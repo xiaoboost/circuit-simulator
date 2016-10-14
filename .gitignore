@@ -5,9 +5,11 @@
 /_素材/
 /_文档/
 /node_modules/
-/jsconfig.json/
 /_develop/
 /js/eventProcess.js
 /js/testLibrary.js
 /js/test.js
 /js/thePanelEvent.js
+
+jsconfig.json
+.gitignore
