@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8">
+	<title>电路仿真</title>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" >
+	<link rel="shortcut icon" type="image/x-icon" href="/src/favicons.ico">
+	<link rel="stylesheet" href="/src/circuitlab.min.css" type="text/css">
+</head>
+
+<body id="editor-container">
+    <!--起始加载画面-->
+	<div id="load-cover">
+		<div id="cover-inner">
+			<h3 style="font-style: italic;">加载中……</h3>
+			<svg class="spinner" width="55px" height="55px" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+				<circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
+			</svg>
+			<h3>绘制草图·模拟</h3>
+		</div>
+	</div>
+	<!--灰幕-->
+	<div id="shade-gray"></div>
+    <!--绘图部分-->
+	<div id="container-grid" tabindex="-1">
+		<svg height="100%" width="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+			<g id="mouse-control">
+				<rect x="0" y="0" width="100%" height="100%" stroke="transparent"></rect>
+			</g>
+			<g id="area-of-parts">
+				<g id="test"></g>
+			</g>
+		</svg>
+	</div>
+	<!--右键菜单-->
+	<ul class="" id="right-button-menu">
+        <li class="right-space"></li>
+		<li class="right-button-option" id="edit-parameters">
+			<span class="option-description" style="color: #888">编辑参数</span>
+		</li>
+        <li  class="right-line" id="right-line-1"></li>
+		<li class="right-button-option" id="parts-copy">
+			<span class="option-description" style="color: #888">复制</span>
+			<span class="option-key">Ctrl+C</span>
+		</li>
+		<li class="right-button-option" id="parts-shear">
+			<span class="option-description" style="color: #888">剪切</span>
+			<span class="option-key">Ctrl+X</span>
+		</li>
+		<li class="right-button-option" id="parts-Paste">
+			<span class="option-description" style="color: #888">粘贴</span>
+			<span class="option-key">Ctrl+V</span>
+		</li>
+		<li class="right-button-option" id="parts-delete">
+			<span class="option-description">删除</span>
+			<span class="option-key">Delete</span>
+		</li>
+		<li  class="right-line" id="right-line-2"></li>
+		<li class="right-button-option" id="clockwise-direction">
+			<span class="option-description">顺时针旋转</span>
+			<span class="option-key">Ctrl+D</span>
+		</li>
+		<li class="right-button-option" id="anticlockwise-direction">
+			<span class="option-description">逆时针旋转</span>
+			<span class="option-key">Ctrl+Alt+D</span>
+		</li>
+		<li class="right-button-option" id="X-Mirror">
+			<span class="option-description">垂直镜像</span>
+			<span class="option-key">Alt+X</span>
+		</li>
+		<li class="right-button-option" id="Y-Mirror">
+			<span class="option-description">水平镜像</span>
+			<span class="option-key">Alt+C</span>
+		</li>
+		<li  class="right-line" id="right-line-3"></li>
+		<li class="right-button-option" id="parts-all">
+			<span class="option-description">选择全部</span>
+			<span class="option-key">Ctrl+A</span>
+		</li>
+		<li class="right-line" id="right-line-4"></li>
+		<li class="right-button-option" id="time-simulations">
+			<span class="option-description" style="color: #888">时域模拟</span>
+		</li>
+		<!--
+		<li class="right-button-option" id="frequency-scan">
+			<span class="option-description" style="color: #888">频域扫描</span>
+		</li>
+		-->
+		<li class="right-space"></li>
+	</ul>
+	<!--波形-->
+    <div id="graph-page" class="silence" style="display:none">
+        <div id="graph-box">
+            <div id="graph-topbar">
+				<a id="waveRecover" class="textLink" href="#">取消缩放</a>
+				|
+                <a id="waveToImage" class="textLink" href="#">输出绘制图像</a>
+                |
+                <a id="waveToData" class="textLink" href="#">输出数据</a>
+                |
+                <a id="waveClose" class="textLink" href="#">关闭面板</a>
+            </div>
+            <div id="graph-title"><span>瞬态分析</span></div>
+            <div id="graph-main">
+            </div>
+        </div>
+    </div>
+    <!--器件属性菜单-->
+	<div class="parameter-close" id="parameter-menu">
+		<div class="parameter-title">Parameters</div>
+		<div class="parameter-bottom-line">
+			<div class="parameter-bottom" id="parameter-bottom-accept">ACCEPT</div>
+			<div class="parameter-bottom" id="parameter-bottom-cancel">CANCEL</div>
+		</div>
+		<div id="parameter-menu-triangle-down"></div>
+	</div>
+	<!--边栏菜单-->
+	<div id="sidebar-menu">
+		<div class="st-menu" id="menu-add-parts">
+			<div id="menu-add-parts-close">
+				<span></span>
+			</div>
+			<div class="st-menu-title">
+				<h1>添加器件</h1>
+				<h2>Add Parts</h2>
+			</div>
+			<div class="parts-menu">
+				<button class="parts-list" id="reference_ground"></button>
+				<!--<button class="parts-list" id="global_connect"></button>-->
+                <button class="parts-list" id="voltage_meter"></button>
+                <button class="parts-list" id="current_meter"></button>
+            </div>
+            <div class="parts-menu">
+                <button class="parts-list" id="dc_voltage_source"></button>
+                <button class="parts-list" id="ac_voltage_source"></button>
+				<button class="parts-list" id="dc_current_source"></button>
+				<!--<button class="parts-list" id="ac_current_source"></button>-->
+			</div>
+			<div class="parts-menu">
+				<button class="parts-list" id="resistance"></button>
+				<button class="parts-list" id="capacitor"></button>
+				<button class="parts-list" id="inductance"></button>
+			</div>
+			<div class="parts-menu">
+				<button class="parts-list" id="diode"></button>
+                <button class="parts-list" id="transistor_npn"></button>
+				<button class="parts-list" id="operational_amplifier"></button>
+            </div>
+			<div id="float-tool-tip"></div>
+        </div>
+        <div class="st-menu" id="menu-config">
+            <div class="st-menu-title">
+                <h1>运行设置</h1>
+                <h2>Simulation Settings</h2>
+            </div>
+            <div class="st-menu-input-title">
+                <span>T</span>
+                <span>时域模拟</span>
+            </div>
+            <div class="st-menu-input-group">
+                <input id="endtime" type="st-menu-input-text" value="20m" required>
+                <span class="st-menu-input-highlight"></span>
+                <span class="st-menu-input-bar"></span>
+                <label>结束时间：</label>
+                <span class="st-menu-unit">s(秒)</span>
+            </div>
+            <div class="st-menu-input-group">
+                <input id="stepsize" type="st-menu-input-text" value="5u" required>
+                <span class="st-menu-input-highlight"></span>
+                <span class="st-menu-input-bar"></span>
+                <label>固定步长：</label>
+                <span class="st-menu-unit">s(秒)</span>
+            </div>
+            <!--
+            <div class="st-menu-input-title">
+                <span class="st-menu-sign">F</span>
+                <span class="st-menu-description">频域分析</span>
+            </div>
+            <div class="st-menu-input-group">
+                <input id="minfrequency" type="st-menu-input-text" value="1" required>
+                <span class="st-menu-input-highlight"></span>
+                <span class="st-menu-input-bar"></span>
+                <label>初始频率：</label>
+                <span class="st-menu-unit">Hz</span>
+            </div>
+            <div class="st-menu-input-group">
+                <input id="maxfrequency" type="st-menu-input-text" value="1M" required>
+                <span class="st-menu-input-highlight"></span>
+                <span class="st-menu-input-bar"></span>
+                <label>结束频率：</label>
+                <span class="st-menu-unit">Hz</span>
+            </div>
+            -->
+		</div>
+	</div>
+	<!--运行及配置按钮-->
+	<div id="action-container">
+		<div class="fab-container" tooltip="时域模拟">
+			<div class="fab" id="fab-run"></div>
+			<div class="fab" id="fab-text" style="display:none;"><p></p></div>
+		</div>
+		<!--
+		<div class="fab-container" tooltip="频域分析">
+			<div class="fab" id="fab-FFT"><span></span></div>
+		</div>
+		-->
+		<div class="fab-container" tooltip="添加器件">
+			<div class="fab" id="fab-adds"></div>
+		</div>
+		<div class="fab-container" tooltip="运行设置">
+			<div class="fab" id="fab-config"></div>
+		</div>
+	</div>
+	<!--脚本-->
+
+	<script src="./../js/test.js"></script>
+
+    <script src="/src/script.min.js"></script>
+    <!--
+            <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+            <script src="https://cdn.bootcss.com/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+
+                    <script src="../js/testLibrary.js"></script>
+                    <script src="../js/script.js"></script>
+
+                        <script src="./src/script.min.js"></script>
+
+
+
+    <script src="../lib/jquery-2.1.0.min.js"></script>
+    <script src="../lib/jquery.mousewheel.min.js"></script>
+    <script src="../js/testLibrary.js"></script>
+    <script src="../js/eventProcess.js"></script>
+    <script src="../js/thePanelEvent.js"></script>
+-->
+</body>
+
+</html>

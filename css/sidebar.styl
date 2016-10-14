@@ -1,0 +1,225 @@
+#sidebar-menu
+  top 0
+  left:100%
+  position absolute
+  background-color  color-white
+  opacity  0
+  z-index 10
+  width 20vw
+  height 100%
+  transform translateX(0)
+  box-shadow -5px 0 15px color-shadow
+  -webkit-transition transform time-aside bezier-aside, opacity time-aside bezier-aside
+  transition transform time-aside bezier-aside, opacity time-aside bezier-aside
+  .st-menu
+    position  absolute
+    visibility  hidden
+    transition-delay 0.4s
+    width 100%
+    height 100%
+    -webkit-transition visibility time-aside bezier-aside
+    transition visibility time-aside bezier-aside
+    .st-menu-title
+      color  color-white
+      font-family  font-serif
+      text-align  center
+      background-color  color-blue
+      margin  0
+      padding  1px
+      cursor  default
+      h1
+        font-size  40px
+        font-weight  normal
+        margin  20px
+      h2
+        font-size  25px
+        font-weight  normal
+        margin  20px
+
+#sidebar-menu.open-menu-config,
+#sidebar-menu.open-add-parts
+  transform  translateX(-100%)
+  opacity  1
+
+#sidebar-menu.open-menu-config #menu-config
+  transition-delay 0ms
+  visibility  visible
+#sidebar-menu.open-add-parts #menu-add-parts
+  transition-delay 0ms
+  visibility  visible
+
+#menu-add-parts
+  #float-tool-tip
+    display none
+    position absolute
+    padding 5px
+    margin  6px
+    background #d9edf7
+    color #3f8aaf
+    font-family:font-text
+    -webkit-box-shadow 0 0 2px color-shadow
+    box-shadow:0 0 2px color-shadow
+    -webkit-border-radius 3px
+    border-radius 3px
+    text-align:center
+    height:auto
+    font-size:16px
+    over-flow hidden
+    -webkit-user-select:none
+    -moz-user-select:none
+    -ms-user-select:none
+    user-select:none
+  .parts-menu
+    margin:20px 30px 20px 30px
+    .parts-list
+      height 66px
+      width 66px
+      margin 2px
+      padding  0
+      box-shadow:0 0 3px color-shadow
+      background:#f2f2f2
+      border 1px solid color-gray
+      -webkit-border-radius 5px
+      border-radius:5px
+      transition:background 200ms bezier-aside
+      &:hover
+        background:#FFFFFF
+        border 1px solid #bbbbbb
+      &:focus
+        background:#FFFFFF
+        border 1px solid color-blue-Light
+        box-shadow:0 0 3px color-blue-Light
+      svg
+        height:60px
+        width:60px
+        stroke:#3B4449
+        stroke-width 2
+        stroke-linecap round
+        fill:transparent
+        transform  scale(0.9,0.9)
+  #menu-add-parts-close
+    position:absolute
+    width:50px
+    height:50px
+    transform translate(-25px,25px)
+    background:color-green-aside
+    border-radius 50%
+    box-shadow -2px 0 10px #a1a1a1;
+    -webkit-transition:width time-aside bezier-aside, height time-aside bezier-aside, transform time-aside bezier-aside
+    transition:width time-aside bezier-aside, height time-aside bezier-aside, transform time-aside bezier-aside
+    span:before,
+    span:after
+      background color-white
+      content:''
+      height:5px
+      width 30px
+      position absolute
+      -webkit-transition:width time-aside bezier-aside
+      transition:width time-aside bezier-aside
+    span:before
+      -webkit-transform  translate(10px, 22.5px) rotate(45deg)
+      transform  translate(10px, 22.5px) rotate(45deg)
+    span:after
+      -webkit-transform  translate(10px, 22.5px) rotate(135deg)
+      transform  translate(10px, 22.5px) rotate(135deg)
+    &.disappear
+      width:0
+      height:0
+      span:before,
+      span:after
+        width 0
+
+
+#menu-config
+  .st-menu-input-title
+    font-family  font-default
+    margin 20px
+    cursor :default
+    span
+      font-size 24px
+    span:nth-child(1)
+      font-family  font-serif
+      color:color-gray-aside
+      margin-right:30px
+  .st-menu-input-group
+    font-family:font-serif
+    position:relative
+    margin 24px 0 8px 65px
+    height 40px
+    input
+      color:#5264AE
+      font-size:20px
+      padding:10px 5px 3px 5px
+      display:block
+      width:60%
+      border:none
+      border-bottom:1px solid color-gray
+      &:focus
+        outline:none
+      &:focus ~ .st-menu-input-highlight
+        -webkit-animation:inputHighlighter time-input bezier-aside
+        -moz-animation:inputHighlighter time-input bezier-aside
+        animation:inputHighlighter time-input bezier-aside
+      &:focus ~ .st-menu-input-bar:before
+        width:100%
+      &:focus ~ label,
+      &:valid ~ label
+        top:-13px
+        font-size:14px
+    label
+      color:#999999
+      font-family  font-text
+      font-size:18px
+      font-weight:Lighter
+      position:absolute
+      pointer-events:none
+      left:5px
+      top:10px
+      transition:all time-label bezier-input
+      -moz-transition:all time-label bezier-input
+      -webkit-transition:all time-label bezier-input
+    .st-menu-input-bar
+      position relative
+      display block
+      width 60%
+      &:before
+        content:''
+        height:2px
+        width:0
+        bottom:0
+        position:absolute
+        background:#5264AE
+        transition:width time-input bezier-aside
+        -moz-transition:width time-input bezier-aside
+        -webkit-transition:width time-input bezier-aside
+    .st-menu-input-highlight
+      position:absolute
+      height:63%
+      width:100px
+      top:25%
+      left:0
+      pointer-events:none
+      opacity:0.5
+    .st-menu-unit
+      color #999999
+      font-size 20px
+      position :relative
+      left:200px
+      top:-25px
+      font-weight :normal
+      cursor :default
+
+/* ANIMATIONS ================ */
+//输入框动画
+@-webkit-keyframes inputHighlighter {
+  from { background:#5264AE }
+  to  { width:0;background:transparent }
+}
+@-moz-keyframes inputHighlighter {
+  from { background:#5264AE }
+  to  { width:0; background:transparent }
+}
+@keyframes inputHighlighter {
+  from { background:#5264AE }
+  to  { width:0; background:transparent }
+}
