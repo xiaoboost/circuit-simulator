@@ -1,8 +1,6 @@
 "use strict";
-// 获取 gulp
-var gulp = require("gulp");
-// 引入组件
-var htmlmin = require("gulp-htmlmin"),
+const gulp = require("gulp"),
+    htmlmin = require("gulp-htmlmin"),
     concat = require("gulp-concat"),
     rename = require("gulp-rename"),
     stylus = require("gulp-stylus"),
@@ -40,7 +38,7 @@ gulp.task("develop-stylus", function () {
         .pipe(gulp.dest("./_develop/src/"));
 });
 gulp.task("develop-js", function () {
-    return gulp.src("../Source/js/main.js")
+    return gulp.src("./js/main.js")
         .pipe(webpack({
             devtool: "source-map",
             output: {
@@ -78,9 +76,9 @@ gulp.task("build", function () {
     // 首次运行task
     gulp.run("develop-html", "develop-stylus", "develop-js", "image");
     // 监听html文件变化
-    gulp.watch("../Source/index.html", ["develop-html"]);
+    gulp.watch("./index.html", ["develop-html"]);
     // 监听stylus文件变化
-    gulp.watch("../Source/css/*.styl", ["develop-stylus"]);
+    gulp.watch("./css/*.styl", ["develop-stylus"]);
     // 监听js文件
-    gulp.watch("../Source/js/*.js", ["develop-js"]);
+    gulp.watch("./js/*.js", ["develop-js"]);
 });

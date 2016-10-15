@@ -864,11 +864,16 @@ mainPage.on({
 //取消缩放
 graphPage.on("click", "#waveRecover", function() {
     $("#graph-main .graph-individual").each((n) => {
-        const graph = n._data;
+        const graph = n._data,
+            time = [0, graph.time],
+            value = [
+                Math.minOfArray(graph.output.map((n) => Math.minOfArray(n.data))),
+                Math.maxOfArray(graph.output.map((n) => Math.maxOfArray(n.data)))
+            ];
 
         graph.clearActionCanvas();
-        graph.darwBackground();
-        graph.darwCurve();
+        graph.drawBackground(time, value, true);
+        graph.drawCurve();
     });
 });
 //转换成图片
@@ -901,7 +906,7 @@ graphPage.on("click", "#waveToData", function() {
     }
     ans += "</p>";
     for(let i = 0; i < data[0].data.length; i++) {
-        ans += "<p>" + Math.signFigures(i * stepTime) + ", ";
+        ans += "<p>" + (i * stepTime).toSFixed() + ", ";
         for(let j = 0; j < data.length; j++) {
             ans += data[j].data[i] + ", ";
         }
@@ -991,17 +996,19 @@ graphPage.on("mousedown", ".graph-action", function(event) {
 });
 //波形界面的鼠标移动
 graphPage.on("mouseup", function() {
-    //取消移动事件绑定
-    graphPage.off("mousemove", mousemoveEvent);
-    graphPage.removeClass("mouse-select");
-    //标志位置低
-    grid.setGraphSelecte(false);
-    //重绘背景和曲线
-    const graph = grid.current.graph;
-    graph.clearActionCanvas();
-    graph.reDraw(grid.current.select);
-    //临时变量清空
-    grid.current = [];
+    if(grid.totalMarks && grid.graphSelecte) {
+        //取消移动事件绑定
+        graphPage.off("mousemove", mousemoveEvent);
+        graphPage.removeClass("mouse-select");
+        //标志位置低
+        grid.setGraphSelecte(false);
+        //重绘背景和曲线
+        const graph = grid.current.graph;
+        graph.clearActionCanvas();
+        graph.reDraw(grid.current.select);
+        //临时变量清空
+        grid.current = [];
+    }
 });
 
 //页面加载完毕之后运行初始化

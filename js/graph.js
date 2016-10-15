@@ -3,35 +3,7 @@ import { $ } from "./jquery";
 const color = ["#50B4C8", "#F0A050", "#50C850"],
     background = "#66CCCC",
     page = $("#graph-page"),
-    u = undefined,
-    axisType = [{   //x轴
-            "name": "graph-bottomList",
-            "way": function (x) {
-                return ([
-                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[0][1]],
-                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[1][1] + 5]
-                ]);
-            },
-            "tagStyle": function (x) {
-                return ("top: 8px; transform: rotate(35deg); left: " + (waveRound[0][0] + x - 10) + "px")
-            },
-            "signStyle": (waveRound[2][0] + 10) + "px",
-            "unit": "s"
-        },
-        {   //y轴
-            "name": "graph-leftList",
-            "way": function (x) {
-                return ([
-                    [waveRound[2][0], waveRound[1][1] - Math.round(x) - 0.5],
-                    [waveRound[1][0] - 4, waveRound[1][1] - Math.round(x) - 0.5]
-                ]);
-            },
-            "tagStyle": function (x) {
-                return ("right: 0px; top: " + (waveRound[1][1] - x - 9) + "px")
-            },
-            "signStyle": "75px",
-            "unit": (this.type === "voltage") ? "V" : "A"
-        }];
+    u = undefined;
 
 //根据像素进行大致的分段
 function axisSplit(long) {
@@ -43,9 +15,9 @@ function extendPoint(x) {
 
     const sign = x / Math.abs(x),
         rank = Math.rank(x),
-        number = Math.signFigures(Math.abs(x), 2),      //保留三位有效数字
-        int = Math.floor(number / rank),                //整数部分
-        mod = Math.signFigures(x * sign / rank - int);  //小数部分
+        number = Math.abs(x).toSFixed(2),      //保留三位有效数字
+        int = Math.floor(number / rank),            //整数部分
+        mod = (x * sign / rank - int).toSFixed();   //小数部分
 
     let ans;
     if (int < 3) {
@@ -65,18 +37,18 @@ function extendPoint(x) {
     } else {
         ans = 1;
     }
-    return (Math.signFigures(rank * (int + ans) * sign));
+    return ((rank * (int + ans) * sign).toSFixed());
 }
 //线段分段
 function lineSplit(maxExpand, minExpand, num) {
     const rank = Math.rank(maxExpand),
-        max = Math.signFigures(maxExpand / rank),
-        min = Math.signFigures(Math.abs(minExpand / rank)),
+        max = (maxExpand / rank).toSFixed(),
+        min = (Math.abs(minExpand / rank)).toSFixed(),
         ans = [];
 
     for (let i = 1; i < 2 * num; i++) {
-        const segment = Math.signFigures(max / i, 8),
-            minNumber = Math.signFigures(min / segment, 8);
+        const segment = (max / i).toSFixed(8),
+            minNumber = (min / segment).toSFixed(8);
 
         //小数点五位以内被视作整除
         if ((segment === parseFloat(segment.toFixed(5))) &&
@@ -104,16 +76,16 @@ function extendLine(line, long) {
         const number = Math.abs(line[0]),
             rank = Math.rank(number),
             numberFloor = Math.floor(number / rank),
-            minExpand = (numberFloor === Math.signFigures(number / rank)) ?
+            minExpand = (numberFloor === (number / rank).toSFixed()) ?
                 numberFloor - 1 : numberFloor,
             maxExpand = minExpand + 2;
 
         if(line[0] > 0) {
-            axisMin = Math.signFigures(minExpand * rank);
-            axisMax = Math.signFigures(maxExpand * rank);
+            axisMin = (minExpand * rank).toSFixed();
+            axisMax = (maxExpand * rank).toSFixed();
         } else {
-            axisMin = - Math.signFigures(maxExpand * rank);
-            axisMax = - Math.signFigures(minExpand * rank);
+            axisMin = - (maxExpand * rank).toSFixed();
+            axisMax = - (minExpand * rank).toSFixed();
         }
         return([axisMin, axisMax, lineSplit((axisMax - axisMin), 0, num)]);
     } else if (line[0] * line[1] <= 0) {
@@ -121,9 +93,7 @@ function extendLine(line, long) {
         const max = Math.max(Math.abs(line[0]), Math.abs(line[1])),
             min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
             maxExpand = extendPoint(max),       //最大值先被固定
-            minExpand = Math.signFigures(
-                extendPoint((maxExpand + min) / 2) * 2 - maxExpand
-            );
+            minExpand = (extendPoint((maxExpand + min) / 2) * 2 - maxExpand).toSFixed();
 
         if (Math.abs(line[0]) < Math.abs(line[1])) {
             axisMin = - minExpand;
@@ -136,7 +106,7 @@ function extendLine(line, long) {
     } else {
         //两点同号，0点没有被包含其中，两端悬浮
         const min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
-            maxExpand = extendPoint(Math.abs(point[0] - point[1]) / 2) * 2,
+            maxExpand = extendPoint(Math.abs(line[0] - line[1]) / 2) * 2,
             count = lineSplit(maxExpand, 0, num),
             minFloor = Math.floor(min / (maxExpand / count)) * (maxExpand / count);
 
@@ -151,39 +121,19 @@ function extendLine(line, long) {
     }
 }
 //收缩坐标
-function reduceList(line, list) {
+function reduceList(list, line) {
+    const max = Math.maxOfArray(line),
+        min = Math.minOfArray(line);
 
-}
-//绘制坐标轴
-
-//提示文字格式
-//保留5个有效数字
-function tipText(number) {
-    if(!number) { return("0"); };
-
-    const save = 5,
-        sign = number / Math.abs(number),
-        unitS = ["m", "μ", "n", "p"],
-        unitL = ["k", "M", "G"];
-
-    let sub = -1,
-        uint = number * sign;
-
-    while(uint < 1) {
-        uint *= 1000;
-        sub ++;
-        if(uint > 1) {
-            return(Math.signFigures(sign * uint, save) + unitS[sub]);
-        }
+    while(list[1] < min) {
+        list.splice(0,1);
     }
-    while(uint > 1000) {
-        uint *= 0.001;
-        sub ++;
-        if(uint < 1000) {
-            return(Math.signFigures(sign * uint, save) + unitL[sub]);
-        }
+    list[0] = min;
+
+    while(list[list.length - 2] > max) {
+        list.pop()
     }
-    return(Math.signFigures(number, save));
+    list[list.length - 1] = max;
 }
 
 //canvas绘图类
@@ -196,7 +146,7 @@ function Graphics(canvas) {
     this.length = {
         "width" : parseInt(canvas.getAttribute("width")),
         "height" : parseInt(canvas.getAttribute("Height"))
-    }
+    };
     this.clear();       //创建时清理画布
 }
 Graphics.prototype = {
@@ -313,7 +263,7 @@ Graphics.prototype = {
     drawImage(...args) {
         this.ctx.drawImage(...args);
     }
-}
+};
 //波形绘制窗口类
 function Graph(Data, DOM, type) {
     //实例初始化
@@ -321,8 +271,8 @@ function Graph(Data, DOM, type) {
     this.type = type;
     this.output = Data;
     this.long = {};
-    this.time = Math.signFigures(Math.txt2Value($("#endtime").prop("value"))),
-    this.stepTime = Math.signFigures(Math.txt2Value($("#stepsize").prop("value")));
+    this.time = Math.txt2Value($("#endtime").prop("value")),
+    this.stepTime = Math.txt2Value($("#stepsize").prop("value"));
 
     //计算各种坐标
     const left = 80;            //左侧边栏宽度
@@ -358,7 +308,7 @@ function Graph(Data, DOM, type) {
         }));
     }
     //绘制曲线
-    this.darwCurve([0, this.time], valueStart);
+    this.drawCurve();
     //当前曲线状态为全部显示
     for(let i = 0; i < this.output.length; i++) {
         this.output[i].status = true;
@@ -396,8 +346,7 @@ Graph.prototype = {
     //绘制背景
     drawBackground(time, value, expend = false) {
         //取出数据
-        const axis = [],
-            waveWidth = this.long.waveWidth,
+        const waveWidth = this.long.waveWidth,
             waveHeight = this.long.waveHeight,
             waveRound = this.long.waveRound,
             //寻找或者创建背景画布
@@ -406,6 +355,9 @@ Graph.prototype = {
                 "height": this.elementDOM.height() + "px",
                 "style": "position: absolute; left: 0px; top: 0px;"
             });
+
+        //当前坐标轴序列
+        this.axisList = [];
 
         //创建画笔
         const drawer = new Graphics(background[0]);
@@ -433,118 +385,25 @@ Graph.prototype = {
             "strokeStyle": "#cccccc",
             "lineWidth": 1
         });
-
-         //左侧边栏和底部边栏
-        /*
-         for(let k = 0; k < 2; k++) {
-             //边栏和底栏的相关属性
-             const divType = [
-                 {   //x轴
-                     "name": "graph-bottomList",
-                     "way": function (x) {
-                         return ([
-                             [waveRound[0][0] + Math.round(x) + 0.5, waveRound[0][1]],
-                             [waveRound[0][0] + Math.round(x) + 0.5, waveRound[1][1] + 5]
-                         ]);
-                     },
-                     "tagStyle": function (x) {
-                         return ("top: 8px; transform: rotate(35deg); left: " + (waveRound[0][0] + x - 10) + "px")
-                     },
-                     "signStyle": (waveRound[2][0] + 10) + "px",
-                     "unit": "s"
-                 },
-                 {   //y轴
-                     "name": "graph-leftList",
-                     "way": function (x) {
-                         return ([
-                             [waveRound[2][0], waveRound[1][1] - Math.round(x) - 0.5],
-                             [waveRound[1][0] - 4, waveRound[1][1] - Math.round(x) - 0.5]
-                         ]);
-                     },
-                     "tagStyle": function (x) {
-                         return ("right: 0px; top: " + (waveRound[1][1] - x - 9) + "px")
-                     },
-                     "signStyle": "75px",
-                     "unit": (this.type === "voltage") ? "V" : "A"
-                 }
-             ];
-
-             const axisx = range[k],
-                 rank = maxRank(axisx),
-                 listDiv = this.elementDOM.childSelect("div." + divType[k].name, 1),
-                 lists = listDiv.childSelect("div.axisSign", axisx.length),
-                 eachPixel = [this.long.waveWidth, this.long.waveHeight][k] / (axisx[axisx.length - 1] - axisx[0]);
-
-             for (let i = 0; i < axisx.length; i++) {
-                 const axisLast = (axisx[i - 1]) ? (Math.round((axisx[i - 1] - axisx[0]) * eachPixel) - 0.5) : (-30),
-                     axisNow = Math.round((axisx[i] - axisx[0]) * eachPixel) - 0.5;
-
-                 drawer.line(divType[k].way(axisNow));
-
-                 if (axisNow - axisLast > 20) {
-                     lists.get(i).attr("style", divType[k].tagStyle(axisNow))
-                         .text((axisx[i] / rank).toFixed(3));
-                 } else {
-                     lists.get(i).remove();
-                 }
-             }
-             //添加数量级
-             const rankNumber = [Infinity, 9, 6, 3, 0, -3, -6, -9, -12, -Infinity],
-                 mathSign = Math.log10(rank),
-                 sign = $("<div>", {
-                     "class": "number-rank",
-                     "style": "left:" + divType[k].signStyle
-                 }),
-                 exp10 = $("<span>"),
-                 unit = $("<span>"),
-                 upSign = $("<span>", {
-                     "class": "upSign"
-                 });
-             sign.append(exp10);
-             sign.append(upSign);
-             sign.append(unit);
-             listDiv.append(sign);
-
-             for (let i = 0; i < rankNumber.length - 1; i++) {
-                 const units = ["G", "M", "k", "", "m", "μ", "n", "p"];
-                 if ((mathSign < rankNumber[i]) && (mathSign > rankNumber[i + 1])) {
-                     exp10.text("×10");
-                     unit.text(units[i] + divType[k].unit);
-                     if (mathSign - rankNumber[i + 1] !== 1) {
-                         upSign.text(mathSign - rankNumber[i + 1]);
-                         if (i === rankNumber.length - 2) {
-                             upSign.text(mathSign - rankNumber[i + 1]);
-                         }
-                     }
-                     break;
-                 } else if (mathSign === rankNumber[i]) {
-                     unit.text(units[i - 1] + divType[k].unit);
-                     break;
-                 }
-             }
-         }
-         */
-
         //绘制轴线
         for(let i = 0; i < 2; i++) {
             const item = [time, value][i],
                 pixel = [this.long.waveWidth, this.long.waveHeight][i],
                 [axisMin, axisMax, count] = extendLine(item, pixel),
-                axisLong = Math.signFigures(axisMax - axisMin),
-                splitLong = Math.signFigures(axisLong / count),
+                axisLong = (axisMax - axisMin).toSFixed(),
+                splitLong = (axisLong / count).toSFixed(),
                 axisList = [axisMin];
             //坐标轴分割值
             while (axisList[axisList.length - 1] < axisMax) {
-                axisList.push(Math.signFigures(axisList[axisList.length - 1] + splitLong));
+                axisList.push((axisList[axisList.length - 1] + splitLong).toSFixed());
             }
             //不扩展坐标时收缩当前列表
             if(!expend) { reduceList(axisList, item); }
-            //保存当前坐标轴列表
-            axis[i] = axisList;
-
-
+            //按照序列绘制坐标网格
+            this.drawGrid(i, axisList, drawer);
+            //保存当前坐标轴序列
+            this.axisList[i] = axisList;
         }
-
         //画笔属性恢复默认
         drawer.attributesDefault();
         //绘制边框
@@ -552,14 +411,74 @@ Graph.prototype = {
             "strokeStyle" : "#999999",
             "lineWidth" : 2
         });
-        //保存当前坐标序列
-        //this.numberList = range;
+    },
+    //坐标网格
+    drawGrid(label, axis, drawer) {
+        const waveRound = this.long.waveRound,
+            attr = [{   //x轴
+            "name": "graph-bottomList",
+            "way": function (x) {
+                return ([
+                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[0][1]],
+                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[1][1] + 5]
+                ]);
+            },
+            "tagStyle": function (x) {
+                return ("top: 8px; transform: rotate(35deg); left: " + (waveRound[0][0] + x - 10) + "px")
+            },
+            "signStyle": (waveRound[2][0] + 10) + "px"
+        }, {   //y轴
+            "name": "graph-leftList",
+            "way": function (x) {
+                return ([
+                    [waveRound[2][0], waveRound[1][1] - Math.round(x) - 0.5],
+                    [waveRound[1][0] - 4, waveRound[1][1] - Math.round(x) - 0.5]
+                ]);
+            },
+            "tagStyle": function (x) {
+                return ("right: 0px; top: " + (waveRound[1][1] - x - 9) + "px")
+            },
+            "signStyle": "75px"
+        }],
+            sidebar = this.elementDOM.childSelect("div." + attr[label].name, 1),
+            lists = sidebar.childSelect("div.axis-number", axis.length),
+            unit = sidebar.childSelect("div.axis-unit", 1),
+            eachPixel = [this.long.waveWidth, this.long.waveHeight][label] / (axis[axis.length - 1] - axis[0]),
+
+            maxSxis = Math.maxOfArray(axis).toShort(),
+            rank = maxSxis.rank,
+            power = maxSxis.number.powRank(),
+
+            type = label
+                ? ((this.type === "voltage") ? "V" : "A")
+                : "s";
+
+        //添加单位
+        unit.text(maxSxis.unit + type);
+        unit.attr("style", "left:" + attr[label].signStyle);
+
+        //绘制轴线
+        for (let i = 0; i < axis.length; i++) {
+            const axisLast = (axis[i - 1])
+                    ? (Math.round((axis[i - 1] - axis[0]) * eachPixel) - 0.5)
+                    : (-30),
+                axisNow = Math.round((axis[i] - axis[0]) * eachPixel) - 0.5;
+
+            drawer.line(attr[label].way(axisNow));
+
+            if (axisNow - axisLast > 20) {
+                lists.get(i).attr("style", attr[label].tagStyle(axisNow))
+                    .text((axis[i] * rank).toSFixed().toFixed(4 - power));
+            } else {
+                lists.get(i).remove();
+            }
+        }
     },
     //绘制曲线
-    darwCurve() {
+    drawCurve() {
         const [timeStart, timeEnd, valueMin, valueMax] = this.backgroundStartToEnd(),
-            pixelSplitX = this.long.waveWidth / Math.signFigures(timeEnd - timeStart),
-            pixelSplitY = this.long.waveHeight / Math.signFigures(valueMax - valueMin),
+            pixelSplitX = this.long.waveWidth / (timeEnd - timeStart).toSFixed(),
+            pixelSplitY = this.long.waveHeight / (valueMax - valueMin).toSFixed(),
             //精确求解输出时间间隔的长度
             outputTimeSplit = this.time / (this.output[0].data.length - 1);
 
@@ -680,14 +599,14 @@ Graph.prototype = {
                     drawer.circle(circleX, circleY, 5, {
                         "fillStyle": color[i]
                     });
-                    tips.get(i).text(tipText(this.output[i].data[sub]) + unit)
+                    tips.get(i).text((this.output[i].data[sub]).toShort(5).txt + unit)
                         .css({ right: (width - circleX) + "px", bottom: (height - circleY) + "px" });
                 } else {
                     //曲线隐藏
                     tips.get(i).attr("style", "display: none");
                 }
             }
-            tips.get(-1).text(tipText(sub * stepTime) + "s")
+            tips.get(-1).text((sub * stepTime).toShort(5).txt + "s")
                 .css({ right: (width - circleX) + "px", bottom: "0px" });
 
             return("index:" + sub);
@@ -764,62 +683,22 @@ Graph.prototype = {
     //返回当前背景的XY轴起始和终止坐标
     backgroundStartToEnd() {
         return([
-            this.numberList[0][0],                              //当前时间起点
-            this.numberList[0][this.numberList[0].length - 1],  //当前时间终点
-            this.numberList[1][0],                              //当前值起点
-            this.numberList[1][this.numberList[1].length - 1]   //当前值终点
+            this.axisList[0][0],                            //当前时间起点
+            this.axisList[0][this.axisList[0].length - 1],  //当前时间终点
+            this.axisList[1][0],                            //当前值起点
+            this.axisList[1][this.axisList[1].length - 1]   //当前值终点
         ]);
-    },
-    //从像素范围到值范围
-    pixelToValue(pixelSmall, pixelLarge) {
-        //XY轴起始终点
-        const [timeStart, timeEnd, valueMin, valueMax] = this.backgroundStartToEnd();
-        //每个像素点对应的实际长度
-        const pixelSplitX = Math.signFigures(timeEnd - timeStart) / this.long.waveWidth;
-        const pixelSplitY = Math.signFigures(valueMax - valueMin) / this.long.waveHeight;
-
-        //必须要注意的是，输入的是鼠标坐标
-        //对于画布而言，Y轴最上面是原点
-        //而对于实际数值坐标来说，最下面才是原点，要注意坐标转换
-        const realSmall = [
-            pixelSmall[0] * pixelSplitX + timeStart,
-            (this.long.waveHeight - pixelLarge[1]) * pixelSplitY + valueMin
-        ];
-        const realLarge = [
-            pixelLarge[0] * pixelSplitX + timeStart,
-            (this.long.waveHeight - pixelSmall[1]) * pixelSplitY + valueMin
-        ];
-        //以大数字为基准，保留4位有效数字
-        const rank = [
-            3 - Math.floor(Math.log10(realLarge[0])),
-            3 - Math.floor(Math.log10(realLarge[1]))
-        ];
-        for(let i = 0; i < 2; i++) {
-            if (rank[i] > 0) {
-                realSmall[i] = parseFloat(realSmall[i].toFixed(rank[i]));
-                realLarge[i] = parseFloat(realLarge[i].toFixed(rank[i]));
-            } else if(rank[i] < 0) {
-                const temp = Math.pos(10, rank[i]);
-                realSmall[i] = Math.round(realSmall[i] / temp) * temp;
-                realLarge[i] = Math.round(realLarge[i] / temp) * temp;
-            } else {
-                realSmall[i] = Math.round(realSmall[i]);
-                realLarge[i] = Math.round(realLarge[i]);
-            }
-        }
-        //返回的是左下角以及右上角坐标
-        return ([realSmall, realLarge]);
     },
     //根据选择范围重绘曲线
     reDraw(range) {
         const [timeStart, timeEnd, valueMin, valueMax] = this.backgroundStartToEnd(),
-            time2pixel = Math.signFigures(timeEnd - timeStart) / this.long.waveWidth,
-            value2pixel = Math.signFigures(valueMax - valueMin) / this.long.waveHeight,
-            time = [range[0], range[2]].map((n) => Math.signFigures(n * time2pixel + timeStart, 4)),
-            value = [range[1], range[3]].map((n) => Math.signFigures(valueMax - n * value2pixel, 4));
+            time2pixel = (timeEnd - timeStart).toSFixed() / this.long.waveWidth,
+            value2pixel = (valueMax - valueMin).toSFixed() / this.long.waveHeight,
+            time = [range[0], range[2]].map((n) => (n * time2pixel + timeStart).toSFixed(4)),
+            value = [range[3], range[1]].map((n) => (valueMax - n * value2pixel).toSFixed(4));
 
-        this.drawBackground([time, value]);
-        this.darwCurve();
+        this.drawBackground(time, value);
+        this.drawCurve();
     }
 };
 //把整个波形页面转换成图像
@@ -858,8 +737,8 @@ Graph.toImage = function() {
         "font" : "10px Arial"
     });
     //横向文字
-    $("div.graph-individual div.graph-leftList div.axisSign, " +
-        "div.graph-individual div.number-rank span").each((n) => {
+    $("div.graph-individual div.graph-leftList div.axis-number, " +
+        "div.graph-individual div.axis-unit").each((n) => {
         const elem = $(n),
             offset = elem.offset(page),
             position = [offset[0], offset[1] + 10.5];
@@ -937,13 +816,13 @@ Graph.toImage = function() {
             });
         });
     });
-    //横坐标斜着的文字
+    //x轴坐标斜着的文字
     tempCanvas.attributesAssignment({
         "font" : "10px Arial"
     });
     const deg = 35 / 180 * Math.PI;     //倾斜角度
     tempCanvas.ctx.rotate(deg);
-    $(".graph-bottomList .axisSign").each((n) => {
+    $(".graph-bottomList .axis-number").each((n) => {
         const elem = $(n),
             position = elem.offset(page),
             x1 = position[0] / Math.cos(deg),

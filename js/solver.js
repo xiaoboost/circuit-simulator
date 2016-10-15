@@ -8,7 +8,7 @@ import { partsAll, PartsCollection } from "./collection";
 const partInternal = {
     //器件的内部结构，分为迭代方程和拆分结构两类
     //迭代方程有方程原型以及方程生成函数，参数全部由闭包来保存
-    //拆分解构下有器件对外管脚到内部管脚的接口列表、拆分器件内部的连接关系表、拆分器件原型
+    //拆分结构下有器件对外管脚到内部管脚的接口列表、拆分器件内部的连接关系表、拆分器件原型
     "ac_voltage_source": {
         "iterative": {
             "equation": function(factor, frequency, bias, phase) {
@@ -413,6 +413,7 @@ function insertFactorMatrix(F, H, S, item, input, index) {
     return (ans + 1);
 }
 
+//求解器类
 function Solver(collection) {
     //临时变量初始化
     const nodeHash = {},                    //[管脚->节点号]对应表
@@ -585,6 +586,7 @@ function Solver(collection) {
         F = new Matrix(branchNumber),               //电导电容矩阵
         H = new Matrix(branchNumber),               //电阻电感矩阵
         S = new Matrix(branchNumber, 1);            //独立电压电流源列向量
+
     //扫描所有支路，建立关联矩阵
     for (let i in branchHash) {
         if (branchHash.hasOwnProperty(i)) {
@@ -677,8 +679,8 @@ function Solver(collection) {
 }
 Solver.prototype.solve = function* () {
     //取出设置界面的时间设定
-    const endTime = Math.signFigures(Math.txt2Value($("#endtime").prop("value"))),
-        stepSize = Math.signFigures(Math.txt2Value($("#stepsize").prop("value"))),
+    const endTime = Math.txt2Value($("#endtime").prop("value")).toSFixed(),
+        stepSize = Math.txt2Value($("#stepsize").prop("value")).toSFixed(),
         total = Math.round(endTime / stepSize),
         //取出求解器中的数据
         update = this.update,

@@ -399,9 +399,11 @@ Object.extend({
     },
     //对象是否为空
     isEmpty(fromObj) {
-        for(let i in fromObj)
-            if(fromObj.hasOwnProperty(i))
-                return(false);
+        for(let i in fromObj) {
+            if (fromObj.hasOwnProperty(i)) {
+                return (false);
+            }
+        }
         return(true);
     },
     //冻结当前对象以及当前对象下属的全部对象
@@ -537,14 +539,101 @@ Math.extend({
 
         let unit = input.match(unitReg);
         unit = hash[unit] ? hash[unit] : 1;
-        return (Math.signFigures(number * unit));
+        return ((number * unit).toSFixed());
     }
 });
+Number.prototype.extend({
+    // 保留效数字，默认6位有效数字
+    toSFixed(rank = 6) {
+        const num = Number(this.toString());
+        if(!num) { return(0); }
+
+        const sign = num / Math.abs(num),
+            number = num * sign,
+            index = rank - 1 - Math.floor(Math.log10(number));
+
+        let ans;
+        if (index > 0) {
+            ans = parseFloat(number.toFixed(index));
+        } else if (index < 0) {
+            const temp = Math.pow(10, index);
+            ans = Math.round(number / temp) * temp;
+        } else {
+            ans = Math.round(number);
+        }
+        return (ans * sign);
+    },
+    // 数字转换为缩写字符串，默认保留6位有效数字
+    // 数字小于10^-12以及大于10^9的时候，保留6位小数
+    toShort(save = 6) {
+        const number = Number(this.toString());
+        if(!number) { return("0"); };
+
+        const sign = number / Math.abs(number),
+            unitS = ["m", "μ", "n", "p"],
+            unitL = ["k", "M", "G"];
+
+        let sub = -1, ans, rank = 1,
+            uint = number * sign;
+
+        while(uint < 1) {
+            rank *= 1000;
+            uint *= 1000;
+            sub ++;
+            if(uint > 1 || sub === 3) {
+                ans = (sign * uint).toSFixed(save);
+                return({
+                    rank: rank,
+                    number: ans,
+                    unit: unitS[sub],
+                    txt: ans + unitS[sub]
+                });
+            }
+        }
+        while(uint > 1000) {
+            rank *= 0.001;
+            uint *= 0.001;
+            sub ++;
+            if(uint < 1000 || sub === 2) {
+                ans = (sign * uint).toSFixed(save);
+                return({
+                    rank: rank,
+                    number: ans,
+                    unit: unitL[sub],
+                    txt: ans + unitL[sub]
+                });
+            }
+        }
+        return({
+            rank: 1,
+            unit: "",
+            number: number.toSFixed(save),
+            txt: number.toSFixed(save).toString()
+        });
+    },
+    // 数量级
+    rank() {
+        const number = Number(this.toString());
+        if(!number) { return(0); };
+
+        const sign = number / Math.abs(number);
+        return (Math.pow(10, Math.floor(Math.log10(number * sign))));
+    },
+    // 数字有多少位
+    powRank() {
+        const number = Number(this.toString());
+        if(!number) { return(0); };
+
+        const sign = number / Math.abs(number);
+        return (Math.floor(Math.log10(number * sign))) + 1;
+    }
+})
 
 //修改部分方法为隐藏以及不可修改
 Object.freezeMethod(Array);
 Object.freezeMethod(Object);
 Object.freezeMethod(Object.prototype);
+Object.freezeMethod(Number.prototype);
 
 //网页禁止右键和选中
 window.document.oncontextmenu = function(){return(false);};
