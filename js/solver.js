@@ -6,13 +6,13 @@ import { partsAll, PartsCollection } from "./collection";
 
 //器件的内部结构
 const partInternal = {
-    //器件的内部结构，分为迭代方程和拆分结构两类
-    //迭代方程有方程原型以及方程生成函数，参数全部由闭包来保存
-    //拆分结构下有器件对外管脚到内部管脚的接口列表、拆分器件内部的连接关系表、拆分器件原型
+    //器件的内部结构，分为迭代方程(iterative)和拆分结构(apart)两类
+    //迭代方程有方程原型(equation)以及方程生成函数(create)，参数全部由闭包来保存
+    //拆分结构下有器件对外管脚到内部管脚的接口列表(interface)、拆分器件内部的连接关系表(connect)、拆分器件原型(parts)
     "ac_voltage_source": {
         "iterative": {
             "equation": function(factor, frequency, bias, phase) {
-                return( function(t) {
+                return(function(t) {
                     return ([factor * Math.sin((frequency * t) * Math.PI * 2 + phase / 180 * Math.PI) + bias]);
                 });
             },
@@ -21,10 +21,10 @@ const partInternal = {
                     "to": []
                 };
                 ans.process = partInternal["ac_voltage_source"]["iterative"]["equation"](
-                    Math.txt2Value(part.input[0]),
-                    Math.txt2Value(part.input[1]),
-                    Math.txt2Value(part.input[2]),
-                    Math.txt2Value(part.input[3])
+                    part.input[0].toVal(),
+                    part.input[1].toVal(),
+                    part.input[2].toVal(),
+                    part.input[3].toVal()
                 );
                 //迭代方程参数描述
                 ans.describe = [
@@ -55,7 +55,7 @@ const partInternal = {
                     "to": []
                 };
                 ans.process = partInternal["capacitor"]["iterative"]["equation"](
-                    Math.txt2Value(part.input[0])
+                    part.input[0].toVal()
                 );
                 ans.describe = [
                     {"name": "current", "place": part.id + "-0"},
@@ -68,22 +68,25 @@ const partInternal = {
     },
     "diode": {
         "iterative": {
-            "equation": function (voltage) {
-                if (voltage >= this.turnOnVoltage) {
-                    return ([this.turnOnRes, this.turnOnVoltage]);
-                } else {
-                    return ([this.turnOffRes, 0]);
+            "equation": function(turnOnVoltage, turnOnRes, turnOffRes) {
+                //二段函数
+                return function (voltage) {
+                    if (voltage >= turnOnVoltage) {
+                        return ([turnOnRes, turnOnVoltage]);
+                    } else {
+                        return ([turnOffRes, 0]);
+                    }
                 }
             },
             "create": function (part) {
                 const ans = {
                     "to": []
                 };
-                ans.process = partInternal[part.partType]["iterative"]["equation"].bind({
-                    "turnOnVoltage": Math.toValue(part.input[0]),
-                    "turnOnRes": Math.toValue(part.input[1]),
-                    "turnOffRes": Math.toValue(part.input[2])
-                });
+                ans.process = partInternal[part.partType]["iterative"]["equation"](
+                    part.input[0].toVal(),
+                    part.input[1].toVal(),
+                    part.input[2].toVal()
+                );
                 const external = partInternal["diode"]["apart"]["interface"];
                 ans.describe = [
                     {
@@ -106,57 +109,59 @@ const partInternal = {
                 {
                     "partType": "resistance",
                     "id": "R1",
-                    "value": "-0"
+                    "input": ["update-0"]
                 },
                 {
                     "partType": "dc_voltage_source",
                     "id": "VD1",
-                    "value": "-1"
+                    "input": ["update-1"]
                 }
             ]
         }
     },
     "transistor_npn": {
         "iterative" : {
-            "equation" : function(vd1, vd2) {
-                const ans = new Array(4).fill(0);
+            "equation" : function (currentZoom, ResB, voltageB, voltageCE) {
+                return function(vd1, vd2) {
+                    const ans = new Array(4).fill(0);
 
-                //ans[0] 基极导通压降
-                //ans[1] E极导通压降
-                //ans[2] 基极电阻
-                //ans[3] 电流放大倍数
-                if (vd1 >= this.voltageB) {
-                    //基极正向偏置
-                    ans[0] = this.voltageB;
-                    ans[2] = this.ResB;
-                    if (vd2 >= this.voltageCE) {
-                        //发射极正向偏置
-                        ans[1] = this.voltageCE;
-                        ans[3] = -this.currentZoom;
+                    //ans[0] 基极导通压降
+                    //ans[1] E极导通压降
+                    //ans[2] 基极电阻
+                    //ans[3] 电流放大倍数
+                    if (vd1 >= voltageB) {
+                        //基极正向偏置
+                        ans[0] = voltageB;
+                        ans[2] = ResB;
+                        if (vd2 >= voltageCE) {
+                            //发射极正向偏置
+                            ans[1] = voltageCE;
+                            ans[3] = - currentZoom;
+                        } else {
+                            //发射极反向偏置
+                            ans[1] = 0;
+                            ans[3] = 0;
+                        }
                     } else {
-                        //发射极反向偏置
+                        //基极反向偏置
+                        ans[0] = 0;
                         ans[1] = 0;
+                        ans[2] = 5e9;
                         ans[3] = 0;
                     }
-                } else {
-                    //基极反向偏置
-                    ans[0] = 0;
-                    ans[1] = 0;
-                    ans[2] = 5e9;
-                    ans[3] = 0;
+                    return (ans);
                 }
-                return (ans);
             },
             "create" : function(part) {
                 const ans = {
                     "to": []
                 };
-                ans.process = partInternal[part.partType]["iterative"]["equation"].bind({
-                    "currentZoom": Math.toValue(part.input[0]),
-                    "ResB": Math.toValue(part.input[1]),
-                    "voltageB": Math.toValue(part.input[2]),
-                    "voltageCE": Math.toValue(part.input[3])
-                });
+                ans.process = partInternal[part.partType].iterative.equation(
+                    part.input[0].toVal(),
+                    part.input[1].toVal(),
+                    part.input[2].toVal(),
+                    part.input[3].toVal()
+                );
                 const external = partInternal["transistor_npn"]["apart"]["interface"];
                 ans.describe = [
                     {
@@ -185,28 +190,28 @@ const partInternal = {
                 {
                     "partType": "dc_voltage_source",
                     "id": "V2",
-                    "value": "-0"
+                    "input": ["update-0"]
                 },
                 {
                     "partType": "dc_voltage_source",
                     "id": "V1",
-                    "value": "-1"
+                    "input": ["update-1"]
                 },
                 {
                     "partType": "resistance",
                     "id": "R1",
-                    "value": "-2"
+                    "input": ["update-2"]
                 },
                 {
                     "partType": "CCCS",
                     "id": "I1",
-                    "value": "-3",
-                    "relational": "-R1-0"
+                    "input": ["update-3", "this-R1-0"]
                 }
             ]
         }
     },
     "operational_amplifier": {
+        /*
         "iterative": {
             "equation" : function (voltage) {
                 let ans = 0;
@@ -253,6 +258,7 @@ const partInternal = {
                 return (ans);
             }
         },
+        */
         "apart": {
             "interface": [
                 ["R1-1"],
@@ -266,18 +272,17 @@ const partInternal = {
                 {
                     "partType": "resistance",
                     "id": "R1",
-                    "value": "输入电阻"
+                    "input": ["input-1"]
                 },
                 {
                     "partType": "resistance",
                     "id": "R2",
-                    "value": "输出电阻"
+                    "input": ["input-2"]
                 },
                 {
                     "partType": "VCVS",
                     "id": "VD1",
-                    "value": "开环增益",
-                    "relational": "-R1-0"
+                    "input": ["input-0", "this-R1-0"]
                 }
             ]
         }
@@ -308,7 +313,7 @@ function pinToCurrent(pin, nodeHash, branchHash, branchNumber) {
     return (ans);
 }
 //从管脚到节点电压计算矩阵
-function pinToVoltage(pin) {
+function pinToVoltage(pin, nodeHash, nodeNumber) {
     const ans = new Matrix(1, nodeNumber);
     for (let i = 0; i < 2; i++) {
         if (nodeHash[pin[i]]) {
@@ -321,97 +326,6 @@ function pinToVoltage(pin) {
 function partToBranch(part, branchHash) {
     return(branchHash[part + "-0"]);
 }
-//填写器件参数
-function insertFactorMatrix(F, H, S, item, input, index) {
-    let ans = index;
-    switch (item.partType) {
-        case "ac_voltage_source" :
-        {
-            F[index][index] = 1;
-            S[index][0] = "update-" + parameterUpdate.length + "-0";
-            parameterUpdate.push(partInternal[item.partType]["iterative"]["create"](item));
-            break;
-        }
-        case "dc_voltage_source" :
-        {
-            F[index][index] = 1;
-            S[index][0] = Math.txt2Value(input[0]);
-            break;
-        }
-        case "dc_current_source" :
-        {
-            H[index][index] = 1;
-            S[index][0] = Math.txt2Value(input[0]);
-            break;
-        }
-        case "resistance" :
-        {
-            F[index][index] = -1;
-            H[index][index] = Math.txt2Value(input[0]);
-            break;
-        }
-        case "capacitor" :
-        {
-            F[index][index] = 1;
-            S[index][0] = "update-" + parameterUpdate.length + "-0";
-            const parameter = partInternal[item.partType]["iterative"]["create"](item);
-            const input = parameter.describe[0];
-            input.matrix = pinToCurrent(input.place);
-            parameterUpdate.push(parameter);
-            break;
-        }
-        //压控压源
-        case "VCVS" :
-        {
-            F[index][index] = 1;
-            F[index][branchHash[input[1]]] = Math.toValue(input[0]);
-            break;
-        }
-        //流控流源
-        case "CCCS" :
-        {
-            let temp = Math.toValue(input[0]);
-            if(typeof temp === "number") temp *= -1;
-            H[index][index] = 1;
-            H[index][branchHash[input[1]]] = temp;
-            break;
-        }
-        case "operational_amplifier" :
-        case "transistor_npn" :
-        case "diode" :
-        {
-            const parts = partInternal[item.partType]["apart"]["parts"];
-            for (let i = 0; i < parts.length; i++) {
-                let index = -1, value;
-                item.inputTxt.some((n, sub) => ((n.indexOf(parts[i].value) !== -1) && (index = sub)));
-                //fillMatrixByPart(parts[i], ["update-" + parameterUpdate.length + parts[i].value], ans + i);
-                if (index !== -1) {
-                    //器件的某值直接填入
-                    value = (parts[i].partType === "VCVS") ?
-                        (Math.pow(10, parseInt(item.input[index]) / 20)).toString() :
-                        item.input[index];
-                } else {
-                    //迭代生成的值
-                    value = "update-" + parameterUpdate.length + parts[i].value;
-                }
-                fillMatrixByPart(parts[i], [value, item.id + parts[i].relational], ans + i);
-            }
-            ans += parts.length - 1;
-
-            //运放的迭代公式现在还不可用
-            if(item.partType !== "operational_amplifier") {
-                const parameter = partInternal[item.partType]["iterative"]["create"](item);
-                for(let i = 0; i < parameter.describe.length; i++) {
-                    const input = parameter.describe[i];
-                    input.matrix = pinToVoltage(input.place);
-                }
-                parameterUpdate.push(parameter);
-            }
-            break;
-        }
-    }
-    return (ans + 1);
-}
 
 //求解器类
 function Solver(collection) {
@@ -421,12 +335,13 @@ function Solver(collection) {
         observeCurrent = [],                //电压观测
         observeVoltage = [],                //电流观测
         parameterUpdate = [],               //参数迭代公式
-        tempLines = new PartsCollection();  //待删除器件
+        tempLines = new PartsCollection(),  //待删除器件
+
+        parts = [];     //拆分成的基础器件集
 
     let nodeNumber = 1,             //节点数量
         branchNumber = 0,           //支路数量
-        errorTip = "",              //错误代码
-        factorUpdateFlag = false;   //电路方程系数迭代标志
+        errorTip = "";              //错误代码
 
     //扫描所有导线(以后可能还会有“网络标识符”)，建立[管脚->节点号]对应表
     collection.forEach(function (item) {
@@ -480,6 +395,7 @@ function Solver(collection) {
                 }
                 nodeNumber++;
             }
+            //根据器件内部结构追加branchHash
             for (let i = 0; i < partsPrototype.length; i++) {
                 const part = partsPrototype[i];
                 branchHash[item.id + "-" + part.id + "-0"] = branchNumber;
@@ -487,12 +403,13 @@ function Solver(collection) {
                 branchNumber++;
             }
         } else {
+            //建立[管脚->支路号]列表
             branchHash[item.id + "-0"] = branchNumber;
             branchHash[item.id + "-1"] = branchNumber;
             branchNumber++;
         }
     });
-    //删除所有的参考节点，合并且记录电流表入口
+    //删除所有的参考节点，合并并且记录电流表入口
     collection.forEach(function (n) {
         if (n.partType === "reference_ground") {
             const tempNode = nodeHash[n.id + "-0"];
@@ -559,10 +476,10 @@ function Solver(collection) {
             temp.name = n.id;
             temp.data = [];
             temp.matrix = new Matrix(1, nodeNumber);
-            if (nodeHash[n.id + "-0"]) temp.matrix[0][nodeHash[n.id + "-0"] - 1] += 1;
-            if (nodeHash[n.id + "-1"]) temp.matrix[0][nodeHash[n.id + "-1"] - 1] += -1;
-            if (nodeHash.hasOwnProperty(n.id + "-0")) delete nodeHash[n.id + "-0"];
-            if (nodeHash.hasOwnProperty(n.id + "-1")) delete nodeHash[n.id + "-1"];
+            if (nodeHash[n.id + "-0"]) { temp.matrix[0][nodeHash[n.id + "-0"] - 1] += 1;  }
+            if (nodeHash[n.id + "-1"]) { temp.matrix[0][nodeHash[n.id + "-1"] - 1] += -1; }
+            if (nodeHash.hasOwnProperty(n.id + "-0")) { delete nodeHash[n.id + "-0"]; }
+            if (nodeHash.hasOwnProperty(n.id + "-1")) { delete nodeHash[n.id + "-1"]; }
             observeVoltage.push(temp);
             tempLines.push(n);
         }
@@ -580,7 +497,6 @@ function Solver(collection) {
             matrix[0][branchHash[item]] = Math.pow(-1, parseInt(item[item.length - 1]) + 1);
         }
     }
-
     //电路矩阵初始化
     const A = new Matrix(nodeNumber, branchNumber), //关联矩阵
         F = new Matrix(branchNumber),               //电导电容矩阵
@@ -598,45 +514,97 @@ function Solver(collection) {
         }
     }
     //扫描所有器件，建立器件矩阵
-    collection.forEach(function insertFactor(part) {
-        //这里的index就是支路下标
-        const index = partToBranch(part.id, branchHash);
-        switch (part.partType) {
-            case "ac_voltage_source" : {
-                F[index][index] = 1;
-                S[index][0] = "update-" + parameterUpdate.length + "-0";
-                parameterUpdate.push(partInternal[part.partType].iterative.create(part));
-                break;
+    collection.forEach(function (item) {
+        //递归填写参数
+        (function insertFactor(part){
+            //这里的index就是支路下标
+            const index = partToBranch(part.id, branchHash);
+
+            switch (part.partType) {
+                //基本器件
+                case "ac_voltage_source" : {
+                    F[index][index] = 1;
+                    S[index][0] = "update-" + parameterUpdate.length + "-0";
+                    break;
+                }
+                case "dc_voltage_source" : {
+                    F[index][index] = 1;
+                    S[index][0] = part.input[0].toVal();
+                    break;
+                }
+                case "dc_current_source" : {
+                    H[index][index] = 1;
+                    S[index][0] = part.input[0].toVal();
+                    break;
+                }
+                case "resistance" : {
+                    F[index][index] = -1;
+                    H[index][index] = part.input[0].toVal();
+                    break;
+                }
+                case "capacitor" : {
+                    F[index][index] = 1;
+                    S[index][0] = "update-" + parameterUpdate.length + "-0";
+                    break;
+                }
+                case "VCVS" : {
+                    F[index][index] = 1;
+                    F[index][branchHash[part.input[1]]] = part.input[0].toVal();
+                    break;
+                }
+                case "CCCS" : {
+                    let temp = part.input[0].toVal();
+                    if (typeof temp === "number") { temp *= -1; }
+
+                    H[index][index] = 1;
+                    H[index][branchHash[part.input[1]]] = temp;
+                    break;
+                }
+                //组合器件
+                default: {
+                    const apart = partInternal[part.partType].apart;
+                    //器件需要拆分
+                    for(let i = 0; apart && i < apart.parts.length; i++) {
+                        const pieces = Object.clone(apart.parts[i]);
+
+                        pieces.id = part.id + "-" + pieces.id;
+                        pieces.input = pieces.input.map(function(n) {
+                            if(n.search(/^input/) !== -1) {
+                                //分割的器件值等于完整器件的某个输入
+                                return(part.input[n.split("-")[1]]);
+                            } else if(n.search(/this/) !== -1) {
+                                //等于当前器件和某个器件的关系
+                                return(n.replace(/this/g, part.id));
+                            } else if(n.search(/^update/) !== -1) {
+                                //等于迭代公式的输出
+                                return("update-" + parameterUpdate.length + "-" + n.split("-")[1]);
+                            } else {
+                                return(n);
+                            }
+                        });
+                        //插入拆分器件
+                        insertFactor(pieces);
+                    }
+                }
             }
-            case "dc_voltage_source" : {
-                F[index][index] = 1;
-                S[index][0] = Math.txt2Value(part.input[0]);
-                break;
-            }
-            case "dc_current_source" : {
-                H[index][index] = 1;
-                S[index][0] = Math.txt2Value(part.input[0]);
-                break;
-            }
-            case "resistance" : {
-                F[index][index] = -1;
-                H[index][index] = Math.txt2Value(part.input[0]);
-                break;
-            }
-            case "capacitor" : {
-                F[index][index] = 1;
-                S[index][0] = "update-" + parameterUpdate.length + "-0";
-                const parameter = partInternal[part.partType]["iterative"]["create"](part),
-                    input = parameter.describe[0];
-                //输入的第一个值是电流，这里需要计算取出电流的计算矩阵
-                input.matrix = pinToCurrent(input.place, nodeHash, branchHash, branchNumber);
+            //器件有更新方程
+            if(partInternal[part.partType] && partInternal[part.partType].iterative) {
+                const parameter = partInternal[part.partType].iterative.create(part),
+                    describe = parameter.describe;
+                //电流和电压需要建立对应的矩阵
+                describe.forEach(function(n) {
+                    if(n.name === "voltage") {
+                        n.matrix = pinToVoltage(n.place, nodeHash, nodeNumber);
+                    } else if(n.name === "current") {
+                        n.matrix = pinToCurrent(n.place, nodeHash, branchHash, branchNumber);
+                    }
+                });
                 parameterUpdate.push(parameter);
-                break;
             }
-        }
+        })(item);
     });
     //组合系数矩阵
-    let factor = Matrix.combination([
+    const factor = Matrix.combination([
         [0, 0, A],
         [A.transpose(), "E", 0],
         [0, F, H]
@@ -679,8 +647,8 @@ function Solver(collection) {
 }
 Solver.prototype.solve = function* () {
     //取出设置界面的时间设定
-    const endTime = Math.txt2Value($("#endtime").prop("value")).toSFixed(),
-        stepSize = Math.txt2Value($("#stepsize").prop("value")).toSFixed(),
+    const endTime = $("#endtime").prop("value").toVal(),
+        stepSize = $("#stepsize").prop("value").toVal(),
         total = Math.round(endTime / stepSize),
         //取出求解器中的数据
         update = this.update,
@@ -692,7 +660,7 @@ Solver.prototype.solve = function* () {
         observeVoltage = this.observeVoltage;
 
     //电路初始状态
-    let nodeVoltage = new Matrix(this.nodeNumber, 1),        //结电电压列向量
+    let nodeVoltage = new Matrix(this.nodeNumber, 1),        //结点电压列向量
         branchCurrent = new Matrix(this.branchNumber, 1),    //支路电流列向量
         factorInverse, factorUpdateFlag;
 
@@ -750,6 +718,8 @@ Solver.prototype.solve = function* () {
             const matrix = observeCurrent[i].matrix;
             observeCurrent[i].data.push(matrix.mul(branchCurrent));
         }
+
+        //对外输出的是计算百分比
         yield (Math.round(i / Math.round(endTime / stepSize) * 100));
     }
 };

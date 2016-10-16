@@ -485,28 +485,6 @@ Math.extend({
         }
         return (ans);
     },
-    //数字的有效数字
-    rank (number) {
-        const sign = number / Math.abs(number);
-        return (Math.pow(10, Math.floor(Math.log10(number * sign))));
-    },
-    //以有效数字位数来进行四舍五入，默认6位有效数字
-    signFigures(num, rank = 6) {
-        if (!num) return (0);
-        const sign = num / Math.abs(num);
-        const number = num * sign;
-        const index = rank - 1 - Math.floor(Math.log10(number));
-        let ans;
-        if (index > 0) {
-            ans = parseFloat(number.toFixed(index));
-        } else if (index < 0) {
-            const temp = Math.pow(10, index);
-            ans = Math.round(number / temp) * temp;
-        } else {
-            ans = Math.round(number);
-        }
-        return (ans * sign);
-    },
     //求平均数
     average(arr) {
         let ans = 0;
@@ -514,32 +492,6 @@ Math.extend({
             ans += arr[i];
         }
         return(ans /= arr.length);
-    },
-    //标量转换为实际值
-    txt2Value(txt) {
-        const hash = {
-            G: 1e9,
-            M: 1e6,
-            k: 1e3,
-            m: 1e-3,
-            u: 1e-6,
-            n: 1e-9,
-            p: 1e-12
-        };
-        if (txt.indexOf("dB") !== -1) {
-            return (Math.pow(10, parseFloat(txt) / 20));
-        } else if (txt.indexOf("update") !== -1) {
-            return (txt);
-        }
-
-        const numberReg = /\d+(.\d+)?/,
-            unitReg = /[GMkmunp]/,
-            input = txt.replace("μ", "u"),
-            number = parseFloat(input.match(numberReg)[0]);
-
-        let unit = input.match(unitReg);
-        unit = hash[unit] ? hash[unit] : 1;
-        return ((number * unit).toSFixed());
     }
 });
 Number.prototype.extend({
@@ -567,7 +519,7 @@ Number.prototype.extend({
     // 数字小于10^-12以及大于10^9的时候，保留6位小数
     toShort(save = 6) {
         const number = Number(this.toString());
-        if(!number) { return("0"); };
+        if(!number) { return("0"); }
 
         const sign = number / Math.abs(number),
             unitS = ["m", "μ", "n", "p"],
@@ -614,7 +566,7 @@ Number.prototype.extend({
     // 数量级
     rank() {
         const number = Number(this.toString());
-        if(!number) { return(0); };
+        if(!number) { return(0); }
 
         const sign = number / Math.abs(number);
         return (Math.pow(10, Math.floor(Math.log10(number * sign))));
@@ -622,18 +574,41 @@ Number.prototype.extend({
     // 数字有多少位
     powRank() {
         const number = Number(this.toString());
-        if(!number) { return(0); };
+        if(!number) { return(0); }
 
         const sign = number / Math.abs(number);
         return (Math.floor(Math.log10(number * sign))) + 1;
     }
-})
+});
+String.prototype.extend({
+    // 转换为真实的数值
+    toVal() {
+        const hash = { G: 1e9, M: 1e6, k: 1e3,
+            m: 1e-3, u: 1e-6, n: 1e-9, p: 1e-12 };
+
+        if(this.search(/[dD][bB]$/) !== -1) {
+            //db转换
+            return (Math.pow(10, parseFloat(this) / 20));
+        } else if(this.search(/^update/) !== -1) {
+            //有update关键字，字符串保持原样
+            return this;
+        }
+
+        const input = this.replace("μ", "u"),
+            number = parseFloat(input.match(/\d+(.\d+)?/)[0]),
+            unit = input.match(/[GMkmunp]/),
+            rank = unit ? hash[unit[0]] : 1;
+
+        return((number * rank).toSFixed());
+    }
+});
 
 //修改部分方法为隐藏以及不可修改
 Object.freezeMethod(Array);
 Object.freezeMethod(Object);
 Object.freezeMethod(Object.prototype);
 Object.freezeMethod(Number.prototype);
+Object.freezeMethod(String.prototype);
 
 //网页禁止右键和选中
 window.document.oncontextmenu = function(){return(false);};

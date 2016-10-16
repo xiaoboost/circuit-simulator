@@ -14,7 +14,7 @@ function extendPoint(x) {
     if(!x) { return(1); }
 
     const sign = x / Math.abs(x),
-        rank = Math.rank(x),
+        rank = x.rank(),
         number = Math.abs(x).toSFixed(2),      //保留三位有效数字
         int = Math.floor(number / rank),            //整数部分
         mod = (x * sign / rank - int).toSFixed();   //小数部分
@@ -41,7 +41,7 @@ function extendPoint(x) {
 }
 //线段分段
 function lineSplit(maxExpand, minExpand, num) {
-    const rank = Math.rank(maxExpand),
+    const rank = maxExpand.rank(),
         max = (maxExpand / rank).toSFixed(),
         min = (Math.abs(minExpand / rank)).toSFixed(),
         ans = [];
@@ -74,7 +74,7 @@ function extendLine(line, long) {
     if (line[0] === line[1]) {
         //起点和终点相等
         const number = Math.abs(line[0]),
-            rank = Math.rank(number),
+            rank = number.rank(),
             numberFloor = Math.floor(number / rank),
             minExpand = (numberFloor === (number / rank).toSFixed()) ?
                 numberFloor - 1 : numberFloor,
@@ -271,8 +271,8 @@ function Graph(Data, DOM, type) {
     this.type = type;
     this.output = Data;
     this.long = {};
-    this.time = Math.txt2Value($("#endtime").prop("value")),
-    this.stepTime = Math.txt2Value($("#stepsize").prop("value"));
+    this.time = $("#endtime").prop("value").toVal(),
+    this.stepTime = $("#stepsize").prop("value").toVal();
 
     //计算各种坐标
     const left = 80;            //左侧边栏宽度

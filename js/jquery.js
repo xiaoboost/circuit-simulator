@@ -637,7 +637,7 @@ $.fn = $.prototype = {
         }
 
         //选择html元素部分
-        let root = context ? $(context) : root$;
+        const root = context ? $(context) : root$;
 
         if (!selector) {
             //空或者非法输入：$(""), $(null), $(undefined), $(false)
