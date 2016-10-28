@@ -295,7 +295,7 @@ const iniData = {
         { partType: "line", way:[[600,460],[400,460]] }
     ],
     EmitterFollower : [
-        { partType: "config", endtime: "50m", stepsize : "2u" },
+        { partType: "config", endtime: "40m", stepsize : "5u" },
         { partType: "dc_voltage_source", id: "V_1", position: [220,100], rotate: [[0,1],[-1,0]], text: [-7,-36], input: ["20"] },
         { partType: "reference_ground", id: "GND_1", position: [140,100], rotate: [[0,1],[-1,0]] },
         { partType: "resistance", id: "R_1", position: [300,180], rotate: [[0,1],[-1,0]], text: [16,-2], input: ["10k"] },

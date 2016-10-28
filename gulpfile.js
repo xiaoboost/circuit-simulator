@@ -6,10 +6,11 @@ const gulp = require("gulp"),
     stylus = require("gulp-stylus"),
     webpack = require("gulp-webpack"),
     base64 = require("gulp-base64"),
+    uglify = require("gulp-uglifyjs"),
     sourcemaps = require("gulp-sourcemaps"),
 
     _develop = "Z:/在线仿真网站/",
-    _push = "";
+    _push = "./.deploy_git/";
 
 //开发版本任务
 gulp.task("develop-html", function() {
@@ -35,9 +36,6 @@ gulp.task("develop-stylus", function () {
         .pipe(gulp.dest(_develop + "src/"));
 });
 gulp.task("develop-js", function () {
-    gulp.src("./js/test.js")
-        .pipe(gulp.dest(_develop + "src/"));
-
     return gulp.src("./js/main.js")
         .pipe(webpack({
             devtool: "source-map",
@@ -94,12 +92,47 @@ gulp.task("push-html", function() {
             collapseWhitespace: true,
             removeComments: true
         }))
-        .pipe(gulp.dest(_develop));
+        .pipe(gulp.dest(_push));
 });
 gulp.task("push-image", function () {
     return gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
-        .pipe(gulp.dest(_develop + "src/"));
+        .pipe(gulp.dest(_push + "src/"));
+});
+gulp.task("push-stylus", function () {
+    return gulp.src("./css/main.styl")
+        .pipe(stylus({
+            compress: true
+        }))
+        .pipe(base64())
+        .pipe(rename({
+            basename: "circuitlab",
+            suffix: ".min"
+        }))
+        .pipe(gulp.dest(_push + "src/"));
+});
+gulp.task("push-js", function () {
+    return gulp.src("./js/main.js")
+        .pipe(webpack({
+            output: {
+                filename: "script.min.js"
+            },
+            module: {
+                loaders: [
+                    {
+                        test: /\.js$/,
+                        exclude: /(node_modules|bower_components)/,
+                        loader: "babel",
+                        query: {
+                            presets: ["es2015"],
+                            plugins: ["transform-runtime"]
+                        }
+                    }
+                ]
+            }
+        }))
+        .pipe(uglify())
+        .pipe(gulp.dest(_push + "src/"));
 });
 gulp.task("push", function () {
-    gulp.run("push-html", "develop-stylus", "develop-js", "push-image");
+    gulp.run("push-html", "push-stylus", "push-js", "push-image");
 });

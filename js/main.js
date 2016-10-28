@@ -355,7 +355,7 @@ function createGraph(data) {
 }
 //读取数据
 function loadData(data) {
-    //第一遍加载器件
+    //第一遍，加载器件和设置
     for(let i = 0; i < data.length; i++) {
         if ((data[i].partType !== "line") && (data[i].partType !== "config")) {
             const device = new PartClass(data[i]);
@@ -364,11 +364,11 @@ function loadData(data) {
         } else if (data[i].partType === "config"){
             for(let j in data[i]) if(data[i].hasOwnProperty(j)) {
                 if(j === "partType") continue;
-                $(j).prop("value", data[i][j]);
+                $('#' + j).prop("value", data[i][j]);
             }
         }
     }
-    //第二遍加载导线
+    //第二遍，加载导线
     for(let i = 0; i < data.length; i++) {
         if(data[i].partType === "line") {
             const devices = new LineClass(data[i].way[0]);
@@ -400,7 +400,7 @@ function loadData(data) {
             devices.markSign();
         }
     }
-    //第三遍扫描图纸的交错节点
+    //第三遍，扫描图纸的交错节点
     for(let i in schMap) if(schMap.hasOwnProperty(i)) {
         for (let j in schMap[i]) if(schMap[i].hasOwnProperty(j)){
             const nodeStatus = schMap[i][j];
