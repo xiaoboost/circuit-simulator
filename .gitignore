@@ -10,6 +10,6 @@
 /js/testLibrary.js
 /js/test.js
 /js/thePanelEvent.js
-
-jsconfig.json
-.gitignore
+/.deploy_git/
+/jsconfig.json
+/.gitignore

@@ -8,7 +8,8 @@ const gulp = require("gulp"),
     base64 = require("gulp-base64"),
     sourcemaps = require("gulp-sourcemaps"),
 
-    _develop = "Z:/在线仿真网站/";
+    _develop = "Z:/在线仿真网站/",
+    _push = "";
 
 //开发版本任务
 gulp.task("develop-html", function() {
@@ -84,4 +85,21 @@ gulp.task("build", function () {
     gulp.watch("./css/*.styl", ["develop-stylus"]);
     // 监听js文件
     gulp.watch("./js/*.js", ["develop-js"]);
+});
+
+//发布版本任务
+gulp.task("push-html", function() {
+    return gulp.src("./index.html")
+        .pipe(htmlmin({
+            collapseWhitespace: true,
+            removeComments: true
+        }))
+        .pipe(gulp.dest(_develop));
+});
+gulp.task("push-image", function () {
+    return gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
+        .pipe(gulp.dest(_develop + "src/"));
+});
+gulp.task("push", function () {
+    gulp.run("push-html", "develop-stylus", "develop-js", "push-image");
 });
