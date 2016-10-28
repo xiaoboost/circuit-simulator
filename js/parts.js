@@ -9,6 +9,7 @@ import { partsAll, partsNow } from "./collection";
 
 //常量定义
 const SVG_NS = "http://www.w3.org/2000/svg",
+    schematic = $("#area-of-parts"),
     directionhash = [
         new Matrix([[0,-1]]),
         new Matrix([[-1,0]]),
@@ -16,6 +17,7 @@ const SVG_NS = "http://www.w3.org/2000/svg",
         new Matrix([[1,0]])
     ];
 
+//原来的sizeRange顺序是上左下右
 //器件原型描述
 const originalElectronic = {
     /*
@@ -26,7 +28,8 @@ const originalElectronic = {
      inputTxt：显示输入值的说明
      visionNum：器件参数面板显示参数的数量
      pointInfor：管脚方向以及相对器件中心的位置
-     sizeRange：器件为中心外部范围的绝对值，顺序是上左下右
+     padding：器件内边距  内外边距的格式和css中一样
+     margin：器件外边距
      txtLocate：显示的txt文本相对中心的距离
      criteriaTrend：电流相对于管脚所连接节点的方向
      */
@@ -36,14 +39,25 @@ const originalElectronic = {
             id: "R_",
             input: ["10k"]
         },
-        readOnly: {  //只读数据
+        readOnly: {
             partType: "resistance",
             inputTxt: ["阻值："],
             parameterUnit: ["Ω"],
             visionNum: 2,
             txtLocate: 14,
-            sizeRange: [0.5, 1.5, 0.5, 1.5],
-            pointInfor: [[[-40, 0], [40, 0]], [1, 3]],
+            //器件初始为横向
+            padding: [0, 1],
+            margin: 1,
+            pointInfor: [
+                {
+                    position: [-40, 0],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [40, 0],
+                    direction: [1, 0]
+                }
+            ],
             aspectInfor: [
                 {
                     "name": "path",
@@ -72,8 +86,19 @@ const originalElectronic = {
             inputTxt: ["电容量："],
             parameterUnit: ["F"],
             visionNum: 2,
-            pointInfor: [[[-40, 0], [40, 0]], [1, 3]],
-            sizeRange: [0.5, 1, 0.5, 1],
+            pointInfor: [
+                {
+                    position: [-40, 0],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [40, 0],
+                    direction: [1, 0]
+                }
+            ],
+            //器件初始为横向
+            padding: [0, 1],
+            margin: 1,
             txtLocate: 22,
             aspectInfor: [
                 {
@@ -103,8 +128,19 @@ const originalElectronic = {
             inputTxt: ["电感量："],
             parameterUnit: ["H"],
             visionNum: 2,
-            pointInfor: [[[-40, 0], [40, 0]], [1, 3]],
-            sizeRange: [0.5, 1, 0.5, 1],
+            pointInfor: [
+                {
+                    position: [-40, 0],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [40, 0],
+                    direction: [1, 0]
+                }
+            ],
+            //器件初始为横向
+            padding: [0, 1],
+            margin: 1,
             txtLocate: 13,
             aspectInfor: [
                 {
@@ -121,8 +157,7 @@ const originalElectronic = {
                 }
             ],
             introduction : "电感器"
-        },
-        criteriaTrend:[-1,1]
+        }
     },
     //直流电压源
     dc_voltage_source: {
@@ -135,8 +170,19 @@ const originalElectronic = {
             inputTxt: ["电压值："],
             parameterUnit:["V"],
             visionNum: 2,
-            pointInfor: [[[0, -40], [0, 40]], [0, 2]],
-            sizeRange : [1,0.5,1,0.5],
+            pointInfor: [
+                {
+                    position: [0, -40],
+                    direction: [0, -1]
+                },
+                {
+                    position: [0, 40],
+                    direction: [0, 1]
+                }
+            ],
+            //器件初始为竖向
+            padding: 1,
+            margin: [1, 0],
             txtLocate: 20,
             aspectInfor: [
                 {
@@ -166,8 +212,19 @@ const originalElectronic = {
             inputTxt: ["峰值电压：","频率：","偏置电压：","相位角："],
             parameterUnit:["V","Hz","V","°"],
             visionNum: 3,
-            pointInfor: [[[0, -40], [0, 40]], [0, 2]],
-            sizeRange : [1,1,1,1],
+            pointInfor: [
+                {
+                    position: [0, -40],
+                    direction: [0, -1]
+                },
+                {
+                    position: [0, 40],
+                    direction: [0, 1]
+                }
+            ],
+            //器件初始为竖向
+            padding: 1,
+            margin: [1, 0],
             txtLocate: 24,
             aspectInfor: [
                 {
@@ -203,8 +260,19 @@ const originalElectronic = {
             inputTxt: ["电流值："],
             parameterUnit:["A"],
             visionNum: 2,
-            pointInfor: [[[0, 40], [0, -40]], [2, 0]],
-            sizeRange : [1,1,1,1],
+            pointInfor: [
+                {
+                    position: [0, 40],
+                    direction: [0, 1]
+                },
+                {
+                    position: [0, -40],
+                    direction: [0, -1]
+                }
+            ],
+            //器件初始为竖向
+            padding: [1, 0],
+            margin: 1,
             txtLocate: 20,
             aspectInfor: [
                 {
@@ -244,8 +312,14 @@ const originalElectronic = {
             partType : "reference_ground",
             inputTxt :[],
             visionNum : 0,
-            pointInfor: [[[0, -20]], [0]],
-            sizeRange : [0.5,0.5,0.5,0.5],
+            pointInfor: [
+                {
+                    position: [0, -20],
+                    direction: [0, -1]
+                }
+            ],
+            padding: 0,
+            margin: 1,
             txtLocate:12,
             aspectInfor: [
                 {
@@ -273,8 +347,19 @@ const originalElectronic = {
             partType : "voltage_meter",
             inputTxt: [],
             visionNum: 1,
-            pointInfor: [[[0,-40], [0,40]], [0, 2]],
-            sizeRange : [1,1,1,1],
+            pointInfor: [
+                {
+                    position: [0, -40],
+                    direction: [0, -1]
+                },
+                {
+                    position: [0, 40],
+                    direction: [0, 1]
+                }
+            ],
+            //器件初始为竖向
+            padding: 1,
+            margin: [1, 0],
             txtLocate: 24,
             aspectInfor: [
                 {
@@ -314,8 +399,18 @@ const originalElectronic = {
             partType : "current_meter",
             inputTxt: [],
             visionNum: 1,
-            pointInfor: [[[-20,0], [20,0]], [1, 3]],
-            sizeRange : [0.5,0.5,0.5,0.5],
+            pointInfor: [
+                {
+                    position: [-20, 0],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [20, 0],
+                    direction: [1, 0]
+                }
+            ],
+            padding: 0,
+            margin: 1,
             txtLocate: 11,
             aspectInfor: [
                 {
@@ -352,8 +447,18 @@ const originalElectronic = {
             parameterUnit: ["V", "Ω", "Ω"],
             visionNum: 1,
             txtLocate: 18,
-            sizeRange: [1, 0.5, 1, 0.5],
-            pointInfor: [[[0, -40], [0, 40]], [0, 2]],
+            padding: [1, 0],
+            margin: 1,
+            pointInfor: [
+                {
+                    position: [0, -40],
+                    direction: [0, -1]
+                },
+                {
+                    position: [0, 40],
+                    direction: [0, 1]
+                }
+            ],
             aspectInfor: [
                 {
                     "name": "path",
@@ -389,8 +494,22 @@ const originalElectronic = {
             parameterUnit: ["", "Ω", "V", "V"],
             visionNum: 1,
             txtLocate: 25,
-            sizeRange: [1, 0.5, 1, 0.5],
-            pointInfor: [[[-20, 0], [20, -40], [20, 40]], [1, 0, 2]],
+            padding: [1, 1, 1, 0],
+            margin: 1,
+            pointInfor: [
+                {
+                    position: [-20, 0],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [20, -40],
+                    direction: [0, -1]
+                },
+                {
+                    position: [20, 40],
+                    direction: [0, 1]
+                }
+            ],
             aspectInfor: [
                 {
                     "name": "path",
@@ -427,8 +546,22 @@ const originalElectronic = {
             parameterUnit: ["dB", "Ω", "Ω"],  //["dB", "Hz", "Ω", "Ω"],
             visionNum: 1,
             txtLocate: 0,
-            sizeRange: [1, 1, 1, 1],
-            pointInfor: [[[-40, -20], [-40, 20], [40, 0]], [1, 1, 3]],
+            padding: 1,
+            margin: 1,
+            pointInfor: [
+                {
+                    position: [-40, -20],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [-40, 20],
+                    direction: [-1, 0]
+                },
+                {
+                    position: [40, 0],
+                    direction: [1, 0]
+                }
+            ],
             aspectInfor: [
                 {
                     "name": "path",
@@ -459,8 +592,7 @@ const originalElectronic = {
             introduction: "运算放大器"
         }
     }
-},
-    schematic = $("#area-of-parts");
+};
 
 //器件类
 function PartClass(data) {
@@ -472,33 +604,37 @@ function PartClass(data) {
     }
     this.extend(Object.clone(originalElectronic[type].readWrite));
     Object.setPrototypeOf(this, originalElectronic[type].readOnly);
+
     this.id = partsAll.newId(this.id);
     this.rotate = new Matrix([[1, 0], [0, 1]]); //旋转矩阵
     this.position = new Point([1000, 1000]);    //器件位置
     this.current = {};                          //临时数据
-    this.connect = new Array(this.pointInfor[0].length).fill(false);
+    this.connect = new Array(this.pointInfor.length).fill(false);
     this.circle = [];
 
-    for(let i in data) {
-        if(data.hasOwnProperty(i)) {
-            switch (i) {
-                case "partType":
-                    continue;
-                case "rotate":
-                    this.rotate = new Matrix(data[i]);
-                    break;
-                case "text":
-                    textPos = Array.clone(data[i]);
-                    break;
-                case "position":
-                    this[i] = new Point(data[i]);
-                    break;
-                default:
-                    if(data[i] instanceof Array) {
-                        this[i] = Array.clone(data[i]);
-                    } else {
-                        this[i] = data[i];
-                    }
+    //外部输入数据
+    if(typeof data === "object") {
+        for (let i in data) {
+            if (data.hasOwnProperty(i)) {
+                switch (i) {
+                    case "partType":
+                        continue;
+                    case "rotate":
+                        this.rotate = new Matrix(data[i]);
+                        break;
+                    case "text":
+                        textPos = Array.clone(data[i]);
+                        break;
+                    case "position":
+                        this[i] = new Point(data[i]);
+                        break;
+                    default:
+                        if (data[i] instanceof Array) {
+                            this[i] = Array.clone(data[i]);
+                        } else {
+                            this[i] = data[i];
+                        }
+                }
             }
         }
     }
@@ -506,63 +642,74 @@ function PartClass(data) {
     this.elementDOM = this.createPart(); //创建新器件
     this.setPosition();
 
+    //引脚DOM引用
     for(let i = 0; i < this.connect.length; i++) {
         this.circle[i] = $("#" + this.id + "-" + i, this.elementDOM);
     }
-    //显示文字,默认文字放在器件的右上方
+    //显示文字,默认在器件的右上方
     this.textVisition(textPos);
     partsAll.push(this);
 }
 PartClass.prototype = {
     constructor: PartClass,
     length: 0,
+
     //器件方法
     //计算器件当前引脚坐标及方向
     pointRotate() {
-        //console.time("pointRotate");
-        const position = [], vector = [];
-        for (let i = 0; i < this.pointInfor[0].length; i++) {
-            //向量旋转
-            let temp = this.rotate.multo(directionhash[this.pointInfor[1][i]])[0];
-            if ((temp[0] + temp[1]) < 0) {
-                if (temp[0] < 0) vector[i] = 1;
-                else vector[i] = 0;
-            } else {
-                if (temp[0] > 0) vector[i] = 3;
-                else vector[i] = 2;
-            }
-            //器件引脚坐标旋转
-            position[i] = this.rotate.multo([this.pointInfor[0][i]])[0];
+        const ans = [];
+        for (let i = 0; i < this.pointInfor.length; i++) {
+            const point = this.pointInfor[i];
+            ans.push({
+                position: this.rotate.multo([point.position])[0],
+                direction: this.rotate.multo(point.direction)[0]
+            });
         }
-        //console.timeEnd("pointRotate");
-        return([position,vector]);
+        return(ans);
     },
-    //器件的范围数组旋转
-    sizeRangeRotate() {
-        let ans = [];
-        let tempRange = [
-            [0, -this.sizeRange[0]],    //上
-            [-this.sizeRange[1], 0],    //左
-            [0, this.sizeRange[0]],     //下
-            [this.sizeRange[1], 0]];    //右
+    //当前器件边距
+    marginRotate() {
+        const ans = {},
+            attr = ['padding', 'margin'];
 
-        for (let i = 0; i < 4; i++) {
-            tempRange[i] = this.rotate.multo([tempRange[i]])[0];
-            if (tempRange[i][0] !== 0) {
-                if (tempRange[i][0] > 0) ans[3] = tempRange[i][0];
-                else ans[1] = -tempRange[i][0];
-            } else {
-                if (tempRange[i][1] > 0) ans[2] = tempRange[i][1];
-                else ans[0] = -tempRange[i][1];
+        for(let i = 0; i < 2; i++) {
+            const margin = {left:0,right:0,top:0,bottom:0},
+                data = this[attr[i]],
+                tempMargin = [
+                    [0, - data.top],
+                    [- data.left, 0],
+                    [0, data.bottom],
+                    [data.right, 0]
+                ];
+
+            //四方向计算
+            for(let j = 0; j < 4; j++) {
+                const ma = this.rotate.multo([tempMargin[j]])[0];
+                if (ma[0] !== 0) {
+                    if (ma[0] > 0) {
+                        margin.right = ma[0];
+                    } else {
+                        margin.left =  - ma[0];
+                    }
+                } else if(ma[1] !== 0) {
+                    if (ma[1] > 0) {
+                        margin.bottom = ma[1];
+                    } else {
+                        margin.top = - ma[1];
+                    }
+                }
             }
+            ans[attr[i]] = margin;
         }
-        return (ans);
+        return(ans);
     },
     //在图中标记器件
     markSign() {
-        const position = [this.position[0] / 20, this.position[1] / 20],    //器件坐标
-            range = this.sizeRangeRotate().map((n) => parseInt(n)),         //器件四周范围
-            pointInfor = this.pointRotate()[0];                             //管脚的相对坐标
+        const position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            pointInfor = this.pointRotate()
+                .map((n) => n.position);
+
         //格式验证
         if(position[0] !== parseInt(position[0]) || position[1] !== parseInt(position[1])) {
             throw "设置标记时，器件必须对齐图纸";
@@ -571,9 +718,11 @@ PartClass.prototype = {
     },
     //删除器件标记
     deleteSign() {
-        const position = [this.position[0] / 20, this.position[1] / 20],    //器件坐标
-            range = this.sizeRangeRotate().map((n) => parseInt(n)),         //器件四周范围
-            pointInfor = this.pointRotate()[0];                             //管脚的相对坐标
+        const position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            pointInfor = this.pointRotate()
+                .map((n) => n.position);
+
         schMap.deletePartSign(position, pointInfor, range);
     },
     //器件设置位置
@@ -587,56 +736,66 @@ PartClass.prototype = {
         if (coordinates === undefined) {
             coordinates = [this.txtLocate, -this.txtLocate];
         }
-        const elemtxt = $("text", this.elementDOM);
-        const elemtspan = $("tspan", elemtxt);
-        const tempPointInfor = this.pointRotate();
-        const signRotate = $(".part-rotate", this.elementDOM);
+        const elemtxt = $("text", this.elementDOM),
+            elemtspan = $("tspan", elemtxt),
+            tempPointInfor = this.pointRotate(),
+            signRotate = $(".part-rotate", this.elementDOM),
+            //器件文字旋转逆矩阵
+            texttransfor = this.rotate.inverse();
 
-        //器件文字旋转逆矩阵
-        const texttransfor = this.rotate.inverse();
         elemtxt.attr("transform", "matrix(" + texttransfor.join(",") + ",0,0)");
+
         if (signRotate.length) {
             signRotate.attr("transform", "matrix(" + texttransfor.join(",") + ",0,0)");
         }
 
-        //判断文字显示的方位,最后posion的值0,1,2,3分别对应上左下右。
-        for (let i = 0; i < tempPointInfor[1].length; i++) {
-            if ((tempPointInfor[1][i] === 0) && (coordinates[1] < 0)) coordinates[1] = 0;
-            else if ((tempPointInfor[1][i] === 1) && (coordinates[0] < 0)) coordinates[0] = 0;
-            else if ((tempPointInfor[1][i] === 2) && (coordinates[1] > 0)) coordinates[1] = 0;
-            else if ((tempPointInfor[1][i] === 3) && (coordinates[0] > 0)) coordinates[0] = 0;
+        //判断文字显示的方位，文字显示在管脚没有的方向
+        for (let i = 0; i < tempPointInfor.length; i++) {
+            const direction = tempPointInfor[i].direction;
+
+            if(direction[0] === 0) {
+                if((direction[1] < 0 && coordinates[1] < 0) ||
+                    (direction[1] > 0 && coordinates[1] > 0)) {
+                    //上下
+                    coordinates[1] = 0;
+                }
+            } else {
+                if ((direction[0] < 0 && coordinates[0] < 0) ||
+                    (direction[0] > 0 && coordinates[0] > 0)) {
+                    //左右
+                    coordinates[0] = 0;
+                }
+            }
+        }
+        //取数字大的那个距离为标准
+        if (Math.abs(coordinates[0]) > Math.abs(coordinates[1])) {
+            coordinates[1] = 0;
+        } else {
+            coordinates[0] = 0;
         }
 
-        //取数字大的那个距离为标准
-        if (Math.abs(coordinates[0]) > Math.abs(coordinates[1])) coordinates[1] = 0;
-        else coordinates[0] = 0;
-
         //外形大小
-        const rect = $(".focus-part", this.elementDOM).attr(["width","height"]).map((n) => Number(n));
+        const rect = $(".focus-part", this.elementDOM).attr(["width","height"]).map((n) => Number(n)),
+            exec = (/scale\(([\d.]+?)\)/).exec(schematic.attr("transform")) || [1, 1],
+            scale = Number(exec[1]);
+
         let transform = this.elementDOM.attr("transform");
         if (!transform) {
             transform = new Matrix([[1,0],[0,1]]);
         } else {
-            let count = 0;
-            for(let i = 0; i < transform.length; i++) {
-                if(transform[i] === ",") {
-                    count ++;
-                }
-                if(count === 4) {
-                    const temp = transform.substring(7, i).split(",").map((n) => parseInt(n));
-                    transform = new Matrix([[temp[0], temp[1]], [temp[2], temp[3]]]);
-                    break;
-                }
-            }
+            const nums = transform.match(/\d+/g)
+                .map((n) => Number(n));
+            transform = new Matrix([[nums[0], nums[1]], [nums[2], nums[3]]]);
         }
         const size = transform.multo([rect])[0].map((n) => parseInt(Math.abs(n / 2))),
             bias = 4;
 
         if (!coordinates[0]) {
-            if (coordinates[1] > 0) {  //下
+            if (coordinates[1] > 0) {
+                //下
                 const idText = $(elemtspan[0]),
-                    startY = size[1] + idText.height() - bias,
-                    startX = -0.5 * (idText.width() + $(elemtspan[1]).width());
+                    startY = size[1] + idText.height()/scale - bias,
+                    startX = -0.5 * (idText.width()/scale + $(elemtspan[1]).width()/scale);
 
                 elemtxt.attr({
                     "x": startX,
@@ -645,20 +804,22 @@ PartClass.prototype = {
                 for (let i = 2; i < elemtspan.length; i++) {
                     const elem = $(elemtspan[i]);
                     elem.attr({
-                        "dx": -0.5 * elem.width() + startX,
-                        "dy": elem.height()
+                        "dx": -0.5 * elem.width()/scale + startX,
+                        "dy": elem.height()/scale
                     });
                 }
-            } else {  //上
+            } else {
+                //上
                 const idText = $(elemtspan[0]),
-                    startX = -0.5 * (idText.width() + $(elemtspan[1]).width());
+                    startX = -0.5 * (idText.width()/scale + $(elemtspan[1]).width()/scale);
                 let startY = 0;
 
                 for(let i = 2; i < elemtspan.length; i++) {
-                    const elem = $(elemtspan[i]);
-                    const height = elem.height();
+                    const elem = $(elemtspan[i]),
+                        height = elem.height() / scale;
+
                     elem.attr({
-                        "dx": -0.5 * elem.width() + startX,
+                        "dx": -0.5 * elem.width() / scale + startX,
                         "dy": height
                     });
                     startY -= height;
@@ -671,7 +832,8 @@ PartClass.prototype = {
                 });
             }
         } else {
-            if (coordinates[0] > 0) {  //右
+            if (coordinates[0] > 0) {
+                //右
                 const startX = size[0] + bias,
                     idText = $(elemtspan[0]);
 
@@ -680,36 +842,37 @@ PartClass.prototype = {
 
                 for(let i = 2; i < elemtspan.length; i++) {
                     const elem = $(elemtspan[i]);
-                    const height = elem.height();
+                    const height = elem.height()/scale;
                     elem.attr({
-                        "dx": biasY - $(elemtspan[i - 1]).width(),
+                        "dx": biasY - $(elemtspan[i - 1]).width()/scale,
                         "dy": height
                     });
                     startY -= height;
                     biasY = 0;
                 }
-                startY = 0.5 * (startY + idText.height()) - bias;
+                startY = 0.5 * (startY + idText.height()/scale) - bias;
 
                 elemtxt.attr({
                     "x": startX,
                     "y": startY
                 });
-            } else {  //左
+            } else {
+                //左
                 const idText = $(elemtspan[0]),
-                    startX = - (size[0] + bias + idText.width() + $(elemtspan[1]).width());
+                    startX = - (size[0] + bias + idText.width()/scale + $(elemtspan[1]).width()/scale);
                 let startY = 0;
 
                 for(let i = 2; i < elemtspan.length; i++) {
                     const elem = $(elemtspan[i]);
-                    const height = elem.height();
+                    const height = elem.height()/scale;
                     elem.attr({
-                        "dx": - $(elemtspan[i]).width(),
+                        "dx": - $(elemtspan[i]).width()/scale,
                         "dy": height
                     });
                     startY -= height;
                 }
 
-                startY = 0.5 * (startY + idText.height()) - bias;
+                startY = 0.5 * (startY + idText.height()/scale) - bias;
 
                 elemtxt.attr({
                     "x": startX,
@@ -717,58 +880,6 @@ PartClass.prototype = {
                 });
             }
         }
-
-        /*
-         //取数字大的那个距离为标准
-         if (Math.abs(coordinates[0]) > Math.abs(coordinates[1])) coordinates[1] = 0;
-         else coordinates[0] = 0;
-         let normalpos = this.txtLocate;
-         if (!coordinates[0]) {
-         if (coordinates[1] > 0) {  //下
-         textposy = normalpos + 10;
-         textposx = -0.5 * (elemtspan[0].textContent.length * 9 + elemtspan[1].textContent.length * 5);
-         lastpos = textposx;
-         elemtxt.setAttribute("x", textposx.toString());
-         elemtxt.setAttribute("y", textposy.toString());
-         for (let i = 2; i < elemtspan.length; i++) {
-         textposx = -4.35 * elemtspan[i].textContent.length + lastpos;
-         lastpos = -4.35 * elemtspan[i].textContent.length;
-         elemtspan[i].setAttribute("dx", textposx.toString());
-         }
-         } else {  //上
-         textposy = -normalpos - 16 * (elemtspan.length - 2);
-         textposx = -0.5 * (elemtspan[0].textContent.length * 9 + elemtspan[1].textContent.length * 5);
-         lastpos = textposx;
-         elemtxt.setAttribute("x", textposx.toString());
-         elemtxt.setAttribute("y", textposy.toString());
-         for (let i = 2; i < elemtspan.length; i++) {
-         textposx = -4.35 * elemtspan[i].textContent.length + lastpos;
-         lastpos = -4.35 * elemtspan[i].textContent.length;
-         elemtspan[i].setAttribute("dx", textposx.toString());
-         }
-         }
-         } else {
-         if (coordinates[0] > 0) {  //右
-         textposy -= 8 * (elemtspan.length - 3);
-         textposx = -elemtspan[0].textContent.length * 9 - elemtspan[1].textContent.length * 7;
-         elemtxt.setAttribute("x", normalpos.toString());
-         elemtxt.setAttribute("y", textposy.toString());
-         for (let i = 2; i < elemtspan.length; i++) {
-         elemtspan[i].setAttribute("dx", textposx.toString());
-         textposx = -elemtspan[i].textContent.length * 9;
-         }
-         } else {  //左
-         textposx = -1 * (normalpos + elemtspan[0].textContent.length * 9 + elemtspan[1].textContent.length * 5);
-         textposy -= 8 * (elemtspan.length - 3);
-         elemtxt.setAttribute("x", textposx.toString());
-         elemtxt.setAttribute("y", textposy.toString());
-         for (let i = 2; i < elemtspan.length; i++) {
-         textposx = -elemtspan[i].textContent.length * 9;
-         elemtspan[i].setAttribute("dx", textposx.toString());
-         }
-         }
-         }
-         */
     },
     //在图纸中创建器件SVG
     createPart() {
@@ -794,15 +905,18 @@ PartClass.prototype = {
             group.append(tempData);
         }
         //创建器件引脚节点
-        for (let i = 0; i < this.pointInfor[0].length; i++) {
-            let coor = this.pointInfor[0][i];
-            let tempDate = $("<g>", SVG_NS, {
-                "id": this.id + "-" + i,
-                "transform": "translate(" + coor[0] + "," + coor[1] + ")",
-                "class": "part-point point-open"
-            });
-            for (let j in nodepoint) if (nodepoint.hasOwnProperty(j)) {
-                tempDate.append($("<" + j + ">", SVG_NS, nodepoint[j]));
+        for (let i = 0; i < this.pointInfor.length; i++) {
+            let position = this.pointInfor[i].position,
+                tempDate = $("<g>", SVG_NS, {
+                    "id": this.id + "-" + i,
+                    "transform": "translate(" + position[0] + "," + position[1] + ")",
+                    "class": "part-point point-open"
+                });
+
+            for (let j in nodepoint) {
+                if (nodepoint.hasOwnProperty(j)) {
+                    tempDate.append($("<" + j + ">", SVG_NS, nodepoint[j]));
+                }
             }
             group.append(tempDate);
         }
@@ -833,50 +947,76 @@ PartClass.prototype = {
         return (group);
     },
     //输出true表示此处被占用，false表示此处为空
-    sheetCover(position, map) {
-        const tempRange = this.sizeRangeRotate();
-        const tempPointInfor = this.pointRotate();
-        const tempPosition = [position[0] / 20, position[1] / 20];
-        //器件管脚处没有覆盖别的器件
-        for (let i = 0; i < tempPointInfor[0].length; i++) {
-            if (map.getSingleValueBySmalle([tempPosition[0] + tempPointInfor[0][i][0] / 20,
-                    tempPosition[1] + tempPointInfor[0][i][1] / 20]))
-                return (true);
+    sheetCover(pos) {
+        //获取当前器件的内外边距之和
+        function merge(part) {
+            const box = {},
+                range = part.marginRotate();
+
+            for(let i = 0; i < 4; i++) {
+                const attr = ['left','right','top','bottom'][i];
+                box[attr] = range.margin[attr] + range.padding[attr];
+            }
+            return(box);
         }
-        //范围四舍五入
-        let RangeNow = [], coverPart = null, coverRange = [];
-        for (let i = 0; i < 4; i++) RangeNow[i] = Math.round(tempRange[i]);
-        let tempx = tempPosition[0], tempy = tempPosition[1];
-        for (let i = tempx - RangeNow[1]; i <= tempx + RangeNow[3]; i++)
-            for (let j = tempy - RangeNow[0]; j <= tempy + RangeNow[2]; j++) {
-                const tempStatus = map.getSingleValueBySmalle([i, j]);
-                if (tempStatus) {
-                    if (tempStatus.form === "line") return (true);
-                    else if (tempStatus.form === "part") {
-                        coverPart = partsAll.findPartObj(tempStatus.id);
-                        //coverPart = partsAll.findPartObj(SchematicMap[i][j].id);
-                    } else if (tempStatus.form === "part-point") {
-                        coverPart = partsAll.findPartObj(tempStatus.id.substring(0, tempStatus.id.search("-")));
-                        //coverPart = partsAll.findPartObj(SchematicMap[i][j].id.substring(0, SchematicMap[i][j].id.search("-")));
-                    }
-                    coverRange = coverPart.sizeRangeRotate();
-                    let Flag_x = true, Flag_y = true;
-                    for (let k = 0; k < 4; k++) coverRange[k] = Math.round(coverPart.sizeRange[k]);
-                    let distance = [tempPosition[0] - coverPart.position[0] / 20,
-                        tempPosition[1] - coverPart.position[1] / 20];
-                    //X轴
-                    if (distance[0] === 0) Flag_x = false;
-                    else if ((distance[0] < 0) &&
-                        (RangeNow[3] + coverRange[1] > -distance[0])) Flag_x = false;
-                    else if (RangeNow[1] + coverRange[3] > distance[0]) Flag_x = false;
-                    //Y轴
-                    if (distance[1] === 0) Flag_y = false;
-                    else if ((distance[1] < 0) &&
-                        (RangeNow[2] + coverRange[0] > -distance[1])) Flag_y = false;
-                    else if (RangeNow[0] + coverRange[2] > distance[1]) Flag_y = false;
-                    if (!Flag_x && !Flag_y) return (true);
+
+        pos = new Point(pos);
+        const coverHash = {},
+            boxSize = merge(this),
+            margin = this.marginRotate().margin,
+            position = pos.floorToSmall(),
+
+            point = this.pointRotate()
+                .map((n) => Point.prototype.floorToSmall.call(n.position));
+
+        //检查器件管脚
+        for (let i = 0; i < point.length; i++) {
+            const node = position.add(point[i]);
+            if (schMap.getSingleValueBySmalle(node)) {
+                return (true);
+            }
+            coverHash[node.join(',')] = true;
+        }
+        //扫描内边距
+        for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
+            for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
+                const status = schMap.getSingleValueBySmalle([i,j]);
+                //内边距中存在任何元素都表示被占用
+                if(status) {
+                    return(true);
+                } else {
+                    coverHash[i + "," + j] = true;
                 }
             }
+        }
+        //扫描外边距
+        for (let i = position[0] - boxSize.left; i <= position[0] + boxSize.right; i++) {
+            for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
+                //跳过内边距
+                if(coverHash[i + "," + j]) { continue; }
+                const status = schMap.getSingleValueBySmalle([i,j]);
+                if(status && status.form === 'part') {
+                    const part = partsAll.findPartObj(status.id),
+                        partSize = merge(part),
+                        diff = this.position.add(-1, part.position).floorToSmall();
+
+                    if(diff[0] !== 0) {
+                        if(diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
+                            return(true);
+                        } else if(-diff[0] < boxSize.right + partSize.left) {
+                            return(true);
+                        }
+                    }
+                    if(diff[1] !== 0) {
+                        if(diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
+                            return(true);
+                        } else if(-diff[1] < boxSize.bottom + partSize.top) {
+                            return(true);
+                        }
+                    }
+                }
+            }
+        }
         return (false);
     },
     //引脚被占用，禁止缩放
@@ -1210,16 +1350,17 @@ PartClass.prototype = {
     },
     //移动之后放下器件
     putDownSelf() {
-        if(!this.current.isMove) return(false);
-        //相关常量
-        const positionLast = this.current.lastPosition;
-        //当前的位置
-        let positionNew = this.position.round();
-
-        if(positionLast && !positionNew.isEqual(positionLast)) {
-            positionNew = schMap.nodeRound(positionNew, this.position, this.sheetCover.bind(this));
+        if(!this.current.isMove) {
+            return(false);
         }
-        this.position = positionNew;
+        //相关常量
+        const positionLast = this.current.lastPosition,
+            round = this.position.round();
+
+        this.position = round.isEqual(positionLast)
+                ? round
+                : new Point(schMap.nodeRound(round, this.position, this.sheetCover.bind(this)));
+
         this.setPosition();
         this.markSign();
 
@@ -1303,11 +1444,49 @@ PartClass.prototype = {
     }
 };
 
-//冻结器件原型函数的只读属性
+function css2obj(css) {
+    if(css instanceof Array) {
+        if(css.length === 2) {
+            return({
+                top: css[0],
+                bottom: css[0],
+                left: css[1],
+                right: css[1]
+            });
+        } else if(css.length === 4) {
+            return({
+                top: css[0],
+                right: css[1],
+                bottom: css[2],
+                left: css[3]
+            });
+        }
+    } else {
+        const num = Number(css);
+        return({
+            left: num,
+            right: num,
+            top: num,
+            bottom: num
+        });
+    }
+}
+//处理器件原型的格式
 for(let i in originalElectronic) {
+    const data = originalElectronic[i].readOnly,
+        pointInfor = data.pointInfor;
+
+    //内外边距
+    data.padding = css2obj(data.padding);
+    data.margin = css2obj(data.margin);
+    //管脚方向矩阵
+    for(let j = 0; j < pointInfor.length; j++) {
+        pointInfor[j].direction = new Matrix([pointInfor[j].direction]);
+    }
+    //器件原型链链接只读属性，并冻结只读属性
     if (originalElectronic.hasOwnProperty(i)) {
-        Object.setPrototypeOf(originalElectronic[i].readOnly, PartClass.prototype);
-        Object.freezeAll(originalElectronic[i].readOnly);
+        Object.setPrototypeOf(data, PartClass.prototype);
+        Object.freezeAll(data);
     }
 }
 //外观和说明原型

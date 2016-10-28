@@ -6,13 +6,9 @@ const gulp = require("gulp"),
     stylus = require("gulp-stylus"),
     webpack = require("gulp-webpack"),
     base64 = require("gulp-base64"),
-    sourcemaps = require("gulp-sourcemaps");
+    sourcemaps = require("gulp-sourcemaps"),
 
-//图标和网格复制
-gulp.task("image", function () {
-    return gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
-        .pipe(gulp.dest("./_develop/src/"));
-});
+    _develop = "Z:/在线仿真网站/";
 
 //开发版本任务
 gulp.task("develop-html", function() {
@@ -21,7 +17,7 @@ gulp.task("develop-html", function() {
             collapseWhitespace: true,
             removeComments: true
         }))
-        .pipe(gulp.dest("./_develop/"));
+        .pipe(gulp.dest(_develop));
 });
 gulp.task("develop-stylus", function () {
     return gulp.src("./css/main.styl")
@@ -35,9 +31,12 @@ gulp.task("develop-stylus", function () {
             basename: "circuitlab",
             suffix: ".min"
         }))
-        .pipe(gulp.dest("./_develop/src/"));
+        .pipe(gulp.dest(_develop + "src/"));
 });
 gulp.task("develop-js", function () {
+    gulp.src("./js/test.js")
+        .pipe(gulp.dest(_develop + "src/"));
+
     return gulp.src("./js/main.js")
         .pipe(webpack({
             devtool: "source-map",
@@ -58,7 +57,11 @@ gulp.task("develop-js", function () {
                 ]
             }
         }))
-        .pipe(gulp.dest("./_develop/src/"));
+        .pipe(gulp.dest(_develop + "src/"));
+});
+gulp.task("develop-image", function () {
+    return gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
+        .pipe(gulp.dest(_develop + "src/"));
 });
 gulp.task("build", function () {
     //设置静态服务器
@@ -66,15 +69,15 @@ gulp.task("build", function () {
         app = express();
 
     //允许网页访问theme文件夹
-    app.use(express.static("./_develop/"));
+    app.use(express.static(_develop));
     //建立虚拟网站，端口5000
     app.listen(5000, function () {
-        console.info("INFO : 虚拟网站已建立于 http://localhost:5000/");
-        console.info("INFO : CTRL + C 退出当前状态");
+        console.info(" INFO : 虚拟网站已建立于 http://localhost:5000/");
+        console.info(" INFO : CTRL + C 退出当前状态");
     });
 
     // 首次运行task
-    gulp.run("develop-html", "develop-stylus", "develop-js", "image");
+    gulp.run("develop-html", "develop-stylus", "develop-js", "develop-image");
     // 监听html文件变化
     gulp.watch("./index.html", ["develop-html"]);
     // 监听stylus文件变化

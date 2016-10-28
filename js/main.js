@@ -353,6 +353,75 @@ function createGraph(data) {
         circle.remove();
     }, 600);
 }
+//读取数据
+function loadData(data) {
+    //第一遍加载器件
+    for(let i = 0; i < data.length; i++) {
+        if ((data[i].partType !== "line") && (data[i].partType !== "config")) {
+            const device = new PartClass(data[i]);
+            device.elementDOM.attr("opacity", 1);
+            device.markSign();
+        } else if (data[i].partType === "config"){
+            for(let j in data[i]) if(data[i].hasOwnProperty(j)) {
+                if(j === "partType") continue;
+                $(j).prop("value", data[i][j]);
+            }
+        }
+    }
+    //第二遍加载导线
+    for(let i = 0; i < data.length; i++) {
+        if(data[i].partType === "line") {
+            const devices = new LineClass(data[i].way[0]);
+            for(let j = 1; j < data[i].way.length; j++) {
+                devices.way.push(data[i].way[j]);
+            }
+            devices.current = [0,[],[],[],[],[],false,false,[]];
+            devices.toGoing();
+            partsNow.push(devices);
+            for(let j = 0; j < 2; j++) {
+                const node = devices.way[j * (devices.way.length - 1)];
+                const nodeStatus = schMap.getSingleValueByOrigin(node);
+                if(nodeStatus.form === "part-point") {
+                    //器件引脚
+                    const connectpart = partsAll.findPartObj(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
+                    connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
+                    devices.setConnect(j, nodeStatus.id);
+                } else if (nodeStatus.form === "line-point") {
+                    //导线临时节点
+                    //在临时节点相交，那么此点必定是交错节点
+                    nodeStatus.form = "cross-point";
+                    nodeStatus.id += " " + devices.id;
+                } else if (nodeStatus.form === "cross-point") {
+                    //交错节点
+                    nodeStatus.id += " " + devices.id;
+                }
+            }
+            devices.render();
+            devices.markSign();
+        }
+    }
+    //第三遍扫描图纸的交错节点
+    for(let i in schMap) if(schMap.hasOwnProperty(i)) {
+        for (let j in schMap[i]) if(schMap[i].hasOwnProperty(j)){
+            const nodeStatus = schMap[i][j];
+            if(nodeStatus.form === "cross-point") {
+                //查询所有连接的导线
+                const node = [parseInt(i) * 20, parseInt(j) * 20],
+                    lines = nodeStatus.id.split(" ").map(function(item){
+                        const line = partsAll.findPartObj(item),
+                            sub = line.findConnect(node);
+                        return([line,sub]);
+                });
+                for(let k = 0; k < lines.length; k++) {
+                    const lineconnect = (nodeStatus.id.search(lines[k][0].id + " ") !== -1)
+                        ? nodeStatus.id.replace(lines[k][0].id + " ", "")
+                        : nodeStatus.id.replace(" " + lines[k][0].id, "");
+                    lines[k][0].setConnect(lines[k][1], lineconnect);
+                }
+            }
+        }
+    }
+}
 
 //网页元素相关事件
 //添加器件菜单中器件的所有事件
@@ -671,17 +740,16 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
             newPart(clickpart, pointmark).current
                 .extend(grid.createData(event));
             mainPage.attr("class", "mouse-line");
-            grid.setDrawLine(true);
         } else {                                //当前引脚已经连接了导线
             const line = partsAll.findPartObj(clickpart.connect[pointmark]);
             line.focusOnly();                //选中导线
             line.current = grid.createData(event);
             line.reDraw(event, clickpart, pointmark);
             mainPage.attr("class", "mouse-line");
-            grid.setDrawLine(true);
         }
+        grid.setDrawLine(true);
+        mainPage.on("mousemove", mousemoveEvent);
     }
-    mainPage.on("mousemove", mousemoveEvent);
     return(false);
 });
 //图纸全局的mousedown操作
@@ -1002,10 +1070,29 @@ graphPage.on("mouseup", function() {
         graphPage.removeClass("mouse-select");
         //标志位置低
         grid.setGraphSelecte(false);
-        //重绘背景和曲线
-        const graph = grid.current.graph;
+
+        //重绘当前面板
+        const graph = grid.current.graph,
+            [time, value] = graph.pixel2Value(grid.current.select);
+
         graph.clearActionCanvas();
-        graph.reDraw(grid.current.select);
+        graph.drawBackground(time, value);
+        graph.drawCurve();
+
+        //其余面板需要根据时间轴缩放
+        $("#graph-main .graph-individual").each(function(n){
+            if(n._data !== graph) {
+                n._data.clearActionCanvas();
+                n._data.drawBackground(time,
+                    [
+                        Math.minOfArray(n._data.output.map((list) => Math.minOfArray(list.data))),
+                        Math.maxOfArray(n._data.output.map((list) => Math.maxOfArray(list.data)))
+                    ]
+                );
+                n._data.drawCurve();
+            }
+        });
+
         //临时变量清空
         grid.current = [];
     }
@@ -1070,17 +1157,21 @@ doc.body.onload = function() {
             "viewBox" : "0 0 80 80"
         })).append($("<g>", SVG_NS));
 
-        const type = elem.attr("id");
-        const part = partsinfo.shape[type];
-        const bias = (special[type]) ? "translate(40,40) " + special[type] : "translate(40,40)";
+        const type = elem.attr("id"),
+            part = partsinfo.shape[type],
+            bias = (special[type]) ? "translate(40,40) " + special[type] : "translate(40,40)";
+
         icon.attr("transform", bias);
         for (let i = 0; i < part.length; i++) {
-            const svgPart = part[i];
-            if (svgPart.name === "rect") continue;
-            const iconSVG = icon.append($("<" + svgPart.name + ">", SVG_NS));
-            for (let k in svgPart.attribute) if (svgPart.attribute.hasOwnProperty(k)) {
-                if (svgPart.attribute[k] === "class") continue;
-                iconSVG.attr(k, svgPart.attribute[k]);
+            if (part[i].name === "rect") { continue; }
+
+            const svgPart = part[i],
+                iconSVG = icon.append($("<" + svgPart.name + ">", SVG_NS));
+            for (let k in svgPart.attribute) {
+                if (svgPart.attribute.hasOwnProperty(k)) {
+                    if (svgPart.attribute[k] === "class") { continue; }
+                    iconSVG.attr(k, svgPart.attribute[k]);
+                }
             }
         }
     });
@@ -1119,78 +1210,15 @@ doc.body.onload = function() {
             parameters[obj[0]] = obj[1];
         }
     }
-
+    //加载图纸
+    loadData(iniData[parameters.init] || []);
     //去掉灰幕
     const cover = $("#load-cover");
     cover.css("opacity", 0);
     setTimeout(function() {
         cover.css("display", "none");
     }, 300);
-
-    //根据地址信息完成图纸初始化
-    const data = iniData[parameters.init] || [];
-    //第一遍加载器件
-    for(let i = 0; i < data.length; i++) {
-        if ((data[i].partType !== "line") && (data[i].partType !== "config")) {
-            const device = new PartClass(data[i]);
-            device.elementDOM.attr("opacity", 1);
-            device.markSign();
-        } else if (data[i].partType === "config"){
-            for(let j in data[i]) if(data[i].hasOwnProperty(j)) {
-                if(j === "partType") continue;
-                $(j).prop("value", data[i][j]);
-            }
-        }
-    }
-    //第二遍加载导线
-    for(let i = 0; i < data.length; i++) {
-        if(data[i].partType === "line") {
-            const devices = new LineClass(data[i].way[0]);
-            for(let j = 1; j < data[i].way.length; j++) {
-                devices.way.push(data[i].way[j]);
-            }
-            devices.current = [0,[],[],[],[],[],false,false,[]];
-            devices.toGoing();
-            partsNow.push(devices);
-            for(let j = 0; j < 2; j++) {
-                const node = devices.way[j * (devices.way.length - 1)];
-                const nodeStatus = schMap.getSingleValueByOrigin(node);
-                if(nodeStatus.form === "part-point") {          //此处是器件引脚
-                    const connectpart = partsAll.findPartObj(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
-                    connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
-                    devices.setConnect(j, nodeStatus.id);
-                } else if (nodeStatus.form === "line-point") {  //此处是导线临时节点
-                    nodeStatus.form = "cross-point";            //在临时节点相交，那么那一点必定是交错节点
-                    nodeStatus.id += " " + devices.id;
-                } else if (nodeStatus.form === "cross-point") { //此处是交错节点
-                    nodeStatus.id += " " + devices.id;
-                }
-            }
-            devices.render();
-            devices.markSign();
-        }
-    }
-    //第三遍扫描图纸的交错节点
-    for(let i in schMap) if(schMap.hasOwnProperty(i)) {
-        for (let j in schMap[i]) if(schMap[i].hasOwnProperty(j)){
-            const nodeStatus = schMap[i][j];
-            if(nodeStatus.form === "cross-point") {
-                const node = [parseInt(i) * 20, parseInt(j) * 20];
-                const lines = nodeStatus.id.split(" ").map(function(item){    //查询所有连接的导线
-                    const line = partsAll.findPartObj(item);
-                    const sub = line.findConnect(node);
-                    return([line,sub]);
-                });
-                for(let k = 0; k < lines.length; k++) {
-                    let lineconnect;
-                    if(nodeStatus.id.search(lines[k][0].id + " ") !== -1) {
-                        lineconnect = nodeStatus.id.replace(lines[k][0].id + " ", "");
-                    } else {
-                        lineconnect = nodeStatus.id.replace(" " + lines[k][0].id, "");
-                    }
-                    lines[k][0].setConnect(lines[k][1], lineconnect);
-                }
-            }
-        }
-    }
 };
+
+//测试的时候调用test模块
+import { } from "./test"

@@ -1,5 +1,3 @@
-//电路求解
-
 import { $ } from "./jquery";
 import { Matrix } from "./matrix";
 import { partsAll, PartsCollection } from "./collection";
@@ -719,7 +717,7 @@ Solver.prototype.solve = function* () {
             observeCurrent[i].data.push(matrix.mul(branchCurrent));
         }
 
-        //对外输出的是计算百分比
+        //对外输计算进度
         yield (Math.round(i / Math.round(endTime / stepSize) * 100));
     }
 };

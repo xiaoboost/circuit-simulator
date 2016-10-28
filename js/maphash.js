@@ -112,8 +112,9 @@ MapHash.prototype = {
     },
     //设置器件标志位
     makePartSign(id, position, point, range) {
-        for (let j = position[1] - range[0]; j <= position[1] + range[2]; j++) {
-            for (let i = position[0] - range[1]; i <= position[0] + range[3]; i++) {
+        //器件内边距占位
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
                 //删除原来的属性，并赋值新的属性
                 this.setSingleValueBySmalle([i, j], {
                     id: id,
@@ -121,6 +122,7 @@ MapHash.prototype = {
                 }, true);
             }
         }
+        //器件管脚距占位
         for (let i = 0; i < point.length; i++) {
             this.setSingleValueBySmalle([position[0] + point[i][0] / 20, position[1] + point[i][1] / 20], {
                 id: id + "-" + i,
@@ -131,8 +133,8 @@ MapHash.prototype = {
     },
     //删除器件标志位
     deletePartSign(position, point, range) {
-        for (let i = position[0] - range[1]; i <= position[0] + range[3]; i++) {
-            for (let j = position[1] - range[0]; j <= position[1] + range[2]; j++) {
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
                 this.deleteSingleValueBySmalle([i, j]);
             }
         }

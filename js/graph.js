@@ -689,16 +689,15 @@ Graph.prototype = {
             this.axisList[1][this.axisList[1].length - 1]   //当前值终点
         ]);
     },
-    //根据选择范围重绘曲线
-    reDraw(range) {
+    //由像素到实际值
+    pixel2Value(range) {
         const [timeStart, timeEnd, valueMin, valueMax] = this.backgroundStartToEnd(),
             time2pixel = (timeEnd - timeStart).toSFixed() / this.long.waveWidth,
             value2pixel = (valueMax - valueMin).toSFixed() / this.long.waveHeight,
             time = [range[0], range[2]].map((n) => (n * time2pixel + timeStart).toSFixed(4)),
             value = [range[3], range[1]].map((n) => (valueMax - n * value2pixel).toSFixed(4));
 
-        this.drawBackground(time, value);
-        this.drawCurve();
+        return([time, value]);
     }
 };
 //把整个波形页面转换成图像
