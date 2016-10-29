@@ -740,9 +740,9 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
             newPart(clickpart, pointmark).current
                 .extend(grid.createData(event));
             mainPage.attr("class", "mouse-line");
-        } else {                                //当前引脚已经连接了导线
+        } else {
             const line = partsAll.findPartObj(clickpart.connect[pointmark]);
-            line.focusOnly();                //选中导线
+            line.focusOnly();
             line.current = grid.createData(event);
             line.reDraw(event, clickpart, pointmark);
             mainPage.attr("class", "mouse-line");

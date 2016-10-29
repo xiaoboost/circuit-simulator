@@ -1282,6 +1282,7 @@ PartClass.prototype = {
         //删除旧器件标记
         if(!flagBit.totalMarks()) this.deleteSign(this.position);
         this.rotate = this.rotate.mul(transfor);            //器件旋转
+
         //重新标记
         if(!flagBit.totalMarks()) this.markSign();
         //器件显示旋转

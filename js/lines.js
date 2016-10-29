@@ -590,7 +590,7 @@ function AstartSearch(start, end, vector, mode) {
     const tempway = new LineWay();
     let junctionValue = endStatus.junction;
     tempway.push(Array.clone(endStatus.point, 20));
-    //从当前节点开始回溯广搜路径
+    //从当前节点开始回溯路径
     while(endStatus.parent){
         if(endStatus.junction < junctionValue) {
             tempway.push(Array.clone(endStatus.point, 20));
@@ -961,10 +961,10 @@ function LineClass(part, mark) {
     if(!!part.elementDOM && mark !== undefined) {
         //输入是器件和器件管脚
         const pointInfor = part.pointRotate(),
-            trend = Array.clone(directionhash[pointInfor[1][mark]]);
+            trend = new Point(pointInfor[mark].direction);
         start = new Point([
-            part.position[0] + pointInfor[0][mark][0],
-            part.position[1] + pointInfor[0][mark][1]
+            part.position[0] + pointInfor[mark].position[0],
+            part.position[1] + pointInfor[mark].position[1]
         ]);
 
         //导线与器件管脚相互连接

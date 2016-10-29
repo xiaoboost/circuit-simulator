@@ -275,11 +275,11 @@ function Graph(Data, DOM, type) {
     this.stepTime = $("#stepsize").prop("value").toVal();
 
     //计算各种坐标
-    const left = 80;            //左侧边栏宽度
-    const top = 10;             //顶层间隔宽度
-    const bottomHeight = 70;    //底栏高度
-    //整个背景画布的宽高
-    const Width = this.elementDOM.width(),
+    const left = 80,            //左侧边栏宽度
+        top = 10,             //顶层间隔宽度
+        bottomHeight = 70,    //底栏高度
+        //整个背景画布的宽高
+        Width = this.elementDOM.width(),
         Height = this.elementDOM.height();
 
     this.long.waveWidth = Width - left - 10;
@@ -593,13 +593,14 @@ Graph.prototype = {
             const circleX = (sub * stepTime - backTimeStart) / time2Pixel;
 
             for(let i = 0; i < this.output.length; i++) {
-                if(this.output[i].status) {
+                const valueNow = this.output[i].data[sub];
+                if(this.output[i].status && valueNow < backValueMax && valueNow > backValueMin) {
                     //曲线显示
-                    const circleY = (backValueMax - this.output[i].data[sub]) / value2Pixel;
+                    const circleY = (backValueMax - valueNow) / value2Pixel;
                     drawer.circle(circleX, circleY, 5, {
                         "fillStyle": color[i]
                     });
-                    tips.get(i).text((this.output[i].data[sub]).toShort(5).txt + unit)
+                    tips.get(i).text(valueNow.toShort(5).txt + unit)
                         .css({ right: (width - circleX) + "px", bottom: (height - circleY) + "px" });
                 } else {
                     //曲线隐藏
