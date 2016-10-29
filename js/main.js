@@ -1082,12 +1082,10 @@ graphPage.on("mouseup", function() {
         //其余面板需要根据时间轴缩放
         $("#graph-main .graph-individual").each(function(n){
             if(n._data !== graph) {
+                const range = n._data.backgroundStartToEnd();
                 n._data.clearActionCanvas();
                 n._data.drawBackground(time,
-                    [
-                        Math.minOfArray(n._data.output.map((list) => Math.minOfArray(list.data))),
-                        Math.maxOfArray(n._data.output.map((list) => Math.maxOfArray(list.data)))
-                    ]
+                    [range[2], range[3]]
                 );
                 n._data.drawCurve();
             }
