@@ -137,6 +137,7 @@ function reduceList(list, line) {
 }
 
 //canvas绘图类
+
 function Graphics(canvas) {
     if(!(canvas && canvas.attributes && canvas.nodeName)) {
         throw("输入必须是canvas元素");

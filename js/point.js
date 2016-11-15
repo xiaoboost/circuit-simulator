@@ -1,4 +1,54 @@
-//节点类
+//在备选值中选出最大或者最小的
+function selectMax(ref, alts, func){
+    let max = -Infinity, sub;
+    for(let i = 0; i < alts.length; i++) {
+        if(alts[i]) {
+            const res = func(ref, alts[i]);
+            if(res > max) {
+                max = res;
+                sub = i;
+            }
+        }
+    }
+    if(sub !== undefined) {
+        return({
+            value: alts[sub],
+            sub: sub
+        });
+    } else {
+        return(false);
+    }
+}
+function selectMin(ref, alts, func){
+    let min = Infinity, sub;
+    for(let i = 0; i < alts.length; i++) {
+        if(alts[i]) {
+            const res = func(ref, alts[i]);
+            if (res < min) {
+                min = res;
+                sub = i;
+            }
+        }
+    }
+    if(sub !== undefined) {
+        return({
+            value: alts[sub],
+            sub: sub
+        });
+    } else {
+        return(false);
+    }
+}
+//向量相乘
+function vectorProduct(a, b) {
+    return (a[0] * b[0] + a[1] * b[1]);
+}
+//点与点的距离
+function nodeDistance(a, b) {
+    return (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]));
+}
+
+//点和向量
 function Point(arr) {
     this[0] = arr[0];
     this[1] = arr[1];
@@ -146,6 +196,18 @@ Point.prototype = {
             new Point([this[0], this[1] + 20]),
             new Point([this[0] + 20, this[1] + 20])
         ]);
+    },
+    //在vectors中与this最为相似的向量
+    similar(vectors) {
+        return selectMax(this, vectors, vectorProduct);
+    },
+    //在points中与this距离最短的点
+    closest(points) {
+        return selectMin(this, points, nodeDistance)
+    },
+    //在points中与this距离最远的点
+    farest(points) {
+        return selectMax(this, points, nodeDistance)
     }
 };
 Object.setPrototypeOf(Point.prototype, Array.prototype);

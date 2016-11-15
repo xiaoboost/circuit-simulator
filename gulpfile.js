@@ -8,6 +8,7 @@ const gulp = require("gulp"),
     base64 = require("gulp-base64"),
     uglify = require("gulp-uglifyjs"),
     sourcemaps = require("gulp-sourcemaps"),
+    autoprefixer = require("gulp-autoprefixer"),
 
     _develop = "Z:/在线仿真网站/",
     _push = "./.deploy_git/";
@@ -27,6 +28,7 @@ gulp.task("develop-stylus", function () {
         .pipe(stylus({
             compress: true
         }))
+        .pipe(autoprefixer())
         .pipe(base64())
         .pipe(sourcemaps.write())
         .pipe(rename({
@@ -38,7 +40,7 @@ gulp.task("develop-stylus", function () {
 gulp.task("develop-js", function () {
     return gulp.src("./js/main.js")
         .pipe(webpack({
-            devtool: "source-map",
+            //devtool: "source-map",
             output: {
                 filename: "script.min.js"
             },
@@ -103,6 +105,7 @@ gulp.task("push-stylus", function () {
         .pipe(stylus({
             compress: true
         }))
+        .pipe(autoprefixer())
         .pipe(base64())
         .pipe(rename({
             basename: "circuitlab",

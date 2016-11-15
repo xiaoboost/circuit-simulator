@@ -11,6 +11,7 @@ import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
 import { PartClass, partsinfo } from "./parts";
 import { partsAll, partsNow } from "./collection";
+import "./test";
 
 //全局变量定义
 const doc = document,
@@ -294,7 +295,7 @@ function createGraph(data) {
         boxHeight = graphHeight / maxForm,              //每个面板的高度
         graphMain = $("#graph-main"),
         graphWidth = (totalHeight * ratio < totalWidth) ? totalHeight * ratio : totalWidth,
-        graphForm = $.maxSelect("div.graph-individual", graphMain, maxForm);
+        graphForm = graphMain.childSelect("div.graph-individual", maxForm);
 
     //删除DOM中的所有元素
     for(let i = 0; i < graphForm.length; i++) {
@@ -634,6 +635,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
     if (event.which === 1) {
         clearStatus();
         if (event.currentTarget.tagName === "text") {
+            //单击器件说明文本
             const text = $(this);
             clickpart.focusOnly();          //当前器件染色
             clickpart.current.extend(grid.createData(event))
@@ -646,6 +648,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
                 });
             grid.setMoveText(true);
         } else {
+            //单击本体
             clickpart.focusOnly();
             clickpart.current.extend(grid.createData(event))
                 .extend({ map: schMap });
@@ -1217,6 +1220,3 @@ doc.body.onload = function() {
         cover.css("display", "none");
     }, 300);
 };
-
-//测试的时候调用test模块
-import { } from "./test"

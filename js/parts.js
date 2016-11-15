@@ -422,7 +422,7 @@ const originalElectronic = {
                 {
                     "name": "polygon",
                     "attribute": {
-                        "points": "10,0 4,-4 6,0 4,4", "fill":"#3B4449"
+                        "points": "12,0 2,-6 6,0 2,6", "class":"fill-whole"
                     }
                 },
                 {
@@ -652,7 +652,6 @@ function PartClass(data) {
 }
 PartClass.prototype = {
     constructor: PartClass,
-    length: 0,
 
     //器件方法
     //计算器件当前引脚坐标及方向
@@ -838,7 +837,7 @@ PartClass.prototype = {
                     idText = $(elemtspan[0]);
 
                 let startY = 0,
-                    biasY = - idText.width();
+                    biasY = - idText.width()/scale;
 
                 for(let i = 2; i < elemtspan.length; i++) {
                     const elem = $(elemtspan[i]);
@@ -863,8 +862,8 @@ PartClass.prototype = {
                 let startY = 0;
 
                 for(let i = 2; i < elemtspan.length; i++) {
-                    const elem = $(elemtspan[i]);
-                    const height = elem.height()/scale;
+                    const elem = $(elemtspan[i]),
+                        height = elem.height()/scale;
                     elem.attr({
                         "dx": - $(elemtspan[i]).width()/scale,
                         "dy": height
