@@ -122,13 +122,13 @@ MapTest.prototype = {
     clear(className) {
         switch (className) {
             case "Point" :
-                this.test.children(".testPoint").remove();
+                this.test.childrens(".testPoint").remove();
                 return true;
             case "Path" :
-                this.test.children(".testPath").remove();
+                this.test.childrens(".testPath").remove();
                 return true;
             case undefined :
-                this.test.children().remove();
+                this.test.childrens().remove();
                 return true;
             default :
                 return(false);

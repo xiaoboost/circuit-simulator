@@ -442,27 +442,6 @@ Object.extend({
     }
 });
 Math.extend({
-    //返回start->end单位向量与Multiples的乘积
-    vectorInit(start, end, Multiples = 1) {
-        if (!Multiples) Multiples = 1;
-        const ans = [end[0] - start[0], end[1] - start[1]];
-        if (ans[0]) ans[0] = ans[0] / Math.abs(ans[0]) * Multiples;
-        if (ans[1]) ans[1] = ans[1] / Math.abs(ans[1]) * Multiples;
-        return (ans);
-    },
-    //在向量数组b中寻找与向量a方向差距最小的向量
-    vectorSimilar(a, b) {
-        let max = -300000, sub = -1;
-        for (let i = 0; i < b.length; i++) {
-            if (!b[i]) continue;
-            const product = a[0] * b[i][0] + a[1] * b[i][1];
-            if (max < product) {
-                max = product;
-                sub = i;
-            }
-        }
-        return (sub);
-    },
     //数组的最大值
     maxOfArray(arr) {
         let ans = -Infinity;

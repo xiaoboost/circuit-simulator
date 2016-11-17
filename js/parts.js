@@ -652,8 +652,6 @@ function PartClass(data) {
 }
 PartClass.prototype = {
     constructor: PartClass,
-
-    //器件方法
     //计算器件当前引脚坐标及方向
     pointRotate() {
         const ans = [];

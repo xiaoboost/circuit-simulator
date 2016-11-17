@@ -97,14 +97,13 @@ MapHash.prototype = {
         }
         return ([line, lines]);
     },
-    //nodelast和node是否在同一个导线上
-    nodeInConnectBySmall(nodelast, node) {
-        //判断node是否在nodelast的连接表中，两个参数均为small
-        //node必须已经确定是line属性，nodelast是否是line属性在此函数内判断
-        const nodelastStatus = this.getSingleValueBySmalle(nodelast);
+    //node和connect是否在同一个导线上
+    nodeInConnectBySmall(node, connect) {
+        //判断node是否在node的连接表中，两个参数均为small
+        const nodelastStatus = this.getSingleValueBySmalle(node);
         if (nodelastStatus && (nodelastStatus.form === "line" || nodelastStatus.form === "cross-point")) {
             for (let i = 0; i < nodelastStatus.connect.length; i++) {
-                if (nodelastStatus.connect[i][0] === node[0] && nodelastStatus.connect[i][1] === node[1])
+                if (nodelastStatus.connect[i].isEqual(connect))
                     return (true);
             }
         }
@@ -284,9 +283,9 @@ MapHash.prototype = {
             }
             m++;
         }
-        const tempvector = [mouse[0] - node[0], mouse[1] - node[1]];
+
         const vectors = ans.map((item) => [item[0] - node[0], item[1] - node[1]]);
-        return (ans[Math.vectorSimilar(tempvector, vectors)]);
+        return (ans[mouse.add(-1, node).similar(vectors).sub]);
     },
     //判断当前点是不是导线
     isLine(node, flag = "origin") {
@@ -300,74 +299,29 @@ MapHash.prototype = {
             tempStatus.form === "cross-node"
         );
     },
-    //当前点是器件
-    isPart(node, flag = "origin") {
-        const tempStatus = (flag === "origin") ?
-            this.getSingleValueByOrigin(node) :
-            this.getSingleValueBySmalle(node);
-
-        return (
-            tempStatus &&
-            tempStatus.form === "part" ||
-            tempStatus.form === "part-point"
-        );
-    },
-    //当前点是器件但不是管脚
-    isPartNotPoint(node, flag = "origin") {
-        const tempStatus = (flag === "origin") ?
-            this.getSingleValueByOrigin(node) :
-            this.getSingleValueBySmalle(node);
-
-        return (
-            tempStatus &&
-            tempStatus.form === "part"
-        );
-    },
     //在[start、end]范围中沿着vector直行，求最后一点的坐标
     alongTheLineBySmall(start, end, vector) {
-        //start点必须在某个导线上，此函数将会沿着vector的方向，返回在导线上的最后一点
-        if (vector[0]) vector[0] /= Math.abs(vector[0]);
-        else vector[1] /= Math.abs(vector[1]);
-        let node = [start[0], start[1]], endFlag = true;
-        let nodeStatus = this.getSingleValueBySmalle(node);
+        //单位向量
+        if(vector[0]) { vector[0] /= Math.abs(vector[0]); }
+        if(vector[1]) { vector[1] /= Math.abs(vector[1]); }
+        //非法坐标为无限大
+        if(!end) { end = [3000, 3000]; }
+
+        let node = [start[0], start[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进
-        while (nodeStatus && (node[0] !== end[0] || node[1] !== end[1]) &&
-        (nodeStatus.form === "line" || nodeStatus.form === "cross-point") && endFlag) {
-            let nodeNow = [node[0] + vector[0], node[1] + vector[1]];
-            endFlag = this.nodeInConnectBySmall(node, nodeNow);
-            node = nodeNow;
-            nodeStatus = this.getSingleValueBySmalle(node);
-        }
-        if (node[0] === start[0] && node[1] === start[1]) {
-            return (node);
-        } else if (!nodeStatus || (nodeStatus.form !== "line" && nodeStatus.form !== "cross-point")) {
-            return ([node[0] - vector[0], node[1] - vector[1]]);
-        }
-        return (node);
-    },
-    //由节点得到当前线段
-    getLineBySmall(node) {
-        const limit = [],
-            ans = [],
-            around = [
-                [0, 1],
-                [0,-1],
-                [1 ,0],
-                [-1,0]
-            ];
-        for(let i = 0; i < 4; i++) {
-            limit[i] = this.alongTheLineBySmall(node, [3000, 3000], around[i]);
-        }
-        for(let i = 0; i < 2; i++) {
-            if(!limit[i * 2].isEqual(limit[i * 2 + 1])) {
-                ans.push([limit[i * 2], limit[i * 2 + 1]]);
+        while (this.isLine(node, "small") && !node.isEqual(end)) {
+            const nodeNow = [node[0] + vector[0], node[1] + vector[1]];
+            if(this.nodeInConnectBySmall(node, nodeNow)) {
+                node = nodeNow;
+            } else {
+                break;
             }
         }
-        return(ans);
-    },
+        return (node);
+    }
 };
 
 //全局图纸标志位
 const schMap = new MapHash();
 
-export { MapHash, schMap };
+export { schMap };

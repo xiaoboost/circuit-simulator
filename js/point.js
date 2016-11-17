@@ -50,37 +50,31 @@ function nodeDistance(a, b) {
 
 //点和向量
 function Point(arr) {
-    this[0] = arr[0];
-    this[1] = arr[1];
+    if(Point.isPoint(arr)) {
+        //输入是点
+        this[0] = arr[0];
+        this[1] = arr[1];
+    } else if(Point.isVector(arr)){
+        //输入是向量
+        this[0] = arr[1][0] - arr[0][0];
+        this[1] = arr[1][1] - arr[0][1];
+    }
     this.length = 2;
-    Object.seal(this);
 }
+//是否是点
 Point.extend({
-    //点
     isPoint(arr) {
-        return(
+        return (
             arr instanceof Point ||
-            arr.length === 2 &&
             typeof arr[0] === "number" &&
             typeof arr[1] === "number"
         );
     },
-    //线段
-    isSegment(arr) {
+    isVector(arr) {
         return(
-            arr.length === 2 &&
             Point.isPoint(arr[0]) &&
             Point.isPoint(arr[1])
-        );
-    },
-    //线段集
-    isPolyline(arr) {
-        for(let i = 0; i < arr.length; i++) {
-            if(!Point.isSegment(arr[i])) {
-                return(false);
-            }
-        }
-        return(true);
+        )
     }
 });
 Point.prototype = {
@@ -133,7 +127,17 @@ Point.prototype = {
         }
         return(new Point(sum));
     },
-    //是标准格式
+    //单位化，符号不变，数值变为1
+    toUnit() {
+        for(let i = 0; i < 2; i++) {
+            if(this[i] > 0) {
+                this[i] = 1;
+            } else if(this[i] < 0) {
+                this[i] = -1;
+            }
+        }
+    },
+    //是否是标准格式
     isStandarNode() {
         if(this.length !== 2 ||
             this[0] !== Math.floor(this[0]) ||
@@ -141,6 +145,14 @@ Point.prototype = {
             return(false);
         }
         return(true);
+    },
+    //是否平行
+    isParallel(vector) {
+        return(this[0]*vector[1] === this[1]*vector[0]);
+    },
+    //是否垂直
+    isVertical(vector) {
+        return(!!(this[0]*vector[0] + this[1]*vector[1]));
     },
     //与另一点/线段/折线的最短距离
     distance(node) {

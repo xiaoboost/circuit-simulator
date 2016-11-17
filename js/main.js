@@ -18,7 +18,9 @@ const doc = document,
     SVG_NS = "http://www.w3.org/2000/svg",
     u = undefined;
 //图纸网格模块
-const grid = new (function SchematicsGrid() {
+const grid = (function SchematicsGrid() {
+    //模块对象
+    const self = {};
     //持续型状态标志位
     let flag = 0;
     const continuous = [
@@ -35,7 +37,7 @@ const grid = new (function SchematicsGrid() {
     //标志位
     for(let i = 0; i < continuous.length; i++) {
         //这是块级作用域，所以不必在内部再保存i的值
-        Object.defineProperty(this, continuous[i], {
+        Object.defineProperty(self, continuous[i], {
             enumerable: true,
             configurable: true,
 
@@ -45,7 +47,7 @@ const grid = new (function SchematicsGrid() {
         });
         const setValue = "set" + continuous[i].substring(0,1).toUpperCase() + continuous[i].substring(1);
         //对标志位的操作必须通过此函数
-        this[setValue] = function(value) {
+        self[setValue] = function(value) {
             value = Number(!!value);
             if(value) {
                 flag |= 1 << i;
@@ -55,7 +57,7 @@ const grid = new (function SchematicsGrid() {
         };
     }
     //总标志位
-    Object.defineProperty(this, "totalMarks", {
+    Object.defineProperty(self, "totalMarks", {
         enumerable: true,
         configurable: true,
 
@@ -95,28 +97,28 @@ const grid = new (function SchematicsGrid() {
         return (ans);
     }
 
-    this.size = function(num) {
+    self.size = function(num) {
         if(num === u) {
             return(size);
         } else {
             size = num;
         }
     };
-    this.rate = function(num) {
+    self.rate = function(num) {
         if(num === u) {
             return(rate);
         } else {
             rate = num;
         }
     };
-    this.zoom = function(num) {
+    self.zoom = function(num) {
         if(num === u) {
             return(zoom);
         } else {
             zoom = num;
         }
     };
-    this.bias = function(x , y) {
+    self.bias = function(x , y) {
         if(x === u && y === u) {
             return([placeX, placeY]);
         } else if(x !== u && y !== u) {
@@ -127,7 +129,7 @@ const grid = new (function SchematicsGrid() {
             placeY = x[1];
         }
     };
-    this.SVG = function(x , y) {
+    self.SVG = function(x , y) {
         if(x === u && y === u) {
             return([SVGX, SVGY]);
         } else if(x !== u && y !== u) {
@@ -138,18 +140,18 @@ const grid = new (function SchematicsGrid() {
             SVGY = x[1];
         }
     };
-    this.mouse = function(event) {
+    self.mouse = function(event) {
         return( mouse(event) );
     };
-    this.createData = function(event) {
+    self.createData = function(event) {
         //偏移量初始化
         mouseBias(event);
         //返回初始数据
         return({
             isMove: false,
-            isNew: this.newMark,
-            zoom: this.zoom(),
-            SVG: this.SVG(),
+            isNew: self.newMark,
+            zoom: self.zoom(),
+            SVG: self.SVG(),
             mouse: mouse,
             mouseBias: mouseBias,
             pageL: new Point([event.pageX, event.pageY]),
@@ -158,9 +160,12 @@ const grid = new (function SchematicsGrid() {
     };
 
     //保留的全局临时变量
-    this.current = [];
+    self.current = [];
     //封闭模块
-    Object.seal(this);
+    Object.seal(self);
+
+    //返回模块对象
+    return(self);
 })();
 //全局jq元素定义
 const sidebar = $("#sidebar-menu"),
@@ -214,7 +219,7 @@ function mousemoveEvent(event) {
         partsNow[0].moveSelf(event);
     } else if (grid.drawLine) {
         //绘制导线
-        partsNow[partsNow.length - 1].setPath(event);
+        partsNow[partsNow.length - 1].setPath(event, "draw");
     } else if(grid.graphSelecte) {
         //波形界面选择框
         grid.current.graph.drawSelect(event, grid.current);
