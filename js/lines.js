@@ -555,7 +555,7 @@ const Search = {
             this.deleteSign();
 
             //相关器件断开与当前导线的连接
-            if(part && mark) {
+            if(part && part.elementDOM) {
                 //器件引脚
                 part.noConnectPoint(mark);
             } else if(part instanceof Array) {
@@ -579,10 +579,8 @@ const Search = {
                 this.current.initTrend = tempPointInfor[tempmark].direction;
             } else {
                 //非器件，则初始方向为旧路径的第一个线段的方向
-                this.current.initTrend = new Point(this.way.slice(0,2));
+                this.current.initTrend = new Point(this.way.slice(0,2)).toUnit();
             }
-
-            partsNow.push(this);
         },
         callback: function(event) {
             //预处理

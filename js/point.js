@@ -136,6 +136,7 @@ Point.prototype = {
                 this[i] = -1;
             }
         }
+        return(this);
     },
     //是否是标准格式
     isStandarNode() {
