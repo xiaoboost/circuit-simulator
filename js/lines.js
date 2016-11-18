@@ -598,8 +598,10 @@ const Search = {
             //鼠标当前状态
             if(pointStatus.form === "line-point" || pointStatus.form === "cross-point" && pointStatus.connect.length === 3) {
                 option.preStatus = "point";
-            } else if(pointStatus.form === "line" || pointStatus.form === "cross-point" && pointStatus.connect.length === 4){
+            } else if(pointStatus.form === "line" || pointStatus.form === "cross-point" && pointStatus.connect.length === 4) {
                 option.preStatus = "line";
+            } if(enforceAlign.label && enforceAlign.onPart) {
+                option.preStatus = "align";
             } else {
                 option.preStatus = "space";
             }
@@ -664,7 +666,8 @@ const Search = {
                         }
                     }
                 }
-                case "point": {
+                case "point":
+                case "align": {
                     //与点对齐模式
                     if(enforceAlign.label) {
                         enforceAlign.label.part.enlargePoint(enforceAlign.label.sub);
