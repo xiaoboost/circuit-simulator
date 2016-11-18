@@ -172,9 +172,15 @@ function SearchRules(nodestart, nodeend, mode) {
     //node是否在某线段内
     function nodeInLine(node, line) {
         if(line[0][0] === line[1][0] && line[0][0] === node[0]) {
-            return(node[1] >= line[0][1] && node[1] <= line[1][1]);
+            return (
+                (node[1] >= line[0][1] && node[1] <= line[1][1]) ||
+                (node[1] <= line[0][1] && node[1] >= line[1][1])
+            );
         } else if(line[0][1] === line[1][1] && line[0][1] === node[1]) {
-            return(node[0] >= line[0][0] && node[0] <= line[1][0]);
+            return(
+                (node[0] >= line[0][0] && node[0] <= line[1][0]) ||
+                (node[0] <= line[0][0] && node[0] >= line[1][0])
+            );
         }
     }
     //是否在终点等效的线段中
@@ -196,21 +202,18 @@ function SearchRules(nodestart, nodeend, mode) {
     }
     //点对点（在导线中）搜索的结束判断
     function checkNode2NodeLine(node) {
+        //是否等于终点
+        if(node.point.isEqual(end)) { return (true); }
         //是否在终点等效线段中
-        const exLine = checkEndEqLine(node);
+        const exLine = checkEndEqLine(node.point);
         if(!exLine) { return false; }
-
         //所在等效线段方向和当前节点的关系
         if((new Point(exLine)).isParallel(node.vector)) {
             //等效线段和当前节点方向平行
             return true;
         } else {
             //等效线段和当前节点方向垂直
-            if(node.expand) {
-                return node.point.isEqual(end);
-            } else {
-                return true;
-            }
+
         }
     }
 
@@ -469,12 +472,12 @@ function AStartSearch(start, end, vector, opt) {
         const nodenow = stackopen.pop(),
             expandCount = check.expandNumber(nodenow.point);
 
-        mapTest.point(nodenow.point, "#2196F3", 20);
+        mapTest && mapTest.point(nodenow.point, "#2196F3", 20);
 
         for (let i = 0; i < expandCount; i++) {
             let nodexpand = newNode(nodenow, rotate[i]);
 
-            mapTest.point(nodexpand.point, "#000000", 20);
+            mapTest && mapTest.point(nodexpand.point, "#000000", 20);
 
             //检查当前扩展点是否满足扩展要求，不满足就跳过
             if (!check.checkPoint(nodexpand, nodenow)) {
@@ -502,7 +505,7 @@ function AStartSearch(start, end, vector, opt) {
         }
     }
 
-    mapTest.clear();
+    mapTest && mapTest.clear();
 
     const tempway = new LineWay();
     let junctionValue = endStatus.junction;
@@ -600,7 +603,7 @@ const Search = {
                 option.preStatus = "point";
             } else if(pointStatus.form === "line" || pointStatus.form === "cross-point" && pointStatus.connect.length === 4) {
                 option.preStatus = "line";
-            } if(enforceAlign.label && enforceAlign.onPart) {
+            } else if(enforceAlign.label && enforceAlign.onPart) {
                 option.preStatus = "align";
             } else {
                 option.preStatus = "space";
@@ -666,15 +669,16 @@ const Search = {
                         }
                     }
                 }
-                case "point":
-                case "align": {
+                case "point": {
                     //与点对齐模式
-                    if(enforceAlign.label) {
-                        enforceAlign.label.part.enlargePoint(enforceAlign.label.sub);
-                        this.way.cloneWay(mouseGrid.get(enforceAlign.label.node));
-                    } else {
-                        this.way.cloneWay(mouseGrid.get(mouseRound));
-                    }
+                    this.way.cloneWay(mouseGrid.get(mouseRound));
+                    this.shrinkPoint(1);
+                    break;
+                }
+                case "align": {
+                    //直接对齐模式
+                    enforceAlign.label.part.enlargePoint(enforceAlign.label.sub);
+                    this.way.cloneWay(mouseGrid.get(enforceAlign.label.node));
                     this.shrinkPoint(1);
                     break;
                 }
@@ -1021,14 +1025,15 @@ function WayMap(pair) {
 }
 WayMap.extend({
     checkKeyError(key) {
-        if((!key instanceof Point) || (!key.isEqual(key.floor()))) {
-            throw("键必须是Point实例，且坐标为20的倍数");
+        if (!Point.isPoint(key) ||
+            !key.isEqual(Point.prototype.floor.call(key))) {
+            throw ("键的格式错误");
         }
     },
     //检查键值的格式
     checkValueError(value) {
         if (!(value instanceof LineWay)) {
-            throw("键值必须是导线路径");
+            throw ("键值必须是LineWay的实例");
         }
     },
     //将键转换为内部hash的键
@@ -1037,9 +1042,6 @@ WayMap.extend({
     },
     //内部hash值转换为键
     hashToKey(hash) {
-        if(parseInt(hash) !== parseFloat(hash)) {
-            throw("内部Hash值必须是整数");
-        }
         const ans = [], temp = hash % 100;
         ans[1] = temp * 20;
         ans[0] = (hash - temp) * 0.2;
@@ -1054,16 +1056,15 @@ WayMap.prototype = {
         return(this[WayMap.keyToHash(key)]);
     },
     //设置键key在myMap中的值为value
-    //mode表示设定模式，默认为default，表示强制覆写；选输入small，表示之前就有的和当前输入的保留节点数量少的
+    //mode表示设定模式，默认为default，表示强制覆写；输入small，表示之前就有的和当前输入的保留节点数量少的
     set(key, value, mode = "default") {
         WayMap.checkKeyError(key);
         WayMap.checkValueError(value);
         const tempHash = WayMap.keyToHash(key);
-        //已经有值了
         if (this[tempHash]) {
-            if (mode === "default")
+            if (mode === "default") {
                 this[tempHash] = value;
-            else if (mode === "small") {
+            } else if (mode === "small") {
                 if (this[tempHash].length > value.length)
                     this[tempHash] = value;
             }
@@ -1094,37 +1095,16 @@ WayMap.prototype = {
             }
         }
     },
-    /*
-    //reduce缩小函数，功能类似Array的reduce函数，key、value为键和键值
-    reduce(callback) {
-        const keys = [], temp = [];
-        for(let i in this) {
-            if(this.hasOwnProperty(i)) {
-                keys.push(WayMap.hashToKey(i));
-                temp.push(i);
-            }
-        }
-        if(!keys.length) return(false);
-        let ans = [keys[0], this[temp[0]]];
-        //由小到大进行迭代
-        for(let i = 1; i < keys.length; i++) {
-            ans = callback(ans, [keys[i], this[temp[i]]]);
-        }
-        return(ans);
-    },
-    */
     //返回节点最多的路径
     nodeMax() {
-        let max = -Infinity, way;
-        for(let i in this) {
-            if(this.hasOwnProperty(i)) {
-                if(this[i].length > max) {
-                    max = this[i].length;
-                    way = this[i];
-                }
+        let max = -Infinity, ans;
+        this.forEach(function(key, way) {
+            if(way.length > max) {
+                max = way.length;
+                ans = way;
             }
-        }
-        return(way);
+        });
+        return(ans);
     }
 };
 

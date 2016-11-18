@@ -641,7 +641,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
             grid.setMoveText(true);
         } else {
             //单击本体
-            clickpart.focusOnly();
+            clickpart.toFocus();
             clickpart.current.extend(grid.createData(event))
                 .extend({ map: schMap });
             grid.setMovePart(true);
@@ -652,7 +652,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
              grid.movePart = true; //移动器件标志位置高
              } else {
              schematic.clearPartsStatus();  //清空一切状态
-             clickpart.focusOnly();
+             clickpart.toFocus();
              grid.movePart = true;  //移动器件标志位置高
              }
              */
@@ -666,7 +666,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
         } else {
             //单个器件的右键
             clearStatus();
-            clickpart.focusOnly();
+            clickpart.toFocus();
             context(event, "single");
         }
     }
@@ -821,7 +821,7 @@ mainPage.on("mousedown","g.line g.draw-open",function(event) {
         const line = partsAll.findPartObj(event.currentTarget.parentNode.id);
         if (!grid.totalMarks) {
             clearStatus();
-            line.focusOnly();
+            line.toFocus();
             line.current = grid.createData(event);
             line.reDraw(event);
             mainPage.attr("class", "mouse-line");
@@ -901,7 +901,7 @@ mainPage.on({
                         .filter((n) => n !== line);
 
                 partsNow.deleteAll();
-                line.focusOnly();
+                line.toFocus();
                 if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
                     lines[0].mergeLine(lines[1]);
                     line.tuneStart(event);
@@ -914,7 +914,7 @@ mainPage.on({
                 let [line,lines] = schMap.findLinesByCrossPoint(mousePosition);
                 if(!line) return(false);  //鼠标所在方向并没有导线
                 partsNow.deleteAll();
-                line.focusOnly();
+                line.toFocus();
                 if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
                     lines[0].mergeLine(lines[1]);
                     lines = undefined;

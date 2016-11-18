@@ -289,14 +289,14 @@ MapHash.prototype = {
     },
     //判断当前点是不是导线
     isLine(node, flag = "origin") {
-        const tempStatus = (flag === "origin") ?
-            this.getSingleValueByOrigin(node) :
-            this.getSingleValueBySmalle(node);
+        const tempStatus = (flag === "origin")
+            ? this.getSingleValueByOrigin(node)
+            : this.getSingleValueBySmalle(node);
 
         return (
             tempStatus &&
             tempStatus.form === "line" ||
-            tempStatus.form === "cross-node"
+            tempStatus.form === "cross-point"
         );
     },
     //在[start、end]范围中沿着vector直行，求最后一点的坐标
@@ -314,10 +314,11 @@ MapHash.prototype = {
             if(this.nodeInConnectBySmall(node, nodeNow)) {
                 node = nodeNow;
             } else {
+                node = nodeNow;
                 break;
             }
         }
-        return (node);
+        return ([node[0] - vector[0], node[1] - vector[1]]);
     }
 };
 

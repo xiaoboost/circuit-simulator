@@ -1244,8 +1244,6 @@ PartClass.prototype = {
                 lines[lines.length - 1].preMoveLine(this.position.add(point[i]));
                 lines[lines.length - 1].current.initTrend = directionhash[trend[i]][0];
             }
-            MapTest.whole(partsAll,schMap);
-            MapTest.clear();
         }
         this.current.isMove = true;
         //器件移动

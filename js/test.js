@@ -80,7 +80,7 @@ const SVG_NS = "http://www.w3.org/2000/svg",
 
 //图纸测试
 function MapTest() {
-    this.test = $("#container-grid > svg").append($("<g>", SVG_NS, {
+    this.test = $("#container-grid > svg > #area-of-parts").append($("<g>", SVG_NS, {
         "id": "maptest"
     }));
 }
