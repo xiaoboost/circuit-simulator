@@ -148,8 +148,6 @@ const grid = (function SchematicsGrid() {
         mouseBias(event);
         //返回初始数据
         return({
-            isMove: false,
-            isNew: self.newMark,
             zoom: self.zoom(),
             SVG: self.SVG(),
             mouse: mouse,
@@ -229,24 +227,10 @@ function mousemoveEvent(event) {
 //清除当前所有状态
 function clearStatus() {
     context();
-    for(let i = 0; i < partsNow.length; i++) {
-        partsNow[i].toStatus("normal");
-        partsNow[i].current = {};
+    while(partsNow.length) {
+        partsNow[0].current = {};
+        partsNow[0].toNormal();
     }
-    partsNow.deleteAll();
-}
-//创建新的器件
-function newPart(type, point) {
-    let devices;
-    if(typeof type === "object" && point !== u) {
-        //创建导线
-        devices = new LineClass(type, point);
-    } else if(typeof type === "string" && point === u) {
-        //创建器件
-        devices = new PartClass(type);
-    }
-    devices.focusOnly();
-    return(devices);
 }
 //右键菜单
 function context(event, status) {
@@ -455,8 +439,11 @@ sidebar.on({
             if (!grid.totalMarks) {
                 clearStatus();
                 grid.setNewMark(true);
-                newPart(event.currentTarget.id).current
-                    .extend(grid.createData(event));
+                partsAll.push(new PartClass(event.currentTarget.id));
+                partsAll.get(-1).toFocus();
+                partsAll.get(-1).current
+                    .extend(grid.createData(event))
+                    .extend({isNew: true});
                 mainPage.on("mousemove", mousemoveEvent);
             }
         }
@@ -642,7 +629,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
         if (event.currentTarget.tagName === "text") {
             //单击器件说明文本
             const text = $(this);
-            clickpart.focusOnly();          //当前器件染色
+            clickpart.toFocus();
             clickpart.current.extend(grid.createData(event))
                 .extend({
                     text: text,
@@ -744,18 +731,17 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
 
         clearStatus();
         if (!clickpart.connect[pointmark]) {
-            clickpart.focusOnly();
-            newPart(clickpart, pointmark).current
-                .extend(grid.createData(event));
-            mainPage.attr("class", "mouse-line");
+            clickpart.toFocus();
+            partsAll.push(new LineClass(clickpart, pointmark));
+            partsAll.get(-1).toFocus();
+            partsAll.get(-1).current.extend(grid.createData(event));
         } else {
             const line = partsAll.findPartObj(clickpart.connect[pointmark]);
-            line.focusOnly();
             line.current = grid.createData(event);
-            line.reDraw(event, clickpart, pointmark);
-            mainPage.attr("class", "mouse-line");
+            LineClass.prototype.startPath.call(line, event, "draw", clickpart, pointmark);
         }
         grid.setDrawLine(true);
+        mainPage.attr("class", "mouse-line");
         mainPage.on("mousemove", mousemoveEvent);
     }
     return(false);
@@ -776,26 +762,31 @@ mainPage.on("mouseup", function(event) {
     //全局解除移动事件
     mainPage.off("mousemove", mousemoveEvent);
     if (event.which === 1) {
-        if (grid.newMark) {                     //新建器件
+        if (grid.newMark) {
+            //新建器件
             grid.setNewMark(false);
-            partsNow[0].putDownSelf(schMap);
+            partsNow[0].putDownSelf();
             partsNow[0].elementDOM.attr("opacity", "1");
-        } else if (grid.movePart) {              //移动器件
+        } else if (grid.movePart) {
+            //移动器件
             grid.setMovePart(false);
-            if (partsNow.length === 1) {        //放下单个器件
-                partsNow[0].putDownSelf(schMap);
+            if (partsNow.length === 1) {
+                partsNow[0].putDownSelf();
             } else {
                 putdownMoreParts(partsNow);
             }
-        } else if (grid.boxDraw) {               //结束绘制多选框
+        } else if (grid.boxDraw) {
+            //绘制多选框
             grid.setBoxDraw(false);
             if (grid.movemouse)
                 schematic.focusRectselect(event);
-        } else if (grid.deformLine) {            //结束导线变形
+        } else if (grid.deformLine) {
+            //导线变形
             grid.setDeformLine(false);
             if(grid.movemouse)
                 partsNow[0].deformSelfEnd();
-        } else if (grid.moveText) {              //结束移动器件属性说明文字
+        } else if (grid.moveText) {
+            //移动器件属性说明文字
             grid.setMoveText(false);
             if (partsNow[0].current.isMove) {
                 partsNow[0].textVisition([
@@ -804,9 +795,10 @@ mainPage.on("mouseup", function(event) {
                 ]);
                 delete partsNow[0].current;
             }
-        } else if (grid.drawLine) {      //结束导线绘制
+        } else if (grid.drawLine) {
+            //导线绘制
             grid.setDrawLine(false);
-            partsNow[partsNow.length - 1].drawLineEnd();
+            partsNow.get(-1).endPath(event, "draw");
         } else {
             clearStatus();
         }
@@ -823,7 +815,7 @@ mainPage.on("mouseup", function(event) {
     //鼠标恢复原样
     mainPage.attr("class", "");
 });
-//导线结点的mousedown操作
+//导线临时结点的mousedown操作
 mainPage.on("mousedown","g.line g.draw-open",function(event) {
     if (event.which === 1) {
         const line = partsAll.findPartObj(event.currentTarget.parentNode.id);

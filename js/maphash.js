@@ -285,7 +285,7 @@ MapHash.prototype = {
         }
 
         const vectors = ans.map((item) => [item[0] - node[0], item[1] - node[1]]);
-        return (ans[mouse.add(-1, node).similar(vectors).sub]);
+        return (ans[node.add(-1, mouse).similar(vectors).sub]);
     },
     //判断当前点是不是导线
     isLine(node, flag = "origin") {
@@ -305,7 +305,7 @@ MapHash.prototype = {
         if(vector[0]) { vector[0] /= Math.abs(vector[0]); }
         if(vector[1]) { vector[1] /= Math.abs(vector[1]); }
         //非法坐标为无限大
-        if(!end) { end = [3000, 3000]; }
+        end = end ? end : [3000, 3000];
 
         let node = [start[0], start[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进

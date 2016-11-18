@@ -384,6 +384,17 @@ Array.prototype.extend({
         }
         return (true);
     },
+    //取出下标为index的元素
+    get (index) {
+        const sub = (index >= 0) ?
+            index : (this.length + index);
+
+        if(index >= 0 || index < this.length) {
+            return(this[sub]);
+        } else {
+            return(false);
+        }
+    }
 });
 Object.extend({
     //深度复制对象

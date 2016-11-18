@@ -1018,7 +1018,7 @@ PartClass.prototype = {
     },
     //引脚被占用，禁止缩放
     connectPoint(pointMark, lineId) {
-        this.connect[pointMark] = lineId;           //器件端点指向导线ID
+        this.connect[pointMark] = lineId;
         this.circle[pointMark].attr("class", "part-point point-close");
     },
     //引脚悬空，允许缩放
@@ -1034,18 +1034,15 @@ PartClass.prototype = {
     enlargePoint(pointMark) {
         $("circle", this.circle[pointMark]).attr("style", "r:5");
     },
-    //选中器件
-    focusOnly() {
-        this.toStatus("focus");
+    //器件高亮
+    toFocus() {
+        this.elementDOM.addClass("focus");
         partsNow.push(this);
     },
-    //改变状态
-    toStatus(status) {
-        if(status === "focus") {
-            this.elementDOM.addClass("focus");
-        } else if(status === "normal") {
-            this.elementDOM.removeClass("focus");
-        }
+    //器件取消高亮
+    toNormal() {
+        this.elementDOM.removeClass("focus");
+        partsNow.deletePart(this);
     },
     //显示器件参数菜单
     viewParameter(zoom, SVG) {
