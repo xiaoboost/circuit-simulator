@@ -328,6 +328,14 @@ function SearchRules(nodestart, nodeend, mode) {
             }
             //绘制模式下，节点估值
             self.calValue = calValue01;
+            break;
+        }
+        case "modified": {
+            //修饰导线，此时终点只可能在导线上以及
+            self.checkPoint = exRuleNode2Space;
+            self.checkEnd = checkEndNode;
+            self.calValue = calValue01;
+            break;
         }
         default: {
 
@@ -440,9 +448,9 @@ function SearchGrid(start, end, mouse, vector, opt) {
         const node = grid[i];
         if(!mouseRound.get(node)) {
             if(start[0] instanceof Point) {
-                mouseRound.set(node, AStartSearch(node, end, vector, opt).checkWayExcess());
+                mouseRound.set(node, AStartSearch(node, end, vector, opt).checkWayExcess(vector));
             } else {
-                mouseRound.set(node, AStartSearch(start, node, vector, opt).checkWayExcess());
+                mouseRound.set(node, AStartSearch(start, node, vector, opt).checkWayExcess(vector));
             }
         }
     }
@@ -690,7 +698,6 @@ const Search = {
                     this.enlargePoint(1);
                 }
             }
-            //绘制导线
             this.wayDrawing();
         },
         end: function() {
@@ -827,36 +834,28 @@ LineWay.prototype = {
         return(this);
     },
     //去除路径冗余
-    checkWayExcess(trend, mode) {
+    checkWayExcess(trend) {
         if (this.length <= 3) {
             return(this);
         }
         //如果优先出线方向和第二个线段方向相同，说明此处需要修正
-        if (trend.isEqual(Math.vectorInit(this[1],this[2]))) {
-            this.insert(
-                AstartSearch(this[0], this[2], trend, mode),
-                0, 3);
+        if (trend.isSameDire([this[1], this[2]])) {
+            this.insert(AStartSearch(this[0], this[2], trend, {process: "modified"}), 0, 3);
             this.checkWayRepeat();
         }
 
         for (let i = 0; i < this.length - 3; i++) {
             const vector = [
-                Math.vectorInit(this[i], this[i + 1]),
-                Math.vectorInit(this[i + 2], this[i + 3])
+                (new Point([this[i], this[i + 1]])).toUnit(),
+                (new Point([this[i + 2], this[i + 3]])).toUnit()
             ];
-            //相隔线段方向不同
-            //去除冗余过程中优先处理导线折返的情况
-            if (!vector[0].isEqual(vector[1])) {
-                //局部修饰，模式2
-                this.insert(
-                    AstartSearch(this[i], this[i + 3], vector[0], mode),
-                    i , 4);
+            if (vector[0].isEqual(vector[1])) {
+                //同向修饰
+                this.insert(AStartSearch(this[i + 1], this[i + 3], vector[0], {process: "modified"}), i + 1, 3);
                 this.checkWayRepeat();
             } else {
-                //局部修饰，模式2
-                this.insert(
-                    AstartSearch(this[i + 1], this[i + 3], vector[0], mode),
-                    i + 1, 3);
+                //反向修饰
+                this.insert(AStartSearch(this[i], this[i + 3], vector[0], {process: "modified"}), i , 4);
                 this.checkWayRepeat();
             }
         }

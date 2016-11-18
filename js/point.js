@@ -129,14 +129,8 @@ Point.prototype = {
     },
     //单位化，符号不变，数值变为1
     toUnit() {
-        for(let i = 0; i < 2; i++) {
-            if(this[i] > 0) {
-                this[i] = 1;
-            } else if(this[i] < 0) {
-                this[i] = -1;
-            }
-        }
-        return(this);
+        const scale = 1 / Math.sqrt(this[0] * this[0] + this[1] * this[1]);
+        return(new Point([this[0] * scale, this[1] * scale]));
     },
     //是否是标准格式
     isStandarNode() {
@@ -154,6 +148,18 @@ Point.prototype = {
     //是否垂直
     isVertical(vector) {
         return(!!(this[0]*vector[0] + this[1]*vector[1]));
+    },
+    //方向相同，0向量输出false
+    isSameDire(vector) {
+        const vc1 = this.toUnit(),
+            vc2 = Point.prototype.toUnit.call(vector);
+        return(vc1.isEqual(vc2));
+    },
+    //方向相反，0向量输出false
+    isOppoDire(vector) {
+        const vc1 = this.toUnit().mul(-1),
+            vc2 = Point.prototype.toUnit.call(vector);
+        return(vc1.isEqual(vc2));
     },
     //与另一点/线段/折线的最短距离
     distance(node) {
