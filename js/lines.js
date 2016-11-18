@@ -659,27 +659,28 @@ const Search = {
                     if(roundSet.length) {
                         //交集不为空
                         //交集中离鼠标最近的点
-                        const closest = mousePosition.closest(mouseGrid.keys()),
+                        const closest = mousePosition.closest(roundSet).value,
                             mouseRoundWay = mouseGrid.get(mouseRound);
 
                         if(!mouseRoundWay.isSame(mouseGrid.get(closest))) {
-                            this.way.clone(mouseRoundWay);
-                            this.way.endToLine(mouseRound, closest);
+                            this.shrinkPoint(1);
+                            this.way.cloneWay(mouseRoundWay);
+                            this.way.endToLine([mouseRound, closest], mousePosition);
                             break;
                         }
                     }
                 }
                 case "point": {
                     //与点对齐模式
-                    this.way.cloneWay(mouseGrid.get(mouseRound));
                     this.shrinkPoint(1);
+                    this.way.cloneWay(mouseGrid.get(mouseRound));
                     break;
                 }
                 case "align": {
                     //直接对齐模式
-                    enforceAlign.label.part.enlargePoint(enforceAlign.label.sub);
-                    this.way.cloneWay(mouseGrid.get(enforceAlign.label.node));
                     this.shrinkPoint(1);
+                    this.way.cloneWay(mouseGrid.get(enforceAlign.label.node));
+                    enforceAlign.label.part.enlargePoint(enforceAlign.label.sub);
                     break;
                 }
                 default: {
@@ -961,8 +962,18 @@ LineWay.prototype = {
         this[this.length - 1] = node;
     },
     //终点指向指定线段
-    endToLine(start, end) {
-
+    endToLine(line, position) {
+        if (line[0][0] === line[1][0]) {
+            //竖着的
+            this[this.length - 1][1] = position[1];
+            this[this.length - 2][1] = position[1];
+            this[this.length - 1][0] = line[0][0];
+        } else {
+            //横着的
+            this[this.length - 1][1] = line[0][1];
+            this[this.length - 1][0] = position[0];
+            this[this.length - 2][0] = position[0];
+        }
     },
     //求路径长度
     len() {
