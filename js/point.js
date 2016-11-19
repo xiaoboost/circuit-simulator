@@ -85,7 +85,6 @@ exPoint.prototype = {
         }
         return(new exPoint(sum));
     },
-    //数组相乘
     mul(label = 1, a) {
         const sum = [],
             sign = (a === undefined) ? 1 : label;
@@ -144,26 +143,6 @@ exPoint.prototype = {
         const vc1 = this.toUnit().mul(-1),
             vc2 = Point.prototype.toUnit.call(vector);
         return(vc1.isEqual(vc2));
-    },
-    //与另一点/线段/折线的最短距离
-    distance(node) {
-        //计算方式特殊，仅仅是为了表征距离的长短，并非实际的距离
-        //对于点和点，是xy轴分别做差的绝对值相加
-        //对于点和线，是和线的垂直距离的绝对值*2，如果点在线外，那么还要加上平行距离
-        let ans = 0;
-        if(Point.isPoint(node)) {
-            //点
-            for(let i = 0; i < 2; i++) {
-                ans += this[i] - node[i];
-            }
-        } else if(Point.isSegment(node)) {
-            //线段
-
-        } else if(Point.isPolyline(node)) {
-            //折线
-
-        }
-        return(ans);
     },
     //四舍五入
     round(n = 20) {

@@ -503,12 +503,12 @@ function AStartSearch(start, end, vector, opt) {
         const nodenow = stackopen.pop(),
             expandCount = check.expandNumber(nodenow.point);
 
-        mapTest && mapTest.point(nodenow.point, "#2196F3", 20);
+        (typeof mapTest !== "undefined" && mapTest.point(nodenow.point, "#2196F3", 20));
 
         for (let i = 0; i < expandCount; i++) {
             const nodexpand = newNode(nodenow, rotate[i]);
 
-            mapTest && mapTest.point(nodexpand.point, "#000000", 20);
+            (typeof mapTest !== "undefined" && mapTest.point(nodexpand.point, "#000000", 20));
 
             //节点性质计算
             nodexpand.junction = nodenow.junction + (!!i);
@@ -538,22 +538,9 @@ function AStartSearch(start, end, vector, opt) {
         }
     }
 
-    mapTest && mapTest.clear();
+    (typeof mapTest !== "undefined" && mapTest.clear());
 
     const tempway = new LineWay();
-    //从当前节点开始回溯路径
-    /*
-    let junctionValue = endStatus.junction;
-    while(endStatus.parent){
-        if(endStatus.junction < junctionValue) {
-            tempway.push(Array.clone(endStatus.point, 20));
-            junctionValue = endStatus.junction;
-        }
-        endStatus = endStatus.parent;
-    }
-    tempway.push(Array.clone(start));
-    tempway.reverse();
-    */
     //起点的junctionParent等于其自身，所以这里检测节点的parent属性
     while(endStatus.parent){
         tempway.push(Point([endStatus.point[0]*20, endStatus.point[1]*20]));

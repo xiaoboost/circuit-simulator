@@ -9,13 +9,7 @@ import { partsAll, partsNow } from "./collection";
 
 //常量定义
 const SVG_NS = "http://www.w3.org/2000/svg",
-    schematic = $("#area-of-parts"),
-    directionhash = [
-        new Matrix([[0,-1]]),
-        new Matrix([[-1,0]]),
-        new Matrix([[0,1]]),
-        new Matrix([[1,0]])
-    ];
+    schematic = $("#area-of-parts");
 
 //原来的sizeRange顺序是上左下右
 //器件原型描述
@@ -607,7 +601,7 @@ function PartClass(data) {
 
     this.id = partsAll.newId(this.id);
     this.rotate = new Matrix([[1, 0], [0, 1]]); //旋转矩阵
-    this.position = Point([1000, 1000]);    //器件位置
+    this.position = Point([1000, 1000]);        //器件位置
     this.current = {};                          //临时数据
     this.connect = new Array(this.pointInfor.length).fill(false);
     this.circle = [];
@@ -1272,17 +1266,15 @@ PartClass.prototype = {
         const transfor = new Matrix(rotateMatrix[sub]);
         const elemtxt = this.elementDOM.getElementsByTagName("text")[0];
         //删除旧器件标记
-        if(!flagBit.totalMarks()) this.deleteSign(this.position);
-        this.rotate = this.rotate.mul(transfor);            //器件旋转
-
+        this.deleteSign(this.position);
+        this.rotate = this.rotate.mul(transfor);
         //重新标记
-        if(!flagBit.totalMarks()) this.markSign();
+        this.markSign();
         //器件显示旋转
-        this.elementDOM.setAttribute("transform",
-            "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
+        this.setPosition();
         if(this.visionNum) {
             //文字初始位置坐标
-            const  txtLocate = transfor.mul([[Number(elemtxt.getAttribute("x")),Number(elemtxt.getAttribute("y"))]],"left")[0];
+            const txtLocate = transfor.mul([[+(elemtxt.getAttribute("x")),+(elemtxt.getAttribute("y"))]],"left")[0];
             //改变器件显示文字
             this.textVisition(txtLocate);
         }
@@ -1360,11 +1352,11 @@ PartClass.prototype = {
         //导线部分
         if(this.current && this.current.lines && this.current.lines.length) {
             this.current.lines.forEach(function (line) {
-                line.way.standardize();     //路径标准化
-                line.setCollectCircle(1);   //连接的节点处理
-                line.render();              //导线重新渲染
-                line.markSign();         //在图中标记导线标志位
-                partsNow.push(line);        //attention：这一步存疑，现在只是为了“清除所有状态”函数进行器件染色
+                line.way.standardize();
+                line.setCollectCircle(1);
+                line.render();
+                line.markSign();
+                partsNow.push(line);        //attention：这一步存疑
             });
         }
 

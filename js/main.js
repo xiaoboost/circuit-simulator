@@ -11,7 +11,7 @@ import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
 import { PartClass, partsinfo } from "./parts";
 import { partsAll, partsNow } from "./collection";
-import "./test";
+//mport "./test";
 
 //全局变量定义
 const doc = document,
@@ -265,10 +265,10 @@ function context(event, status) {
             event.pageX - menuWidth : event.pageX,
         top = (Height - event.pageY < menuHeight) ?
             event.pageY - menuHeight : event.pageY;
-    //放置菜单，透明度为1
+
     contextMenu.css({
-        "left": left,
-        "top": top,
+        "left": left + "px",
+        "top": top + "px",
         "opacity": 1
     });
 }
