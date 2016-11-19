@@ -1356,7 +1356,6 @@ PartClass.prototype = {
                 line.setCollectCircle(1);
                 line.render();
                 line.markSign();
-                partsNow.push(line);        //attention：这一步存疑
             });
         }
 
@@ -1373,8 +1372,7 @@ PartClass.prototype = {
             }
         }
         this.deleteSign();
-        const svg = document.getElementById("area-of-parts");
-        svg.removeChild(this.elementDOM);
+        this.elementDOM.remove();
         partsAll.deletePart(this);
     },
     //按照标准格式输出

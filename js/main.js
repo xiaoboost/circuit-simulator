@@ -170,7 +170,8 @@ const sidebar = $("#sidebar-menu"),
     action = $("#action-container"),
     mainPage = $("#container-grid"),
     parameter = $("#parameter-menu"),
-    graphPage = $("#graph-page");
+    graphPage = $("#graph-page"),
+    context = $("#right-button-menu");
 
 //鼠标移动的入口函数
 function mousemoveEvent(event) {
@@ -226,14 +227,14 @@ function mousemoveEvent(event) {
 }
 //清除当前所有状态
 function clearStatus() {
-    context();
+    contextSet();
     for(let i = 0; i < partsNow.length; i++) {
         partsNow[i].toNormal();
     }
     partsNow.deleteAll();
 }
 //右键菜单
-function context(event, status) {
+function contextSet(event, status) {
     const contextMenu = $("#right-button-menu"),
         menuAttr = {
             "free" : "right-map",
@@ -662,12 +663,12 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
     } else if (event.which === 3) {
         if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
             //多个器件的右键
-            context(event, "more");
+            contextSet(event, "more");
         } else {
             //单个器件的右键
             clearStatus();
             clickpart.toFocus();
-            context(event, "single");
+            contextSet(event, "single");
         }
     }
     //器件的mousedown事件要阻止事件冒泡
@@ -809,7 +810,7 @@ mainPage.on("mouseup", function(event) {
         //如果没有这个标签，说明鼠标没有移动，那么弹出右键菜单
         if(!mainPage.hasClass("mouse-movemap")) {
             clearStatus();
-            context(event, "free");
+            contextSet(event, "free");
         }
     }
     //鼠标恢复原样
@@ -1074,6 +1075,26 @@ graphPage.on("mouseup", function() {
 
         //临时变量清空
         grid.current = [];
+    }
+});
+
+//右键菜单
+//编辑参数
+context.on("click", "#edit-parameters", function(event) {
+    const clickpart = partsNow.get(-1);
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        clickpart.viewParameter(grid.zoom(), grid.SVG());
+    }
+});
+//删除
+context.on("click", "#parts-delete", function(event) {
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        for(let i = 0; i < partsNow.length; i++) {
+            partsNow[i].deleteSelf();
+        }
+        partsNow.deleteAll();
     }
 });
 

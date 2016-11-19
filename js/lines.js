@@ -1495,7 +1495,9 @@ LineClass.prototype = {
             if (this.getConnectStatus(i) === "line") {
                 const lines = this.connect[i].split(" ").map((n) => partsAll.findPartObj(n));
                 lines.forEach((n) => n.deleteConnect(this.id));
-                if (lines.length === 2) lines[0].mergeLine(lines[1]);
+                if (lines.length === 2) {
+                    lines[0].mergeLine(lines[1]);
+                }
             } else if (this.getConnectStatus(i) === "part") {
                 const temp = this.connect[i].split("-"),
                     part = partsAll.findPartObj(temp[0]);
@@ -1506,7 +1508,6 @@ LineClass.prototype = {
         this.way.standardize();
         this.deleteSign();
         this.elementDOM.remove();
-        //attention:还要删除elementDOM数据
         partsAll.deletePart(this);
     },
     //器件移动造成的导线初始化
