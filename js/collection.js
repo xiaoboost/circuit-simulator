@@ -119,7 +119,7 @@ PartsCollection.prototype = {
     //器件堆栈清空
     deleteAll () {
         for(let i = 0; i < this.length; i++) {
-            this[i].toStatus("normal");
+            this[i].toNormal();
             delete this.hash[this[i].id];
             delete this[i];
         }

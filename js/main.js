@@ -227,10 +227,10 @@ function mousemoveEvent(event) {
 //清除当前所有状态
 function clearStatus() {
     context();
-    while(partsNow.length) {
-        partsNow[0].current = {};
-        partsNow[0].toNormal();
+    for(let i = 0; i < partsNow.length; i++) {
+        partsNow[i].toNormal();
     }
+    partsNow.deleteAll();
 }
 //右键菜单
 function context(event, status) {
@@ -877,7 +877,7 @@ mainPage.on({
     "mousedown": function(event) {
         if (event.which === 1 && !grid.totalMarks) {
             const mouseRound = grid.mouse(event).roundToSmall(),
-                style = (mainPage.attr("style") || "").match(/right|left|up|down/),
+                style = (mainPage.attr("class") || "").match(/right|left|up|down/),
                 dire = {
                     "right": [1, 0],
                     "left": [-1, 0],
@@ -895,6 +895,7 @@ mainPage.on({
 
             partsNow.deleteAll();
             line.toFocus();
+            line.current = grid.createData(event);
             if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
                 lines[0].mergeLine(lines[1]);
                 line.startPath(event, "draw");
@@ -903,6 +904,8 @@ mainPage.on({
             }
 
             grid.setDrawLine(true);
+            mainPage.attr("class", "mouse-line");
+            mainPage.on("mousemove", mousemoveEvent);
         }
     }
 },"g.line g.cross-point");

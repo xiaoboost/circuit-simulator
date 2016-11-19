@@ -218,7 +218,10 @@ function SearchRules(nodestart, nodeend, mode) {
         if(node.point.isEqual(end)) { return (true); }
         //是否在终点等效线段中
         const exLine = checkEndEqLine(node.point);
+        //不在等效终线中
         if(!exLine) { return false; }
+        //当前路径是直线
+        if(!node.junction) { return true; }
         //所在等效线段方向和当前节点的关系
         if((new Point(exLine)).isParallel(node.vector)) {
             //等效线段和当前节点方向平行
@@ -612,10 +615,10 @@ const Search = {
                     tempmark = tempArr[1],
                     temppart = partsAll.findPartObj(tempArr[0]),
                     tempPointInfor = temppart.pointRotate();
-                this.current.initTrend = tempPointInfor[tempmark].direction;
+                this.current.initTrend = new Point(tempPointInfor[tempmark].direction);
             } else {
                 //非器件，则初始方向为旧路径的第一个线段的方向
-                this.current.initTrend = new Point(this.way.slice(0,2)).toUnit();
+                this.current.initTrend = (new Point(this.way.slice(0,2))).toUnit();
             }
         },
         callback: function(event) {
@@ -866,7 +869,7 @@ LineWay.prototype = {
             return(this);
         }
         //如果优先出线方向和第二个线段方向相同，说明此处需要修正
-        if (trend.isSameDire([this[1], this[2]])) {
+        if (trend.isSameDire(new Point([this[1], this[2]]))) {
             this.insert(AStartSearch(this[0], this[2], trend, {process: "modified"}), 0, 3);
             this.checkWayRepeat();
         }
@@ -1066,6 +1069,7 @@ LineWay.prototype = {
     }
 };
 Object.setPrototypeOf(LineWay.prototype, Array.prototype);
+LineWay.prototype[Symbol.isConcatSpreadable] = true;
 
 //[点->路径]的键值对类，整个设计与Map数据结构类似
 //只接受Point实例作为键，以及LineWay实例的键值
@@ -1437,7 +1441,7 @@ LineClass.prototype = {
     //器件取消高亮
     toNormal() {
         this.elementDOM.removeClass("focus");
-        partsNow.deletePart(this);
+        this.current = {};
     },
     //position是导线的起点还是终点，起点为0，终点为1，假如两个都不是返回-1
     findConnect(position) {

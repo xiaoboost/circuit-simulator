@@ -1042,7 +1042,7 @@ PartClass.prototype = {
     //器件取消高亮
     toNormal() {
         this.elementDOM.removeClass("focus");
-        partsNow.deletePart(this);
+        this.current = {};
     },
     //显示器件参数菜单
     viewParameter(zoom, SVG) {
