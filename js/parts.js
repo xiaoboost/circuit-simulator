@@ -888,7 +888,7 @@ PartClass.prototype = {
         const nodepoint = {     //引脚节点外形
             circle: {},
             rect: {
-                x: "-9", y: "-9", width: "18", height: "18", "class": "rect-point"
+                x: "-9", y: "-9", width: "18", height: "18", "class": "rect-part-point"
             }
         };
         //创建器件本体

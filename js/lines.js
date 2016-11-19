@@ -1208,7 +1208,7 @@ function LineClass(part, mark) {
             },{
                 tag: "<rect>",
                 attribute: {
-                    "class": "line-point"
+                    "class": "rect-line-point"
                 }
             }
         ]
