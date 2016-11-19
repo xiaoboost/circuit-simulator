@@ -189,12 +189,14 @@ MapHash.prototype = {
         }
 
         //假如起点和终点是交错节点，那么就要加入当前导线的id
-        [way[0], way[way.length - 1]].forEach((n) => {
+        [way[0], way.get(-1)].forEach((n) => {
             const tempStatus = this.getValueByOrigin(n);
             if (tempStatus && tempStatus.form === "cross-point" && tempStatus.id.search(id) === -1) {
-                if (!tempStatus.id) {   //当前ID为空，那么直接赋值
+                if (!tempStatus.id) {
+                    //当前ID为空，那么直接赋值
                     tempStatus.id = id;
-                } else {                //当前ID不为空，那么向原ID后面追加当前ID
+                } else {
+                    //当前ID不为空，那么向原ID后面追加当前ID
                     tempStatus.id += " " + id;
                 }
             }

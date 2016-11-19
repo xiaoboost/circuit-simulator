@@ -3,13 +3,20 @@
 import { $ } from "./jquery";
 import { Point } from "./point";
 import { Matrix } from "./matrix";
+import { LineClass } from "./lines";
 import { schMap } from "./maphash";
 import { styleRule } from "./styleRule";
 import { partsAll, partsNow } from "./collection";
 
 //常量定义
 const SVG_NS = "http://www.w3.org/2000/svg",
-    schematic = $("#area-of-parts");
+    schematic = $("#area-of-parts"),
+    rotateMatrix = [
+        new Matrix([[0, 1], [-1, 0]]),  //顺时针
+        new Matrix([[0, -1], [1, 0]]),  //逆时针
+        new Matrix([[1, 0], [0, -1]]),  //沿X轴镜像
+        new Matrix([[-1, 0], [0, 1]])   //沿Y轴镜像
+    ];
 
 //原来的sizeRange顺序是上左下右
 //器件原型描述
@@ -600,9 +607,9 @@ function PartClass(data) {
     Object.setPrototypeOf(this, originalElectronic[type].readOnly);
 
     this.id = partsAll.newId(this.id);
-    this.rotate = new Matrix([[1, 0], [0, 1]]); //旋转矩阵
-    this.position = Point([1000, 1000]);        //器件位置
-    this.current = {};                          //临时数据
+    this.rotate = new Matrix([[1, 0], [0, 1]]);
+    this.position = Point([1000, 1000]);
+    this.current = {};
     this.connect = new Array(this.pointInfor.length).fill(false);
     this.circle = [];
 
@@ -702,7 +709,7 @@ PartClass.prototype = {
                 .map((n) => n.position);
 
         //格式验证
-        if(position[0] !== parseInt(position[0]) || position[1] !== parseInt(position[1])) {
+        if(!position.isInteger()) {
             throw "设置标记时，器件必须对齐图纸";
         }
         schMap.makePartSign(this.id, position, pointInfor, range);
@@ -714,12 +721,21 @@ PartClass.prototype = {
             pointInfor = this.pointRotate()
                 .map((n) => n.position);
 
+        //格式验证
+        if(!position.isInteger()) {
+            throw "设置标记时，器件必须对齐图纸";
+        }
         schMap.deletePartSign(position, pointInfor, range);
     },
     //器件设置位置
     setPosition() {
+        //器件本体
         this.elementDOM.attr("transform",
             "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
+        //显示文字
+        if(this.visionNum) {
+            this.textVisition($("text.features-text", this.elementDOM).attr(["x", "y"]));
+        }
     },
     //显示器件文字
     textVisition(coordinates) {  //器件说明文字显示
@@ -1263,84 +1279,50 @@ PartClass.prototype = {
     },
     //旋转器件
     rotateSelf(sub) {
-        const transfor = new Matrix(rotateMatrix[sub]);
-        const elemtxt = this.elementDOM.getElementsByTagName("text")[0];
+        //旋转前的器件引脚信息
+        const pointOld = this.pointRotate();
         //删除旧器件标记
         this.deleteSign(this.position);
-        this.rotate = this.rotate.mul(transfor);
-        //重新标记
-        this.markSign();
-        //器件显示旋转
-        this.setPosition();
-        if(this.visionNum) {
-            //文字初始位置坐标
-            const txtLocate = transfor.mul([[+(elemtxt.getAttribute("x")),+(elemtxt.getAttribute("y"))]],"left")[0];
-            //改变器件显示文字
-            this.textVisition(txtLocate);
-        }
-
-        //attention：要是器件上连接了导线，下面就是要导线随着器件的旋转而改变
+        //计算新的旋转矩阵
+        this.rotate = this.rotate.mul(rotateMatrix[sub]);
+        //旋转之后的引脚信息
         const point = this.pointRotate();
-        const lineEnd = [];
-        const lines = this.connect.map((n) => partsAll.findPartObj(n));
-        //检测导线是否需要变化，如果需要变化，那么就删除导线标记
-        for(let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            if (line) {
-                const nodeEnd = [
-                    this.position[0] + point[0][i][0],
-                    this.position[1] + point[0][i][1]
-                ];
-                //当前管脚坐标与原来导线的起点/终点没有变化，那么导线不改变
-                if (((line.connect[0] === this.id + "-" + i) && (nodeEnd.isEqual(line.way[0]))) ||
-                    ((line.connect[1] === this.id + "-" + i) && (nodeEnd.isEqual(line.way[line.way.length - 1])))) {
-                    lineEnd.push(false);
-                    continue;
-                } else {
-                    lineEnd.push(nodeEnd);
-                }
-                //拔起导线
-                line.deleteSign();
+        //导线部分
+        this.current.lines = [];
+        for(let i = 0; i < this.connect.length; i++) {
+            const node = this.position.add(pointOld[i].position),
+                line = partsAll.findPartObj(this.connect[i]);
+
+            //没有连接就跳过
+            if (!line) {
+                continue;
             }
-        }
-        for(let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            //导线存在，且确实需要重新搜索路径
-            if (line && lineEnd[i]) {
-                const nodeEnd = lineEnd[i];
-                //如果导线连接到当前器件的点是起点，那么导线翻转
-                if(line.connect[0] === this.id + "-" + i) line.reverse();
-                //导线的起点初始方向
-                let initTrend;
-                const tempStatus = SchematicMap.getValueByOrigin(line.way[0]);
-                if(tempStatus && tempStatus.form === "part-point") {    //导线出线方向为起点器件的引脚方向
-                    const tempArr = tempStatus.id.split("-");
-                    const temppart = partsAll.findPartObj(tempArr[0]);
-                    const tempmark = parseInt(tempArr[1]);
-                    const tempPointInfor = temppart.pointRotate();
-                    initTrend = directionhash[tempPointInfor[1][tempmark]];
-                } else {
-                    initTrend = Math.vector.init(line.way[0],line.way[1]);
-                }
-                //计算路径
-                line.way.clone(schematic.AstartSearch(
-                    line.way[0], nodeEnd, initTrend, 1
-                ));
-                line.way.checkWayRepeat();
-                line.way.checkWayExcess(initTrend, 2);
-                line.render();
-                line.markSign();
+            //引脚位置没有变化也跳过
+            if (pointOld[i].position.isEqual(point[i].position)) {
+                continue;
             }
+            //器件引脚为起点
+            if(node.isEqual(line.way.get(-1))) {
+                line.reverse();
+            }
+            //设置导线的起点所连接的引脚下标、初始方向、当前路径
+            line.current.pointMark = i;
+            line.current.initTrend = Point(point[i].direction);
+            line.current.wayBackup = Array.clone(line.way);
+
+            line.deleteSign();
+            this.current.lines.push(line);
         }
+        //放下器件
+        this.putDownSelf();
     },
     //移动之后放下器件
     putDownSelf() {
-        if(!this.current.isMove) {
-            return(false);
-        }
         //相关常量
         const positionLast = this.current.lastPosition,
-            round = this.position.round();
+            round = this.position.round(),
+            point = this.pointRotate(),
+            lines = (this.current && this.current.lines) || [];
 
         this.position = round.isEqual(positionLast)
                 ? round
@@ -1350,16 +1332,21 @@ PartClass.prototype = {
         this.markSign();
 
         //导线部分
-        if(this.current && this.current.lines && this.current.lines.length) {
-            this.current.lines.forEach(function (line) {
-                line.way.standardize();
-                line.setCollectCircle(1);
-                line.render();
-                line.markSign();
-            });
+        for(let i = 0; i < lines.length; i++) {
+            const line = lines[i],
+                current = line.current,
+                trend = current.initTrend,
+                end = current.wayBackup.get(-1),
+                start = this.position.add(point[current.pointMark].position);
+
+            line.way.clone(LineClass.AStartSearch(start, end, trend));
+            line.setCollectCircle(1);
+            line.render();
+            line.markSign();
+            line.current = {};
         }
 
-        //清空临时变量
+        //清空器件临时变量
         this.current = {};
     },
     //删除器件

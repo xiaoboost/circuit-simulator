@@ -115,8 +115,8 @@ exPoint.prototype = {
         const scale = 1 / Math.sqrt(this[0] * this[0] + this[1] * this[1]);
         return(new exPoint([this[0] * scale, this[1] * scale]));
     },
-    //是否是标准格式
-    isStandarNode() {
+    //是否是整数点
+    isInteger() {
         if(this.length !== 2 ||
             this[0] !== Math.floor(this[0]) ||
             this[1] !== Math.floor(this[1])) {

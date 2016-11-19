@@ -11,7 +11,7 @@ import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
 import { PartClass, partsinfo } from "./parts";
 import { partsAll, partsNow } from "./collection";
-//mport "./test";
+import "./test";
 
 //全局变量定义
 const doc = document,
@@ -1095,6 +1095,38 @@ context.on("click", "#parts-delete", function(event) {
             partsNow[i].deleteSelf();
         }
         partsNow.deleteAll();
+    }
+});
+//顺时针旋转
+context.on("click", "#clockwise-direction", function(event) {
+    const clickpart = partsNow.get(-1);
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        clickpart.rotateSelf(0);
+    }
+});
+//逆时针旋转
+context.on("click", "#anticlockwise-direction", function(event) {
+    const clickpart = partsNow.get(-1);
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        clickpart.rotateSelf(1);
+    }
+});
+//沿X轴镜像
+context.on("click", "#X-Mirror", function(event) {
+    const clickpart = partsNow.get(-1);
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        clickpart.rotateSelf(2);
+    }
+});
+//沿Y轴镜像
+context.on("click", "#Y-Mirror", function(event) {
+    const clickpart = partsNow.get(-1);
+    if (event.which === 1 && !grid.totalMarks) {
+        contextSet();
+        clickpart.rotateSelf(3);
     }
 });
 
