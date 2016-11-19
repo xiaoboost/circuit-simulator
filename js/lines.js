@@ -116,6 +116,18 @@ function SearchRules(nodestart, nodeend, mode) {
             return(Math.abs(node[0] - end[0]) + Math.abs(node[1] - end[1]));
         }
     }
+    //node所在线段是否和当前节点方向垂直
+    function nodeVerticalLine(node) {
+        const status = schMap.getValueBySmalle(node.point);
+        if (status && status.form === "line" || status.form === "cross-point") {
+            for (let i = 0; i < status.connect.length; i++) {
+                if((new Point([node.point, status.connect[i]])).isParallel(node.vector)) {
+                    return(false);
+                }
+            }
+        }
+        return(true);
+    }
 
     //返回node所在器件
     function excludePart(node) {
@@ -133,7 +145,7 @@ function SearchRules(nodestart, nodeend, mode) {
         const status = schMap.getValueBySmalle(node);
         if(status &&
             status.form === "line" ||
-            status.form === "cross-node") {
+            status.form === "cross-point") {
             const ans = [];
             for(let i = 0; i < 2; i++) {
                 const temp = [[1,0],[-1,0],[0,-1],[0,1]],
@@ -213,13 +225,15 @@ function SearchRules(nodestart, nodeend, mode) {
             return true;
         } else {
             //等效线段和当前节点方向垂直
-
+            const junction = node.junctionParent.vector,
+                node2End = new Point([node.point, end]);
+            return(node2End.isOppoDire(junction));
         }
     }
 
     //节点扩展规则
     //点到空
-    function exRuleNode2Space(node, last) {
+    function exRuleNode2Space(node) {
         const status = schMap.getValueBySmalle(node.point);
         if (!status) {
             //空节点
@@ -231,14 +245,14 @@ function SearchRules(nodestart, nodeend, mode) {
             //当前节点在引脚时在终点周围距离为1的地方都可行
             return(nodeDistance(node.point, end) < 2);
         } else if (status.form === "line" || status.form === "cross-point") {
-            //当前节点在导线上，last不可以在相同的导线上
-            return(!schMap.nodeInConnectBySmall(node.point, last.point));
+            //当前节点方向必须和所在导线方向垂直
+            return(nodeVerticalLine(node));
         } else {
             return (true);
         }
     }
     //直接对齐
-    function exRuleNodeAlign(node, last) {
+    function exRuleNodeAlign(node) {
         const status = schMap.getValueBySmalle(node.point);
         if (!status) {
             return true;
@@ -248,14 +262,14 @@ function SearchRules(nodestart, nodeend, mode) {
             //直接对齐时，器件引脚只能等于终点
             return(node.point.isEqual(end));
         } else if (status.form === "line" || status.form === "cross-point") {
-            return(!schMap.nodeInConnectBySmall(node.point, last.point));
+            return(nodeVerticalLine(node));
         } else {
             return (true);
         }
 
     }
     //排除需要排除的部分
-    function exRuleExclude(node, last) {
+    function exRuleExclude(node) {
         const status = schMap.getValueBySmalle(node.point);
         if (!status) {
             return(true);
@@ -265,7 +279,7 @@ function SearchRules(nodestart, nodeend, mode) {
             return(status.id.split("-")[0] === excludeParts ||
                 nodeDistance(node.point, end) < 2);
         } else if (status.form === "line" || status.form === "cross-point") {
-            return(!schMap.nodeInConnectBySmall(node.point, last.point));
+            return(nodeVerticalLine(node));
         } else {
             return (true);
         }
@@ -370,9 +384,10 @@ function SearchStack(nodestart, vector, map) {
         junction: 0,
         value: 0,
         parent: false,
-        straight: true,
-        junctionNode: false,
+        straight: true
     };
+    //起点的junctionParent属性的等于其自身
+    stack[0][0].junctionParent = stack[0][0];
     map.setValue(start, stack[0][0]);
 
     self.openSize = 1;
@@ -483,29 +498,31 @@ function AStartSearch(start, end, vector, opt) {
         mapTest && mapTest.point(nodenow.point, "#2196F3", 20);
 
         for (let i = 0; i < expandCount; i++) {
-            let nodexpand = newNode(nodenow, rotate[i]);
+            const nodexpand = newNode(nodenow, rotate[i]);
 
             mapTest && mapTest.point(nodexpand.point, "#000000", 20);
 
-            //检查当前扩展点是否满足扩展要求，不满足就跳过
-            if (!check.checkPoint(nodexpand, nodenow)) {
-                //直行时遇到障碍物
-                nodenow.straight = (!i) ? false : nodenow.straight;
-                continue;
-            }
-
+            //节点性质计算
             nodexpand.junction = nodenow.junction + (!!i);
             nodexpand.parent = nodenow;
             nodexpand.straight = true;
-            nodexpand.junctionNode = i ? nodenow : nodenow.junctionNode;
+            nodexpand.junctionParent = i ? nodenow : nodenow.junctionParent;
             nodexpand.value = check.calValue(nodexpand);
-            stackopen.push(nodexpand);
 
-            //检查当前扩展点是否是终点
+            //当前扩展点是否是终点
             if (check.checkEnd(nodexpand)){
                 endStatus = nodexpand;
                 endFlag = true;
                 break;
+            }
+
+            //当前扩展点是否满足扩展要求
+            if (check.checkPoint(nodexpand)) {
+                //节点加入搜索栈
+                stackopen.push(nodexpand);
+            } else {
+                //直行时遇到障碍物
+                nodenow.straight = (!i) ? false : nodenow.straight;
             }
         }
         if (Object.isEmpty(stackopen)) {
@@ -516,9 +533,9 @@ function AStartSearch(start, end, vector, opt) {
     mapTest && mapTest.clear();
 
     const tempway = new LineWay();
-    let junctionValue = endStatus.junction;
-    tempway.push(Array.clone(endStatus.point, 20));
     //从当前节点开始回溯路径
+    /*
+    let junctionValue = endStatus.junction;
     while(endStatus.parent){
         if(endStatus.junction < junctionValue) {
             tempway.push(Array.clone(endStatus.point, 20));
@@ -527,6 +544,14 @@ function AStartSearch(start, end, vector, opt) {
         endStatus = endStatus.parent;
     }
     tempway.push(Array.clone(start));
+    tempway.reverse();
+    */
+    //起点的junctionParent等于其自身，所以这里检测节点的parent属性
+    while(endStatus.parent){
+        tempway.push(new Point([endStatus.point[0]*20, endStatus.point[1]*20]));
+        endStatus = endStatus.junctionParent;
+    }
+    tempway.push(new Point(start));
     tempway.reverse();
     return(tempway);
 }
@@ -671,8 +696,8 @@ const Search = {
                         //交集中离鼠标最近的点
                         const closest = mousePosition.closest(roundSet).value,
                             mouseRoundWay = mouseGrid.get(mouseRound);
-
-                        if(!mouseRoundWay.isSame(mouseGrid.get(closest))) {
+                        //导线最后两个节点不同
+                        if(mouseRoundWay.isSimilar(mouseGrid.get(closest))) {
                             this.shrinkPoint(1);
                             this.way.clone(mouseRoundWay);
                             this.way.endToLine([mouseRound, closest], mousePosition);
@@ -851,25 +876,35 @@ LineWay.prototype = {
                 (new Point([this[i], this[i + 1]])).toUnit(),
                 (new Point([this[i + 2], this[i + 3]])).toUnit()
             ];
+            let tempWay, tempVector;
             if (vector[0].isEqual(vector[1])) {
                 //同向修饰
-                this.insert(AStartSearch(this[i + 1], this[i + 3], vector[0], {process: "modified"}), i + 1, 3);
-                this.checkWayRepeat();
-            } else {
-                //反向修饰
-                this.insert(AStartSearch(this[i], this[i + 3], vector[0], {process: "modified"}), i , 4);
-                this.checkWayRepeat();
+                tempWay = AStartSearch(this[i + 1], this[i + 3], vector[0], {process: "modified"});
+                tempVector = new Point([tempWay[0], tempWay[1]]);
+                if(tempWay.length < 4 && tempVector.isSameDire(vector[0])) {
+                    this.insert(tempWay, i + 1, 3);
+                    this.checkWayRepeat();
+                    i--;
+                }
+            } else if(this.length > 4){
+                //导线必须大于4个节点才有必要进行反向修饰
+                tempWay = AStartSearch(this[i], this[i + 3], vector[0], {process: "modified"});
+                if(tempWay.length < 4) {
+                    this.insert(tempWay, i, 4);
+                    this.checkWayRepeat();
+                    i--;
+                }
             }
         }
         this.checkWayRepeat();
         return(this);
     },
-    //给路径添加插入一个数组方法
     //向this数组的sub下标中插入tempArray数组，并且删除sub下标开始长度为len的数据
-    insert(tempArray,sub,len = 0) {
+    insert(tempArray, sub, len = 0) {
         this.splice(sub, len);
-        for (let i = 0; i < tempArray.length; i++)
+        for (let i = 0; i < tempArray.length; i++) {
             this.splice(sub + i, 0, tempArray[i]);
+        }
     },
     //复制路径，将会抛弃原路径数据的全部引用，也不会引用被复制的数据
     clone(tempway) {
@@ -880,13 +915,28 @@ LineWay.prototype = {
         this.length = tempway.length;
     },
     //tempWay和this是否完全相等
-    isSame(tempWay) {
+    isSame(tempway) {
         for(let i = 0; i < this.length; i++) {
-            if(!(this[i].isEqual(tempWay[i]))) {
+            if(!(this[i].isEqual(tempway[i]))) {
                 return(false);
             }
         }
         return(true);
+    },
+    //路径有且仅有最后两个节点不同，其余全部相同；完全相同仍然会输出false
+    isSimilar(tempway) {
+        if(this.length !== tempway.length) {
+            return(false);
+        }
+        for(let i = 0; i < this.length - 2; i++) {
+            if(!(this[i].isEqual(tempway[i]))) {
+                return(false);
+            }
+        }
+        return(
+            (!this.get(-1).isEqual(tempway.get(-1))) &&
+            (!this.get(-2).isEqual(tempway.get(-2)))
+        );
     },
     //路径标准化
     standardize() {
@@ -1259,12 +1309,13 @@ LineClass.prototype = {
             throw("路径数据错误");
         }
         let temp = "M" + this.way[0][0] + "," + this.way[0][1];
-        for(let i = 1; i < this.way.length; i++)
+        for(let i = 1; i < this.way.length; i++) {
             temp += "L" + this.way[i][0] + "," + this.way[i][1];
+        }
 
         $("path", this.elementDOM).attr("d", temp);
         this.moveCircle(0, this.way[0]);
-        this.moveCircle(1, this.way[this.way.length - 1]);
+        this.moveCircle(1, this.way.get(-1));
     },
     //导线图形渲染
     render() {
