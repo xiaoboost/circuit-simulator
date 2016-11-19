@@ -726,8 +726,8 @@ mainPage.on({
 //左键器件引脚mousedown，绘制导线开始
 mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
     if (event.which === 1 && !grid.totalMarks){
-        const clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id),  //寻找当前器件的对象
-            pointmark = parseInt(event.currentTarget.id.split("-")[1]);             //当前器件的connect端口号
+        const clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id),
+            pointmark = parseInt(event.currentTarget.id.split("-")[1]);
 
         clearStatus();
         if (!clickpart.connect[pointmark]) {
@@ -738,7 +738,7 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
         } else {
             const line = partsAll.findPartObj(clickpart.connect[pointmark]);
             line.current = grid.createData(event);
-            LineClass.prototype.startPath.call(line, event, "draw", clickpart, pointmark);
+            line.startPath(event, "draw", clickpart, pointmark);
         }
         grid.setDrawLine(true);
         mainPage.attr("class", "mouse-line");
@@ -875,55 +875,34 @@ mainPage.on({
         return(false);
     },
     "mousedown": function(event) {
-        if (event.which === 1) {
-            if (!grid.totalMarks) {
-                const director = /right|left|up|down/,
-                    SVG = grid.SVG(),
-                    mouseRound = [
-                        Math.round((event.pageX - SVG[0]) / grid.zoom() * 0.05),
-                        Math.round((event.pageY - SVG[1]) / grid.zoom() * 0.05)
-                    ],
-                    style = (mainPage.attr("style") || "").match(director),
-                    round = {
-                        "right": [1, 0],
-                        "left": [-1, 0],
-                        "up":   [0, -1],
-                        "down":  [0, 1]
-                    }[style],
-                    point = mouseRound.add(round);
+        if (event.which === 1 && !grid.totalMarks) {
+            const mouseRound = grid.mouse(event).roundToSmall(),
+                style = (mainPage.attr("style") || "").match(/right|left|up|down/),
+                dire = {
+                    "right": [1, 0],
+                    "left": [-1, 0],
+                    "up":   [0, -1],
+                    "down":  [0, 1]
+                }[style],
+                point = mouseRound.add(dire);
 
-                if(!style) {
-                    return false;
-                }
-                const line = partsAll.findPartObj(schMap.getSingleValueBySmalle(point).id),
-                    lines = schMap.getSingleValueBySmalle(mouseRound).id.split(" ")
-                        .map((n) => partsAll.findPartObj(n))
-                        .filter((n) => n !== line);
+            if(!style) { return false; }
 
-                partsNow.deleteAll();
-                line.toFocus();
-                if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
-                    lines[0].mergeLine(lines[1]);
-                    line.tuneStart(event);
-                } else if(lines.length === 3) {
-                    line.tuneStart(event, lines);
-                }
+            const line = partsAll.findPartObj(schMap.getSingleValueBySmalle(point).id),
+                lines = schMap.getSingleValueBySmalle(mouseRound).id.split(" ")
+                    .map((n) => partsAll.findPartObj(n))
+                    .filter((n) => n !== line);
 
-                grid.setDrawLine(true);
-                /*
-                let [line,lines] = schMap.findLinesByCrossPoint(mousePosition);
-                if(!line) return(false);  //鼠标所在方向并没有导线
-                partsNow.deleteAll();
-                line.toFocus();
-                if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
-                    lines[0].mergeLine(lines[1]);
-                    lines = undefined;
-                }
-                line.tuneStart(event, lines);
-                $("#container-grid").css("cursor", "url(../img/mouse/crosshair_line.cur), crosshair");
-                flagBit.drawline = true;
-                */
+            partsNow.deleteAll();
+            line.toFocus();
+            if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
+                lines[0].mergeLine(lines[1]);
+                line.startPath(event, "draw");
+            } else if(lines.length === 3) {
+                line.startPath(event, "draw", lines);
             }
+
+            grid.setDrawLine(true);
         }
     }
 },"g.line g.cross-point");
