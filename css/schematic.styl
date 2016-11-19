@@ -83,9 +83,9 @@ body div
   g#area-of-parts
     position:absolute
   g#mouse-control
-    z-index:2
+    z-index 2
   g#area-of-parts
-    z-index:3
+    z-index 3
 
 //多选框
 #container-grid svg
@@ -93,10 +93,10 @@ body div
     stroke #166CCF
     stroke-width 1.2
     fill #BBDEFB
-    opacity:0.3
+    opacity 0.3
   path#rect-elect.delet
-    opacity:0
-    transition:opacity 80ms linear
+    opacity 0
+    transition opacity 80ms linear
 
 
 //器件引脚缩放参数
@@ -188,9 +188,9 @@ time-point-zoom = 200ms
 //导线属性
 #area-of-parts g.line
   g.line-point circle
-    cx:0
-    cy:0
-    transition:r time-point-zoom bezier-point-zoom, stroke-dasharray time-point-zoom bezier-point-zoom
+    cx 0
+    cy 0
+    transition r time-point-zoom bezier-point-zoom, stroke-dasharray time-point-zoom bezier-point-zoom
   g.draw-open circle
     r 4
     stroke-dasharray 1.5,4

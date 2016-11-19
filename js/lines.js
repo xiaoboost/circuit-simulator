@@ -313,35 +313,40 @@ function SearchRules(nodestart, nodeend, mode) {
         case "draw": {
             //根据终点属性来分类
             const status = schMap.getValueBySmalle(end);
-            if (!status) {
-                //空点
-                self.checkPoint = exRuleNode2Space;
-                self.checkEnd = checkEndNode;
-            } else if(status.form === "line") {
-                //导线
-                endLine = excludeLine(end);
-                self.checkPoint = exRuleNodeAlign;
-                self.checkEnd = checkNode2NodeLine;
-            } else if(status.form === "cross-point") {
-                //交错节点
-                endLine = excludeLine(end);
-                if(status.connect.length === 3) {
+            switch(status.form) {
+                case "line":
+                    //导线
+                    endLine = excludeLine(end);
                     self.checkPoint = exRuleNodeAlign;
                     self.checkEnd = checkNode2NodeLine;
-                } else if(status.connect.length === 4) {
-                    //交错节点连接了4个导线时，此终点是不可能达到的，此时的规则还没考虑好，先暂定和3个导线时一样
+                    break;
+                case  "cross-point":
+                    //交错节点
+                    endLine = excludeLine(end);
+                    if(status.connect.length === 3) {
+                        self.checkPoint = exRuleNodeAlign;
+                        self.checkEnd = checkNode2NodeLine;
+                    } else if(status.connect.length === 4) {
+                        //交错节点连接了4个导线时，此终点是不可能达到的，此时的规则还没考虑好，先暂定和3个导线时一样
+                        self.checkPoint = exRuleNodeAlign;
+                        self.checkEnd = checkNode2NodeLine;
+                    }
+                    break;
+                case "part-point":
+                case "line-point":
+                    //器件引脚、导线临时节点
                     self.checkPoint = exRuleNodeAlign;
-                    self.checkEnd = checkNode2NodeLine;
-                }
-            } else if(status.form === "part-point") {
-                //器件引脚
-                self.checkPoint = exRuleNodeAlign;
-                self.checkEnd = checkEndNode;
-            } else if(status.form === "part") {
-                //器件本体
-                excludeParts = excludePart(end);
-                self.checkPoint = exRuleNode2Space;
-                self.checkEnd = exRuleExclude;
+                    self.checkEnd = checkEndNode;
+                    break;
+                case "part":
+                    //器件本体
+                    excludeParts = excludePart(end);
+                    self.checkPoint = exRuleNode2Space;
+                    self.checkEnd = exRuleExclude;
+                    break;
+                default:
+                    self.checkPoint = exRuleNode2Space;
+                    self.checkEnd = checkEndNode;
             }
             //绘制模式下，节点估值
             self.calValue = calValue01;
@@ -1452,42 +1457,43 @@ LineClass.prototype = {
         } else return(-1);
     },
     //拆分导线，splited为被拆分导线，this为分割导线的导线，sub表示交错节点是this路径的起点/终点
-    splitLine(splited,sub) {
-        const NodeCross = Array.clone(this.way[sub * (this.way.length - 1)]),      //交错节点
-            devices = new LineClass(NodeCross);                             //新建导线
+    splitLine(splited, sub) {
+        const NodeCross = Array.clone(this.way[sub * (this.way.length - 1)]),
+            devices = new LineClass(NodeCross);
 
         //导线连接表
-        splited.replaceConnect(1,devices.id);               //替换连接器件的ID
+        splited.replaceConnect(1,devices.id);              //替换连接器件的ID
         devices.setConnect(1,splited.connect[1]);          //原导线起点不变，新导线的终点等于原导线的终点
         devices.setConnect(0,splited.id + " " + this.id);  //新导线起点由旧导线ID和分割旧导线的导线ID组成
         this.setConnect(1,splited.id + " " + devices.id);  //分割旧导线的导线终点由新旧导线ID组成
         splited.setConnect(1,devices.id + " " + this.id);  //旧导线终点由新导线ID和分割旧导线的导线ID组成
 
         //拆分路径
-        let Cross_sub = 0;
+        let crossSub = 0;
         for (let i = 0; i < splited.way.length-1; i++) { //寻找交错点所在线段
             if((NodeCross[0] === splited.way[i][0]) && (NodeCross[0] === splited.way[i+1][0])) {
                 if(((NodeCross[1] <= splited.way[i][1]) && (NodeCross[1] >= splited.way[i+1][1])) ||
                     ((NodeCross[1] >= splited.way[i][1]) && (NodeCross[1] <= splited.way[i+1][1])))
-                { Cross_sub = i; break; }
-
+                { crossSub = i; break; }
             }else if ((NodeCross[1] === splited.way[i][1]) && (NodeCross[1] === splited.way[i+1][1])) {
                 if(((NodeCross[0] <= splited.way[i][0]) && (NodeCross[0] >= splited.way[i+1][0])) ||
                     ((NodeCross[0] >= splited.way[i][0]) && (NodeCross[0] <= splited.way[i+1][0])))
-                { Cross_sub = i; break; }
+                { crossSub = i; break; }
             }
         }
-        devices.way.clone(splited.way.slice(Cross_sub + 1));devices.way.unshift(NodeCross);
-        splited.way.splice(Cross_sub+1,splited.way.length-Cross_sub-1);splited.way.push(NodeCross);
+        devices.way.clone(splited.way.slice(crossSub + 1));
+        devices.way.unshift(NodeCross);
+        splited.way.splice(crossSub + 1,splited.way.length - crossSub - 1);
+        splited.way.push(NodeCross);
 
         //将新建的导线加入图纸中
-        this.elementDOM.preappendTo($("#area-of-parts"));
+        this.elementDOM.preappendTo(actionArea);
         splited.render();
         splited.markSign();
-        splited.focusOnly();
+        splited.toFocus();
         devices.render();
         devices.markSign();
-        devices.focusOnly();
+        devices.toFocus();
 
         //改变图纸标记
         schMap.setValueByOrigin(NodeCross, {

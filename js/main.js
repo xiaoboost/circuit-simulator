@@ -817,18 +817,17 @@ mainPage.on("mouseup", function(event) {
 });
 //导线临时结点的mousedown操作
 mainPage.on("mousedown","g.line g.draw-open",function(event) {
-    if (event.which === 1) {
+    if (event.which === 1 && !grid.totalMarks) {
         const line = partsAll.findPartObj(event.currentTarget.parentNode.id);
-        if (!grid.totalMarks) {
-            clearStatus();
-            line.toFocus();
-            line.current = grid.createData(event);
-            line.reDraw(event);
-            mainPage.attr("class", "mouse-line");
-            grid.setDrawLine(true);
-        }
+
+        clearStatus();
+        line.toFocus();
+        line.current = grid.createData(event);
+        line.startPath(event, "draw");
+        grid.setDrawLine(true);
+        mainPage.attr("class", "mouse-line");
+        mainPage.on("mousemove", mousemoveEvent);
     }
-    mainPage.on("mousemove", mousemoveEvent);
     return(false);
 });
 //交错节点事件
