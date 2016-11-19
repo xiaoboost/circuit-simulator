@@ -969,7 +969,7 @@ PartClass.prototype = {
         //检查器件管脚
         for (let i = 0; i < point.length; i++) {
             const node = position.add(point[i]);
-            if (schMap.getSingleValueBySmalle(node)) {
+            if (schMap.getValueBySmalle(node)) {
                 return (true);
             }
             coverHash[node.join(',')] = true;
@@ -977,7 +977,7 @@ PartClass.prototype = {
         //扫描内边距
         for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
             for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
-                const status = schMap.getSingleValueBySmalle([i,j]);
+                const status = schMap.getValueBySmalle([i,j]);
                 //内边距中存在任何元素都表示被占用
                 if(status) {
                     return(true);
@@ -991,7 +991,7 @@ PartClass.prototype = {
             for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
                 //跳过内边距
                 if(coverHash[i + "," + j]) { continue; }
-                const status = schMap.getSingleValueBySmalle([i,j]);
+                const status = schMap.getValueBySmalle([i,j]);
                 if(status && status.form === 'part') {
                     const part = partsAll.findPartObj(status.id),
                         partSize = merge(part),
@@ -1317,10 +1317,10 @@ PartClass.prototype = {
             if (line && lineEnd[i]) {
                 const nodeEnd = lineEnd[i];
                 //如果导线连接到当前器件的点是起点，那么导线翻转
-                if(line.connect[0] === this.id + "-" + i) line.reversal();
+                if(line.connect[0] === this.id + "-" + i) line.reverse();
                 //导线的起点初始方向
                 let initTrend;
-                const tempStatus = SchematicMap.getSingleValueByOrigin(line.way[0]);
+                const tempStatus = SchematicMap.getValueByOrigin(line.way[0]);
                 if(tempStatus && tempStatus.form === "part-point") {    //导线出线方向为起点器件的引脚方向
                     const tempArr = tempStatus.id.split("-");
                     const temppart = partsAll.findPartObj(tempArr[0]);
@@ -1331,7 +1331,7 @@ PartClass.prototype = {
                     initTrend = Math.vector.init(line.way[0],line.way[1]);
                 }
                 //计算路径
-                line.way.cloneWay(schematic.AstartSearch(
+                line.way.clone(schematic.AstartSearch(
                     line.way[0], nodeEnd, initTrend, 1
                 ));
                 line.way.checkWayRepeat();

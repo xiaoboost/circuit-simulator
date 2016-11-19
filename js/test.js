@@ -32,7 +32,7 @@ function loadData(data) {
             partsNow.push(devices);
             for(let j = 0; j < 2; j++) {
                 const node = devices.way[j * (devices.way.length - 1)];
-                const nodeStatus = schMap.getSingleValueByOrigin(node);
+                const nodeStatus = schMap.getValueByOrigin(node);
                 if(nodeStatus.form === "part-point") {
                     //器件引脚
                     const connectpart = partsAll.findPartObj(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
