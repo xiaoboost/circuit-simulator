@@ -121,7 +121,7 @@ function SearchRules(nodestart, nodeend, mode) {
         const status = schMap.getValueBySmalle(node.point);
         if (status && status.form === "line" || status.form === "cross-point") {
             for (let i = 0; i < status.connect.length; i++) {
-                if((new Point([node.point, status.connect[i]])).isParallel(node.vector)) {
+                if((Point([node.point, status.connect[i]])).isParallel(node.vector)) {
                     return(false);
                 }
             }
@@ -223,13 +223,13 @@ function SearchRules(nodestart, nodeend, mode) {
         //当前路径是直线
         if(!node.junction) { return true; }
         //所在等效线段方向和当前节点的关系
-        if((new Point(exLine)).isParallel(node.vector)) {
+        if((Point(exLine)).isParallel(node.vector)) {
             //等效线段和当前节点方向平行
             return true;
         } else {
             //等效线段和当前节点方向垂直
             const junction = node.junctionParent.vector,
-                node2End = new Point([node.point, end]);
+                node2End = Point([node.point, end]);
             return(node2End.isOppoDire(junction));
         }
     }
@@ -451,7 +451,7 @@ function SearchStack(nodestart, vector, map) {
 //方格路径搜索
 function SearchGrid(start, end, mouse, vector, opt) {
     const mouseRound = new WayMap(),
-        grid = (start[0] instanceof Point) ? start : end;
+        grid = Point.isPoint(start[0]) ? start : end;
 
     //第一次检测上次搜索的是否有重复
     mouse.forEach((node, way) => {
@@ -465,7 +465,7 @@ function SearchGrid(start, end, mouse, vector, opt) {
     for(let i = 0; i < grid.length; i++) {
         const node = grid[i];
         if(!mouseRound.get(node)) {
-            if(start[0] instanceof Point) {
+            if(Point.isPoint(start[0])) {
                 mouseRound.set(node, AStartSearch(node, end, vector, opt).checkWayExcess(vector));
             } else {
                 mouseRound.set(node, AStartSearch(start, node, vector, opt).checkWayExcess(vector));
@@ -551,10 +551,10 @@ function AStartSearch(start, end, vector, opt) {
     */
     //起点的junctionParent等于其自身，所以这里检测节点的parent属性
     while(endStatus.parent){
-        tempway.push(new Point([endStatus.point[0]*20, endStatus.point[1]*20]));
+        tempway.push(Point([endStatus.point[0]*20, endStatus.point[1]*20]));
         endStatus = endStatus.junctionParent;
     }
-    tempway.push(new Point(start));
+    tempway.push(Point(start));
     tempway.reverse();
     return(tempway);
 }
@@ -579,11 +579,11 @@ const Search = {
             }
             //临时变量
             this.current.extend({
-                startNode: new Point(this.way[0]),
+                startNode: Point(this.way[0]),
                 mouseGrid: new WayMap(),
                 enforceAlign: {},
                 oldStatus: {
-                    oldNode: new Point(mouseRound),
+                    oldNode: Point(mouseRound),
                     oldWay: new LineWay(this.way)
                 }
             });
@@ -615,10 +615,10 @@ const Search = {
                     tempmark = tempArr[1],
                     temppart = partsAll.findPartObj(tempArr[0]),
                     tempPointInfor = temppart.pointRotate();
-                this.current.initTrend = new Point(tempPointInfor[tempmark].direction);
+                this.current.initTrend = Point(tempPointInfor[tempmark].direction);
             } else {
                 //非器件，则初始方向为旧路径的第一个线段的方向
-                this.current.initTrend = (new Point(this.way.slice(0,2))).toUnit();
+                this.current.initTrend = (Point(this.way.slice(0,2))).toUnit();
             }
         },
         callback: function(event) {
@@ -739,7 +739,7 @@ const Search = {
 
             //以mouseRound为中心寻找可行的点，并重新搜索路径
             function newLineWay() {
-                const end = new Point(schMap.nodeRound(mouseRound, mouse,
+                const end = Point(schMap.nodeRound(mouseRound, mouse,
                     schMap.getValueByOrigin.bind(schMap)
                 ));
                 return(
@@ -829,14 +829,14 @@ function LineWay(way) {
     this.length = 0;
     if (way instanceof Array) {
         for (let i = 0; i < way.length; i++) {
-            this.push(new Point(way[i]));
+            this.push(Point(way[i]));
         }
     }
 }
 LineWay.prototype = {
     constructor: LineWay,
     push(node) {
-        this[this.length++] = new Point(node);
+        this[this.length++] = Point(node);
         return(this.length);
     },
     unshift(...args) {
@@ -845,7 +845,7 @@ LineWay.prototype = {
             this[i + len] = this[i];
         }
         for(let i = 0; i < len; i++) {
-            this[i] = new Point(args[i]);
+            this[i] = Point(args[i]);
         }
         this.length = this.length + len;
         return(this.length);
@@ -869,21 +869,21 @@ LineWay.prototype = {
             return(this);
         }
         //如果优先出线方向和第二个线段方向相同，说明此处需要修正
-        if (trend.isSameDire(new Point([this[1], this[2]]))) {
+        if (trend.isSameDire(Point([this[1], this[2]]))) {
             this.insert(AStartSearch(this[0], this[2], trend, {process: "modified"}), 0, 3);
             this.checkWayRepeat();
         }
 
         for (let i = 0; i < this.length - 3; i++) {
             const vector = [
-                (new Point([this[i], this[i + 1]])).toUnit(),
-                (new Point([this[i + 2], this[i + 3]])).toUnit()
+                (Point([this[i], this[i + 1]])).toUnit(),
+                (Point([this[i + 2], this[i + 3]])).toUnit()
             ];
             let tempWay, tempVector;
             if (vector[0].isEqual(vector[1])) {
                 //同向修饰
                 tempWay = AStartSearch(this[i + 1], this[i + 3], vector[0], {process: "modified"});
-                tempVector = new Point([tempWay[0], tempWay[1]]);
+                tempVector = Point([tempWay[0], tempWay[1]]);
                 if(tempWay.length < 4 && tempVector.isSameDire(vector[0])) {
                     this.insert(tempWay, i + 1, 3);
                     this.checkWayRepeat();
@@ -912,7 +912,7 @@ LineWay.prototype = {
     //复制路径，将会抛弃原路径数据的全部引用，也不会引用被复制的数据
     clone(tempway) {
         for (let i = 0; i < tempway.length; i++) {
-            this[i] = new Point(tempway[i]);
+            this[i] = Point(tempway[i]);
         }
         this.splice(tempway.length);
         this.length = tempway.length;
@@ -1111,7 +1111,7 @@ WayMap.extend({
         const ans = [], temp = hash % 100;
         ans[1] = temp * 20;
         ans[0] = (hash - temp) * 0.2;
-        return(new Point(ans));
+        return(Point(ans));
     }
 });
 WayMap.prototype = {
@@ -1228,8 +1228,8 @@ function LineClass(part, mark) {
     if(!!part.elementDOM && mark !== undefined) {
         //输入是器件和器件管脚
         const pointInfor = part.pointRotate(),
-            trend = new Point(pointInfor[mark].direction);
-        start = new Point([
+            trend = Point(pointInfor[mark].direction);
+        start = Point([
             part.position[0] + pointInfor[mark].position[0],
             part.position[1] + pointInfor[mark].position[1]
         ]);
@@ -1255,7 +1255,7 @@ function LineClass(part, mark) {
         this.current = {};
     }
 
-    this.way.push(new Point(start));
+    this.way.push(Point(start));
     this.circle[0].attr("transform", "translate(" + start.join(",") + ")");
     this.toGoing();
     //冻结导线的常规属性，current是临时变量可以随意变动
@@ -1534,7 +1534,7 @@ LineClass.prototype = {
         this.current = {
             pathBackup : new LineWay(this.way),
             startRound : new WayMap(),
-            startNode : new Point(start),
+            startNode : Point(start),
             gridL : [],
             wayNow : [],
             circle : [],

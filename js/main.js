@@ -81,14 +81,14 @@ const grid = (function SchematicsGrid() {
 
     //当前鼠标位置
     function mouse(event) {
-        return(new Point([
+        return(Point([
             (event.pageX - SVGX) / zoom,
             (event.pageY - SVGY) / zoom
         ]));
     }
     //鼠标偏移位置
     function mouseBias(event) {
-        const ans = new Point([
+        const ans = Point([
             (event.pageX - mouseLastX) / zoom,
             (event.pageY - mouseLastY) / zoom
         ]);
@@ -152,7 +152,7 @@ const grid = (function SchematicsGrid() {
             SVG: self.SVG(),
             mouse: mouse,
             mouseBias: mouseBias,
-            pageL: new Point([event.pageX, event.pageY]),
+            pageL: Point([event.pageX, event.pageY]),
             gridL: []
         });
     };

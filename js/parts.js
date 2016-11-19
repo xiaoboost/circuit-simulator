@@ -607,7 +607,7 @@ function PartClass(data) {
 
     this.id = partsAll.newId(this.id);
     this.rotate = new Matrix([[1, 0], [0, 1]]); //旋转矩阵
-    this.position = new Point([1000, 1000]);    //器件位置
+    this.position = Point([1000, 1000]);    //器件位置
     this.current = {};                          //临时数据
     this.connect = new Array(this.pointInfor.length).fill(false);
     this.circle = [];
@@ -626,7 +626,7 @@ function PartClass(data) {
                         textPos = Array.clone(data[i]);
                         break;
                     case "position":
-                        this[i] = new Point(data[i]);
+                        this[i] = Point(data[i]);
                         break;
                     default:
                         if (data[i] instanceof Array) {
@@ -957,7 +957,7 @@ PartClass.prototype = {
             return(box);
         }
 
-        pos = new Point(pos);
+        pos = Point(pos);
         const coverHash = {},
             boxSize = merge(this),
             margin = this.marginRotate().margin,
@@ -1352,7 +1352,7 @@ PartClass.prototype = {
 
         this.position = round.isEqual(positionLast)
                 ? round
-                : new Point(schMap.nodeRound(round, this.position, this.sheetCover.bind(this)));
+                : Point(schMap.nodeRound(round, this.position, this.sheetCover.bind(this)));
 
         this.setPosition();
         this.markSign();

@@ -49,7 +49,7 @@ function nodeDistance(a, b) {
 }
 
 //点和向量
-function Point(arr) {
+function exPoint(arr) {
     if(Point.isPoint(arr)) {
         //输入是点
         this[0] = arr[0];
@@ -61,23 +61,7 @@ function Point(arr) {
     }
     this.length = 2;
 }
-//是否是点
-Point.extend({
-    isPoint(arr) {
-        return (
-            arr instanceof Point ||
-            typeof arr[0] === "number" &&
-            typeof arr[1] === "number"
-        );
-    },
-    isVector(arr) {
-        return(
-            Point.isPoint(arr[0]) &&
-            Point.isPoint(arr[1])
-        )
-    }
-});
-Point.prototype = {
+exPoint.prototype = {
     add(label = 1, a) {
         const sum = [],
             sign = (a === undefined) ? 1 : label,
@@ -99,7 +83,7 @@ Point.prototype = {
             sum[0] = this[0];
             sum[1] = this[1];
         }
-        return(new Point(sum));
+        return(new exPoint(sum));
     },
     //数组相乘
     mul(label = 1, a) {
@@ -125,12 +109,12 @@ Point.prototype = {
             sum[0] = this[0];
             sum[1] = this[1];
         }
-        return(new Point(sum));
+        return(new exPoint(sum));
     },
     //单位化，符号不变，数值变为1
     toUnit() {
         const scale = 1 / Math.sqrt(this[0] * this[0] + this[1] * this[1]);
-        return(new Point([this[0] * scale, this[1] * scale]));
+        return(new exPoint([this[0] * scale, this[1] * scale]));
     },
     //是否是标准格式
     isStandarNode() {
@@ -183,26 +167,26 @@ Point.prototype = {
     },
     //四舍五入
     round(n = 20) {
-        return(new Point([
+        return(new exPoint([
             Math.round(this[0] / n) * n,
             Math.round(this[1] / n) * n
         ]));
     },
     roundToSmall(n = 20) {
-        return(new Point([
+        return(new exPoint([
             Math.round(this[0] / n),
             Math.round(this[1] / n)
         ]));
     },
     //向下取整
     floor(n = 20) {
-        return(new Point([
+        return(new exPoint([
             Math.floor(this[0] / n) * n,
             Math.floor(this[1] / n) * n
         ]));
     },
     floorToSmall(n = 20) {
-        return(new Point([
+        return(new exPoint([
             Math.floor(this[0] / n),
             Math.floor(this[1] / n)
         ]));
@@ -210,10 +194,10 @@ Point.prototype = {
     //以当前点为左上角，生成四方格坐标
     toGrid() {
         return([
-            new Point(this),
-            new Point([this[0] + 20, this[1]]),
-            new Point([this[0], this[1] + 20]),
-            new Point([this[0] + 20, this[1] + 20])
+            new exPoint(this),
+            new exPoint([this[0] + 20, this[1]]),
+            new exPoint([this[0], this[1] + 20]),
+            new exPoint([this[0] + 20, this[1] + 20])
         ]);
     },
     //在vectors中与this最为相似的向量
@@ -229,6 +213,27 @@ Point.prototype = {
         return selectMax(this, points, nodeDistance)
     }
 };
-Object.setPrototypeOf(Point.prototype, Array.prototype);
+Object.setPrototypeOf(exPoint.prototype, Array.prototype);
+
+//对外暴露的构造函数
+function Point(...args) {
+    return (new exPoint(...args));
+}
+//公共方法
+Point.extend({
+    isPoint(arr) {
+        return (
+            arr instanceof exPoint ||
+            typeof arr[0] === "number" &&
+            typeof arr[1] === "number"
+        );
+    },
+    isVector(arr) {
+        return(
+            Point.isPoint(arr[0]) &&
+            Point.isPoint(arr[1])
+        )
+    }
+});
 
 export { Point };
