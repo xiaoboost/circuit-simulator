@@ -219,7 +219,6 @@ Object.setPrototypeOf(exPoint.prototype, Array.prototype);
 function Point(...args) {
     return (new exPoint(...args));
 }
-//公共方法
 Point.extend({
     isPoint(arr) {
         return (
@@ -235,5 +234,6 @@ Point.extend({
         )
     }
 });
+Point.prototype = exPoint.prototype;
 
 export { Point };
