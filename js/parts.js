@@ -22,18 +22,20 @@ const SVG_NS = "http://www.w3.org/2000/svg",
 //器件原型描述
 const originalElectronic = {
     /*
-     此处是器件的基本属性及外形形态描述——
-     id：ID编号前缀
-     partType：器件种类
-     input：输入的值
-     inputTxt：显示输入值的说明
-     visionNum：器件参数面板显示参数的数量
-     pointInfor：管脚方向以及相对器件中心的位置
-     padding：器件内边距  内外边距的格式和css中一样
-     margin：器件外边距
-     txtLocate：显示的txt文本相对中心的距离
-     criteriaTrend：电流相对于管脚所连接节点的方向
+     * 此处是器件的基本属性及外形形态描述——
+     *   id             ID编号前缀
+     *   partType       器件种类
+     *   input          输入的值
+     *   inputTxt       显示输入值的说明
+     *   visionNum      器件参数面板显示参数的数量
+     *   pointInfor     管脚方向以及相对器件中心的位置
+     *   padding        器件内边距
+     *   margin         器件外边距
+     *   txtLocate      显示的txt文本相对中心的距离
+     *   criteriaTrend  电流相对于管脚所连接节点的方向
+     *
      */
+
     //电阻
     resistance : {
         readWrite: {  //可读写数据

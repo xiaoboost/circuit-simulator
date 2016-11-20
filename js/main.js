@@ -28,11 +28,11 @@ const grid = (function SchematicsGrid() {
         "movePart",     //移单个器件标志位
         "moveMore",     //移动多个器件标志
         "moveMap",      //移动图纸标志位
-        "boxDraw",      //绘制复选框标志位
+        "selectBox",    //绘制复选框标志位
         "deformLine",   //导线变形标志位
         "moveText",     //移动txt标志位
         "drawLine",     //绘制导线标志位
-        "graphSelecte"   //波形选择框
+        "graphSelecte"  //波形选择框
     ];
     //标志位
     for(let i = 0; i < continuous.length; i++) {
@@ -204,9 +204,18 @@ function mousemoveEvent(event) {
         mainPage.css("background-position", grid.bias().join("px ") + "px");
         $("#area-of-parts").attr("transform",
             "translate(" + SVGPos.join(",") + ") scale(" + grid.zoom() + ")");
-    } else if (grid.boxDraw) {
+    } else if (grid.selectBox) {
         //绘制多选框
-        schematic.drawRectselect(event);
+        const node = grid.mouse(event),
+            start = grid.current.selectionBoxStart;
+
+        $("#select-box").attr("points",
+            start.join(",") + " " +
+            node[0] + "," + start[1] + " " +
+            node.join(",") + " " +
+            start[0] + "," + node[1]
+        );
+        mainPage.attr("class", "mouse-selectBox");
     } else if (grid.deformLine) {
         //导线变形
         partsNow[0].deformSelf(event);
@@ -218,7 +227,7 @@ function mousemoveEvent(event) {
         partsNow[0].moveSelf(event);
     } else if (grid.drawLine) {
         //绘制导线
-        partsNow[partsNow.length - 1].setPath(event, "draw");
+        partsNow.get(-1).setPath(event, "draw");
     } else if(grid.graphSelecte) {
         //波形界面选择框
         grid.current.graph.drawSelect(event, grid.current);
@@ -622,7 +631,7 @@ $("#shade-gray").on("click", function() {
 //器件相关事件
 //对于器件的mousedown操作
 mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
-    if(grid.totalMarks) return false;
+    if(grid.totalMarks) { return false; }
     //寻找当前器件的对象
     let clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id);
     if (event.which === 1) {
@@ -631,32 +640,27 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
             //单击器件说明文本
             const text = $(this);
             clickpart.toFocus();
-            clickpart.current.extend(grid.createData(event))
+            clickpart.curren = grid.createData(event)
                 .extend({
                     text: text,
-                    position: [
+                    position: Point([
                         parseInt(text.attr("x")),
                         parseInt(text.attr("y"))
-                    ]
+                    ])
                 });
             grid.setMoveText(true);
         } else {
             //单击本体
-            clickpart.toFocus();
-            clickpart.current.extend(grid.createData(event))
-                .extend({ map: schMap });
+            if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
+                //多个器件
+
+            } else {
+                //单个器件
+                clearStatus();
+                clickpart.toFocus();
+                clickpart.current = grid.createData(event);
+            }
             grid.setMovePart(true);
-            /*
-             //这里有群体选择的部分，暂时取消，一律单选
-             if (partsNow.has(clickpart.id)) {
-             vision.closeRight();
-             grid.movePart = true; //移动器件标志位置高
-             } else {
-             schematic.clearPartsStatus();  //清空一切状态
-             clickpart.toFocus();
-             grid.movePart = true;  //移动器件标志位置高
-             }
-             */
         }
         //绑定全局移动事件
         mainPage.on("mousemove", mousemoveEvent);
@@ -751,12 +755,18 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
 mainPage.on("mousedown", function(event) {
     //有持续性事件，那么直接返回
     if(grid.totalMarks) return(false);
-    //空闲地区右键按下
-    if (event.which === 3) {
-        mainPage.on("mousemove", mousemoveEvent);
+    if(event.which === 1) {
+        //左键
+        clearStatus();
+        $("#area-of-parts").append($("<polygon>", SVG_NS, {id: "select-box"}));
+        grid.current.selectionBoxStart = grid.mouse(event);
+        grid.setSelectBox(true);
+    } else if (event.which === 3) {
+        //右键
         grid.current = grid.createData(event);
         grid.setMoveMap(true);
     }
+    mainPage.on("mousemove", mousemoveEvent);
 });
 //图纸的全局mouseup操作
 mainPage.on("mouseup", function(event) {
@@ -776,11 +786,25 @@ mainPage.on("mouseup", function(event) {
             } else {
                 putdownMoreParts(partsNow);
             }
-        } else if (grid.boxDraw) {
-            //绘制多选框
-            grid.setBoxDraw(false);
-            if (grid.movemouse)
-                schematic.focusRectselect(event);
+        } else if (grid.selectBox) {
+            //绘制复选框
+            const node = grid.mouse(event),
+                top = Math.min(grid.current.selectionBoxStart[1], node[1]),
+                bottom = Math.max(grid.current.selectionBoxStart[1], node[1]),
+                left = Math.min(grid.current.selectionBoxStart[0], node[0]),
+                right = Math.max(grid.current.selectionBoxStart[0], node[0]);
+
+            clearStatus();
+            for(let i = 0; i < partsAll.length; i++) {
+                const position = partsAll[i].position;
+                if(partsAll[i].form !== "line" &&
+                    position[0] >= left && position[0] <= right &&
+                    position[1] >= top && position[1] <= bottom) {
+                    partsAll[i].toFocus();
+                }
+            }
+            $("#select-box").remove();
+            grid.setSelectBox(false);
         } else if (grid.deformLine) {
             //导线变形
             grid.setDeformLine(false);

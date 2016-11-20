@@ -65,9 +65,9 @@ body div
   &.mouse-crossright
     cursor url(/img/mouse_cross_right.cur), crosshair
 
-#container-grid.mouse-rectbox,
+#container-grid.mouse-selectBox,
 #graph-page.select
-  cursor url(/img/mouse_rect_box.cur), crosshair
+  cursor url(/img/mouse_select_box.cur), crosshair
 
 //绘图部分
 #container-grid svg
@@ -89,15 +89,14 @@ body div
 
 //多选框
 #container-grid svg
-  path#rect-elect
+  polygon#select-box
     stroke #166CCF
     stroke-width 1.2
     fill #BBDEFB
     opacity 0.3
-  path#rect-elect.delet
+  polygon#select-box.delet
     opacity 0
     transition opacity 80ms linear
-
 
 //器件引脚缩放参数
 bezier-point-zoom = cubic-bezier(.4,1.3,1,1)
