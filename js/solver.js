@@ -4,9 +4,16 @@ import { partsAll, PartsCollection } from "./collection";
 
 //器件的内部结构
 const partInternal = {
-    //器件的内部结构，分为迭代方程(iterative)和拆分结构(apart)两类
-    //迭代方程有方程原型(equation)以及方程生成函数(create)，参数全部由闭包来保存
-    //拆分结构下有器件对外管脚到内部管脚的接口列表(interface)、拆分器件内部的连接关系表(connect)、拆分器件原型(parts)
+    /*
+     * 器件的内部结构，数据成分如下
+     *   - 迭代方程(iterative)
+     *     - 方程原型(equation)
+     *     - 方程生成函数(create)
+     *   - 拆分结构(apart)
+     *     - 拆分器件原型(parts)
+     *     - 拆分器件内部的连接关系表(connect)
+     *     - 外部管脚到内部管脚的接口列表(interface)
+     */
     "ac_voltage_source": {
         "iterative": {
             "equation": function(factor, frequency, bias, phase) {
@@ -335,7 +342,7 @@ function Solver(collection) {
         parameterUpdate = [],               //参数迭代公式
         tempLines = new PartsCollection(),  //待删除器件
 
-        parts = [];     //拆分成的基础器件集
+        parts = [];                 //拆分成的基础器件集
 
     let nodeNumber = 1,             //节点数量
         branchNumber = 0,           //支路数量
@@ -603,9 +610,9 @@ function Solver(collection) {
     });
     //组合系数矩阵
     const factor = Matrix.combination([
-        [0, 0, A],
-        [A.transpose(), "E", 0],
-        [0, F, H]
+        [0,              0,     A],
+        [A.transpose(), "E",    0],
+        [0,              F,     H]
     ]);
     //独立电源列向量
     const source = (new Matrix(A.row, 1)).concatDown((new Matrix(A.column, 1)), S);

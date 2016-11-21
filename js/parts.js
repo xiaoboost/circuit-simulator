@@ -641,7 +641,7 @@ function PartClass(data) {
             }
         }
     }
-    if(!this.input) { this.input = []; };
+    if(!this.input) { this.input = []; }
     this.elementDOM = this.createPart(); //创建新器件
     this.setPosition();
 
@@ -1415,6 +1415,72 @@ PartClass.prototype = {
         partsNow.push(this);
     }
 };
+
+//由器件开始回溯导线，确定导线状态
+PartClass.checkLineStatus = function(collection) {
+    //递归搜索器件所连接的导线
+    for(let i = 0; i < collection.length; i++) {
+        (function DFS(part) {
+            //非法器件，直接返回
+            if(!part) { return(false); }
+
+            if(part.form !== "line" && collection.has(part)) {
+                //当前器件是被选中的器件
+                for(let i = 0; i < part.connect.length; i++) {
+                    DFS(partsAll.findPartObj(part.connect[i]));
+                }
+            } else if(part.form === "line") {
+                //当前器件是导线
+                //标记当前器件
+                if(!part.current.status) {
+                    part.current.status = "half";
+                } else if(part.current.status === "half") {
+                    part.current.status = "move";
+                    return(true);
+                } else if(part.current.status === "move") {
+                    return(true);
+                }
+
+                if(part.connect.every(function(con) {
+                    con.split(" ")
+                        .map((item) => partsAll.findPartObj(item))
+                        .some((item) => (!item) || item.current.status)
+                    })) {
+                    //当前导线整体移动
+                    part.current.status = "move";
+                    part.connect.join(" ").split(" ")
+                        .forEach((item) => DFS(partsAll.findPartObj(item)));
+                }
+            }
+        })(collection[i]);
+    }
+    /*
+    //被标记的导线加入器件堆栈
+    partsAll.forEach((item) => {
+        if(item.form !== "line") { return( false); }
+
+        if(item.current.status === "move") {
+            collection.push(item);
+        } else if(item.current.status === "half") {
+            //half为需要变形的导线
+            let connect1 = partsAll.findPartObj(item.connect[0]),
+                connect2 = partsAll.findPartObj(item.connect[1]);
+            //活动器件 -> 静止器件/导线
+
+            //活动导线 -> 静止器件
+
+            //活动导线 -> 静止导线
+
+            if((connect1.form !== "line" && collection.has(connect1)) ||
+                (connect2.form !== "line" && collection.has(connect2))) {
+                item.current.status = "movePart";
+                return(true);
+            }
+
+        }
+    });
+    */
+}
 
 function css2obj(css) {
     if(css instanceof Array) {

@@ -1,7 +1,7 @@
 //单个器件的最大值
 const maxNumber = 50;
 
-//构造函数
+//器件堆栈类
 function PartsCollection(parts) {
     if(typeof parts === "number") {
         //当输入为一个数字时，将会返回一个普通数组
@@ -9,6 +9,7 @@ function PartsCollection(parts) {
         return(ans);
     }
     this.hash = {};
+    this.current = {};
     this.length = 0;
     //输入不为空
     if(parts !== undefined) {
@@ -19,7 +20,7 @@ function PartsCollection(parts) {
             this.push(parts[i]);
         }
     }
-    //hash不可枚举且不可修改，length属性不可枚举
+
     Object.defineProperties(this, {
         hash: {
             configurable: false,
@@ -29,10 +30,13 @@ function PartsCollection(parts) {
         length: {
             configurable: false,
             enumerable: false
+        },
+        current: {
+            configurable: false,
+            enumerable: false
         }
     });
 }
-//实例方法
 PartsCollection.prototype = {
     length: 0,
     constructor: PartsCollection,
@@ -171,7 +175,6 @@ PartsCollection.prototype = {
         return(partsArea);
     }
 };
-//PartsCollection继承Array的方法
 Object.setPrototypeOf(PartsCollection.prototype, Array.prototype);
 
 //全局器件集合

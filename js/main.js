@@ -175,63 +175,86 @@ const sidebar = $("#sidebar-menu"),
 
 //鼠标移动的入口函数
 function mousemoveEvent(event) {
-    if(!grid.totalMarks) return(false);
+    if(!grid.totalMarks) { return(false); }
 
-    if (grid.movePart) {
+    switch(true) {
         //器件移动
-        if (partsNow.length === 1) {
-            partsNow[0].moveSelf(event);
-        } else {
-            //多个器件移动
+        case grid.movePart: {
+            if (partsNow.length === 1) {
+                partsNow[0].moveSelf(event);
+            } else {
+                //多个器件移动
+            }
+            break;
         }
-    } else if (grid.moveMap) {
         //图纸移动
-        //只有确实移动了，才会让鼠标变形
-        mainPage.attr("class", "mouse-movemap");
+        case grid.moveMap: {
+            //只有确实移动了，才会让鼠标变形
+            mainPage.attr("class", "mouse-movemap");
 
-        //移动图纸时不需要对鼠标距离做缩放
-        const bias = grid.current.mouseBias(event)
-            .map((n) => n * grid.current.zoom);
+            //移动图纸时不需要对鼠标距离做缩放
+            const bias = grid.current.mouseBias(event)
+                .map((n) => n * grid.current.zoom);
 
-        let SVGPos = grid.SVG();
-        grid.SVG(SVGPos[0] + bias[0], SVGPos[1] + bias[1]);
+            let SVGPos = grid.SVG();
+            grid.SVG(SVGPos[0] + bias[0], SVGPos[1] + bias[1]);
 
-        SVGPos = grid.SVG();
-        grid.bias(
-            SVGPos[0] % grid.size(),
-            SVGPos[1] % grid.size()
-        );
-        mainPage.css("background-position", grid.bias().join("px ") + "px");
-        $("#area-of-parts").attr("transform",
-            "translate(" + SVGPos.join(",") + ") scale(" + grid.zoom() + ")");
-    } else if (grid.selectBox) {
+            SVGPos = grid.SVG();
+            grid.bias(
+                SVGPos[0] % grid.size(),
+                SVGPos[1] % grid.size()
+            );
+            mainPage.css("background-position", grid.bias().join("px ") + "px");
+            $("#area-of-parts").attr("transform",
+                "translate(" + SVGPos.join(",") + ") scale(" + grid.zoom() + ")");
+
+            break;
+        }
         //绘制多选框
-        const node = grid.mouse(event),
-            start = grid.current.selectionBoxStart;
+        case grid.selectBox: {
+            const node = grid.mouse(event),
+                start = grid.current.selectionBoxStart;
 
-        $("#select-box").attr("points",
-            start.join(",") + " " +
-            node[0] + "," + start[1] + " " +
-            node.join(",") + " " +
-            start[0] + "," + node[1]
-        );
-        mainPage.attr("class", "mouse-selectBox");
-    } else if (grid.deformLine) {
+            $("#select-box").attr("points",
+                start.join(",") + " " +
+                node[0] + "," + start[1] + " " +
+                node.join(",") + " " +
+                start[0] + "," + node[1]
+            );
+            mainPage.attr("class", "mouse-selectBox");
+            break;
+        }
         //导线变形
-        partsNow[0].deformSelf(event);
-    } else if (grid.moveText) {
+        case grid.deformLine: {
+            partsNow[0].deformSelf(event);
+            break;
+        }
         //移动器件说明文字
-        partsNow[0].moveText(event);
-    } else if (grid.newMark) {
+        case grid.moveText: {
+            partsNow[0].moveText(event);
+            break;
+        }
         //移动新建器件
-        partsNow[0].moveSelf(event);
-    } else if (grid.drawLine) {
+        case grid.newMark: {
+            partsNow[0].moveSelf(event);
+            break;
+        }
         //绘制导线
-        partsNow.get(-1).setPath(event, "draw");
-    } else if(grid.graphSelecte) {
-        //波形界面选择框
-        grid.current.graph.drawSelect(event, grid.current);
+        case grid.drawLine: {
+            partsNow.get(-1).setPath(event, "draw");
+            break;
+        }
+        //绘制波形界面选择框
+        case grid.graphSelecte: {
+            grid.current.graph.drawSelect(event, grid.current);
+            break;
+        }
+        //其他
+        default: {
+            break;
+        }
     }
+
     return(false);
 }
 //清除当前所有状态
@@ -751,95 +774,6 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
     }
     return(false);
 });
-//图纸全局的mousedown操作
-mainPage.on("mousedown", function(event) {
-    //有持续性事件，那么直接返回
-    if(grid.totalMarks) return(false);
-    if(event.which === 1) {
-        //左键
-        clearStatus();
-        $("#area-of-parts").append($("<polygon>", SVG_NS, {id: "select-box"}));
-        grid.current.selectionBoxStart = grid.mouse(event);
-        grid.setSelectBox(true);
-    } else if (event.which === 3) {
-        //右键
-        grid.current = grid.createData(event);
-        grid.setMoveMap(true);
-    }
-    mainPage.on("mousemove", mousemoveEvent);
-});
-//图纸的全局mouseup操作
-mainPage.on("mouseup", function(event) {
-    //全局解除移动事件
-    mainPage.off("mousemove", mousemoveEvent);
-    if (event.which === 1) {
-        if (grid.newMark) {
-            //新建器件
-            grid.setNewMark(false);
-            partsNow[0].putDownSelf();
-            partsNow[0].elementDOM.attr("opacity", "1");
-        } else if (grid.movePart) {
-            //移动器件
-            grid.setMovePart(false);
-            if (partsNow.length === 1) {
-                partsNow[0].putDownSelf();
-            } else {
-                putdownMoreParts(partsNow);
-            }
-        } else if (grid.selectBox) {
-            //绘制复选框
-            const node = grid.mouse(event),
-                top = Math.min(grid.current.selectionBoxStart[1], node[1]),
-                bottom = Math.max(grid.current.selectionBoxStart[1], node[1]),
-                left = Math.min(grid.current.selectionBoxStart[0], node[0]),
-                right = Math.max(grid.current.selectionBoxStart[0], node[0]);
-
-            clearStatus();
-            for(let i = 0; i < partsAll.length; i++) {
-                const position = partsAll[i].position;
-                if(partsAll[i].form !== "line" &&
-                    position[0] >= left && position[0] <= right &&
-                    position[1] >= top && position[1] <= bottom) {
-                    partsAll[i].toFocus();
-                }
-            }
-            $("#select-box").remove();
-            grid.setSelectBox(false);
-        } else if (grid.deformLine) {
-            //导线变形
-            grid.setDeformLine(false);
-            if(grid.movemouse)
-                partsNow[0].deformSelfEnd();
-        } else if (grid.moveText) {
-            //移动器件属性说明文字
-            grid.setMoveText(false);
-            if (partsNow[0].current.isMove) {
-                partsNow[0].textVisition([
-                    parseInt(partsNow[0].current.text.attr("x")),
-                    parseInt(partsNow[0].current.text.attr("y"))
-                ]);
-                delete partsNow[0].current;
-            }
-        } else if (grid.drawLine) {
-            //导线绘制
-            grid.setDrawLine(false);
-            partsNow.get(-1).endPath(event, "draw");
-        } else {
-            clearStatus();
-        }
-    } else if ((event.which === 3) && (grid.moveMap)) {
-        //右放开且正在移动图纸移动整个图纸结束
-        grid.setMoveMap(false);
-        grid.current = [];
-        //如果没有这个标签，说明鼠标没有移动，那么弹出右键菜单
-        if(!mainPage.hasClass("mouse-movemap")) {
-            clearStatus();
-            contextSet(event, "free");
-        }
-    }
-    //鼠标恢复原样
-    mainPage.attr("class", "");
-});
 //导线临时结点的mousedown操作
 mainPage.on("mousedown","g.line g.draw-open",function(event) {
     if (event.which === 1 && !grid.totalMarks) {
@@ -933,6 +867,114 @@ mainPage.on({
         }
     }
 },"g.line g.cross-point");
+//图纸全局的mousedown操作
+mainPage.on("mousedown", function(event) {
+    //有持续性事件，那么直接返回
+    if(grid.totalMarks)  { return(false); }
+
+    if(event.which === 1) {
+        //左键
+        clearStatus();
+        $("#area-of-parts").append($("<polygon>", SVG_NS, {id: "select-box"}));
+        grid.current.selectionBoxStart = grid.mouse(event);
+        grid.setSelectBox(true);
+    } else if (event.which === 3) {
+        //右键
+        grid.current = grid.createData(event);
+        grid.setMoveMap(true);
+    }
+
+    mainPage.on("mousemove", mousemoveEvent);
+});
+//图纸的全局mouseup操作
+mainPage.on("mouseup", function(event) {
+    if (event.which === 1) {
+        //左键
+        switch (true) {
+            //新建器件
+            case grid.newMark: {
+                grid.setNewMark(false);
+                partsNow[0].putDownSelf();
+                partsNow[0].elementDOM.attr("opacity", "1");
+                break;
+            }
+            //移动器件
+            case grid.movePart: {
+                grid.setMovePart(false);
+                if (partsNow.length === 1) {
+                    partsNow[0].putDownSelf();
+                } else {
+                    putdownMoreParts(partsNow);
+                }
+                break;
+            }
+            //绘制多框
+            case grid.selectBox: {
+                const node = grid.mouse(event),
+                    top = Math.min(grid.current.selectionBoxStart[1], node[1]),
+                    bottom = Math.max(grid.current.selectionBoxStart[1], node[1]),
+                    left = Math.min(grid.current.selectionBoxStart[0], node[0]),
+                    right = Math.max(grid.current.selectionBoxStart[0], node[0]);
+
+                clearStatus();
+                for(let i = 0; i < partsAll.length; i++) {
+                    const position = partsAll[i].position;
+                    if(partsAll[i].form !== "line" &&
+                        position[0] >= left && position[0] <= right &&
+                        position[1] >= top && position[1] <= bottom) {
+                        partsAll[i].toFocus();
+                    }
+                }
+                PartClass.checkLineStatus(partsNow);
+                $("#select-box").remove();
+                grid.setSelectBox(false);
+                break;
+            }
+            //导线变形
+            case grid.deformLine: {
+                grid.setDeformLine(false);
+                if(grid.movemouse)
+                    partsNow[0].deformSelfEnd();
+                break;
+            }
+            //移动器件属性说明文字
+            case grid.moveText: {
+                grid.setMoveText(false);
+                if (partsNow[0].current.isMove) {
+                    partsNow[0].textVisition([
+                        parseInt(partsNow[0].current.text.attr("x")),
+                        parseInt(partsNow[0].current.text.attr("y"))
+                    ]);
+                    delete partsNow[0].current;
+                }
+                break;
+            }
+            //导线绘制
+            case grid.drawLine: {
+                grid.setDrawLine(false);
+                partsNow.get(-1).endPath(event, "draw");
+                break;
+            }
+            //其他
+            default: {
+                clearStatus();
+            }
+        }
+    } else if ((event.which === 3) && (grid.moveMap)) {
+        //右键放开，且正在移动图纸移动整个图纸结束
+        grid.setMoveMap(false);
+        grid.current = [];
+        //如果没有这个标签，说明鼠标没有移动，那么弹出右键菜单
+        if(!mainPage.hasClass("mouse-movemap")) {
+            clearStatus();
+            contextSet(event, "free");
+        }
+    }
+    //全局解除移动事件
+    mainPage.off("mousemove", mousemoveEvent);
+    //鼠标恢复原样
+    mainPage.attr("class", "");
+});
 
 //曲线面板事件
 //取消缩放
