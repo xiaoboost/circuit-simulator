@@ -25,7 +25,7 @@ const grid = (function SchematicsGrid() {
     let flag = 0;
     const continuous = [
         "newMark",      //新建器件标志位
-        "movePart",     //移单个器件标志位
+        "moveParts",    //移单个器件标志位
         "moveMore",     //移动多个器件标志
         "moveMap",      //移动图纸标志位
         "selectBox",    //绘制复选框标志位
@@ -179,12 +179,8 @@ function mousemoveEvent(event) {
 
     switch(true) {
         //器件移动
-        case grid.movePart: {
-            if (partsNow.length === 1) {
-                partsNow[0].moveSelf(event);
-            } else {
-                //多个器件移动
-            }
+        case grid.moveParts: {
+            PartClass.moveParts(event, partsNow);
             break;
         }
         //图纸移动
@@ -231,7 +227,7 @@ function mousemoveEvent(event) {
         }
         //移动器件说明文字
         case grid.moveText: {
-            partsNow[0].moveText(event);
+            partsNow[0].move(event, "text");
             break;
         }
         //移动新建器件
@@ -406,7 +402,7 @@ function loadData(data) {
                 const nodeStatus = schMap.getValueByOrigin(node);
                 if(nodeStatus.form === "part-point") {
                     //器件引脚
-                    const connectpart = partsAll.findPartObj(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
+                    const connectpart = partsAll.findPart(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
                     connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
                     devices.setConnect(j, nodeStatus.id);
                 } else if (nodeStatus.form === "line-point") {
@@ -431,7 +427,7 @@ function loadData(data) {
                 //查询所有连接的导线
                 const node = [parseInt(i) * 20, parseInt(j) * 20],
                     lines = nodeStatus.id.split(" ").map(function(item){
-                        const line = partsAll.findPartObj(item),
+                        const line = partsAll.findPart(item),
                             sub = line.findConnect(node);
                         return([line,sub]);
                 });
@@ -656,14 +652,14 @@ $("#shade-gray").on("click", function() {
 mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
     if(grid.totalMarks) { return false; }
     //寻找当前器件的对象
-    let clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id);
+    const clickpart = partsAll.findPart(event.currentTarget.parentNode.id);
     if (event.which === 1) {
         clearStatus();
         if (event.currentTarget.tagName === "text") {
             //单击器件说明文本
             const text = $(this);
             clickpart.toFocus();
-            clickpart.curren = grid.createData(event)
+            clickpart.current = grid.createData(event)
                 .extend({
                     text: text,
                     position: Point([
@@ -674,15 +670,13 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
             grid.setMoveText(true);
         } else {
             //单击本体
-            if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
-                //多个器件
-
-            } else {
+            if (!partsNow.has(clickpart.id)) {
                 //单个器件
                 clearStatus();
                 clickpart.toFocus();
-                clickpart.current = grid.createData(event);
             }
+            PartClass.checkLineStatus(partsNow);
+            partsNow.current = grid.createData(event);
             grid.setMovePart(true);
         }
         //绑定全局移动事件
@@ -703,7 +697,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
 });
 //对于器件的双击操作，弹出器件参数对话框
 mainPage.on("dblclick","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
-    const clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id);
+    const clickpart = partsAll.findPart(event.currentTarget.parentNode.id);
     if (event.which === 1 && !grid.totalMarks) {
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
@@ -729,7 +723,7 @@ mainPage.on({
                 line.current.enforceAlign.extend({
                     flag: true,
                     onPart:true,
-                    part: partsAll.findPartObj(event.currentTarget.parentNode.id)
+                    part: partsAll.findPart(event.currentTarget.parentNode.id)
                 });
             }
         }
@@ -754,7 +748,7 @@ mainPage.on({
 //左键器件引脚mousedown，绘制导线开始
 mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
     if (event.which === 1 && !grid.totalMarks){
-        const clickpart = partsAll.findPartObj(event.currentTarget.parentNode.id),
+        const clickpart = partsAll.findPart(event.currentTarget.parentNode.id),
             pointmark = parseInt(event.currentTarget.id.split("-")[1]);
 
         clearStatus();
@@ -764,7 +758,7 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
             partsAll.get(-1).toFocus();
             partsAll.get(-1).current.extend(grid.createData(event));
         } else {
-            const line = partsAll.findPartObj(clickpart.connect[pointmark]);
+            const line = partsAll.findPart(clickpart.connect[pointmark]);
             line.current = grid.createData(event);
             line.startPath(event, "draw", clickpart, pointmark);
         }
@@ -777,7 +771,7 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
 //导线临时结点的mousedown操作
 mainPage.on("mousedown","g.line g.draw-open",function(event) {
     if (event.which === 1 && !grid.totalMarks) {
-        const line = partsAll.findPartObj(event.currentTarget.parentNode.id);
+        const line = partsAll.findPart(event.currentTarget.parentNode.id);
 
         clearStatus();
         line.toFocus();
@@ -846,9 +840,9 @@ mainPage.on({
 
             if(!style) { return false; }
 
-            const line = partsAll.findPartObj(schMap.getValueBySmalle(point).id),
+            const line = partsAll.findPart(schMap.getValueBySmalle(point).id),
                 lines = schMap.getValueBySmalle(mouseRound).id.split(" ")
-                    .map((n) => partsAll.findPartObj(n))
+                    .map((n) => partsAll.findPart(n))
                     .filter((n) => n !== line);
 
             partsNow.deleteAll();
@@ -899,16 +893,11 @@ mainPage.on("mouseup", function(event) {
                 break;
             }
             //移动器件
-            case grid.movePart: {
-                grid.setMovePart(false);
-                if (partsNow.length === 1) {
-                    partsNow[0].putDownSelf();
-                } else {
-                    putdownMoreParts(partsNow);
-                }
+            case grid.moveParts: {
+                PartClass.putDownParts(event, partsNow);
                 break;
             }
-            //绘制多框
+            //绘制多选框
             case grid.selectBox: {
                 const node = grid.mouse(event),
                     top = Math.min(grid.current.selectionBoxStart[1], node[1]),
@@ -925,7 +914,8 @@ mainPage.on("mouseup", function(event) {
                         partsAll[i].toFocus();
                     }
                 }
-                PartClass.checkLineStatus(partsNow);
+
+                PartClass.checkLineStatus(event);
                 $("#select-box").remove();
                 grid.setSelectBox(false);
                 break;
@@ -940,13 +930,7 @@ mainPage.on("mouseup", function(event) {
             //移动器件属性说明文字
             case grid.moveText: {
                 grid.setMoveText(false);
-                if (partsNow[0].current.isMove) {
-                    partsNow[0].textVisition([
-                        parseInt(partsNow[0].current.text.attr("x")),
-                        parseInt(partsNow[0].current.text.attr("y"))
-                    ]);
-                    delete partsNow[0].current;
-                }
+                partsNow[0].textVisition(partsNow[0].current.text.attr(["x", "y"]));
                 break;
             }
             //导线绘制

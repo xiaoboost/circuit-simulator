@@ -740,11 +740,14 @@ PartClass.prototype = {
         }
     },
     //显示器件文字
-    textVisition(coordinates) {  //器件说明文字显示
-        if (!this.visionNum) return (false);
-        if (coordinates === undefined) {
-            coordinates = [this.txtLocate, -this.txtLocate];
-        }
+    textVisition(coordinates) {
+        //没有需要显示的文字
+        if (!this.visionNum) { return (false); }
+
+        coordinates = (coordinates instanceof Array)
+            ? coordinates.map((n) => parseInt(n))
+            : [this.txtLocate, -this.txtLocate];
+
         const elemtxt = $("text", this.elementDOM),
             elemtspan = $("tspan", elemtxt),
             tempPointInfor = this.pointRotate(),
@@ -974,7 +977,6 @@ PartClass.prototype = {
             boxSize = merge(this),
             margin = this.marginRotate().margin,
             position = pos.floorToSmall(),
-
             point = this.pointRotate()
                 .map((n) => Point.prototype.floorToSmall.call(n.position));
 
@@ -1005,7 +1007,7 @@ PartClass.prototype = {
                 if(coverHash[i + "," + j]) { continue; }
                 const status = schMap.getValueBySmalle([i,j]);
                 if(status && status.form === 'part') {
-                    const part = partsAll.findPartObj(status.id),
+                    const part = partsAll.findPart(status.id),
                         partSize = merge(part),
                         diff = this.position.add(-1, part.position).floorToSmall();
 
@@ -1026,6 +1028,7 @@ PartClass.prototype = {
                 }
             }
         }
+
         return (false);
     },
     //引脚被占用，禁止缩放
@@ -1218,20 +1221,20 @@ PartClass.prototype = {
         this.textVisition([parseInt(sharptxt.attr("x")), parseInt(sharptxt.attr("y"))]);
         return(true);
     },
-    //属性文本移动
-    moveText(event) {
-        const move = this.current;
-        move.position[0] += (event.pageX - move.pageL[0]) / move.zoom;
-        move.position[1] += (event.pageY - move.pageL[1]) / move.zoom;
+    //移动器件本身或者是属性文本
+    move(mouse, attr) {
+        if (attr === "text") {
+            const grid = this.current;
+            grid.position = grid.position.add(grid.mouseBias(mouse));
 
-        move.pageL[0] = event.pageX;
-        move.pageL[1] = event.pageY;
-
-        move.text.attr({
-            "x": move.position[0],
-            "y": move.position[1]
-        });
-        move.isMove = true;
+            grid.text.attr({
+                "x": grid.position[0],
+                "y": grid.position[1]
+            });
+        } else {
+            this.position = this.position.add(mouse);
+            this.setPosition();
+        }
     },
     //器件移动
     moveSelf(event) {
@@ -1252,7 +1255,7 @@ PartClass.prototype = {
                 if(!this.connect[i]) {
                     continue;
                 }
-                lines.push(partsAll.findPartObj(this.connect[i]));
+                lines.push(partsAll.findPart(this.connect[i]));
                 lines[lines.length - 1].preMoveLine(this.position.add(point[i]));
                 lines[lines.length - 1].current.initTrend = directionhash[trend[i]][0];
             }
@@ -1293,7 +1296,7 @@ PartClass.prototype = {
         this.current.lines = [];
         for(let i = 0; i < this.connect.length; i++) {
             const node = this.position.add(pointOld[i].position),
-                line = partsAll.findPartObj(this.connect[i]);
+                line = partsAll.findPart(this.connect[i]);
 
             //没有连接就跳过
             if (!line) {
@@ -1356,7 +1359,7 @@ PartClass.prototype = {
         //删除与之相连的导线
         for(let i = 0; i < this.connect.length; i++) {
             if (this.connect[i]) {
-                const line = partsAll.findPartObj(this.connect[i]);
+                const line = partsAll.findPart(this.connect[i]);
                 line.deleteSelf();
             }
         }
@@ -1401,7 +1404,7 @@ PartClass.prototype = {
             pointLabel[0] = label;
             point.attr("id", pointLabel.join("-"));
             if(this.connect[i]) {
-                const tempPart = partsAll.findPartObj(this.connect[i]);
+                const tempPart = partsAll.findPart(this.connect[i]);
                 for (let j = 0; j < tempPart.connect.length; j++) {
                     if (tempPart.connect[j] = last + "-" + i) {
                         tempPart.connect[j] = label + "-" + i;
@@ -1417,69 +1420,71 @@ PartClass.prototype = {
 };
 
 //由器件开始回溯导线，确定导线状态
-PartClass.checkLineStatus = function(collection) {
-    //递归搜索器件所连接的导线
-    for(let i = 0; i < collection.length; i++) {
+PartClass.checkLineStatus = function() {
+    //递归标记器件所连接的导线
+    for(let i = 0; i < partsNow.length; i++) {
         (function DFS(part) {
-            //非法器件，直接返回
+            //非法器件
             if(!part) { return(false); }
+            //已经确定整体移动的器件
+            if(part.current.status === "move") { return(true); }
 
-            if(part.form !== "line" && collection.has(part)) {
+            if(part.partType !== "line" && partsNow.has(part)) {
+                //标记当前器件
+                part.current.status = "move";
                 //当前器件是被选中的器件
                 for(let i = 0; i < part.connect.length; i++) {
-                    DFS(partsAll.findPartObj(part.connect[i]));
+                    DFS(partsAll.findPart(part.connect[i]));
                 }
-            } else if(part.form === "line") {
+            } else if(part.partType === "line") {
                 //当前器件是导线
-                //标记当前器件
+                //标记当前导线
                 if(!part.current.status) {
                     part.current.status = "half";
                 } else if(part.current.status === "half") {
                     part.current.status = "move";
                     return(true);
-                } else if(part.current.status === "move") {
-                    return(true);
                 }
+                //导线回溯
+                if(part.connect.every((con) =>
+                        con.split(" ").map((item) => partsAll.findPart(item))
+                            .some((item) => (!item) || partsNow.has(item) || item.current.status))) {
 
-                if(part.connect.every(function(con) {
-                    con.split(" ")
-                        .map((item) => partsAll.findPartObj(item))
-                        .some((item) => (!item) || item.current.status)
-                    })) {
                     //当前导线整体移动
                     part.current.status = "move";
                     part.connect.join(" ").split(" ")
-                        .forEach((item) => DFS(partsAll.findPartObj(item)));
+                        .forEach((item) => DFS(partsAll.findPart(item)));
                 }
             }
-        })(collection[i]);
+        })(partsNow[i]);
     }
-    /*
     //被标记的导线加入器件堆栈
     partsAll.forEach((item) => {
-        if(item.form !== "line") { return( false); }
-
+        if(item.partType !== "line") { return( false); }
+        //对部分移动的导线进行分类以及数据准备
         if(item.current.status === "move") {
-            collection.push(item);
+            item.toFocus();
         } else if(item.current.status === "half") {
-            //half为需要变形的导线
-            let connect1 = partsAll.findPartObj(item.connect[0]),
-                connect2 = partsAll.findPartObj(item.connect[1]);
-            //活动器件 -> 静止器件/导线
+            item.startPath(event, "movePart");
+        }
+    });
+}
+//器件移动
+PartClass.moveParts = function(event) {
+    const bias = partsNow.current.mouseBias(event);
+    partsNow.forEach((item) => {
+        if(item.partType !== "line" || item.current.status === "move") {
+            //整体移动
 
-            //活动导线 -> 静止器件
-
-            //活动导线 -> 静止导线
-
-            if((connect1.form !== "line" && collection.has(connect1)) ||
-                (connect2.form !== "line" && collection.has(connect2))) {
-                item.current.status = "movePart";
-                return(true);
-            }
+        } else {
+            //移动变形
 
         }
     });
-    */
+}
+//放下所有器件
+PartClass.putDownParts = function(event) {
+
 }
 
 function css2obj(css) {

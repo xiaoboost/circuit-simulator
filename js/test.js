@@ -35,7 +35,7 @@ function loadData(data) {
                 const nodeStatus = schMap.getValueByOrigin(node);
                 if(nodeStatus.form === "part-point") {
                     //器件引脚
-                    const connectpart = partsAll.findPartObj(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
+                    const connectpart = partsAll.findPart(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
                     connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
                     devices.setConnect(j, nodeStatus.id);
                 } else if (nodeStatus.form === "line-point") {
@@ -60,7 +60,7 @@ function loadData(data) {
                 //查询所有连接的导线
                 const node = [parseInt(i) * 20, parseInt(j) * 20],
                     lines = nodeStatus.id.split(" ").map(function(item){
-                        const line = partsAll.findPartObj(item),
+                        const line = partsAll.findPart(item),
                             sub = line.findConnect(node);
                         return([line,sub]);
                     });
@@ -426,7 +426,7 @@ const lineTest = {
     //数据校验
     dataCheck(data) {
         for(let i = 0; i < data.length; i++) {
-            const line = partsAll.findPartObj(data[i].id);
+            const line = partsAll.findPart(data[i].id);
             if(!line.way.isSame(data[i].way)) {
                 return(false);
             }

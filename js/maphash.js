@@ -83,16 +83,16 @@ MapHash.prototype = {
         const expandStatus = this.getValueBySmalle(minPoint);
         let line;
         if (expandStatus.form === "line" || expandStatus.form === "line-point") {
-            line = partsAll.findPartObj(expandStatus.id);
+            line = partsAll.findPart(expandStatus.id);
         } else if (expandStatus.form === "part-point") {
             const tempPastConnect = expandStatus.id.split("-");
-            const tempPart = partsAll.findPartObj(tempPastConnect[0]);
-            line = partsAll.findPartObj(tempPart.connect[parseInt(tempPastConnect[1])]);
+            const tempPart = partsAll.findPart(tempPastConnect[0]);
+            line = partsAll.findPart(tempPart.connect[parseInt(tempPastConnect[1])]);
         }
         const linesId = this.getValueByOrigin(nodeRound).id.split(" "), lines = [];
         for (let i = 0; i < linesId.length; i++) {
             if (linesId[i] !== line.id) {
-                lines.push(partsAll.findPartObj(linesId[i]));
+                lines.push(partsAll.findPart(linesId[i]));
             }
         }
         return ([line, lines]);

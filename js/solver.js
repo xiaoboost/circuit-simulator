@@ -359,7 +359,7 @@ function Solver(collection) {
                 const line = node.pop();
                 tempLines.push(line);
                 line.connect.join(" ").split(" ").forEach(function (item) {
-                    const temp = partsAll.findPartObj(item.split("-")[0]);
+                    const temp = partsAll.findPart(item.split("-")[0]);
                     if (temp.partType === "line") {
                         if (!(node.has(temp) || tempLines.has(temp)))
                             node.push(temp);
@@ -436,7 +436,7 @@ function Solver(collection) {
             const node = nodeHash[n.id + "-0"];     //电流表入口结点
             for (let i in nodeHash) if (nodeHash.hasOwnProperty(i)) {
                 if ((nodeHash[i] === node) && (i.search("GND") === -1)) {
-                    const temp = partsAll.findPartObj(i.split("-")[0]);
+                    const temp = partsAll.findPart(i.split("-")[0]);
                     //此时电压电流表还未删除，所以必须排除
                     if ((temp.partType !== "voltage_meter") && (temp.partType !== "current_meter"))
                         meter.matrix.push(i);

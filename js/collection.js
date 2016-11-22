@@ -69,9 +69,13 @@ PartsCollection.prototype = {
         }
     },
     //根据器件ID返回器件对象
-    findPartObj (tempid) {
-        if (!this.has(tempid)) return(false);
-        return(this[this.hash[tempid]]);
+    findPart (tempid) {
+        const id = tempid.split("-")[0];
+
+        if (!this.has(id)) {
+            return(false);
+        }
+        return(this[this.hash[id]]);
     },
     //删除器件
     deletePart (part) {
@@ -145,6 +149,7 @@ PartsCollection.prototype = {
     connectGraph() {
         const partsArea = [],   //电路连通区域
             partsHash = {};     //电路所有器件Hash查询表
+
         //连接表初始化
         this.forEach((n) => partsHash[n.id] = true);
         //扫描所有器件，分割电路连通图区域
@@ -159,7 +164,7 @@ PartsCollection.prototype = {
                     partsHash[item.id] = false;     //当前器件访问标志
                     ans.push(item);                 //当前区域器件入栈
                     item.connect.join(" ").split(" ").forEach(function(n) {
-                        const tempPart = partsAll.findPartObj(n.split("-")[0]);
+                        const tempPart = partsAll.findPart(n);
                         //attention:
                         if (tempPart.partType === "网络标号") {
 

@@ -552,6 +552,7 @@ function AStartSearch(start, end, vector, opt) {
 }
 //搜索函数
 const Search = {
+    //绘制导线
     draw: {
         start: function(event, part, mark) {
             /*
@@ -740,7 +741,7 @@ const Search = {
                 case "part-point": {
                     //器件引脚
                     const temp = status.id.split("-"),
-                        clickpart = partsAll.findPartObj(temp[0]),
+                        clickpart = partsAll.findPart(temp[0]),
                         pointmark = parseInt(temp[1]);
 
                     if (!clickpart.connect[pointmark]) {
@@ -755,18 +756,18 @@ const Search = {
                     break;
                 }
                 case "line-point": {
-                    const clickpart = partsAll.findPartObj(status.id);
+                    const clickpart = partsAll.findPart(status.id);
                     this.mergeLine(clickpart);
                     return (true);
                 }
                 case "line": {
-                    const clickpart = partsAll.findPartObj(status.id);
+                    const clickpart = partsAll.findPart(status.id);
                     this.splitLine(clickpart, 1);
                     break;
                 }
                 case "cross-point": {
                     const lines = schMap.getValueByOrigin(status).id.split(" ")
-                        .map((n) => partsAll.findPartObj(n));
+                        .map((n) => partsAll.findPart(n));
 
                     if (lines.length === 3) {
                         for (let i = 0; i < 3; i++) {
@@ -794,11 +795,31 @@ const Search = {
             this.markSign();
         }
     },
-    singlePart: {
+    //移动器件导致的导线变形
+    movePart: {
+        start: function(event) {
+            //活动器件 -> 静止导线/器件
+            if(partsNow.has(this.connect[0]) || partsNow.has(this.connect[1])) {
+                const current = this.current;
+                //器件端为起点
+                if(this.getConnectStatus(1) === "part") {
+                    this.reverse();
+                }
+                current.status = "part2any";
+                current.wayBackup = new LineWay(this.way);
+                current.initTrend = this.initTrend(0);
+                current.movePoint = Point(this.way[0]);
+            }
+            //活动导线 -> 静止器件
 
-    },
-    moreParts: {
+            //活动导线 -> 静止导线
+        },
+        callback: function(event) {
 
+        },
+        end: function() {
+
+        }
     },
     deformation: {
 
@@ -1366,12 +1387,12 @@ LineClass.prototype = {
         let connectId = this.connect[sub];
         if (connectId.search("-") !== -1) {              //此连接点连接到了器件
             let tempcon = connectId.split("-");
-            let partObj = partsAll.findPartObj(tempcon[0]);
+            let partObj = partsAll.findPart(tempcon[0]);
             let pointMark = parseInt(tempcon[1]);
             partObj.connectPoint(pointMark, newId);      //替换器件的引脚连接
         } else {
             let lines = connectId.split(" ").map(function (item) {    //查询所有连接的导线
-                return (partsAll.findPartObj(item));
+                return (partsAll.findPart(item));
             });
             for (let i = 0; i < lines.length; i++) {
                 lines[i].connect[0] = lines[i].connect[0].replace(this.id, newId);
@@ -1486,14 +1507,14 @@ LineClass.prototype = {
     deleteSelf() {
         for(let i = 0; i < this.connect.length; i++) {
             if (this.getConnectStatus(i) === "line") {
-                const lines = this.connect[i].split(" ").map((n) => partsAll.findPartObj(n));
+                const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
                 lines.forEach((n) => n.deleteConnect(this.id));
                 if (lines.length === 2) {
                     lines[0].mergeLine(lines[1]);
                 }
             } else if (this.getConnectStatus(i) === "part") {
                 const temp = this.connect[i].split("-"),
-                    part = partsAll.findPartObj(temp[0]);
+                    part = partsAll.findPart(temp[0]);
                 part.connect[temp[1]] = false;
                 part.noConnectPoint(temp[1]);
             }
@@ -1669,7 +1690,7 @@ LineClass.prototype = {
             //交错节点坐标
             const crossPoint = Array.clone(this.way[Num * (this.way.length - 1)]);
             return (
-                temp.map((n) => partsAll.findPartObj(n)).map((item) => item.circle[item.findConnect(crossPoint)])
+                temp.map((n) => partsAll.findPart(n)).map((item) => item.circle[item.findConnect(crossPoint)])
             );
         }
         return(false);
@@ -1700,7 +1721,7 @@ LineClass.prototype = {
                 id: this.id
             });
             lines.forEach(function (n) {
-                const line = partsAll.findPartObj(n),
+                const line = partsAll.findPart(n),
                     sub = crossPointOld.isEqual(line.way[0])
                         ? 0 : line.way.length;
 
@@ -1713,11 +1734,11 @@ LineClass.prototype = {
             //连接了三个器件，那么三个器件从连接表中删除当前导线
             //导线在新交错节点中将那个导线拆分
             lines.forEach((item) => {
-                partsAll.findPartObj(item)
+                partsAll.findPart(item)
                     .deleteConnect(this.id);
             });
             const crossValue = schMap.getValueByOrigin(crossPointOld).id,
-                splited = partsAll.findPartObj(schMap.getValueByOrigin(crossPointNew).id);
+                splited = partsAll.findPart(schMap.getValueByOrigin(crossPointNew).id);
             schMap.setValueByOrigin(crossPointOld, {
                 id: crossValue.split(" ")
                     .map((n) => n !== this.id)
@@ -1917,7 +1938,7 @@ LineClass.prototype = {
             //导线出线方向为起点器件的引脚方向
             const tempArr = tempstatus.id.split("-"),
                 tempmark = tempArr[1],
-                temppart = partsAll.findPartObj(tempArr[0]),
+                temppart = partsAll.findPart(tempArr[0]),
                 tempPointInfor = temppart.pointRotate();
             return(Point(tempPointInfor[tempmark].direction));
         } else {
