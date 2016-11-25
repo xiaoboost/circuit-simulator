@@ -40,6 +40,10 @@ MapHash.prototype = {
             delete this[node[0]];
         }
     },
+    //以原坐标删除节点
+    deleteValueByOrigin(node) {
+        return (this.deleteValueBySmalle([node[0] / 20, node[1] / 20]));
+    },
     //给节点添加连接关系，如果重复那么就忽略
     pushConnectPointBySmalle(node, connect) {
         let nodeStatus = this.getValueBySmalle(node);
@@ -254,15 +258,21 @@ MapHash.prototype = {
         deleteLineNode(temp_last, [tempx, tempy]);
         if (map.getValueBySmalle([tempx, tempy]).form === "line-point") {
             delete map[tempx][tempy];
-            if (Object.isEmpty(map[tempx])) delete map[tempx];
+            if (Object.isEmpty(map[tempx])) {
+                delete map[tempx];
+            }
         }
 
         //假如起点和终点是交错节点，那么就要从交错节点id中删去当前导线id
         const tempId = id;
-        [way[0], way[way.length - 1]].forEach(function(n) {
+        [way[0], way.get(-1)].forEach((n) => {
             const tempStatus = map.getValueByOrigin(n);
             if (tempStatus && tempStatus.form === "cross-point") {
                 tempStatus.id = tempStatus.id.split(" ").filter((n) => n !== tempId).join(" ");
+            }
+            //如果id已经空了，那么删除此点
+            if(!tempStatus.id) {
+                map.deleteValueByOrigin(n);
             }
         });
     },

@@ -38,7 +38,6 @@ function PartsCollection(parts) {
     });
 }
 PartsCollection.prototype = {
-    length: 0,
     constructor: PartsCollection,
     //器件压栈
     push (part) {
@@ -107,7 +106,7 @@ PartsCollection.prototype = {
     has (part) {
         let tempid;
         if (typeof  part === "string") {
-            tempid = part;
+            tempid = part.split("-")[0];
         } else {
             tempid = part.id;
         }

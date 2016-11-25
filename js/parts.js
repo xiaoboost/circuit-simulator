@@ -1419,74 +1419,90 @@ PartClass.prototype = {
     }
 };
 
-//由器件开始回溯导线，确定导线状态
-PartClass.checkLineStatus = function() {
-    //递归标记器件所连接的导线
-    for(let i = 0; i < partsNow.length; i++) {
-        (function DFS(part) {
-            //非法器件
-            if(!part) { return(false); }
-            //已经确定整体移动的器件
-            if(part.current.status === "move") { return(true); }
+//器件移动相关的方法
+partsNow.extend({
+    //由器件开始回溯导线，确定导线状态
+    checkLine(event) {
+        const self = this;
+        //递归标记器件所连接的导线
+        for(let i = 0; i < self.length; i++) {
+            (function DFS(part) {
+                //非法器件
+                if(!part) { return(false); }
+                //已经确定整体移动的器件
+                if(part.current.status === "move") { return(true); }
 
-            if(part.partType !== "line" && partsNow.has(part)) {
-                //标记当前器件
-                part.current.status = "move";
-                //当前器件是被选中的器件
-                for(let i = 0; i < part.connect.length; i++) {
-                    DFS(partsAll.findPart(part.connect[i]));
-                }
-            } else if(part.partType === "line") {
-                //当前器件是导线
-                //标记当前导线
-                if(!part.current.status) {
-                    part.current.status = "half";
-                } else if(part.current.status === "half") {
+                if(part.partType !== "line" && self.has(part)) {
+                    //标记当前器件
                     part.current.status = "move";
-                    return(true);
-                }
-                //导线回溯
-                if(part.connect.every((con) =>
-                        con.split(" ").map((item) => partsAll.findPart(item))
-                            .some((item) => (!item) || partsNow.has(item) || item.current.status))) {
+                    //当前器件是被选中的器件
+                    for(let i = 0; i < part.connect.length; i++) {
+                        DFS(partsAll.findPart(part.connect[i]));
+                    }
+                } else if(part.partType === "line") {
+                    //当前器件是导线
+                    //标记当前导线
+                    if(!part.current.status) {
+                        part.current.status = "half";
+                    } else if(part.current.status === "half") {
+                        part.current.status = "move";
+                        return(true);
+                    }
+                    //导线回溯
+                    if(part.connect.every((con) =>
+                            con.split(" ").map((item) => partsAll.findPart(item))
+                                .some((item) => (!item) || self.has(item) || item.current.status))) {
 
-                    //当前导线整体移动
-                    part.current.status = "move";
-                    part.connect.join(" ").split(" ")
-                        .forEach((item) => DFS(partsAll.findPart(item)));
+                        //当前导线整体移动
+                        part.current.status = "move";
+                        part.connect.join(" ").split(" ")
+                            .forEach((item) => DFS(partsAll.findPart(item)));
+                    }
                 }
+            })(self[i]);
+        }
+        //被标记的导线加入器件堆栈
+        partsAll.forEach((item) => {
+            if(item.partType !== "line") { return( false); }
+            //对部分移动的导线进行分类以及数据准备
+            if(item.current.status === "move") {
+                item.toFocus();
+            } else if(item.current.status === "half") {
+                item.toFocus();
+                item.startPath(event, "movePart");
             }
-        })(partsNow[i]);
+        });
+    },
+    //器件准备移动
+    moveStart() {
+        //拔起全部器件
+        this.forEach((n) => n.deleteSign());
+    },
+    //器件移动
+    moveParts(event) {
+        const self = this,
+            grid = self.current,
+            bias = grid.mouseBias(event);
+
+        this.forEach((item) => {
+            if(item.partType !== "line" || item.current.status === "move") {
+                //整体移动
+                item.move(bias);
+            } else {
+                //移动变形
+                item.current.movePoint = item.current.movePoint.add(bias);
+                item.setPath(false, "movePart");
+            }
+        });
+    },
+    //放下所有器件
+    putDownParts() {
+
     }
-    //被标记的导线加入器件堆栈
-    partsAll.forEach((item) => {
-        if(item.partType !== "line") { return( false); }
-        //对部分移动的导线进行分类以及数据准备
-        if(item.current.status === "move") {
-            item.toFocus();
-        } else if(item.current.status === "half") {
-            item.startPath(event, "movePart");
-        }
-    });
-}
-//器件移动
-PartClass.moveParts = function(event) {
-    const bias = partsNow.current.mouseBias(event);
-    partsNow.forEach((item) => {
-        if(item.partType !== "line" || item.current.status === "move") {
-            //整体移动
+});
+Object.freezeMethod(partsNow);
 
-        } else {
-            //移动变形
-
-        }
-    });
-}
-//放下所有器件
-PartClass.putDownParts = function(event) {
-
-}
-
+//处理器件原型的格式
 function css2obj(css) {
     if(css instanceof Array) {
         if(css.length === 2) {
@@ -1514,7 +1530,6 @@ function css2obj(css) {
         });
     }
 }
-//处理器件原型的格式
 for(let i in originalElectronic) {
     const data = originalElectronic[i].readOnly,
         pointInfor = data.pointInfor;

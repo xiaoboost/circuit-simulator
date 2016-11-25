@@ -39,13 +39,12 @@ function selectMin(ref, alts, func){
         return(false);
     }
 }
-//向量相乘
+
 function vectorProduct(a, b) {
-    return (a[0] * b[0] + a[1] * b[1]);
+    return exPoint.prototype.mul.call(a, b);
 }
-//点与点的距离
-function nodeDistance(a, b) {
-    return (Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]));
+function nodeDistance(node, end) {
+    return exPoint.prototype.distance.call(node, end);
 }
 
 //点和向量
@@ -62,6 +61,7 @@ function exPoint(arr) {
     this.length = 2;
 }
 exPoint.prototype = {
+    //加法，如果输入数组，那么逐个相加
     add(label = 1, a) {
         const sum = [],
             sign = (a === undefined) ? 1 : label,
@@ -85,6 +85,7 @@ exPoint.prototype = {
         }
         return(new exPoint(sum));
     },
+    //乘法，如果输入数组，那么逐个相乘
     mul(label = 1, a) {
         const sum = [],
             sign = (a === undefined) ? 1 : label;
@@ -144,6 +145,42 @@ exPoint.prototype = {
             vc2 = Point.prototype.toUnit.call(vector);
         return(vc1.isEqual(vc2));
     },
+    //在某线段范围内
+    inLine(line) {
+        if(line[0][0] === line[1][0] && line[0][0] === this[0]) {
+            return (
+                (this[1] >= line[0][1] && this[1] <= line[1][1]) ||
+                (this[1] <= line[0][1] && this[1] >= line[1][1])
+            );
+        } else if(line[0][1] === line[1][1] && line[0][1] === this[1]) {
+            return(
+                (this[0] >= line[0][0] && this[0] <= line[1][0]) ||
+                (this[0] <= line[0][0] && this[0] >= line[1][0])
+            );
+        }
+    },
+    //点到点或线的距离
+    distance(end) {
+        if(end[0].length) {
+            //end是线段
+            //垂直为1，水平为0
+            const sub = +(end[0][1] !== end[1][1]);
+            if (((this[sub] <= end[0][sub]) && (this[sub] >= end[1][sub])) ||
+                ((this[sub] >= end[0][sub]) && (this[sub] <= end[1][sub]))) {
+                //this在线段x或y轴范围内
+                return(Math.abs(this[1 - sub] - end[0][1 - sub]));
+            } else {
+                //否则，取线段起点或终点中和this距离小的
+                return(Math.min(
+                    Math.abs(this[0] - end[0][0]) + Math.abs(this[1] - end[0][1]),
+                    Math.abs(this[0] - end[1][0]) + Math.abs(this[1] - end[1][1])
+                ));
+            }
+        } else {
+            //end是点
+            return(Math.abs(this[0] - end[0]) + Math.abs(this[1] - end[1]));
+        }
+    },
     //四舍五入
     round(n = 20) {
         return(new exPoint([
@@ -179,7 +216,7 @@ exPoint.prototype = {
             new exPoint([this[0] + 20, this[1] + 20])
         ]);
     },
-    //在vectors中与this最为相似的向量
+    //在vectors中与this夹角最小的向量
     similar(vectors) {
         return selectMax(this, vectors, vectorProduct);
     },
