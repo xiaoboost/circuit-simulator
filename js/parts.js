@@ -958,79 +958,6 @@ PartClass.prototype = {
         schematic.append(group);
         return (group);
     },
-    //输出true表示此处被占用，false表示此处为空
-    sheetCover(pos) {
-        //获取当前器件的内外边距之和
-        function merge(part) {
-            const box = {},
-                range = part.marginRotate();
-
-            for(let i = 0; i < 4; i++) {
-                const attr = ['left','right','top','bottom'][i];
-                box[attr] = range.margin[attr] + range.padding[attr];
-            }
-            return(box);
-        }
-
-        pos = Point(pos);
-        const coverHash = {},
-            boxSize = merge(this),
-            margin = this.marginRotate().margin,
-            position = pos.floorToSmall(),
-            point = this.pointRotate()
-                .map((n) => Point.prototype.floorToSmall.call(n.position));
-
-        //检查器件管脚
-        for (let i = 0; i < point.length; i++) {
-            const node = position.add(point[i]);
-            if (schMap.getValueBySmalle(node)) {
-                return (true);
-            }
-            coverHash[node.join(',')] = true;
-        }
-        //扫描内边距
-        for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
-            for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
-                const status = schMap.getValueBySmalle([i,j]);
-                //内边距中存在任何元素都表示被占用
-                if(status) {
-                    return(true);
-                } else {
-                    coverHash[i + "," + j] = true;
-                }
-            }
-        }
-        //扫描外边距
-        for (let i = position[0] - boxSize.left; i <= position[0] + boxSize.right; i++) {
-            for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
-                //跳过内边距
-                if(coverHash[i + "," + j]) { continue; }
-                const status = schMap.getValueBySmalle([i,j]);
-                if(status && status.form === 'part') {
-                    const part = partsAll.findPart(status.id),
-                        partSize = merge(part),
-                        diff = this.position.add(-1, part.position).floorToSmall();
-
-                    if(diff[0] !== 0) {
-                        if(diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
-                            return(true);
-                        } else if(-diff[0] < boxSize.right + partSize.left) {
-                            return(true);
-                        }
-                    }
-                    if(diff[1] !== 0) {
-                        if(diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
-                            return(true);
-                        } else if(-diff[1] < boxSize.bottom + partSize.top) {
-                            return(true);
-                        }
-                    }
-                }
-            }
-        }
-
-        return (false);
-    },
     //引脚被占用，禁止缩放
     connectPoint(pointMark, lineId) {
         this.connect[pointMark] = lineId;
@@ -1236,52 +1163,6 @@ PartClass.prototype = {
             this.setPosition();
         }
     },
-    //器件移动
-    moveSelf(event) {
-        //常量提取
-        const mouse = this.current.mouse(event),
-            bias = this.current.mouseBias(event),
-            lines = this.current.lines = this.current.lines || [];
-
-        //首次运行且不是新建器件，准备运行参数
-        if (!this.current.isMove && !this.current.isNew) {
-            this.deleteSign(this.current.map);
-            this.current.lastPosition = Array.clone(this.position);
-            const tempPart = this.pointRotate(),
-                point = tempPart[0],
-                trend = tempPart[1];
-
-            for(let i = 0; i < this.connect.length; i++) {
-                if(!this.connect[i]) {
-                    continue;
-                }
-                lines.push(partsAll.findPart(this.connect[i]));
-                lines[lines.length - 1].preMoveLine(this.position.add(point[i]));
-                lines[lines.length - 1].current.initTrend = directionhash[trend[i]][0];
-            }
-        }
-        this.current.isMove = true;
-        //器件移动
-        if (this.current.isNew) {
-            //新建器件直接将器件对准鼠标
-            this.position = mouse;
-        } else {
-            //普通的器件移动，将鼠标偏移量累加到器件坐标
-            this.position = this.position.add(bias);
-        }
-        this.setPosition();
-        //没有临时导线，直接退出
-        if (!(this.current && this.current.lines && this.current.lines.length)) {
-            return (true);
-        }
-
-        //导线变形部分
-        for(let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            line.current.startNode = line.current.startNode.add(bias);
-            line.moveToLine();
-        }
-    },
     //旋转器件
     rotateSelf(sub) {
         //旋转前的器件引脚信息
@@ -1321,8 +1202,100 @@ PartClass.prototype = {
         //放下器件
         this.putDownSelf();
     },
+    //当前位置是否被占用
+    isCover(pos) {
+        //获取当前器件的内外边距之和
+        function merge(part) {
+            const box = {},
+                range = part.marginRotate();
+
+            for(let i = 0; i < 4; i++) {
+                const attr = ['left','right','top','bottom'][i];
+                box[attr] = range.margin[attr] + range.padding[attr];
+            }
+            return(box);
+        }
+
+        const coverHash = {},
+            boxSize = merge(this),
+            margin = this.marginRotate().margin,
+            point = this.pointRotate()
+                .map((n) => Point.prototype.floorToSmall.call(n.position)),
+            position = pos
+                ? Point(pos).roundToSmall()
+                : this.position.roundToSmall();
+
+        //检查器件管脚
+        for (let i = 0; i < point.length; i++) {
+            const node = position.add(point[i]);
+            if (schMap.getValueBySmalle(node)) {
+                return (true);
+            }
+            coverHash[node.join(',')] = true;
+        }
+        //扫描内边距
+        for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
+            for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
+                const status = schMap.getValueBySmalle([i, j]);
+                //内边距中存在任何元素都表示被占用
+                if (status) {
+                    return (true);
+                } else {
+                    coverHash[i + "," + j] = true;
+                }
+            }
+        }
+        //扫描外边距
+        for (let i = position[0] - boxSize.left; i <= position[0] + boxSize.right; i++) {
+            for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
+                //跳过内边距
+                if (coverHash[i + "," + j]) {
+                    continue;
+                }
+                const status = schMap.getValueBySmalle([i, j]);
+                if (status && status.form === 'part') {
+                    const part = partsAll.findPart(status.id),
+                        partSize = merge(part),
+                        diff = this.position.add(-1, part.position).floorToSmall();
+
+                    if (diff[0] !== 0) {
+                        if (diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
+                            return (true);
+                        } else if (-diff[0] < boxSize.right + partSize.left) {
+                            return (true);
+                        }
+                    }
+                    if (diff[1] !== 0) {
+                        if (diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
+                            return (true);
+                        } else if (-diff[1] < boxSize.bottom + partSize.top) {
+                            return (true);
+                        }
+                    }
+                }
+            }
+        }
+
+        return (false);
+    },
     //移动之后放下器件
-    putDownSelf() {
+    putDown(isNew) {
+        if (isNew) {
+            //新建器件需要检测是否可行
+            this.position = Point(
+                schMap.nodeRound(
+                    this.position.round(),
+                    this.position,
+                    this.isCover.bind(this)
+                )
+            );
+        }
+
+        this.position = this.position.round();
+        this.setPosition();
+        this.markSign();
+
+        /*
         //相关常量
         const positionLast = this.current.lastPosition,
             round = this.position.round(),
@@ -1353,6 +1326,7 @@ PartClass.prototype = {
 
         //清空器件临时变量
         this.current = {};
+        */
     },
     //删除器件
     deleteSelf() {
@@ -1434,6 +1408,7 @@ partsNow.extend({
 
                 if(part.partType !== "line" && self.has(part)) {
                     //标记当前器件
+                    part.current = {};
                     part.current.status = "move";
                     //当前器件是被选中的器件
                     for(let i = 0; i < part.connect.length; i++) {
@@ -1443,6 +1418,7 @@ partsNow.extend({
                     //当前器件是导线
                     //标记当前导线
                     if(!part.current.status) {
+                        part.current = {};
                         part.current.status = "half";
                     } else if(part.current.status === "half") {
                         part.current.status = "move";
@@ -1467,6 +1443,10 @@ partsNow.extend({
             //对部分移动的导线进行分类以及数据准备
             if(item.current.status === "move") {
                 item.toFocus();
+                //记录初始位置
+                item.current.position = item.position
+                    ? Point(item.position)
+                    : Point([0,0]);
             } else if(item.current.status === "half") {
                 item.toFocus();
                 item.startPath(event, "movePart");
@@ -1484,8 +1464,9 @@ partsNow.extend({
             grid = self.current,
             bias = grid.mouseBias(event);
 
+        //器件移动
         this.forEach((item) => {
-            if(item.partType !== "line" || item.current.status === "move") {
+            if(item.current.status === "move") {
                 //整体移动
                 item.move(bias);
             } else {
@@ -1497,7 +1478,41 @@ partsNow.extend({
     },
     //放下所有器件
     putDownParts() {
+        const self = this;
 
+        //整体移动的器件对齐网格
+        self.forEach((part) => {
+            if(part.current.status === "move") {
+                if(part.partType === "line") {
+                    part.way.forEach((node) => node.add(part.current.position).round());
+                } else {
+                    part.position = part.position.round();
+                }
+            }
+        });
+        //是否能放置器件
+        if (self.every((n) => (n.current.status === "move")
+                ? !n.isCover()
+                : true)) {
+            //首先放置整体移动的器件
+            self.forEach((n) => {
+                if (n.current.status === "move") {
+                    n.putDown(false, "movePart")
+                }
+            });
+            //然后放置变形导线
+            self.forEach((n) => {
+                if (n.current.status !== "move") {
+                    n.putDown(false, "movePart")
+                }
+            });
+            //变形导线连接关系改变
+
+        }
+        else {
+            //不可放置器件，恢复原状
+
+        }
     }
 });
 Object.freezeMethod(partsNow);

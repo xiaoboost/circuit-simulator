@@ -144,6 +144,15 @@ PartsCollection.prototype = {
             callback(this[i], i, this);
         }
     },
+    //同Array的every
+    every(callback) {
+        for (let i = 0; i < this.length; i++) {
+            if (!callback(this[i], i, this)) {
+                return (false);
+            }
+        }
+        return (true);
+    },
     //分割连通图，返回连通图数组
     connectGraph() {
         const partsArea = [],   //电路连通区域

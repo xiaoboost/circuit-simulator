@@ -11,7 +11,7 @@ import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
 import { PartClass, partsinfo } from "./parts";
 import { partsAll, partsNow } from "./collection";
-import "./test";
+//import "./test";
 
 //全局变量定义
 const doc = document,
@@ -899,6 +899,7 @@ mainPage.on("mouseup", function(event) {
             //移动器件
             case grid.moveParts: {
                 partsNow.putDownParts(event);
+                grid.setMoveParts(false);
                 break;
             }
             //绘制多选框
