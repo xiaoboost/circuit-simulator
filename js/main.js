@@ -11,7 +11,7 @@ import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
 import { PartClass, partsinfo } from "./parts";
 import { partsAll, partsNow } from "./collection";
-//import "./test";
+import "./test";
 
 //全局变量定义
 const doc = document,
@@ -421,23 +421,25 @@ function loadData(data) {
         }
     }
     //第三遍，扫描图纸的交错节点
-    for(let i in schMap) if(schMap.hasOwnProperty(i)) {
-        for (let j in schMap[i]) if(schMap[i].hasOwnProperty(j)){
-            const nodeStatus = schMap[i][j];
-            if(nodeStatus.form === "cross-point") {
-                //查询所有连接的导线
-                const node = [parseInt(i) * 20, parseInt(j) * 20],
-                    lines = nodeStatus.id.split(" ").map(function(item){
-                        const line = partsAll.findPart(item),
-                            sub = line.findConnect(node);
-                        return([line,sub]);
+    const nodes = schMap.toSmallNodes();
+    for(let k = 0; k < nodes.length; k++) {
+        const i = nodes[k][0],
+            j = nodes[k][1],
+            nodeStatus = schMap.getValueBySmalle(nodes[k]);
+
+        if(nodeStatus.form === "cross-point") {
+            //查询所有连接的导线
+            const node = [parseInt(i) * 20, parseInt(j) * 20],
+                lines = nodeStatus.id.split(" ").map(function(item){
+                    const line = partsAll.findPart(item),
+                        sub = line.findConnect(node);
+                    return([line,sub]);
                 });
-                for(let k = 0; k < lines.length; k++) {
-                    const lineconnect = (nodeStatus.id.search(lines[k][0].id + " ") !== -1)
-                        ? nodeStatus.id.replace(lines[k][0].id + " ", "")
-                        : nodeStatus.id.replace(" " + lines[k][0].id, "");
-                    lines[k][0].setConnect(lines[k][1], lineconnect);
-                }
+            for(let k = 0; k < lines.length; k++) {
+                const lineconnect = (nodeStatus.id.search(lines[k][0].id + " ") !== -1)
+                    ? nodeStatus.id.replace(lines[k][0].id + " ", "")
+                    : nodeStatus.id.replace(" " + lines[k][0].id, "");
+                lines[k][0].setConnect(lines[k][1], lineconnect);
             }
         }
     }

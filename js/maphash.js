@@ -1,53 +1,80 @@
-//图纸记录的类
-function MapHash() {}
-MapHash.prototype = {
+//图纸记录对象
+const map = {},
+    schMap = {};
+
+schMap.extend({
     //以小坐标取得节点属性
     getValueBySmalle(node) {
-        if (!this[node[0]]) return (false);
-        else if (!this[node[0]][node[1]]) return (false);
-        return (this[node[0]][node[1]]);
+        if (!map[node[0]]) {
+            return (false);
+        } else if (!map[node[0]][node[1]]) {
+            return (false);
+        }
+        return (map[node[0]][node[1]]);
     },
     //以原坐标取得节点属性
     getValueByOrigin(node) {
-        return (this.getValueBySmalle([node[0] / 20, node[1] / 20]));
+        return (schMap.getValueBySmalle([node[0] / 20, node[1] / 20]));
     },
     //以小坐标强制设定节点属性，默认为覆盖模式
     setValueBySmalle(node, attribute, flag = false) {
-        if (!this[node[0]]) {
-            this[node[0]] = [];
+        if (!map[node[0]]) {
+            map[node[0]] = [];
         }
         if (flag) {
             //删除原来的属性
-            this[node[0]][node[1]] = {};
-        } else if (!this[node[0]][node[1]]) {
+            map[node[0]][node[1]] = {};
+        } else if (!map[node[0]][node[1]]) {
             //覆盖模式下只有当节点为空的之后才会重新创建
-            this[node[0]][node[1]] = {};
+            map[node[0]][node[1]] = {};
         }
-        for (let i in attribute) if (attribute.hasOwnProperty(i)) {
-            this[node[0]][node[1]][i] = attribute[i];
+        for (let i in attribute) {
+            if (attribute.hasOwnProperty(i)) {
+                map[node[0]][node[1]][i] = attribute[i];
+            }
         }
     },
     //以原坐标强制设定节点属性，节点已经有的被新的覆盖，旧的不删除
     setValueByOrigin(node, attribute, flag = false) {
-        this.setValueBySmalle([node[0] / 20, node[1] / 20], attribute, flag);
+        schMap.setValueBySmalle([node[0] / 20, node[1] / 20], attribute, flag);
     },
     //以小坐标删除节点
     deleteValueBySmalle(node) {
-        if (this.getValueBySmalle(node)) {
-            delete this[node[0]][node[1]];
+        const status = schMap.getValueBySmalle(node);
+        if(status && status.connect) {
+            //删除与当前点相连的点的连接信息
+            for (let i = 0; i < status.connect.length; i++) {
+                const next = schMap.getValueBySmalle(status.connect[i]);
+                if (!next) {
+                    continue;
+                }
+                let sub = -1;
+                for (let j = 0; j < next.connect.length; j++) {
+                    if (next.connect.isEqual(node)) {
+                        sub = j;
+                        break;
+                    }
+                }
+                if (sub !== -1) {
+                    next.connect.splice(sub, 1);
+                }
+            }
+            delete map[node[0]][node[1]];
         }
-        if (Object.isEmpty(this[node[0]])) {
-            delete this[node[0]];
+        if (Object.isEmpty(map[node[0]])) {
+            delete map[node[0]];
         }
     },
     //以原坐标删除节点
     deleteValueByOrigin(node) {
-        return (this.deleteValueBySmalle([node[0] / 20, node[1] / 20]));
+        return (schMap.deleteValueBySmalle([node[0] / 20, node[1] / 20]));
     },
     //给节点添加连接关系，如果重复那么就忽略
     pushConnectPointBySmalle(node, connect) {
-        let nodeStatus = this.getValueBySmalle(node);
-        if (!nodeStatus) return (false);
+        let nodeStatus = schMap.getValueBySmalle(node);
+        if (!nodeStatus) {
+            return (false);
+        }
         if (nodeStatus && !nodeStatus.connect) {
             nodeStatus.connect = [];
         }
@@ -61,249 +88,35 @@ MapHash.prototype = {
         nodeStatus.push(connect);
         return (true);
     },
-    //从鼠标当前坐标判断连接在交错节点的导线应该拔出哪一个
-    findLinesByCrossPoint(mousePosition) {
-        const nodeRound = [
-                Math.round(mousePosition[0] * 0.05) * 20,
-                Math.round(mousePosition[1] * 0.05) * 20
-            ],
-            tempConnect = this.getValueByOrigin(nodeRound).connect;
-        //求离鼠标最近的方向
-        let minPoint = [[0, 20], [0, -20], [20, 0], [-20, 0]].reduce(function (pre, next) {
-            const preDistance = Math.abs(mousePosition[0] - nodeRound[0] - pre[0]) +
-                    Math.abs(mousePosition[1] - nodeRound[1] - pre[1]),
-                nextDistance = Math.abs(mousePosition[0] - nodeRound[0] - next[0]) +
-                    Math.abs(mousePosition[1] - nodeRound[1] - next[1]);
-            if (preDistance < nextDistance) return (pre);
-            else return (next);
-        }).map((n, i) => (nodeRound[i] + n) * 0.05);
-        //根据上面求得的方向得到坐标
-        //minPoint = [(nodeRound[0] + minPoint[0]) * 0.05, (nodeRound[1] + minPoint[1]) * 0.05];
+    pushConnectPointByOrigin(a, b) {
+        const node = [a[0] / 20, a[1] / 20],
+            connect = [b[0] / 20, b[1] / 20];
 
-        //交错节点扩展的节点和当前离鼠标最近的节点是否有交集
-        if (!tempConnect.some((n) => n.isEqual(minPoint))) {
-            return ([]);
-        }
-        const expandStatus = this.getValueBySmalle(minPoint);
-        let line;
-        if (expandStatus.form === "line" || expandStatus.form === "line-point") {
-            line = partsAll.findPart(expandStatus.id);
-        } else if (expandStatus.form === "part-point") {
-            const tempPastConnect = expandStatus.id.split("-");
-            const tempPart = partsAll.findPart(tempPastConnect[0]);
-            line = partsAll.findPart(tempPart.connect[parseInt(tempPastConnect[1])]);
-        }
-        const linesId = this.getValueByOrigin(nodeRound).id.split(" "), lines = [];
-        for (let i = 0; i < linesId.length; i++) {
-            if (linesId[i] !== line.id) {
-                lines.push(partsAll.findPart(linesId[i]));
-            }
-        }
-        return ([line, lines]);
+        return schMap.pushConnectPointBySmalle(node, connect);
     },
     //node和connect是否在同一个导线上
     nodeInConnectBySmall(node, connect) {
-        //判断node是否在node的连接表中，两个参数均为small
-        const nodelastStatus = this.getValueBySmalle(node);
+        const nodelastStatus = schMap.getValueBySmalle(node);
         if (nodelastStatus && (nodelastStatus.form === "line" || nodelastStatus.form === "cross-point")) {
             for (let i = 0; i < nodelastStatus.connect.length; i++) {
-                if (nodelastStatus.connect[i].isEqual(connect))
+                if (nodelastStatus.connect[i].isEqual(connect)) {
                     return (true);
+                }
             }
         }
         return (false);
     },
-    //设置器件标志位
-    makePartSign(id, position, point, range) {
-        //器件内边距占位
-        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
-            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
-                //删除原来的属性，并赋值新的属性
-                this.setValueBySmalle([i, j], {
-                    id: id,
-                    form: "part"
-                }, true);
-            }
-        }
-        //器件管脚距占位
-        for (let i = 0; i < point.length; i++) {
-            this.setValueBySmalle([position[0] + point[i][0] / 20, position[1] + point[i][1] / 20], {
-                id: id + "-" + i,
-                form: "part-point",
-                connect: []
-            }, true);
-        }
-    },
-    //删除器件标志位
-    deletePartSign(position, point, range) {
-        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
-            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
-                this.deleteValueBySmalle([i, j]);
-            }
-        }
-        for (let i = 0; i < point.length; i++) {
-            this.deleteValueBySmalle([position[0] + point[i][0] / 20, position[1] + point[i][1] / 20]);
-        }
-    },
-    //给导线设置或者删除标志位
-    makeLineSign(id, way) {
-        //设定导线相邻两点的属性
-        function setLineNode(map, nodelast, nodenow, id) {
-            let tempStatus = map.getValueBySmalle(nodenow);
-            if (!tempStatus) {
-                map.setValueBySmalle(nodenow, {
-                    form: "line",
-                    id: id,
-                    connect: []
-                });
-            } else if (tempStatus.form !== "cross-point" && tempStatus.form !== "part-point") {
-                map.setValueBySmalle(nodenow, {
-                    id: id
-                });
-            }
-            if (nodelast[0]) {
-                map.pushConnectPointBySmalle(nodenow, nodelast);
-                map.pushConnectPointBySmalle(nodelast, nodenow);
-            }
-        }
+    nodeInConnectByOrigin(a, b) {
+        const node = [a[0] / 20, a[1] / 20],
+            connect = [b[0] / 20, b[1] / 20];
 
-        let last = [], tempx = 0, tempy = 0;
-        for (let i = 0; i < way.length - 1; i++) {
-            let Constant = 0, Vector = 0, nodestart = 0, nodeend = 0, sub = 0;
-            if (way[i][0] !== way[i + 1][0]) sub = 1;
-            Constant = way[i][sub];
-            nodestart = way[i][1 - sub];
-            nodeend = way[i + 1][1 - sub];
-            Vector = (nodeend - nodestart) / Math.abs(nodeend - nodestart) * 20;
-            for (let j = nodestart; j !== nodeend; j += Vector) {
-                tempx = ((1 - sub) * Constant + sub * j) / 20;
-                tempy = (sub * Constant + (1 - sub) * j) / 20;
-                setLineNode(this, last, [tempx, tempy], id);
-                last = [tempx, tempy];
-            }
-        }
-        last = [tempx, tempy];
-        tempx = (way[way.length - 1][0]) / 20;
-        tempy = (way[way.length - 1][1]) / 20;
-        if (!this.getValueBySmalle([tempx, tempy])) {
-            setLineNode(this, last, [tempx, tempy], id);
-            this[tempx][tempy].form = "line-point";
-        } else {
-            setLineNode(this, last, [tempx, tempy], id);
-        }
-
-        //假如起点和终点是交错节点，那么就要加入当前导线的id
-        [way[0], way.get(-1)].forEach((n) => {
-            const tempStatus = this.getValueByOrigin(n);
-            if (tempStatus && tempStatus.form === "cross-point" && tempStatus.id.search(id) === -1) {
-                if (!tempStatus.id) {
-                    //当前ID为空，那么直接赋值
-                    tempStatus.id = id;
-                } else {
-                    //当前ID不为空，那么向原ID后面追加当前ID
-                    tempStatus.id += " " + id;
-                }
-            }
-        });
+        return schMap.nodeInConnectBySmall(node, connect);
     },
-    //删除导线标志位
-    deleteLineSign(id, way) {
-        const map = this;
-        
-        //设定导线相邻两点的属性
-        function deleteLineNode(nodelast,nodenow) {
-            function deleteConnect(status, connect) {
-                if (!status) return (false);
-                for (let i = 0; i < status.length; i++) {
-                    if ((status[i][0] === connect[0]) && (status[i][1] === connect[1])) {
-                        status.splice(i, 1);
-                        return (true);
-                    }
-                }
-                return (false);
-            }
-            if (nodelast[0]) {
-                const lastStatus = map.getValueBySmalle(nodelast);
-                if (lastStatus && lastStatus.connect.length === 1) {
-                    if (lastStatus.form !== "part-point") {
-                        delete map[nodelast[0]][nodelast[1]];
-                    } else map.setValueBySmalle(nodelast, {connect: []});
-                    if (Object.isEmpty(map[nodelast[0]])) delete map[nodelast[0]];
-                } else if (lastStatus && lastStatus.connect.length > 1) {
-                    deleteConnect(lastStatus.connect, nodenow);
-                }
-                const nowStatus = map.getValueBySmalle(nodenow);
-                if (nowStatus)
-                    deleteConnect(nowStatus.connect, nodelast);
-            }
-        }
-
-        let temp_last = [], tempx = 0, tempy = 0;
-        for (let i = 0; i < way.length - 1; i++) {
-            let Constant = 0, Vector = 0, nodestart = 0, nodeend = 0, sub = 0;
-            if (way[i][0] !== way[i + 1][0]) sub = 1;
-            Constant = way[i][sub];
-            nodestart = way[i][1 - sub];
-            nodeend = way[i + 1][1 - sub];
-            Vector = (nodeend - nodestart) / Math.abs(nodeend - nodestart) * 20;
-            for (let j = nodestart; j !== nodeend; j += Vector) {
-                tempx = ((1 - sub) * Constant + sub * j) / 20;
-                tempy = (sub * Constant + (1 - sub) * j) / 20;
-                deleteLineNode(temp_last, [tempx, tempy]);
-                temp_last = [tempx, tempy];
-            }
-        }
-        tempx = (way[way.length - 1][0]) / 20;
-        tempy = (way[way.length - 1][1]) / 20;
-        deleteLineNode(temp_last, [tempx, tempy]);
-        if (map.getValueBySmalle([tempx, tempy]).form === "line-point") {
-            delete map[tempx][tempy];
-            if (Object.isEmpty(map[tempx])) {
-                delete map[tempx];
-            }
-        }
-
-        //假如起点和终点是交错节点，那么就要从交错节点id中删去当前导线id
-        const tempId = id;
-        [way[0], way.get(-1)].forEach((n) => {
-            const tempStatus = map.getValueByOrigin(n);
-            if (tempStatus && tempStatus.form === "cross-point") {
-                tempStatus.id = tempStatus.id.split(" ").filter((n) => n !== tempId).join(" ");
-            }
-            //如果id已经空了，那么删除此点
-            if(!tempStatus.id) {
-                map.deleteValueByOrigin(n);
-            }
-        });
-    },
-    //以node为中心，寻找最近的可行点，callback为判断标准函数，由外部输入
-    nodeRound(node, mouse, callback) {
-        const ans = [];
-        let m = 0;
-        while (!ans.length) {
-            for (let k = 0; k <= m; k++) {
-                for (let i = node[0] - m * 20; i <= node[0] + m * 20; i += 20) {
-                    for (let j = node[1] - m * 20; j <= node[1] + m * 20; j += 20) {
-                        if (Math.abs(i - node[0]) + Math.abs(j - node[1]) === (k + m) * 20) {
-                            if (!callback([i, j], this)) {
-                                ans.push([i, j]);
-                            }
-                        }
-                    }
-                    if (ans.length) break;
-                }
-            }
-            m++;
-        }
-
-        const vectors = ans.map((item) => [item[0] - node[0], item[1] - node[1]]);
-        return (ans[node.add(-1, mouse).similar(vectors).sub]);
-    },
-    //判断当前点是不是导线
+    //当前点是否是导线
     isLine(node, flag = "origin") {
         const tempStatus = (flag === "origin")
-            ? this.getValueByOrigin(node)
-            : this.getValueBySmalle(node);
+            ? schMap.getValueByOrigin(node)
+            : schMap.getValueBySmalle(node);
 
         return (
             tempStatus &&
@@ -321,9 +134,9 @@ MapHash.prototype = {
 
         let node = [start[0], start[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进
-        while (this.isLine(node, "small") && !node.isEqual(end)) {
+        while (schMap.isLine(node, "small") && !node.isEqual(end)) {
             const nodeNow = [node[0] + vector[0], node[1] + vector[1]];
-            if(this.nodeInConnectBySmall(node, nodeNow)) {
+            if(schMap.nodeInConnectBySmall(node, nodeNow)) {
                 node = nodeNow;
             } else {
                 node = nodeNow;
@@ -331,10 +144,44 @@ MapHash.prototype = {
             }
         }
         return ([node[0] - vector[0], node[1] - vector[1]]);
-    }
-};
+    },
+    //以node为中心，寻找最近的可行点，callback为判断标准函数，由外部输入
+    nodeRound(node, mouse, callback) {
+        const ans = [];
+        let m = 0;
+        while (!ans.length) {
+            for (let k = 0; k <= m; k++) {
+                for (let i = node[0] - m * 20; i <= node[0] + m * 20; i += 20) {
+                    for (let j = node[1] - m * 20; j <= node[1] + m * 20; j += 20) {
+                        if (Math.abs(i - node[0]) + Math.abs(j - node[1]) === (k + m) * 20) {
+                            if (!callback([i, j])) {
+                                ans.push([i, j]);
+                            }
+                        }
+                    }
+                    if (ans.length) break;
+                }
+            }
+            m++;
+        }
 
-//全局图纸标志位
-const schMap = new MapHash();
+        const vectors = ans.map((item) => [item[0] - node[0], item[1] - node[1]]);
+        return (ans[node.add(-1, mouse).similar(vectors).sub]);
+    },
+    //返回已经记录的全部节点
+    toSmallNodes() {
+        const ans = [];
+        for (let i in map) {
+            if(map.hasOwnProperty(i)) {
+                for (let j in map[i]) {
+                    if (map[i].hasOwnProperty(j)) {
+                        ans.push([i, j]);
+                    }
+                }
+            }
+        }
+        return(ans);
+    },
+});
 
 export { schMap };

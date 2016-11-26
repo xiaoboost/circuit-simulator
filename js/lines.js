@@ -1014,15 +1014,17 @@ LineWay.prototype = {
         const ans = [];
 
         for(let i = 0; i < this.length - 1; i++) {
-            const vector = Point([this[i], this[i + 1]]).unit().mul(20);
+            const vector = Point([this[i], this[i + 1]]).toUnit().mul(20);
             let node = Point(this[i]);
-            while(Point([this[i + 1], node]).isSameDire(vector)) {
+            while(Point([node, this[i + 1]]).isSameDire(vector)) {
                 ans.push(node);
                 node = node.add(vector);
             }
         }
         //最后一个点
         ans.push(Point(this.get(-1)));
+
+        return(ans);
     },
     //导线终点扩展
     endExpand(points, endPoint, initTrend) {
@@ -1720,12 +1722,68 @@ LineClass.prototype = {
     },
     //在图中标记导线
     markSign() {
-        //标记并不会覆盖cross-point和part-point属性，需要在外部强制设定
-        schMap.makeLineSign(this.id, this.way);
+        const nodes = this.way.nodeCollection();
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i],
+                last = nodes[i - 1];
+            if (i && i !== nodes.length - 1) {
+                //非端点节点
+                schMap.setValueByOrigin(node, {
+                    form: "line",
+                    id: this.id,
+                    connect: []
+                });
+            } else if(!i) {
+                //导线起点
+                const status = schMap.getValueByOrigin(node);
+                if (status && status.form === "cross-point" &&
+                    status.id.search(this.id) === -1) {
+                    if (!status.id) {
+                        //当前ID为空，那么直接赋值
+                        status.id = this.id;
+                    } else {
+                        //当前ID不为空，那么向原ID后面追加当前ID
+                        status.id += " " + this.id;
+                    }
+                }
+            } else {
+                //导线终点
+                const status = schMap.getValueByOrigin(node);
+                if(!status) {
+                    schMap.setValueByOrigin(node, {
+                        form: "line-point",
+                        id: this.id
+                    });
+                }
+            }
+            if (last) {
+                schMap.pushConnectPointByOrigin(node, last);
+                schMap.pushConnectPointByOrigin(last, node);
+            }
+        }
     },
     //删除导线标记
     deleteSign() {
-        schMap.deleteLineSign(this.id, this.way);
+        const nodes = this.way.nodeCollection();
+        for (let i = 0; i < nodes.length; i++) {
+            const node = nodes[i];
+            if (i && i !== nodes.length - 1) {
+                //非端点节点
+                schMap.deleteValueByOrigin(node);
+            } else if(!i) {
+                //导线起点
+                const status = schMap.getValueByOrigin(node);
+                if(!status) { continue; }
+                if(status.form === "line-point") {
+                    schMap.deleteValueByOrigin(node);
+                }
+                else if (status.form === "cross-point") {
+                    status.id = status.id.split(" ")
+                        .filter((n) => n !== this.id)
+                        .join(" ");
+                }
+            }
+        }
     },
     //将导线起点/终点所连接导线重置
     resetPoint(Num) {

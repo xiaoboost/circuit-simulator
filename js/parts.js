@@ -707,27 +707,54 @@ PartClass.prototype = {
     markSign() {
         const position = this.position.floorToSmall(),
             range = this.marginRotate().padding,
-            pointInfor = this.pointRotate()
+            points = this.pointRotate()
                 .map((n) => n.position);
 
         //格式验证
         if(!position.isInteger()) {
             throw "设置标记时，器件必须对齐图纸";
         }
-        schMap.makePartSign(this.id, position, pointInfor, range);
+
+        //器件内边距占位
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                //删除原来的属性，并赋值新的属性
+                schMap.setValueBySmalle([i, j], {
+                    id: this.id,
+                    form: "part"
+                }, true);
+            }
+        }
+        //器件管脚距占位
+        for (let i = 0; i < points.length; i++) {
+            schMap.setValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20], {
+                id: this.id + "-" + i,
+                form: "part-point",
+                connect: []
+            }, true);
+        }
     },
     //删除器件标记
     deleteSign() {
         const position = this.position.floorToSmall(),
             range = this.marginRotate().padding,
-            pointInfor = this.pointRotate()
+            points = this.pointRotate()
                 .map((n) => n.position);
 
         //格式验证
         if(!position.isInteger()) {
             throw "设置标记时，器件必须对齐图纸";
         }
-        schMap.deletePartSign(position, pointInfor, range);
+        //删除器件内边距占位
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                schMap.deleteValueBySmalle([i, j]);
+            }
+        }
+        //删除器件引脚占位
+        for (let i = 0; i < points.length; i++) {
+            schMap.deleteValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20]);
+        }
     },
     //器件设置位置
     setPosition() {
