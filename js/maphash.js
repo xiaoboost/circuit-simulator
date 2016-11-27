@@ -182,6 +182,25 @@ schMap.extend({
         }
         return(ans);
     },
+    //返回交错节点到指定导线的方向
+    cross2line(node, line) {
+        const status = schMap.getValueByOrigin(node);
+        if(!status || status.form !== "cross-point") {
+            return(false);
+        }
+        for(let i = 0; i < status.connect.length; i++) {
+            const con = status.connect[i],
+                temp = schMap.getValueBySmalle(con);
+
+            if(temp.id.indexOf(line) !== -1) {
+                return([
+                    node[0] - con[0] * 20,
+                    node[1] - con[1] * 20
+                ]);
+            }
+        }
+        return(false);
+    }
 });
 
 export { schMap };

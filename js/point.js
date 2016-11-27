@@ -41,7 +41,7 @@ function selectMin(ref, alts, func){
 }
 
 function vectorProduct(a, b) {
-    return exPoint.prototype.mul.call(a, b);
+    return exPoint.prototype.product.call(a, b);
 }
 function nodeDistance(node, end) {
     return exPoint.prototype.distance.call(node, end);
@@ -110,6 +110,10 @@ exPoint.prototype = {
             sum[1] = this[1];
         }
         return(new exPoint(sum));
+    },
+    //向量相乘
+    product(a) {
+        return(this[0] * a[0] + this[1] * a[1]);
     },
     //单位化，符号不变，数值变为1
     toUnit() {

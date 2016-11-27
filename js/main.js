@@ -232,7 +232,9 @@ function mousemoveEvent(event) {
         }
         //移动新建器件
         case grid.newMark: {
-            partsNow[0].moveSelf(event);
+            const part = partsNow[0],
+                bias = part.current.mouse(event);
+            part.move(bias, "new");
             break;
         }
         //绘制导线
@@ -473,9 +475,7 @@ sidebar.on({
                 grid.setNewMark(true);
                 partsAll.push(new PartClass(event.currentTarget.id));
                 partsAll.get(-1).toFocus();
-                partsAll.get(-1).current
-                    .extend(grid.createData(event))
-                    .extend({isNew: true});
+                partsAll.get(-1).current = grid.createData(event);
                 mainPage.on("mousemove", mousemoveEvent);
             }
         }
@@ -894,7 +894,7 @@ mainPage.on("mouseup", function(event) {
             //新建器件
             case grid.newMark: {
                 grid.setNewMark(false);
-                partsNow[0].putDownSelf();
+                partsNow[0].putDown("new");
                 partsNow[0].elementDOM.attr("opacity", "1");
                 break;
             }

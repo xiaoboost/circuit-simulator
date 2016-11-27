@@ -1185,7 +1185,12 @@ PartClass.prototype = {
                 "x": grid.position[0],
                 "y": grid.position[1]
             });
-        } else {
+        }
+        else if(attr === "new") {
+            this.position = Point(mouse);
+            this.setPosition();
+        }
+        else {
             this.position = this.position.add(mouse);
             this.setPosition();
         }
