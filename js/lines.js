@@ -350,7 +350,18 @@ function SearchRules(nodestart, nodeend, mode) {
             self.calValue = calValue01;
             break;
         }
-        case "line2line":
+        case "line2part": {
+            //由器件引脚开始，忽略终点全部
+            //其余情况和part2any相同
+            if(mode.status === "part") {
+                excludeParts = excludePart(end);
+                excludeLines = excludeLine(end);
+                self.calValue = calValue01;
+                self.checkEnd = checkNode2NodeLine;
+                self.checkPoint = exRuleExcludeAlign;
+                break;
+            }
+        }
         case "part2any": {
             //活动器件 -> 静止器物，end会是点或者线
             excludeParts = excludePart(start);
@@ -370,14 +381,8 @@ function SearchRules(nodestart, nodeend, mode) {
             }
             break;
         }
-        case "line2part": {
-            if(mode.status === "line") {
+        case "line2line": {
 
-            }
-            else if(mode.status === "part") {
-
-            }
-            break;
         }
         case "modified": {
             //修饰导线
@@ -482,33 +487,6 @@ function SearchStack(nodestart, vector, map) {
     }
 
     return(self);
-}
-//方格路径搜索
-function SearchGrid(start, end, mouse, vector, opt) {
-    const mouseRound = new WayMap(),
-        grid = Point.isPoint(start[0]) ? start : end;
-
-    //第一次检测上次搜索的是否有重复
-    mouse && mouse.forEach((node, way) => {
-        for(let i = 0; i < grid.length; i++) {
-            if(node.isEqual(grid[i])) {
-                mouseRound.set(node, way);
-            }
-        }
-    });
-    //第二次搜索空的节点
-    for(let i = 0; i < grid.length; i++) {
-        const node = grid[i];
-        if(!mouseRound.get(node)) {
-            if(Point.isPoint(start[0])) {
-                mouseRound.set(node, AStartSearch(node, end, vector, opt).checkWayExcess(vector));
-            } else {
-                mouseRound.set(node, AStartSearch(start, node, vector, opt).checkWayExcess(vector));
-            }
-        }
-    }
-
-    return(mouseRound);
 }
 //A*路径搜索
 function AStartSearch(start, end, vector, opt) {
@@ -688,16 +666,8 @@ const Search = {
                 }
 
                 //更新路径
-                //第一次检测上次搜索的是否有重复
-                mouseGridL.forEach((node, way) => {
-                    for(let i = 0; i < endGrid.length; i++) {
-                        if(node.isEqual(endGrid[i])) {
-                            mouseGrid.set(node, way);
-                        }
-                    }
-                });
-                //第二次搜索空的节点
-                for(let i = 0; i < grid.length; i++) {
+                mouseGridL.forSameNode(endGrid, mouseGrid);
+                for(let i = 0; i < endGrid.length; i++) {
                     const end = endGrid[i];
                     if(!mouseGrid.get(end)) {
                         mouseRound.set(end,
@@ -900,23 +870,33 @@ const Search = {
             if(!mouseFloor.isEqual(gridL)) {
                 const gridPoints = mouseFloor.toGrid(),
                     end = wayBackup.gridToEnd(gridPoints),
-                    map = cur.mouseGrid = new WayMap();
+                    searchGridL = cur.mouseGrid || new WayMap(),
+                    searchGrid = cur.mouseGrid = new WayMap(),
+                    mouseGrid = cur.mouseGrid = new WayMap();
 
                 //更新路径
-                //起点为器件或者是导线的时候需要做不同的处理
-                if(cur.status === "line2part" && Point.isPoint(end)) {
-                    option.status = "part";
-                    //此时器件为起点
-                    cur.searchGrid = SearchGrid(gridPoints, end.seg, cur.searchGrid, backTrend, option);
-                } else {
-                    option.status = "line";
+                searchGridL.forSameNode(gridPoints, searchGrid);
+                for(let i = 0; i < gridPoints.length; i++) {
+                    const start = gridPoints[i];
+                    if(mouseGrid.get(end)) { continue; }
+
+                    let way;
+                    if (cur.status === "line2part" && Point.isPoint(end)) {
+                        option.preStatus = "part";
+                        way = AStartSearch(end, start, backTrend, option)
+                                .checkWayExcess(backTrend);
+                        way.reverse();
+                    } else {
+                        option.preStatus = "line";
+                        way = AStartSearch(start, end, initTrend, option)
+                            .checkWayExcess(initTrend);
+                    }
+                    mouseGrid.set(end, way);
                 }
 
-                //更新路径
-                cur.searchGrid = SearchGrid(gridPoints, end.seg, cur.searchGrid, initTrend, option);
                 //新旧路径合并
-                cur.searchGrid.forEach((node, way) => {
-                    map.set(node,
+                searchGrid.forEach((node, way) => {
+                    mouseGrid.set(node,
                         wayBackup.insert(0, end.sub, way)
                             .checkWayRepeat()
                     );
@@ -1400,6 +1380,16 @@ WayMap.prototype = {
             }
         });
         return(ans);
+    },
+    //如果有相同的key，那么将this的值赋值给新的map
+    forSameNode(points, map) {
+        this.forEach((node, way) => {
+            for(let i = 0; i < points.length; i++) {
+                if(node.isEqual(points[i])) {
+                    map.set(node, way);
+                }
+            }
+        });
     }
 };
 
