@@ -2,6 +2,9 @@
 const map = {},
     schMap = {};
 
+//虚拟层
+let virtualMap;
+
 schMap.extend({
     //以小坐标取得节点属性
     getValueBySmalle(node) {
@@ -18,21 +21,20 @@ schMap.extend({
     },
     //以小坐标强制设定节点属性，默认为覆盖模式
     setValueBySmalle(node, attribute, flag = false) {
-        if (!map[node[0]]) {
-            map[node[0]] = [];
+        const i = node[0], j = node[1];
+        
+        if (!map[i]) {
+            map[i] = [];
         }
         if (flag) {
             //删除原来的属性
-            map[node[0]][node[1]] = {};
-        } else if (!map[node[0]][node[1]]) {
+            map[i][j] = {};
+        } else if (!map[i][j]) {
             //覆盖模式下只有当节点为空的之后才会重新创建
-            map[node[0]][node[1]] = {};
+            map[i][j] = {};
         }
-        for (let i in attribute) {
-            if (attribute.hasOwnProperty(i)) {
-                map[node[0]][node[1]][i] = attribute[i];
-            }
-        }
+
+        map[i][j].extend(attribute);
     },
     //以原坐标强制设定节点属性，节点已经有的被新的覆盖，旧的不删除
     setValueByOrigin(node, attribute, flag = false) {
@@ -200,7 +202,40 @@ schMap.extend({
             }
         }
         return(false);
+    },
+
+    //重置虚拟层
+    resetVirtualMap() {
+        virtualMap = Object.create(map);
+    },
+    //以小坐标取得虚拟层中的节点属性
+    getValueInViMap(node) {
+        if (!virtualMap[node[0]]) {
+            return (false);
+        } else if (!virtualMap[node[0]][node[1]]) {
+            return (false);
+        }
+        return (virtualMap[node[0]][node[1]]);
+    },
+    //以小坐标强制设定虚拟层中的节点属性，强制覆盖
+    setValueInViMap(node, attribute, inherit) {
+        const mapStatus = schMap.getValueBySmalle(node),
+            i = node[0], j = node[1];
+
+        if(!virtualMap.hasOwnProperty(i)) {
+            virtualMap[i] = [];
+        }
+        if(!virtualMap[i].hasOwnProperty(j)) {
+            virtualMap[i][j] = {};
+        }
+        const viMapStatus = virtualMap[i][j];
+        //现将实际层数据复制到虚拟层，再扩展输入的属性
+        viMapStatus
+            .extend(Object.clone(mapStatus))
+            .extend(attribute);
     }
 });
+
+schMap.resetVirtualMap();
 
 export { schMap };

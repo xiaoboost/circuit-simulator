@@ -358,16 +358,20 @@ Object.prototype.extend = function(fromObj) {
 };
 //原生对象扩展
 Array.extend({
+    //数组深复制，需要避免循环引用
     clone(arr, factor = 1) {
         const ans = [];
         for (let i = 0; i < arr.length; i++) {
             if(arr[i] instanceof Array) {
                 ans[i] = Array.clone(arr[i], factor);
-            } else if(arr[i] instanceof Object) {
+            }
+            else if(arr[i] instanceof Object) {
                 ans[i] = Object.clone(arr[i]);
-            } else if(typeof arr[i] === "number") {
+            }
+            else if(typeof arr[i] === "number") {
                 ans[i] = arr[i] * factor;
-            } else {
+            }
+            else {
                 ans[i] = arr[i];
             }
         }
@@ -397,15 +401,23 @@ Array.prototype.extend({
     }
 });
 Object.extend({
-    //深度复制对象
+    //深度复制对象，需要避免循环引用
     clone(fromObj) {
         const toObj = {};
-        for(let i in fromObj) if(fromObj.hasOwnProperty(i)) {
-            if (fromObj[i] instanceof Array) toObj[i] = Array.clone(fromObj[i]);
-            else if (fromObj[i] instanceof Object) toObj[i] = Object.clone(fromObj[i]);
-            else toObj[i] = fromObj[i];
+        for(let i in fromObj) {
+            if(fromObj.hasOwnProperty(i)) {
+                if (fromObj[i] instanceof Array) {
+                    toObj[i] = Array.clone(fromObj[i]);
+                }
+                else if (fromObj[i] instanceof Object) {
+                    toObj[i] = Object.clone(fromObj[i]);
+                }
+                else {
+                    toObj[i] = fromObj[i];
+                }
+            }
         }
-        Object.setPrototypeOf(toObj,Object.getPrototypeOf(fromObj));
+        Object.setPrototypeOf(toObj, Object.getPrototypeOf(fromObj));
         return(toObj);
     },
     //对象是否为空
