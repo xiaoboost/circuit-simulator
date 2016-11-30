@@ -722,7 +722,7 @@ PartClass.prototype = {
                 schMap.setValueBySmalle([i, j], {
                     id: this.id,
                     form: "part"
-                }, true);
+                });
             }
         }
         //器件管脚距占位
@@ -731,7 +731,7 @@ PartClass.prototype = {
                 id: this.id + "-" + i,
                 form: "part-point",
                 connect: []
-            }, true);
+            });
         }
     },
     //删除器件标记
@@ -1186,13 +1186,10 @@ PartClass.prototype = {
                 "y": grid.position[1]
             });
         }
-        else if(attr === "new") {
-            this.position = Point(mouse);
-            this.setPosition();
-        }
         else {
-            this.position = this.position.add(mouse);
-            this.setPosition();
+            this.position = mouse ? Point(mouse) : this.position;
+            this.elementDOM.attr("transform",
+                "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
         }
     },
     //旋转器件
@@ -1469,18 +1466,17 @@ partsNow.extend({
                 }
             })(self[i]);
         }
-        //被标记的导线加入器件堆栈
+        //器件数据初始化
         partsAll.forEach((item) => {
-            if(item.partType !== "line") { return( false); }
-            //对部分移动的导线进行分类以及数据准备
             if(item.current.status === "move") {
-                item.toFocus();
+                partsNow.has(item) || item.toFocus();
                 //记录初始位置
-                item.current.position = item.position
+                item.current.bias = item.position
                     ? Point(item.position)
                     : Point([0,0]);
             } else if(item.current.status === "half") {
-                item.toFocus();
+                partsNow.has(item) || item.toFocus();
+                //导线变形数据初始化
                 item.startPath(event, "movePart");
             }
         });
@@ -1493,18 +1489,18 @@ partsNow.extend({
     //器件移动
     moveParts(event) {
         const self = this,
-            grid = self.current,
-            bias = grid.mouseBias(event);
+            cur = self.current,
+            bias = cur.mouseBias(event),
+            move = cur.pageL = cur.pageL.add(bias);
 
         //器件移动
         this.forEach((item) => {
             if(item.current.status === "move") {
                 //整体移动
-                item.move(bias);
+                item.move(item.current.bias.add(move));
             } else {
                 //移动变形
-                item.current.movePoint = item.current.movePoint.add(bias);
-                item.setPath(false, "movePart");
+                item.setPath(item.current.startPoint.add(move), "movePart");
             }
         });
     },

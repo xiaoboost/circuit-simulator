@@ -350,6 +350,7 @@ function SearchRules(nodestart, nodeend, mode) {
             self.calValue = calValue01;
             break;
         }
+        case "line2line":
         case "line2part": {
             //由器件引脚开始，忽略终点全部
             //其余情况和part2any相同
@@ -380,9 +381,6 @@ function SearchRules(nodestart, nodeend, mode) {
                 self.checkPoint = exRuleExcludeAlign;
             }
             break;
-        }
-        case "line2line": {
-
         }
         case "modified": {
             //修饰导线
@@ -854,16 +852,15 @@ const Search = {
             //临时属性
             cur.wayBackup = new LineWay(this.way);
             cur.initTrend = this.initTrend(0);
-            cur.movePoint = Point(this.way[0]);
+            cur.startPoint = Point(this.way[0]);
         },
-        callback: function() {
+        callback: function(point) {
             const cur = this.current,
-                movePoint = cur.movePoint,
                 gridL = cur.gridL,
                 wayBackup = cur.wayBackup,
                 initTrend = cur.initTrend,
                 backTrend = cur.backTrend,
-                mouseFloor = movePoint.floor(),
+                mouseFloor = point.floor(),
                 option = {process: cur.status};
 
             //更新路径
@@ -880,6 +877,12 @@ const Search = {
                     const start = gridPoints[i];
                     if(mouseGrid.get(end)) { continue; }
 
+                    mouseGrid.set(end,
+                        AStartSearch(end, start, initTrend, option)
+                            .checkWayExcess(initTrend)
+                    );
+
+                    /*
                     let way;
                     if (cur.status === "line2part" && Point.isPoint(end)) {
                         option.preStatus = "part";
@@ -892,6 +895,7 @@ const Search = {
                             .checkWayExcess(initTrend);
                     }
                     mouseGrid.set(end, way);
+                    */
                 }
 
                 //新旧路径合并
@@ -968,6 +972,13 @@ LineWay.prototype = {
         }
         this.length = this.length + len;
         return(this.length);
+    },
+    //路径标准化
+    standardize() {
+        for(let i = 0; i < this.length; i++) {
+            this[i] = this[i].floor();
+        }
+        return(this);
     },
     //去除节点冗余
     checkWayRepeat() {
@@ -1222,12 +1233,6 @@ LineWay.prototype = {
             ans += Math.abs(this[i][0] - this[i + 1][0]) + Math.abs(this[i][1] - this[i + 1][1]);
         }
         return(ans);
-    },
-    //路径标准化
-    standardize() {
-        for(let i = 0; i < this.length; i++) {
-            this[i] = this[i].round();
-        }
     },
     //由某点求距离这点最短的线段在当前导线的下标
     searchNodeSub(node) {
@@ -1783,6 +1788,7 @@ LineClass.prototype = {
     //在图中标记导线
     markSign() {
         const nodes = this.way.nodeCollection();
+
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i],
                 last = nodes[i - 1];
@@ -2242,10 +2248,10 @@ LineClass.prototype = {
     },
     //整体移动
     move(bais) {
-        this.current.position =
-            (this.current.position || Point([0,0])).add(bais);
+        const position = (this.current.bias || Point([0,0])).add(bais);
+
         this.elementDOM.attr("transform",
-            "translate(" + this.current.position.join(",") + ")");
+            "translate(" + position.join(",") + ")");
     },
     //导线路径开始
     startPath(event, opt, ...args) {

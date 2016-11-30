@@ -2,15 +2,10 @@
 const map = {},
     schMap = {};
 
-//虚拟层
-let virtualMap;
-
 schMap.extend({
     //以小坐标取得节点属性
     getValueBySmalle(node) {
-        if (!map[node[0]]) {
-            return (false);
-        } else if (!map[node[0]][node[1]]) {
+        if (!map[node[0]] || !map[node[0]][node[1]]) {
             return (false);
         }
         return (map[node[0]][node[1]]);
@@ -73,21 +68,22 @@ schMap.extend({
     },
     //给节点添加连接关系，如果重复那么就忽略
     pushConnectPointBySmalle(node, connect) {
-        let nodeStatus = schMap.getValueBySmalle(node);
-        if (!nodeStatus) {
+        let status = schMap.getValueBySmalle(node);
+
+        if (!status) {
             return (false);
         }
-        if (nodeStatus && !nodeStatus.connect) {
-            nodeStatus.connect = [];
+        if (!status.connect) {
+            status.connect = [];
         }
-        nodeStatus = nodeStatus.connect;
-        for (let j = 0; j < nodeStatus.length; j++) {
-            if ((nodeStatus[j][0] === connect[0]) &&
-                (nodeStatus[j][1] === connect[1])) {
+        status = status.connect;
+        for (let j = 0; j < status.length; j++) {
+            if ((status[j][0] === connect[0]) &&
+                (status[j][1] === connect[1])) {
                 return (false);
             }
         }
-        nodeStatus.push(connect);
+        status.push(connect);
         return (true);
     },
     pushConnectPointByOrigin(a, b) {
@@ -203,39 +199,6 @@ schMap.extend({
         }
         return(false);
     },
-
-    //重置虚拟层
-    resetVirtualMap() {
-        virtualMap = Object.create(map);
-    },
-    //以小坐标取得虚拟层中的节点属性
-    getValueInViMap(node) {
-        if (!virtualMap[node[0]]) {
-            return (false);
-        } else if (!virtualMap[node[0]][node[1]]) {
-            return (false);
-        }
-        return (virtualMap[node[0]][node[1]]);
-    },
-    //以小坐标强制设定虚拟层中的节点属性，强制覆盖
-    setValueInViMap(node, attribute, inherit) {
-        const mapStatus = schMap.getValueBySmalle(node),
-            i = node[0], j = node[1];
-
-        if(!virtualMap.hasOwnProperty(i)) {
-            virtualMap[i] = [];
-        }
-        if(!virtualMap[i].hasOwnProperty(j)) {
-            virtualMap[i][j] = {};
-        }
-        const viMapStatus = virtualMap[i][j];
-        //现将实际层数据复制到虚拟层，再扩展输入的属性
-        viMapStatus
-            .extend(Object.clone(mapStatus))
-            .extend(attribute);
-    }
 });
-
-schMap.resetVirtualMap();
 
 export { schMap };
