@@ -942,7 +942,7 @@ mainPage.on("mouseup", function(event) {
             //导线绘制
             case grid.drawLine: {
                 grid.setDrawLine(false);
-                partsNow.get(-1).endPath(event, "draw");
+                partsNow.get(-1).putDown(event, "draw");
                 break;
             }
             //其他
@@ -950,7 +950,8 @@ mainPage.on("mouseup", function(event) {
                 clearStatus();
             }
         }
-    } else if ((event.which === 3) && (grid.moveMap)) {
+    }
+    else if ((event.which === 3) && (grid.moveMap)) {
         //右键放开，且正在移动图纸移动整个图纸结束
         grid.setMoveMap(false);
         grid.current = [];

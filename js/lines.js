@@ -668,7 +668,7 @@ const Search = {
                 for(let i = 0; i < endGrid.length; i++) {
                     const end = endGrid[i];
                     if(!mouseGrid.get(end)) {
-                        mouseRound.set(end,
+                        mouseGrid.set(end,
                             AStartSearch(nodeStart, end, initTrend, option)
                                 .checkWayExcess(initTrend)
                         );
@@ -884,10 +884,11 @@ const Search = {
 
                 //新旧路径合并
                 searchGrid.forEach((node, way) => {
-                    mouseGrid.set(node,
-                        wayBackup.insert(0, end.sub, way)
-                            .checkWayRepeat()
-                    );
+                    const temp = new LineWay(wayBackup);
+                    temp.splice(0, end.sub, ...way);
+                    temp.checkWayRepeat();
+
+                    mouseGrid.set(node, temp);
                 });
                 //记录当前搜索框的定位点
                 cur.gridL = mouseFloor;
@@ -979,7 +980,7 @@ LineWay.prototype = {
         }
         //如果优先出线方向和第二个线段方向相同，说明此处需要修正
         if (trend.isSameDire(Point([this[1], this[2]]))) {
-            this.insert(AStartSearch(this[0], this[2], trend, {process: "modified"}), 0, 3);
+            this.splice(0, 3, ...AStartSearch(this[0], this[2], trend, {process: "modified"}));
             this.checkWayRepeat();
         }
 
@@ -994,7 +995,7 @@ LineWay.prototype = {
                 tempWay = AStartSearch(this[i + 1], this[i + 3], vector[0], {process: "modified"});
                 tempVector = Point([tempWay[0], tempWay[1]]);
                 if(tempWay.length < 4 && tempVector.isSameDire(vector[0])) {
-                    this.insert(tempWay, i + 1, 3);
+                    this.splice(i + 1, 3, ...tempWay);
                     this.checkWayRepeat();
                     i--;
                 }
@@ -1002,7 +1003,7 @@ LineWay.prototype = {
                 //导线必须大于4个节点才有必要进行反向修饰
                 tempWay = AStartSearch(this[i], this[i + 3], vector[0], {process: "modified"});
                 if(tempWay.length < 4) {
-                    this.insert(tempWay, i, 4);
+                    this.splice(i, 4, ...tempWay);
                     this.checkWayRepeat();
                     i--;
                 }
@@ -1108,8 +1109,8 @@ LineWay.prototype = {
     },
     //终点/起点指向指定坐标
     endToMouse(dir, node) {
-        node = (node === undefined) ? dir : node;
-        dir = (node === undefined) ? 1 : dir;
+        node = (arguments.length === 1) ? dir : node;
+        dir = (arguments.length === 1) ? 1 : dir;
 
         const end = (dir === 1) ? this.length - 1 : 0,
             last = (dir === 1) ? this.length - 2 : 1;
@@ -1545,6 +1546,8 @@ LineClass.prototype = {
             tempway = this.way;
 
         tempway.checkWayRepeat();
+        tempway.standardize();
+
         //多余的导线线段需要删除
         while (linepath.length > this.way.length - 1) {
             linepath.remove(-1);

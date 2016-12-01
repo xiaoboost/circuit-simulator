@@ -69,8 +69,9 @@ PartsCollection.prototype = {
     },
     //根据器件ID返回器件对象
     findPart (tempid) {
-        const id = tempid.split("-")[0];
+        if(!tempid) { return(false); }
 
+        const id = tempid.split("-")[0];
         if (!this.has(id)) {
             return(false);
         }
