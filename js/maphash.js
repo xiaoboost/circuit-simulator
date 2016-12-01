@@ -38,24 +38,13 @@ schMap.extend({
     //以小坐标删除节点
     deleteValueBySmalle(node) {
         const status = schMap.getValueBySmalle(node);
-        if(status && status.connect) {
+        if (status && status.connect) {
             //删除与当前点相连的点的连接信息
             for (let i = 0; i < status.connect.length; i++) {
-                const next = schMap.getValueBySmalle(status.connect[i]);
-                if (!next) {
-                    continue;
-                }
-                let sub = -1;
-                for (let j = 0; j < next.connect.length; j++) {
-                    if (next.connect.isEqual(node)) {
-                        sub = j;
-                        break;
-                    }
-                }
-                if (sub !== -1) {
-                    next.connect.splice(sub, 1);
-                }
+                schMap.deleteConnectBySmalle(status.connect[i], node);
             }
+        }
+        if (status) {
             delete map[node[0]][node[1]];
         }
         if (Object.isEmpty(map[node[0]])) {
@@ -66,8 +55,8 @@ schMap.extend({
     deleteValueByOrigin(node) {
         return (schMap.deleteValueBySmalle([node[0] / 20, node[1] / 20]));
     },
-    //给节点添加连接关系，如果重复那么就忽略
-    pushConnectPointBySmalle(node, connect) {
+    //添加连接关系，如果重复那么就忽略
+    pushConnectBySmalle(node, connect) {
         let status = schMap.getValueBySmalle(node);
 
         if (!status) {
@@ -77,20 +66,41 @@ schMap.extend({
             status.connect = [];
         }
         status = status.connect;
-        for (let j = 0; j < status.length; j++) {
-            if ((status[j][0] === connect[0]) &&
-                (status[j][1] === connect[1])) {
+        for (let i = 0; i < status.length; i++) {
+            if (status[i].isEqual(connect)) {
                 return (false);
             }
         }
         status.push(connect);
         return (true);
     },
-    pushConnectPointByOrigin(a, b) {
+    pushConnectByOrigin(a, b) {
         const node = [a[0] / 20, a[1] / 20],
             connect = [b[0] / 20, b[1] / 20];
 
-        return schMap.pushConnectPointBySmalle(node, connect);
+        return schMap.pushConnectBySmalle(node, connect);
+    },
+    //删除连接关系，如果没有那么忽略
+    deleteConnectBySmalle(node, connect) {
+        const status = schMap.getValueBySmalle(node);
+
+        if (!status || !status.connect) {
+            return (false);
+        }
+
+        for (let i = 0; i < status.connect.length; i++) {
+            if(status.connect[i].isEqual(connect)) {
+                status.connect.splice(i, 1);
+                break;
+            }
+        }
+        return (true);
+    },
+    deleteConnectByOrigin(a, b) {
+        const node = [a[0] / 20, a[1] / 20],
+            connect = [b[0] / 20, b[1] / 20];
+
+        return schMap.deleteConnectBySmalle(node, connect);
     },
     //node和connect是否在同一个导线上
     nodeInConnectBySmall(node, connect) {

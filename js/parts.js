@@ -643,7 +643,7 @@ function PartClass(data) {
     }
     if(!this.input) { this.input = []; }
     this.elementDOM = this.createPart(); //创建新器件
-    this.setPosition();
+    this.move();
 
     //引脚DOM引用
     for(let i = 0; i < this.connect.length; i++) {
@@ -754,16 +754,6 @@ PartClass.prototype = {
         //删除器件引脚占位
         for (let i = 0; i < points.length; i++) {
             schMap.deleteValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20]);
-        }
-    },
-    //器件设置位置
-    setPosition() {
-        //器件本体
-        this.elementDOM.attr("transform",
-            "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
-        //显示文字
-        if(this.visionNum) {
-            this.textVisition($("text.features-text", this.elementDOM).attr(["x", "y"]));
         }
     },
     //显示器件文字
@@ -1321,41 +1311,10 @@ PartClass.prototype = {
         }
 
         this.position = this.position.round();
-        this.setPosition();
+        this.move();
         this.markSign();
-
-        /*
-        //相关常量
-        const positionLast = this.current.lastPosition,
-            round = this.position.round(),
-            point = this.pointRotate(),
-            lines = (this.current && this.current.lines) || [];
-
-        this.position = round.isEqual(positionLast)
-                ? round
-                : Point(schMap.nodeRound(round, this.position, this.sheetCover.bind(this)));
-
-        this.setPosition();
-        this.markSign();
-
-        //导线部分
-        for(let i = 0; i < lines.length; i++) {
-            const line = lines[i],
-                current = line.current,
-                trend = current.initTrend,
-                end = current.wayBackup.get(-1),
-                start = this.position.add(point[current.pointMark].position);
-
-            line.way.clone(LineClass.AStartSearch(start, end, trend));
-            line.setCollectCircle(1);
-            line.render();
-            line.markSign();
-            line.current = {};
-        }
-
         //清空器件临时变量
-        this.current = {};
-        */
+        //this.current = {};
     },
     //删除器件
     deleteSelf() {
@@ -1474,7 +1433,10 @@ partsNow.extend({
                 item.current.bias = item.position
                     ? Point(item.position)
                     : Point([0,0]);
-            } else if(item.current.status === "half") {
+            }
+        });
+        partsAll.forEach((item) => {
+            if(item.current.status === "half") {
                 partsNow.has(item) || item.toFocus();
                 //导线变形数据初始化
                 item.startPath(event, "movePart");
@@ -1506,13 +1468,15 @@ partsNow.extend({
     },
     //放下所有器件
     putDownParts() {
-        const self = this;
+        const self = this,
+            cur = self.current,
+            move = cur.pageL;
 
         //整体移动的器件对齐网格
         self.forEach((part) => {
             if(part.current.status === "move") {
                 if(part.partType === "line") {
-                    part.way.forEach((node) => node.add(part.current.position).round());
+                    part.way.standardize(move);
                 } else {
                     part.position = part.position.round();
                 }
