@@ -171,7 +171,7 @@ const grid = (function SchematicsGrid() {
     //剪切
     self.cut = function(arr) {
         const half = [], move = [];
-
+        //分别保存整体移动和变形导线
         for(let i = 0; i < arr.length; i++) {
             if (arr.current.status !== "move") {
                 half.push(arr[i]);
@@ -211,7 +211,20 @@ const grid = (function SchematicsGrid() {
     }
     //记录当前所有器件状态
     self.now = function() {
+        revocation.length = 0;
+        for(let i = 0; i < partsAll.length; i++) {
+            if(partsAll[i].current.status === "move") {
+                revocation.push(partsAll[i].toSimpleData());
+            }
+        }
+    }
+    //撤销
+    self.revocate = function() {
 
+    }
+    //复制堆栈中是否有数据
+    self.isPaste = function() {
+        return(!!copyStack.length);
     }
 
     //保留的全局临时变量
@@ -326,8 +339,7 @@ function contextSet(event, status) {
     const contextMenu = $("#right-button-menu"),
         menuAttr = {
             "free" : "right-map",
-            "single" : "right-part",
-            "more" : "right-moreparts",
+            "parts" : "right-parts",
             "line" : "right-line"
         };
     //关闭右键菜单
@@ -676,12 +688,12 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
     } else if (event.which === 3) {
         if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
             //多个器件的右键
-            contextSet(event, "more");
+            contextSet(event, "parts");
         } else {
             //单个器件的右键
             clearStatus();
             clickpart.toFocus();
-            contextSet(event, "single");
+            contextSet(event, "parts");
         }
     }
     //器件的mousedown事件要阻止事件冒泡
@@ -858,9 +870,9 @@ mainPage.on("mousedown", function(event) {
     //有持续性事件，那么直接返回
     if(grid.totalMarks)  { return(false); }
 
+    clearStatus();
     if(event.which === 1) {
         //左键
-        clearStatus();
         $("#area-of-parts").append($("<polygon>", SVG_NS, {id: "select-box"}));
         grid.current.selectionBoxStart = grid.mouse(event);
         grid.setSelectBox(true);
@@ -1129,6 +1141,7 @@ context.on("click", "#edit-parameters", function(event) {
         contextSet();
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
+    return(false);
 });
 //删除
 context.on("click", "#parts-delete", function(event) {
@@ -1139,6 +1152,7 @@ context.on("click", "#parts-delete", function(event) {
         }
         partsNow.deleteAll();
     }
+    return(false);
 });
 //顺时针旋转
 context.on("click", "#clockwise-direction", function(event) {
@@ -1146,6 +1160,7 @@ context.on("click", "#clockwise-direction", function(event) {
         contextSet();
         partsNow.rotate(0);
     }
+    return(false);
 });
 //逆时针旋转
 context.on("click", "#anticlockwise-direction", function(event) {
@@ -1153,6 +1168,7 @@ context.on("click", "#anticlockwise-direction", function(event) {
         contextSet();
         partsNow.rotate(1);
     }
+    return(false);
 });
 //沿X轴镜像
 context.on("click", "#X-Mirror", function(event) {
@@ -1160,6 +1176,7 @@ context.on("click", "#X-Mirror", function(event) {
         contextSet();
         partsNow.rotate(2);
     }
+    return(false);
 });
 //沿Y轴镜像
 context.on("click", "#Y-Mirror", function(event) {
@@ -1167,6 +1184,7 @@ context.on("click", "#Y-Mirror", function(event) {
         contextSet();
         partsNow.rotate(3);
     }
+    return(false);
 });
 //复制
 context.on("click", "#parts-copy", function(event) {
@@ -1174,55 +1192,100 @@ context.on("click", "#parts-copy", function(event) {
         contextSet();
         grid.copy(partsNow);
     }
+    return(false);
 });
+//剪切
+context.on("click", "#parts-cut", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
 
+    }
+    return(false);
+});
+//粘贴
+context.on("click", "#parts-paste", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
+        grid.paste();
+        grid.setNewMark(true);
+        mainPage.on("mousemove", mousemoveEvent);
+    }
+    return(false);
+});
+//全选
+context.on("click", "#parts-all", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
+
+    }
+    return(false);
+});
+//删除
+context.on("click", "#parts-delete", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
+
+    }
+    return(false);
+});
 
 //键盘事件
 $("body").on("keydown", function(event) {
-    if (!grid.totalMarks) { return(false); }
+    if (grid.totalMarks) { return(false); }
+
+    //触发右键事件函数
+    function trigger(selector) {
+        $(selector).trigger({
+            type: "click",
+            which: 1,
+            currentTarget: $(selector)[0]
+        });
+    }
 
     switch(true) {
-        //ctrl + D被按下，顺时针旋转
+        //ctrl + D，顺时针旋转
         case (event.ctrlKey && (event.keyCode === 68)): {
-            partsNow.rotate(0);
+            trigger("#clockwise-direction");
             break;
         }
-        //ctrl + alt + D被按下，逆时针旋转
+        //ctrl + alt + D，逆时针旋转
         case (event.ctrlKey && event.altKey && (event.keyCode === 68)) :{
-            partsNow.rotate(1);
+            trigger("#anticlockwise-direction");
             break;
         }
         //alt + X，X轴镜像
         case (event.altKey && (event.keyCode === 88)): {
-            partsNow.rotate(2);
+            trigger("#X-Mirror");
             break;
         }
         //alt + C，Y轴镜像
         case (event.altKey && (event.keyCode === 67)): {
-            partsNow.rotate(3);
+            trigger("#Y-Mirror");
             break;
         }
-        //ctrl + A被按下，全选
+        //ctrl + A，全选
         case (event.ctrlKey && (event.keyCode === 65)): {
-            contextSet();
-            console.log("ctrl+A被按下,全选");
+            trigger("#parts-all");
             break;
         }
         //ctrl + V，粘贴
         case (event.ctrlKey && (event.keyCode === 86)): {
-            contextSet();
-            console.log("ctrl+V，粘贴");
+            trigger("#parts-paste");
             break;
         }
         //ctrl + C，复制
         case (event.ctrlKey && (event.keyCode === 67)): {
-            console.log("ctrl+C，复制");
+            trigger("#parts-copy");
             break;
         }
         //ctrl + X，剪切
         case (event.ctrlKey && (event.keyCode === 88)): {
-            console.log("ctrl+X，剪切");
-            contextSet();
+            trigger("#parts-cut");
+            break;
+        }
+        //Delete，删除
+        case (event.ctrlKey && (event.keyCode === 88)): {
+            trigger("#parts-delete");
             break;
         }
     }

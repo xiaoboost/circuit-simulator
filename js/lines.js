@@ -1453,6 +1453,7 @@ function LineClass(part, mark) {
     } else if(typeof part === "object") {
         //输入是对象
         this.extend(part);
+        this.current = {};
         this.way = new LineWay(this.way);
     }
 

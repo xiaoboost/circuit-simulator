@@ -604,7 +604,7 @@ function PartClass(data) {
     Object.setPrototypeOf(this, originalElectronic[type].readOnly);
 
     this.id = partsAll.newId(this.id);
-    
+
     //输入是对象，那么直接扩展当前对象
     if (typeof data === "object") {
         const obj = Object.clone(data);
@@ -624,6 +624,7 @@ function PartClass(data) {
     this.circle = [];
     this.elementDOM = this.createPart();
     this.move();
+
     //引脚DOM引用
     for (let i = 0; i < this.connect.length; i++) {
         this.circle[i] = $("#" + this.id + "-" + i, this.elementDOM);
@@ -1341,6 +1342,8 @@ partsNow.extend({
     //由器件开始回溯导线，确定导线状态
     checkLine(event) {
         const self = this;
+        //当前没有器件，那么退出
+        if (!self.length) { return(false); }
         //递归标记器件所连接的导线
         for(let i = 0; i < self.length; i++) {
             (function DFS(part) {
