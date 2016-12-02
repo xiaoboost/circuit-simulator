@@ -1124,7 +1124,7 @@ graphPage.on("mouseup", function() {
 //编辑参数
 context.on("click", "#edit-parameters", function(event) {
     const clickpart = partsNow.get(-1);
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !this.hasClass("disable")) {
         contextSet();
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
