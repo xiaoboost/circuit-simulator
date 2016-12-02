@@ -3,14 +3,13 @@
 import { $ } from "./jquery";
 import { Point } from "./point";
 import { Matrix } from "./matrix";
-import { LineClass } from "./lines";
+import { SVG_NS } from "./init";
 import { schMap } from "./maphash";
 import { styleRule } from "./styleRule";
 import { partsAll, partsNow } from "./collection";
 
 //常量定义
-const SVG_NS = "http://www.w3.org/2000/svg",
-    schematic = $("#area-of-parts"),
+const schematic = $("#area-of-parts"),
     rotateMatrix = [
         new Matrix([[0, 1], [-1, 0]]),  //顺时针
         new Matrix([[0, -1], [1, 0]]),  //逆时针
@@ -1300,19 +1299,18 @@ PartClass.prototype = {
     },
     //按照标准格式输出
     toSimpleData() {
-        let ans = "{ partType: \"" + this.partType + "\", id: \"" + this.id +
-            "\", position: [" + this.position.join(",") + "], rotate: [[" +
-            this.rotate[0].join(",") + "],[" + this.rotate[1].join(",") + "]]";
-        if(this.visionNum) {
-            const text = this.elementDOM.getElementsByTagName("text")[0];
-            ans += ", text: [" + text.getAttribute("x") + "," + text.getAttribute("y") + "]";
-        }
-        if (this.input) {
-            ans += ", input: [\"" + this.input.join("\",\"") + "\"]},";
-        } else {
-            ans += "},";
-        }
-        return (ans);
+        const text = this.visionNum
+            ? $("text", this.elementDOM).attr(["x", "y"])
+            : null;
+
+        return({
+            partType: this.partType,
+            position: Point(this.position),
+            rotate: new Matrix(this.rotate),
+            input: Array.clone(this.input),
+            connect: Array.clone(this.connect),
+            text: text
+        });
     },
     //变更当前器件ID
     exchangeID(label) {
@@ -1554,16 +1552,44 @@ for(let i in originalElectronic) {
         Object.freezeAll(data);
     }
 }
-//外观和说明原型
-const partsinfo = {
-    shape : {},
-    intro: {}
-};
-for(let i in originalElectronic) {
-    if (originalElectronic.hasOwnProperty(i)) {
-        partsinfo.shape[i] = originalElectronic[i].readOnly.aspectInfor;
-        partsinfo.intro[i] = originalElectronic[i].readOnly.introduction;
+
+//添加器件图标
+$("#sidebar-menu #menu-add-parts button.parts-list").each((n) => {
+    const elem = $(n),
+        special = {
+            "reference_ground" : "scale(1.3, 1.3)",
+            "transistor_npn" : "translate(-5,0)"
+        },
+        type = elem.attr("id"),
+        part = originalElectronic[type].readOnly.aspectInfor,
+        intro = originalElectronic[type].readOnly.introduction,
+        bias = (special[type])
+            ? "translate(40,40) " + special[type]
+            : "translate(40,40)",
+        icon = elem.append($("<svg>", SVG_NS, {
+            "x" : "0px",
+            "y" : "0px",
+            "viewBox" : "0 0 80 80"
+        })).append($("<g>", SVG_NS));
+
+    icon.attr("transform", bias);
+    elem.prop("introduction", intro);
+    for (let i = 0; i < part.length; i++) {
+        if (part[i].name === "rect") { continue; }
+
+        const svgPart = part[i],
+            iconSVG = icon.append($("<" + svgPart.name + ">", SVG_NS));
+        for (let k in svgPart.attribute) {
+            if (svgPart.attribute.hasOwnProperty(k)) {
+                if (svgPart.attribute[k] === "class") { continue; }
+                iconSVG.attr(k, svgPart.attribute[k]);
+            }
+        }
     }
-}
+});
+//菜单关闭按钮位置
+$("#menu-add-parts-close").attr("style",
+    "top:" + ($(".st-menu-title").prop("clientHeight") - 50) + "px;");
+
 //模块对外的接口
-export { PartClass, partsinfo };
+export { PartClass };

@@ -2,20 +2,19 @@
 
 //外部模块引用
 import { $ } from "./jquery";
-import { iniData } from "./init";
+import { iniData, SVG_NS } from "./init";
 import { schMap } from "./maphash";
 import { Point } from "./point";
 import { LineClass } from "./lines";
 import { Solver } from "./solver";
 import { Graph } from "./graph";
 import { styleRule } from "./styleRule";
-import { PartClass, partsinfo } from "./parts";
+import { PartClass } from "./parts";
 import { partsAll, partsNow } from "./collection";
 import "./test";
 
 //全局变量定义
 const doc = document,
-    SVG_NS = "http://www.w3.org/2000/svg",
     u = undefined;
 //图纸网格模块
 const grid = (function SchematicsGrid() {
@@ -77,6 +76,9 @@ const grid = (function SchematicsGrid() {
 
         mouseLastX = 0, //鼠标偏移量暂存
         mouseLastY = 0;
+
+    const copyStack = [],   //复制器件堆栈
+        revocation = [];    //撤销堆栈，保留上一次操作
 
     //当前鼠标位置
     function mouse(event) {
@@ -156,6 +158,60 @@ const grid = (function SchematicsGrid() {
             gridS: Point([event.pageX, event.pageY]).floor()
         });
     };
+
+    //复制
+    self.copy = function(arr) {
+        for(let i = 0; i < arr.length; i++) {
+            if(arr[i].current.status === "move") {
+                copyStack.push(arr[i].toSimpleData());
+            }
+        }
+    }
+    //剪切
+    self.cut = function(arr) {
+        const half = [], move = [];
+
+        for(let i = 0; i < arr.length; i++) {
+            if (arr.current.status !== "move") {
+                half.push(arr[i]);
+            } else {
+                move.push(arr[i]);
+            }
+        }
+        //复制
+        self.copy(arr);
+        //删除
+        for(let i = 0; i < move.length; i++) {
+            move[i].deleteSelf();
+        }
+        //再粘贴部分导线
+
+    }
+    //粘贴
+    self.paste = function(arr) {
+        const now = arr ? arr : copyStack;
+
+        for(let i = 0; i < now.length; i++) {
+            const part = now[i];
+            if (part.partType === "config") {
+                for (let j in part) {
+                    if (part.hasOwnProperty(j)) {
+                        $('#' + j).prop("value", part[j]);
+                    }
+                }
+            }
+            else if (part.partType !== "line") {
+                new PartClass(part);
+            }
+            else {
+                new LineClass(part.way);
+            }
+        }
+    }
+    //记录当前所有器件状态
+    self.now = function() {
+
+    }
 
     //保留的全局临时变量
     self.current = [];
@@ -375,77 +431,6 @@ function createGraph(data) {
         circle.remove();
     }, 600);
 }
-//读取数据
-function loadData(data) {
-    //第一遍，加载器件和设置
-    for(let i = 0; i < data.length; i++) {
-        if ((data[i].partType !== "line") && (data[i].partType !== "config")) {
-            const device = new PartClass(data[i]);
-            device.elementDOM.attr("opacity", 1);
-            device.markSign();
-        } else if (data[i].partType === "config"){
-            for(let j in data[i]) if(data[i].hasOwnProperty(j)) {
-                if(j === "partType") continue;
-                $('#' + j).prop("value", data[i][j]);
-            }
-        }
-    }
-    //第二遍，加载导线
-    for(let i = 0; i < data.length; i++) {
-        if(data[i].partType === "line") {
-            const devices = new LineClass(data[i].way[0]);
-            for(let j = 1; j < data[i].way.length; j++) {
-                devices.way.push(data[i].way[j]);
-            }
-            devices.current = [0,[],[],[],[],[],false,false,[]];
-            devices.toGoing();
-            partsNow.push(devices);
-            for(let j = 0; j < 2; j++) {
-                const node = devices.way[j * (devices.way.length - 1)];
-                const nodeStatus = schMap.getValueByOrigin(node);
-                if(nodeStatus.form === "part-point") {
-                    //器件引脚
-                    const connectpart = partsAll.findPart(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
-                    connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
-                    devices.setConnect(j, nodeStatus.id);
-                } else if (nodeStatus.form === "line-point") {
-                    //导线临时节点
-                    //在临时节点相交，那么此点必定是交错节点
-                    nodeStatus.form = "cross-point";
-                    nodeStatus.id += " " + devices.id;
-                } else if (nodeStatus.form === "cross-point") {
-                    //交错节点
-                    nodeStatus.id += " " + devices.id;
-                }
-            }
-            devices.render();
-            devices.markSign();
-        }
-    }
-    //第三遍，扫描图纸的交错节点
-    const nodes = schMap.toSmallNodes();
-    for(let k = 0; k < nodes.length; k++) {
-        const i = nodes[k][0],
-            j = nodes[k][1],
-            nodeStatus = schMap.getValueBySmalle(nodes[k]);
-
-        if(nodeStatus.form === "cross-point") {
-            //查询所有连接的导线
-            const node = [parseInt(i) * 20, parseInt(j) * 20],
-                lines = nodeStatus.id.split(" ").map(function(item){
-                    const line = partsAll.findPart(item),
-                        sub = line.findConnect(node);
-                    return([line,sub]);
-                });
-            for(let k = 0; k < lines.length; k++) {
-                const lineconnect = (nodeStatus.id.search(lines[k][0].id + " ") !== -1)
-                    ? nodeStatus.id.replace(lines[k][0].id + " ", "")
-                    : nodeStatus.id.replace(" " + lines[k][0].id, "");
-                lines[k][0].setConnect(lines[k][1], lineconnect);
-            }
-        }
-    }
-}
 
 //网页元素相关事件
 //添加器件菜单中器件的所有事件
@@ -457,7 +442,7 @@ sidebar.on({
         });
     },
     "mouseenter": function(event){
-        const text = partsinfo.intro[event.currentTarget.id];
+        const text = $(event.currentTarget).prop("introduction");
         $("#float-tool-tip").css({
             display: "block",
             width: (text.length * 16) + "px"
@@ -1185,174 +1170,110 @@ context.on("click", "#Y-Mirror", function(event) {
 
 //键盘事件
 $("body").on("keydown", function(event) {
-    if (!grid.totalMarks) {
-        contextSet();
-        switch(true) {
-            //ctrl + D被按下，顺时针旋转
-            case (event.ctrlKey && (event.keyCode === 68)): {
-                partsNow.rotate(0);
-                break;
-            }
-            //ctrl + alt + D被按下，逆时针旋转
-            case (event.ctrlKey && event.altKey && (event.keyCode === 68)) :{
-                partsNow.rotate(1);
-                break;
-            }
-            //alt + X，X轴镜像
-            case (event.altKey && (event.keyCode === 88)): {
-                partsNow.rotate(2);
-                break;
-            }
-            //alt + C，Y轴镜像
-            case (event.altKey && (event.keyCode === 67)): {
-                partsNow.rotate(3);
-                break;
-            }
+    if (!grid.totalMarks) { return(false); }
+
+    switch(true) {
+        //ctrl + D被按下，顺时针旋转
+        case (event.ctrlKey && (event.keyCode === 68)): {
+            partsNow.rotate(0);
+            break;
         }
-    } else {
-        switch(true) {
-            //ctrl + A被按下，全选
-            case (event.ctrlKey && (event.keyCode === 65)): {
-                console.log("ctrl+A被按下,全选");
-                break;
-            }
-            //ctrl + V，粘贴
-            case (event.ctrlKey && (event.keyCode === 86)): {
-                console.log("ctrl+V，粘贴");
-                break;
-            }
-            //ctrl + C，复制
-            case (event.ctrlKey && (event.keyCode === 67)): {
-                console.log("ctrl+C，复制");
-                break;
-            }
-            //ctrl + X，剪切
-            case (event.ctrlKey && (event.keyCode === 88)): {
-                console.log("ctrl+X，剪切");
-                break;
-            }
+        //ctrl + alt + D被按下，逆时针旋转
+        case (event.ctrlKey && event.altKey && (event.keyCode === 68)) :{
+            partsNow.rotate(1);
+            break;
+        }
+        //alt + X，X轴镜像
+        case (event.altKey && (event.keyCode === 88)): {
+            partsNow.rotate(2);
+            break;
+        }
+        //alt + C，Y轴镜像
+        case (event.altKey && (event.keyCode === 67)): {
+            partsNow.rotate(3);
+            break;
+        }
+        //ctrl + A被按下，全选
+        case (event.ctrlKey && (event.keyCode === 65)): {
+            contextSet();
+            console.log("ctrl+A被按下,全选");
+            break;
+        }
+        //ctrl + V，粘贴
+        case (event.ctrlKey && (event.keyCode === 86)): {
+            contextSet();
+            console.log("ctrl+V，粘贴");
+            break;
+        }
+        //ctrl + C，复制
+        case (event.ctrlKey && (event.keyCode === 67)): {
+            console.log("ctrl+C，复制");
+            break;
+        }
+        //ctrl + X，剪切
+        case (event.ctrlKey && (event.keyCode === 88)): {
+            console.log("ctrl+X，剪切");
+            contextSet();
+            break;
         }
     }
 });
 
 //页面加载完毕之后运行初始化
 doc.body.onload = function() {
-    //图标特殊位置
-    const special = {
-        "reference_ground" : "scale(1.3, 1.3)",
-        "transistor_npn" : "translate(-5,0)"
-    };
-    //右下角图标样式
-    const icon = {
-        "run" : {
-            "long" : 1580,
-            "transform" : [86,100],
-            "d" : "M1384 609l-1328 -738q-23 -13 -39.5 -3t-16.5 36v1472q0 26 " +
-            "16.5 36t39.5 -3l1328 -738q23 -13 23 -31t-23 -31z"
-        },
-        "adds" : {
-            "long" : 1408,
-            "transform" : [0,0],
-            "d" : "M1408 800v-192q0 -40 -28 -68t-68 -28h-416v-416q0 -40 -28 " +
-            "-68t-68 -28h-192q-40 0 -68 28t-28 68v416h-416q-40 0 -68 28t-28 " +
-            "68v192q0 40 28 68t68 28h416v416q0 40 28 68t68 28h192q40 0 68 " +
-            "-28t28 -68v-416h416q40 0 68 -28t28 -68z"
-        },
-        "config" : {
-            "long" : 1920,
-            "transform" : [-30, 200],
-            "d" : "M896 640q0 106 -75 181t-181 75t-181 -75t-75 -181t75 -181t181 -75t181 " +
-            "75t75 181zM1664 128q0 52 -38 90t-90 38t-90 -38t-38 -90q0 -53 37.5 " +
-            "-90.5t90.5 -37.5t90.5 37.5t37.5 90.5zM1664 1152q0 52 -38 90t-90 38t-90 " +
-            "-38t-38 -90q0 -53 37.5 -90.5t90.5 -37.5 t90.5 37.5t37.5 90.5zM1280 731v-185q0 " +
-            "-10 -7 -19.5t-16 -10.5l-155 -24q-11 -35 -32 -76q34 -48 90 -115q7 -10 7 -20q0 " +
-            "-12 -7 -19q-23 -30 -82.5 -89.5t-78.5 -59.5q-11 0 -21 7l-115 90q-37 -19 -77 -31q-11 " +
-            "-108 -23 -155q-7 -24 -30 -24h-186q-11 0 -20 7.5t-10 17.5 l-23 153q-34 10 -75 " +
-            "31l-118 -89q-7 -7 -20 -7q-11 0 -21 8q-144 133 -144 160q0 9 7 19q10 14 41 53t47 " +
-            "61q-23 44 -35 82l-152 24q-10 1 -17 9.5t-7 19.5v185q0 10 7 19.5t16 10.5l155 24q11 " +
-            "35 32 76q-34 48 -90 115q-7 11 -7 20q0 12 7 20q22 30 82 89t79 59q11 0 21 -7 l115 " +
-            "-90q34 18 77 32q11 108 23 154q7 24 30 24h186q11 0 20 -7.5t10 -17.5l23 -153q34 -10 " +
-            "75 -31l118 89q8 7 20 7q11 0 21 -8q144 -133 144 -160q0 -9 -7 -19q-12 -16 -42 -54t-45 " +
-            "-60q23 -48 34 -82l152 -23q10 -2 17 -10.5t7 -19.5zM1920 198v-140q0 -16 -149 -31 q-12 -27 " +
-            "-30 -52q51 -113 51 -138q0 -4 -4 -7q-122 -71 -124 -71q-8 0 -46 47t-52 68q-20 -2 -30 -2t-30 " +
-            "2q-14 -21 -52 -68t-46 -47q-2 0 -124 71q-4 3 -4 7q0 25 51 138q-18 25 -30 52q-149 15 -149 " +
-            "31v140q0 16 149 31q13 29 30 52q-51 113 -51 138q0 4 4 7q4 2 35 20 t59 34t30 16q8 0 46 " +
-            "-46.5t52 -67.5q20 2 30 2t30 -2q51 71 92 112l6 2q4 0 124 -70q4 -3 4 -7q0 -25 -51 -138q17 " +
-            "-23 30 -52q149 -15 149 -31zM1920 1222v-140q0 -16 -149 -31q-12 -27 -30 -52q51 -113 51 -138q0 " +
-            "-4 -4 -7q-122 -71 -124 -71q-8 0 -46 47t-52 68 q-20 -2 -30 -2t-30 2q-14 -21 -52 -68t-46 -47q-2 " +
-            "0 -124 71q-4 3 -4 7q0 25 51 138q-18 25 -30 52q-149 15 -149 31v140q0 16 149 31q13 29 30 52q-51 113 " +
-            "-51 138q0 4 4 7q4 2 35 20t59 34t30 16q8 0 46 -46.5t52 -67.5q20 2 30 2t30 -2q51 71 92 112l6 2q4 " +
-            "0 124 -70 q4 -3 4 -7q0 -25 -51 -138q17 -23 30 -52q149 -15 149 -31z"
-        }
-    };
-    //添加器件图标
-    $("#sidebar-menu #menu-add-parts button.parts-list").each((n) => {
-        const elem = $(n);
-        const icon = elem.append($("<svg>", SVG_NS, {
-            "x" : "0px",
-            "y" : "0px",
-            "viewBox" : "0 0 80 80"
-        })).append($("<g>", SVG_NS));
-
-        const type = elem.attr("id"),
-            part = partsinfo.shape[type],
-            bias = (special[type]) ? "translate(40,40) " + special[type] : "translate(40,40)";
-
-        icon.attr("transform", bias);
-        for (let i = 0; i < part.length; i++) {
-            if (part[i].name === "rect") { continue; }
-
-            const svgPart = part[i],
-                iconSVG = icon.append($("<" + svgPart.name + ">", SVG_NS));
-            for (let k in svgPart.attribute) {
-                if (svgPart.attribute.hasOwnProperty(k)) {
-                    if (svgPart.attribute[k] === "class") { continue; }
-                    iconSVG.attr(k, svgPart.attribute[k]);
-                }
-            }
-        }
-    });
-    //添加右下角图标
-    $("#action-container .fab").each((n) => {
-        const elem = $(n);
-        const id = elem.attr("id").split("-")[1];
-        //跳过text
-        if(id === "text") return;
-        //缩小倍数
-        const zoom = 0.6;
-        const view = icon[id].long;
-        elem.append($("<svg>", SVG_NS, {
-            "viewBox" : "0 0 " + view + " " + view
-        })).append($("<g>", SVG_NS, {
-            "transform" : "translate(" + (icon[id]["transform"][0] + (1 - zoom) / 2 * view) +
-            "," + (icon[id]["transform"][1] + (1 - zoom) / 2 * view) + ")" +
-            " scale(" + zoom + "," + zoom + ")"
-        })).append($("<path>", SVG_NS, {
-            "d" : icon[id]["d"]
-        }));
-    });
-    //添加器件部分，关闭按钮的位置
-    const top = $(".st-menu-title").prop("clientHeight"),
-        closeButton = $("#menu-add-parts-close"),
-        height = closeButton.prop("clientHeight");
-    closeButton.attr("style", "top:" + (top - height) + "px;");
     //读取地址信息
     const src = window.location.href.split("?")[1],
         parameters = {};
+
+    //分解输入参数
     if (src && src.length) {
         const data = src.split("&");
         for(let i = 0; i < data.length; i++) {
-            //分解每个输入参数
             const obj = data[i].replace(/#/g, "").split("=");
             parameters[obj[0]] = obj[1];
         }
     }
-    //加载图纸
-    loadData(iniData[parameters.init] || []);
+
+    //加载参数
+    if (parameters.init) {
+        grid.paste(iniData[parameters.init]);
+        //放置器件
+        for(let i = 0; i < partsAll.length; i++) {
+            partsAll[i].elementDOM.attr("opacity", 1);
+            partsAll[i].markSign();
+        }
+        //确定连接关系
+        for(let i = 0; i < partsAll.length; i++) {
+            const line = partsAll[i];
+            if(line.partType !== "line") { continue; }
+
+            for(let j = 0; j < 2; j++) {
+                const node = line.way.get(-1 * j),
+                    status = schMap.getValueByOrigin(node);
+
+                if (status.form === "part-point") {
+                    //器件引脚
+                    const part = partsAll.findPart(status.id),
+                        mark = status.id.split("-")[1];
+
+                    part.connectPoint(mark, line.id);
+                    line.setConnect(j, status.id);
+                } else if (status.form === "cross-point") {
+                    //交错节点
+                    line.setConnect(j,
+                        status.id
+                            .split(" ")
+                            .filter((n) => n !== line.id)
+                            .join(" ")
+                    );
+                }
+            }
+        }
+    }
+
     //去掉灰幕
-    const cover = $("#load-cover");
-    cover.css("opacity", 0);
+    $("#load-cover").css("opacity", 0);
     setTimeout(function() {
-        cover.css("display", "none");
+        $("#load-cover").css("display", "none");
     }, 300);
 };

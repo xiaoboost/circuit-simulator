@@ -1,6 +1,7 @@
 "use strict";
 import { $ } from "./jquery";
 import { schMap } from "./maphash";
+import { SVG_NS } from "./init";
 import { partsAll, partsNow } from "./collection";
 import { PartClass } from "./parts";
 import { LineClass } from "./lines";
@@ -75,8 +76,7 @@ function loadData(data) {
     }
 }
 
-const SVG_NS = "http://www.w3.org/2000/svg",
-    schematic = $("#area-of-parts");
+const schematic = $("#area-of-parts");
 
 //图纸测试
 function MapTest() {

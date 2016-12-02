@@ -2,12 +2,12 @@
 
 import { $ } from "./jquery";
 import { Point } from "./point";
+import { SVG_NS } from "./init";
 import { schMap } from "./maphash";
 import { partsAll, partsNow } from "./collection";
 
 //常量
-const SVG_NS = "http://www.w3.org/2000/svg",
-    actionArea = $("#area-of-parts"),
+const actionArea = $("#area-of-parts"),
     rotate = [
         [[1, 0], [0, 1]],   //同相
         [[0, 1], [-1, 0]],  //顺时针
@@ -1424,13 +1424,6 @@ function LineClass(part, mark) {
             }
         ]
     };
-    //创建导线DOM
-    this.elementDOM = creatDOM(line);
-    for(let i = 0; i < 2; i++) {
-        this.circle[i] = creatDOM(circle);
-        this.circle[i].attr("id", this.id + "-" + i);
-        this.elementDOM.append(this.circle[i]);
-    }
 
     if(!!part.elementDOM && mark !== undefined) {
         //输入是器件和器件管脚
@@ -1456,15 +1449,28 @@ function LineClass(part, mark) {
                 label:false     //直接对齐的坐标
             }
         };
-    } else {
+        this.way.push(Point(start));
+    } else if(Point.isPoint(part)) {
         //输入是起点坐标
-        start = part;
+        this.way.push(Point(part));
+        this.current = {};
+    } else {
+        //输入是路径
+        this.way = new LineWay(part);
         this.current = {};
     }
 
-    this.way.push(Point(start));
-    this.circle[0].attr("transform", "translate(" + start.join(",") + ")");
+    //创建导线DOM
+    this.elementDOM = creatDOM(line);
+    for(let i = 0; i < 2; i++) {
+        this.circle[i] = creatDOM(circle);
+        this.circle[i].attr("id", this.id + "-" + i);
+        this.circle[i].attr("transform", "translate(" + this.way.get(-1 * i).join(",") + ")");
+        this.elementDOM.append(this.circle[i]);
+    }
+
     this.toGoing();
+    this.wayDrawing();
     //冻结导线的常规属性，current是临时变量可以随意变动
     Object.defineProperties(this, {
         "way": {
@@ -1608,7 +1614,8 @@ LineClass.prototype = {
         this.connect.reverse();
         this.circle.reverse();
     },
-    setConnect(Num,connectId) {
+    //设置导线端点
+    setConnect(Num, connectId) {
         this.connect[Num] = connectId;
         if(connectId.search(" ") === -1) {
             //没有搜索到空格，表示连接到器件
@@ -1929,12 +1936,11 @@ LineClass.prototype = {
     */
     //按照标准格式输出
     toSimpleData() {
-        let ans = "{ partType: \"line\", way:[";
-        for(let i = 0; i < this.way.length - 1; i++) {
-            ans += "[" + this.way[i].join(",") + "],";
-        }
-        ans += "[" + this.way[this.way.length - 1].join(",") + "]] },";
-        return(ans);
+        return ({
+            partType: "line",
+            way: new LineWay(this.way),
+            connect: Array.clone(this.connect)
+        });
     },
     //导线旋转
     rotateSelf(matrix, center) {
