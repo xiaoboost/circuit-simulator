@@ -598,58 +598,42 @@ const originalElectronic = {
 
 //器件类
 function PartClass(data) {
-    let type, textPos = [10, -10];
-    if(typeof data === "string") {
-        type = data;
-    } else if(typeof data === "object") {
-        type = data.partType;
-    }
+    const type = data.partType || data;
+
     this.extend(Object.clone(originalElectronic[type].readWrite));
     Object.setPrototypeOf(this, originalElectronic[type].readOnly);
 
     this.id = partsAll.newId(this.id);
-    this.rotate = new Matrix([[1, 0], [0, 1]]);
-    this.position = Point([1000, 1000]);
-    this.current = {};
-    this.connect = new Array(this.pointInfor.length).fill(false);
-    this.circle = [];
+    
+    //输入是对象，那么直接扩展当前对象
+    if (typeof data === "object") {
+        const obj = Object.clone(data);
+        delete obj.partType;
 
-    //外部输入数据
-    if(typeof data === "object") {
-        for (let i in data) {
-            if (data.hasOwnProperty(i)) {
-                switch (i) {
-                    case "partType":
-                        continue;
-                    case "rotate":
-                        this.rotate = new Matrix(data[i]);
-                        break;
-                    case "text":
-                        textPos = Array.clone(data[i]);
-                        break;
-                    case "position":
-                        this[i] = Point(data[i]);
-                        break;
-                    default:
-                        if (data[i] instanceof Array) {
-                            this[i] = Array.clone(data[i]);
-                        } else {
-                            this[i] = data[i];
-                        }
-                }
-            }
-        }
+        this.extend(obj);
     }
-    if(!this.input) { this.input = []; }
-    this.elementDOM = this.createPart(); //创建新器件
-    this.move();
 
+    this.rotate = this.rotate
+        ? new Matrix(this.rotate)
+        : new Matrix([[1, 0], [0, 1]]);
+    this.position = this.position
+        ? Point(this.position)
+        : Point([1000, 1000]);
+    this.connect = this.connect || [];
+    this.current = {};
+    this.circle = [];
+    this.elementDOM = this.createPart();
+    this.move();
     //引脚DOM引用
-    for(let i = 0; i < this.connect.length; i++) {
+    for (let i = 0; i < this.connect.length; i++) {
         this.circle[i] = $("#" + this.id + "-" + i, this.elementDOM);
+        this.connectPoint[i];
     }
     //显示文字,默认在器件的右上方
-    this.textVisition(textPos);
+    this.textVisition((this.text || [10, -10]));
+
+    delete this.text;
+    Object.seal(this);
     partsAll.push(this);
 }
 PartClass.prototype = {
@@ -976,8 +960,12 @@ PartClass.prototype = {
     },
     //引脚被占用，禁止缩放
     connectPoint(pointMark, lineId) {
-        this.connect[pointMark] = lineId;
-        this.circle[pointMark].attr("class", "part-point point-close");
+        if (lineId) {
+            this.connect[pointMark] = lineId;
+        }
+        if (this.circle[pointMark]) {
+            this.circle[pointMark].attr("class", "part-point point-close");
+        }
     },
     //引脚悬空，允许缩放
     noConnectPoint(pointMark) {

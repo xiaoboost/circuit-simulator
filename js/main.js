@@ -161,6 +161,7 @@ const grid = (function SchematicsGrid() {
 
     //复制
     self.copy = function(arr) {
+        copyStack.length = 0;
         for(let i = 0; i < arr.length; i++) {
             if(arr[i].current.status === "move") {
                 copyStack.push(arr[i].toSimpleData());
@@ -204,7 +205,7 @@ const grid = (function SchematicsGrid() {
                 new PartClass(part);
             }
             else {
-                new LineClass(part.way);
+                new LineClass(part);
             }
         }
     }
@@ -1123,15 +1124,15 @@ graphPage.on("mouseup", function() {
 //右键菜单
 //编辑参数
 context.on("click", "#edit-parameters", function(event) {
-    const clickpart = partsNow.get(-1);
-    if (event.which === 1 && !grid.totalMarks && !this.hasClass("disable")) {
+    const clickpart = partsNow.get(0);
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
 });
 //删除
 context.on("click", "#parts-delete", function(event) {
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         for(let i = 0; i < partsNow.length; i++) {
             partsNow[i].deleteSelf();
@@ -1141,32 +1142,40 @@ context.on("click", "#parts-delete", function(event) {
 });
 //顺时针旋转
 context.on("click", "#clockwise-direction", function(event) {
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         partsNow.rotate(0);
     }
 });
 //逆时针旋转
 context.on("click", "#anticlockwise-direction", function(event) {
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         partsNow.rotate(1);
     }
 });
 //沿X轴镜像
 context.on("click", "#X-Mirror", function(event) {
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         partsNow.rotate(2);
     }
 });
 //沿Y轴镜像
 context.on("click", "#Y-Mirror", function(event) {
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
         partsNow.rotate(3);
     }
 });
+//复制
+context.on("click", "#parts-copy", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
+        grid.copy(partsNow);
+    }
+});
+
 
 //键盘事件
 $("body").on("keydown", function(event) {

@@ -1387,8 +1387,8 @@ function LineClass(part, mark) {
     let start;      //起点声明
 
     this.way = new LineWay();       //导线路径
-    this.circle = [false,false];    //导线交错节点数组为空
-    this.connect = ["",""];         //导线连接点，默认两端为空
+    this.circle = [false,false];    //导线端点DOM
+    this.connect = ["",""];         //导线连接点
     this.partType = "line";         //导线类型
     this.id = partsAll.newId(this.partType + "_");
 
@@ -1450,14 +1450,10 @@ function LineClass(part, mark) {
             }
         };
         this.way.push(Point(start));
-    } else if(Point.isPoint(part)) {
-        //输入是起点坐标
-        this.way.push(Point(part));
-        this.current = {};
-    } else {
-        //输入是路径
-        this.way = new LineWay(part);
-        this.current = {};
+    } else if(typeof part === "object") {
+        //输入是对象
+        this.extend(part);
+        this.way = new LineWay(this.way);
     }
 
     //创建导线DOM
@@ -1467,6 +1463,7 @@ function LineClass(part, mark) {
         this.circle[i].attr("id", this.id + "-" + i);
         this.circle[i].attr("transform", "translate(" + this.way.get(-1 * i).join(",") + ")");
         this.elementDOM.append(this.circle[i]);
+        this.setConnect(i);
     }
 
     this.toGoing();
@@ -1616,13 +1613,17 @@ LineClass.prototype = {
     },
     //设置导线端点
     setConnect(Num, connectId) {
-        this.connect[Num] = connectId;
-        if(connectId.search(" ") === -1) {
-            //没有搜索到空格，表示连接到器件
-            this.circle[Num].attr("class", "line-point draw-close");
-        } else {
-            //连接到交错节点
-            this.circle[Num].attr("class", "line-point cross-point");
+        if (connectId) {
+            this.connect[Num] = connectId;
+        }
+        if (this.connect[Num]) {
+            if (this.connect[Num].search(" ") === -1) {
+                //没有搜索到空格，表示连接到器件
+                this.circle[Num].attr("class", "line-point draw-close");
+            } else {
+                //连接到交错节点
+                this.circle[Num].attr("class", "line-point cross-point");
+            }
         }
     },
     //缩小节点
@@ -1923,8 +1924,6 @@ LineClass.prototype = {
         }
         return (false);
     },
-    */
-    /*
     //鼠标变形结束
     deformSelfEnd() {
         this.way.standardize();

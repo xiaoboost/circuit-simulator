@@ -297,6 +297,9 @@ Matrix.extend({
     //验证矩阵ma是否是矩阵，如果是，那么返回[行数，列数]，否则返回false
     //下标必须从0开始，下标必须连续，不得含有非数字元素
     isMatrix: function(ma) {
+        if (ma instanceof Matrix) {
+            return ([ma.row, ma.column]);
+        }
         let subx = -1, columnMax = -1;
         for (let i in ma) if (ma.hasOwnProperty(i)) {                       //枚举矩阵行下标
             if ((parseInt(i) - subx === 1) && (ma[i] instanceof Array)) {   //下标连续且第一个下标下的元素也是数组
@@ -306,11 +309,18 @@ Matrix.extend({
                     if ((parseInt(j) - suby === 1) &&                       //下标连续，并且当前元素是数字
                         (typeof row[j] === "number")) {
                         suby++;
-                    } else return (false);
+                    } else {
+                        return (false);
+                    }
                 }
-                if (columnMax === -1) columnMax = suby;
-                else if (columnMax !== suby) return (false);
-            } else return (false);
+                if (columnMax === -1) {
+                    columnMax = suby;
+                } else if (columnMax !== suby) {
+                    return (false);
+                }
+            } else {
+                return (false);
+            }
             subx++;
         }
         return ([subx + 1, columnMax + 1]);
