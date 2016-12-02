@@ -1012,12 +1012,6 @@ LineWay.prototype = {
         this.checkWayRepeat();
         return(this);
     },
-    //和Array.splice功能相同，不过这里将在新数组中操作，并返回这个新数组，原数组不变
-    insert(sub, len, args) {
-        const ans = new LineWay(this);
-        ans.splice(sub, len, ...args);
-        return(ans);
-    },
     //复制路径，将会抛弃原路径数据的全部引用，也不会引用被复制的数据
     clone(tempway) {
         for (let i = 0; i < tempway.length; i++) {
@@ -1941,6 +1935,10 @@ LineClass.prototype = {
         }
         ans += "[" + this.way[this.way.length - 1].join(",") + "]] },";
         return(ans);
+    },
+    //导线旋转
+    rotateSelf(matrix, center) {
+
     },
     //计算导线初始方向
     initTrend(sub) {

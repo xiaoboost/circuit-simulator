@@ -1183,43 +1183,12 @@ PartClass.prototype = {
         }
     },
     //旋转器件
-    rotateSelf(sub) {
-        //旋转前的器件引脚信息
-        const pointOld = this.pointRotate();
-        //删除旧器件标记
-        this.deleteSign(this.position);
-        //计算新的旋转矩阵
-        this.rotate = this.rotate.mul(rotateMatrix[sub]);
-        //旋转之后的引脚信息
-        const point = this.pointRotate();
-        //导线部分
-        this.current.lines = [];
-        for(let i = 0; i < this.connect.length; i++) {
-            const node = this.position.add(pointOld[i].position),
-                line = partsAll.findPart(this.connect[i]);
+    rotateSelf(matrix, center) {
+        let relation = this.position.add(-1, center);
+        relation = matrix.multo([relation])[0];
 
-            //没有连接就跳过
-            if (!line) {
-                continue;
-            }
-            //引脚位置没有变化也跳过
-            if (pointOld[i].position.isEqual(point[i].position)) {
-                continue;
-            }
-            //器件引脚为起点
-            if(node.isEqual(line.way.get(-1))) {
-                line.reverse();
-            }
-            //设置导线的起点所连接的引脚下标、初始方向、当前路径
-            line.current.pointMark = i;
-            line.current.initTrend = Point(point[i].direction);
-            line.current.wayBackup = Array.clone(line.way);
-
-            line.deleteSign();
-            this.current.lines.push(line);
-        }
-        //放下器件
-        this.putDownSelf();
+        this.position = center.add(relation);
+        this.rotate = this.rotate.mul(matrix);
     },
     //当前位置是否被占用
     isCover(pos) {
@@ -1505,6 +1474,37 @@ partsNow.extend({
             //不可放置器件，恢复原状
 
         }
+    },
+    //旋转
+    rotate(sub) {
+        this.moveStart();
+
+        const nodes = {x: [], y: []},
+            matrix = rotateMatrix[sub],
+            parts = this.filter((n) => n.current.status === "move");
+
+        //计算旋转中心
+        for(let i = 0; i < parts.length; i++) {
+            if(parts[i].partType === "line") {
+                const line = parts[i].nodeCollection();
+                nodes.x = nodes.x.concat(line.map((n) => n[0]));
+                nodes.y = nodes.y.concat(line.map((n) => n[1]));
+            } else {
+                nodes.x.push(parts[i].position[0]);
+                nodes.y.push(parts[i].position[1]);
+            }
+        }
+        const center = Point([
+                (Math.minOfArray(nodes.x) + Math.maxOfArray(nodes.x)) / 2,
+                (Math.minOfArray(nodes.y) + Math.maxOfArray(nodes.y)) / 2
+            ]).round();
+
+        //整体移动的器件旋转
+        this.forEach((item) => {
+            if(item.current.status === "move") {
+                item.rotateSelf(matrix, center);
+            }
+        });
     }
 });
 Object.freezeMethod(partsNow);
