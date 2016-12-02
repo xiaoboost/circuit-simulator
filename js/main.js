@@ -1283,9 +1283,24 @@ $("body").on("keydown", function(event) {
             trigger("#parts-cut");
             break;
         }
+        //ctrl + Z，撤销操作
+        case (event.ctrlKey && (event.keyCode === 90)): {
+            //trigger("#parts-cut");
+            break;
+        }
         //Delete，删除
-        case (event.ctrlKey && (event.keyCode === 88)): {
+        case (event.keyCode === 46): {
             trigger("#parts-delete");
+            break;
+        }
+        //Esc，取消
+        case (event.keyCode === 27): {
+            //trigger("#parts-delete");
+            break;
+        }
+        //Enter，回车
+        case (event.keyCode === 13): {
+            //trigger("#parts-delete");
             break;
         }
     }
