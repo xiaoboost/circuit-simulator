@@ -1156,34 +1156,82 @@ context.on("click", "#parts-delete", function(event) {
 });
 //顺时针旋转
 context.on("click", "#clockwise-direction", function(event) {
-    const clickpart = partsNow.get(-1);
     if (event.which === 1 && !grid.totalMarks) {
         contextSet();
-        clickpart.rotateSelf(0);
+        partsNow.rotate(0);
     }
 });
 //逆时针旋转
 context.on("click", "#anticlockwise-direction", function(event) {
-    const clickpart = partsNow.get(-1);
     if (event.which === 1 && !grid.totalMarks) {
         contextSet();
-        clickpart.rotateSelf(1);
+        partsNow.rotate(1);
     }
 });
 //沿X轴镜像
 context.on("click", "#X-Mirror", function(event) {
-    const clickpart = partsNow.get(-1);
     if (event.which === 1 && !grid.totalMarks) {
         contextSet();
-        clickpart.rotateSelf(2);
+        partsNow.rotate(2);
     }
 });
 //沿Y轴镜像
 context.on("click", "#Y-Mirror", function(event) {
-    const clickpart = partsNow.get(-1);
     if (event.which === 1 && !grid.totalMarks) {
         contextSet();
-        clickpart.rotateSelf(3);
+        partsNow.rotate(3);
+    }
+});
+
+//键盘事件
+$("body").on("keydown", function(event) {
+    if (!grid.totalMarks) {
+        contextSet();
+        switch(true) {
+            //ctrl + D被按下，顺时针旋转
+            case (event.ctrlKey && (event.keyCode === 68)): {
+                partsNow.rotate(0);
+                break;
+            }
+            //ctrl + alt + D被按下，逆时针旋转
+            case (event.ctrlKey && event.altKey && (event.keyCode === 68)) :{
+                partsNow.rotate(1);
+                break;
+            }
+            //alt + X，X轴镜像
+            case (event.altKey && (event.keyCode === 88)): {
+                partsNow.rotate(2);
+                break;
+            }
+            //alt + C，Y轴镜像
+            case (event.altKey && (event.keyCode === 67)): {
+                partsNow.rotate(3);
+                break;
+            }
+        }
+    } else {
+        switch(true) {
+            //ctrl + A被按下，全选
+            case (event.ctrlKey && (event.keyCode === 65)): {
+                console.log("ctrl+A被按下,全选");
+                break;
+            }
+            //ctrl + V，粘贴
+            case (event.ctrlKey && (event.keyCode === 86)): {
+                console.log("ctrl+V，粘贴");
+                break;
+            }
+            //ctrl + C，复制
+            case (event.ctrlKey && (event.keyCode === 67)): {
+                console.log("ctrl+C，复制");
+                break;
+            }
+            //ctrl + X，剪切
+            case (event.ctrlKey && (event.keyCode === 88)): {
+                console.log("ctrl+X，剪切");
+                break;
+            }
+        }
     }
 });
 
