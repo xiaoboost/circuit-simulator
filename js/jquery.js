@@ -980,7 +980,7 @@ $.fn = $.prototype = {
     // 把当前DOM全部移除出HTML文档流
     remove(index) {
         if(index === u) {
-            this.each((n) => n.parentNode.removeChild(n));
+            this.each((n) => n.parentNode && n.parentNode.removeChild(n));
         } else {
             const sub = (index >= 0) ?
                 index : (this.length + index);

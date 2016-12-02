@@ -133,12 +133,6 @@ PartsCollection.prototype = {
         }
         this.length = 0;
     },
-    //复制器件堆栈
-    selectAll (parts) {
-        for (let i = 0; i < parts.length; i++) {
-            this.push(parts[i]);
-        }
-    },
     //枚举器件
     forEach(callback) {
         for(let i = 0; i < this.length; i++) {

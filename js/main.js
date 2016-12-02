@@ -1143,17 +1143,6 @@ context.on("click", "#edit-parameters", function(event) {
     }
     return(false);
 });
-//删除
-context.on("click", "#parts-delete", function(event) {
-    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
-        contextSet();
-        for(let i = 0; i < partsNow.length; i++) {
-            partsNow[i].deleteSelf();
-        }
-        partsNow.deleteAll();
-    }
-    return(false);
-});
 //顺时针旋转
 context.on("click", "#clockwise-direction", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
@@ -1216,7 +1205,8 @@ context.on("click", "#parts-paste", function(event) {
 context.on("click", "#parts-all", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-
+        partsAll.forEach((n) => n.toFocus());
+        partsNow.checkLine();
     }
     return(false);
 });
@@ -1224,7 +1214,8 @@ context.on("click", "#parts-all", function(event) {
 context.on("click", "#parts-delete", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-
+        partsNow.forEach((n) => n.deleteSelf());
+        partsNow.deleteAll();
     }
     return(false);
 });
@@ -1295,12 +1286,16 @@ $("body").on("keydown", function(event) {
         }
         //Esc，取消
         case (event.keyCode === 27): {
-            //trigger("#parts-delete");
+            if($("#parameter-menu").hasClass("parameter-open")) {
+                trigger("#parameter-bottom-cancel");
+            }
             break;
         }
         //Enter，回车
         case (event.keyCode === 13): {
-            //trigger("#parts-delete");
+            if($("#parameter-menu").hasClass("parameter-open")) {
+                trigger("#parameter-bottom-accept");
+            }
             break;
         }
     }
@@ -1343,7 +1338,7 @@ doc.body.onload = function() {
                     const part = partsAll.findPart(status.id),
                         mark = status.id.split("-")[1];
 
-                    part.connectPoint(mark, line.id);
+                    part.setConnect(mark, line.id);
                     line.setConnect(j, status.id);
                 } else if (status.form === "cross-point") {
                     //交错节点

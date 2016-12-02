@@ -620,15 +620,16 @@ function PartClass(data) {
         ? Point(this.position)
         : Point([1000, 1000]);
     this.connect = this.connect || [];
+    this.input = this.input || [];
     this.current = {};
     this.circle = [];
     this.elementDOM = this.createPart();
     this.move();
 
     //引脚DOM引用
-    for (let i = 0; i < this.connect.length; i++) {
+    for (let i = 0; i < this.pointInfor.length; i++) {
         this.circle[i] = $("#" + this.id + "-" + i, this.elementDOM);
-        this.connectPoint[i];
+        this.setConnect(i);
     }
     //显示文字,默认在器件的右上方
     this.textVisition((this.text || [10, -10]));
@@ -960,18 +961,17 @@ PartClass.prototype = {
         return (group);
     },
     //引脚被占用，禁止缩放
-    connectPoint(pointMark, lineId) {
-        if (lineId) {
-            this.connect[pointMark] = lineId;
+    setConnect(mark, id) {
+        if(arguments.length === 2) {
+            //没有输入连接导线的时候，连接表不变
+            this.connect[mark] = id;
         }
-        if (this.circle[pointMark]) {
-            this.circle[pointMark].attr("class", "part-point point-close");
+
+        if (this.connect[mark]) {
+            this.circle[mark].attr("class", "part-point point-close");
+        } else {
+            this.circle[mark].attr("class", "part-point point-open");
         }
-    },
-    //引脚悬空，允许缩放
-    noConnectPoint(pointMark) {
-        this.connect[pointMark] = false;
-        this.circle[pointMark].attr("class", "part-point point-open");
     },
     //取消引脚放大
     shrinkPoint(pointMark) {
@@ -1279,7 +1279,11 @@ PartClass.prototype = {
         for(let i = 0; i < this.connect.length; i++) {
             if (this.connect[i]) {
                 const line = partsAll.findPart(this.connect[i]);
-                line.deleteSelf();
+
+                //有可能该导线已经被删除
+                if (line) {
+                    line.deleteSelf();
+                }
             }
         }
         this.deleteSign();

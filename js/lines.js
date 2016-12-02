@@ -595,7 +595,7 @@ const Search = {
             //相关器件断开与当前导线的连接
             if(part && part.elementDOM) {
                 //器件引脚
-                part.noConnectPoint(mark);
+                part.setConnect(mark, false);
             } else if(part instanceof Array) {
                 //交错节点
                 for(let i = 0; i < part.length; i++) {
@@ -764,7 +764,7 @@ const Search = {
 
                     if (!clickpart.connect[pointmark]) {
                         clickpart.shrinkPoint(pointmark);
-                        clickpart.connectPoint(pointmark, this.id);
+                        clickpart.setConnect(pointmark, this.id);
                         clickpart.toFocus();
                         this.setConnect(1, clickpart.id + "-" + pointmark);
                     } else {
@@ -1436,7 +1436,7 @@ function LineClass(part, mark) {
 
         //导线与器件管脚相互连接
         this.setConnect(0, part.id + "-" + mark);
-        part.connectPoint(mark, this.id);
+        part.setConnect(mark, this.id);
         //当前导线的临时变量
         this.current = {
             startNode: start,
@@ -1592,7 +1592,7 @@ LineClass.prototype = {
             let tempcon = connectId.split("-");
             let partObj = partsAll.findPart(tempcon[0]);
             let pointMark = parseInt(tempcon[1]);
-            partObj.connectPoint(pointMark, newId);      //替换器件的引脚连接
+            partObj.setConnect(pointMark, newId);      //替换器件的引脚连接
         } else {
             let lines = connectId.split(" ").map(function (item) {    //查询所有连接的导线
                 return (partsAll.findPart(item));
@@ -1613,17 +1613,19 @@ LineClass.prototype = {
         this.circle.reverse();
     },
     //设置导线端点
-    setConnect(Num, connectId) {
-        if (connectId) {
-            this.connect[Num] = connectId;
+    setConnect(mark, id) {
+        if(arguments.length === 2) {
+            //没有输入连接导线的时候，连接表不变
+            this.connect[mark] = id;
         }
-        if (this.connect[Num]) {
-            if (this.connect[Num].search(" ") === -1) {
+
+        if (this.connect[mark]) {
+            if (this.connect[mark].search(" ") === -1) {
                 //没有搜索到空格，表示连接到器件
-                this.circle[Num].attr("class", "line-point draw-close");
+                this.circle[mark].attr("class", "line-point draw-close");
             } else {
                 //连接到交错节点
-                this.circle[Num].attr("class", "line-point cross-point");
+                this.circle[mark].attr("class", "line-point cross-point");
             }
         }
     },
@@ -1716,15 +1718,20 @@ LineClass.prototype = {
         for(let i = 0; i < this.connect.length; i++) {
             if (this.getConnectStatus(i) === "line") {
                 const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
-                lines.forEach((n) => n.deleteConnect(this.id));
+
+                lines.forEach((n) => n && n.deleteConnect(this.id));
+
                 if (lines.length === 2) {
-                    lines[0].mergeLine(lines[1]);
+                    lines[0] && lines[0].mergeLine(lines[1]);
                 }
             } else if (this.getConnectStatus(i) === "part") {
                 const temp = this.connect[i].split("-"),
                     part = partsAll.findPart(temp[0]);
-                part.connect[temp[1]] = false;
-                part.noConnectPoint(temp[1]);
+
+                //有可能该器件已经被删除
+                if (part) {
+                    part.setConnect(temp[1], false);
+                }
             }
         }
         this.deleteSign();
@@ -1733,6 +1740,9 @@ LineClass.prototype = {
     },
     //合并导线，保留this，删除Fragment
     mergeLine(Fragment) {
+        if (!Fragment || Fragment.partType !== "line") {
+            return (false);
+        }
         if (this.way[0].isEqual(Fragment.way[0])) {
             this.reverse();
         } else if (this.way[0].isEqual(Fragment.way.get(-1))) {

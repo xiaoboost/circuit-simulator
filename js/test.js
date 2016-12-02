@@ -37,7 +37,7 @@ function loadData(data) {
                 if(nodeStatus.form === "part-point") {
                     //器件引脚
                     const connectpart = partsAll.findPart(nodeStatus.id.slice(0, nodeStatus.id.search("-")));
-                    connectpart.connectPoint(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
+                    connectpart.setConnect(nodeStatus.id.slice(nodeStatus.id.search("-") + 1), devices.id);
                     devices.setConnect(j, nodeStatus.id);
                 } else if (nodeStatus.form === "line-point") {
                     //导线临时节点
