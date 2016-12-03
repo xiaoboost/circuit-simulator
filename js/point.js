@@ -59,6 +59,11 @@ function exPoint(arr) {
         this[1] = arr[1][1] - arr[0][1];
     }
     this.length = 2;
+    Object.defineProperty(this, "length", {
+        configurable: false,
+        enumerable: false,
+        writable: false
+    });
 }
 exPoint.prototype = {
     //加法，如果输入数组，那么逐个相加
@@ -231,6 +236,16 @@ exPoint.prototype = {
     //在points中与this距离最远的点
     farest(points) {
         return selectMax(this, points, nodeDistance)
+    },
+    //旋转
+    rotate(matrix, center) {
+        center = center || (new exPoint([0,0]));
+
+        const vector = this.add(-1, center),
+            vectorR = matrix.multo([vector]),
+            node = Point(vectorR[0]).add(center);
+
+        return(node);
     }
 };
 Object.setPrototypeOf(exPoint.prototype, Array.prototype);

@@ -9,7 +9,8 @@ import { styleRule } from "./styleRule";
 import { partsAll, partsNow } from "./collection";
 
 //常量定义
-const schematic = $("#area-of-parts"),
+const u = undefined,
+    schematic = $("#area-of-parts"),
     rotateMatrix = [
         new Matrix([[0, 1], [-1, 0]]),  //顺时针
         new Matrix([[0, -1], [1, 0]]),  //逆时针
@@ -1172,11 +1173,10 @@ PartClass.prototype = {
     },
     //旋转器件
     rotateSelf(matrix, center) {
-        let relation = this.position.add(-1, center);
-        relation = matrix.multo([relation])[0];
-
-        this.position = center.add(relation);
+        this.position = this.position.rotate(matrix, center);
         this.rotate = this.rotate.mul(matrix);
+        this.move();
+        this.textVisition();
     },
     //当前位置是否被占用
     isCover(pos) {
@@ -1253,6 +1253,25 @@ PartClass.prototype = {
         }
 
         return (false);
+    },
+    //器件内边距中的所有节点和管脚节点
+    nodeCollection() {
+        const ans = [],
+            position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            points = this.pointRotate().map((n) => n.position);
+
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                ans.push(Point([i * 20, j * 20]));
+            }
+        }
+
+        for (let i = 0; i < points.length; i++) {
+            ans.push(position.mul(20).add(points[i]));
+        }
+
+        return(ans);
     },
     //移动之后放下器件
     putDown(isNew) {
@@ -1468,34 +1487,65 @@ partsNow.extend({
 
         }
     },
+    //旋转检测
+    isRotate(sub) {
+        const move = this.filter((n) => (n.current && n.current.status === "move"));
+        //节点集合
+        let nodes = [];
+        for (let i = 0; i < move.length; i++) {
+            const node = move[i].way
+                ? move[i].way.nodeCollection()
+                : move[i].nodeCollection();
+
+            nodes = nodes.concat(node);
+        }
+        //中心点
+        const nodeX = nodes.map((n) => n[0]),
+            nodeY = nodes.map((n) => n[1]),
+            center = Point([
+                (Math.minOfArray(nodeX) + Math.maxOfArray(nodeX)) / 2,
+                (Math.minOfArray(nodeY) + Math.maxOfArray(nodeY)) / 2
+            ]).round();
+
+        //搜索
+        const ans = Array(4).fill(true),
+            start = (sub === u) ? 0 : sub,
+            end = (sub === u) ? 3 : sub;
+
+        for (let k = start; k <= end; k++) {
+            const ma = rotateMatrix[k];
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i].rotate(ma, center),
+                    status = schMap.getValueByOrigin(node);
+
+                if (status && status.id.split(" ").every((n) => !partsNow.has(n))) {
+                    ans[k] = false;
+                    break;
+                }
+            }
+        }
+
+        return((sub === u) ? ans : ans[sub]);
+    },
     //旋转
     rotate(sub) {
         this.moveStart();
 
-        const nodes = {x: [], y: []},
-            matrix = rotateMatrix[sub],
-            parts = this.filter((n) => n.current.status === "move");
-
-        //计算旋转中心
-        for(let i = 0; i < parts.length; i++) {
-            if(parts[i].partType === "line") {
-                const line = parts[i].nodeCollection();
-                nodes.x = nodes.x.concat(line.map((n) => n[0]));
-                nodes.y = nodes.y.concat(line.map((n) => n[1]));
-            } else {
-                nodes.x.push(parts[i].position[0]);
-                nodes.y.push(parts[i].position[1]);
-            }
-        }
-        const center = Point([
-                (Math.minOfArray(nodes.x) + Math.maxOfArray(nodes.x)) / 2,
-                (Math.minOfArray(nodes.y) + Math.maxOfArray(nodes.y)) / 2
-            ]).round();
+        const move = this.filter((n) => (n.current && n.current.status === "move")),
+            center = Point(this.center.call(move)).round(),
+            ma = rotateMatrix[sub];
 
         //整体移动的器件旋转
-        this.forEach((item) => {
-            if(item.current.status === "move") {
-                item.rotateSelf(matrix, center);
+        move.forEach((item) => {
+            item.rotateSelf(ma, center);
+            item.markSign();
+        });
+
+        //导线变形
+        this.forEach((n) => {
+            if (n.current.status !== "move") {
+                n.current.initTrend = n.current.initTrend.rotate(ma);
+                n.putDown(false, "movePart");
             }
         });
     }

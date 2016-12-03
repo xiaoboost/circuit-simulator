@@ -181,6 +181,26 @@ PartsCollection.prototype = {
             }
         });
         return(partsArea);
+    },
+    //所有器件的几何中心点
+    center() {
+        //所有器件的节点集合
+        let nodes = [];
+        for(let i = 0; i < this.length; i++) {
+            const node = this[i].way
+                ? this[i].way.nodeCollection()
+                : this[i].position.round();
+
+            nodes = nodes.concat(node);
+        }
+
+        const nodeX = nodes.map((n) => n[0]),
+            nodeY = nodes.map((n) => n[1]);
+
+        return([
+            (Math.minOfArray(nodeX) + Math.maxOfArray(nodeX)) / 2,
+            (Math.minOfArray(nodeY) + Math.maxOfArray(nodeY)) / 2
+        ]);
     }
 };
 Object.setPrototypeOf(PartsCollection.prototype, Array.prototype);

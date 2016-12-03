@@ -338,14 +338,21 @@ function clearStatus() {
 function contextSet(event, status) {
     const contextMenu = $("#right-button-menu"),
         menuAttr = {
-            "free" : "right-map",
-            "parts" : "right-parts",
-            "line" : "right-line"
-        };
+            "free": "right-map",
+            "parts": "right-parts",
+            "line": "right-line"
+        },
+        rotateId = [
+            "#clockwise-direction",
+            "#anticlockwise-direction",
+            "#X-Mirror",
+            "#Y-Mirror"
+        ];
+
     //关闭右键菜单
-    if(status === "close" || status === undefined) {
+    if (status === "close" || status === u) {
         contextMenu.attr("class", "");
-        return(false);
+        return (false);
     }
 
     contextMenu.attr("class", menuAttr[status]);
@@ -358,20 +365,35 @@ function contextSet(event, status) {
     //强制刷新菜单，并获取菜单大小
     const win = $(window),
         Height = win.height(),
-        Width = sidebar.hasClass("open-add-parts") ?
-            win.width() - sidebar.width() : win.width(),
+        Width = sidebar.hasClass("open-add-parts")
+            ? win.width() - sidebar.width()
+            : win.width(),
         menuWidth = contextMenu.width(),
         menuHeight = contextMenu.height(),
-        left = (Width - event.pageX < menuWidth) ?
-            event.pageX - menuWidth : event.pageX,
-        top = (Height - event.pageY < menuHeight) ?
-            event.pageY - menuHeight : event.pageY;
+        left = (Width - event.pageX < menuWidth)
+            ? event.pageX - menuWidth
+            : event.pageX,
+        top = (Height - event.pageY < menuHeight)
+            ? event.pageY - menuHeight
+            : event.pageY;
 
     contextMenu.css({
         "left": left + "px",
         "top": top + "px",
         "opacity": 1
     });
+
+    //器件部分，需要检测旋转可行性
+    if (status === "parts") {
+        const rotate = partsNow.isRotate();
+        for (let i = 0; i < 4; i++) {
+            const elem = $(rotateId[i]);
+            elem.removeClass("disable");
+            if (!rotate[i]) {
+                elem.addClass("disable");
+            }
+        }
+    }
 }
 //显示波形
 function createGraph(data) {
@@ -675,10 +697,11 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
                 //单个器件
                 clearStatus();
                 clickpart.toFocus();
-                partsNow.checkLine();
             } else {
+                //多个器件
                 contextSet();
             }
+            partsNow.checkLine();
             partsNow.moveStart();
             partsNow.current = grid.createData(event);
             grid.setMoveParts(true);
@@ -689,10 +712,12 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
         if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
             //多个器件的右键
             contextSet(event, "parts");
+            partsNow.checkLine();
         } else {
             //单个器件的右键
             clearStatus();
             clickpart.toFocus();
+            partsNow.checkLine();
             contextSet(event, "parts");
         }
     }
@@ -1147,7 +1172,9 @@ context.on("click", "#edit-parameters", function(event) {
 context.on("click", "#clockwise-direction", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-        partsNow.rotate(0);
+        if (partsNow.isRotate(0)) {
+            partsNow.rotate(0);
+        }
     }
     return(false);
 });
@@ -1155,7 +1182,9 @@ context.on("click", "#clockwise-direction", function(event) {
 context.on("click", "#anticlockwise-direction", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-        partsNow.rotate(1);
+        if (partsNow.isRotate(1)) {
+            partsNow.rotate(1);
+        }
     }
     return(false);
 });
@@ -1163,7 +1192,9 @@ context.on("click", "#anticlockwise-direction", function(event) {
 context.on("click", "#X-Mirror", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-        partsNow.rotate(2);
+        if (partsNow.isRotate(2)) {
+            partsNow.rotate(2);
+        }
     }
     return(false);
 });
@@ -1171,7 +1202,9 @@ context.on("click", "#X-Mirror", function(event) {
 context.on("click", "#Y-Mirror", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-        partsNow.rotate(3);
+        if (partsNow.isRotate(3)) {
+            partsNow.rotate(3);
+        }
     }
     return(false);
 });

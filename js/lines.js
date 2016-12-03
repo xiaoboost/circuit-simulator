@@ -1954,7 +1954,11 @@ LineClass.prototype = {
     },
     //导线旋转
     rotateSelf(matrix, center) {
-
+        for(let i = 0; i < this.way.length; i++) {
+            this.way[i] = this.way[i].rotate(matrix, center);
+        }
+        this.wayDrawing();
+        return(this);
     },
     //计算导线初始方向
     initTrend(sub) {
