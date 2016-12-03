@@ -187,6 +187,7 @@ PartsCollection.prototype = {
         //所有器件的节点集合
         let nodes = [];
         for(let i = 0; i < this.length; i++) {
+            //导线为所有节点集合，器件则是它本身的几何中心
             const node = this[i].way
                 ? this[i].way.nodeCollection()
                 : this[i].position.round();

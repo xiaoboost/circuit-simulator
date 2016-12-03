@@ -24,13 +24,13 @@ const grid = (function SchematicsGrid() {
     let flag = 0;
     const continuous = [
         "newMark",      //新建器件标志位
-        "moveParts",    //移单个器件标志位
+        "moveParts",    //移动器件标志位
         "moveMap",      //移动图纸标志位
         "selectBox",    //绘制复选框标志位
         "deformLine",   //导线变形标志位
         "moveText",     //移动txt标志位
         "drawLine",     //绘制导线标志位
-        "graphSelecte"  //波形选择框
+        "graphSelecte"  //波形选择框标志位
     ];
     //标志位
     for(let i = 0; i < continuous.length; i++) {
@@ -78,7 +78,7 @@ const grid = (function SchematicsGrid() {
         mouseLastY = 0;
 
     const copyStack = [],   //复制器件堆栈
-        revocation = [];    //撤销堆栈，保留上一次操作
+        revocation = [];    //撤销堆栈，最多保留10次操作
 
     //当前鼠标位置
     function mouse(event) {
@@ -119,7 +119,7 @@ const grid = (function SchematicsGrid() {
             zoom = num;
         }
     };
-    self.bias = function(x , y) {
+    self.bias = function(x, y) {
         if(x === u && y === u) {
             return([placeX, placeY]);
         } else if(x !== u && y !== u) {
@@ -130,7 +130,7 @@ const grid = (function SchematicsGrid() {
             placeY = x[1];
         }
     };
-    self.SVG = function(x , y) {
+    self.SVG = function(x, y) {
         if(x === u && y === u) {
             return([SVGX, SVGY]);
         } else if(x !== u && y !== u) {
@@ -211,20 +211,72 @@ const grid = (function SchematicsGrid() {
     }
     //记录当前所有器件状态
     self.now = function() {
-        revocation.length = 0;
-        for(let i = 0; i < partsAll.length; i++) {
-            if(partsAll[i].current.status === "move") {
-                revocation.push(partsAll[i].toSimpleData());
-            }
+        const ans = [];
+        for (let i = 0; i < partsAll.length; i++) {
+            ans.push(partsAll[i].toSimpleData());
+        }
+        if (!ans.isEqual(revocation.get(-1))) {
+            revocation.push(ans);
+        }
+        if (revocation.length > 11) {
+            revocation.splice(1, 1);
         }
     }
     //撤销
-    self.revocate = function() {
+    self.revocate = function(arr) {
+        //取出上次的操作
+        const last = arr ? arr : revocation.pop();
+        if(!last) { return(false); }
 
+        //删除图中所有器件
+        partsNow.deleteAll();
+        partsAll.forEach((n) => partsNow.push(n));
+        partsNow.forEach((n) => n.deleteSelf());
+        partsNow.deleteAll();
+        partsAll.deleteAll();
+
+        //加载指定数据
+        grid.paste(last);
+        //放置器件
+        for(let i = 0; i < partsAll.length; i++) {
+            partsAll[i].elementDOM.attr("opacity", 1);
+            partsAll[i].markSign();
+        }
+        //确定连接关系
+        for(let i = 0; i < partsAll.length; i++) {
+            const line = partsAll[i];
+            if(line.partType !== "line") { continue; }
+
+            for(let j = 0; j < 2; j++) {
+                const node = line.way.get(-1 * j),
+                    status = schMap.getValueByOrigin(node);
+
+                if (status.form === "part-point") {
+                    //器件引脚
+                    const part = partsAll.findPart(status.id),
+                        mark = status.id.split("-")[1];
+
+                    part.setConnect(mark, line.id);
+                    line.setConnect(j, status.id);
+                } else if (status.form === "cross-point") {
+                    //交错节点
+                    line.setConnect(j,
+                        status.id
+                            .split(" ")
+                            .filter((n) => n !== line.id)
+                            .join(" ")
+                    );
+                }
+            }
+        }
     }
     //复制堆栈中是否有数据
     self.isPaste = function() {
         return(!!copyStack.length);
+    }
+    //记录堆栈是否有数据
+    self.isRevocate = function() {
+        return(!!revocation.length);
     }
 
     //保留的全局临时变量
@@ -352,6 +404,7 @@ function contextSet(event, status) {
     //关闭右键菜单
     if (status === "close" || status === u) {
         contextMenu.attr("class", "");
+        $(".right-button-option", contextMenu).each((n) => $(n).removeClass("disable"));
         return (false);
     }
 
@@ -383,17 +436,30 @@ function contextSet(event, status) {
         "opacity": 1
     });
 
-    //器件部分，需要检测旋转可行性
+    //器件部分，旋转功能可行性
     if (status === "parts") {
         const rotate = partsNow.isRotate();
         for (let i = 0; i < 4; i++) {
             const elem = $(rotateId[i]);
-            elem.removeClass("disable");
-            if (!rotate[i]) {
-                elem.addClass("disable");
-            }
+
+            rotate[i]
+                ? elem.removeClass("disable")
+                : elem.addClass("disable");
         }
     }
+    //图纸部分，撤销和粘帖功能是否可用
+    else if (status === "free") {
+        let elem = $("#right-undo");
+        grid.isRevocate()
+            ? elem.removeClass("disable")
+            : elem.addClass("disable");
+
+        elem = $("#parts-paste");
+        grid.isPaste()
+            ? elem.removeClass("disable")
+            : elem.addClass("disable");
+    }
+
 }
 //显示波形
 function createGraph(data) {
@@ -492,6 +558,7 @@ sidebar.on({
         if (event.which === 1) {
             if (!grid.totalMarks) {
                 clearStatus();
+                grid.now();
                 grid.setNewMark(true);
                 partsAll.push(new PartClass(event.currentTarget.id));
                 partsAll.get(-1).toFocus();
@@ -608,6 +675,8 @@ parameter.on("click", "#parameter-bottom-cancel", function() {
 });
 //器件属性菜单的确定键
 parameter.on("click", "#parameter-bottom-accept", function() {
+    //记录数据
+    grid.now();
     //检查输入数据的格式
     if(partsNow[0].inputVision()) {
         $(doc.body).removeClass("open-gray");
@@ -704,6 +773,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
             partsNow.checkLine();
             partsNow.moveStart();
             partsNow.current = grid.createData(event);
+            grid.now();
             grid.setMoveParts(true);
         }
         //绑定全局移动事件
@@ -791,6 +861,7 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
             line.current = grid.createData(event);
             line.startPath(event, "draw", clickpart, pointmark);
         }
+        grid.now();
         grid.setDrawLine(true);
         mainPage.attr("class", "mouse-line");
         mainPage.on("mousemove", mousemoveEvent);
@@ -806,6 +877,7 @@ mainPage.on("mousedown","g.line g.draw-open",function(event) {
         line.toFocus();
         line.current = grid.createData(event);
         line.startPath(event, "draw");
+        grid.now();
         grid.setDrawLine(true);
         mainPage.attr("class", "mouse-line");
         mainPage.on("mousemove", mousemoveEvent);
@@ -884,6 +956,7 @@ mainPage.on({
                 line.startPath(event, "draw", lines);
             }
 
+            grid.now();
             grid.setDrawLine(true);
             mainPage.attr("class", "mouse-line");
             mainPage.on("mousemove", mousemoveEvent);
@@ -906,7 +979,6 @@ mainPage.on("mousedown", function(event) {
         grid.current = grid.createData(event);
         grid.setMoveMap(true);
     }
-
     mainPage.on("mousemove", mousemoveEvent);
 });
 //图纸的全局mouseup操作
@@ -1252,6 +1324,16 @@ context.on("click", "#parts-delete", function(event) {
     }
     return(false);
 });
+//撤销
+context.on("click", "#right-undo", function(event) {
+    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+        contextSet();
+        if (grid.isRevocate()) {
+            grid.revocate();
+        }
+    }
+    return(false);
+});
 
 //键盘事件
 $("body").on("keydown", function(event) {
@@ -1309,7 +1391,7 @@ $("body").on("keydown", function(event) {
         }
         //ctrl + Z，撤销操作
         case (event.ctrlKey && (event.keyCode === 90)): {
-            //trigger("#parts-cut");
+            trigger("#right-undo");
             break;
         }
         //Delete，删除
@@ -1351,39 +1433,7 @@ doc.body.onload = function() {
 
     //加载参数
     if (parameters.init) {
-        grid.paste(iniData[parameters.init]);
-        //放置器件
-        for(let i = 0; i < partsAll.length; i++) {
-            partsAll[i].elementDOM.attr("opacity", 1);
-            partsAll[i].markSign();
-        }
-        //确定连接关系
-        for(let i = 0; i < partsAll.length; i++) {
-            const line = partsAll[i];
-            if(line.partType !== "line") { continue; }
-
-            for(let j = 0; j < 2; j++) {
-                const node = line.way.get(-1 * j),
-                    status = schMap.getValueByOrigin(node);
-
-                if (status.form === "part-point") {
-                    //器件引脚
-                    const part = partsAll.findPart(status.id),
-                        mark = status.id.split("-")[1];
-
-                    part.setConnect(mark, line.id);
-                    line.setConnect(j, status.id);
-                } else if (status.form === "cross-point") {
-                    //交错节点
-                    line.setConnect(j,
-                        status.id
-                            .split(" ")
-                            .filter((n) => n !== line.id)
-                            .join(" ")
-                    );
-                }
-            }
-        }
+        grid.revocate(iniData[parameters.init]);
     }
 
     //去掉灰幕

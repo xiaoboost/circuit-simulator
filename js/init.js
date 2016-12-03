@@ -360,6 +360,30 @@ Object.prototype.extend = function(fromObj) {
     }
     return(this);
 };
+Object.prototype.extend({
+    //对象是否相等
+    isEqual(obj) {
+        const thisKeys = Object.keys(this),
+            fromKeys = Object.keys(obj);
+
+        if (!thisKeys.isEqual(fromKeys)) {
+            return (false);
+        }
+
+        for (let i = 0; i < thisKeys.length; i++) {
+            if (this[thisKeys[i]] instanceof Object) {
+                if (!this[thisKeys[i]].isEqual(obj[thisKeys[i]])) {
+                    return (false);
+                }
+            } else {
+                if (this[thisKeys[i]] !== obj[thisKeys[i]]) {
+                    return (false);
+                }
+            }
+        }
+        return (true);
+    }
+});
 //原生对象扩展
 Array.extend({
     //数组深复制，需要避免循环引用
@@ -385,10 +409,22 @@ Array.extend({
 Array.prototype.extend({
     //数组是否相等
     isEqual(b) {
-        if (!b) return (false);
-        if (this.length !== b.length) return (false);
+        if (!b) {
+            return (false);
+        }
+        if (this.length !== b.length) {
+            return (false);
+        }
         for (let i = 0; i < this.length; i++) {
-            if (this[i] !== b[i]) return (false);
+            if (this[i] instanceof Object) {
+                if (!this[i].isEqual(b[i])) {
+                    return(false);
+                }
+            } else {
+                if (this[i] !== b[i]) {
+                    return (false);
+                }
+            }
         }
         return (true);
     },

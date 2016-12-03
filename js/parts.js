@@ -1321,7 +1321,8 @@ PartClass.prototype = {
             rotate: new Matrix(this.rotate),
             input: Array.clone(this.input),
             connect: Array.clone(this.connect),
-            text: text
+            text: text,
+            id: this.id
         });
     },
     //变更当前器件ID
