@@ -96,6 +96,18 @@ const grid = (function SchematicsGrid() {
         mouseLastY = event.pageY;
         return (ans);
     }
+    //保存器件属性
+    function save(arr) {
+        const ans = [];
+
+        for (let i = 0; i < arr.length; i++) {
+            //复制操作需要删除id
+            ans.push(arr[i].toSimpleData());
+            delete ans.get(-1).id;
+        }
+
+        return(ans);
+    }
 
     self.size = function(num) {
         if(num === u) {
@@ -162,32 +174,45 @@ const grid = (function SchematicsGrid() {
     self.copy = function(arr) {
         const data = arr ? arr : partsNow;
 
-        copyStack.length = 0;
-        for (let i = 0; i < data.length; i++) {
+        let move = [];
+        for(let i = 0; i < data.length; i++) {
             if (data[i].current.status === "move") {
-                //复制操作需要删除id
-                copyStack.push(data[i].toSimpleData());
-                delete copyStack.get(-1).id;
+                move.push(data[i]);
             }
+        }
+        move = save(move);
+
+        copyStack.length = 0;
+        for (let i = 0; i < move.length; i++) {
+            copyStack.push(move[i]);
         }
     }
     //剪切
-    self.cut = function(arr) {
-        const half = [], move = [];
-        //分别保存整体移动和变形导线
-        for(let i = 0; i < arr.length; i++) {
-            if (arr.current.status !== "move") {
-                half.push(arr[i]);
-            } else {
-                move.push(arr[i]);
+    self.cut = function() {
+        let half = [], move = [];
+        //保存变形导线
+        for(let i = 0; i < partsNow.length; i++) {
+            if (partsNow[i].current.status === "move") {
+                move.push(partsNow[i]);
+            }
+            else {
+                half.push(partsNow[i]);
             }
         }
         //复制
-        self.copy(half);
+        self.copy(partsNow);
+        //记录数据
+        half = save(half);
         //删除
         move.forEach((n) => n.deleteSelf());
         //再粘贴部分导线
-
+        self.paste(half);
+        partsNow.forEach((n) => {
+            n.elementDOM.removeAttr("opacity");
+            n.nodeToConnect(0);
+            n.nodeToConnect(1);
+            n.markSign();
+        })
     }
     //粘贴
     self.paste = function(arr) {
@@ -246,34 +271,14 @@ const grid = (function SchematicsGrid() {
         partsNow.deleteAll();
         //放置器件
         for(let i = 0; i < partsAll.length; i++) {
-            partsAll[i].elementDOM.attr("opacity", 1);
+            partsAll[i].elementDOM.removeAttr("opacity");
             partsAll[i].markSign();
         }
         //确定连接关系
         for(let i = 0; i < partsAll.length; i++) {
-            const line = partsAll[i];
-            if(line.partType !== "line") { continue; }
-
-            for(let j = 0; j < 2; j++) {
-                const node = line.way.get(-1 * j),
-                    status = schMap.getValueByOrigin(node);
-
-                if (status.form === "part-point") {
-                    //器件引脚
-                    const part = partsAll.findPart(status.id),
-                        mark = status.id.split("-")[1];
-
-                    part.setConnect(mark, line.id);
-                    line.setConnect(j, status.id);
-                } else if (status.form === "cross-point") {
-                    //交错节点
-                    line.setConnect(j,
-                        status.id
-                            .split(" ")
-                            .filter((n) => n !== line.id)
-                            .join(" ")
-                    );
-                }
+            if(partsAll[i].partType === "line") {
+                partsAll[i].nodeToConnect(0);
+                partsAll[i].nodeToConnect(1);
             }
         }
     }
@@ -955,20 +960,17 @@ mainPage.on({
                     "up":   [0, -1],
                     "down":  [0, 1]
                 }[style],
-                point = mouseRound.add(dire);
+                point = mouseRound.add(dire),
+                id = schMap.getValueBySmalle(point).id,
+                line = partsAll.findPart(id);
 
             if(!style) { return false; }
-
-            const line = partsAll.findPart(schMap.getValueBySmalle(point).id),
-                lines = schMap.getValueBySmalle(mouseRound).id.split(" ")
-                    .map((n) => partsAll.findPart(n))
-                    .filter((n) => n !== line);
 
             partsNow.deleteAll();
 
             line.toFocus();
             line.current = grid.createData(event);
-            line.startPath(event, "draw", lines);
+            line.startPath(event, "draw");
 
             mainPage.attr("class", "mouse-line");
             mainPage.on("mousemove", mousemoveEvent);
@@ -1002,7 +1004,7 @@ mainPage.on("mouseup", function(event) {
             case grid.newMark: {
                 grid.setNewMark(false);
                 partsNow[0].putDown("new");
-                partsNow[0].elementDOM.attr("opacity", "1");
+                partsNow[0].elementDOM.removeAttr("opacity");
                 break;
             }
             //移动器件
@@ -1304,7 +1306,7 @@ context.on("click", "#parts-copy", function(event) {
 context.on("click", "#parts-cut", function(event) {
     if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
         contextSet();
-
+        grid.cut();
     }
     return(false);
 });

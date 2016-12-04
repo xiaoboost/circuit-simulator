@@ -1070,6 +1070,13 @@ $.fn = $.prototype = {
             delegate.trigger(n, event, data);
         });
         return this;
+    },
+    // elem是否是this[0]的子元素
+    contains(elem) {
+        const e = elem instanceof $
+            ? elem[0] : elem;
+
+        return(this[0].contains(e));
     }
 };
 //改变init构造函数的原型链

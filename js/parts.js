@@ -10,7 +10,7 @@ import { partsAll, partsNow } from "./collection";
 
 //常量定义
 const u = undefined,
-    schematic = $("#area-of-parts"),
+    actionArea = $("#area-of-parts"),
     rotateMatrix = [
         new Matrix([[0, 1], [-1, 0]]),  //顺时针
         new Matrix([[0, -1], [1, 0]]),  //逆时针
@@ -18,7 +18,6 @@ const u = undefined,
         new Matrix([[-1, 0], [0, 1]])   //沿Y轴镜像
     ];
 
-//原来的sizeRange顺序是上左下右
 //器件原型描述
 const originalElectronic = {
     /*
@@ -791,7 +790,7 @@ PartClass.prototype = {
 
         //外形大小
         const rect = $(".focus-part", this.elementDOM).attr(["width","height"]).map((n) => Number(n)),
-            exec = (/scale\(([\d.]+?)\)/).exec(schematic.attr("transform")) || [1, 1],
+            exec = (/scale\(([\d.]+?)\)/).exec(actionArea.attr("transform")) || [1, 1],
             scale = Number(exec[1]);
 
         let transform = this.elementDOM.attr("transform");
@@ -958,7 +957,7 @@ PartClass.prototype = {
             }
             group.append(tempDate);
         }
-        schematic.append(group);
+        actionArea.append(group);
         return (group);
     },
     //引脚被占用，禁止缩放
@@ -1294,19 +1293,21 @@ PartClass.prototype = {
     },
     //删除器件
     deleteSelf() {
-        //删除与之相连的导线
-        for(let i = 0; i < this.connect.length; i++) {
-            if (this.connect[i]) {
-                const line = partsAll.findPart(this.connect[i]);
+        if (actionArea.contains(this.elementDOM)) {
+            //删除与之相连的导线
+            for (let i = 0; i < this.connect.length; i++) {
+                if (this.connect[i]) {
+                    const line = partsAll.findPart(this.connect[i]);
 
-                //有可能该导线已经被删除
-                if (line) {
-                    line.deleteSelf();
+                    //有可能该导线已经被删除
+                    if (line) {
+                        line.deleteSelf();
+                    }
                 }
             }
+            this.deleteSign();
+            this.elementDOM.remove();
         }
-        this.deleteSign();
-        this.elementDOM.remove();
         partsAll.deletePart(this);
     },
     //按照标准格式输出

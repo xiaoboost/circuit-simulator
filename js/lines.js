@@ -1369,7 +1369,7 @@ WayMap.prototype = {
 function LineClass(way) {
     this.way = new LineWay();
     this.circle = [false, false];
-    this.connect = [false, false];
+    this.connect = ["", ""];
     this.partType = "line";
     this.current = {};
     this.id = partsAll.newId("line_");
@@ -1601,6 +1601,7 @@ LineClass.prototype = {
             }
         } else {
             //端点悬空
+            this.connect[mark] = "";
             this.circle[mark].attr("class", "line-point draw-open");
         }
     },
@@ -1636,31 +1637,36 @@ LineClass.prototype = {
             node = self.way.get(-1 * sub).round(),
             status = schMap.getValueByOrigin(node);
 
-        if(!status) {
+        if (!status) {
             self.setConnect(sub, false);
         }
-        else if(status.form === "part-point") {
+        else if (status.form === "part-point") {
             const part = partsAll.findPart(status.id),
                 mark = status.id.split("-")[1];
 
             part.setConnect(mark, this.id);
-            self.setConnect(sub, part.id);
+            self.setConnect(sub, part.id + "-" + mark);
         }
-        else if(status.form === "line-point") {
+        else if (status.form === "line-point") {
             self.mergeLine(status.id);
         }
-        else if(status.form === "line") {
+        else if (status.form === "line") {
             self.splitLine(status.id, sub);
         }
-        else if(status.form === "cross-point") {
-            const node = self.way.get(-1 * sub);
+        else if (status.form === "cross-point") {
+            const temp = self.way.get(-1 * sub),
+                lines = status.id.split(" ");
+            //当前导线
+            self.setConnect(sub, lines.filter((n) => n !== self.id).join(" "));
+            //其余导线
+            for (let i = 0; i < lines.length; i++) {
+                const line = partsAll.findPart(lines[i]),
+                    con = line.findConnect(temp);
 
-            status.id.split(" ").forEach((n) => {
-                const line = partsAll.findPart(n),
-                    s = n.findConnect(node);
-                if(s === -1) { throw("路径错误"); }
-                line.connect[s] += " " + self.id;
-            });
+                line.setConnect(con,
+                    lines.filter((n) => n !== line.id).join(" ")
+                );
+            }
         }
     },
 
@@ -1897,40 +1903,43 @@ LineClass.prototype = {
         this.elementDOM.preappendTo(actionArea);
         splited.render();
         splited.markSign();
-        splited.toFocus();
         devices.render();
         devices.markSign();
-        devices.toFocus();
 
         //交错节点设定
         schMap.setValueByOrigin(NodeCross, {
             form: "cross-point",
             id: this.id + " " + splited.id + " " + devices.id
-        })
+        });
     },
     //删除导线
     deleteSelf() {
-        for(let i = 0; i < this.connect.length; i++) {
-            if (this.connectStatus(i) === "line") {
-                const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
+        if (actionArea.contains(this.elementDOM)) {
+            for (let i = 0; i < this.connect.length; i++) {
+                if (this.connectStatus(i) === "line") {
+                    const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
 
-                lines.forEach((n) => n && n.deleteConnect(this.id));
+                    lines.forEach((n) => n && n.deleteConnect(this.id));
 
-                if (lines.length === 2) {
-                    lines[0] && lines[0].mergeLine(lines[1]);
+                    if (lines.length === 2 && lines[0]) {
+                        lines[0].mergeLine(lines[1]);
+                        lines[0].render();
+                        lines[0].markSign();
+                    }
                 }
-            } else if (this.connectStatus(i) === "part") {
-                const temp = this.connect[i].split("-"),
-                    part = partsAll.findPart(temp[0]);
+                else if (this.connectStatus(i) === "part") {
+                    const temp = this.connect[i].split("-"),
+                        part = partsAll.findPart(temp[0]);
 
-                //有可能该器件已经被删除
-                if (part) {
-                    part.setConnect(temp[1], false);
+                    //有可能该器件已经被删除
+                    if (part) {
+                        part.setConnect(temp[1], false);
+                    }
                 }
             }
+            this.deleteSign();
+            this.elementDOM.remove();
         }
-        this.deleteSign();
-        this.elementDOM.remove();
         partsAll.deletePart(this);
     },
     //合并导线，保留this，删除Fragment
