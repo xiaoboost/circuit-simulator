@@ -132,6 +132,7 @@ PartsCollection.prototype = {
             delete this[i];
         }
         this.length = 0;
+        this.current = {};
     },
     //枚举器件
     forEach(callback) {

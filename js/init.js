@@ -620,6 +620,18 @@ Number.prototype.extend({
 
         const sign = number / Math.abs(number);
         return (Math.floor(Math.log10(number * sign))) + 1;
+    },
+    // 单位化
+    toUnit() {
+        const number = Number(this.toString());
+
+        if (number > 0) {
+            return (1);
+        } else if (number < 0) {
+            return (-1);
+        } else {
+            return (0);
+        }
     }
 });
 String.prototype.extend({

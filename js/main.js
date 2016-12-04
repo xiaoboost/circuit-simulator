@@ -1,6 +1,5 @@
 "use strict";
 
-//外部模块引用
 import { $ } from "./jquery";
 import { iniData, SVG_NS } from "./init";
 import { schMap } from "./maphash";
@@ -161,10 +160,14 @@ const grid = (function SchematicsGrid() {
 
     //复制
     self.copy = function(arr) {
+        const data = arr ? arr : partsNow;
+
         copyStack.length = 0;
-        for(let i = 0; i < arr.length; i++) {
-            if(arr[i].current.status === "move") {
-                copyStack.push(arr[i].toSimpleData());
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].current.status === "move") {
+                //复制操作需要删除id
+                copyStack.push(data[i].toSimpleData());
+                delete copyStack.get(-1).id;
             }
         }
     }
@@ -180,11 +183,9 @@ const grid = (function SchematicsGrid() {
             }
         }
         //复制
-        self.copy(arr);
+        self.copy(half);
         //删除
-        for(let i = 0; i < move.length; i++) {
-            move[i].deleteSelf();
-        }
+        move.forEach((n) => n.deleteSelf());
         //再粘贴部分导线
 
     }
@@ -192,21 +193,26 @@ const grid = (function SchematicsGrid() {
     self.paste = function(arr) {
         const now = arr ? arr : copyStack;
 
+        partsNow.deleteAll();
         for(let i = 0; i < now.length; i++) {
-            const part = now[i];
-            if (part.partType === "config") {
-                for (let j in part) {
-                    if (part.hasOwnProperty(j)) {
-                        $('#' + j).prop("value", part[j]);
+            const data = now[i];
+            if (data.partType === "config") {
+                for (let j in data) {
+                    if (data.hasOwnProperty(j)) {
+                        $('#' + j).prop("value", data[j]);
                     }
                 }
             }
-            else if (part.partType !== "line") {
-                new PartClass(part);
+            else if (data.partType !== "line") {
+                partsNow.push(new PartClass(data));
             }
             else {
-                new LineClass(part);
+                partsNow.push(new LineClass(data));
             }
+
+            const part = partsNow.get(-1);
+            part.current = {};
+            part.current.status = "move";
         }
     }
     //记录当前所有器件状态
@@ -218,8 +224,8 @@ const grid = (function SchematicsGrid() {
         if (!ans.isEqual(revocation.get(-1))) {
             revocation.push(ans);
         }
-        if (revocation.length > 11) {
-            revocation.splice(1, 1);
+        if (revocation.length > 10) {
+            revocation.splice(0, 1);
         }
     }
     //撤销
@@ -237,6 +243,7 @@ const grid = (function SchematicsGrid() {
 
         //加载指定数据
         grid.paste(last);
+        partsNow.deleteAll();
         //放置器件
         for(let i = 0; i < partsAll.length; i++) {
             partsAll[i].elementDOM.attr("opacity", 1);
@@ -846,23 +853,31 @@ mainPage.on({
 
 //左键器件引脚mousedown，绘制导线开始
 mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
-    if (event.which === 1 && !grid.totalMarks){
-        const clickpart = partsAll.findPart(event.currentTarget.parentNode.id),
-            pointmark = parseInt(event.currentTarget.id.split("-")[1]);
-
+    if (event.which === 1 && !grid.totalMarks) {
         clearStatus();
-        if (!clickpart.connect[pointmark]) {
-            clickpart.toFocus();
-            partsAll.push(new LineClass(clickpart, pointmark));
-            partsAll.get(-1).toFocus();
-            partsAll.get(-1).current.extend(grid.createData(event));
-        } else {
-            const line = partsAll.findPart(clickpart.connect[pointmark]);
-            line.current = grid.createData(event);
-            line.startPath(event, "draw", clickpart, pointmark);
-        }
         grid.now();
         grid.setDrawLine(true);
+
+        const part = partsAll.findPart(event.currentTarget.parentNode.id),
+            mark = parseInt(event.currentTarget.id.split("-")[1]),
+            point = part.position.add(part.pointRotate()[mark].position),
+            connect = part.connect[mark],
+            line = connect
+                ? partsAll.findPart(connect)
+                : new LineClass([point]);
+
+        line.toFocus();
+        line.current = grid.createData(event);
+
+        if (!connect) {
+            part.toFocus();
+            part.setConnect(mark, line.id);
+            line.setConnect(0, part.id + "-" + mark);
+            line.startPath(event, "draw", "new");
+        } else {
+            line.startPath(event, "draw");
+        }
+
         mainPage.attr("class", "mouse-line");
         mainPage.on("mousemove", mousemoveEvent);
     }
@@ -874,11 +889,11 @@ mainPage.on("mousedown","g.line g.draw-open",function(event) {
         const line = partsAll.findPart(event.currentTarget.parentNode.id);
 
         clearStatus();
-        line.toFocus();
-        line.current = grid.createData(event);
-        line.startPath(event, "draw");
         grid.now();
         grid.setDrawLine(true);
+        line.toFocus();
+        line.current = grid.createData(event);
+        line.startPath(event, "draw", "new");
         mainPage.attr("class", "mouse-line");
         mainPage.on("mousemove", mousemoveEvent);
     }
@@ -929,6 +944,9 @@ mainPage.on({
     },
     "mousedown": function(event) {
         if (event.which === 1 && !grid.totalMarks) {
+            grid.now();
+            grid.setDrawLine(true);
+
             const mouseRound = grid.mouse(event).roundToSmall(),
                 style = (mainPage.attr("class") || "").match(/right|left|up|down/),
                 dire = {
@@ -947,17 +965,11 @@ mainPage.on({
                     .filter((n) => n !== line);
 
             partsNow.deleteAll();
+
             line.toFocus();
             line.current = grid.createData(event);
-            if(lines.length === 2) {  //如果剩下两个导线，那么合并剩下的两导线
-                lines[0].mergeLine(lines[1]);
-                line.startPath(event, "draw");
-            } else if(lines.length === 3) {
-                line.startPath(event, "draw", lines);
-            }
+            line.startPath(event, "draw", lines);
 
-            grid.now();
-            grid.setDrawLine(true);
             mainPage.attr("class", "mouse-line");
             mainPage.on("mousemove", mousemoveEvent);
         }

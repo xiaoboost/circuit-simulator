@@ -975,11 +975,11 @@ PartClass.prototype = {
         }
     },
     //取消引脚放大
-    shrinkPoint(pointMark) {
+    shrinkCircle(pointMark) {
         $("circle", this.circle[pointMark]).attr("style", "");
     },
     //引脚放大
-    enlargePoint(pointMark) {
+    enlargeCircle(pointMark) {
         $("circle", this.circle[pointMark]).attr("style", "r:5");
     },
     //器件高亮
