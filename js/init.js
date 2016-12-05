@@ -490,8 +490,10 @@ Math.extend({
 Number.prototype.extend({
     // 保留效数字，默认6位有效数字
     toSFixed(rank = 6) {
-        const num = Number(this.toString());
-        if(!num) { return(0); }
+        const num = this.valueOf();
+        if (!num) {
+            return (0);
+        }
 
         const sign = num / Math.abs(num),
             number = num * sign,
@@ -500,10 +502,12 @@ Number.prototype.extend({
         let ans;
         if (index > 0) {
             ans = parseFloat(number.toFixed(index));
-        } else if (index < 0) {
+        }
+        else if (index < 0) {
             const temp = Math.pow(10, index);
             ans = Math.round(number / temp) * temp;
-        } else {
+        }
+        else {
             ans = Math.round(number);
         }
         return (ans * sign);
@@ -511,8 +515,10 @@ Number.prototype.extend({
     // 数字转换为缩写字符串，默认保留6位有效数字
     // 数字小于10^-12以及大于10^9的时候，保留6位小数
     toShort(save = 6) {
-        const number = Number(this.toString());
-        if(!number) { return("0"); }
+        const number = this.valueOf();
+        if (!number) {
+            return ("0");
+        }
 
         const sign = number / Math.abs(number),
             unitS = ["m", "μ", "n", "p"],
@@ -521,13 +527,13 @@ Number.prototype.extend({
         let sub = -1, ans, rank = 1,
             uint = number * sign;
 
-        while(uint < 1) {
+        while (uint < 1) {
             rank *= 1000;
             uint *= 1000;
-            sub ++;
-            if(uint > 1 || sub === 3) {
+            sub++;
+            if (uint > 1 || sub === 3) {
                 ans = (sign * uint).toSFixed(save);
-                return({
+                return ({
                     rank: rank,
                     number: ans,
                     unit: unitS[sub],
@@ -535,13 +541,13 @@ Number.prototype.extend({
                 });
             }
         }
-        while(uint > 1000) {
+        while (uint > 1000) {
             rank *= 0.001;
             uint *= 0.001;
-            sub ++;
-            if(uint < 1000 || sub === 2) {
+            sub++;
+            if (uint < 1000 || sub === 2) {
                 ans = (sign * uint).toSFixed(save);
-                return({
+                return ({
                     rank: rank,
                     number: ans,
                     unit: unitL[sub],
@@ -549,7 +555,7 @@ Number.prototype.extend({
                 });
             }
         }
-        return({
+        return ({
             rank: 1,
             unit: "",
             number: number.toSFixed(save),
@@ -558,29 +564,35 @@ Number.prototype.extend({
     },
     // 数量级
     rank() {
-        const number = Number(this.toString());
-        if(!number) { return(0); }
+        const number = this.valueOf();
+        if (!number) {
+            return (0);
+        }
 
         const sign = number / Math.abs(number);
         return (Math.pow(10, Math.floor(Math.log10(number * sign))));
     },
     // 数字有多少位
     powRank() {
-        const number = Number(this.toString());
-        if(!number) { return(0); }
+        const number = this.valueOf();
+        if (!number) {
+            return (0);
+        }
 
         const sign = number / Math.abs(number);
         return (Math.floor(Math.log10(number * sign))) + 1;
     },
     // 单位化
     toUnit() {
-        const number = Number(this.toString());
+        const number = this.valueOf();
 
         if (number > 0) {
             return (1);
-        } else if (number < 0) {
+        }
+        else if (number < 0) {
             return (-1);
-        } else {
+        }
+        else {
             return (0);
         }
     }
@@ -588,13 +600,16 @@ Number.prototype.extend({
 String.prototype.extend({
     // 转换为真实的数值
     toVal() {
-        const hash = { G: 1e9, M: 1e6, k: 1e3,
-            m: 1e-3, u: 1e-6, n: 1e-9, p: 1e-12 };
+        const hash = {
+            G: 1e9, M: 1e6, k: 1e3,
+            m: 1e-3, u: 1e-6, n: 1e-9, p: 1e-12
+        };
 
-        if(this.search(/[dD][bB]$/) !== -1) {
+        if (this.search(/[dD][bB]$/) !== -1) {
             //db转换
             return (Math.pow(10, parseFloat(this) / 20));
-        } else if(this.search(/^update/) !== -1) {
+        }
+        else if (this.search(/^update/) !== -1) {
             //有update关键字，字符串保持原样
             return this;
         }
@@ -604,7 +619,7 @@ String.prototype.extend({
             unit = input.match(/[GMkmunp]/),
             rank = unit ? hash[unit[0]] : 1;
 
-        return((number * rank).toSFixed());
+        return ((number * rank).toSFixed());
     }
 });
 
