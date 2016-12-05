@@ -2,55 +2,6 @@ import { $ } from "./jquery"
 
 //初始数据
 const iniData = {
-    Empty : [],
-    R1 : [
-        { partType: "resistance", id: "R_in", input: ["10k"], position: [420,280], rotate:[[0,1],[-1,0]] }
-    ],
-    R2 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [420,340], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_2", input: ["10k"], position: [700,340], rotate:[[1,0],[0,1]] }
-    ],
-    R2W1 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [420,340], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_2", input: ["10k"], position: [700,240], rotate:[[1,0],[0,1]] },
-        { partType: "line", way: [[460,340],[540,340],[540,300],[560,300],[560,240],[660,240]] }
-    ],
-    R3W2 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [420,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_2", input: ["10k"], position: [640,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_3", input: ["10k"], position: [860,240], rotate:[[1,0],[0,1]] },
-        { partType: "line", way: [[460,240],[600,240]] },
-        { partType: "line", way: [[680,240],[820,240]] }
-    ],
-    R3W3 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [220,340], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_2", input: ["10k"], position: [500,340], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_3", input: ["10k"], position: [500,220], rotate:[[1,0],[0,1]] },
-        { partType: "line", way: [[460,220],[360,220],[360,340]] },
-        { partType: "line", way: [[260,340],[360,340]] },
-        { partType: "line", way: [[360,340],[460,340]] }
-    ],
-    R4W4 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [400,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_2", input: ["10k"], position: [760,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_3", input: ["10k"], position: [580,120], rotate:[[0,1],[-1,0]] },
-        { partType: "resistance", id: "R_4", input: ["10k"], position: [760,400], rotate:[[1,0],[0,1]] },
-        { partType: "line", way: [[440,240],[580,240]] },
-        { partType: "line", way: [[580,240],[720,240]] },
-        { partType: "line", way: [[580,160],[580,240]] },
-        { partType: "line", way: [[580,240],[580,300],[640,300],[640,360],[680,360],[680,400],[720,400]] }
-    ],
-    R9 : [
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [360,60], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [200,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [300,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [400,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [500,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [600,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [700,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [800,240], rotate:[[1,0],[0,1]] },
-        { partType: "resistance", id: "R_1", input: ["10k"], position: [900,240], rotate:[[1,0],[0,1]] }
-    ],
     Series : [
         { partType: "resistance", id: "R_1", position: [700,160], rotate: [[0,1],[-1,0]], text: [16,-2], input: ["1k"]},
         { partType: "resistance", id: "R_2", position: [700,320], rotate: [[0,1],[-1,0]], text: [16,-2], input: ["1k"]},

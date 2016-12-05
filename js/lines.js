@@ -605,6 +605,7 @@ const Search = {
             this.toGoing();
             this.deleteSign();
             this.freedConnect(1);
+            this.wayDrawing();
 
             this.current.initTrend = this.initTrend(0);
 

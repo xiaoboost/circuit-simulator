@@ -619,7 +619,7 @@ function PartClass(data) {
     this.position = this.position
         ? Point(this.position)
         : Point([1000, 1000]);
-    this.connect = this.connect || [];
+    this.connect = Array(this.pointInfor.length).fill("");
     this.input = this.input || [];
     this.current = {};
     this.circle = [];
@@ -970,12 +970,14 @@ PartClass.prototype = {
         if (this.connect[mark]) {
             this.circle[mark].attr("class", "part-point point-close");
         } else {
+            this.connect[mark] = "";
             this.circle[mark].attr("class", "part-point point-open");
         }
+        this.shrinkCircle(mark);
     },
     //取消引脚放大
     shrinkCircle(pointMark) {
-        $("circle", this.circle[pointMark]).attr("style", "");
+        $("circle", this.circle[pointMark]).removeAttr("style");
     },
     //引脚放大
     enlargeCircle(pointMark) {

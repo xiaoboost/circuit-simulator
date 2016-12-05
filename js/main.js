@@ -272,6 +272,7 @@ const grid = (function SchematicsGrid() {
         //放置器件
         for(let i = 0; i < partsAll.length; i++) {
             partsAll[i].elementDOM.removeAttr("opacity");
+            partsAll[i].render && partsAll[i].render();
             partsAll[i].markSign();
         }
         //确定连接关系
@@ -401,11 +402,6 @@ function clearStatus() {
 //右键菜单
 function contextSet(event, status) {
     const contextMenu = $("#right-button-menu"),
-        menuAttr = {
-            "free": "right-map",
-            "parts": "right-parts",
-            "line": "right-line"
-        },
         rotateId = [
             "#clockwise-direction",
             "#anticlockwise-direction",
@@ -420,7 +416,7 @@ function contextSet(event, status) {
         return (false);
     }
 
-    contextMenu.attr("class", menuAttr[status]);
+    contextMenu.attr("class", "right-" + status);
     //先放置在左上角，透明度为0
     contextMenu.css({
         "left": 0,
@@ -449,7 +445,7 @@ function contextSet(event, status) {
     });
 
     //器件部分，旋转功能可行性
-    if (status === "parts") {
+    if (status.indexOf("part") !== -1) {
         const rotate = partsNow.isRotate();
         for (let i = 0; i < 4; i++) {
             const elem = $(rotateId[i]);
@@ -460,7 +456,7 @@ function contextSet(event, status) {
         }
     }
     //图纸部分，撤销和粘帖功能是否可用
-    else if (status === "free") {
+    else if (status === "map") {
         let elem = $("#right-undo");
         grid.isRevocate()
             ? elem.removeClass("disable")
@@ -752,9 +748,11 @@ $("#shade-gray").on("click", function() {
 });
 
 //器件相关事件
-//对于器件的mousedown操作
+//器件mousedown事件
 mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
-    if(grid.totalMarks) { return false; }
+    if (grid.totalMarks) {
+        return false;
+    }
     //寻找当前器件的对象
     const clickpart = partsAll.findPart(event.currentTarget.parentNode.id);
     if (event.which === 1) {
@@ -772,13 +770,15 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
                     ])
                 });
             grid.setMoveText(true);
-        } else {
+        }
+        else {
             //单击本体
             if (!partsNow.has(clickpart.id)) {
                 //单个器件
                 clearStatus();
                 clickpart.toFocus();
-            } else {
+            }
+            else {
                 //多个器件
                 contextSet();
             }
@@ -790,30 +790,34 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
         }
         //绑定全局移动事件
         mainPage.on("mousemove", mousemoveEvent);
-    } else if (event.which === 3) {
-        if (partsNow.has(clickpart.id) && (partsNow.length > 1)) {
+    }
+    else if (event.which === 3) {
+        const parts = partsNow.filter((n) => n.partType !== "line");
+
+        if (parts.has(clickpart.id) && (parts.length > 1)) {
             //多个器件的右键
             contextSet(event, "parts");
             partsNow.checkLine();
-        } else {
+        }
+        else {
             //单个器件的右键
             clearStatus();
             clickpart.toFocus();
             partsNow.checkLine();
-            contextSet(event, "parts");
+            contextSet(event, "part");
         }
     }
-    //器件的mousedown事件要阻止事件冒泡
+    //阻止事件冒泡
     return (false);
 });
-//对于器件的双击操作，弹出器件参数对话框
+//器件双击事件
 mainPage.on("dblclick","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
     const clickpart = partsAll.findPart(event.currentTarget.parentNode.id);
     if (event.which === 1 && !grid.totalMarks) {
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
 });
-//对于器件的强制对齐
+//鼠标经过器件和导线
 mainPage.on({
     "mouseenter": function(event) {
         const tagName = event.currentTarget.tagName.toLowerCase(),
@@ -821,19 +825,25 @@ mainPage.on({
 
         if (!grid.totalMarks) {
             if (tagName === "rect" || tagName === "text") {
-                //普通状态下，鼠标滑过导线和器件，鼠标变为move状态
+                //经过导线和器件
                 mainPage.attr("class", "mouse-movepart");
-            } else if(tagName === "g" && elem.hasClass("point-close")){
-                //关闭状态下的器件引脚
+            }
+            else if (tagName === "g" && elem.hasClass("point-close")) {
+                //经过关闭的引脚
                 mainPage.attr("class", "mouse-closepoint");
             }
-        } else if(grid.drawLine) {
-            if(tagName !== "text" && !elem.hasClass("line-rect")) {
+            else if (tagName === "g" && elem.hasClass("point-open")) {
+                //经过开放的引脚
+                mainPage.attr("class", "mouse-line");
+            }
+        }
+        else if (grid.drawLine) {
+            if (tagName !== "text" && !elem.hasClass("line-rect")) {
                 //绘制导线时鼠标经过器件
-                const line = partsNow[partsNow.length - 1];
+                const line = partsNow.get(-1);
                 line.current.enforceAlign.extend({
                     flag: true,
-                    onPart:true,
+                    onPart: true,
                     part: partsAll.findPart(event.currentTarget.parentNode.id)
                 });
             }
@@ -841,10 +851,11 @@ mainPage.on({
     },
     "mouseleave": function() {
         if (!grid.totalMarks) {
-            //没有状态，全局回复鼠标默认
+            //没有状态，鼠标恢复默认
             mainPage.attr("class", "");
-        } else  if (grid.drawLine) {
-            const line = partsNow[partsNow.length - 1];
+        }
+        else if (grid.drawLine) {
+            const line = partsNow.get(-1);
             if (line.current.enforceAlign.label) {
                 line.current.enforceAlign.extend({
                     flag: true,
@@ -853,8 +864,28 @@ mainPage.on({
                 });
             }
         }
-    }
+    },
 },"g.editor-parts rect.focus-part, g.editor-parts g.part-point, g.editor-parts text, g.line rect.line-rect");
+//导线mousedown事件
+mainPage.on("mousedown","g.line rect.line-rect",function(event) {
+    if(grid.totalMarks) { return false; }
+
+    clearStatus();
+    grid.now();
+    const line = partsAll.findPart(this.parentNode.id);
+    line.toFocus();
+    if (event.which === 1) {
+
+
+        grid.setDeformLine(true);
+        mainPage.on("mousemove", mousemoveEvent);
+    } else if (event.which === 3) {
+        contextSet(event, "line");
+    }
+
+    //阻止事件冒泡
+    return (false);
+});
 
 //左键器件引脚mousedown，绘制导线开始
 mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
@@ -1067,7 +1098,7 @@ mainPage.on("mouseup", function(event) {
         //如果没有这个标签，说明鼠标没有移动，那么弹出右键菜单
         if(!mainPage.hasClass("mouse-movemap")) {
             clearStatus();
-            contextSet(event, "free");
+            contextSet(event, "map");
         }
     }
     //全局解除移动事件
