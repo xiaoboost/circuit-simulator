@@ -257,6 +257,7 @@ function Point(...args) {
 Point.extend({
     isPoint(arr) {
         return (
+            arr instanceof Object &&
             arr instanceof exPoint ||
             typeof arr[0] === "number" &&
             typeof arr[1] === "number"

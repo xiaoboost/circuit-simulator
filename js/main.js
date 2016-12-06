@@ -24,6 +24,7 @@ const grid = (function SchematicsGrid() {
     const continuous = [
         "newMark",      //新建器件标志位
         "moveParts",    //移动器件标志位
+        "pasteParts",   //粘贴器件
         "moveMap",      //移动图纸标志位
         "selectBox",    //绘制复选框标志位
         "deformLine",   //导线变形标志位
@@ -81,7 +82,7 @@ const grid = (function SchematicsGrid() {
 
     //当前鼠标位置
     function mouse(event) {
-        return(Point([
+        return (Point([
             (event.pageX - SVGX) / zoom,
             (event.pageY - SVGY) / zoom
         ]));
@@ -101,9 +102,7 @@ const grid = (function SchematicsGrid() {
         const ans = [];
 
         for (let i = 0; i < arr.length; i++) {
-            //复制操作需要删除id
             ans.push(arr[i].toSimpleData());
-            delete ans.get(-1).id;
         }
 
         return(ans);
@@ -158,16 +157,20 @@ const grid = (function SchematicsGrid() {
     self.createData = function(event) {
         //偏移量初始化
         mouseBias(event);
-        //返回初始数据
-        return({
+
+        //初始数据
+        const ans = {
             zoom: self.zoom(),
             SVG: self.SVG(),
             mouse: mouse,
             mouseBias: mouseBias,
-            gridL: [],
-            pageL: Point([0, 0]),
-            gridS: Point([event.pageX, event.pageY]).floor()
-        });
+            gridL: []
+        };
+        if (event.pageX && event.pageY) {
+            ans.pageL = mouse(event);
+            ans.gridS = Point([event.pageX, event.pageY]).floor();
+        }
+        return (ans);
     };
 
     //复制
@@ -216,7 +219,7 @@ const grid = (function SchematicsGrid() {
     }
     //粘贴
     self.paste = function(arr) {
-        const now = arr ? arr : copyStack;
+        const now = arr ? arr : copyStack, name = [];
 
         partsNow.deleteAll();
         for(let i = 0; i < now.length; i++) {
@@ -235,9 +238,31 @@ const grid = (function SchematicsGrid() {
                 partsNow.push(new LineClass(data));
             }
 
-            const part = partsNow.get(-1);
+            const part = partsNow.get(-1), id = {};
+            //记录新旧id
+            if (data.id && data.id !== part.id) {
+                id.old = data.id;
+                id.new = partsNow.get(-1).id;
+                name.push(id);
+            }
+
             part.current = {};
             part.current.status = "move";
+            part.elementDOM.attr("opacity", 0.4);
+        }
+
+        //替换新旧id
+        for(let i = 0; i < name.length; i++) {
+            for(let j = 0; j < partsNow.length; j++) {
+                for(let k = 0; k < partsNow[j].connect.length; k++) {
+                    const part = partsNow[j],
+                        con = part.connect[k],
+                        old = name[i].old,
+                        id = name[i].new;
+
+                    part.connect[k] = con.replace(old, id);
+                }
+            }
         }
     }
     //记录当前所有器件状态
@@ -314,6 +339,8 @@ function mousemoveEvent(event) {
 
     switch(true) {
         //器件移动
+        case grid.newMark:
+        case grid.pasteParts:
         case grid.moveParts: {
             partsNow.moveParts(event);
             break;
@@ -363,13 +390,6 @@ function mousemoveEvent(event) {
         //移动器件说明文字
         case grid.moveText: {
             partsNow[0].move(event, "text");
-            break;
-        }
-        //移动新建器件
-        case grid.newMark: {
-            const part = partsNow[0],
-                bias = part.current.mouse(event);
-            part.move(bias, "new");
             break;
         }
         //绘制导线
@@ -563,16 +583,18 @@ sidebar.on({
         }, true);
     },
     "click": function(event){
-        if (event.which === 1) {
-            if (!grid.totalMarks) {
-                clearStatus();
-                grid.now();
-                grid.setNewMark(true);
-                partsAll.push(new PartClass(event.currentTarget.id));
-                partsAll.get(-1).toFocus();
-                partsAll.get(-1).current = grid.createData(event);
-                mainPage.on("mousemove", mousemoveEvent);
-            }
+        if (event.which === 1 && !grid.totalMarks) {
+            clearStatus();
+            grid.now();
+            grid.setNewMark(true);
+
+            (new PartClass(event.currentTarget.id)).toFocus();
+
+            partsNow.checkLine(event);
+            partsNow.current = grid.createData(event);
+            partsNow.current.pageL = partsNow.center();
+            partsNow.moveParts({pageX: -50000, pageY: -50000});
+            mainPage.on("mousemove", mousemoveEvent);
         }
     }
 }, ".parts-list");
@@ -1028,20 +1050,31 @@ mainPage.on("mousedown", function(event) {
 });
 //图纸的全局mouseup操作
 mainPage.on("mouseup", function(event) {
+    //是否取消mousemove事件标志位
+    let off = true;
     if (event.which === 1) {
         //左键
         switch (true) {
             //新建器件
             case grid.newMark: {
                 grid.setNewMark(false);
-                partsNow[0].putDown("new");
-                partsNow[0].elementDOM.removeAttr("opacity");
+                partsNow.putDownParts("new");
+                break;
+            }
+            //粘贴器件
+            case grid.pasteParts: {
+                if (partsNow.putDownParts("paste")) {
+                    grid.setPasteParts(false);
+                }
+                else {
+                    off = false;
+                }
                 break;
             }
             //移动器件
             case grid.moveParts: {
-                partsNow.putDownParts(event);
                 grid.setMoveParts(false);
+                partsNow.putDownParts();
                 break;
             }
             //绘制多选框
@@ -1102,9 +1135,9 @@ mainPage.on("mouseup", function(event) {
         }
     }
     //全局解除移动事件
-    mainPage.off("mousemove", mousemoveEvent);
+    off && mainPage.off("mousemove", mousemoveEvent);
     //鼠标恢复原样
-    mainPage.attr("class", "");
+    off && mainPage.attr("class", "");
 });
 
 //曲线面板事件
@@ -1243,7 +1276,7 @@ graphPage.on("mousedown", ".graph-action", function(event) {
 });
 //波形界面的鼠标移动
 graphPage.on("mouseup", function() {
-    if(grid.totalMarks && grid.graphSelecte) {
+    if (grid.totalMarks && grid.graphSelecte) {
         //取消移动事件绑定
         graphPage.off("mousemove", mousemoveEvent);
         graphPage.removeClass("mouse-select");
@@ -1259,8 +1292,8 @@ graphPage.on("mouseup", function() {
         graph.drawCurve();
 
         //其余面板需要根据时间轴缩放
-        $("#graph-main .graph-individual").each(function(n){
-            if(n._data !== graph) {
+        $("#graph-main .graph-individual").each(function (n) {
+            if (n._data !== graph) {
                 const range = n._data.backgroundStartToEnd();
                 n._data.clearActionCanvas();
                 n._data.drawBackground(time,
@@ -1343,10 +1376,15 @@ context.on("click", "#parts-cut", function(event) {
 });
 //粘贴
 context.on("click", "#parts-paste", function(event) {
-    if (event.which === 1 && !grid.totalMarks && !$(this).hasClass("disable")) {
+    if (event.which === 1 && !grid.totalMarks && grid.isPaste()) {
         contextSet();
         grid.paste();
-        grid.setNewMark(true);
+        grid.setPasteParts(true);
+
+        partsNow.checkLine(event);
+        partsNow.current = grid.createData(event);
+        partsNow.current.pageL = partsNow.center();
+        partsNow.moveParts({pageX: -50000, pageY: -50000});
         mainPage.on("mousemove", mousemoveEvent);
     }
     return(false);

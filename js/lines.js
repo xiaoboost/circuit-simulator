@@ -904,8 +904,17 @@ const Search = {
             this.markSign();
         }
     },
+    //导线变形
     deformation: {
+        start: function() {
 
+        },
+        callback: function() {
+
+        },
+        end: function() {
+
+        }
     }
 };
 
@@ -1537,6 +1546,23 @@ LineClass.prototype = {
         this.resetCircle(0);
         this.resetCircle(1);
     },
+    //导线旋转
+    rotateSelf(matrix, center) {
+        for(let i = 0; i < this.way.length; i++) {
+            this.way[i] = this.way[i].rotate(matrix, center);
+        }
+        this.wayDrawing();
+        return(this);
+    },
+    //整体移动
+    move(bais) {
+        const position = (this.current.bias || Point([0, 0])).add(bais);
+
+        this.elementDOM.attr("transform",
+            "translate(" + position.join(",") + ")");
+
+        return (this);
+    },
 
     //连接相关
     //返回连接点所连接器件类型
@@ -1657,16 +1683,26 @@ LineClass.prototype = {
         else if (status.form === "cross-point") {
             const temp = self.way.get(-1 * sub),
                 lines = status.id.split(" ");
-            //当前导线
-            self.setConnect(sub, lines.filter((n) => n !== self.id).join(" "));
-            //其余导线
-            for (let i = 0; i < lines.length; i++) {
-                const line = partsAll.findPart(lines[i]),
-                    con = line.findConnect(temp);
 
-                line.setConnect(con,
-                    lines.filter((n) => n !== line.id).join(" ")
-                );
+            if (lines.length === 2) {
+                const other = (lines[0] === self.id)
+                    ? lines[1]
+                    : lines[0];
+
+                self.mergeLine(other);
+            }
+            else {
+                //当前导线
+                self.setConnect(sub, lines.filter((n) => n !== self.id).join(" "));
+                //其余导线
+                for (let i = 0; i < lines.length; i++) {
+                    const line = partsAll.findPart(lines[i]),
+                        con = line.findConnect(temp);
+
+                    line.setConnect(con,
+                        lines.filter((n) => n !== line.id).join(" ")
+                    );
+                }
             }
         }
     },
@@ -1767,6 +1803,13 @@ LineClass.prototype = {
 
             return (part.position.add(pointInfor.position));
         }
+    },
+    //当前导线是否还存在
+    isExist() {
+        return(
+            actionArea.contains(this.elementDOM) ||
+            partsAll.has(this)
+        )
     },
 
     //标记
@@ -1915,32 +1958,35 @@ LineClass.prototype = {
     },
     //删除导线
     deleteSelf() {
-        if (actionArea.contains(this.elementDOM)) {
-            for (let i = 0; i < this.connect.length; i++) {
-                if (this.connectStatus(i) === "line") {
-                    const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
+        if (!this.isExist()) {
+            return(false);
+        }
 
-                    lines.forEach((n) => n && n.deleteConnect(this.id));
+        for (let i = 0; i < this.connect.length; i++) {
+            if (this.connectStatus(i) === "line") {
+                const lines = this.connect[i].split(" ").map((n) => partsAll.findPart(n));
 
-                    if (lines.length === 2 && lines[0]) {
-                        lines[0].mergeLine(lines[1]);
-                        lines[0].render();
-                        lines[0].markSign();
-                    }
-                }
-                else if (this.connectStatus(i) === "part") {
-                    const temp = this.connect[i].split("-"),
-                        part = partsAll.findPart(temp[0]);
+                lines.forEach((n) => n && n.deleteConnect(this.id));
 
-                    //有可能该器件已经被删除
-                    if (part) {
-                        part.setConnect(temp[1], false);
-                    }
+                if (lines.length === 2 && lines[0]) {
+                    lines[0].mergeLine(lines[1]);
+                    lines[0].render();
+                    lines[0].markSign();
                 }
             }
-            this.deleteSign();
-            this.elementDOM.remove();
+            else if (this.connectStatus(i) === "part") {
+                const temp = this.connect[i].split("-"),
+                    part = partsAll.findPart(temp[0]);
+
+                //有可能该器件已经被删除
+                if (part) {
+                    part.setConnect(temp[1], false);
+                }
+            }
         }
+
+        this.deleteSign();
+        this.elementDOM.remove();
         partsAll.deletePart(this);
     },
     //合并导线，保留this，删除Fragment
@@ -1967,46 +2013,6 @@ LineClass.prototype = {
         Fragment.replaceConnect(1, this.id);
         Fragment.elementDOM.remove();
         partsAll.deletePart(Fragment);
-    },
-    /*
-    //将导线起点、终点的交错节点的DOM集合到current中
-    collectCircle(Num) {
-        if (this.connectStatus(Num) !== "line") return ([]);
-        const temp = this.connect[Num].split(" ");
-        if (temp.length === 3) {
-            return ([this.circle[Num]]);
-        } else if (temp.length === 2) {
-            //交错节点坐标
-            const crossPoint = Array.clone(this.way[Num * (this.way.length - 1)]);
-            return (
-                temp.map((n) => partsAll.findPart(n)).map((item) => item.circle[item.findConnect(crossPoint)])
-            );
-        }
-        return (false);
-    },
-    //鼠标变形结束
-    deformSelfEnd() {
-        this.way.standardize();
-        this.setCollectCircle(0);
-        this.setCollectCircle(1);
-        this.render();
-        this.markSign();
-    },
-    */
-    //导线旋转
-    rotateSelf(matrix, center) {
-        for(let i = 0; i < this.way.length; i++) {
-            this.way[i] = this.way[i].rotate(matrix, center);
-        }
-        this.wayDrawing();
-        return(this);
-    },
-    //整体移动
-    move(bais) {
-        const position = (this.current.bias || Point([0,0])).add(bais);
-
-        this.elementDOM.attr("transform",
-            "translate(" + position.join(",") + ")");
     },
     //导线路径开始
     startPath(event, opt, ...args) {

@@ -603,8 +603,6 @@ function PartClass(data) {
     this.extend(Object.clone(originalElectronic[type].readWrite));
     Object.setPrototypeOf(this, originalElectronic[type].readOnly);
 
-    this.id = partsAll.newId(this.id);
-
     //输入是对象，那么直接扩展当前对象
     if (typeof data === "object") {
         const obj = Object.clone(data);
@@ -613,12 +611,13 @@ function PartClass(data) {
         this.extend(obj);
     }
 
+    this.id = partsAll.newId(this.id);
     this.rotate = this.rotate
         ? new Matrix(this.rotate)
         : new Matrix([[1, 0], [0, 1]]);
     this.position = this.position
         ? Point(this.position)
-        : Point([1000, 1000]);
+        : Point([-5000, -50000]);
     this.connect = Array(this.pointInfor.length).fill("");
     this.input = this.input || [];
     this.current = {};
@@ -640,105 +639,88 @@ function PartClass(data) {
 }
 PartClass.prototype = {
     constructor: PartClass,
-    //计算器件当前引脚坐标及方向
-    pointRotate() {
-        const ans = [];
-        for (let i = 0; i < this.pointInfor.length; i++) {
-            const point = this.pointInfor[i];
-            ans.push({
-                position: this.rotate.multo([point.position])[0],
-                direction: this.rotate.multo(point.direction)[0]
-            });
+
+    //绘制相关
+    //在图纸中创建器件SVG
+    createPart() {
+        let group = $("<g>", SVG_NS, {
+            class: "editor-parts",
+            id: this.id,
+            opacity: "0.4"
+        });
+        const nodepoint = {     //引脚节点外形
+            circle: {},
+            rect: {
+                x: "-9", y: "-9", width: "18", height: "18", "class": "rect-part-point"
+            }
+        };
+        //创建器件本体
+        for(let i = 0; i < this.aspectInfor.length; i++) {
+            const elementName = this.aspectInfor[i].name;
+            const elementAttribute = this.aspectInfor[i].attribute;
+            let tempData = $("<" + elementName + ">", SVG_NS);
+            for(let j in elementAttribute) if(elementAttribute.hasOwnProperty(j)) {
+                tempData.attr(j, elementAttribute[j]);
+            }
+            group.append(tempData);
         }
-        return(ans);
-    },
-    //当前器件边距
-    marginRotate() {
-        const ans = {},
-            attr = ['padding', 'margin'];
+        //创建器件引脚节点
+        for (let i = 0; i < this.pointInfor.length; i++) {
+            let position = this.pointInfor[i].position,
+                tempDate = $("<g>", SVG_NS, {
+                    "id": this.id + "-" + i,
+                    "transform": "translate(" + position[0] + "," + position[1] + ")",
+                    "class": "part-point point-open"
+                });
 
-        for(let i = 0; i < 2; i++) {
-            const margin = {left:0,right:0,top:0,bottom:0},
-                data = this[attr[i]],
-                tempMargin = [
-                    [0, - data.top],
-                    [- data.left, 0],
-                    [0, data.bottom],
-                    [data.right, 0]
-                ];
-
-            //四方向计算
-            for(let j = 0; j < 4; j++) {
-                const ma = this.rotate.multo([tempMargin[j]])[0];
-                if (ma[0] !== 0) {
-                    if (ma[0] > 0) {
-                        margin.right = ma[0];
-                    } else {
-                        margin.left =  - ma[0];
-                    }
-                } else if(ma[1] !== 0) {
-                    if (ma[1] > 0) {
-                        margin.bottom = ma[1];
-                    } else {
-                        margin.top = - ma[1];
-                    }
+            for (let j in nodepoint) {
+                if (nodepoint.hasOwnProperty(j)) {
+                    tempDate.append($("<" + j + ">", SVG_NS, nodepoint[j]));
                 }
             }
-            ans[attr[i]] = margin;
+            group.append(tempDate);
         }
-        return(ans);
-    },
-    //在图中标记器件
-    markSign() {
-        const position = this.position.floorToSmall(),
-            range = this.marginRotate().padding,
-            points = this.pointRotate()
-                .map((n) => n.position);
-
-        //格式验证
-        if(!position.isInteger()) {
-            throw "设置标记时，器件必须对齐图纸";
-        }
-
-        //器件内边距占位
-        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
-            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
-                //删除原来的属性，并赋值新的属性
-                schMap.setValueBySmalle([i, j], {
-                    id: this.id,
-                    form: "part"
-                });
+        //创建器件显示文本
+        //attention:网络标号的时候，text这里需要更改方式
+        if (this.visionNum) {
+            //创建txt下属ID显示
+            const propertyVision = [];
+            //把所有的 u 替换成 μ
+            for (let i = 0; i < this.visionNum - 1; i++) {
+                this.input[i] = this.input[i].replace("u","μ");
+                propertyVision.push(this.input[i] + this.parameterUnit[i]);
             }
+            const textMain = this.id.split("_");
+            const tempDate = $("<text>", SVG_NS, { x: "0", y: "0", "class": "features-text" });
+            tempDate.append($("<tspan>", SVG_NS).text(textMain[0]));
+            tempDate.append($("<tspan>", SVG_NS).text(textMain[1]));
+            //创建txt下属器件属性
+            for (let i = 0; i < propertyVision.length; i++) {
+                tempDate.append($("<tspan>", SVG_NS, {
+                    dx: "0",
+                    dy: "16"
+                }).text(propertyVision[i]));
+            }
+            group.append(tempDate);
         }
-        //器件管脚距占位
-        for (let i = 0; i < points.length; i++) {
-            schMap.setValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20], {
-                id: this.id + "-" + i,
-                form: "part-point",
-                connect: []
+        actionArea.append(group);
+        return (group);
+    },
+    //移动器件本身或者是属性文本
+    move(mouse, attr) {
+        if (attr === "text") {
+            const grid = this.current;
+            grid.position = grid.position.add(grid.mouseBias(mouse));
+
+            grid.text.attr({
+                "x": grid.position[0],
+                "y": grid.position[1]
             });
         }
-    },
-    //删除器件标记
-    deleteSign() {
-        const position = this.position.floorToSmall(),
-            range = this.marginRotate().padding,
-            points = this.pointRotate()
-                .map((n) => n.position);
-
-        //格式验证
-        if(!position.isInteger()) {
-            throw "设置标记时，器件必须对齐图纸";
-        }
-        //删除器件内边距占位
-        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
-            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
-                schMap.deleteValueBySmalle([i, j]);
-            }
-        }
-        //删除器件引脚占位
-        for (let i = 0; i < points.length; i++) {
-            schMap.deleteValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20]);
+        else {
+            this.position = mouse ? Point(mouse) : this.position;
+            this.elementDOM.attr("transform",
+                "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
         }
     },
     //显示器件文字
@@ -895,72 +877,245 @@ PartClass.prototype = {
             }
         }
     },
-    //在图纸中创建器件SVG
-    createPart() {
-        let group = $("<g>", SVG_NS, {
-            class: "editor-parts",
-            id: this.id,
-            opacity: "0.4"
-        });
-        const nodepoint = {     //引脚节点外形
-            circle: {},
-            rect: {
-                x: "-9", y: "-9", width: "18", height: "18", "class": "rect-part-point"
-            }
-        };
-        //创建器件本体
-        for(let i = 0; i < this.aspectInfor.length; i++) {
-            const elementName = this.aspectInfor[i].name;
-            const elementAttribute = this.aspectInfor[i].attribute;
-            let tempData = $("<" + elementName + ">", SVG_NS);
-            for(let j in elementAttribute) if(elementAttribute.hasOwnProperty(j)) {
-                tempData.attr(j, elementAttribute[j]);
-            }
-            group.append(tempData);
-        }
-        //创建器件引脚节点
-        for (let i = 0; i < this.pointInfor.length; i++) {
-            let position = this.pointInfor[i].position,
-                tempDate = $("<g>", SVG_NS, {
-                    "id": this.id + "-" + i,
-                    "transform": "translate(" + position[0] + "," + position[1] + ")",
-                    "class": "part-point point-open"
-                });
+    //旋转器件
+    rotateSelf(matrix, center) {
+        this.position = this.position.rotate(matrix, center);
+        this.rotate = this.rotate.mul(matrix);
+        this.move();
+        this.textVisition();
+    },
+    //取消引脚放大
+    shrinkCircle(pointMark) {
+        $("circle", this.circle[pointMark]).removeAttr("style");
+    },
+    //引脚放大
+    enlargeCircle(pointMark) {
+        $("circle", this.circle[pointMark]).attr("style", "r:5");
+    },
 
-            for (let j in nodepoint) {
-                if (nodepoint.hasOwnProperty(j)) {
-                    tempDate.append($("<" + j + ">", SVG_NS, nodepoint[j]));
+    //标记
+    markSign() {
+        const position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            points = this.pointRotate()
+                .map((n) => n.position);
+
+        //格式验证
+        if(!position.isInteger()) {
+            throw "设置标记时，器件必须对齐图纸";
+        }
+
+        //器件内边距占位
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                //删除原来的属性，并赋值新的属性
+                schMap.setValueBySmalle([i, j], {
+                    id: this.id,
+                    form: "part"
+                });
+            }
+        }
+        //器件管脚距占位
+        for (let i = 0; i < points.length; i++) {
+            schMap.setValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20], {
+                id: this.id + "-" + i,
+                form: "part-point",
+                connect: []
+            });
+        }
+    },
+    deleteSign() {
+        const position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            points = this.pointRotate()
+                .map((n) => n.position);
+
+        //格式验证
+        if(!position.isInteger()) {
+            throw "设置标记时，器件必须对齐图纸";
+        }
+        //删除器件内边距占位
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                schMap.deleteValueBySmalle([i, j]);
+            }
+        }
+        //删除器件引脚占位
+        for (let i = 0; i < points.length; i++) {
+            schMap.deleteValueBySmalle([position[0] + points[i][0] / 20, position[1] + points[i][1] / 20]);
+        }
+    },
+
+    //查询操作
+    //当前位置是否被占用
+    isCover(pos) {
+        //获取当前器件的内外边距之和
+        function merge(part) {
+            const box = {},
+                range = part.marginRotate();
+
+            for(let i = 0; i < 4; i++) {
+                const attr = ['left','right','top','bottom'][i];
+                box[attr] = range.margin[attr] + range.padding[attr];
+            }
+            return(box);
+        }
+
+        const coverHash = {},
+            boxSize = merge(this),
+            margin = this.marginRotate().margin,
+            point = this.pointRotate()
+                .map((n) => Point.prototype.floorToSmall.call(n.position)),
+            position = pos
+                ? Point(pos).roundToSmall()
+                : this.position.roundToSmall();
+
+        //检查器件管脚
+        for (let i = 0; i < point.length; i++) {
+            const node = position.add(point[i]);
+            if (schMap.getValueBySmalle(node)) {
+                return (true);
+            }
+            coverHash[node.join(',')] = true;
+        }
+        //扫描内边距
+        for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
+            for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
+                const status = schMap.getValueBySmalle([i, j]);
+                //内边距中存在任何元素都表示被占用
+                if (status) {
+                    return (true);
+                } else {
+                    coverHash[i + "," + j] = true;
                 }
             }
-            group.append(tempDate);
         }
-        //创建器件显示文本
-        //attention:网络标号的时候，text这里需要更改方式
-        if (this.visionNum) {
-            //创建txt下属ID显示
-            const propertyVision = [];
-            //把所有的 u 替换成 μ
-            for (let i = 0; i < this.visionNum - 1; i++) {
-                this.input[i] = this.input[i].replace("u","μ");
-                propertyVision.push(this.input[i] + this.parameterUnit[i]);
+        //扫描外边距
+        for (let i = position[0] - boxSize.left; i <= position[0] + boxSize.right; i++) {
+            for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
+                //跳过内边距
+                if (coverHash[i + "," + j]) {
+                    continue;
+                }
+                const status = schMap.getValueBySmalle([i, j]);
+                if (status && status.form === 'part') {
+                    const part = partsAll.findPart(status.id),
+                        partSize = merge(part),
+                        diff = this.position.add(-1, part.position).floorToSmall();
+
+                    if (diff[0] !== 0) {
+                        if (diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
+                            return (true);
+                        } else if (-diff[0] < boxSize.right + partSize.left) {
+                            return (true);
+                        }
+                    }
+                    if (diff[1] !== 0) {
+                        if (diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
+                            return (true);
+                        } else if (-diff[1] < boxSize.bottom + partSize.top) {
+                            return (true);
+                        }
+                    }
+                }
             }
-            const textMain = this.id.split("_");
-            const tempDate = $("<text>", SVG_NS, { x: "0", y: "0", "class": "features-text" });
-            tempDate.append($("<tspan>", SVG_NS).text(textMain[0]));
-            tempDate.append($("<tspan>", SVG_NS).text(textMain[1]));
-            //创建txt下属器件属性
-            for (let i = 0; i < propertyVision.length; i++) {
-                tempDate.append($("<tspan>", SVG_NS, {
-                    dx: "0",
-                    dy: "16"
-                }).text(propertyVision[i]));
-            }
-            group.append(tempDate);
         }
-        actionArea.append(group);
-        return (group);
+
+        return (false);
     },
-    //引脚被占用，禁止缩放
+    //器件内边距中的所有节点和管脚节点
+    nodeCollection() {
+        const ans = [],
+            position = this.position.floorToSmall(),
+            range = this.marginRotate().padding,
+            points = this.pointRotate().map((n) => n.position);
+
+        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
+            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
+                ans.push(Point([i * 20, j * 20]));
+            }
+        }
+
+        for (let i = 0; i < points.length; i++) {
+            ans.push(position.mul(20).add(points[i]));
+        }
+
+        return(ans);
+    },
+    //计算器件当前引脚坐标及方向
+    pointRotate() {
+        const ans = [];
+        for (let i = 0; i < this.pointInfor.length; i++) {
+            const point = this.pointInfor[i];
+            ans.push({
+                position: this.rotate.multo([point.position])[0],
+                direction: this.rotate.multo(point.direction)[0]
+            });
+        }
+        return(ans);
+    },
+    //当前器件边距
+    marginRotate() {
+        const ans = {},
+            attr = ['padding', 'margin'];
+
+        for(let i = 0; i < 2; i++) {
+            const margin = {left:0,right:0,top:0,bottom:0},
+                data = this[attr[i]],
+                tempMargin = [
+                    [0, - data.top],
+                    [- data.left, 0],
+                    [0, data.bottom],
+                    [data.right, 0]
+                ];
+
+            //四方向计算
+            for(let j = 0; j < 4; j++) {
+                const ma = this.rotate.multo([tempMargin[j]])[0];
+                if (ma[0] !== 0) {
+                    if (ma[0] > 0) {
+                        margin.right = ma[0];
+                    } else {
+                        margin.left =  - ma[0];
+                    }
+                } else if(ma[1] !== 0) {
+                    if (ma[1] > 0) {
+                        margin.bottom = ma[1];
+                    } else {
+                        margin.top = - ma[1];
+                    }
+                }
+            }
+            ans[attr[i]] = margin;
+        }
+        return(ans);
+    },
+    //按照标准格式输出
+    toSimpleData() {
+        const text = this.visionNum
+            ? $("text", this.elementDOM).attr(["x", "y"])
+            : null;
+
+        return({
+            partType: this.partType,
+            position: Point(this.position),
+            rotate: new Matrix(this.rotate),
+            input: Array.clone(this.input),
+            connect: Array.clone(this.connect),
+            text: text,
+            id: this.id
+        });
+    },
+    //当前器件是否还存在
+    isExist() {
+        return(
+            actionArea.contains(this.elementDOM) ||
+            partsAll.has(this)
+        )
+    },
+
+    //操作
+    //直接设置导线连接，会影响端点形状
     setConnect(mark, id) {
         if(arguments.length === 2) {
             //没有输入连接导线的时候，连接表不变
@@ -974,14 +1129,6 @@ PartClass.prototype = {
             this.circle[mark].attr("class", "part-point point-open");
         }
         this.shrinkCircle(mark);
-    },
-    //取消引脚放大
-    shrinkCircle(pointMark) {
-        $("circle", this.circle[pointMark]).removeAttr("style");
-    },
-    //引脚放大
-    enlargeCircle(pointMark) {
-        $("circle", this.circle[pointMark]).attr("style", "r:5");
     },
     //器件高亮
     toFocus() {
@@ -1155,125 +1302,6 @@ PartClass.prototype = {
         this.textVisition([parseInt(sharptxt.attr("x")), parseInt(sharptxt.attr("y"))]);
         return(true);
     },
-    //移动器件本身或者是属性文本
-    move(mouse, attr) {
-        if (attr === "text") {
-            const grid = this.current;
-            grid.position = grid.position.add(grid.mouseBias(mouse));
-
-            grid.text.attr({
-                "x": grid.position[0],
-                "y": grid.position[1]
-            });
-        }
-        else {
-            this.position = mouse ? Point(mouse) : this.position;
-            this.elementDOM.attr("transform",
-                "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
-        }
-    },
-    //旋转器件
-    rotateSelf(matrix, center) {
-        this.position = this.position.rotate(matrix, center);
-        this.rotate = this.rotate.mul(matrix);
-        this.move();
-        this.textVisition();
-    },
-    //当前位置是否被占用
-    isCover(pos) {
-        //获取当前器件的内外边距之和
-        function merge(part) {
-            const box = {},
-                range = part.marginRotate();
-
-            for(let i = 0; i < 4; i++) {
-                const attr = ['left','right','top','bottom'][i];
-                box[attr] = range.margin[attr] + range.padding[attr];
-            }
-            return(box);
-        }
-
-        const coverHash = {},
-            boxSize = merge(this),
-            margin = this.marginRotate().margin,
-            point = this.pointRotate()
-                .map((n) => Point.prototype.floorToSmall.call(n.position)),
-            position = pos
-                ? Point(pos).roundToSmall()
-                : this.position.roundToSmall();
-
-        //检查器件管脚
-        for (let i = 0; i < point.length; i++) {
-            const node = position.add(point[i]);
-            if (schMap.getValueBySmalle(node)) {
-                return (true);
-            }
-            coverHash[node.join(',')] = true;
-        }
-        //扫描内边距
-        for (let i = position[0] - margin.left; i <= position[0] + margin.right; i++) {
-            for (let j = position[1] - margin.top; j <= position[1] + margin.bottom; j++) {
-                const status = schMap.getValueBySmalle([i, j]);
-                //内边距中存在任何元素都表示被占用
-                if (status) {
-                    return (true);
-                } else {
-                    coverHash[i + "," + j] = true;
-                }
-            }
-        }
-        //扫描外边距
-        for (let i = position[0] - boxSize.left; i <= position[0] + boxSize.right; i++) {
-            for (let j = position[1] - boxSize.top; j <= position[1] + boxSize.bottom; j++) {
-                //跳过内边距
-                if (coverHash[i + "," + j]) {
-                    continue;
-                }
-                const status = schMap.getValueBySmalle([i, j]);
-                if (status && status.form === 'part') {
-                    const part = partsAll.findPart(status.id),
-                        partSize = merge(part),
-                        diff = this.position.add(-1, part.position).floorToSmall();
-
-                    if (diff[0] !== 0) {
-                        if (diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
-                            return (true);
-                        } else if (-diff[0] < boxSize.right + partSize.left) {
-                            return (true);
-                        }
-                    }
-                    if (diff[1] !== 0) {
-                        if (diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
-                            return (true);
-                        } else if (-diff[1] < boxSize.bottom + partSize.top) {
-                            return (true);
-                        }
-                    }
-                }
-            }
-        }
-
-        return (false);
-    },
-    //器件内边距中的所有节点和管脚节点
-    nodeCollection() {
-        const ans = [],
-            position = this.position.floorToSmall(),
-            range = this.marginRotate().padding,
-            points = this.pointRotate().map((n) => n.position);
-
-        for (let i = position[0] - range.left; i <= position[0] + range.right; i++) {
-            for (let j = position[1] - range.top; j <= position[1] + range.bottom; j++) {
-                ans.push(Point([i * 20, j * 20]));
-            }
-        }
-
-        for (let i = 0; i < points.length; i++) {
-            ans.push(position.mul(20).add(points[i]));
-        }
-
-        return(ans);
-    },
     //移动之后放下器件
     putDown(isNew) {
         if (isNew) {
@@ -1290,43 +1318,28 @@ PartClass.prototype = {
         this.position = this.position.round();
         this.move();
         this.markSign();
-        //清空器件临时变量
-        //this.current = {};
+        this.current = {};
     },
     //删除器件
     deleteSelf() {
-        if (actionArea.contains(this.elementDOM)) {
-            //删除与之相连的导线
-            for (let i = 0; i < this.connect.length; i++) {
-                if (this.connect[i]) {
-                    const line = partsAll.findPart(this.connect[i]);
+        if (!this.isExist()) {
+            return(false);
+        }
+        //删除与之相连的导线
+        for (let i = 0; i < this.connect.length; i++) {
+            if (this.connect[i]) {
+                const line = partsAll.findPart(this.connect[i]);
 
-                    //有可能该导线已经被删除
-                    if (line) {
-                        line.deleteSelf();
-                    }
+                //有可能该导线已经被删除
+                if (line) {
+                    line.deleteSelf();
                 }
             }
-            this.deleteSign();
-            this.elementDOM.remove();
         }
-        partsAll.deletePart(this);
-    },
-    //按照标准格式输出
-    toSimpleData() {
-        const text = this.visionNum
-            ? $("text", this.elementDOM).attr(["x", "y"])
-            : null;
 
-        return({
-            partType: this.partType,
-            position: Point(this.position),
-            rotate: new Matrix(this.rotate),
-            input: Array.clone(this.input),
-            connect: Array.clone(this.connect),
-            text: text,
-            id: this.id
-        });
+        this.deleteSign();
+        this.elementDOM.remove();
+        partsAll.deletePart(this);
     },
     //变更当前器件ID
     exchangeID(label) {
@@ -1437,33 +1450,35 @@ partsNow.extend({
     moveParts(event) {
         const self = this,
             cur = self.current,
-            bias = cur.mouseBias(event),
-            move = cur.pageL = cur.pageL.add(bias);
+            mouse = cur.mouse(event),
+            bias = mouse.add(-1, cur.pageL);
 
         //器件移动
         this.forEach((item) => {
             if(item.current.status === "move") {
                 //整体移动
-                item.move(item.current.bias.add(move));
+                item.move(item.current.bias.add(bias));
             } else {
                 //移动变形
-                item.setPath(item.current.startPoint.add(move), "movePart");
+                item.setPath(item.current.startPoint.add(bias), "movePart");
             }
         });
     },
     //放下所有器件
-    putDownParts() {
+    putDownParts(opt) {
         const self = this,
             cur = self.current,
-            move = cur.pageL;
+            mouse = cur.mouse(event),
+            bias = mouse.add(-1, cur.pageL);
 
         //整体移动的器件对齐网格
         self.forEach((part) => {
-            if(part.current.status === "move") {
-                if(part.partType === "line") {
-                    part.way.standardize(move);
-                } else {
-                    part.position = part.position.round();
+            if (part.current.status === "move") {
+                if (part.partType === "line") {
+                    part.way.standardize(bias);
+                }
+                else {
+                    part.move(part.current.bias.add(bias));
                 }
             }
         });
@@ -1474,7 +1489,8 @@ partsNow.extend({
             //首先放置整体移动的器件
             self.forEach((n) => {
                 if (n.current.status === "move") {
-                    n.putDown(false, "movePart")
+                    n.putDown(opt, "movePart");
+                    n.elementDOM.removeAttr("opacity");
                 }
             });
             //然后放置变形导线
@@ -1485,10 +1501,29 @@ partsNow.extend({
             });
             //变形导线连接关系改变
 
+            //粘贴器件时还需要再次确定导线连接关系
+            if (opt === "paste") {
+                self.forEach((n) => {
+                    if (n.partType === "line" && n.isExist()) {
+                        n.nodeToConnect(0);
+                        n.nodeToConnect(1);
+                        n.render();
+                        n.markSign();
+                    }
+                });
+            }
+
+            //放置成功
+            return (true);
         }
         else {
-            //不可放置器件，恢复原状
+            //不可放置器件
+            if (opt !== "paste") {
 
+            }
+
+            //放置失败
+            return (false);
         }
     },
     //旋转检测
