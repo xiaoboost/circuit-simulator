@@ -352,7 +352,7 @@ function mousemoveEvent(event) {
 
             //移动图纸时不需要对鼠标距离做缩放
             const bias = grid.current.mouseBias(event)
-                .map((n) => n * grid.current.zoom);
+                .mul(grid.current.zoom);
 
             let SVGPos = grid.SVG();
             grid.SVG(SVGPos[0] + bias[0], SVGPos[1] + bias[1]);
@@ -384,7 +384,7 @@ function mousemoveEvent(event) {
         }
         //导线变形
         case grid.deformLine: {
-            partsNow[0].deformSelf(event);
+            partsNow[0].setPath(event, "deformation");
             break;
         }
         //移动器件说明文字
@@ -469,7 +469,6 @@ function contextSet(event, status) {
         const rotate = partsNow.isRotate();
         for (let i = 0; i < 4; i++) {
             const elem = $(rotateId[i]);
-
             rotate[i]
                 ? elem.removeClass("disable")
                 : elem.addClass("disable");
@@ -897,8 +896,8 @@ mainPage.on("mousedown","g.line rect.line-rect",function(event) {
     const line = partsAll.findPart(this.parentNode.id);
     line.toFocus();
     if (event.which === 1) {
-
-
+        line.current = grid.createData(event);
+        line.startPath(event, "deformation");
         grid.setDeformLine(true);
         mainPage.on("mousemove", mousemoveEvent);
     } else if (event.which === 3) {
@@ -1086,9 +1085,9 @@ mainPage.on("mouseup", function(event) {
                     right = Math.max(grid.current.selectionBoxStart[0], node[0]);
 
                 clearStatus();
-                for(let i = 0; i < partsAll.length; i++) {
+                for (let i = 0; i < partsAll.length; i++) {
                     const position = partsAll[i].position;
-                    if(partsAll[i].partType !== "line" &&
+                    if (partsAll[i].partType !== "line" &&
                         position[0] >= left && position[0] <= right &&
                         position[1] >= top && position[1] <= bottom) {
                         partsAll[i].toFocus();
@@ -1102,8 +1101,7 @@ mainPage.on("mouseup", function(event) {
             //导线变形
             case grid.deformLine: {
                 grid.setDeformLine(false);
-                if(grid.movemouse)
-                    partsNow[0].deformSelfEnd();
+                partsNow[0].putDown(event, "deformation");
                 break;
             }
             //移动器件属性说明文字

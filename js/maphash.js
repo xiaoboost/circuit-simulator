@@ -134,24 +134,45 @@ schMap.extend({
     },
     //在[start、end]范围中沿着vector直行，求最后一点的坐标
     alongTheLineBySmall(start, end, vector) {
-        //单位向量
-        if(vector[0]) { vector[0] /= Math.abs(vector[0]); }
-        if(vector[1]) { vector[1] /= Math.abs(vector[1]); }
         //非法坐标为无限大
         end = end ? end : [3000, 3000];
+        //没有方向，则方向为起点到终点
+        vector = vector
+            ? vector
+            : [end[0] - start[0], end[1] - start[1]];
+
+        //单位向量
+        vector[0] = vector[0].toUnit();
+        vector[1] = vector[1].toUnit();
+
+        //起点并不是导线，直接返回
+        if (!schMap.isLine(start, "small")) {
+            return (start);
+        }
 
         let node = [start[0], start[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进
         while (schMap.isLine(node, "small") && !node.isEqual(end)) {
             const nodeNow = [node[0] + vector[0], node[1] + vector[1]];
-            if(schMap.nodeInConnectBySmall(node, nodeNow)) {
+            if (schMap.nodeInConnectBySmall(node, nodeNow)) {
                 node = nodeNow;
-            } else {
+            }
+            else {
                 node = nodeNow;
                 break;
             }
         }
-        return ([node[0] - vector[0], node[1] - vector[1]]);
+
+        return node.isEqual(end)
+            ? node
+            : [node[0] - vector[0], node[1] - vector[1]];
+    },
+    alongTheLineByOrigin(a, b, c) {
+        const start = [a[0] / 20, a[1] / 20],
+            end = [b[0] / 20, b[1] / 20],
+            ans = schMap.alongTheLineBySmall(start, end, c);
+
+        return([ans[0] * 20, ans[1] * 20]);
     },
     //以node为中心，寻找最近的可行点，callback为判断标准函数，由外部输入
     nodeRound(node, mouse, callback) {
@@ -208,7 +229,7 @@ schMap.extend({
             }
         }
         return(false);
-    },
+    }
 });
 
 export { schMap };

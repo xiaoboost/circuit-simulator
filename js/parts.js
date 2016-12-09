@@ -718,6 +718,7 @@ PartClass.prototype = {
             });
         }
         else {
+            //器件的几何中心将会移动至输入坐标
             this.position = mouse ? Point(mouse) : this.position;
             this.elementDOM.attr("transform",
                 "matrix(" + this.rotate.join(",") + "," + this.position.join(",") + ")");
@@ -1425,16 +1426,24 @@ partsNow.extend({
         }
         //器件数据初始化
         partsAll.forEach((item) => {
-            if(item.current.status === "move") {
+            const type = item.partType,
+                status = item.current.status;
+
+            if (status === "move") {
                 partsNow.has(item) || item.toFocus();
-                //记录初始位置
-                item.current.bias = item.position
-                    ? Point(item.position)
-                    : Point([0,0]);
+                if (type === "line") {
+                    //导线初始位置为原点，记录当前路径
+                    item.current.bias = Point([0, 0]);
+                    item.current.wayBackup = Array.clone(item.way);
+                }
+                else {
+                    //器件初始位置为其几何中心当前坐标
+                    item.current.bias = Point(item.position);
+                }
             }
         });
         partsAll.forEach((item) => {
-            if(item.current.status === "half") {
+            if (item.current.status === "half") {
                 partsNow.has(item) || item.toFocus();
                 //导线变形数据初始化
                 item.startPath(event, "movePart");
@@ -1517,6 +1526,13 @@ partsNow.extend({
             return (true);
         }
         else {
+            //导线恢复旧路径
+            self.forEach((line) => {
+                if (line.partType === "line") {
+                    line.way.clone(line.current.wayBackup);
+                }
+            });
+
             //不可放置器件
             if (opt !== "paste") {
 

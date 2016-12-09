@@ -1,28 +1,29 @@
 //在备选值中选出最大或者最小的
-function selectMax(ref, alts, func){
+function selectMax(ref, alts, func) {
     let max = -Infinity, sub;
-    for(let i = 0; i < alts.length; i++) {
-        if(alts[i]) {
+    for (let i = 0; i < alts.length; i++) {
+        if (alts[i]) {
             const res = func(ref, alts[i]);
-            if(res > max) {
+            if (res > max) {
                 max = res;
                 sub = i;
             }
         }
     }
-    if(sub !== undefined) {
-        return({
+    if (sub !== undefined) {
+        return ({
             value: alts[sub],
             sub: sub
         });
-    } else {
-        return(false);
+    }
+    else {
+        return (false);
     }
 }
-function selectMin(ref, alts, func){
+function selectMin(ref, alts, func) {
     let min = Infinity, sub;
-    for(let i = 0; i < alts.length; i++) {
-        if(alts[i]) {
+    for (let i = 0; i < alts.length; i++) {
+        if (alts[i]) {
             const res = func(ref, alts[i]);
             if (res < min) {
                 min = res;
@@ -30,13 +31,14 @@ function selectMin(ref, alts, func){
             }
         }
     }
-    if(sub !== undefined) {
-        return({
+    if (sub !== undefined) {
+        return ({
             value: alts[sub],
             sub: sub
         });
-    } else {
-        return(false);
+    }
+    else {
+        return (false);
     }
 }
 
@@ -53,7 +55,8 @@ function exPoint(arr) {
         //输入是点
         this[0] = arr[0];
         this[1] = arr[1];
-    } else if(Point.isVector(arr)){
+    }
+    else if(Point.isVector(arr)){
         //输入是向量
         this[0] = arr[1][0] - arr[0][0];
         this[1] = arr[1][1] - arr[0][1];
@@ -76,19 +79,22 @@ exPoint.prototype = {
             for (let i = 0; i < this.length; i++) {
                 sum[i] = this[i] + arr * sign;
             }
-        } else if (arr.length) {
+        }
+        else if (arr.length) {
             for (let i = 0; i < this.length; i++) {
-                if (!arr[i]) {
+                if (typeof arr[i] !== "number") {
                     sum[i] = this[i];
-                } else {
+                }
+                else {
                     sum[i] = this[i] + arr[i] * sign;
                 }
             }
-        } else {
+        }
+        else {
             sum[0] = this[0];
             sum[1] = this[1];
         }
-        return(new exPoint(sum));
+        return (new exPoint(sum));
     },
     //乘法，如果输入数组，那么逐个相乘
     mul(label = 1, a) {
@@ -101,29 +107,39 @@ exPoint.prototype = {
             for (let i = 0; i < this.length; i++) {
                 sum[i] = this[i] * arr;
             }
-        } else if (arr.length) {
+        }
+        else if (arr.length) {
             for (let i = 0; i < this.length; i++) {
-                if (!arr[i]) {
+                if (typeof arr[i] !== "number") {
                     sum[i] = this[i];
-                } else {
+                }
+                else {
                     const muled = (sign === -1) ? 1 / arr[i] : arr[i];
                     sum[i] = this[i] * muled;
                 }
             }
-        } else {
+        }
+        else {
             sum[0] = this[0];
             sum[1] = this[1];
         }
-        return(new exPoint(sum));
+        return (new exPoint(sum));
     },
     //向量相乘
     product(a) {
         return(this[0] * a[0] + this[1] * a[1]);
     },
     //单位化，符号不变，数值变为1
-    toUnit() {
-        const scale = 1 / Math.sqrt(this[0] * this[0] + this[1] * this[1]);
-        return(new exPoint([this[0] * scale, this[1] * scale]));
+    toUnit(x) {
+        const a = Number(this[0]), b = Number(this[1]);
+        if (!a && !b) {
+            return (new exPoint([0, 0]));
+        }
+
+        const scale = 1 / Math.sqrt(a * a + b * b),
+            factor = x ? Number(x) : 1;
+
+        return (new exPoint([a * scale * factor, b * scale * factor]));
     },
     //是否是整数点
     isInteger() {
@@ -140,7 +156,7 @@ exPoint.prototype = {
     },
     //是否垂直
     isVertical(vector) {
-        return(!!(this[0]*vector[0] + this[1]*vector[1]));
+        return(!(this[0]*vector[0] + this[1]*vector[1]));
     },
     //方向相同，0向量输出false
     isSameDire(vector) {
@@ -156,13 +172,14 @@ exPoint.prototype = {
     },
     //在某线段范围内
     inLine(line) {
-        if(line[0][0] === line[1][0] && line[0][0] === this[0]) {
+        if (line[0][0] === line[1][0] && line[0][0] === this[0]) {
             return (
                 (this[1] >= line[0][1] && this[1] <= line[1][1]) ||
                 (this[1] <= line[0][1] && this[1] >= line[1][1])
             );
-        } else if(line[0][1] === line[1][1] && line[0][1] === this[1]) {
-            return(
+        }
+        else if (line[0][1] === line[1][1] && line[0][1] === this[1]) {
+            return (
                 (this[0] >= line[0][0] && this[0] <= line[1][0]) ||
                 (this[0] <= line[0][0] && this[0] >= line[1][0])
             );
@@ -170,24 +187,26 @@ exPoint.prototype = {
     },
     //点到点或线的距离
     distance(end) {
-        if(end[0].length) {
+        if (end[0].length) {
             //end是线段
             //垂直为1，水平为0
             const sub = +(end[0][1] !== end[1][1]);
             if (((this[sub] <= end[0][sub]) && (this[sub] >= end[1][sub])) ||
                 ((this[sub] >= end[0][sub]) && (this[sub] <= end[1][sub]))) {
                 //this在线段x或y轴范围内
-                return(Math.abs(this[1 - sub] - end[0][1 - sub]));
-            } else {
+                return (Math.abs(this[1 - sub] - end[0][1 - sub]));
+            }
+            else {
                 //否则，取线段起点或终点中和this距离小的
-                return(Math.min(
+                return (Math.min(
                     Math.abs(this[0] - end[0][0]) + Math.abs(this[1] - end[0][1]),
                     Math.abs(this[0] - end[1][0]) + Math.abs(this[1] - end[1][1])
                 ));
             }
-        } else {
+        }
+        else {
             //end是点
-            return(Math.abs(this[0] - end[0]) + Math.abs(this[1] - end[1]));
+            return (Math.abs(this[0] - end[0]) + Math.abs(this[1] - end[1]));
         }
     },
     //四舍五入
