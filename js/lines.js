@@ -705,7 +705,7 @@ const Search = {
                 mouseGridL.forSameNode(endGrid, mouseGrid);
                 for (let i = 0; i < endGrid.length; i++) {
                     const end = endGrid[i];
-                    if (!mouseGrid.get(end)) {
+                    if (!mouseGrid.has(end)) {
                         mouseGrid.set(end,
                             AStartSearch(nodeStart, end, initTrend, option)
                                 .checkWayExcess(initTrend)
@@ -891,7 +891,7 @@ const Search = {
                 searchGridL.forSameNode(gridPoints, searchGrid);
                 for(let i = 0; i < gridPoints.length; i++) {
                     const start = gridPoints[i];
-                    if(mouseGrid.get(start)) { continue; }
+                    if(mouseGrid.has(start)) { continue; }
 
                     mouseGrid.set(start,
                         AStartSearch(start, end.seg, initTrend, option)
@@ -946,6 +946,7 @@ const Search = {
                 seg = self.way.nodeInWay(mouse);
 
             cur.startSegment = seg;
+            cur.startMouse = mouse;
             cur.movePoint = Point(seg.value[0]);
             cur.moveVector = (seg.value[0][0] === seg.value[1][0])
                 ? Point([1, 0])
@@ -962,9 +963,8 @@ const Search = {
                 gridL = cur.gridL,
                 moveV = cur.moveVector,
                 moveH = cur.moveVertical,
-                start = cur.movePoint,
-                mouse = cur.mouse(event).mul(moveV),
-                point = start.mul(moveH).add(mouse),
+                bias  = cur.mouse(event).add(-1, cur.startMouse),
+                point = cur.movePoint.add(bias.mul(moveV)),
                 pointFloor = point.floor(),
                 option = {process: "deformation"};
 
@@ -973,8 +973,10 @@ const Search = {
                     mouseGridL = cur.mouseGrid || new WayMap(),
                     mouseGrid = cur.mouseGrid = new WayMap();
 
-                mouseGrid.forSameNode(points, mouseGridL);
-                for (let i = 0; i < points.length; i++) {
+                mouseGridL.forSameNode(points, mouseGrid);
+                for (let i = 0; i < 2; i++) {
+                    if (mouseGrid.get(points[i])) { continue; }
+
                     //求当前路径
                     const subL = cur.startSegment.sub,
                         segm = cur.startSegment.value,
@@ -1019,16 +1021,19 @@ const Search = {
                         mouseGrid.set(points[i], way);
                     }
                     else {
-
+                        //没有合法路径，那么就沿用之前的路径
+                        mouseGrid.set(points[i], points[1 - i]);
                     }
                 }
 
-                //后处理
-                const way = cur.mouseGrid.nodeMax();
-                this.way.clone(way);
-                //this.way.endToMouse(-1, point);
-                this.wayDrawing();
+                cur.gridL = pointFloor;
             }
+
+            //后处理
+            const way = cur.mouseGrid.nodeMax();
+            this.way.clone(way);
+            this.way.segToPoint(way.currentSub, point);
+            this.wayDrawing();
         },
         end: function() {
 
@@ -1258,6 +1263,19 @@ LineWay.prototype = {
             this[this.length - 1][1] = line[0][1];
             this[this.length - 1][0] = position[0];
             this[this.length - 2][0] = position[0];
+        }
+    },
+    //线段指向某点
+    segToPoint(sub, point) {
+        if (this[sub][0] === this[sub + 1][0]) {
+            //竖着的
+            this[sub][0] = point[0];
+            this[sub + 1][0] = point[0];
+        }
+        else {
+            //横着的
+            this[sub][1] = point[1];
+            this[sub + 1][1] = point[1];
         }
     },
     //由四方格回溯导线下标，从起点开始

@@ -145,8 +145,8 @@ schMap.extend({
         vector[0] = vector[0].toUnit();
         vector[1] = vector[1].toUnit();
 
-        //起点并不是导线，直接返回
-        if (!schMap.isLine(start, "small")) {
+        //起点并不是导线或者起点等于终点，直接返回
+        if (!schMap.isLine(start, "small") || start.isEqual(end)) {
             return (start);
         }
 
@@ -158,14 +158,11 @@ schMap.extend({
                 node = nodeNow;
             }
             else {
-                node = nodeNow;
                 break;
             }
         }
 
-        return node.isEqual(end)
-            ? node
-            : [node[0] - vector[0], node[1] - vector[1]];
+        return node;
     },
     alongTheLineByOrigin(a, b, c) {
         const start = [a[0] / 20, a[1] / 20],
