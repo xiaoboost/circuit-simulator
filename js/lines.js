@@ -945,13 +945,14 @@ const Search = {
                 mouse = cur.mouse(event),
                 seg = self.way.nodeInWay(mouse);
 
-            cur.startSegment = seg;
+            cur.startSub = seg.sub;
             cur.startMouse = mouse;
             cur.movePoint = Point(seg.value[0]);
+            cur.backup = new LineWay(this.way);
+            cur.backup.currentSub = seg.sub;
             cur.moveVector = (seg.value[0][0] === seg.value[1][0])
                 ? Point([1, 0])
                 : Point([0, 1]);
-            cur.moveVertical = Point(cur.moveVector).reverse();
 
             self.toGoing();
             self.deleteSign();
@@ -962,7 +963,6 @@ const Search = {
             const cur = this.current,
                 gridL = cur.gridL,
                 moveV = cur.moveVector,
-                moveH = cur.moveVertical,
                 bias  = cur.mouse(event).add(-1, cur.startMouse),
                 point = cur.movePoint.add(bias.mul(moveV)),
                 pointFloor = point.floor(),
@@ -975,19 +975,44 @@ const Search = {
 
                 mouseGridL.forSameNode(points, mouseGrid);
                 for (let i = 0; i < 2; i++) {
-                    if (mouseGrid.get(points[i])) { continue; }
+                    if (mouseGrid.get(points[i])) {
+                        continue;
+                    }
+                    mouseGrid.set(points[i],
+                        Search.deformation.splice(
+                            points[i],
+                            cur.backup,
+                            cur.startSub,
+                            moveV,
+                            option,
+                            mouseGrid.get(points[1 - i])
+                        )
+                    );
+                }
 
-                    //求当前路径
-                    const subL = cur.startSegment.sub,
-                        segm = cur.startSegment.value,
-                        tempSeg = segm.map((v) => v.mul(moveH).add(points[i].mul(moveV))),
-                        tempWay = new LineWay(this.way);
+                cur.gridL = pointFloor;
+            }
 
-                    tempWay.splice(subL + 1, 0, ...tempSeg);
-                    tempWay.checkWayRepeat();
+            //后处理
+            const way = cur.mouseGrid.nodeMax();
+            this.way.clone(way);
+            this.way.segToPoint(way.currentSub, point);
+            this.wayDrawing();
+        },
+        end: function() {
 
-                    //求新下标和终线
-                    const sub = tempWay.overlapp(tempSeg),
+        },
+        splice: function(point, way, subL, moveV, option, last) {
+            const moveH = Point(moveV).reverse(),
+                segment = [way[subL], way[subL + 1]],
+                maxBias = Math.abs(point.add(-1, way[subL]).product(moveV.mul(-1, 20)));
+
+            for (let k = 0; k < maxBias; k++) {
+                for (let i = -k; i <= k; i += 2 * k) {
+                    const seg = segment.map((v) =>
+                            v.mul(moveH).add(point.mul(moveV).add(moveV.mul(i * 20)))),
+                        tempWay = way.moveSegment(subL, seg),
+                        sub = tempWay.overlapp(seg),
                         end = tempWay.segmentSplit(sub);
 
                     if (end) {
@@ -1015,28 +1040,29 @@ const Search = {
                         //拼接路径
                         const way = new LineWay(startSeg.concat(startWay, end, endWay, endSeg))
                             .checkWayLine();
+
+                        let subN = way.overlapp(end);
+                        //起点和终点是器件引脚时，需要插入一个点
+                        if (!subN && schMap.isPartPoint(way[0])) {
+                            way.splice(0, 0, Point(way[0]));
+                            subN++;
+                        }
+                        if ((subN === way.length - 2) &&
+                            schMap.isPartPoint(way.get(-1))) {
+                            way.push(Point(way.get(-1)));
+                        }
+
                         //当前操作线段下标
-                        way.currentSub = way.overlapp(end);
-                        //设置路径
-                        mouseGrid.set(points[i], way);
+                        way.currentSub = subN;
+
+                        return (way);
                     }
-                    else {
-                        //没有合法路径，那么就沿用之前的路径
-                        mouseGrid.set(points[i], points[1 - i]);
+                    else if (last) {
+                        return (last);
                     }
                 }
-
-                cur.gridL = pointFloor;
             }
-
-            //后处理
-            const way = cur.mouseGrid.nodeMax();
-            this.way.clone(way);
-            this.way.segToPoint(way.currentSub, point);
-            this.wayDrawing();
-        },
-        end: function() {
-
+            return (way);
         }
     }
 };
@@ -1277,6 +1303,46 @@ LineWay.prototype = {
             this[sub][1] = point[1];
             this[sub + 1][1] = point[1];
         }
+    },
+    //线段移动产生的新导线
+    moveSegment(sub, seg) {
+        const newLine = new LineWay(this),
+            segVec = Point(seg).reverse();
+
+        //起点和终点为无限远处
+        //0 * Inf等于NaN，所以这里用1e6代替无穷远
+        newLine[0] = newLine[0].add(Point([newLine[1], newLine[0]]).mul([1e6, 1e6]));
+        newLine[newLine.length - 1] = newLine.get(-1).add(Point([this.get(-2), this.get(-1)]).mul([1e6, 1e6]));
+
+        //搜索新线段与导线的交点
+        let start = sub, end = sub + 1;
+        for (let i = sub; i > 0; i--) {
+            const segment = [this[i - 1], this[i]];
+            if (Point(segment).isParallel(segVec) &&
+                seg[0].inLine(segment)) {
+                start = i;
+                break;
+            }
+        }
+        for (let i = sub + 1; i < this.length - 1; i++) {
+            const segment = [this[i], this[i + 1]];
+            if (Point(segment).isParallel(segVec) &&
+                seg[0].inLine(segment)) {
+                end = i;
+                break;
+            }
+        }
+
+        //新导线起点终点恢复原状
+        newLine[0] = Point(this[0]);
+        newLine[newLine.length - 1] = Point(this.get(-1));
+        //导线合并
+        newLine.splice(start, end - start + 1, ...seg);
+        //再次插入起点和终点
+        newLine.splice(0, 0, Point(this[0]));
+        newLine.push(Point(this.get(-1)));
+        newLine.checkWayRepeat();
+        return(newLine);
     },
     //由四方格回溯导线下标，从起点开始
     gridToEnd(grid) {

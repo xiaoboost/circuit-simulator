@@ -121,15 +121,26 @@ schMap.extend({
         return schMap.nodeInConnectBySmall(node, connect);
     },
     //当前点是否是导线
-    isLine(node, flag = "origin") {
-        const tempStatus = (flag === "origin")
-            ? schMap.getValueByOrigin(node)
-            : schMap.getValueBySmalle(node);
+    isLine(node, flag) {
+        const tempStatus = (flag === "small")
+            ? schMap.getValueBySmalle(node)
+            : schMap.getValueByOrigin(node);
 
         return (
             tempStatus &&
             tempStatus.form === "line" ||
             tempStatus.form === "cross-point"
+        );
+    },
+    //当前点是否是器件引脚
+    isPartPoint(node, flag) {
+        const tempStatus = (flag === "small")
+            ? schMap.getValueBySmalle(node)
+            : schMap.getValueByOrigin(node);
+
+        return (
+            tempStatus &&
+            tempStatus.form === "part-point"
         );
     },
     //在[start、end]范围中沿着vector直行，求最后一点的坐标
