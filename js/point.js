@@ -171,14 +171,15 @@ exPoint.prototype = {
         return(vc1.isEqual(vc2));
     },
     //在某线段范围内
-    inLine(line) {
-        if (line[0][0] === line[1][0] && line[0][0] === this[0]) {
+    inLine(line, sign) {
+        //sign为强制比较标志
+        if (sign === "y" || line[0][0] === line[1][0] && line[0][0] === this[0]) {
             return (
                 (this[1] >= line[0][1] && this[1] <= line[1][1]) ||
                 (this[1] <= line[0][1] && this[1] >= line[1][1])
             );
         }
-        else if (line[0][1] === line[1][1] && line[0][1] === this[1]) {
+        else if (sign === "x" || line[0][1] === line[1][1] && line[0][1] === this[1]) {
             return (
                 (this[0] >= line[0][0] && this[0] <= line[1][0]) ||
                 (this[0] <= line[0][0] && this[0] >= line[1][0])

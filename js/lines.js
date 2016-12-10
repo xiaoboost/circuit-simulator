@@ -957,6 +957,20 @@ const Search = {
             self.toGoing();
             self.deleteSign();
             self.wayDrawing();
+
+            cur.Limit = {};
+            if (schMap.isLine(this.way[0])) {
+                cur.Limit.start = [
+                    schMap.alongTheLineByOrigin(this.way[0], false, cur.moveVector),
+                    schMap.alongTheLineByOrigin(this.way[0], false, cur.moveVector.mul(-1)),
+                ]
+            }
+            if (schMap.isLine(this.way.get(-1))) {
+                cur.Limit.end = [
+                    schMap.alongTheLineByOrigin(this.way.get(-1), false, cur.moveVector),
+                    schMap.alongTheLineByOrigin(this.way.get(-1), false, cur.moveVector.mul(-1)),
+                ]
+            }
         },
         callback: function(event) {
             //预处理
@@ -996,10 +1010,12 @@ const Search = {
             //后处理
             const way = cur.mouseGrid.nodeMax();
             this.way.clone(way);
-            this.way.segToPoint(way.currentSub, point);
+            this.way.segToPoint(way.currentSub, point, cur.Limit);
             this.wayDrawing();
         },
         end: function() {
+            const cur = this.current;
+
 
         },
         splice: function(point, way, subL, moveV, option, last) {
@@ -1039,21 +1055,10 @@ const Search = {
                         }
                         //拼接路径
                         const way = new LineWay(startSeg.concat(startWay, end, endWay, endSeg))
-                            .checkWayLine();
-
-                        let subN = way.overlapp(end);
-                        //起点和终点是器件引脚时，需要插入一个点
-                        if (!subN && schMap.isPartPoint(way[0])) {
-                            way.splice(0, 0, Point(way[0]));
-                            subN++;
-                        }
-                        if ((subN === way.length - 2) &&
-                            schMap.isPartPoint(way.get(-1))) {
-                            way.push(Point(way.get(-1)));
-                        }
+                            .checkWayLine(moveV);
 
                         //当前操作线段下标
-                        way.currentSub = subN;
+                        way.currentSub = way.overlapp(seg);
 
                         return (way);
                     }
@@ -1155,14 +1160,22 @@ LineWay.prototype = {
         return(this);
     },
     //去除导线两端和已知导线重叠的部分
-    checkWayLine() {
+    checkWayLine(vector) {
         this.checkWayRepeat();
 
-        this[0] = Point(schMap.alongTheLineByOrigin(this[0], this[1]));
-        this[this.length - 1] = Point(schMap.alongTheLineByOrigin(this.get(-1), this.get(-2)));
+        const startTrend = Point([this[0], this[1]]),
+            ebdTrend = Point([this.get(-1), this.get(-2)]);
+
+        if (startTrend.isParallel(vector)) {
+            this[0] = Point(schMap.alongTheLineByOrigin(this[0], this[1]));
+        }
+
+        if (ebdTrend.isParallel(vector)) {
+            this[this.length - 1] = Point(schMap.alongTheLineByOrigin(this.get(-1), this.get(-2)));
+        }
 
         this.checkWayRepeat();
-        return(this);
+        return (this);
     },
     //复制路径，将会抛弃原路径数据的全部引用，也不会引用被复制的数据
     clone(tempway) {
@@ -1176,6 +1189,15 @@ LineWay.prototype = {
     reverse() {
         Array.prototype.reverse.call(this);
         return(this);
+    },
+    //输出sub线段的方向
+    vector(sub) {
+        if (sub >= 0) {
+            return (Point([this[sub], this[sub + 1]]));
+        }
+        else {
+            return (Point([this.get(sub), this.get(sub - 1)]));
+        }
     },
     //tempWay和this是否完全相等
     isSame(tempway) {
@@ -1292,34 +1314,49 @@ LineWay.prototype = {
         }
     },
     //线段指向某点
-    segToPoint(sub, point) {
-        if (this[sub][0] === this[sub + 1][0]) {
+    segToPoint(sub, point, limit) {
+        let i = sub;
+
+        const sign = (this[i][0] === this[i + 1][0]) ? "x" : "y";
+
+        if (!i && limit && limit.start &&
+            !point.inLine(limit.start, sign)) {
+            this.splice(0,0,this[0]);
+        }
+        if (i === this.length - 2 && limit &&
+            limit.end && !point.inLine(limit.end, sign)) {
+            this.push(this.get(-1));
+        }
+
+        if (this[i][0] === this[i + 1][0]) {
             //竖着的
-            this[sub][0] = point[0];
-            this[sub + 1][0] = point[0];
+            this[i][0] = point[0];
+            this[i + 1][0] = point[0];
         }
         else {
             //横着的
-            this[sub][1] = point[1];
-            this[sub + 1][1] = point[1];
+            this[i][1] = point[1];
+            this[i + 1][1] = point[1];
         }
     },
     //线段移动产生的新导线
     moveSegment(sub, seg) {
-        const newLine = new LineWay(this),
-            segVec = Point(seg).reverse();
+        const self = this,
+            newLine = new LineWay(self),
+            segVec = Point(seg).reverse(),
+            sign = segVec[0] ? "x" : "y";
 
         //起点和终点为无限远处
         //0 * Inf等于NaN，所以这里用1e6代替无穷远
-        newLine[0] = newLine[0].add(Point([newLine[1], newLine[0]]).mul([1e6, 1e6]));
-        newLine[newLine.length - 1] = newLine.get(-1).add(Point([this.get(-2), this.get(-1)]).mul([1e6, 1e6]));
+        newLine[0] = self[0].add(-1, self.vector(0).mul([1e6, 1e6]));
+        newLine[newLine.length - 1] = self.get(-1).add(-1, self.vector(-1).mul([1e6, 1e6]));
 
         //搜索新线段与导线的交点
         let start = sub, end = sub + 1;
         for (let i = sub; i > 0; i--) {
             const segment = [this[i - 1], this[i]];
             if (Point(segment).isParallel(segVec) &&
-                seg[0].inLine(segment)) {
+                seg[0].inLine(segment, sign)) {
                 start = i;
                 break;
             }
@@ -1327,7 +1364,7 @@ LineWay.prototype = {
         for (let i = sub + 1; i < this.length - 1; i++) {
             const segment = [this[i], this[i + 1]];
             if (Point(segment).isParallel(segVec) &&
-                seg[0].inLine(segment)) {
+                seg[0].inLine(segment, sign)) {
                 end = i;
                 break;
             }
@@ -1377,10 +1414,10 @@ LineWay.prototype = {
             }
             //回溯导线
             for(let i = 0; i < line.length - 1; i++) {
-                if(this[i][sub] === this[i + 1][sub]) {
+                if (this[i][sub] === this[i + 1][sub]) {
                     continue;
                 }
-                if(points.every((n) => Point.prototype.inLine.call(n, [line[i], line[i + 1]]))) {
+                if (points.every((n) => Point.prototype.inLine.call(n, [line[i], line[i + 1]]))) {
                     segs.push(i);
                 }
             }
@@ -1427,6 +1464,9 @@ LineWay.prototype = {
         for (let node = seg[0]; !node.isEqual(seg[1]); node = node.add(vector)) {
             map[node.join(",")] = true;
         }
+        //标记终点
+        map[seg[1].join(",")] = true;
+
         //搜索导线
         for (let i = 0; i < this.length - 1; i++) {
             const nodeway = this.slice(i, i + 2),
@@ -1479,9 +1519,7 @@ LineWay.prototype = {
                 seg = nodes[i];
             }
             else if (!flag && seg) {
-                if (seg !== nodes[i - 1]) {
-                    segs.push([seg, nodes[i - 1]]);
-                }
+                segs.push([seg, nodes[i - 1]]);
                 seg = null;
             }
             else if (flag && i === nodes.length - 1 && seg) {
@@ -1489,7 +1527,7 @@ LineWay.prototype = {
             }
         }
         //取距离最大的
-        let max = 0, ans = false;
+        let max = -1, ans = false;
         for (let i = 0; i < segs.length; i++) {
             if (segs[i].length > max) {
                 max = Point.prototype.distance.call(segs[i][0], segs[i][1]);
@@ -1588,12 +1626,20 @@ WayMap.prototype = {
     //返回所有key
     keys() {
         const keys = [];
-        for(let i in this) {
-            if(this.hasOwnProperty(i)) {
+        for (let i in this) {
+            if (this.hasOwnProperty(i)) {
                 keys.push(WayMap.hashToKey(i));
             }
         }
-        return(keys);
+        return (keys);
+    },
+    //返回所有路径
+    ways() {
+        const ways = [], keys = this.keys();
+        for (let i = 0; i < keys.length; i++) {
+            ways.push(this.get(keys[i]));
+        }
+        return (ways);
     },
     //forEach遍历函数，功能类似Array的forEach函数，key、value为键和键值
     forEach(callback) {
