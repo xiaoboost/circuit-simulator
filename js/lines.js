@@ -945,14 +945,11 @@ const Search = {
                 mouse = cur.mouse(event),
                 seg = self.way.nodeInWay(mouse);
 
-            cur.startSub = seg.sub;
             cur.startMouse = mouse;
             cur.movePoint = Point(seg.value[0]);
             cur.backup = new LineWay(this.way);
             cur.backup.currentSub = seg.sub;
-            cur.moveVector = (seg.value[0][0] === seg.value[1][0])
-                ? Point([1, 0])
-                : Point([0, 1]);
+            cur.moveVector = Point(seg.value).abs().reverse();
 
             self.toGoing();
             self.deleteSign();
@@ -996,8 +993,6 @@ const Search = {
                         Search.deformation.splice(
                             points[i],
                             cur.backup,
-                            cur.startSub,
-                            moveV,
                             option,
                             mouseGrid.get(points[1 - i])
                         )
@@ -1013,13 +1008,39 @@ const Search = {
             this.way.segToPoint(way.currentSub, point, cur.Limit);
             this.wayDrawing();
         },
-        end: function() {
-            const cur = this.current;
+        end: function(event) {
+            const cur = this.current,
+                moveV = cur.moveVector,
+                bias = cur.mouse(event).add(-1, cur.startMouse),
+                point = cur.movePoint.add(bias.mul(moveV)).round();
 
+            //新路径
+            this.way.clone(
+                Search.deformation.splice(
+                    point,
+                    cur.backup,
+                    {process: "deformation"},
+                    false,
+                    true
+                )
+            );
 
+            //重设端点
+            for (let i = 0; i < 2; i++) {
+                if (this.connectStatus(i) === "line" &&
+                    !cur.backup.get(-1 * i).isEqual(this.way.get(-1 * i))) {
+                    this.freedConnect(i);
+                    this.nodeToConnect(i);
+                }
+            }
+
+            this.render();
+            this.markSign();
         },
-        splice: function(point, way, subL, moveV, option, last) {
-            const moveH = Point(moveV).reverse(),
+        splice: function(point, way, option, last, sign) {
+            const subL = way.currentSub,
+                moveH = way.vector(subL).abs().toUnit(),
+                moveV = Point(moveH).reverse(),
                 segment = [way[subL], way[subL + 1]],
                 maxBias = Math.abs(point.add(-1, way[subL]).product(moveV.mul(-1, 20)));
 
@@ -1029,7 +1050,7 @@ const Search = {
                             v.mul(moveH).add(point.mul(moveV).add(moveV.mul(i * 20)))),
                         tempWay = way.moveSegment(subL, seg),
                         sub = tempWay.overlapp(seg),
-                        end = tempWay.segmentSplit(sub);
+                        end = tempWay.segmentSplit(sub, !!sign);
 
                     if (end) {
                         //拆分导线
@@ -1319,13 +1340,16 @@ LineWay.prototype = {
 
         const sign = (this[i][0] === this[i + 1][0]) ? "x" : "y";
 
-        if (!i && limit && limit.start &&
-            !point.inLine(limit.start, sign)) {
-            this.splice(0,0,this[0]);
+        //操作下标为0 且 （起点为导线引脚 或者 起点在排除线段外）
+        if (!i && ((limit && limit.start && !point.inLine(limit.start, sign)) ||
+            schMap.isPartPoint(this[0]))) {
+            i ++;
+            this.splice(0, 0, Point(this[0]));
         }
-        if (i === this.length - 2 && limit &&
-            limit.end && !point.inLine(limit.end, sign)) {
-            this.push(this.get(-1));
+        if (i === this.length - 2 &&
+            ((limit && limit.end && !point.inLine(limit.end, sign)) ||
+            schMap.isPartPoint(this.get(-1)))) {
+            this.push(Point(this.get(-1)));
         }
 
         if (this[i][0] === this[i + 1][0]) {
@@ -1354,7 +1378,7 @@ LineWay.prototype = {
         //搜索新线段与导线的交点
         let start = sub, end = sub + 1;
         for (let i = sub; i > 0; i--) {
-            const segment = [this[i - 1], this[i]];
+            const segment = [newLine[i - 1], newLine[i]];
             if (Point(segment).isParallel(segVec) &&
                 seg[0].inLine(segment, sign)) {
                 start = i;
@@ -1362,7 +1386,7 @@ LineWay.prototype = {
             }
         }
         for (let i = sub + 1; i < this.length - 1; i++) {
-            const segment = [this[i], this[i + 1]];
+            const segment = [newLine[i], newLine[i + 1]];
             if (Point(segment).isParallel(segVec) &&
                 seg[0].inLine(segment, sign)) {
                 end = i;
@@ -1485,35 +1509,42 @@ LineWay.prototype = {
         return (-1);
     },
     //对某线段可行性分段
-    segmentSplit(sub) {
-        const segs = [],
-            segment = [this[sub], this[sub + 1]],
-            nodes = LineWay.prototype.nodeCollection.call(segment),
-            vector = Point(segment);
-
-        //分段
-        let seg = null;
-        for (let i = 0; i < nodes.length; i++) {
-            const status = schMap.getValueByOrigin(nodes[i]);
-            let flag = true;
-
+    segmentSplit(sub, sign) {
+        function strict(node) {
+            return (!schMap.getValueByOrigin(node));
+        }
+        function standard(node) {
+            const status = schMap.getValueByOrigin(node);
             if (status.form === "part" ||
                 status.form === "part-point" ||
                 status.form === "line-point") {
-                flag = false;
+                return (false);
             }
             else if (status.form === "line" ||
                 status.form === "cross-point") {
                 const connect = status.connect;
                 for (let j = 0; j < connect.length; j++) {
                     const con = connect[j],
-                        vecn = Point([nodes[i].floorToSmall(), con]);
+                        vecn = Point([node.floorToSmall(), con]);
 
                     if (vector.isVertical(vecn)) {
-                        flag = false;
+                        return (false);
                     }
                 }
             }
+            return (true);
+        }
+
+        const segs = [],
+            segment = [this[sub], this[sub + 1]],
+            nodes = LineWay.prototype.nodeCollection.call(segment),
+            vector = Point(segment),
+            check = sign ? strict : standard;
+
+        //分段
+        let seg = null;
+        for (let i = 0; i < nodes.length; i++) {
+            const flag = check(nodes[i]);
 
             if (flag && !seg) {
                 seg = nodes[i];
@@ -1526,7 +1557,7 @@ LineWay.prototype = {
                 segs.push([seg, nodes[i]]);
             }
         }
-        //取距离最大的
+        //取长度最大的
         let max = -1, ans = false;
         for (let i = 0; i < segs.length; i++) {
             if (segs[i].length > max) {
@@ -1771,7 +1802,7 @@ LineClass.prototype = {
     resetCircle(num) {
         this.elementDOM.append(this.circle[num]);
         this.moveCircle(num, this.way.get(-1 * num));
-        $("circle", this.circle[num]).attr("style", "");
+        $("circle", this.circle[num]).removeAttr("style");
     },
     //移动导线端点
     moveCircle(Num, position) {
@@ -1779,6 +1810,7 @@ LineClass.prototype = {
     },
     //导线转换为动态
     toGoing() {
+        //rect全部删除，path剩下一个
         const linepath = $("path", this.elementDOM);
         while (linepath.length > 1) {
             linepath.pop().remove();
@@ -1786,6 +1818,34 @@ LineClass.prototype = {
         $("rect.line-rect", this.elementDOM).remove();
         //导线放置在最底层
         actionArea.preappend(this.elementDOM);
+
+        //交错节点操作
+        for (let i = 0; i < 2; i++) {
+            if (this.connectStatus(i) === "line") {
+                const node = this.way.get(-1 * i),
+                    lines = this.connect[i].split(" ");
+
+                //只有两个导线时，需要隐藏它们的交错节点
+                if (lines.length === 2) {
+                    for (let j = 0; j < 2; j++) {
+                        const line = partsAll.findPart(lines[j]),
+                            sub = line.findConnect(node);
+
+                        line.circle[sub].addClass("dispear");
+                    }
+                }
+
+                const tempLine = $("<g>", SVG_NS, {
+                    id: "temp-line",
+                    class: "line focus"
+                });
+                tempLine.append(this.circle[i]);
+                actionArea.preappend(
+                    tempLine,
+                    document.querySelector("#area-of-parts .editor-parts")
+                );
+            }
+        }
     },
     //绘制导线
     wayDrawing() {
@@ -1811,6 +1871,14 @@ LineClass.prototype = {
 
         tempway.checkWayRepeat();
         tempway.standardize();
+
+        //删除临时导线
+        $("#temp-line").remove();
+        //当前导线放置到导线顶
+        actionArea.preappend(
+            this.elementDOM,
+            document.querySelector("#area-of-parts .editor-parts")
+        );
 
         //多余的导线线段需要删除
         while (linepath.length > this.way.length - 1) {
@@ -1839,7 +1907,7 @@ LineClass.prototype = {
                 linerect.get(i).attr(lineRectAttr(tempway[i], tempway[i + 1]));
             }
         }
-        this.elementDOM.attr("transform", "translate(0,0)");
+        this.elementDOM.removeAttr("transform");
         this.resetCircle(0);
         this.resetCircle(1);
     },

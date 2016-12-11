@@ -129,6 +129,13 @@ exPoint.prototype = {
     product(a) {
         return(this[0] * a[0] + this[1] * a[1]);
     },
+    //绝对值
+    abs() {
+        return (new exPoint([
+            Math.abs(this[0]),
+            Math.abs(this[1])
+        ]));
+    },
     //单位化，符号不变，数值变为1
     toUnit(x) {
         const a = Number(this[0]), b = Number(this[1]);

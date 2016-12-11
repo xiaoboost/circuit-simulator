@@ -497,4 +497,5 @@ window.mapTest = new MapTest();
 window.lineTest = LineTest;
 window.partsAll = partsAll;
 window.partsNow = partsNow;
+window.schMap = schMap;
 window.$ = $;

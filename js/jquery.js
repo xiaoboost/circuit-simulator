@@ -906,9 +906,10 @@ $.fn = $.prototype = {
         const temp = before ? before : this[0].childNodes[0],
             topElement = (temp instanceof $.fn.init) ? temp[0] : temp;
 
-        if(isElement(content)) {
+        if (isElement(content)) {
             this[0].insertBefore(content, topElement);
-        } else if (content instanceof $.fn.init) {
+        }
+        else if (content instanceof $.fn.init) {
             content.each((n) => this[0].insertBefore(n, topElement));
         }
     },
