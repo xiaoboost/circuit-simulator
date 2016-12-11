@@ -282,7 +282,7 @@ const grid = (function SchematicsGrid() {
     self.revocate = function(arr) {
         //取出上次的操作
         const last = arr ? arr : revocation.pop();
-        if(!last) { return(false); }
+        if (!last) { return(false); }
 
         //删除图中所有器件
         partsNow.deleteAll();
@@ -295,14 +295,14 @@ const grid = (function SchematicsGrid() {
         grid.paste(last);
         partsNow.deleteAll();
         //放置器件
-        for(let i = 0; i < partsAll.length; i++) {
+        for (let i = 0; i < partsAll.length; i++) {
             partsAll[i].elementDOM.removeAttr("opacity");
             partsAll[i].render && partsAll[i].render();
             partsAll[i].markSign();
         }
         //确定连接关系
-        for(let i = 0; i < partsAll.length; i++) {
-            if(partsAll[i].partType === "line") {
+        for (let i = 0; i < partsAll.length; i++) {
+            if (partsAll[i].partType === "line") {
                 partsAll[i].nodeToConnect(0);
                 partsAll[i].nodeToConnect(1);
             }

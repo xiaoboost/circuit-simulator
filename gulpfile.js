@@ -6,12 +6,31 @@ const gulp = require("gulp"),
     stylus = require("gulp-stylus"),
     webpack = require("gulp-webpack"),
     base64 = require("gulp-base64"),
-    uglify = require("gulp-uglifyjs"),
+    uglify = require("gulp-uglify"),
     sourcemaps = require("gulp-sourcemaps"),
     autoprefixer = require("gulp-autoprefixer"),
 
     _develop = "Z:/在线仿真网站/",
     _push = "./.deploy_git/";
+
+const webpackConfig = {
+    output: {
+        filename: "script.min.js"
+    },
+    module: {
+        loaders: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: "babel",
+                query: {
+                    presets: ["es2015"],
+                    plugins: ["transform-runtime"]
+                }
+            }
+        ]
+    }
+};
 
 //开发版本任务
 gulp.task("develop-html", function() {
@@ -39,25 +58,7 @@ gulp.task("develop-stylus", function () {
 });
 gulp.task("develop-js", function () {
     return gulp.src("./js/main.js")
-        .pipe(webpack({
-            //devtool: "source-map",
-            output: {
-                filename: "script.min.js"
-            },
-            module: {
-                loaders: [
-                    {
-                        test: /\.js$/,
-                        exclude: /(node_modules|bower_components)/,
-                        loader: "babel",
-                        query: {
-                            presets: ["es2015"],
-                            plugins: ["transform-runtime"]
-                        }
-                    }
-                ]
-            }
-        }))
+        .pipe(webpack(webpackConfig))
         .pipe(gulp.dest(_develop + "src/"));
 });
 gulp.task("develop-image", function () {
@@ -115,24 +116,7 @@ gulp.task("push-stylus", function () {
 });
 gulp.task("push-js", function () {
     return gulp.src("./js/main.js")
-        .pipe(webpack({
-            output: {
-                filename: "script.min.js"
-            },
-            module: {
-                loaders: [
-                    {
-                        test: /\.js$/,
-                        exclude: /(node_modules|bower_components)/,
-                        loader: "babel",
-                        query: {
-                            presets: ["es2015"],
-                            plugins: ["transform-runtime"]
-                        }
-                    }
-                ]
-            }
-        }))
+        .pipe(webpack(webpackConfig))
         .pipe(uglify())
         .pipe(gulp.dest(_push + "src/"));
 });
