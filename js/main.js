@@ -413,7 +413,7 @@ function mousemoveEvent(event) {
 //清除当前所有状态
 function clearStatus() {
     contextSet();
-    for(let i = 0; i < partsNow.length; i++) {
+    for (let i = 0; i < partsNow.length; i++) {
         partsNow[i].toNormal();
     }
     partsNow.deleteAll();
@@ -589,7 +589,7 @@ sidebar.on({
 
             (new PartClass(event.currentTarget.id)).toFocus();
 
-            partsNow.checkLine(event);
+            partsNow.checkLine();
             partsNow.current = grid.createData(event);
             partsNow.current.pageL = partsNow.center();
             partsNow.moveParts({pageX: -50000, pageY: -50000});
@@ -1379,7 +1379,7 @@ context.on("click", "#parts-paste", function(event) {
         grid.paste();
         grid.setPasteParts(true);
 
-        partsNow.checkLine(event);
+        partsNow.checkLine();
         partsNow.current = grid.createData(event);
         partsNow.current.pageL = partsNow.center();
         partsNow.moveParts({pageX: -50000, pageY: -50000});

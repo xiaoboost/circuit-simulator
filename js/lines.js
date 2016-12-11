@@ -8,6 +8,10 @@ import { partsAll, partsNow } from "./collection";
 
 //常量
 const actionArea = $("#area-of-parts"),
+    tempLine = $("<g>", SVG_NS, {
+            id: "temp-line",
+            class: "line focus"
+        }),
     rotate = [
         [[1, 0], [0, 1]],   //同相
         [[0, 1], [-1, 0]],  //顺时针
@@ -880,7 +884,7 @@ const Search = {
                 option = {process: cur.status};
 
             //更新路径
-            if(!mouseFloor.isEqual(gridL)) {
+            if (!mouseFloor.isEqual(gridL)) {
                 const gridPoints = mouseFloor.toGrid(),
                     end = wayBackup.gridToEnd(gridPoints),
                     searchGridL = cur.searchGrid || new WayMap(),
@@ -889,11 +893,13 @@ const Search = {
 
                 //更新路径
                 searchGridL.forSameNode(gridPoints, searchGrid);
-                for(let i = 0; i < gridPoints.length; i++) {
+                for (let i = 0; i < gridPoints.length; i++) {
                     const start = gridPoints[i];
-                    if(mouseGrid.has(start)) { continue; }
+                    if (mouseGrid.has(start)) {
+                        continue;
+                    }
 
-                    mouseGrid.set(start,
+                    searchGrid.set(start,
                         AStartSearch(start, end.seg, initTrend, option)
                             .checkWayExcess(initTrend)
                     );
@@ -918,20 +924,21 @@ const Search = {
             this.wayDrawing();
         },
         end: function() {
-            if (this.current.status !== "move") {
+            const cur = this.current;
+            if (cur.status !== "move") {
                 //求新的起/终点
                 const start = this.connectNode(0),
                     end = this.connectNode(1),
                     trend = this.current.initTrend;
 
-                //重新搜索路径
+                //新路径
                 this.way.clone(
                     AStartSearch(start, end, trend, {process: "draw"})
                         .checkWayExcess(trend)
                 );
 
-                //终点重设定
-                this.nodeToConnect(1);
+                //重设端点连接
+                this.resetConnect(cur.wayBackup);
             }
             this.render();
             this.markSign();
@@ -1025,14 +1032,8 @@ const Search = {
                 )
             );
 
-            //重设端点
-            for (let i = 0; i < 2; i++) {
-                if (this.connectStatus(i) === "line" &&
-                    !cur.backup.get(-1 * i).isEqual(this.way.get(-1 * i))) {
-                    this.freedConnect(i);
-                    this.nodeToConnect(i);
-                }
-            }
+            //重设端点连接
+            this.resetConnect(cur.backup);
 
             this.render();
             this.markSign();
@@ -1835,10 +1836,6 @@ LineClass.prototype = {
                     }
                 }
 
-                const tempLine = $("<g>", SVG_NS, {
-                    id: "temp-line",
-                    class: "line focus"
-                });
                 tempLine.append(this.circle[i]);
                 actionArea.preappend(
                     tempLine,
@@ -1873,7 +1870,7 @@ LineClass.prototype = {
         tempway.standardize();
 
         //删除临时导线
-        $("#temp-line").remove();
+        tempLine.remove();
         //当前导线放置到导线顶
         actionArea.preappend(
             this.elementDOM,
@@ -2071,6 +2068,16 @@ LineClass.prototype = {
             }
         }
     },
+    //导线变形之后重设端点连接
+    resetConnect(backup) {
+        for (let i = 0; i < 2; i++) {
+            if (this.connectStatus(i) === "line" &&
+                !backup.get(-1 * i).isEqual(this.way.get(-1 * i))) {
+                this.freedConnect(i);
+                this.nodeToConnect(i);
+            }
+        }
+    },
 
     //查询相关
     //position是等于起点为0，终点为1，否则返回-1
@@ -2261,7 +2268,7 @@ LineClass.prototype = {
         this.connect.reverse();
         this.circle.reverse();
         for (let i = 0; i < 2; i++) {
-            this.circle[i].attr("id", "line_1-" + i);
+            this.circle[i].attr("id", this.id + "-" + i);
         }
     },
     //器件高亮
@@ -2283,11 +2290,11 @@ LineClass.prototype = {
             devices = new LineClass([NodeCross]);
 
         //变更导线连接表
-        splited.replaceConnect(1,devices.id);              //替换连接器件的ID
-        devices.setConnect(1,splited.connect[1]);          //原导线起点不变，新导线的终点等于原导线的终点
-        devices.setConnect(0,splited.id + " " + this.id);  //新导线起点由旧导线ID和分割旧导线的导线ID组成
-        this.setConnect(1,splited.id + " " + devices.id);  //分割旧导线的导线终点由新旧导线ID组成
-        splited.setConnect(1,devices.id + " " + this.id);  //旧导线终点由新导线ID和分割旧导线的导线ID组成
+        splited.replaceConnect(1, devices.id);                  //替换连接器件的ID
+        devices.setConnect(1, splited.connect[1]);              //原导线起点不变，新导线的终点等于原导线的终点
+        devices.setConnect(0, splited.id + " " + this.id);      //新导线起点由旧导线ID和分割旧导线的导线ID组成
+        this.setConnect(sub, splited.id + " " + devices.id);    //分割旧导线的导线终点由新旧导线ID组成
+        splited.setConnect(1, devices.id + " " + this.id);      //旧导线终点由新导线ID和分割旧导线的导线ID组成
 
         //拆分路径
         let crossSub = 0;

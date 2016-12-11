@@ -90,14 +90,20 @@ PartsCollection.prototype = {
         else {
             throw("输入参数必须是字符串或者器件对象");
         }
-        if (this.hash[tempid] === undefined) return (false);
-        const sub = this.hash[tempid];      //要删除的器件下标
-        this.splice(sub, 1);                //删除器件
+
+        if (this.hash[tempid] === undefined) {
+            return (false);
+        }
+        //要删除的器件下标
+        const sub = this.hash[tempid];
+        this.splice(sub, 1);
+
         //被删除器件之后的全部器件在hash表中的记录全部减1
         for (let i = sub; i < this.length; i++) {
             this.hash[this[i].id]--;
         }
-        delete this.hash[tempid];           //删除hash表中的记录
+        //删除hash表中的记录
+        delete this.hash[tempid];
     },
     //删除器件集合
     deleteParts(temp) {

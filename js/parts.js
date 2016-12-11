@@ -1135,11 +1135,13 @@ PartClass.prototype = {
     toFocus() {
         this.elementDOM.addClass("focus");
         partsNow.push(this);
+        return (this);
     },
     //器件取消高亮
     toNormal() {
         this.elementDOM.removeClass("focus");
         this.current = {};
+        return (this);
     },
     //显示器件参数菜单
     viewParameter(zoom, SVG) {
@@ -1319,7 +1321,6 @@ PartClass.prototype = {
         this.position = this.position.round();
         this.move();
         this.markSign();
-        this.current = {};
     },
     //删除器件
     deleteSelf() {
@@ -1381,19 +1382,19 @@ PartClass.prototype = {
 //器件移动相关的方法
 partsNow.extend({
     //由器件开始回溯导线，确定导线状态
-    checkLine(event) {
+    checkLine() {
         const self = this;
         //当前没有器件，那么退出
         if (!self.length) { return(false); }
         //递归标记器件所连接的导线
-        for(let i = 0; i < self.length; i++) {
+        for (let i = 0; i < self.length; i++) {
             (function DFS(part) {
                 //非法器件
-                if(!part) { return(false); }
+                if (!part) { return(false); }
                 //已经确定整体移动的器件
-                if(part.current.status === "move") { return(true); }
+                if (part.current.status === "move") { return(true); }
 
-                if(part.partType !== "line" && self.has(part)) {
+                if (part.partType !== "line" && self.has(part)) {
                     //标记当前器件
                     part.current = {};
                     part.current.status = "move";
@@ -1401,21 +1402,22 @@ partsNow.extend({
                     for(let i = 0; i < part.connect.length; i++) {
                         DFS(partsAll.findPart(part.connect[i]));
                     }
-                } else if(part.partType === "line") {
+                }
+                else if (part.partType === "line") {
                     //当前器件是导线
                     //标记当前导线
-                    if(!part.current.status) {
+                    if (!part.current.status) {
                         part.current = {};
                         part.current.status = "half";
-                    } else if(part.current.status === "half") {
+                    }
+                    else if (part.current.status === "half") {
                         part.current.status = "move";
-                        return(true);
+                        return (true);
                     }
                     //导线回溯
-                    if(part.connect.every((con) =>
+                    if (part.connect.every((con) =>
                             con.split(" ").map((item) => partsAll.findPart(item))
                                 .some((item) => (!item) || self.has(item) || item.current.status))) {
-
                         //当前导线整体移动
                         part.current.status = "move";
                         part.connect.join(" ").split(" ")
@@ -1446,14 +1448,17 @@ partsNow.extend({
             if (item.current.status === "half") {
                 partsNow.has(item) || item.toFocus();
                 //导线变形数据初始化
-                item.startPath(event, "movePart");
+                item.startPath(false, "movePart");
             }
         });
     },
     //器件准备移动
     moveStart() {
-        //拔起全部器件
-        this.forEach((n) => n.deleteSign());
+        //拔起全部器件以及变形导线转换模式
+        this.forEach((n) => {
+            (n.current.status !== "move") && n.toGoing();
+            n.deleteSign();
+        });
     },
     //器件移动
     moveParts(event) {
@@ -1508,8 +1513,6 @@ partsNow.extend({
                     n.putDown(false, "movePart")
                 }
             });
-            //变形导线连接关系改变
-
             //粘贴器件时还需要再次确定导线连接关系
             if (opt === "paste") {
                 self.forEach((n) => {
@@ -1521,7 +1524,12 @@ partsNow.extend({
                     }
                 });
             }
-
+            //删除所有导线以及被删除的器件，重新确定状态
+            const temp = self.filter((n) => ((n.partType !== "line") && n.isExist()));
+            self.forEach((n) => n.toNormal());
+            self.deleteAll();
+            temp.forEach((n) => (n.toFocus(), self.push(n)));
+            self.checkLine();
             //放置成功
             return (true);
         }
