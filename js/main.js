@@ -230,6 +230,7 @@ const grid = (function SchematicsGrid() {
                         $('#' + j).prop("value", data[j]);
                     }
                 }
+                continue;
             }
             else if (data.partType !== "line") {
                 partsNow.push(new PartClass(data));

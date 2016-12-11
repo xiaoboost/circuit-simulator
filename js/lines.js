@@ -1822,6 +1822,7 @@ LineClass.prototype = {
 
         //交错节点操作
         for (let i = 0; i < 2; i++) {
+            this.setConnect(i);
             if (this.connectStatus(i) === "line") {
                 const node = this.way.get(-1 * i),
                     lines = this.connect[i].split(" ");
@@ -1843,6 +1844,8 @@ LineClass.prototype = {
                 );
             }
         }
+
+        this.wayDrawing();
     },
     //绘制导线
     wayDrawing() {
