@@ -891,11 +891,13 @@ const Search = {
                     searchGrid = cur.searchGrid = new WayMap(),
                     mouseGrid = cur.mouseGrid = new WayMap();
 
+                //终点为标记
+                searchGrid.sign = end;
                 //更新路径
                 searchGridL.forSameNode(gridPoints, searchGrid);
                 for (let i = 0; i < gridPoints.length; i++) {
                     const start = gridPoints[i];
-                    if (mouseGrid.has(start)) {
+                    if (searchGrid.has(start)) {
                         continue;
                     }
 
@@ -1422,15 +1424,15 @@ LineWay.prototype = {
             farest = Point(this[0].farest(grid).value);
 
         //当前导线只有1个线段，返回终点
-        if(this.length === 2) {
-            return({
+        if (this.length === 2) {
+            return ({
                 sub: this.length,
                 seg: Point(this.get(-1))
             });
         }
 
         //0为横线段，1为竖线段
-        for(let sub = 0; sub < 2; sub++) {
+        for (let sub = 0; sub < 2; sub++) {
             const segs = [],
                 line = this.map((n) => [(1 - sub) * n[0], sub * n[1]]),
                 points = grid.map((n) => [(1 - sub) * n[0], sub * n[1]]),
@@ -1443,12 +1445,12 @@ LineWay.prototype = {
                 ]);
 
             //最终线段的方向与当前方格方向相反
-            if(last.isOppoDire(toGrid)) {
+            if (last.isOppoDire(toGrid)) {
                 ans[sub] = 0;
                 continue;
             }
             //回溯导线
-            for(let i = 0; i < line.length - 1; i++) {
+            for (let i = 0; i < line.length - 1; i++) {
                 if (this[i][sub] === this[i + 1][sub]) {
                     continue;
                 }
@@ -1457,9 +1459,10 @@ LineWay.prototype = {
                 }
             }
             //是否在导线范围内
-            if(!segs.length) {
+            if (!segs.length) {
                 ans[sub] = this.length + 1;
-            } else {
+            }
+            else {
                 ans[sub] = farest.closest(segs.map((n) => [this[n], this[n + 1]])).sub;
             }
         }
@@ -1467,18 +1470,20 @@ LineWay.prototype = {
         const diff = Math.abs(ans[0] - ans[1]),
             max = Math.maxOfArray(ans);
         if (max === 0) {
-            return({
+            return ({
                 sub: 1,
                 seg: [this[1], this[2]]
             });
-        } else if(max === this.length + 1){
-            return({
+        }
+        else if (max === this.length + 1) {
+            return ({
                 sub: this.length,
                 seg: Point(this.get(-1))
             });
-        } else if(diff === 1) {
-            return({
-                sub: max - 1,
+        }
+        else if (diff === 1) {
+            return ({
+                sub: max,
                 seg: [this[max - 1], this[max], this[max + 1]]
             });
         }
@@ -1606,19 +1611,27 @@ LineWay.prototype[Symbol.isConcatSpreadable] = true;
 //[点->路径]的键值对类，整个设计与Map数据结构类似
 //只接受Point实例作为键，以及LineWay实例的键值
 function WayMap(pair) {
-    if(pair instanceof Array) {
+    if (pair instanceof Array) {
         this.size = pair.length;
         for (let i = 0; i < pair.length; i++) {
             const [key,value] = pair[i][0];
             this.set(key, value);
         }
-    } else {
+    }
+    else {
         this.size = 0;
     }
-    //size不可枚举
-    Object.defineProperty(this, "size", {
-        enumerable: false,
-        configurable: false
+
+    this.sign = false;
+    Object.defineProperties(this, {
+        "size": {
+            enumerable: false,
+            configurable: false
+        },
+        "sign": {
+            enumerable: false,
+            configurable: false
+        }
     });
 }
 WayMap.extend({
@@ -1721,13 +1734,15 @@ WayMap.prototype = {
     },
     //如果有相同的key，那么将this的值赋值给新的map
     forSameNode(points, map) {
-        this.forEach((node, way) => {
-            for(let i = 0; i < points.length; i++) {
-                if(node.isEqual(points[i])) {
-                    map.set(node, way);
+        if (this.sign && map.sign && this.sign.isEqual(map.sign)) {
+            this.forEach((node, way) => {
+                for (let i = 0; i < points.length; i++) {
+                    if (node.isEqual(points[i])) {
+                        map.set(node, way);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 };
 
