@@ -955,8 +955,8 @@ const Search = {
             cur.startMouse = mouse;
             cur.movePoint = Point(seg.value[0]);
             cur.backup = new LineWay(this.way);
-            cur.backup.currentSub = seg.sub;
-            cur.moveVector = Point(seg.value).abs().reverse();
+            cur.backup.sub = seg.sub;
+            cur.moveVector = Point(seg.value).toUnit().abs().reverse();
 
             self.toGoing();
             self.deleteSign();
@@ -1010,9 +1010,9 @@ const Search = {
             }
 
             //后处理
-            const way = cur.mouseGrid.nodeMax();
+            const way = cur.mouseGrid.nodeMax((v, r) => (v.sub === -1) ? v : r);
             this.way.clone(way);
-            this.way.segToPoint(way.currentSub, point, cur.Limit);
+            this.way.segToPoint(way.sub, point, cur.Limit);
             this.wayDrawing();
         },
         end: function(event) {
@@ -1039,7 +1039,7 @@ const Search = {
             this.markSign();
         },
         splice: function(point, way, option, last, sign) {
-            const subL = way.currentSub,
+            const subL = way.sub,
                 moveH = way.vector(subL).abs().toUnit(),
                 moveV = Point(moveH).reverse(),
                 segment = [way[subL], way[subL + 1]],
@@ -1080,12 +1080,16 @@ const Search = {
                             .checkWayLine(moveV);
 
                         //当前操作线段下标
-                        way.currentSub = way.overlapp(seg);
+                        way.sub = way.overlapp(seg);
 
                         return (way);
                     }
                     else if (last) {
                         return (last);
+                    }
+
+                    if (!k) {
+                        break;
                     }
                 }
             }
@@ -1339,6 +1343,11 @@ LineWay.prototype = {
     segToPoint(sub, point, limit) {
         let i = sub;
 
+        //非法下标
+        if (i < 0) {
+            return (this);
+        }
+
         const sign = (this[i][0] === this[i + 1][0]) ? "x" : "y";
 
         //操作下标为0 且 （起点为导线引脚 或者 起点在排除线段外）
@@ -1363,6 +1372,7 @@ LineWay.prototype = {
             this[i][1] = point[1];
             this[i + 1][1] = point[1];
         }
+        return (this);
     },
     //线段移动产生的新导线
     moveSegment(sub, seg) {
@@ -1373,8 +1383,8 @@ LineWay.prototype = {
 
         //起点和终点为无限远处
         //0 * Inf等于NaN，所以这里用1e6代替无穷远
-        newLine[0] = self[0].add(-1, self.vector(0).mul([1e6, 1e6]));
-        newLine[newLine.length - 1] = self.get(-1).add(-1, self.vector(-1).mul([1e6, 1e6]));
+        //newLine[0] = self[0].add(-1, self.vector(0).mul([1e6, 1e6]));
+        //newLine[newLine.length - 1] = self.get(-1).add(-1, self.vector(-1).mul([1e6, 1e6]));
 
         //搜索新线段与导线的交点
         let start = sub, end = sub + 1;
@@ -1396,8 +1406,8 @@ LineWay.prototype = {
         }
 
         //新导线起点终点恢复原状
-        newLine[0] = Point(this[0]);
-        newLine[newLine.length - 1] = Point(this.get(-1));
+        //newLine[0] = Point(this[0]);
+        //newLine[newLine.length - 1] = Point(this.get(-1));
         //导线合并
         newLine.splice(start, end - start + 1, ...seg);
         //再次插入起点和终点
@@ -1536,6 +1546,11 @@ LineWay.prototype = {
             return (true);
         }
 
+        //非法下标
+        if (sub === -1) {
+            return (false);
+        }
+
         const segs = [],
             segment = [this[sub], this[sub + 1]],
             nodes = LineWay.prototype.nodeCollection.call(segment),
@@ -1548,13 +1563,18 @@ LineWay.prototype = {
             const flag = check(nodes[i]);
 
             if (flag && !seg) {
-                seg = nodes[i];
+                if (i === nodes.length - 1) {
+                    segs.push([nodes[i], nodes[i]]);
+                }
+                else {
+                    seg = nodes[i];
+                }
             }
             else if (!flag && seg) {
                 segs.push([seg, nodes[i - 1]]);
                 seg = null;
             }
-            else if (flag && i === nodes.length - 1 && seg) {
+            else if (flag && seg && i === nodes.length - 1) {
                 segs.push([seg, nodes[i]]);
             }
         }
@@ -1642,11 +1662,14 @@ WayMap.prototype = {
         if (this[tempHash]) {
             if (mode === "default") {
                 this[tempHash] = value;
-            } else if (mode === "small") {
-                if (this[tempHash].length > value.length)
-                    this[tempHash] = value;
             }
-        } else {
+            else if (mode === "small") {
+                if (this[tempHash].length > value.length) {
+                    this[tempHash] = value;
+                }
+            }
+        }
+        else {
             this[tempHash] = value;
             this.size += 1;
         }
@@ -1682,15 +1705,19 @@ WayMap.prototype = {
         }
     },
     //返回节点最多的路径
-    nodeMax() {
-        let max = -Infinity, ans;
-        this.forEach(function(key, way) {
-            if(way.length > max) {
-                max = way.length;
+    nodeMax(func) {
+        let max = -Infinity, ans = false;
+        this.forEach(function (key, way) {
+            if (way.length > max) {
                 ans = way;
+                max = ans.length;
+            }
+            else if (func && way.length === max) {
+                ans = func(ans, way);
+                max = ans.length;
             }
         });
-        return(ans);
+        return (ans);
     },
     //如果有相同的key，那么将this的值赋值给新的map
     forSameNode(points, map) {
@@ -1755,6 +1782,7 @@ function LineClass(way) {
 
     //创建导线DOM
     this.elementDOM = creatDOM(line);
+    actionArea.preappend(this.elementDOM);
     for (let i = 0; i < 2; i++) {
         this.circle[i] = creatDOM(circle);
         this.circle[i].attr("id", this.id + "-" + i);
@@ -1763,7 +1791,6 @@ function LineClass(way) {
         this.setConnect(i);
     }
 
-    this.toGoing();
     this.wayDrawing();
     //冻结导线的常规属性，current是临时变量可以随意变动
     Object.defineProperties(this, {
@@ -1831,9 +1858,9 @@ LineClass.prototype = {
                 if (lines.length === 2) {
                     for (let j = 0; j < 2; j++) {
                         const line = partsAll.findPart(lines[j]),
-                            sub = line.findConnect(node);
+                            sub = line && line.findConnect(node);
 
-                        line.circle[sub].addClass("dispear");
+                        line && line.circle[sub].addClass("dispear");
                     }
                 }
 
