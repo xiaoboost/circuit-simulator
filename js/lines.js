@@ -433,7 +433,9 @@ function SearchRules(nodestart, nodeend, mode) {
         }
         case "modified": {
             //修饰导线
-            excludeParts = excludePart(end);
+            if (!schMap.isPartPoint(end, "small")) {
+                excludeParts = excludePart(end);
+            }
             excludeLines = excludeLine(start);
             self.checkPoint = checkPointExcludeAlign;
             self.checkEnd = checkEndNode;
@@ -785,7 +787,7 @@ const Search = {
                     schMap.getValueByOrigin.bind(schMap)
                 ));
                 return (
-                    AStartSearch(start, end, initTrend, {process: "draw"})
+                    AStartSearch(start, end, initTrend, {process: "modified"})
                         .checkWayExcess(initTrend)
                 );
             }
@@ -842,7 +844,8 @@ const Search = {
             //活动器件 -> 静止导线/器件
             if (partsNow.has(con0) || partsNow.has(con1)) {
                 //活动器件端为起点
-                if (this.connectStatus(1) === "part") {
+                if (this.connectStatus(1) === "part" &&
+                    partsNow.has(con1)) {
                     this.reverse();
                 }
                 cur.status = "part2any";
@@ -878,14 +881,14 @@ const Search = {
         callback: function(point) {
             const cur = this.current,
                 gridL = cur.gridL,
-                wayBackup = cur.wayBackup,
                 initTrend = cur.initTrend,
                 mouseFloor = point.floor(),
                 option = {process: cur.status};
 
             //更新路径
             if (!mouseFloor.isEqual(gridL)) {
-                const gridPoints = mouseFloor.toGrid(),
+                const wayBackup = cur.wayBackup,
+                    gridPoints = mouseFloor.toGrid(),
                     end = wayBackup.gridToEnd(gridPoints),
                     searchGridL = cur.searchGrid || new WayMap(),
                     searchGrid = cur.searchGrid = new WayMap(),
@@ -929,18 +932,20 @@ const Search = {
             const cur = this.current;
             if (cur.status !== "move") {
                 //求新的起/终点
-                const start = this.connectNode(0),
-                    end = this.connectNode(1),
-                    trend = this.current.initTrend;
+                const backup = cur.wayBackup,
+                    trend = cur.initTrend,
+                    start = this.connectNode(0),
+                    end = backup.gridToEnd(start.floor().toGrid()),
+                    temp = AStartSearch(start, end.seg, trend, {process: cur.status})
+                        .checkWayExcess(trend);
 
-                //新路径
-                this.way.clone(
-                    AStartSearch(start, end, trend, {process: "draw"})
-                        .checkWayExcess(trend)
-                );
+                //合并路径
+                this.way.clone(backup);
+                this.way.splice(0, end.sub, ...temp);
+                this.way.checkWayRepeat();
 
                 //重设端点连接
-                this.resetConnect(cur.wayBackup);
+                this.resetConnect(backup);
             }
             this.render();
             this.markSign();
