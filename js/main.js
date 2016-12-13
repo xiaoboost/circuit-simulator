@@ -222,7 +222,7 @@ const grid = (function SchematicsGrid() {
         const now = arr ? arr : copyStack, name = [];
 
         partsNow.deleteAll();
-        for(let i = 0; i < now.length; i++) {
+        for (let i = 0; i < now.length; i++) {
             const data = now[i];
             if (data.partType === "config") {
                 for (let j in data) {
@@ -253,9 +253,9 @@ const grid = (function SchematicsGrid() {
         }
 
         //替换新旧id
-        for(let i = 0; i < name.length; i++) {
-            for(let j = 0; j < partsNow.length; j++) {
-                for(let k = 0; k < partsNow[j].connect.length; k++) {
+        for (let i = 0; i < name.length; i++) {
+            for (let j = 0; j < partsNow.length; j++) {
+                for (let k = 0; k < partsNow[j].connect.length; k++) {
                     const part = partsNow[j],
                         con = part.connect[k],
                         old = name[i].old,
@@ -265,6 +265,33 @@ const grid = (function SchematicsGrid() {
                 }
             }
         }
+        //删除不存在的器件连接
+        for (let i = 0; i < partsNow.length; i++) {
+            const part = partsNow[i],
+                con = part.connect;
+            for (let j = 0; j < con.length; j++) {
+                con[j] = con[j].split(" ")
+                    .filter((n) => partsNow.has(n))
+                    .join(" ");
+            }
+        }
+        //合并部分导线
+        for (let i = 0; i < partsNow.length; i++) {
+            const line = partsNow[i],
+                con = line.connect;
+            if (!line.isExist() || line.partType !== "line") {
+                continue;
+            }
+
+            for (let j = 0; j < 2; j++) {
+                if (line.connectStatus(j) === "line" &&
+                    con[j].split(" ").length === 1) {
+                    line.mergeLine(con[j]);
+                }
+            }
+        }
+        //清理器件集合
+        partsNow.deleteParts((n) => n.isExist());
     }
     //记录当前所有器件状态
     self.now = function() {

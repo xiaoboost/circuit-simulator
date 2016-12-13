@@ -618,7 +618,7 @@ function PartClass(data) {
     this.position = this.position
         ? Point(this.position)
         : Point([-5000, -50000]);
-    this.connect = Array(this.pointInfor.length).fill("");
+    this.connect = this.connect || Array(this.pointInfor.length).fill("");
     this.input = this.input || [];
     this.current = {};
     this.circle = [];

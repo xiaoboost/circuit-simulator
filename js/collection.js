@@ -3,7 +3,10 @@ const maxNumber = 50;
 
 //器件堆栈类
 function PartsCollection(parts) {
-    if (typeof parts === "number") {
+    if (parts instanceof PartsCollection) {
+        return (parts);
+    }
+    else if (typeof parts === "number") {
         return (new PartsCollection());
     }
     this.hash = {};
@@ -106,11 +109,21 @@ PartsCollection.prototype = {
         delete this.hash[tempid];
     },
     //删除器件集合
-    deleteParts(temp) {
-        const parts = (temp instanceof PartsCollection) ? temp : new PartsCollection(temp);
-        const ans = new PartsCollection(this);
+    deleteParts(input) {
+        let func, temp, set;
+        if (typeof input === "function") {
+            func = input;
+        }
+        else {
+            temp = new PartsCollection(input);
+            func = function (n) {
+                return (!temp.has(n));
+            }
+        }
+
+        set = this.filter(func);
         this.deleteAll();
-        ans.forEach((n) => (parts.has(n) || this.push(n)));
+        set.forEach((n) => this.push(n));
     },
     //集合是否包含该器件
     has(part) {

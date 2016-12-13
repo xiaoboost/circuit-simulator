@@ -147,6 +147,10 @@ function SearchRules(nodestart, nodeend, mode) {
             return [];
         }
     }
+    //扩展线段
+    function expandLine(line) {
+
+    }
     //node是否在某线段内
     function nodeInLine(node, line) {
         return Point.prototype.inLine.call(node, line);
@@ -393,18 +397,7 @@ function SearchRules(nodestart, nodeend, mode) {
             break;
         }
         case "line2line":
-        case "line2part": {
-            //由器件引脚开始，忽略终点全部
-            //其余情况和part2any相同
-            if (mode.status === "part") {
-                excludeParts = excludePart(end);
-                excludeLines = excludeLine(end);
-                self.calValue = calValue01;
-                self.checkEnd = checkEndNodeInLine;
-                self.checkPoint = checkPointExcludeAlign;
-                break;
-            }
-        }
+        case "line2part":
         case "part2any": {
             //活动器件 -> 静止器物，end会是点或者线
             excludeParts = excludePart(start);
@@ -942,7 +935,7 @@ const Search = {
                 //合并路径
                 this.way.clone(backup);
                 this.way.splice(0, end.sub, ...temp);
-                this.way.checkWayRepeat();
+                this.way.checkWayLine();
 
                 //重设端点连接
                 this.resetConnect(backup);
@@ -1199,11 +1192,11 @@ LineWay.prototype = {
         const startTrend = Point([this[0], this[1]]),
             ebdTrend = Point([this.get(-1), this.get(-2)]);
 
-        if (startTrend.isParallel(vector)) {
+        if (!vector || (vector && startTrend.isParallel(vector))) {
             this[0] = Point(schMap.alongTheLineByOrigin(this[0], this[1]));
         }
 
-        if (ebdTrend.isParallel(vector)) {
+        if (!vector || (vector && ebdTrend.isParallel(vector))) {
             this[this.length - 1] = Point(schMap.alongTheLineByOrigin(this.get(-1), this.get(-2)));
         }
 
@@ -1753,12 +1746,12 @@ WayMap.prototype = {
 
 //导线类
 function LineClass(way) {
+    this.id = "line_";
     this.way = new LineWay();
     this.circle = [false, false];
     this.connect = ["", ""];
     this.partType = "line";
     this.current = {};
-    this.id = partsAll.newId("line_");
 
     //导线属性
     const line = {
@@ -1795,11 +1788,14 @@ function LineClass(way) {
 
     if (way instanceof Array) {
         this.way = new LineWay(way);
-    } else {
+    }
+    else {
         this.extend(way);
         this.way = new LineWay(this.way);
     }
 
+    //新ID
+    this.id = partsAll.newId(this.id);
     //创建导线DOM
     this.elementDOM = creatDOM(line);
     actionArea.preappend(this.elementDOM);
@@ -1983,7 +1979,7 @@ LineClass.prototype = {
         if (!tempConnect) {
             return (false);
         }
-        if (tempConnect.search(" ") !== -1) {
+        if (tempConnect.search("line_") !== -1) {
             return ("line");
         }
         else if (tempConnect.search("-") !== -1) {
@@ -2094,25 +2090,23 @@ LineClass.prototype = {
         }
         else if (status.form === "cross-point") {
             const temp = self.way.get(-1 * sub),
-                lines = status.id.split(" ");
+                lines = status.id.split(" ")
+                    .filter((n) => n !== self.id);
 
-            if (lines.length === 2) {
-                const other = (lines[0] === self.id)
-                    ? lines[1]
-                    : lines[0];
-
-                self.mergeLine(other);
+            if (lines.length === 1) {
+                self.mergeLine(lines[0]);
             }
             else {
                 //当前导线
-                self.setConnect(sub, lines.filter((n) => n !== self.id).join(" "));
+                self.setConnect(sub, lines.join(" "));
                 //其余导线
                 for (let i = 0; i < lines.length; i++) {
                     const line = partsAll.findPart(lines[i]),
                         con = line.findConnect(temp);
 
                     line.setConnect(con,
-                        lines.filter((n) => n !== line.id).join(" ")
+                        lines.filter((n) => n !== line.id)
+                            .join(" ") + " " + self.id
                     );
                 }
             }
@@ -2170,6 +2164,7 @@ LineClass.prototype = {
     //按照标准格式输出
     toSimpleData() {
         return ({
+            id: this.id,
             partType: "line",
             way: new LineWay(this.way),
             connect: Array.clone(this.connect)
@@ -2435,6 +2430,8 @@ LineClass.prototype = {
         Fragment.replaceConnect(1, this.id);
         Fragment.elementDOM.remove();
         partsAll.deletePart(Fragment);
+
+        this.wayDrawing();
     },
     //导线路径开始
     startPath(event, opt, ...args) {
