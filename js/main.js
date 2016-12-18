@@ -292,8 +292,6 @@ const grid = (function SchematicsGrid() {
         }
         //清理器件集合
         partsNow.deleteParts((n) => n.isExist());
-        //记录导线当前路径
-
     }
     //记录当前所有器件状态
     self.now = function() {

@@ -188,6 +188,10 @@ MapTest.prototype = {
                     //绿色
                     this.point([i, j], "#02fc31", 20, 4);
                 }
+                else if (tempstatus.form === "cover-point") {
+                    //绿色
+                    this.point([i, j], "#E9967A", 20, 4);
+                }
             }
             if (tempstatus.form === "line") {
                 this.text([i * 20 + 5, j * 20 + 15], tempstatus.id.split("_")[1]);
@@ -196,6 +200,11 @@ MapTest.prototype = {
                 this.text([i * 20 + 5, j * 20 + 15], tempstatus.id.split("-")[1]);
             }
             else if (tempstatus.form === "cross-point") {
+                this.path([[i * 20, j * 20], [1000, countx * 25 + 50]], "#222222");
+                this.text([1000, countx * 25 + 50], tempstatus.id);
+                countx++;
+            }
+            else if (tempstatus.form === "cover-point") {
                 this.path([[i * 20, j * 20], [1000, countx * 25 + 50]], "#222222");
                 this.text([1000, countx * 25 + 50], tempstatus.id);
                 countx++;

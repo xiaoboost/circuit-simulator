@@ -104,10 +104,10 @@ schMap.extend({
     },
     //node和connect是否在同一个导线上
     nodeInConnectBySmall(node, connect) {
-        const nodelastStatus = schMap.getValueBySmalle(node);
-        if (nodelastStatus && (nodelastStatus.form === "line" || nodelastStatus.form === "cross-point")) {
-            for (let i = 0; i < nodelastStatus.connect.length; i++) {
-                if (nodelastStatus.connect[i].isEqual(connect)) {
+        const status = schMap.getValueBySmalle(node);
+        if (status && (status.form === "line" || status.form === "cross-point")) {
+            for (let i = 0; i < status.connect.length; i++) {
+                if (status.connect[i].isEqual(connect)) {
                     return (true);
                 }
             }
@@ -129,7 +129,8 @@ schMap.extend({
         return (
             tempStatus &&
             tempStatus.form === "line" ||
-            tempStatus.form === "cross-point"
+            tempStatus.form === "cross-point" ||
+            tempStatus.form === "cover-point"
         );
     },
     //当前点是否是器件引脚

@@ -2271,17 +2271,26 @@ LineClass.prototype = {
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i],
-                last = nodes[i - 1];
+                last = nodes[i - 1],
+                status = schMap.getValueByOrigin(node);
+
+            //非端点节点
             if (i && i !== nodes.length - 1) {
-                //非端点节点
-                schMap.setValueByOrigin(node, {
-                    form: "line",
-                    id: this.id,
-                    connect: []
-                });
-            } else {
-                //导线起点、终点
-                const status = schMap.getValueByOrigin(node);
+                if (status && status.form === "line" &&
+                    !schMap.nodeInConnectByOrigin(node, last)) {
+                    status.form = "cover-point";
+                    status.id += " " + this.id;
+                }
+                else {
+                    schMap.setValueByOrigin(node, {
+                        form: "line",
+                        id: this.id,
+                        connect: []
+                    });
+                }
+            }
+            //导线端点
+            else {
                 if (!status) {
                     schMap.setValueByOrigin(node, {
                         form: "line-point",
@@ -2294,12 +2303,13 @@ LineClass.prototype = {
                     if (!status.id) {
                         //当前ID为空，那么直接赋值
                         status.id = this.id;
-                    } else {
+                    }
+                    else {
                         //当前ID不为空，那么向原ID后面追加当前ID
                         status.id += " " + this.id;
                     }
                 }
-                else if(status.form === "line-point") {
+                else if (status.form === "line-point") {
                     const id = status.id;
                     schMap.setValueByOrigin(node, {
                         form: "cross-point",
@@ -2316,13 +2326,24 @@ LineClass.prototype = {
     deleteSign() {
         const nodes = this.way.nodeCollection();
         for (let i = 0; i < nodes.length; i++) {
-            const node = nodes[i];
+            const node = nodes[i],
+                status = schMap.getValueByOrigin(node);
+            //非端点节点
             if (i && i !== nodes.length - 1) {
-                //非端点节点
-                schMap.deleteValueByOrigin(node);
-            } else {
-                //导线端点
-                const status = schMap.getValueByOrigin(node);
+                if (status.form === "cover-point") {
+                    status.id = status.id.split(" ")
+                        .filter((n) => n !== this.id)[0];
+                    status.form = "line";
+
+                    schMap.deleteConnectByOrigin(node, nodes[i - 1]);
+                    schMap.deleteConnectByOrigin(nodes[i - 1], node);
+                }
+                else if (status.form === "line") {
+                    schMap.deleteValueByOrigin(node);
+                }
+            }
+            //导线端点
+            else {
                 if (!status) { continue; }
 
                 if (status.form === "line-point") {
