@@ -1489,6 +1489,7 @@ partsNow.extend({
         self.forEach((part) => {
             if (part.current.status === "move") {
                 if (part.partType === "line") {
+                    part.way.clone(part.current.wayBackup);
                     part.way.standardize(bias);
                 }
                 else {
@@ -1534,16 +1535,23 @@ partsNow.extend({
             return (true);
         }
         else {
-            //导线恢复旧路径
-            self.forEach((line) => {
-                if (line.partType === "line") {
-                    line.way.clone(line.current.wayBackup);
-                }
-            });
-
-            //不可放置器件
+            //非粘贴状态，当前所有器件恢复原装
             if (opt !== "paste") {
-
+                //器件
+                self.forEach((part) => {
+                    if (part.partType !== "line") {
+                        part.move(part.current.bias);
+                        part.markSign();
+                    }
+                });
+                //导线
+                self.forEach((line) => {
+                    if (line.partType === "line") {
+                        line.way.clone(line.current.wayBackup);
+                        line.render();
+                        line.markSign();
+                    }
+                });
             }
 
             //放置失败
