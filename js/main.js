@@ -959,7 +959,8 @@ mainPage.on("mousedown","g.editor-parts g.part-point",function(event) {
             part.setConnect(mark, line.id);
             line.setConnect(0, part.id + "-" + mark);
             line.startPath(event, "draw", "new");
-        } else {
+        }
+        else {
             line.startPath(event, "draw");
         }
 
@@ -1042,7 +1043,9 @@ mainPage.on({
                 }[style],
                 point = mouseRound.add(dire),
                 id = schMap.getValueBySmalle(point).id,
-                line = partsAll.findPart(id);
+                line = partsAll.findPart(id),
+                lines = schMap.getValueBySmalle(mouseRound).id.split(" "),
+                del = lines.length === 4 ? false : "new";
 
             if(!style) { return false; }
 
@@ -1050,7 +1053,7 @@ mainPage.on({
 
             line.toFocus();
             line.current = grid.createData(event);
-            line.startPath(event, "draw");
+            line.startPath(event, "draw", del);
 
             mainPage.attr("class", "mouse-line");
             mainPage.on("mousemove", mousemoveEvent);

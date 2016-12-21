@@ -620,8 +620,8 @@ const Search = {
     //绘制导线
     draw: {
         start: function(event, opt) {
-            const grid = this.current,
-                mouseRound = grid.mouse(event).round();
+            const cur = this.current,
+                mouseRound = cur.mouse(event).round();
 
             //当前点是导线起点，则导线需要反转
             if (this.findConnect(mouseRound) === 0) {
@@ -640,10 +640,9 @@ const Search = {
 
             this.toFocus();
             this.enlargeCircle(1);
-            this.toGoing();
             this.deleteSign();
             this.freedConnect(1);
-            this.wayDrawing();
+            this.toGoing();
 
             this.current.initTrend = this.initTrend(0);
 
@@ -653,10 +652,11 @@ const Search = {
         },
         callback: function(event) {
             //预处理
-            const gridL = this.current.gridL,
-                enforceAlign = this.current.enforceAlign,
-                mouseBias = this.current.mouseBias(event),
-                mousePosition = this.current.mouse(event),
+            const cur = this.current,
+                gridL = cur.gridL,
+                enforceAlign = cur.enforceAlign,
+                mouseBias = cur.mouseBias(event),
+                mousePosition = cur.mouse(event),
                 mouseRound = mousePosition.round(),
                 mouseFloor = mousePosition.floor(),
                 pointStatus = schMap.getValueByOrigin(mouseRound),
@@ -691,10 +691,10 @@ const Search = {
                 enforceAlign.flag = false;
                 //准备方格数据
                 const partObj = enforceAlign.part,
-                    nodeStart = this.current.startNode,
-                    initTrend = this.current.initTrend,
-                    mouseGridL = this.current.mouseGrid || new WayMap(),
-                    mouseGrid = this.current.mouseGrid = new WayMap();
+                    nodeStart = cur.startNode,
+                    initTrend = cur.initTrend,
+                    mouseGridL = cur.mouseGrid || new WayMap(),
+                    mouseGrid = cur.mouseGrid = new WayMap();
                 let endGrid = mouseFloor.toGrid();
 
                 //在器件上，需要与器件引脚对齐
@@ -730,7 +730,8 @@ const Search = {
             }
 
             //后处理
-            const mouseGrid = this.current.mouseGrid;
+            const mouseGrid = cur.mouseGrid,
+                  backup = cur.backup;
             if (lastConnect) {
                 lastConnect.part.shrinkCircle(lastConnect.sub);
             }
@@ -759,8 +760,8 @@ const Search = {
                 }
                 case "point": {
                     //与点对齐模式
-                    this.shrinkCircle(1);
                     this.way.clone(mouseGrid.get(mouseRound));
+                    this.shrinkCircle(1);
                     break;
                 }
                 case "align": {
@@ -776,6 +777,9 @@ const Search = {
                     this.way.endToMouse(mousePosition);
                     this.enlargeCircle(1);
                 }
+            }
+            if (backup && backup.node.isEqual(this.way.get(-1))) {
+                this.way.clone(backup.way);
             }
             this.wayDrawing();
         },
