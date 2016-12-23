@@ -54,18 +54,17 @@ function Matrix(row, column = row, value = 0) {
 //实例方法
 Matrix.prototype = {
     constructor: Matrix,
-    length: 0,
     //交换坐标元素a、b所在行、列
-    exchange(a,b) {
+    exchange(a, b) {
         //交换行
-        if(a[0] !== b[0]) {
+        if (a[0] !== b[0]) {
             const temp = this[a[0]];
             this[a[0]] = this[b[0]];
             this[b[0]] = temp;
         }
         //交换列
-        if(a[1] !== b[1]) {
-            for(let i = 0; i < this.length; i++) {
+        if (a[1] !== b[1]) {
+            for (let i = 0; i < this.length; i++) {
                 const temp = this[i][a[1]];
                 this[i][a[1]] = this[i][b[1]];
                 this[i][b[1]] = temp;
@@ -73,28 +72,29 @@ Matrix.prototype = {
         }
     },
     //this * ma
-    //计算成功则返回结果，失败则返回false
     mul(ma) {
         //以输入数据创建矩阵
         const a = (ma instanceof Matrix) ? ma : (new Matrix(ma));
-        if(this.column !== a.row) throw("这两个矩阵无法相乘");
+        if (this.column !== a.row) {
+            throw("这两个矩阵无法相乘");
+        }
         //乘法结果的行与列
         const row = this.row,
             column = a.column;
 
         //乘法计算
         const ans = new Matrix(row, column);
-        for (let i = 0; i < row; i ++) {
-            for (let j = 0; j < column; j ++) {
-                for (let sub = 0; sub < this.column; sub ++)
+        for (let i = 0; i < row; i++) {
+            for (let j = 0; j < column; j++) {
+                for (let sub = 0; sub < this.column; sub++) {
                     ans[i][j] += this[i][sub] * a[sub][j];
+                }
             }
         }
-        if ((row === 1) && (column === 1)) {
-            return (ans[0][0]);
-        } else {
-            return (ans);
-        }
+
+        return ((row === 1) && (column === 1))
+            ? ans[0][0]
+            : ans;
     },
     //ma * this
     multo(ma) {
@@ -139,21 +139,11 @@ Matrix.prototype = {
             L[i][i] = 1;
         return ([L, U, P]);
     },
-    //基于LU分解的求行列式值
-    /*
-     valueOfDet: function (ma) {
-     const [,U] = Math.matrix.luDecompose(ma);
-     let ans = 1;
-     for(let i = 0; i < U.length; i++) {
-     ans *= U[i][i];
-     }
-     return(ans);
-     },*/
     //基于LU分解的矩阵求逆
     inverse() {
         const [L,U,P] = this.luDecompose(), n = this.row;
         for (let i = 0; i < U.row; i++)
-            if(!U[i][i]) throw("逆矩阵不存在");
+            if (!U[i][i]) throw("逆矩阵不存在");
 
         //L、U的逆矩阵初始化
         const li = new Matrix(n);
@@ -163,8 +153,9 @@ Matrix.prototype = {
             ui[i][i] = 1 / U[i][i];
             for (let j = i - 1; j >= 0; j--) {
                 let s = 0;
-                for (let k = j + 1; k <= i; k++)
+                for (let k = j + 1; k <= i; k++) {
                     s += U[j][k] * ui[k][i];
+                }
                 ui[j][i] = -s / U[j][j];
             }
         }
@@ -172,32 +163,36 @@ Matrix.prototype = {
         for (let i = 0; i < n; i++) {
             li[i][i] = 1;
             for (let j = i + 1; j < n; j++) {
-                for (let k = i; k <= j - 1; k++)
+                for (let k = i; k <= j - 1; k++) {
                     li[j][i] -= L[j][k] * li[k][i];
+                }
             }
         }
         //ul的逆矩阵相乘得到原矩阵的逆矩阵
         const ans = ui.mul(li).mul(P);
-        return(ans);
+        return (ans);
     },
     //枚举矩阵元素
     forEach(callback) {
-        if(this instanceof Matrix) {
-            for(let i = 0; i < this.row; i++)
-                for(let j = 0; j < this.column; j++) {
-                    callback(this[i][j], [i,j], this);
+        if (this instanceof Matrix) {
+            for (let i = 0; i < this.row; i++)
+                for (let j = 0; j < this.column; j++) {
+                    callback(this[i][j], [i, j], this);
                 }
-        } else if(this instanceof Array){
+        }
+        else if (this instanceof Array) {
             const range = Matrix.isMatrix(this);
-            if(range) {
-                for(let i = 0; i < range[0]; i++)
-                    for(let j = 0; j < range[1]; j++) {
-                        callback(this[i][j], [i,j], this);
+            if (range) {
+                for (let i = 0; i < range[0]; i++)
+                    for (let j = 0; j < range[1]; j++) {
+                        callback(this[i][j], [i, j], this);
                     }
-            } else {
+            }
+            else {
                 throw("只有矩阵或者类似矩阵的数组才能调用此方法");
             }
-        } else {
+        }
+        else {
             throw("只有矩阵或者类似矩阵的数组才能调用此方法");
         }
     },
@@ -214,21 +209,15 @@ Matrix.prototype = {
     //向右串联矩阵，原矩阵不变，返回新矩阵
     concatRight(...args) {
         let main = Matrix.clone(this);
-        for(let x = 0; x < args.length; x++) {
-            const ma = args[x];
-            let row, column;
-            if(ma instanceof Matrix) {
-                row = ma.row;
-                column = ma.column;
-            } else {
-                const temp = Matrix.isMatrix(ma);
-                if(temp) {
-                    row = temp[0];
-                    column = temp[1];
-                } else
-                    throw("矩阵格式错误");
+        for (let x = 0; x < args.length; x++) {
+            const ma = args[x],
+                rc = Matrix.isMatrix(ma),
+                [row, column] = rc ? rc : [];
+
+            if (!row) {
+                throw("无法串联矩阵");
             }
-            if (main.row !== row) throw("无法串联矩阵");
+
             const ans = new Matrix(row, main.column + column);
             //添加main矩阵元素到ans
             main.forEach((n, [i, j]) => ans[i][j] = n);
@@ -236,26 +225,20 @@ Matrix.prototype = {
             Matrix.prototype.forEach.call(ma, ((n, [i, j]) => ans[i][j + main.column] = n));
             main = ans;
         }
-        return(main);
+        return (main);
     },
     //向下串联矩阵，原矩阵不变，返回新矩阵
     concatDown(...args) {
         let main = Matrix.clone(this);
-        for(let x = 0; x < args.length; x++) {
-            const ma = args[x];
-            let row, column;
-            if (ma instanceof Matrix) {
-                row = ma.row;
-                column = ma.column;
-            } else {
-                const temp = Matrix.isMatrix(ma);
-                if (temp) {
-                    row = temp[0];
-                    column = temp[1];
-                } else
-                    throw("矩阵格式错误");
+        for (let x = 0; x < args.length; x++) {
+            const ma = args[x],
+                rc = Matrix.isMatrix(ma),
+                [row, column] = rc ? rc : [];
+
+            if (!row) {
+                throw("无法串联矩阵");
             }
-            if (this.column !== column) throw("无法串联矩阵");
+
             const ans = new Matrix(main.row + row, column);
             //添加this矩阵元素到ans
             main.forEach((n, [i, j]) => ans[i][j] = n);
@@ -263,31 +246,33 @@ Matrix.prototype = {
             Matrix.prototype.forEach.call(ma, ((n, [i, j]) => ans[i + main.row][j] = n));
             main = ans;
         }
-        return(main);
+        return (main);
     },
     //选取矩阵的一部分，返回新矩阵
-    slice(a,b) {
+    slice(a, b) {
         //输入格式检查
-        if((!(a instanceof Array)) || (a.length !== 2) || (typeof a[0] !== "number") || (typeof a[1] !== "number") ||
+        if ((!(a instanceof Array)) || (a.length !== 2) || (typeof a[0] !== "number") || (typeof a[1] !== "number") ||
             (!(b instanceof Array)) && (b.length !== 2) || (typeof b[0] !== "number") || (typeof b[1] !== "number") ||
             (a[0] < 0) || (b[0] < 0) || (a[1] < 0) || (b[1] < 0) ||
-            (a[0] > this.row) || (b[0] > this.row) || (a[1] > this.column) || (b[1] > this.column))
+            (a[0] > this.row) || (b[0] > this.row) || (a[1] > this.column) || (b[1] > this.column)) {
             throw("输入坐标错误");
+        }
 
         const start = [], end = [];
         [start[0], end[0]] = a[0] < b[0] ? [a[0], b[0]] : [b[0], a[0]];
         [start[1], end[1]] = a[1] < b[1] ? [a[1], b[1]] : [b[1], a[1]];
 
         const ans = new Matrix(end[0] - start[0] + 1, end[1] - start[1] + 1);
-        for(let i = start[0]; i <= end[0]; i++)
-            for(let j = start[1]; j <= end[1]; j++) {
+        for (let i = start[0]; i <= end[0]; i++) {
+            for (let j = start[1]; j <= end[1]; j++) {
                 ans[i - start[0]][j - start[1]] = this[i][j];
             }
-        return(ans);
+        }
+        return (ans);
     },
     //输出string
     vision() {
-        for(let i = 0; i < this.row; i++) {
+        for (let i = 0; i < this.row; i++) {
             console.log(this[i].join(","));
         }
     }
