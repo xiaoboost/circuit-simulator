@@ -42,27 +42,37 @@ function extendPoint(x) {
 //线段分段
 function lineSplit(maxExpand, minExpand, num) {
     const rank = maxExpand.rank(),
-        max = (maxExpand / rank).toSFixed(),
-        min = (Math.abs(minExpand / rank)).toSFixed(),
-        ans = [];
+          max = (maxExpand / rank).toSFixed(),
+          min = (Math.abs(minExpand / rank)).toSFixed(),
+          ans = [];
 
+    //严格分段
     for (let i = 1; i < 2 * num; i++) {
-        const segment = (max / i).toSFixed(8),
-            minNumber = (min / segment).toSFixed(8);
+        const maxNum = (max / i).toSFixed(8),
+              minNum = (min / maxNum).toSFixed(8);
 
         //小数点五位以内被视作整除
-        if ((segment === parseFloat(segment.toFixed(5))) &&
-            (minNumber === Math.floor(minNumber))) {
-            ans.push(i + minNumber);
+        if ((maxNum === parseFloat(maxNum.toFixed(5))) &&
+            (minNum === Math.floor(minNum))) {
+            ans.push(i + minNum);
         }
     }
-    return (ans.reduce(function (pre, next) {
-        if (Math.abs(pre - num) < Math.abs(next - num)) {
-            return (pre);
-        } else {
-            return (next);
+
+    //普通分段
+    if (!ans.length) {
+        const tol = (max + min).toSFixed();
+        for (let i = 1; i < 2 * num; i++) {
+            const tolNum = (tol / i).toSFixed(8);
+            if (tolNum === parseFloat(tolNum.toFixed(5))) {
+                ans.push(i);
+            }
         }
-    }));
+    }
+
+    return ans.length
+        ? ans.reduce((pre, next) => ((Math.abs(pre - num) < Math.abs(next - num))
+            ? pre : next))
+        : num;
 }
 //延长线段
 function extendLine(line, long) {
@@ -77,33 +87,38 @@ function extendLine(line, long) {
             rank = number.rank(),
             numberFloor = Math.floor(number / rank),
             minExpand = (numberFloor === (number / rank).toSFixed()) ?
-                numberFloor - 1 : numberFloor,
+            numberFloor - 1 : numberFloor,
             maxExpand = minExpand + 2;
 
-        if(line[0] > 0) {
+        if (line[0] > 0) {
             axisMin = (minExpand * rank).toSFixed();
             axisMax = (maxExpand * rank).toSFixed();
-        } else {
-            axisMin = - (maxExpand * rank).toSFixed();
-            axisMax = - (minExpand * rank).toSFixed();
         }
-        return([axisMin, axisMax, lineSplit((axisMax - axisMin), 0, num)]);
-    } else if (line[0] * line[1] <= 0) {
+        else {
+            axisMin = -(maxExpand * rank).toSFixed();
+            axisMax = -(minExpand * rank).toSFixed();
+        }
+        return ([axisMin, axisMax, lineSplit((axisMax - axisMin), 0, num)]);
+    }
+    else if (line[0] * line[1] <= 0) {
         //两点异号，0点包含在其中
         const max = Math.max(Math.abs(line[0]), Math.abs(line[1])),
             min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
-            maxExpand = extendPoint(max),       //最大值先被固定
+            //最大值先被固定
+            maxExpand = extendPoint(max),
             minExpand = (extendPoint((maxExpand + min) / 2) * 2 - maxExpand).toSFixed();
 
         if (Math.abs(line[0]) < Math.abs(line[1])) {
-            axisMin = - minExpand;
+            axisMin = -minExpand;
             axisMax = maxExpand;
-        } else {
-            axisMin = - maxExpand;
+        }
+        else {
+            axisMin = -maxExpand;
             axisMax = minExpand;
         }
-        return([axisMin, axisMax, lineSplit(axisMax, axisMin, num)]);
-    } else {
+        return ([axisMin, axisMax, lineSplit(axisMax, axisMin, num)]);
+    }
+    else {
         //两点同号，0点没有被包含其中，两端悬浮
         const min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
             maxExpand = extendPoint(Math.abs(line[0] - line[1]) / 2) * 2,
@@ -111,13 +126,14 @@ function extendLine(line, long) {
             minFloor = Math.floor(min / (maxExpand / count)) * (maxExpand / count);
 
         if (line[0] < 0) {
-            axisMin = - (maxExpand + minFloor);
-            axisMax = - minFloor;
-        } else {
+            axisMin = -(maxExpand + minFloor);
+            axisMax = -minFloor;
+        }
+        else {
             axisMin = minFloor;
             axisMax = maxExpand + minFloor;
         }
-        return([axisMin, axisMax, count]);
+        return ([axisMin, axisMax, count]);
     }
 }
 //收缩坐标
