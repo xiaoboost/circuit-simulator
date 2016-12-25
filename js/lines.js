@@ -816,6 +816,7 @@ const Search = {
 
                     if (!part.connect[mark]) {
                         this.nodeToConnect(1);
+                        part.toFocus();
                     }
                     else {
                         //此点已经被占用
