@@ -162,12 +162,13 @@ schMap.extend({
             return (start);
         }
 
-        let node = [start[0], start[1]];
+        let node = [start[0], start[1]],
+            next = [node[0] + vector[0], node[1] + vector[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进
-        while (schMap.isLine(node, "small") && !node.isEqual(end)) {
-            const nodeNow = [node[0] + vector[0], node[1] + vector[1]];
-            if (schMap.nodeInConnectBySmall(node, nodeNow)) {
-                node = nodeNow;
+        while (schMap.isLine(next, "small") && !node.isEqual(end)) {
+            if (schMap.nodeInConnectBySmall(node, next)) {
+                node = next;
+                next = [node[0] + vector[0], node[1] + vector[1]];
             }
             else {
                 break;
