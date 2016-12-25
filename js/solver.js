@@ -297,6 +297,8 @@ const partInternal = {
 //根据连接网络检查电路错误
 function error(nodeHash, branchHash) {
 
+
+
     return(false);
 }
 //从管脚到支路电流计算矩阵
@@ -461,7 +463,8 @@ function Solver(collection) {
     });
     //错误检查
     if(errorTip = error(nodeHash, branchHash)) {
-        return(errorTip);
+        this.error = errorTip;
+        return(this);
     }
     //计算结点数量
     nodeNumber = function (Hash) {

@@ -46,22 +46,37 @@
   transition-delay 0ms
   visibility visible
 
+#error-tip,
+#float-tool-tip
+  display none
+  opacity 1
+  position absolute
+  padding 5px
+  margin 6px
+  background #d9edf7
+  color #3f8aaf
+  font-family font-text
+  box-shadow 0 0 2px color-shadow
+  border-radius 3px
+  text-align center
+  height auto
+  font-size 16px
+  over-flow hidden
+  user-select none
+
+#error-tip
+  font-size 18px
+  display block
+  transition opacity 400ms linear
+  position fixed
+  right 130px
+  bottom 40px
+
+#error-tip.disappear
+  opacity 0
+  transition opacity 1s linear
+
 #menu-add-parts
-  #float-tool-tip
-    display none
-    position absolute
-    padding 5px
-    margin 6px
-    background #d9edf7
-    color #3f8aaf
-    font-family font-text
-    box-shadow 0 0 2px color-shadow
-    border-radius 3px
-    text-align center
-    height auto
-    font-size 16px
-    over-flow hidden
-    user-select none
   .parts-menu
     margin 20px 30px 20px 30px
     .parts-list
@@ -116,7 +131,6 @@
       span:before,
       span:after
         width 0
-
 
 #menu-config
   .st-menu-input-title

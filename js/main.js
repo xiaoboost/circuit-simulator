@@ -39,17 +39,18 @@ const grid = (function SchematicsGrid() {
             enumerable: true,
             configurable: true,
 
-            get: function() {
-                return(!!(flag & (1 << i)));
+            get: function () {
+                return (!!(flag & (1 << i)));
             }
         });
-        const setValue = "set" + continuous[i].substring(0,1).toUpperCase() + continuous[i].substring(1);
+        const setValue = "set" + continuous[i].substring(0, 1).toUpperCase() + continuous[i].substring(1);
         //对标志位的操作必须通过此函数
-        self[setValue] = function(value) {
+        self[setValue] = function (value) {
             value = Number(!!value);
-            if(value) {
+            if (value) {
                 flag |= 1 << i;
-            } else {
+            }
+            else {
                 flag &= 0xFFFF ^ (1 << i);
             }
         };
@@ -78,7 +79,10 @@ const grid = (function SchematicsGrid() {
         mouseLastY = 0;
 
     const copyStack = [],   //复制器件堆栈
-        revocation = [];    //撤销堆栈，最多保留10次操作
+          revocation = [],  //撤销堆栈，最多保留10次操作
+          textTip = $("<div>", {id: "error-tip", class: "disappear"});
+
+    $("#editor-container").append(textTip);
 
     //当前鼠标位置
     function mouse(event) {
@@ -343,6 +347,17 @@ const grid = (function SchematicsGrid() {
     //记录堆栈是否有数据
     self.isRevocate = function() {
         return(!!revocation.length);
+    }
+    //错误提示
+    self.error = function(text) {
+        textTip.text(text);
+        textTip.attr("style", "");
+        textTip.removeClass("disappear");
+
+        //5秒后消失
+        setTimeout(() => textTip.addClass("disappear"), 5000);
+        //6秒后脱离文档流
+        setTimeout(() => textTip.css("display", "none"), 6000);
     }
 
     //保留的全局临时变量
@@ -659,13 +674,6 @@ action.on("click", "#fab-run", function(event) {
         fabText = $("#fab-text"),
         text = fabText.childrens(0),
         data = {voltage: [], current: []};
-    //开始求解前的图标变换
-    for(let i = 1; i < fabs.length; i++) {
-        fabs.get(i).css("display", "none");
-    }
-    fabRun.css("display", "none");
-    fabText.css("display", "");
-    text.text("0%");
 
     //建立电路求解器
     const diagrams = partsAll.connectGraph()
@@ -674,6 +682,27 @@ action.on("click", "#fab-run", function(event) {
             ans.iteration = ans.solver.solve();
             return(ans);
         });
+    //错误代码
+    let error = "";
+
+    //电路图为空
+    if (!diagrams.length) {
+        grid.error("电路图不能为空");
+        return(false);
+    }
+    //某电路网络有错误
+    else if (diagrams.some((n) => (error = n.error))) {
+        grid.error(error);
+        return(false);
+    }
+
+    //求解前先变换图标
+    for(let i = 1; i < fabs.length; i++) {
+        fabs.get(i).css("display", "none");
+    }
+    fabRun.css("display", "none");
+    fabText.css("display", "");
+    text.text("0%");
 
     //求解主进程，异步进行
     setTimeout(function process() {
@@ -692,7 +721,8 @@ action.on("click", "#fab-run", function(event) {
         if (!endFlag) {
             text.text(diagrams[0].now.value + "%");
             setTimeout(process, delayTime);
-        } else {
+        }
+        else {
             text.text("100%");
             for(let i = 0; i < diagrams.length; i++) {
                 data.voltage = data.voltage.concat(diagrams[i].solver.observeVoltage);
@@ -718,7 +748,6 @@ action.on("click", "#fab-run", function(event) {
             }, 1000);
         }
     }, delayTime);
-
 });
 //器件属性菜单的取消键
 parameter.on("click", "#parameter-bottom-cancel", function() {
