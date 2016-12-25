@@ -296,10 +296,11 @@ const partInternal = {
 
 //根据连接网络检查电路错误
 function error(nodeHash, branchHash) {
-
-
-
-    return(false);
+    let ans = "";
+    if (Object.keys(nodeHash).every((n) => nodeHash[n])) {
+        ans = "请为每个电路网络设置参考地";
+    }
+    return (ans);
 }
 //从管脚到支路电流计算矩阵
 function pinToCurrent(pin, nodeHash, branchHash, branchNumber) {
@@ -348,7 +349,7 @@ function Solver(collection) {
 
     let nodeNumber = 1,             //节点数量
         branchNumber = 0,           //支路数量
-        errorTip = "";              //错误代码
+        errorTip;                   //错误代码
 
     //扫描所有导线(以后可能还会有“网络标识符”)，建立[管脚->节点号]对应表
     collection.forEach(function (item) {

@@ -357,7 +357,7 @@ const grid = (function SchematicsGrid() {
         //5秒后消失
         setTimeout(() => textTip.addClass("disappear"), 5000);
         //6秒后脱离文档流
-        setTimeout(() => textTip.css("display", "none"), 6000);
+        setTimeout(() => textTip.css("z-index", "-10"), 6000);
     }
 
     //保留的全局临时变量
@@ -691,7 +691,7 @@ action.on("click", "#fab-run", function(event) {
         return(false);
     }
     //某电路网络有错误
-    else if (diagrams.some((n) => (error = n.error))) {
+    else if (diagrams.some((n) => (error = n.solver.error))) {
         grid.error(error);
         return(false);
     }
