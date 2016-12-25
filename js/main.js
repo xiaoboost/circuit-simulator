@@ -888,7 +888,7 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
             partsNow.checkLine();
             //参考地的右键时，隐藏“编辑参数”选项
             (clickpart.partType === "reference_ground")
-                ? contextSet(event, "part-gnd")
+                ? contextSet(event, "parts")
                 : contextSet(event, "part");
         }
     }
