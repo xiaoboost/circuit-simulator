@@ -414,7 +414,11 @@ function mousemoveEvent(event) {
         //绘制多选框
         case grid.selectBox: {
             const node = grid.mouse(event),
-                start = grid.current.selectionBoxStart;
+                start = grid.current.selectionBoxStart,
+                maxLen = Math.max(
+                    Math.abs(node[0] - start[0]),
+                    Math.abs(node[1] - start[1])
+                );
 
             $("#select-box").attr("points",
                 start.join(",") + " " +
@@ -422,7 +426,7 @@ function mousemoveEvent(event) {
                 node.join(",") + " " +
                 start[0] + "," + node[1]
             );
-            mainPage.attr("class", "mouse-selectBox");
+            (maxLen > 3) && mainPage.attr("class", "mouse-selectBox");
             break;
         }
         //导线变形
@@ -874,15 +878,18 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
 
         if (parts.has(clickpart.id) && (parts.length > 1)) {
             //多个器件的右键
-            contextSet(event, "parts");
             partsNow.checkLine();
+            contextSet(event, "parts");
         }
         else {
             //单个器件的右键
             clearStatus();
             clickpart.toFocus();
             partsNow.checkLine();
-            contextSet(event, "part");
+            //参考地的右键时，隐藏“编辑参数”选项
+            (clickpart.partType === "reference_ground")
+                ? contextSet(event, "part-gnd")
+                : contextSet(event, "part");
         }
     }
     //阻止事件冒泡
