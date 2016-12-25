@@ -5,9 +5,6 @@ body
   border  0
   width 100%
   height 100%
-  -webkit-user-select none
-  -moz-user-select none
-  -ms-user-select none
   user-select none
 
 body div
@@ -23,13 +20,11 @@ body div
   opacity 0
   z-index -3
   background rgba(0,0,0,0.2)
-  -webkit-transition opacity 0.4s ease, z-index 20ms linear 0.4s
   transition opacity 0.4s ease, z-index 20ms linear 0.4s
 
 .open-gray #shade-gray
   z-index 8
   opacity 1
-  -webkit-transition opacity 0.4s ease, z-index 0ms linear
   transition opacity 0.4s ease, z-index 0ms linear
 
 //绘图部分背景
@@ -43,9 +38,6 @@ body div
   background-size 20px
   background-position -40px -40px
   background-repeat repeat
-  -webkit-user-select none
-  -moz-user-select none
-  -ms-user-select none
   user-select none
   cursor default
   &.mouse-line
@@ -81,7 +73,7 @@ body div
   fill transparent
   g#mouse-control,
   g#area-of-parts
-    position:absolute
+    position absolute
   g#mouse-control
     z-index 2
   g#area-of-parts
@@ -226,7 +218,7 @@ time-point-zoom = 200ms
   .right-line
      height 8px
      &:before
-       position:absolute
+       position absolute
        height 1px
        background #c0c0c0
        width 90%
@@ -313,12 +305,8 @@ time-point-zoom = 200ms
   opacity 1
   transition opacity 200ms linear
   #cover-inner
-    -webkit-border-radius 25px
-    -moz-border-radius 25px
     border-radius 25px
     background-color  #222
-    -webkit-box-shadow 0 0 10px #000000
-    -moz-box-shadow 0 0 10px #000000
     box-shadow 0 0 10px #000000
     position absolute
     top 0
@@ -336,17 +324,14 @@ time-point-zoom = 200ms
       font-size 18px
       font-weight normal
       line-height 60px
-      color  #999
+      color #999
       text-shadow 1px 1px 2px black
     .spinner
-      -webkit-animation rotator 1.4s linear infinite
       animation rotator 1.4s linear infinite
       .path 
         stroke-dasharray 187
         stroke-dashoffset 0
-        -webkit-transform-origin center
         transform-origin center
-        -webkit-animation dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite
         animation dash 1.4s ease-in-out infinite, colors 5.6s ease-in-out infinite
     
 
@@ -359,10 +344,10 @@ time-point-zoom = 200ms
     transform rotate(270deg)
 
 @keyframes rotator 
-  0% 
+  0%
     -webkit-transform rotate(0deg)
     transform rotate(0deg)
-  100% 
+  100%
     -webkit-transform rotate(270deg)
     transform rotate(270deg)
 

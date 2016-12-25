@@ -11,4 +11,4 @@
 [桥式整流](https://xiaoboost.github.io/circuitlab/?init=BridgeRectifier)  
 [运放的同相放大](https://xiaoboost.github.io/circuitlab/?init=PhaseAmplifier)  
 [三极管共射放大](https://xiaoboost.github.io/circuitlab/?init=CommonEmitterAmplifier)  
-[三极管射极跟随](https://xiaoboost.github.io/circuitlab/?init=EmitterFollower)  
+[三极管射极跟随](https://xiaoboost.github.io/circuitlab/?init=EmitterFollower)
