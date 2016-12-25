@@ -2286,6 +2286,19 @@ LineClass.prototype = {
                     status.form = "cover-point";
                     status.id += " " + this.id;
                 }
+                else if (status && status.form === "cover-point") {
+                    const ver = node.add(Point([last, node]).reverse()),
+                        verSta = schMap.getValueByOrigin(ver);
+                    let part, line;
+                    if (verSta.form === "line") {
+                        status.id = verSta.id + " " + this.id;
+                    }
+                    else if (verSta.form === "part-point") {
+                        part = partsAll.findPart(verSta.id);
+                        line = part.connect[verSta.id.split("-")[1]];
+                        status.id = line + " " + this.id;
+                    }
+                }
                 else {
                     schMap.setValueByOrigin(node, {
                         form: "line",
