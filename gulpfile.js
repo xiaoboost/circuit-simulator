@@ -221,7 +221,7 @@ gulp.task('push', function () {
     }
     function js(res) {
         const temp = './js/main2.js',
-            reg1 = /^([^\n]+?'\.\/test'[^\n]+?)$/mg,
+            reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
             reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
 
         gulp.src('./js/main.js')
