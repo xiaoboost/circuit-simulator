@@ -1,38 +1,39 @@
-"use strict";
+'use strict';
 const fs = require('fs'),
-    Transform = require("stream").Transform,
-    Writable = require("stream").Writable,
+    Transform = require('stream').Transform,
+    Writable = require('stream').Writable,
     spawn = require('child_process').spawn,
-    gulp = require("gulp"),
-    htmlmin = require("gulp-htmlmin"),
-    concat = require("gulp-concat"),
-    rename = require("gulp-rename"),
-    stylus = require("gulp-stylus"),
-    webpack = require("gulp-webpack"),
-    base64 = require("gulp-base64"),
-    uglify = require("gulp-uglify"),
-    sourcemaps = require("gulp-sourcemaps"),
-    autoprefixer = require("gulp-autoprefixer"),
+    chalk = require('chalk'),
+    gulp = require('gulp'),
+    htmlmin = require('gulp-htmlmin'),
+    concat = require('gulp-concat'),
+    rename = require('gulp-rename'),
+    stylus = require('gulp-stylus'),
+    webpack = require('gulp-webpack'),
+    base64 = require('gulp-base64'),
+    uglify = require('gulp-uglify'),
+    sourcemaps = require('gulp-sourcemaps'),
+    autoprefixer = require('gulp-autoprefixer'),
 
-    _develop = "Z:/在线仿真网站/",
-    _push = "./.deploy_git/",
+    _develop = 'Z:/在线仿真网站/',
+    _push = './.deploy_git/',
 
     opt = { cwd: _push };
 
 //webpack设置
 const webpackConfig = {
     output: {
-        filename: "script.min.js"
+        filename: 'script.min.js'
     },
     module: {
         loaders: [
             {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: "babel",
+                loader: 'babel',
                 query: {
-                    presets: ["es2015"],
-                    plugins: ["transform-runtime"]
+                    presets: ['es2015'],
+                    plugins: ['transform-runtime']
                 }
             }
         ]
@@ -53,7 +54,7 @@ class Cache extends Writable {
         next();
     }
     getCache(encoding) {
-        encoding = encoding ? encoding : "utf8";
+        encoding = encoding ? encoding : 'utf8';
 
         const buf = Buffer.concat(this._cache);
         return buf.toString(encoding).trim();
@@ -71,7 +72,7 @@ function replace(search, replacement) {
         const buffer = buf._contents.toString('utf8')
             .replace(search, replacement);
 
-        buf._contents = Buffer.from(buffer, "utf8");
+        buf._contents = Buffer.from(buffer, 'utf8');
 
         next(null, buf);
     }
@@ -146,102 +147,96 @@ function git() {
     }
 }
 
-gulp.task("develop-html", function() {
-    return gulp.src("./index.html")
+gulp.task('dev-html', function() {
+    return gulp.src('./index.html')
         .pipe(htmlmin({
             collapseWhitespace: true,
             removeComments: true
         }))
         .pipe(gulp.dest(_develop));
 });
-gulp.task("develop-stylus", function () {
-    return gulp.src("./css/main.styl")
+gulp.task('dev-stylus', function () {
+    return gulp.src('./css/main.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({compress: true}))
         .pipe(autoprefixer())
         .pipe(base64())
         .pipe(sourcemaps.write())
-        .pipe(rename("circuitlab.min.css"))
-        .pipe(gulp.dest(_develop + "src/"));
+        .pipe(rename('circuitlab.min.css'))
+        .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task("develop-js", function () {
-    return gulp.src("./js/main.js")
+gulp.task('dev-js', function () {
+    return gulp.src('./js/main.js')
         .pipe(sourcemaps.init())
         .pipe(webpack(webpackConfig))
         .pipe(sourcemaps.write())
-        .pipe(gulp.dest(_develop + "src/"));
+        .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task("develop-image", function () {
-    return gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
-        .pipe(gulp.dest(_develop + "src/"));
+gulp.task('dev-image', function () {
+    return gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
+        .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task("build", function () {
+gulp.task('build', ['dev-html', 'dev-stylus', 'dev-js', 'dev-image'], function () {
     //设置静态服务器
-    const express = require("express"),
-        app = express();
+    const express = require('express'),
+          app = express();
 
     //允许网页访问theme文件夹
     app.use(express.static(_develop));
     //建立虚拟网站，端口5000
     app.listen(5000, function () {
-        console.info(" INFO : 虚拟网站已建立于 http://localhost:5000/");
-        console.info(" INFO : CTRL + C 退出当前状态");
+        console.log(chalk.green('\nINFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
+        console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
     });
 
-    // 首次运行task
-    gulp.run("develop-html", "develop-stylus", "develop-js", "develop-image");
-
-    // 监听html文件变化
-    gulp.watch("./index.html", ["develop-html"]);
-    // 监听stylus文件变化
-    gulp.watch("./css/*.styl", ["develop-stylus"]);
-    // 监听js文件
-    gulp.watch("./js/*.js", ["develop-js"]);
+    gulp.watch('./index.html', ['dev-html']);
+    gulp.watch('./css/*.styl', ['dev-stylus']);
+    gulp.watch('./js/*.js', ['dev-js']);
 });
 
 //发布
-gulp.task("push", function () {
+gulp.task('push', function () {
     function html(res) {
-        gulp.src("./index.html")
+        gulp.src('./index.html')
             .pipe(htmlmin({
                 collapseWhitespace: true,
                 removeComments: true
             }))
             .pipe(gulp.dest(_push))
-            .on("end", res);
+            .on('end', res);
     }
     function image(res) {
-        gulp.src(["./img/favicons.ico", "./img/circuit-grid.svg"])
-            .pipe(gulp.dest(_push + "src/"))
-            .on("end", res);
+        gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
+            .pipe(gulp.dest(_push + 'src/'))
+            .on('end', res);
     }
     function css(res) {
-        gulp.src("./css/main.styl")
+        gulp.src('./css/main.styl')
             .pipe(stylus({compress: true}))
             .pipe(autoprefixer())
             .pipe(base64())
-            .pipe(rename("circuitlab.min.css"))
-            .pipe(gulp.dest(_push + "src/"))
-            .on("end", res);
+            .pipe(rename('circuitlab.min.css'))
+            .pipe(gulp.dest(_push + 'src/'))
+            .on('end', res);
     }
     function js(res) {
-        const temp = "./js/main2.js",
-            reg1 = /^([^\n]+?"\.\/test"[^\n]+?)$/mg,
+        const temp = './js/main2.js',
+            reg1 = /^([^\n]+?'\.\/test'[^\n]+?)$/mg,
             reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
 
-        gulp.src("./js/main.js")
-            .pipe(replace(reg1, "//$1"))
-            .pipe(rename("main2.js"))
-            .pipe(gulp.dest("./js/"))
+        gulp.src('./js/main.js')
+            .pipe(replace(reg1, '//$1'))
+            .pipe(rename('main2.js'))
+            .pipe(gulp.dest('./js/'))
             .pipe(webpack(webpackConfig))
-            .pipe(replace(reg2, "//$1"))
+            .pipe(replace(reg2, '//$1'))
             .pipe(uglify())
-            .pipe(gulp.dest(_push + "src/"))
-            .on("end", () => { fs.unlinkSync(temp); res() });
+            .pipe(gulp.dest(_push + 'src/'))
+            .on('end', () => { fs.unlinkSync(temp); res() });
     }
 
-    const url = "https://github.com/xiaoboost/circuitlab.git",
-          branch = "gh-pages",
+    const url = 'https://github.com/xiaoboost/circuitlab.git',
+          branch = 'gh-pages',
           promises = [html, image, css, js].map((n) => new Promise(n));
 
     Promise.all(promises)
@@ -249,6 +244,6 @@ gulp.task("push", function () {
         .then(git('add', '-A'))
         .then(git('commit', '-m', 'update'))
         .then(git('push', '-u', url, 'master:' + branch, '--force'))
-        .then(() => console.log('\n INFO: 文件上传完毕。'))
-        .catch((err) => console.log('\n INFO: 发生错误，意外中止\n' + err));
+        .then(() => console.log(chalk.green('\nINFO:') + ' 文件上传完毕'))
+        .catch((err) => console.log(chalk.red('\nERROR:') + ' 发生错误，意外中止\n' + err));
 });
