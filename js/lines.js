@@ -210,8 +210,8 @@ function SearchRules(nodestart, nodeend, mode) {
         }
         return (false);
     }
-    //点对点（在导线中）搜索的结束判断
-    function checkEndNodeInLine(node) {
+    //绘制时，点对点（在导线中）
+    function checkEndNodeInLine1(node) {
         //是否等于终点
         if (node.point.isEqual(end)) {
             return (true);
@@ -237,6 +237,10 @@ function SearchRules(nodestart, nodeend, mode) {
                 node2End = Point([node.point, end]);
             return (node2End.isOppoDire(junction));
         }
+    }
+    //移动器件时，点对点（在导线中）
+    function checkEndNodeInLine2(node) {
+        return checkEndEqLine(node.point, endLine);
     }
 
     //节点扩展规则
@@ -362,21 +366,14 @@ function SearchRules(nodestart, nodeend, mode) {
                     //导线
                     endLine = excludeLine(end);
                     self.checkPoint = checkPointNodeAlign;
-                    self.checkEnd = checkEndNodeInLine;
+                    self.checkEnd = checkEndNodeInLine1;
                     break;
                 }
                 case "cross-point": {
                     //交错节点
                     endLine = excludeLine(end);
-                    if (status.connect.length < 4) {
-                        self.checkPoint = checkPointNodeAlign;
-                        self.checkEnd = checkEndNodeInLine;
-                    }
-                    else {
-                        //交错节点连接了4个导线时，此终点是不可能达到的，此时的规则还没考虑好，先暂定和3个导线时一样
-                        self.checkPoint = checkPointNodeAlign;
-                        self.checkEnd = checkEndNodeInLine;
-                    }
+                    self.checkPoint = checkPointNodeAlign;
+                    self.checkEnd = checkEndNodeInLine1;
                     break;
                 }
                 case "part-point":
@@ -416,7 +413,7 @@ function SearchRules(nodestart, nodeend, mode) {
                 //end是点
                 endLine = excludeLine(end);
                 self.calValue = calValue01;
-                self.checkEnd = checkEndNodeInLine;
+                self.checkEnd = checkEndNodeInLine2;
                 self.checkPoint = checkPointExcludeAlign;
             }
             else {
@@ -1299,6 +1296,7 @@ LineWay.prototype = {
 
         return(ans);
     },
+    /*
     //导线终点扩展
     endExpand(points, endPoint, initTrend) {
         if (schMap.isLine(endPoint)) return([]);
@@ -1339,6 +1337,7 @@ LineWay.prototype = {
         }
         return(ans);
     },
+    */
     //终点/起点指向指定坐标
     endToMouse(dir, node) {
         node = (arguments.length === 1) ? dir : node;
