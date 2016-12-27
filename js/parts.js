@@ -333,7 +333,7 @@ const originalElectronic = {
                 {
                     "name":"rect",
                     "attribute": {
-                        "x": "-20", "y":"-2", "width":"40", "height":"32", "class":"focus-part"
+                        "x": "-15", "y":"-10", "width":"30", "height":"26", "class":"focus-part"
                     }
                 }
             ],
