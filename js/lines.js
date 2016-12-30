@@ -975,7 +975,6 @@ const Search = {
 
             self.toGoing();
             self.deleteSign();
-            self.wayDrawing();
 
             cur.Limit = {};
             if (schMap.isLine(this.way[0])) {
@@ -1886,11 +1885,7 @@ LineClass.prototype = {
     },
     //导线转换为动态
     toGoing() {
-        //rect全部删除，path剩下一个
-        const linepath = $("path", this.elementDOM);
-        while (linepath.length > 1) {
-            linepath.pop().remove();
-        }
+        //删除全部rect
         $("rect.line-rect", this.elementDOM).remove();
         //导线放置在最底层
         actionArea.preappend(this.elementDOM);
@@ -1919,8 +1914,6 @@ LineClass.prototype = {
                 );
             }
         }
-
-        this.wayDrawing();
     },
     //绘制导线
     wayDrawing() {
@@ -1940,7 +1933,6 @@ LineClass.prototype = {
     //静态导线渲染
     render() {
         let templine = this.elementDOM,
-            linepath = $("path", templine),
             linerect = $("rect.line-rect", templine),
             tempway = this.way;
 
@@ -1955,26 +1947,10 @@ LineClass.prototype = {
             document.querySelector("#area-of-parts .editor-parts")
         );
 
-        //多余的导线线段需要删除
-        while (linepath.length > this.way.length - 1) {
-            linepath.remove(-1);
-        }
         while (linerect.length > this.way.length - 1) {
             linerect.remove(-1);
         }
-        //绘制导线图像，path部分需要放置底层
-        for (let i = 0; i < tempway.length - 1; i++){
-            if(!linepath[i]) {
-                templine.append($("<path>", SVG_NS, {
-                    "d": "M" + tempway[i][0] + "," + tempway[i][1] +
-                    "L" + tempway[i + 1][0] + "," + tempway[i + 1][1]
-                }));
-            } else {
-                linepath.get(i).attr("d",
-                    "M" + tempway[i][0] + "," + tempway[i][1] + "L" +
-                    tempway[i + 1][0] + "," + tempway[i + 1][1]);
-            }
-        }
+        //绘制导线rect块
         for (let i = 0; i < tempway.length - 1; i++){
             if(!linerect[i]) {
                 templine.append($("<rect>", SVG_NS, lineRectAttr(tempway[i], tempway[i + 1])));
@@ -1982,6 +1958,7 @@ LineClass.prototype = {
                 linerect.get(i).attr(lineRectAttr(tempway[i], tempway[i + 1]));
             }
         }
+        this.wayDrawing();
         this.elementDOM.removeAttr("transform");
         this.resetCircle(0);
         this.resetCircle(1);
