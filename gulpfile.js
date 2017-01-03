@@ -1,24 +1,23 @@
 'use strict';
 const fs = require('fs'),
-    Transform = require('stream').Transform,
-    Writable = require('stream').Writable,
-    spawn = require('child_process').spawn,
-    chalk = require('chalk'),
-    gulp = require('gulp'),
-    htmlmin = require('gulp-htmlmin'),
-    concat = require('gulp-concat'),
-    rename = require('gulp-rename'),
-    stylus = require('gulp-stylus'),
-    webpack = require('gulp-webpack'),
-    base64 = require('gulp-base64'),
-    uglify = require('gulp-uglify'),
-    sourcemaps = require('gulp-sourcemaps'),
-    autoprefixer = require('gulp-autoprefixer'),
+      Transform = require('stream').Transform,
+      Writable = require('stream').Writable,
+      spawn = require('child_process').spawn,
+      chalk = require('chalk'),
+      gulp = require('gulp'),
+      htmlmin = require('gulp-htmlmin'),
+      rename = require('gulp-rename'),
+      stylus = require('gulp-stylus'),
+      webpack = require('gulp-webpack'),
+      base64 = require('gulp-base64'),
+      uglify = require('gulp-uglify'),
+      sourcemaps = require('gulp-sourcemaps'),
+      autoprefixer = require('gulp-autoprefixer'),
 
-    _develop = 'Z:/在线仿真网站/',
-    _push = './.deploy_git/',
+      _develop = 'Z:/在线仿真网站/',
+      _push = './.deploy_git/',
 
-    opt = { cwd: _push };
+      opt = { cwd: _push };
 
 //webpack设置
 const webpackConfig = {
@@ -75,7 +74,7 @@ function replace(search, replacement) {
         buf._contents = Buffer.from(buffer, 'utf8');
 
         next(null, buf);
-    }
+    };
 
     return(ans);
 }
@@ -119,7 +118,7 @@ function promiseSpawn(command, args, options) {
 //git操作入口
 function git() {
     const len = arguments.length,
-        args = new Array(len);
+          args = new Array(len);
 
     for (let i = 0; i < len; i++) {
         args[i] = arguments[i];
@@ -130,8 +129,8 @@ function git() {
         args[1] = args[1] || {};
         for (let i in args[1]) {
             if (args[1].hasOwnProperty(i)) {
-                opt[i] = args[1][i]
-            }
+                opt[i] = args[1][i];
+            } 
         }
         //.git文件夹不存在，那么就需要初始化git
         if (!fs.existsSync((opt.cwd + '/.git').normalize())) {
@@ -221,8 +220,8 @@ gulp.task('push', function () {
     }
     function js(res) {
         const temp = './js/main2.js',
-            reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
-            reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
+              reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
+              reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
 
         gulp.src('./js/main.js')
             .pipe(replace(reg1, '//$1'))
@@ -232,7 +231,7 @@ gulp.task('push', function () {
             .pipe(replace(reg2, '//$1'))
             .pipe(uglify())
             .pipe(gulp.dest(_push + 'src/'))
-            .on('end', () => { fs.unlinkSync(temp); res() });
+            .on('end', () => { fs.unlinkSync(temp); res(); });
     }
 
     const url = 'https://github.com/xiaoboost/circuitlab.git',
