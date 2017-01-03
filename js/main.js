@@ -1558,6 +1558,8 @@ $("body").on("keydown", function(event) {
         case (event.keyCode === 13): {
             if($("#parameter-menu").hasClass("parameter-open")) {
                 trigger("#parameter-bottom-accept");
+            } else if (sidebar.hasClass("open-menu-config")){
+                trigger("#shade-gray");
             }
             break;
         }
