@@ -898,7 +898,8 @@ mainPage.on("mousedown","g.editor-parts .focus-part, g.editor-parts path, g.edit
 //器件双击事件
 mainPage.on("dblclick","g.editor-parts .focus-part, g.editor-parts path, g.editor-parts .features-text",function(event) {
     const clickpart = partsAll.findPart(event.currentTarget.parentNode.id);
-    if (event.which === 1 && !grid.totalMarks) {
+    if (event.which === 1 && !grid.totalMarks &&
+        clickpart.partType !== 'reference_ground') {
         clickpart.viewParameter(grid.zoom(), grid.SVG());
     }
 });
