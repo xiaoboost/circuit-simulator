@@ -1591,4 +1591,8 @@ doc.body.onload = function() {
     setTimeout(function() {
         $("#load-cover").css("display", "none");
     }, 300);
+
+    setTimeout(function() {
+        $("#load-cover").css("display", "none");
+    }, 600);
 };
