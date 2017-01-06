@@ -390,12 +390,16 @@ function mousemoveEvent(event) {
         }
         //图纸移动
         case grid.moveMap: {
-            //只有确实移动了，才会让鼠标变形
-            mainPage.attr("class", "mouse-movemap");
-
             //移动图纸时不需要对鼠标距离做缩放
             const bias = grid.current.mouseBias(event)
                 .mul(grid.current.zoom);
+
+            if (bias.isEqual([0,0])) {
+                return (false);
+            }
+
+            //只有确实移动了，才会让鼠标变形
+            mainPage.attr("class", "mouse-movemap");
 
             let SVGPos = grid.SVG();
             grid.SVG(SVGPos[0] + bias[0], SVGPos[1] + bias[1]);
@@ -1189,13 +1193,12 @@ mainPage.on("mouseup", function(event) {
                 clearStatus();
             }
         }
-    }
-    else if ((event.which === 3) && (grid.moveMap)) {
+    } else if ((event.which === 3) && (grid.moveMap)) {
         //右键放开，且正在移动图纸移动整个图纸结束
         grid.setMoveMap(false);
         grid.current = [];
         //如果没有这个标签，说明鼠标没有移动，那么弹出右键菜单
-        if(!mainPage.hasClass("mouse-movemap")) {
+        if (!mainPage.hasClass("mouse-movemap")) {
             clearStatus();
             contextSet(event, "map");
         }
