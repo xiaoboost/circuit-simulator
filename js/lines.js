@@ -240,7 +240,10 @@ function SearchRules(nodestart, nodeend, mode) {
     }
     //移动器件时，点对点（在导线中）
     function checkEndNodeInLine2(node) {
-        return checkEndEqLine(node.point, endLine);
+        return (
+            node.point.isEqual(end) ||
+            checkEndEqLine(node.point, endLine)
+        );
     }
 
     //节点扩展规则
