@@ -1,23 +1,23 @@
 'use strict';
 const fs = require('fs'),
-      Transform = require('stream').Transform,
-      Writable = require('stream').Writable,
-      spawn = require('child_process').spawn,
-      chalk = require('chalk'),
-      gulp = require('gulp'),
-      htmlmin = require('gulp-htmlmin'),
-      rename = require('gulp-rename'),
-      stylus = require('gulp-stylus'),
-      webpack = require('gulp-webpack'),
-      base64 = require('gulp-base64'),
-      uglify = require('gulp-uglify'),
-      sourcemaps = require('gulp-sourcemaps'),
-      autoprefixer = require('gulp-autoprefixer'),
+    Transform = require('stream').Transform,
+    Writable = require('stream').Writable,
+    spawn = require('child_process').spawn,
+    chalk = require('chalk'),
+    gulp = require('gulp'),
+    htmlmin = require('gulp-htmlmin'),
+    rename = require('gulp-rename'),
+    stylus = require('gulp-stylus'),
+    webpack = require('gulp-webpack'),
+    base64 = require('gulp-base64'),
+    uglify = require('gulp-uglify'),
+    sourcemaps = require('gulp-sourcemaps'),
+    autoprefixer = require('gulp-autoprefixer'),
 
-      _develop = 'Z:/在线仿真网站/',
-      _push = './.deploy_git/',
+    _develop = 'Z:/在线仿真网站/',
+    _push = './.deploy_git/',
 
-      opt = { cwd: _push };
+    opt = { cwd: _push };
 
 //webpack设置
 const webpackConfig = {
@@ -63,7 +63,7 @@ class Cache extends Writable {
 function replace(search, replacement) {
     const ans = Transform({objectMode: true});
 
-    ans._transform = function (buf, enc, next) {
+    ans._transform = function(buf, enc, next) {
         if (buf.isNull()) {
             return next(null, buf);
         }
@@ -76,7 +76,7 @@ function replace(search, replacement) {
         next(null, buf);
     };
 
-    return(ans);
+    return (ans);
 }
 //异步子进程
 function promiseSpawn(command, args, options) {
@@ -92,11 +92,11 @@ function promiseSpawn(command, args, options) {
 
     return new Promise(function(resolve, reject) {
         const stdoutCache = new Cache(),
-              stderrCache = new Cache(),
-              task = spawn(command, args, options),
-              encoding = options.hasOwnProperty('encoding')
-                  ? options.encoding
-                  : 'utf8';
+            stderrCache = new Cache(),
+            task = spawn(command, args, options),
+            encoding = options.hasOwnProperty('encoding')
+                ? options.encoding
+                : 'utf8';
 
         //流管道连接
         task.stdout.pipe(stdoutCache);
@@ -118,7 +118,7 @@ function promiseSpawn(command, args, options) {
 //git操作入口
 function git() {
     const len = arguments.length,
-          args = new Array(len);
+        args = new Array(len);
 
     for (let i = 0; i < len; i++) {
         args[i] = arguments[i];
@@ -127,20 +127,18 @@ function git() {
     if (args[0] === 'init') {
         //初始化，配置参数
         args[1] = args[1] || {};
-        for (let i in args[1]) {
+        for (const i in args[1]) {
             if (args[1].hasOwnProperty(i)) {
                 opt[i] = args[1][i];
-            } 
+            }
         }
         //.git文件夹不存在，那么就需要初始化git
         if (!fs.existsSync((opt.cwd + '/.git').normalize())) {
             return promiseSpawn('git', ['init'], opt);
-        }
-        else {
+        } else {
             return new Promise((n) => n());
         }
-    }
-    else {
+    } else {
         //子进程运行git命令
         return (() => promiseSpawn('git', args, opt));
     }
@@ -154,7 +152,7 @@ gulp.task('dev-html', function() {
         }))
         .pipe(gulp.dest(_develop));
 });
-gulp.task('dev-stylus', function () {
+gulp.task('dev-stylus', function() {
     return gulp.src('./css/main.styl')
         .pipe(sourcemaps.init())
         .pipe(stylus({compress: true}))
@@ -164,26 +162,26 @@ gulp.task('dev-stylus', function () {
         .pipe(rename('circuitlab.min.css'))
         .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task('dev-js', function () {
+gulp.task('dev-js', function() {
     return gulp.src('./js/main.js')
         .pipe(sourcemaps.init())
         .pipe(webpack(webpackConfig))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task('dev-image', function () {
+gulp.task('dev-image', function() {
     return gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
         .pipe(gulp.dest(_develop + 'src/'));
 });
-gulp.task('build', ['dev-html', 'dev-stylus', 'dev-js', 'dev-image'], function () {
+gulp.task('build', ['dev-html', 'dev-stylus', 'dev-js', 'dev-image'], function() {
     //设置静态服务器
     const express = require('express'),
-          app = express();
+        app = express();
 
     //允许网页访问theme文件夹
     app.use(express.static(_develop));
     //建立虚拟网站，端口5000
-    app.listen(5000, function () {
+    app.listen(5000, function() {
         console.log(chalk.green('\nINFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
         console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
     });
@@ -194,7 +192,7 @@ gulp.task('build', ['dev-html', 'dev-stylus', 'dev-js', 'dev-image'], function (
 });
 
 //发布
-gulp.task('push', function () {
+gulp.task('push', function() {
     function html(res) {
         gulp.src('./index.html')
             .pipe(htmlmin({
@@ -220,8 +218,8 @@ gulp.task('push', function () {
     }
     function js(res) {
         const temp = './js/main2.js',
-              reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
-              reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
+            reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
+            reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
 
         gulp.src('./js/main.js')
             .pipe(replace(reg1, '//$1'))
@@ -235,8 +233,8 @@ gulp.task('push', function () {
     }
 
     const url = 'https://github.com/xiaoboost/circuitlab.git',
-          branch = 'gh-pages',
-          promises = [html, image, css, js].map((n) => new Promise(n));
+        branch = 'gh-pages',
+        promises = [html, image, css, js].map((n) => new Promise(n));
 
     Promise.all(promises)
         .then(git('init'))

@@ -17,7 +17,7 @@ schMap.extend({
     //以小坐标强制设定节点属性，默认为覆盖模式
     setValueBySmalle(node, attribute, flag = false) {
         const i = node[0], j = node[1];
-        
+
         if (!map[i]) {
             map[i] = [];
         }
@@ -89,7 +89,7 @@ schMap.extend({
         }
 
         for (let i = 0; i < status.connect.length; i++) {
-            if(status.connect[i].isEqual(connect)) {
+            if (status.connect[i].isEqual(connect)) {
                 status.connect.splice(i, 1);
                 break;
             }
@@ -105,7 +105,7 @@ schMap.extend({
     //node和connect是否在同一个导线上
     nodeInConnectBySmall(node, connect) {
         const status = schMap.getValueBySmalle(node);
-        if (status && (status.form === "line" || status.form === "cross-point")) {
+        if (status && (status.form === 'line' || status.form === 'cross-point')) {
             for (let i = 0; i < status.connect.length; i++) {
                 if (status.connect[i].isEqual(connect)) {
                     return (true);
@@ -122,26 +122,26 @@ schMap.extend({
     },
     //当前点是否是导线
     isLine(node, flag) {
-        const tempStatus = (flag === "small")
+        const tempStatus = (flag === 'small')
             ? schMap.getValueBySmalle(node)
             : schMap.getValueByOrigin(node);
 
         return (
             tempStatus &&
-            tempStatus.form === "line" ||
-            tempStatus.form === "cross-point" ||
-            tempStatus.form === "cover-point"
+            tempStatus.form === 'line' ||
+            tempStatus.form === 'cross-point' ||
+            tempStatus.form === 'cover-point'
         );
     },
     //当前点是否是器件引脚
     isPartPoint(node, flag) {
-        const tempStatus = (flag === "small")
+        const tempStatus = (flag === 'small')
             ? schMap.getValueBySmalle(node)
             : schMap.getValueByOrigin(node);
 
         return (
             tempStatus &&
-            tempStatus.form === "part-point"
+            tempStatus.form === 'part-point'
         );
     },
     //在[start、end]范围中沿着vector直行，求最后一点的坐标
@@ -158,19 +158,18 @@ schMap.extend({
         vector[1] = vector[1].toUnit();
 
         //起点并不是导线或者起点等于终点，直接返回
-        if (!schMap.isLine(start, "small") || start.isEqual(end)) {
+        if (!schMap.isLine(start, 'small') || start.isEqual(end)) {
             return (start);
         }
 
         let node = [start[0], start[1]],
             next = [node[0] + vector[0], node[1] + vector[1]];
         //当前点没有到达终点，还在导线所在直线内部，那就前进
-        while (schMap.isLine(next, "small") && !node.isEqual(end)) {
+        while (schMap.isLine(next, 'small') && !node.isEqual(end)) {
             if (schMap.nodeInConnectBySmall(node, next)) {
                 node = next;
                 next = [node[0] + vector[0], node[1] + vector[1]];
-            }
-            else {
+            } else {
                 break;
             }
         }
@@ -182,7 +181,7 @@ schMap.extend({
             end = [b[0] / 20, b[1] / 20],
             ans = schMap.alongTheLineBySmall(start, end, c);
 
-        return([ans[0] * 20, ans[1] * 20]);
+        return ([ans[0] * 20, ans[1] * 20]);
     },
     //以node为中心，寻找最近的可行点，callback为判断标准函数，由外部输入
     nodeRound(node, mouse, callback) {
@@ -210,35 +209,35 @@ schMap.extend({
     //返回已经记录的全部节点
     toSmallNodes() {
         const ans = [];
-        for (let i in map) {
-            if(map.hasOwnProperty(i)) {
-                for (let j in map[i]) {
+        for (const i in map) {
+            if (map.hasOwnProperty(i)) {
+                for (const j in map[i]) {
                     if (map[i].hasOwnProperty(j)) {
                         ans.push([i, j]);
                     }
                 }
             }
         }
-        return(ans);
+        return (ans);
     },
     //返回交错节点到指定导线的方向
     cross2line(node, line) {
         const status = schMap.getValueByOrigin(node);
-        if(!status || status.form !== "cross-point") {
-            return(false);
+        if (!status || status.form !== 'cross-point') {
+            return (false);
         }
-        for(let i = 0; i < status.connect.length; i++) {
+        for (let i = 0; i < status.connect.length; i++) {
             const con = status.connect[i],
                 temp = schMap.getValueBySmalle(con);
 
-            if(temp.id.indexOf(line) !== -1) {
-                return([
+            if (temp.id.indexOf(line) !== -1) {
+                return ([
                     node[0] - con[0] * 20,
                     node[1] - con[1] * 20
                 ]);
             }
         }
-        return(false);
+        return (false);
     }
 });
 

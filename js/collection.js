@@ -1,12 +1,15 @@
 //单个器件的最大数量
 const maxNumber = 50;
 
+//全局器件集合
+const partsAll = new PartsCollection(),
+    partsNow = new PartsCollection();
+
 //器件堆栈类
 function PartsCollection(parts) {
     if (parts instanceof PartsCollection) {
         return (parts);
-    }
-    else if (typeof parts === "number") {
+    } else if (typeof parts === 'number') {
         return (new PartsCollection());
     }
     this.hash = {};
@@ -54,8 +57,7 @@ PartsCollection.prototype = {
             this[insert] = topElem;
             this.hash[insertElem] = top;
             this.hash[topElem] = insert;
-        }
-        else {
+        } else {
             this[this.length++] = part;
             this.hash[part.id] = this.length - 1;
         }
@@ -75,7 +77,7 @@ PartsCollection.prototype = {
             return (false);
         }
 
-        const id = tempid.split("-")[0];
+        const id = tempid.split('-')[0];
         if (!this.has(id)) {
             return (false);
         }
@@ -83,15 +85,13 @@ PartsCollection.prototype = {
     },
     //删除器件
     deletePart(part) {
-        let tempid;
-        if (typeof part === "string") {
+        let tempid = void 0;
+        if (typeof part === 'string') {
             tempid = part;
-        }
-        else if ((part.elementDOM && part.input) || (part.id.indexOf("line") !== -1)) {
+        } else if ((part.elementDOM && part.input) || (part.id.indexOf('line') !== -1)) {
             tempid = part.id;
-        }
-        else {
-            throw("输入参数必须是字符串或者器件对象");
+        } else {
+            throw ('输入参数必须是字符串或者器件对象');
         }
 
         if (this.hash[tempid] === undefined) {
@@ -110,15 +110,16 @@ PartsCollection.prototype = {
     },
     //删除器件集合
     deleteParts(input) {
-        let func, temp, set;
-        if (typeof input === "function") {
+        let func = void 0,
+            temp = void 0,
+            set = void 0;
+        if (typeof input === 'function') {
             func = input;
-        }
-        else {
+        } else {
             temp = new PartsCollection(input);
-            func = function (n) {
+            func = function(n) {
                 return (!temp.has(n));
-            }
+            };
         }
 
         set = this.filter(func);
@@ -127,11 +128,10 @@ PartsCollection.prototype = {
     },
     //集合是否包含该器件
     has(part) {
-        let tempid;
-        if (typeof  part === "string") {
-            tempid = part.split("-")[0];
-        }
-        else {
+        let tempid = '';
+        if (typeof  part === 'string') {
+            tempid = part.split('-')[0];
+        } else {
             tempid = part.id;
         }
         return (this.hash[tempid] !== undefined);
@@ -142,19 +142,17 @@ PartsCollection.prototype = {
             id = temp && temp[0];
 
         if (!temp) {
-            throw("器件ID格式错误");
+            throw ('器件ID格式错误');
         }
 
-        let tempid = "", ans;
+        let tempid = '', ans = void 0;
         //输入字符串没有下划线
-        if (id.indexOf("_") === -1) {
-            tempid = id + "_";
-        }
-        else if (!this.has(input)) {
+        if (id.indexOf('_') === -1) {
+            tempid = id + '_';
+        } else if (!this.has(input)) {
             return (input);
-        }
-        else {
-            tempid = id.split("_")[0] + "_";
+        } else {
+            tempid = id.split('_')[0] + '_';
         }
 
         for (let i = 1; i <= maxNumber; i++) {
@@ -163,7 +161,7 @@ PartsCollection.prototype = {
                 return (ans);
             }
         }
-        throw("器件数量超出最大限制");
+        throw ('器件数量超出最大限制');
     },
     //器件堆栈清空
     deleteAll() {
@@ -183,7 +181,7 @@ PartsCollection.prototype = {
         //连接表初始化
         this.forEach((n) => partsHash[n.id] = true);
         //扫描所有器件，分割电路连通图区域
-        this.forEach(function (n) {
+        this.forEach(function(n) {
             if (partsHash[n.id]) {
                 //当前连通区域初始化
                 const parts = new PartsCollection(n),
@@ -193,13 +191,12 @@ PartsCollection.prototype = {
                     const item = parts.pop();       //栈顶元素弹出
                     partsHash[item.id] = false;     //当前器件访问标志
                     ans.push(item);                 //当前区域器件入栈
-                    item.connect.join(" ").split(" ").forEach(function (n) {
+                    item.connect.join(' ').split(' ').forEach(function(n) {
                         const tempPart = partsAll.findPart(n);
                         //attention:
-                        if (tempPart.partType === "网络标号") {
+                        if (tempPart.partType === '网络标号') {
 
-                        }
-                        else {
+                        } else {
                             if (partsHash[tempPart.id] && !parts.has(tempPart))
                                 parts.push(tempPart);
                         }
@@ -258,9 +255,5 @@ PartsCollection.prototype = {
     }
 };
 Object.setPrototypeOf(PartsCollection.prototype, Array.prototype);
-
-//全局器件集合
-const partsAll = new PartsCollection(),
-    partsNow = new PartsCollection();
 
 export { partsAll, partsNow, PartsCollection };

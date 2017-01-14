@@ -10,10 +10,10 @@ function Matrix(row, column = row, value = 0) {
             this.column = temp[1];
             this.length = this.row;
         } else {
-            throw("数组格式错误，无法创建矩阵");
+            throw ('数组格式错误，无法创建矩阵');
         }
     } else {
-        if ((column === "I") || (column === "E") || (value === "I") || (value === "E")) {
+        if ((column === 'I') || (column === 'E') || (value === 'I') || (value === 'E')) {
             for (let i = 0; i < row; i++) {
                 this[i] = new Array(row).fill(0);
                 this[i][i] = 1;
@@ -76,7 +76,7 @@ Matrix.prototype = {
         //以输入数据创建矩阵
         const a = (ma instanceof Matrix) ? ma : (new Matrix(ma));
         if (this.column !== a.row) {
-            throw("这两个矩阵无法相乘");
+            throw ('这两个矩阵无法相乘');
         }
         //乘法结果的行与列
         const row = this.row,
@@ -106,7 +106,7 @@ Matrix.prototype = {
     //列主元LU三角分解，返回LUP矩阵
     luDecompose() {
         if (this.row !== this.column)
-            throw("这不是行列式，无法三角分解");
+            throw ('这不是行列式，无法三角分解');
 
         const n = this.row;             //行列式的行数
         const U = Matrix.clone(this);   //上三角行列式
@@ -141,9 +141,9 @@ Matrix.prototype = {
     },
     //基于LU分解的矩阵求逆
     inverse() {
-        const [L,U,P] = this.luDecompose(), n = this.row;
+        const [L, U, P] = this.luDecompose(), n = this.row;
         for (let i = 0; i < U.row; i++)
-            if (!U[i][i]) throw("逆矩阵不存在");
+            if (!U[i][i]) throw ('逆矩阵不存在');
 
         //L、U的逆矩阵初始化
         const li = new Matrix(n);
@@ -179,21 +179,18 @@ Matrix.prototype = {
                 for (let j = 0; j < this.column; j++) {
                     callback(this[i][j], [i, j], this);
                 }
-        }
-        else if (this instanceof Array) {
+        } else if (this instanceof Array) {
             const range = Matrix.isMatrix(this);
             if (range) {
                 for (let i = 0; i < range[0]; i++)
                     for (let j = 0; j < range[1]; j++) {
                         callback(this[i][j], [i, j], this);
                     }
+            } else {
+                throw ('只有矩阵或者类似矩阵的数组才能调用此方法');
             }
-            else {
-                throw("只有矩阵或者类似矩阵的数组才能调用此方法");
-            }
-        }
-        else {
-            throw("只有矩阵或者类似矩阵的数组才能调用此方法");
+        } else {
+            throw ('只有矩阵或者类似矩阵的数组才能调用此方法');
         }
     },
     //矩阵转置
@@ -215,7 +212,7 @@ Matrix.prototype = {
                 [row, column] = rc ? rc : [];
 
             if (!row) {
-                throw("无法串联矩阵");
+                throw ('无法串联矩阵');
             }
 
             const ans = new Matrix(row, main.column + column);
@@ -236,7 +233,7 @@ Matrix.prototype = {
                 [row, column] = rc ? rc : [];
 
             if (!row) {
-                throw("无法串联矩阵");
+                throw ('无法串联矩阵');
             }
 
             const ans = new Matrix(main.row + row, column);
@@ -251,11 +248,11 @@ Matrix.prototype = {
     //选取矩阵的一部分，返回新矩阵
     slice(a, b) {
         //输入格式检查
-        if ((!(a instanceof Array)) || (a.length !== 2) || (typeof a[0] !== "number") || (typeof a[1] !== "number") ||
-            (!(b instanceof Array)) && (b.length !== 2) || (typeof b[0] !== "number") || (typeof b[1] !== "number") ||
+        if ((!(a instanceof Array)) || (a.length !== 2) || (typeof a[0] !== 'number') || (typeof a[1] !== 'number') ||
+            (!(b instanceof Array)) && (b.length !== 2) || (typeof b[0] !== 'number') || (typeof b[1] !== 'number') ||
             (a[0] < 0) || (b[0] < 0) || (a[1] < 0) || (b[1] < 0) ||
             (a[0] > this.row) || (b[0] > this.row) || (a[1] > this.column) || (b[1] > this.column)) {
-            throw("输入坐标错误");
+            throw ('输入坐标错误');
         }
 
         const start = [], end = [];
@@ -273,7 +270,7 @@ Matrix.prototype = {
     //输出string
     vision() {
         for (let i = 0; i < this.row; i++) {
-            console.log(this[i].join(","));
+            console.log(this[i].join(', '));
         }
     }
 };
@@ -281,18 +278,18 @@ Matrix.prototype = {
 Matrix.extend({
     //验证矩阵ma是否是矩阵，如果是，那么返回[行数，列数]，否则返回false
     //下标必须从0开始，下标必须连续，不得含有非数字元素
-    isMatrix: function(ma) {
+    isMatrix(ma) {
         if (ma instanceof Matrix) {
             return ([ma.row, ma.column]);
         }
         let subx = -1, columnMax = -1;
-        for (let i in ma) if (ma.hasOwnProperty(i)) {                       //枚举矩阵行下标
+        for (const i in ma) if (ma.hasOwnProperty(i)) {                       //枚举矩阵行下标
             if ((parseInt(i) - subx === 1) && (ma[i] instanceof Array)) {   //下标连续且第一个下标下的元素也是数组
                 const row = ma[i];
                 let suby = -1;
-                for (let j in row) if (row.hasOwnProperty(j)) {             //枚举当前行
+                for (const j in row) if (row.hasOwnProperty(j)) {             //枚举当前行
                     if ((parseInt(j) - suby === 1) &&                       //下标连续，并且当前元素是数字
-                        (typeof row[j] === "number")) {
+                        (typeof row[j] === 'number')) {
                         suby++;
                     } else {
                         return (false);
@@ -311,26 +308,26 @@ Matrix.extend({
         return ([subx + 1, columnMax + 1]);
     },
     //矩阵组合
-    combination: function(ma) {
-        if(!(ma && (ma instanceof Array)))
-            throw("无法组合矩阵");
-        for(let i = 0; i < ma.length - 1; i++)
-            if(!(ma[i] && (ma[i] instanceof Array) && (ma[i + 1] instanceof Array) && (ma[i].length === ma[i + 1].length)))
-                throw("无法组合矩阵");
+    combination(ma) {
+        if (!(ma && (ma instanceof Array)))
+            throw ('无法组合矩阵');
+        for (let i = 0; i < ma.length - 1; i++)
+            if (!(ma[i] && (ma[i] instanceof Array) && (ma[i + 1] instanceof Array) && (ma[i].length === ma[i + 1].length)))
+                throw ('无法组合矩阵');
         //每一行的行
         const RowInRow = [];
-        for(let i = 0; i < ma.length; i++) {
+        for (let i = 0; i < ma.length; i++) {
             let Row = undefined;
-            for(let j = 0; j < ma[i].length; j++) {
-                if((typeof ma[i][j] !== "number") && (typeof ma[i][j] !== "string")) {
+            for (let j = 0; j < ma[i].length; j++) {
+                if ((typeof ma[i][j] !== 'number') && (typeof ma[i][j] !== 'string')) {
                     let tempRow;
-                    if(ma[i][j] instanceof Matrix) {
+                    if (ma[i][j] instanceof Matrix) {
                         tempRow = ma[i][j].row;
                     } else {
                         tempRow = Object.isMatrix(ma[i][j])[0];
                     }
                     if ((Row !== undefined) && (Row !== tempRow))
-                        throw("无法组合矩阵");
+                        throw ('无法组合矩阵');
                     Row = tempRow;
                 }
             }
@@ -338,18 +335,18 @@ Matrix.extend({
         }
         //每一列的列
         const ColumnInColumn = [];
-        for(let j = 0; j < ma[0].length; j++) {
+        for (let j = 0; j < ma[0].length; j++) {
             let Column = undefined;
-            for(let i = 0; i < ma.length; i++) {
-                if((typeof ma[i][j] !== "number") && (typeof ma[i][j] !== "string")) {
+            for (let i = 0; i < ma.length; i++) {
+                if ((typeof ma[i][j] !== 'number') && (typeof ma[i][j] !== 'string')) {
                     let tempColumn;
-                    if(ma[i][j] instanceof Matrix) {
+                    if (ma[i][j] instanceof Matrix) {
                         tempColumn = ma[i][j].column;
                     } else {
                         tempColumn = Object.isMatrix(ma[i][j])[1];
                     }
                     if ((Column !== undefined) && (Column !== tempColumn))
-                        throw("无法组合矩阵");
+                        throw ('无法组合矩阵');
                     Column = tempColumn;
                 }
             }
@@ -357,28 +354,28 @@ Matrix.extend({
         }
         //串联所有矩阵
         let ColumnMatrix;
-        for(let i = 0; i < ma.length; i++) {
+        for (let i = 0; i < ma.length; i++) {
             let RowMatrix;
-            for(let j = 0; j < ma[i].length; j++) {
+            for (let j = 0; j < ma[i].length; j++) {
                 let temp;
-                if(!((ma[i][j] instanceof Matrix) && (ma[i][j] instanceof Array)))
+                if (!((ma[i][j] instanceof Matrix) && (ma[i][j] instanceof Array)))
                     temp= new Matrix(RowInRow[i], ColumnInColumn[j], ma[i][j]);
                 else temp = ma[i][j];
 
-                if(RowMatrix) RowMatrix = RowMatrix.concatRight(temp);
+                if (RowMatrix) RowMatrix = RowMatrix.concatRight(temp);
                 else RowMatrix = temp;
             }
-            if(ColumnMatrix) ColumnMatrix = ColumnMatrix.concatDown(RowMatrix);
+            if (ColumnMatrix) ColumnMatrix = ColumnMatrix.concatDown(RowMatrix);
             else ColumnMatrix = RowMatrix;
         }
-        return(ColumnMatrix);
+        return (ColumnMatrix);
     },
     //复制当前矩阵
-    clone: function(ma) {
-        if(!(ma instanceof Matrix)) throw("只有矩阵才能调用此方法");
+    clone(ma) {
+        if (!(ma instanceof Matrix)) throw ('只有矩阵才能调用此方法');
         const ans = new Matrix(ma.row, ma.column);
         ma.forEach((item, [i, j]) => ans[i][j] = item);
-        return(ans);
+        return (ans);
     }
 });
 //矩阵类继承Array方法

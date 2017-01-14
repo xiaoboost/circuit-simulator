@@ -1,17 +1,17 @@
-import { $ } from "./jquery";
+import { $ } from './jquery';
 
-const color = ["#50B4C8", "#F0A050", "#50C850"],
-    background = "#66CCCC",
-    page = $("#graph-page"),
+const color = ['#50B4C8', '#F0A050', '#50C850'],
+    background = '#66CCCC',
+    page = $('#graph-page'),
     u = undefined;
 
 //根据像素进行大致的分段
 function axisSplit(long) {
-    return(Math.floor(long / 50));
+    return (Math.floor(long / 50));
 }
 //延长坐标
 function extendPoint(x) {
-    if(!x) { return(1); }
+    if (!x) { return (1); }
 
     const sign = x / Math.abs(x),
         rank = x.rank(),
@@ -19,17 +19,17 @@ function extendPoint(x) {
         int = Math.floor(number / rank),            //整数部分
         mod = (x * sign / rank - int).toSFixed();   //小数部分
 
-    let ans;
+    let ans = null;
     if (int < 3) {
-        if(mod < 0.2) {
+        if (mod < 0.2) {
             ans = 0.2;
-        } else if(mod < 0.5) {
+        } else if (mod < 0.5) {
             ans = 0.5;
         } else {
             ans = 1;
         }
     } else if ((int > 2) && (int < 5)) {
-        if(mod < 0.5) {
+        if (mod < 0.5) {
             ans = 0.5;
         } else {
             ans = 1;
@@ -42,14 +42,14 @@ function extendPoint(x) {
 //线段分段
 function lineSplit(maxExpand, minExpand, num) {
     const rank = maxExpand.rank(),
-          max = (maxExpand / rank).toSFixed(),
-          min = (Math.abs(minExpand / rank)).toSFixed(),
-          ans = [];
+        max = (maxExpand / rank).toSFixed(),
+        min = (Math.abs(minExpand / rank)).toSFixed(),
+        ans = [];
 
     //严格分段
     for (let i = 1; i < 2 * num; i++) {
         const maxNum = (max / i).toSFixed(8),
-              minNum = (min / maxNum).toSFixed(8);
+            minNum = (min / maxNum).toSFixed(8);
 
         //小数点五位以内被视作整除
         if ((maxNum === parseFloat(maxNum.toFixed(5))) &&
@@ -77,7 +77,8 @@ function lineSplit(maxExpand, minExpand, num) {
 //延长线段
 function extendLine(line, long) {
     //坐标轴最小最大值，长度，以及分段数量
-    let axisMin, axisMax;
+    let axisMin = null,
+        axisMax = null;
     //线段的初步分割
     const num = axisSplit(long);
 
@@ -93,14 +94,12 @@ function extendLine(line, long) {
         if (line[0] > 0) {
             axisMin = (minExpand * rank).toSFixed();
             axisMax = (maxExpand * rank).toSFixed();
-        }
-        else {
+        } else {
             axisMin = -(maxExpand * rank).toSFixed();
             axisMax = -(minExpand * rank).toSFixed();
         }
         return ([axisMin, axisMax, lineSplit((axisMax - axisMin), 0, num)]);
-    }
-    else if (line[0] * line[1] <= 0) {
+    } else if (line[0] * line[1] <= 0) {
         //两点异号，0点包含在其中
         const max = Math.max(Math.abs(line[0]), Math.abs(line[1])),
             min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
@@ -111,14 +110,12 @@ function extendLine(line, long) {
         if (Math.abs(line[0]) < Math.abs(line[1])) {
             axisMin = -minExpand;
             axisMax = maxExpand;
-        }
-        else {
+        } else {
             axisMin = -maxExpand;
             axisMax = minExpand;
         }
         return ([axisMin, axisMax, lineSplit(axisMax, axisMin, num)]);
-    }
-    else {
+    } else {
         //两点同号，0点没有被包含其中，两端悬浮
         const min = Math.min(Math.abs(line[0]), Math.abs(line[1])),
             maxExpand = extendPoint(Math.abs(line[0] - line[1]) / 2) * 2,
@@ -128,8 +125,7 @@ function extendLine(line, long) {
         if (line[0] < 0) {
             axisMin = -(maxExpand + minFloor);
             axisMax = -minFloor;
-        }
-        else {
+        } else {
             axisMin = minFloor;
             axisMax = maxExpand + minFloor;
         }
@@ -141,27 +137,27 @@ function reduceList(list, line) {
     const max = Math.maxOfArray(line),
         min = Math.minOfArray(line);
 
-    while(list[1] < min) {
-        list.splice(0,1);
+    while (list[1] < min) {
+        list.splice(0, 1);
     }
     list[0] = min;
 
-    while(list[list.length - 2] > max) {
-        list.pop()
+    while (list[list.length - 2] > max) {
+        list.pop();
     }
     list[list.length - 1] = max;
 }
 
 //canvas绘图类
 function Graphics(canvas) {
-    if(!(canvas && canvas.attributes && canvas.nodeName)) {
-        throw("输入必须是canvas元素");
+    if (!(canvas && canvas.attributes && canvas.nodeName)) {
+        throw ('输入必须是canvas元素');
     }
     this.elementDOM = canvas;
-    this.ctx = canvas.getContext("2d");
+    this.ctx = canvas.getContext('2d');
     this.length = {
-        "width" : parseInt(canvas.getAttribute("width")),
-        "height" : parseInt(canvas.getAttribute("Height"))
+        'width' : parseInt(canvas.getAttribute('width')),
+        'height' : parseInt(canvas.getAttribute('Height'))
     };
     this.clear();       //创建时清理画布
 }
@@ -169,15 +165,15 @@ Graphics.prototype = {
     //备份当前输入属性在原来的属性值
     attributesBackUp(attributes) {
         const temp = {};
-        for(let i in attributes) if(attributes.hasOwnProperty(i)) {
+        for (const i in attributes) if (attributes.hasOwnProperty(i)) {
             temp[i] = this.ctx[i];
             this.ctx[i] = attributes[i];
         }
-        return(temp);
+        return (temp);
     },
     //将输入属性全部赋值给this
     attributesAssignment(attributes) {
-        for(let i in attributes) if(attributes.hasOwnProperty(i)) {
+        for (const i in attributes) if (attributes.hasOwnProperty(i)) {
             this.ctx[i] = attributes[i];
         }
     },
@@ -185,32 +181,32 @@ Graphics.prototype = {
     attributesDefault() {
         //默认属性
         const Default = {
-            "fillStyle":"#000000",
-            "font":"10px sans-serif",
-            "globalAlpha":1,
-            "globalCompositeOperation":"source-over",
-            "imageSmoothingEnabled":true,
-            "lineCap":"butt",
-            "lineDashOffset":0,
-            "lineJoin":"miter",
-            "lineWidth":1,
-            "miterLimit":10,
-            "shadowBlur":0,
-            "shadowColor":"rgba(0, 0, 0, 0)",
-            "shadowOffsetX":0,
-            "shadowOffsetY":0,
-            "strokeStyle":"#000000",
-            "textAlign":"start",
-            "textBaseline":"alphabetic"
+            'fillStyle':'#000000',
+            'font':'10px sans-serif',
+            'globalAlpha':1,
+            'globalCompositeOperation':'source-over',
+            'imageSmoothingEnabled':true,
+            'lineCap':'butt',
+            'lineDashOffset':0,
+            'lineJoin':'miter',
+            'lineWidth':1,
+            'miterLimit':10,
+            'shadowBlur':0,
+            'shadowColor':'rgba(0, 0, 0, 0)',
+            'shadowOffsetX':0,
+            'shadowOffsetY':0,
+            'strokeStyle':'#000000',
+            'textAlign':'start',
+            'textBaseline':'alphabetic'
         };
         //默认属性赋值
-        for(let i in Default) if (Default.hasOwnProperty(i)) {
+        for (const i in Default) if (Default.hasOwnProperty(i)) {
             this.ctx[i] = Default[i];
         }
     },
     //绘制直线
     line(way, attributes, save = true) {
-        let temp;
+        let temp = null;
         if (save) {
             temp = this.attributesBackUp(attributes);
         }
@@ -227,9 +223,9 @@ Graphics.prototype = {
     //实心方块
     fillRect(start, long, attributes) {
         //只输入了属性的情况下，默认覆盖全部区域
-        if(typeof start === "object" && long === u && attributes === u) {
+        if (typeof start === 'object' && long === u && attributes === u) {
             attributes = start;
-            start = [0,0];
+            start = [0, 0];
             long = [this.length.width, this.length.height];
         }
         const temp = this.attributesBackUp(attributes);
@@ -244,7 +240,7 @@ Graphics.prototype = {
     },
     //绘制圆形
     circle(x, y, r, attributes, save = true) {
-        let temp;
+        let temp = null;
         if (save) {
             temp = this.attributesBackUp(attributes);
         }
@@ -258,7 +254,7 @@ Graphics.prototype = {
     //清理画布
     clear(a, b) {
         //a是左上角坐标，b是x、y轴长度
-        if(a === u || b === u) {
+        if (a === u || b === u) {
             this.ctx.clearRect(0, 0, this.length.width, this.length.height);
         } else {
             this.ctx.clearRect(a[0], a[1], b[0], b[1]);
@@ -266,11 +262,11 @@ Graphics.prototype = {
     },
     //toDataURL
     toDataURL(...args) {
-        return(this.elementDOM.toDataURL(...args));
+        return (this.elementDOM.toDataURL(...args));
     },
     //绘制文字
     toText(text, position, attributes, save = true) {
-        let temp;
+        let temp = null;
         if (save) temp = this.attributesBackUp(attributes);
         this.ctx.fillText(text, position[0], position[1]);
         if (save) this.attributesAssignment(temp);
@@ -287,8 +283,8 @@ function Graph(Data, DOM, type) {
     this.type = type;
     this.output = Data;
     this.long = {};
-    this.time = $("#endtime").prop("value").toVal(),
-    this.stepTime = $("#stepsize").prop("value").toVal();
+    this.time = $('#endtime').prop('value').toVal(),
+    this.stepTime = $('#stepsize').prop('value').toVal();
 
     //计算各种坐标
     const left = 80,            //左侧边栏宽度
@@ -315,45 +311,45 @@ function Graph(Data, DOM, type) {
     this.drawBackground([0, this.time], valueStart, true);
     //创建曲线画布
     for (let i = 0; i < Data.length; i++) {
-        this.elementDOM.append($("<canvas>", {
-            "class": "graph-canvas",
-            "width": this.long.waveWidth - 2,
-            "Height": this.long.waveHeight - 2,
-            "id": "graph-" + this.output[i].name,
-            "style": "position: absolute; left: 81px; top: 11px; display: block"
+        this.elementDOM.append($('<canvas>', {
+            'class': 'graph-canvas',
+            'width': this.long.waveWidth - 2,
+            'Height': this.long.waveHeight - 2,
+            'id': 'graph-' + this.output[i].name,
+            'style': 'position: absolute; left: 81px; top: 11px; display: block'
         }));
     }
     //绘制曲线
     this.drawCurve();
     //当前曲线状态为全部显示
-    for(let i = 0; i < this.output.length; i++) {
+    for (let i = 0; i < this.output.length; i++) {
         this.output[i].status = true;
     }
     //添加动态操作集合DIV
-    const actionDiv = this.elementDOM.append($("<div>", {
-        "class": "graph-action",
-        "style": "position: absolute; left: 80px; top: 10px;" +
-        "width: " + this.long.waveWidth + "px; Height: " + this.long.waveHeight + "px;"
+    const actionDiv = this.elementDOM.append($('<div>', {
+        'class': 'graph-action',
+        'style': 'position: absolute; left: 80px; top: 10px;' +
+        'width: ' + this.long.waveWidth + 'px; Height: ' + this.long.waveHeight + 'px;'
     }));
     //创建轴线画布
-    actionDiv.append($("<canvas>", {
-        "class": "graph-action-canvas",
-        "width": this.long.waveWidth,
-        "Height": this.long.waveHeight,
-        "style": "position: absolute; left: 0px; top: 0px;"
+    actionDiv.append($('<canvas>', {
+        'class': 'graph-action-canvas',
+        'width': this.long.waveWidth,
+        'Height': this.long.waveHeight,
+        'style': 'position: absolute; left: 0px; top: 0px;'
     }));
     //创建曲线说明DIV
-    for(let i = 0; i < this.output.length + 1; i++) {
-        actionDiv.append($("<div>", {
-            "class": "graph-action-tip",
-            "style": "position: absolute; display: none;"
+    for (let i = 0; i < this.output.length + 1; i++) {
+        actionDiv.append($('<div>', {
+            'class': 'graph-action-tip',
+            'style': 'position: absolute; display: none;'
         }));
     }
     //最后一层div覆盖整个曲线窗口，防止误操作
-    actionDiv.append($("<div>", {
-        "class": "graph-action-cover",
-        "style": "position: absolute; left: 0px; top: 0px;" +
-        "width: " + this.long.waveWidth + "px; Height: " + this.long.waveHeight + "px;"
+    actionDiv.append($('<div>', {
+        'class': 'graph-action-cover',
+        'style': 'position: absolute; left: 0px; top: 0px;' +
+        'width: ' + this.long.waveWidth + 'px; Height: ' + this.long.waveHeight + 'px;'
     }));
     //添加右上角图例
     this.createTable();
@@ -366,10 +362,10 @@ Graph.prototype = {
             waveHeight = this.long.waveHeight,
             waveRound = this.long.waveRound,
             //寻找或者创建背景画布
-            background = this.elementDOM.childSelect("canvas.graph-background", 1, {
-                "width": this.elementDOM.width() + "px",
-                "height": this.elementDOM.height() + "px",
-                "style": "position: absolute; left: 0px; top: 0px;"
+            background = this.elementDOM.childSelect('canvas.graph-background', 1, {
+                'width': this.elementDOM.width() + 'px',
+                'height': this.elementDOM.height() + 'px',
+                'style': 'position: absolute; left: 0px; top: 0px;'
             });
 
         //当前坐标轴序列
@@ -379,30 +375,30 @@ Graph.prototype = {
         const drawer = new Graphics(background[0]);
         //面板背景
         drawer.fillRect(waveRound[0], [waveWidth, waveHeight], {
-            "fillStyle" : "#fffdf6"
+            'fillStyle' : '#fffdf6'
         });
         //边缘阴影
-        drawer.line(waveRound.slice(1,4), {
-            "shadowOffsetX" : 2,
-            "shadowOffsetY" : 2,
-            "shadowBlur" : 3,
-            "shadowColor" : "rgba(0, 0, 0, 0.7)",
-            "strokeStyle" : "#999999"
+        drawer.line(waveRound.slice(1, 4), {
+            'shadowOffsetX' : 2,
+            'shadowOffsetY' : 2,
+            'shadowBlur' : 3,
+            'shadowColor' : 'rgba(0, 0, 0, 0.7)',
+            'strokeStyle' : '#999999'
         });
-        drawer.line(waveRound.slice(0,2), {
-            "shadowOffsetX" : -2,
-            "shadowOffsetY" : 2,
-            "shadowBlur" : 3,
-            "shadowColor" : "rgba(0, 0, 0, 0.7)",
-            "strokeStyle" : "#999999"
+        drawer.line(waveRound.slice(0, 2), {
+            'shadowOffsetX' : -2,
+            'shadowOffsetY' : 2,
+            'shadowBlur' : 3,
+            'shadowColor' : 'rgba(0, 0, 0, 0.7)',
+            'strokeStyle' : '#999999'
         });
         //设置画笔属性
         drawer.attributesAssignment({
-            "strokeStyle": "#cccccc",
-            "lineWidth": 1
+            'strokeStyle': '#cccccc',
+            'lineWidth': 1
         });
         //绘制轴线
-        for(let i = 0; i < 2; i++) {
+        for (let i = 0; i < 2; i++) {
             const item = [time, value][i],
                 pixel = [this.long.waveWidth, this.long.waveHeight][i],
                 [axisMin, axisMax, count] = extendLine(item, pixel),
@@ -414,7 +410,7 @@ Graph.prototype = {
                 axisList.push((axisList[axisList.length - 1] + splitLong).toSFixed());
             }
             //不扩展坐标时收缩当前列表
-            if(!expend) { reduceList(axisList, item); }
+            if (!expend) { reduceList(axisList, item); }
             //按照序列绘制坐标网格
             this.drawGrid(i, axisList, drawer);
             //保存当前坐标轴序列
@@ -424,41 +420,43 @@ Graph.prototype = {
         drawer.attributesDefault();
         //绘制边框
         drawer.strokeRect(waveRound[0], [waveWidth, waveHeight], {
-            "strokeStyle" : "#999999",
-            "lineWidth" : 2
+            'strokeStyle' : '#999999',
+            'lineWidth' : 2
         });
     },
     //坐标网格
     drawGrid(label, axis, drawer) {
         const waveRound = this.long.waveRound,
-            attr = [{   //x轴
-            "name": "graph-bottomList",
-            "way": function (x) {
-                return ([
-                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[0][1]],
-                    [waveRound[0][0] + Math.round(x) + 0.5, waveRound[1][1] + 5]
-                ]);
-            },
-            "tagStyle": function (x) {
-                return ("top: 8px; transform: rotate(35deg); left: " + (waveRound[0][0] + x - 10) + "px")
-            },
-            "signStyle": (waveRound[2][0] + 10) + "px"
-        }, {   //y轴
-            "name": "graph-leftList",
-            "way": function (x) {
-                return ([
-                    [waveRound[2][0], waveRound[1][1] - Math.round(x) - 0.5],
-                    [waveRound[1][0] - 4, waveRound[1][1] - Math.round(x) - 0.5]
-                ]);
-            },
-            "tagStyle": function (x) {
-                return ("right: 0px; top: " + (waveRound[1][1] - x - 9) + "px")
-            },
-            "signStyle": "75px"
-        }],
-            sidebar = this.elementDOM.childSelect("div." + attr[label].name, 1),
-            lists = sidebar.childSelect("div.axis-number", axis.length),
-            unit = sidebar.childSelect("div.axis-unit", 1),
+            attr = [{
+                //x轴
+                name: 'graph-bottomList',
+                way(x) {
+                    return ([
+                        [waveRound[0][0] + Math.round(x) + 0.5, waveRound[0][1]],
+                        [waveRound[0][0] + Math.round(x) + 0.5, waveRound[1][1] + 5]
+                    ]);
+                },
+                tagStyle(x) {
+                    return ('top: 8px; transform: rotate(35deg); left: ' + (waveRound[0][0] + x - 10) + 'px');
+                },
+                signStyle: (waveRound[2][0] + 10) + 'px'
+            }, {
+                //y轴
+                name: 'graph-leftList',
+                way(x) {
+                    return ([
+                        [waveRound[2][0], waveRound[1][1] - Math.round(x) - 0.5],
+                        [waveRound[1][0] - 4, waveRound[1][1] - Math.round(x) - 0.5]
+                    ]);
+                },
+                tagStyle(x) {
+                    return ('right: 0px; top: ' + (waveRound[1][1] - x - 9) + 'px');
+                },
+                signStyle: '75px'
+            }],
+            sidebar = this.elementDOM.childSelect('div.' + attr[label].name, 1),
+            lists = sidebar.childSelect('div.axis-number', axis.length),
+            unit = sidebar.childSelect('div.axis-unit', 1),
             eachPixel = [this.long.waveWidth, this.long.waveHeight][label] / (axis[axis.length - 1] - axis[0]),
 
             maxSxis = Math.maxOfArray(axis).toShort(),
@@ -466,12 +464,12 @@ Graph.prototype = {
             power = maxSxis.number.powRank(),
 
             type = label
-                ? ((this.type === "voltage") ? "V" : "A")
-                : "s";
+                ? ((this.type === 'voltage') ? 'V' : 'A')
+                : 's';
 
         //添加单位
         unit.text(maxSxis.unit + type);
-        unit.attr("style", "left:" + attr[label].signStyle);
+        unit.attr('style', 'left:' + attr[label].signStyle);
 
         //绘制轴线
         for (let i = 0; i < axis.length; i++) {
@@ -483,7 +481,7 @@ Graph.prototype = {
             drawer.line(attr[label].way(axisNow));
 
             if (axisNow - axisLast > 20) {
-                lists.get(i).attr("style", attr[label].tagStyle(axisNow))
+                lists.get(i).attr('style', attr[label].tagStyle(axisNow))
                     .text((axis[i] * rank).toSFixed().toFixed(4 - power));
             } else {
                 lists.get(i).remove();
@@ -498,55 +496,55 @@ Graph.prototype = {
             //精确求解输出时间间隔的长度
             outputTimeSplit = this.time / (this.output[0].data.length - 1);
 
-        for(let i = 0; i < this.output.length; i++) {
+        for (let i = 0; i < this.output.length; i++) {
             const name = this.output[i].name,
                 data = this.output[i].data,
                 darwLine = [];
 
-            for(let j = 0; j < data.length; j++) {
+            for (let j = 0; j < data.length; j++) {
                 darwLine.push([
                     pixelSplitX * (j * outputTimeSplit - timeStart),
                     this.long.waveHeight - pixelSplitY * (data[j] - valueMin) - 1.25    //每个点的原点是左上角，现在要把点放到中点
                 ]);
             }
-            const drawer = new Graphics(document.getElementById("graph-" + name));
+            const drawer = new Graphics(document.getElementById('graph-' + name));
             drawer.clear();
             drawer.line(darwLine, {
-                "strokeStyle" : color[i],
-                "lineWidth" : 2.5
+                'strokeStyle' : color[i],
+                'lineWidth' : 2.5
             });
         }
     },
     //创建图例
     createTable() {
         //添加table本体
-        const table = this.elementDOM.append($("<table>",{
-            "class": "graph-table-legend"
-        })).append($("<tbody>"));
+        const table = this.elementDOM.append($('<table>', {
+            'class': 'graph-table-legend'
+        })).append($('<tbody>'));
 
         //有多少波形就添加多少行
-        for(let i = 0; i < this.output.length; i++) {
+        for (let i = 0; i < this.output.length; i++) {
             //行元素
-            const row = table.append($("<tr>", {
-                "class": "graph-table-row",
-                "id" : "table-legend-" + this.output[i].name
+            const row = table.append($('<tr>', {
+                'class': 'graph-table-row',
+                'id' : 'table-legend-' + this.output[i].name
             }));
             //图例颜色框
-            row.append($("<td>", {
-                "class": "graph-table-swatch-column"
-            })).append($("<div>", {
-                "class": "table-legend-swatch-outline"
-            })).append($("<div>", {
-                "class": "table-legend-swatch",
-                "style": "border-color:" + color[i] + ";background-color: " + color[i] + ";"
+            row.append($('<td>', {
+                'class': 'graph-table-swatch-column'
+            })).append($('<div>', {
+                'class': 'table-legend-swatch-outline'
+            })).append($('<div>', {
+                'class': 'table-legend-swatch',
+                'style': 'border-color:' + color[i] + ';background-color: ' + color[i] + ';'
             }));
             //文字说明
-            const textTd = row.append($("<td>", {
-                "class": "graph-table-legend graph-table-legend-label"
+            const textTd = row.append($('<td>', {
+                'class': 'graph-table-legend graph-table-legend-label'
             }));
-            const text = this.output[i].name.split("_");
+            const text = this.output[i].name.split('_');
             if (text[1]) {
-                textTd.text(text[0] + "(" + text[1] + ")");
+                textTd.text(text[0] + '(' + text[1] + ')');
             } else {
                 textTd.inner(text[0]);
             }
@@ -555,10 +553,10 @@ Graph.prototype = {
     //绘制x轴线
     drawMove(x, y) {
         //画线
-        const drawer = new Graphics(this.elementDOM[0].querySelector(".graph-action-canvas"));
+        const drawer = new Graphics(this.elementDOM[0].querySelector('.graph-action-canvas'));
         drawer.clear();
-        drawer.line([[x, 0], [x, this.long.waveHeight]],{
-            strokeStyle: "#bbbbbb",
+        drawer.line([[x, 0], [x, this.long.waveHeight]], {
+            strokeStyle: '#bbbbbb',
             lineWidth: 1
         });
 
@@ -576,7 +574,7 @@ Graph.prototype = {
             valueMin = backValueMax - ((y + error > height - 2) ? height - 2 : y + error) * value2Pixel;
 
         let min = Infinity, sub = -1;
-        if(typeof y === "number") {
+        if (typeof y === 'number') {
             //鼠标在当前面板，搜索合适的index
             for (let i = 0; i < this.output.length; i++) {
                 if (!this.output[i].status) {
@@ -596,57 +594,57 @@ Graph.prototype = {
                     }
                 }
             }
-        } else if(typeof y === "string" && y.search("index:") !== -1) {
+        } else if (typeof y === 'string' && y.search('index:') !== -1) {
             //鼠标不在当前面板，直接显示index的数值
-            sub = Number(y.split(":")[1]);
+            sub = Number(y.split(':')[1]);
         }
 
 
-        const tips = $(".graph-action-tip", this.elementDOM),
-            unit = (this.type === "voltage") ? "V" : "A";
-        if(sub !== -1) {
-            tips.attr("style", "position:absolute; display: block");
+        const tips = $('.graph-action-tip', this.elementDOM),
+            unit = (this.type === 'voltage') ? 'V' : 'A';
+        if (sub !== -1) {
+            tips.attr('style', 'position:absolute; display: block');
             const circleX = (sub * stepTime - backTimeStart) / time2Pixel;
 
-            for(let i = 0; i < this.output.length; i++) {
+            for (let i = 0; i < this.output.length; i++) {
                 const valueNow = this.output[i].data[sub];
-                if(this.output[i].status && valueNow < backValueMax && valueNow > backValueMin) {
+                if (this.output[i].status && valueNow < backValueMax && valueNow > backValueMin) {
                     //曲线显示
                     const circleY = (backValueMax - valueNow) / value2Pixel;
                     drawer.circle(circleX, circleY, 5, {
-                        "fillStyle": color[i]
+                        'fillStyle': color[i]
                     });
                     tips.get(i).text(valueNow.toShort(5).txt + unit)
-                        .css({ right: (width - circleX) + "px", bottom: (height - circleY) + "px" });
+                        .css({ right: (width - circleX) + 'px', bottom: (height - circleY) + 'px' });
                 } else {
                     //曲线隐藏
-                    tips.get(i).attr("style", "display: none");
+                    tips.get(i).attr('style', 'display: none');
                 }
             }
-            tips.get(-1).text((sub * stepTime).toShort(5).txt + "s")
-                .css({ right: (width - circleX) + "px", bottom: "0px" });
+            tips.get(-1).text((sub * stepTime).toShort(5).txt + 's')
+                .css({ right: (width - circleX) + 'px', bottom: '0px' });
 
-            return("index:" + sub);
+            return ('index:' + sub);
         } else {
-            tips.attr("style", "display: none");
-            return(false);
+            tips.attr('style', 'display: none');
+            return (false);
         }
     },
     //清空动作画布
     clearActionCanvas() {
-        const canvas = $(".graph-action-canvas", this.elementDOM)[0],
-            drawer = canvas.getContext("2d");
+        const canvas = $('.graph-action-canvas', this.elementDOM)[0],
+            drawer = canvas.getContext('2d');
         drawer.clearRect(0, 0, this.long.waveWidth, this.long.waveHeight);
 
-        $(".graph-action-tip", this.elementDOM)
-            .attr("style", "display: none");
+        $('.graph-action-tip', this.elementDOM)
+            .attr('style', 'display: none');
     },
     //绘制选择框
     drawSelect(event, current) {
         //初次运行，计算临时变量
-        if(!current.drawer) {
+        if (!current.drawer) {
             current.drawer = new Graphics(current.canvas);
-            current.offset = $(current.canvas).offset($("div#graph-page"));
+            current.offset = $(current.canvas).offset($('div#graph-page'));
         }
 
         //面板外框线宽度
@@ -659,14 +657,14 @@ Graph.prototype = {
             ];
 
         //源元素和触发元素不同，定位offset需要重新计算
-        if(event.target !== event.currentTarget) {
+        if (event.target !== event.currentTarget) {
             let node = event.target;
             //offset是鼠标所在源元素到块级元素的偏移
-            while(node.tagName.toLowerCase() !== "div") {
+            while (node.tagName.toLowerCase() !== 'div') {
                 node = node.parentNode;
             }
             //求当前块级元素到page的偏移值
-            while(node !== event.currentTarget) {
+            while (node !== event.currentTarget) {
                 offset[0] += node.offsetLeft;
                 offset[1] += node.offsetTop;
                 node = node.parentNode;
@@ -680,26 +678,26 @@ Graph.prototype = {
             bottom = Math.max(current.start[1], offset[1]);
 
         //范围限定
-        if(left < border) { left = border; }
-        if(top < border) { top = border; }
-        if(right > size.width - border) { right = size.width - border; }
-        if(bottom > size.height - border) { bottom = size.height - border; }
+        if (left < border) { left = border; }
+        if (top < border) { top = border; }
+        if (right > size.width - border) { right = size.width - border; }
+        if (bottom > size.height - border) { bottom = size.height - border; }
 
         const start = [left, top],                  //左上角坐标
             long = [right - left, bottom - top];    //x、y轴长度
 
         //绘制方框
         drawer.clear();
-        drawer.fillRect({"fillStyle": "rgba(187,187,187,0.5)"});
+        drawer.fillRect({'fillStyle': 'rgba(187,187,187,0.5)'});
         drawer.clear(start, long);
-        drawer.strokeRect(start, long, {"strokeStyle": "#aaaaaa"});
+        drawer.strokeRect(start, long, {'strokeStyle': '#aaaaaa'});
 
         //保存当前范围
         current.select = [left, top, right, bottom];
     },
     //返回当前背景的XY轴起始和终止坐标
     backgroundStartToEnd() {
-        return([
+        return ([
             this.axisList[0][0],                            //当前时间起点
             this.axisList[0][this.axisList[0].length - 1],  //当前时间终点
             this.axisList[1][0],                            //当前值起点
@@ -714,27 +712,27 @@ Graph.prototype = {
             time = [range[0], range[2]].map((n) => (n * time2pixel + timeStart).toSFixed(4)),
             value = [range[3], range[1]].map((n) => (valueMax - n * value2pixel).toSFixed(4));
 
-        return([time, value]);
+        return ([time, value]);
     }
 };
 //把整个波形页面转换成图像
 Graph.toImage = function() {
-    if(page.attr("class").search("visionAll") === -1) {
-        throw("波形界面尚未打开，无法转换");
+    if (page.attr('class').search('visionAll') === -1) {
+        throw ('波形界面尚未打开，无法转换');
     }
 
     //创建临时画布，网页数据流中不显示
-    const tempCanvas = new Graphics($("<canvas>", {
-        "style" : "display: none",
-        "height" : page.height() + "px",
-        "width" : page.width() + "px"
+    const tempCanvas = new Graphics($('<canvas>', {
+        'style' : 'display: none',
+        'height' : page.height() + 'px',
+        'width' : page.width() + 'px'
     })[0]);
     //绘制背景
-    tempCanvas.fillRect([0,0], [tempCanvas.length.width, tempCanvas.length.height], {
-        "fillStyle" : background
+    tempCanvas.fillRect([0, 0], [tempCanvas.length.width, tempCanvas.length.height], {
+        'fillStyle' : background
     });
     //绘制标题
-    $("div#graph-title span").each((n) => {
+    $('div#graph-title span').each((n) => {
         const elem = $(n),
             offset = elem.offset(page),
             position = [offset[0], offset[1] + 15.5];
@@ -745,100 +743,100 @@ Graph.toImage = function() {
          */
 
         tempCanvas.toText(elem.text(), position, {
-            "font" : "16px Microsoft YaHei"
+            'font' : '16px Microsoft YaHei'
         });
     });
     //说明文字属性
     tempCanvas.attributesAssignment({
-        "font" : "10px Arial"
+        'font' : '10px Arial'
     });
     //横向文字
-    $("div.graph-individual div.graph-leftList div.axis-number, " +
-        "div.graph-individual div.axis-unit").each((n) => {
-        const elem = $(n),
-            offset = elem.offset(page),
-            position = [offset[0], offset[1] + 10.5];
+    $('div.graph-individual div.graph-leftList div.axis-number, ' +
+        'div.graph-individual div.axis-unit').each((n) => {
+            const elem = $(n),
+                offset = elem.offset(page),
+                position = [offset[0], offset[1] + 10.5];
 
-        tempCanvas.toText(elem.text(), position, {}, false);
-    });
+            tempCanvas.toText(elem.text(), position, {}, false);
+        });
     //绘制波形
-    $("div.graph-individual canvas.graph-background, " +
-        "div.graph-individual canvas.graph-individual, " +
-        "div.graph-individual canvas.graph-canvas").each((n) => {
-        const position = $(n).offset(page);
-        tempCanvas.drawImage(n, position[0], position[1]);
-    });
+    $('div.graph-individual canvas.graph-background, ' +
+        'div.graph-individual canvas.graph-individual, ' +
+        'div.graph-individual canvas.graph-canvas').each((n) => {
+            const position = $(n).offset(page);
+            tempCanvas.drawImage(n, position[0], position[1]);
+        });
     //画笔属性恢复默认
     tempCanvas.attributesDefault();
     //绘制图例
-    $("div.graph-individual tbody").each((table) => {
+    $('div.graph-individual tbody').each((table) => {
         const elem = $(table),
             position = elem.offset(page).map((n) => n + 0.5),
             size = [elem.innerWidth(), elem.innerHeight()];
 
         tempCanvas.fillRect(position, size, {
-            "fillStyle" : "rgba(255, 255, 255, 0.6)"
+            'fillStyle' : 'rgba(255, 255, 255, 0.6)'
         });
         tempCanvas.strokeRect(position, size, {
-            "strokeStyle" : "#cccccc",
-            "lineWidth" : 1
+            'strokeStyle' : '#cccccc',
+            'lineWidth' : 1
         });
 
         //每行的内框
-        $("div.table-legend-swatch-outline", table).each((n, i) => {
+        $('div.table-legend-swatch-outline', table).each((n, i) => {
             const elem = $(n),
                 position =  elem.offset(page).map((n) => n + 1.5),
                 size = [elem.innerWidth() + 1, elem.innerHeight() + 1];
 
-            if(i) {
+            if (i) {
                 position[1] -= 1;
             }
 
             tempCanvas.strokeRect(position, size, {
-                "strokeStyle" : "#cccccc",
-                "lineWidth" : 1
+                'strokeStyle' : '#cccccc',
+                'lineWidth' : 1
             });
         });
         //每行的色块
-        $("div.table-legend-swatch", table).each((n, i) => {
+        $('div.table-legend-swatch', table).each((n, i) => {
             const elem = $(n),
                 position =  elem.offset(page).map((n) => n + 1),
                 //这里是border的宽度
                 size = [n.clientLeft * 2, n.clientTop * 2];
 
-            if(i) {
+            if (i) {
                 position[1] -= 1;
             }
 
             tempCanvas.fillRect(position, size, {
-                "fillStyle" : elem.attr("style").split(";")[0].split(":")[1]
+                'fillStyle' : elem.attr('style').split(';')[0].split(':')[1]
             });
         });
         //每行的说明
-        $("td.graph-table-legend.graph-table-legend-label", table).each((n, i) => {
+        $('td.graph-table-legend.graph-table-legend-label', table).each((n, i) => {
             const elem = $(n),
                 position =  elem.offset(page);
 
             position[0] += 1;
-            if(i) {
+            if (i) {
                 position[1] += 12;
             } else {
                 position[1] += 13;
             }
 
             tempCanvas.toText(elem.text(), position, {
-                "font" : "10px Arial",
-                "fillStyle" : "#696969"
+                'font' : '10px Arial',
+                'fillStyle' : '#696969'
             });
         });
     });
     //x轴坐标斜着的文字
     tempCanvas.attributesAssignment({
-        "font" : "10px Arial"
+        'font' : '10px Arial'
     });
     const deg = 35 / 180 * Math.PI;     //倾斜角度
     tempCanvas.ctx.rotate(deg);
-    $(".graph-bottomList .axis-number").each((n) => {
+    $('.graph-bottomList .axis-number').each((n) => {
         const elem = $(n),
             position = elem.offset(page),
             x1 = position[0] / Math.cos(deg),
@@ -847,7 +845,7 @@ Graph.toImage = function() {
             x2 = y2 * Math.sin(deg);
         tempCanvas.toText(elem.text(), [x1 + x2, y2 * Math.cos(deg)], {}, false);
     });
-    return(tempCanvas.toDataURL());
-}
+    return (tempCanvas.toDataURL());
+};
 
 export { Graph };
