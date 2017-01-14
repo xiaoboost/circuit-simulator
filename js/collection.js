@@ -1,10 +1,6 @@
 //单个器件的最大数量
 const maxNumber = 50;
 
-//全局器件集合
-const partsAll = new PartsCollection(),
-    partsNow = new PartsCollection();
-
 //器件堆栈类
 function PartsCollection(parts) {
     if (parts instanceof PartsCollection) {
@@ -255,5 +251,9 @@ PartsCollection.prototype = {
     }
 };
 Object.setPrototypeOf(PartsCollection.prototype, Array.prototype);
+
+//全局器件集合
+const partsAll = new PartsCollection(),
+    partsNow = new PartsCollection();
 
 export { partsAll, partsNow, PartsCollection };

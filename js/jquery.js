@@ -455,10 +455,9 @@ const delegate = {
     },
     //沿着触发对象向上直到委托对象，将所有触发的事件包装成队列
     handlers(event, handlers) {
-        let i;
+        let i, cur = event.target;
         const handlerQueue = [],
-            delegateCount = handlers.length,
-            cur = event.target;
+            delegateCount = handlers.length;
 
         //存在句柄，节点类型正确，且当前触发事件的元素并不是委托事件的元素
         if (delegateCount && event.target.nodeType && cur !== this) {
@@ -468,9 +467,8 @@ const delegate = {
                 if (cur.nodeType === 1) {
                     for (i = 0; i < delegateCount; i++) {
                         const handleObj = handlers[i],
-                            //读取选择器
-                            sel = handleObj.selector,
-                            matches = handleObj.matches;
+                            sel = handleObj.selector;
+                        let matches = handleObj.matches;
 
                         //选择器存在，那么进行匹配
                         //在冒泡的过程中，一个element只可能触发一次，所以找到合适的元素之后可以直接跳出循环

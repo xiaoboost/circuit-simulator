@@ -1195,16 +1195,19 @@ PartClass.prototype = {
         inputGroup.childrens('input, span.st-menu-input-highlight, span.st-menu-input-bar').attr('style', 'left:' + introWidth + 'px');
 
         //显示定位
-        //输入框的宽度最小175
-        const boxWidth = (110 + introWidth + unitWidth) < 175 ? 175: (110 + introWidth + unitWidth),
-            boxLeftBegin = - boxWidth / 2,                      //输入框宽度的一半
-            boxLeftEnd = boxLeftBegin,
-            boxTopEnd = - parameterDiv.height() - 20,           //输入框高度加上倒三角
-            boxTopBegin = boxTopEnd / 2 + 20,
+        let boxWidth, boxLeftBegin, boxLeftEnd, boxTopEnd,
+            boxTopBegin, sharpposx, sharpposy, triangledown;
 
-            sharpposx = this.position[0] * zoom + SVG[0],       //器件中心点在屏幕中实际的位置
-            sharpposy = this.position[1] * zoom + SVG[1],
-            triangledown = $('#parameter-menu-triangle-down');  //参数框的小倒三角
+        //输入框的宽度最小175
+        boxWidth = (110 + introWidth + unitWidth) < 175 ? 175: (110 + introWidth + unitWidth),
+        boxLeftBegin = - boxWidth / 2,                      //输入框宽度的一半
+        boxLeftEnd = boxLeftBegin,
+        boxTopEnd = - parameterDiv.height() - 20,           //输入框高度加上倒三角
+        boxTopBegin = boxTopEnd / 2 + 20,
+
+        sharpposx = this.position[0] * zoom + SVG[0],       //器件中心点在屏幕中实际的位置
+        sharpposy = this.position[1] * zoom + SVG[1],
+        triangledown = $('#parameter-menu-triangle-down');  //参数框的小倒三角
 
         //倒三角默认在对话框中间
         triangledown.css('left', '50%');
