@@ -46,8 +46,8 @@ module.exports = {
         'no-caller': 2,
         //禁止使用类似 eval() 的方法
         'no-implied-eval': 2,
-        //禁用未声明的变量
-        'no-undef': 2,
+        //警告使用未声明的变量
+        'no-undef': 1,
         //禁止将undefined作为标识符
         'no-undefined': 0,
         //不允许在变量定义之前使用它们
@@ -84,7 +84,7 @@ module.exports = {
         'constructor-super': 2,
         //super之前禁止使用this
         'no-this-before-super': 2,
-        //除函数外，变量和类都不允许在定义前使用
-        'no-use-before-define': [2, { 'functions': false }]
+        //除函数外，变量和类都在定义前使用时警告
+        'no-use-before-define': [1, { 'functions': false }]
     }
 }
