@@ -75,7 +75,7 @@ class readRam extends Readable {
         const peer = this._peer,
             index = this._index,
             max = this._cache.length,
-            frag = (index < max)
+            frag = (index <= max)
                 ? Buffer.from(this._cache, index, peer)
                 : null;
 
