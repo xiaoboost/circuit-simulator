@@ -1,10 +1,12 @@
 'use strict';
 const fs = require('fs'),
-    Transform = require('stream').Transform,
+    Readable = require('stream').Readable,
     Writable = require('stream').Writable,
+    Transform = require('stream').Transform,
     spawn = require('child_process').spawn,
     chalk = require('chalk'),
     gulp = require('gulp'),
+    path = require('path'),
     htmlmin = require('gulp-htmlmin'),
     rename = require('gulp-rename'),
     stylus = require('gulp-stylus'),
@@ -14,10 +16,8 @@ const fs = require('fs'),
     sourcemaps = require('gulp-sourcemaps'),
     autoprefixer = require('gulp-autoprefixer'),
 
-    _develop = 'Z:/在线仿真网站/',
-    _push = './.deploy_git/',
-
-    opt = { cwd: _push };
+    //默认发布文件夹
+    _push = path.normalize('./.deploy_git/');
 
 //webpack设置
 const webpackConfig = {
@@ -38,6 +38,7 @@ const webpackConfig = {
         ]
     }
 };
+
 //缓存类
 class Cache extends Writable {
     constructor() {
@@ -59,6 +60,28 @@ class Cache extends Writable {
         return buf.toString(encoding).trim();
     }
 }
+//从Buffer创建读取流
+class readRam extends Readable {
+    constructor(buf) {
+        super();
+        //保存读取的buffer
+        this._cache = buf;
+        //读取的起点
+        this._index = 0;
+        //每次读取60kb
+        this._peer = 61440;
+    }
+    _read() {
+        const peer = this._peer,
+            index = this._index,
+            max = this._cache.length,
+            frag = (index < max)
+                ? Buffer.from(this._cache, index, peer)
+                : null;
+
+        this.push(frag);
+    }
+}
 //文件内容替换
 function replace(search, replacement) {
     const ans = Transform({objectMode: true});
@@ -78,7 +101,86 @@ function replace(search, replacement) {
 
     return (ans);
 }
-//异步子进程
+//集合数据流
+function toVariable(obj) {
+    const ans = Writable({objectMode: true});
+
+    ans._write = function(buf, enc, next) {
+        const name = buf.relative,
+            base = (name === 'index.html')
+                ? '/' : '/src/',
+            whole = path.join(base, name);
+
+        if (obj[whole]) {
+            obj[whole] = Buffer.concat([obj[whole], buf._contents]);
+        } else {
+            obj[whole] = Buffer.from(buf._contents);
+        }
+
+        next();
+    };
+
+    return (ans);
+}
+
+//特殊字符转义
+function escape(html) {
+    return html
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+//合并对象
+function merge(base, from) {
+    for (const i in from) {
+        if (from.hasOwnProperty(i)) {
+            base[i] = from[i];
+        }
+    }
+}
+//内存中间件
+function ramMiddleware(files) {
+    const url = require('url'),
+        etag = require('etag'),
+        mime = require('mime-types'),
+        parseUrl = require('parseurl'),
+        destroy = require('destroy');
+
+    return (req, res, next) => {
+        //不允许GET或HEAD以外的方法
+        if (req.method !== 'GET' && req.method !== 'HEAD') {
+            res.statusCode = 405;
+            res.setHeader('Allow', 'GET, HEAD');
+            res.setHeader('Content-Length', '0');
+            res.end();
+            return (false);
+        }
+
+        const pathname = parseUrl(req).pathname,
+            pathkey = (pathname[pathname.length - 1] === '/')
+                ? path.join(pathname, 'index.html')
+                : path.normalize(pathname),
+            file = files[pathkey],
+            resStream = new readRam(file);
+
+        //设置响应的Header
+        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Cache-Control', 'public, max-age=600');
+        res.setHeader('Last-Modified', (new Date).toUTCString());
+        //res.setHeader('ETag', etag(file));
+        res.setHeader('Content-Type', mime.lookup(pathkey) + ';charset:utf-8');
+        res.setHeader('Content-Length', file.length);
+
+        //数据流连接至http响应
+        resStream.pipe(res)
+            .on('finish', () => destroy(resStream));
+
+        next();
+    };
+}
+//Git子进程
 function promiseSpawn(command, args, options) {
     if (!command) { throw new TypeError('command is required!'); }
 
@@ -90,7 +192,7 @@ function promiseSpawn(command, args, options) {
     args = args || [];
     options = options || {};
 
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         const stdoutCache = new Cache(),
             stderrCache = new Cache(),
             task = spawn(command, args, options),
@@ -103,95 +205,100 @@ function promiseSpawn(command, args, options) {
         task.stderr.pipe(stderrCache);
 
         //子进程结束
-        task.on('close', function() {
+        task.on('close', () => {
             console.log(stdoutCache.getCache(encoding));
             resolve();
         });
         //子进程发生错误
-        task.on('error', function(code) {
+        task.on('error', (code) => {
             const e = new Error(stderrCache.getCache(encoding));
             e.code = code;
             return reject(e);
         });
     });
 }
-//git操作入口
+//Git操作入口
 function git() {
-    const len = arguments.length,
-        args = new Array(len);
+    const opt = { cwd: _push };
 
-    for (let i = 0; i < len; i++) {
-        args[i] = arguments[i];
-    }
-
-    if (args[0] === 'init') {
-        //初始化，配置参数
-        args[1] = args[1] || {};
-        for (const i in args[1]) {
-            if (args[1].hasOwnProperty(i)) {
-                opt[i] = args[1][i];
-            }
+    if (arguments[0] === 'init') {
+        //初始化
+        //检查文件夹是否存在
+        if (!fs.existsSync(_push)) {
+            fs.mkdirSync(_push);
         }
-        //.git文件夹不存在，那么就需要初始化git
-        if (!fs.existsSync((opt.cwd + '/.git').normalize())) {
+        //检查是否初始化git
+        if (!fs.existsSync(path.join(_push, '/.git'))) {
             return promiseSpawn('git', ['init'], opt);
         } else {
             return new Promise((n) => n());
         }
     } else {
         //子进程运行git命令
-        return (() => promiseSpawn('git', args, opt));
+        return (() => promiseSpawn('git', arguments, opt));
     }
 }
 
-gulp.task('dev-html', function() {
-    return gulp.src('./index.html')
-        .pipe(htmlmin({
-            collapseWhitespace: true,
-            removeComments: true
-        }))
-        .pipe(gulp.dest(_develop));
-});
-gulp.task('dev-stylus', function() {
-    return gulp.src('./css/main.styl')
-        .pipe(sourcemaps.init())
-        .pipe(stylus({compress: true}))
-        .pipe(autoprefixer())
-        .pipe(base64())
-        .pipe(sourcemaps.write())
-        .pipe(rename('circuitlab.min.css'))
-        .pipe(gulp.dest(_develop + 'src/'));
-});
-gulp.task('dev-js', function() {
-    return gulp.src('./js/main.js')
-        .pipe(sourcemaps.init())
-        .pipe(webpack(webpackConfig))
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest(_develop + 'src/'));
-});
-gulp.task('dev-image', function() {
-    return gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
-        .pipe(gulp.dest(_develop + 'src/'));
-});
-gulp.task('build', ['dev-html', 'dev-stylus', 'dev-js', 'dev-image'], function() {
-    //设置静态服务器
-    const express = require('express'),
-        app = express();
+gulp.task('build', function() {
+    function html(obj) {
+        return gulp.src('./index.html')
+            .pipe(htmlmin({
+                collapseWhitespace: true,
+                removeComments: true
+            }))
+            .pipe(toVariable(obj));
+    }
+    function image(obj) {
+        return gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
+            .pipe(toVariable(obj));
+    }
+    function css(obj) {
+        return gulp.src('./css/main.styl')
+            .pipe(sourcemaps.init())
+            .pipe(stylus({compress: true}))
+            .pipe(autoprefixer())
+            .pipe(base64())
+            .pipe(sourcemaps.write())
+            .pipe(rename('circuitlab.min.css'))
+            .pipe(toVariable(obj));
+    }
+    function js(obj) {
+        return gulp.src('./js/main.js')
+            .pipe(sourcemaps.init())
+            .pipe(webpack(webpackConfig))
+            .pipe(sourcemaps.write())
+            .pipe(toVariable(obj));
+    }
+    function watchFunc(func) {
+        return (() => {
+            const temp = {};
+            new Promise((res) => func(temp).on('finish', res))
+                .then(() => merge(source, temp));
+        });
+    }
 
-    //允许网页访问theme文件夹
-    app.use(express.static(_develop));
-    //建立虚拟网站，端口5000
-    app.listen(5000, function() {
-        console.log(chalk.green('\nINFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
-        console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
-    });
+    //设置静态服务器，以及初次编译
+    const source = {},
+        express = require('express'),
+        app = express(),
+        promises = [html, image, css, js]
+            .map((task) => new Promise((res) => task(source).on('finish', res)));
 
-    gulp.watch('./index.html', ['dev-html']);
-    gulp.watch('./css/*.styl', ['dev-stylus']);
-    gulp.watch('./js/*.js', ['dev-js']);
+    //服务器挂载文件
+    app.use(ramMiddleware(source));
+
+    //初次编译完成后，建立虚拟网站，端口5000
+    Promise.all(promises)
+        .then(() => app.listen(5000, () => {
+            console.log(chalk.green('\nINFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
+            console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
+            console.log(chalk.green('INFO:') + ' 本程序不支持热替换！');
+        }));
+
+    gulp.watch('./index.html', watchFunc(html));
+    gulp.watch('./css/*.styl', watchFunc(css));
+    gulp.watch('./js/*.js', watchFunc(js));
 });
-
-//发布
 gulp.task('push', function() {
     function html(res) {
         gulp.src('./index.html')
@@ -200,12 +307,12 @@ gulp.task('push', function() {
                 removeComments: true
             }))
             .pipe(gulp.dest(_push))
-            .on('end', res);
+            .on('finish', res);
     }
     function image(res) {
         gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
             .pipe(gulp.dest(_push + 'src/'))
-            .on('end', res);
+            .on('finish', res);
     }
     function css(res) {
         gulp.src('./css/main.styl')
@@ -214,7 +321,7 @@ gulp.task('push', function() {
             .pipe(base64())
             .pipe(rename('circuitlab.min.css'))
             .pipe(gulp.dest(_push + 'src/'))
-            .on('end', res);
+            .on('finish', res);
     }
     function js(res) {
         const temp = './js/main2.js',
@@ -229,7 +336,7 @@ gulp.task('push', function() {
             .pipe(replace(reg2, '//$1'))
             .pipe(uglify())
             .pipe(gulp.dest(_push + 'src/'))
-            .on('end', () => { fs.unlinkSync(temp); res(); });
+            .on('finish', () => { fs.unlinkSync(temp); res(); });
     }
 
     const url = 'https://github.com/xiaoboost/circuitlab.git',
