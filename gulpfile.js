@@ -79,6 +79,7 @@ class readRam extends Readable {
                 ? Buffer.from(this._cache, index, peer)
                 : null;
 
+        this._index = index + peer;
         this.push(frag);
     }
 }
