@@ -796,6 +796,10 @@ const Search = {
                 case 'line':
                 case 'cross-point': {
                     this.nodeToConnect(1);
+                    //导线被删除，直接退出
+                    if (!this.isExist()) {
+                        return (false);
+                    }
                     break;
                 }
                 default: {
@@ -2036,7 +2040,12 @@ LineClass.prototype = {
         } else if (status.form === 'line-point') {
             self.mergeLine(status.id);
         } else if (status.form === 'line') {
-            self.splitLine(status.id, sub);
+            //终点与起点在同一导线上，删除当前导线
+            if (self.hasConnect(status.id)) {
+                self.deleteSelf();
+            } else {
+                self.splitLine(status.id, sub);
+            }
         } else if (status.form === 'cross-point') {
             const temp = self.way.get(-1 * sub),
                 lines = status.id.split(' ')
@@ -2379,6 +2388,7 @@ LineClass.prototype = {
         }
 
         this.deleteSign();
+        this.circle.forEach((n) => n.remove());
         this.elementDOM.remove();
         partsAll.deletePart(this);
     },
