@@ -168,7 +168,7 @@ function ramMiddleware(files) {
 
         //设置响应的Header
         res.setHeader('Accept-Ranges', 'bytes');
-        res.setHeader('Cache-Control', 'public, max-age=600');
+        res.setHeader('Cache-Control', 'max-age=0');
         res.setHeader('Last-Modified', (new Date).toUTCString());
         res.setHeader('ETag', etag(file));
         res.setHeader('Content-Type', mime.lookup(pathkey) + ';charset:utf-8');
