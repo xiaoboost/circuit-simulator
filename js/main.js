@@ -1555,7 +1555,8 @@ $('body').on('keydown', function(event) {
 //页面加载完毕之后运行初始化
 doc.body.onload = function() {
     //读取地址信息
-    const src = window.location.href.split('?')[1],
+    const cover = $('#load-cover'),
+        src = window.location.href.split('?')[1],
         parameters = {};
 
     //分解输入参数
@@ -1573,12 +1574,12 @@ doc.body.onload = function() {
     }
 
     //去掉灰幕
-    $('#load-cover').css('opacity', 0);
-    setTimeout(function() {
-        $('#load-cover').css('display', 'none');
+    cover.css('opacity', 0);
+    const timer = setInterval(function() {
+        if (cover.css('display') === 'none') {
+            clearInterval(timer);
+        } else {
+            cover.css('display', 'none');
+        }
     }, 300);
-
-    setTimeout(function() {
-        $('#load-cover').css('display', 'none');
-    }, 600);
 };

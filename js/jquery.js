@@ -723,6 +723,7 @@ $.fn = $.prototype = {
             return (this);
         }
         if (typeof name === obj) {
+            //设置多个值
             if (flag) {
                 let str = '';
                 for (const i in name) if (name.hasOwnProperty(i)) {
@@ -734,12 +735,18 @@ $.fn = $.prototype = {
                     this.each((n) => n.style[i] = name[i]);
                 }
             }
-        } else if (typeof name === str && typeof value === str || typeof value === num) {
+        } else if (typeof name === str && value !== u) {
+            //设置单个值
             if (flag) {
-                this.each((n) => n.style = name + '=' + value + ';');
+                this.each((n) => n.style = name + '=' + String(value) + ';');
             } else {
-                this.each((n) => n.style[name] = value);
+                this.each((n) => n.style[name] = String(value));
             }
+        } else if (typeof name === str && value === u) {
+            //取得下标为0元素的行内样式值，如果没有这个样式，那么输出空字符串（''）
+            return this[0].style[name]
+                ? this[0].style[name]
+                : '';
         }
         return (this);
     },
