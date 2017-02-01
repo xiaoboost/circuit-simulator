@@ -744,9 +744,7 @@ $.fn = $.prototype = {
             }
         } else if (typeof name === str && value === u) {
             //取得下标为0元素的行内样式值，如果没有这个样式，那么输出空字符串（''）
-            return this[0].style[name]
-                ? this[0].style[name]
-                : '';
+            return (this[0].style[name] || '');
         }
         return (this);
     },
