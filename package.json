@@ -1,7 +1,7 @@
 {
-  "name": "automation",
-  "version": "1.0.0",
-  "description": "项目文件打包自动化",
+  "name": "在线电路仿真",
+  "version": "0.9.0",
+  "description": "简易的在线电路仿真系统",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,7 +10,7 @@
     "auto"
   ],
   "author": "Xiao",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.11.4",
     "babel-loader": "^6.2.4",
