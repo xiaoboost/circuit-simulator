@@ -1157,7 +1157,7 @@ PartClass.prototype = {
             const inputGroup = $('<div>', { class: 'st-menu-input-group' });
             inputGroup.append($('<span>', { class: 'st-menu-input-introduce' }));
             inputGroup.append($('<input>', { required: '' }));
-            inputGroup.append($('<span>', { class: 'st-menu-input-highlight' }));
+            //inputGroup.append($('<span>', { class: 'st-menu-input-highlight' }));
             inputGroup.append($('<span>', { class: 'st-menu-input-bar' }));
             inputGroup.append($('<span>', { class: 'st-menu-input-unit' }));
             parameterDiv.preappend(inputGroup, parameterBottom);
@@ -1177,7 +1177,7 @@ PartClass.prototype = {
             //添加器件属性
             const group = $(inputGroup[i]),
                 groupIntro = group.childrens(0),
-                groupUnit = group.childrens(4),
+                groupUnit = group.childrens(3),
                 groupInput =  group.childrens(1);
 
             group.attr('id', 'parameter-' + i);
@@ -1191,8 +1191,8 @@ PartClass.prototype = {
         //inputDOM比器件的input数组多了一个器件ID
         this.input.length --;
         //DOM位置调整
-        inputGroup.childrens(4).attr('style', 'left:' + (introWidth + 88) + 'px');
-        inputGroup.childrens('input, span.st-menu-input-highlight, span.st-menu-input-bar').attr('style', 'left:' + introWidth + 'px');
+        inputGroup.childrens(3).attr('style', 'left:' + (introWidth + 100) + 'px');
+        inputGroup.childrens('input, span.st-menu-input-bar').attr('style', 'left:' + introWidth + 'px');
 
         //显示定位
         let boxWidth, boxLeftBegin, boxLeftEnd, boxTopEnd,

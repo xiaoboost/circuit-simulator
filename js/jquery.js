@@ -81,7 +81,7 @@ function isElement(elem) {
 function mathchDom(elements, selector) {
     const ans = $();
     //删除选择器中的所有空格
-    selector = selector.replace(' ', '');
+    selector = selector.replace(/ /g, '');
     //没有输入选择器，那么返回$(elements)
     if (!selector) {
         for (let i = 0; i < elements.length; i++) {
@@ -89,7 +89,7 @@ function mathchDom(elements, selector) {
         }
         return (ans);
     }
-    const selectors = selector.split(', ').map((n) => {
+    const selectors = selector.split(',').map((n) => {
         const ans = {
                 'tag': '',
                 'id': '',
