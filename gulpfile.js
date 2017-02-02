@@ -17,7 +17,7 @@ const fs = require('fs'),
     autoprefixer = require('gulp-autoprefixer'),
 
     //默认发布文件夹
-    _push = path.normalize('./.deploy_git/');
+    _push = path.join(__dirname, '.deploy_git');
 
 //webpack设置
 const webpackConfig = {
@@ -220,9 +220,10 @@ function promiseSpawn(command, args, options) {
 }
 //Git操作入口
 function git() {
-    const opt = { cwd: _push };
+    const opt = { cwd: _push },
+        args = [].slice.call(arguments);
 
-    if (arguments[0] === 'init') {
+    if (args[0] === 'init') {
         //初始化
         //检查文件夹是否存在
         if (!fs.existsSync(_push)) {
@@ -236,7 +237,7 @@ function git() {
         }
     } else {
         //子进程运行git命令
-        return (() => promiseSpawn('git', arguments, opt));
+        return (() => promiseSpawn('git', args, opt));
     }
 }
 
@@ -312,7 +313,7 @@ gulp.task('push', function() {
     }
     function image(res) {
         gulp.src(['./img/favicons.ico', './img/circuit-grid.svg'])
-            .pipe(gulp.dest(_push + 'src/'))
+            .pipe(gulp.dest(path.join(_push, 'src')))
             .on('finish', res);
     }
     function css(res) {
@@ -321,11 +322,11 @@ gulp.task('push', function() {
             .pipe(autoprefixer())
             .pipe(base64())
             .pipe(rename('circuitlab.min.css'))
-            .pipe(gulp.dest(_push + 'src/'))
+            .pipe(gulp.dest(path.join(_push, 'src')))
             .on('finish', res);
     }
     function js(res) {
-        const temp = './js/main2.js',
+        const temp = path.join(__dirname, 'js', 'main2.js'),
             reg1 = /^((?:[^\n]?)+?import[^\n]+?\.\/test[^\n]+?)$/mg,
             reg2 = /^([^\n]+?mapTest[^\n]+?$)/mg;
 
@@ -336,7 +337,7 @@ gulp.task('push', function() {
             .pipe(webpack(webpackConfig))
             .pipe(replace(reg2, '//$1'))
             .pipe(uglify())
-            .pipe(gulp.dest(_push + 'src/'))
+            .pipe(gulp.dest(path.join(_push, 'src')))
             .on('finish', () => { fs.unlinkSync(temp); res(); });
     }
 
