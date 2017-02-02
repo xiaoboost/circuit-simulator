@@ -820,9 +820,8 @@ mainPage.on('mousewheel', function(event) {
 });
 //鼠标点击黑幕
 $('#shade-gray').on('click', function() {
-    const body = $(doc.body);
-    if (body.hasClass('open-sidebar') && !parameter.hasClass('parameter-open')) {
-        body.removeClass('open-gray open-sidebar');
+    if (sidebar.hasClass('open-menu-config') && !parameter.hasClass('parameter-open')) {
+        $(doc.body).removeClass('open-gray open-sidebar');
         sidebar.removeClass('open-menu-config open-add-parts');
     }
 });
