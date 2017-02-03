@@ -1191,7 +1191,7 @@ PartClass.prototype = {
         //inputDOM比器件的input数组多了一个器件ID
         this.input.length --;
         //DOM位置调整
-        inputGroup.childrens(3).attr('style', 'left:' + (introWidth + 100) + 'px');
+        inputGroup.childrens('span.st-menu-input-unit').attr('style', 'left:' + (introWidth + 100) + 'px');
         inputGroup.childrens('input, span.st-menu-input-bar').attr('style', 'left:' + introWidth + 'px');
 
         //显示定位
@@ -1199,7 +1199,7 @@ PartClass.prototype = {
             boxTopBegin, sharpposx, sharpposy, triangledown;
 
         //输入框的宽度最小175
-        boxWidth = (110 + introWidth + unitWidth) < 175 ? 175: (110 + introWidth + unitWidth),
+        boxWidth = (120 + introWidth + unitWidth) < 175 ? 175: (120 + introWidth + unitWidth),
         boxLeftBegin = - boxWidth / 2,                      //输入框宽度的一半
         boxLeftEnd = boxLeftBegin,
         boxTopEnd = - parameterDiv.height() - 20,           //输入框高度加上倒三角
