@@ -1351,7 +1351,7 @@ PartClass.prototype = {
         const last = this.id;
         //删除旧器件
         partsAll.deletePart(this);
-        partsNow.pop(this);
+        partsNow.deletePart(this);
         const temptspan = $('tspan', this.elementDOM);
         const points = $('.part-point', this.elementDOM);
         //变更ID及显示
