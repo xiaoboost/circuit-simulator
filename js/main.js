@@ -1104,7 +1104,7 @@ mainPage.on('mousedown', function(event) {
 //图纸的全局mouseup操作
 mainPage.on('mouseup', function(event) {
     //是否取消mousemove事件标志位
-    let off = true;
+    let offEvent = true, offMouse = true;
     if (event.which === 1) {
         //左键
         switch (true) {
@@ -1112,6 +1112,7 @@ mainPage.on('mouseup', function(event) {
             case grid.newMark: {
                 grid.setNewMark(false);
                 partsNow.putDownParts('new');
+                offMouse = false;
                 break;
             }
             //粘贴器件
@@ -1119,7 +1120,8 @@ mainPage.on('mouseup', function(event) {
                 if (partsNow.putDownParts('paste')) {
                     grid.setPasteParts(false);
                 } else {
-                    off = false;
+                    offEvent = false;
+                    offMouse = false;
                 }
                 break;
             }
@@ -1185,9 +1187,9 @@ mainPage.on('mouseup', function(event) {
         }
     }
     //全局解除移动事件
-    off && mainPage.off('mousemove', mousemoveEvent);
+    offEvent && mainPage.off('mousemove', mousemoveEvent);
     //鼠标恢复原样
-    off && mainPage.attr('class', '');
+    offMouse && mainPage.attr('class', '');
 });
 
 //曲线面板事件
