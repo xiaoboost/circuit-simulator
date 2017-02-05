@@ -240,6 +240,16 @@ function git() {
         return (() => promiseSpawn('git', args, opt));
     }
 }
+//提示信息
+function INFO() {
+    console.log(chalk.green('INFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
+    console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
+    console.log(chalk.green('INFO:') + ' 本程序不支持热替换！');
+}
+//清空屏幕
+function clearScreen() {
+    console.log('\x1Bc');
+}
 
 gulp.task('build', function() {
     function html(obj) {
@@ -274,8 +284,15 @@ gulp.task('build', function() {
     function watchFunc(func) {
         return (() => {
             const temp = {};
-            new Promise((res) => func(temp).on('finish', res))
-                .then(() => merge(source, temp));
+            new Promise((res) => {
+                clearScreen();
+                console.log(chalk.green('INFO:') + ' 正在编译文件……\n');
+                func(temp).on('finish', res);
+            }).then(() => {
+                merge(source, temp);
+                clearScreen();
+                INFO();
+            });
         });
     }
 
@@ -291,11 +308,10 @@ gulp.task('build', function() {
 
     //初次编译完成后，建立虚拟网站，端口5000
     Promise.all(promises)
-        .then(() => app.listen(5000, () => {
-            console.log(chalk.green('\nINFO:') + ' 虚拟网站已建立于 http://localhost:5000/');
-            console.log(chalk.green('INFO:') + ' CTRL + C 退出当前状态');
-            console.log(chalk.green('INFO:') + ' 本程序不支持热替换！');
-        }));
+        .then(() => {
+            clearScreen();
+            app.listen(5000, INFO);
+        });
 
     gulp.watch('./index.html', watchFunc(html));
     gulp.watch('./css/*.styl', watchFunc(css));
