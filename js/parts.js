@@ -690,16 +690,17 @@ PartClass.prototype = {
                 this.input[i] = this.input[i].replace('u', 'μ');
                 propertyVision.push(this.input[i] + this.parameterUnit[i]);
             }
-            const textMain = this.id.split('_');
-            const tempDate = $('<text>', SVG_NS, { x: '0', y: '0', 'class': 'features-text' });
+            const textMain = this.id.split('_'),
+                tempDate = $('<text>', SVG_NS, { 'class': 'features-text' });
+
+            //创建器件ID
             tempDate.append($('<tspan>', SVG_NS).text(textMain[0]));
             tempDate.append($('<tspan>', SVG_NS).text(textMain[1]));
+
             //创建txt下属器件属性
             for (let i = 0; i < propertyVision.length; i++) {
-                tempDate.append($('<tspan>', SVG_NS, {
-                    dx: '0',
-                    dy: '16'
-                }).text(propertyVision[i]));
+                tempDate.append($('<tspan>', SVG_NS)
+                    .text(propertyVision[i]));
             }
             group.append(tempDate);
         }
@@ -728,21 +729,25 @@ PartClass.prototype = {
         //没有需要显示的文字
         if (!this.visionNum) { return (false); }
 
-        coordinates = (coordinates instanceof Array)
-            ? coordinates.map((n) => parseInt(n))
-            : [this.txtLocate, -this.txtLocate];
-
-        const elemtxt = $('text', this.elementDOM),
-            elemtspan = $('tspan', elemtxt),
-            tempPointInfor = this.pointRotate(),
+        const elemtxt = $('text.features-text', this.elementDOM),
             signRotate = $('.part-rotate', this.elementDOM),
+            elemtspan = elemtxt.childrens(),
+            tempPointInfor = this.pointRotate(),
             //器件文字旋转逆矩阵
-            texttransfor = this.rotate.inverse();
+            texttransfor = this.rotate.inverse(),
+            //文字属性
+            textAttr = 'matrix(' + texttransfor.join(',') + ',0,0)';
 
-        elemtxt.attr('transform', 'matrix(' + texttransfor.join(', ') + ',0,0)');
+        //文字旋转
+        elemtxt.attr('transform', textAttr);
+
+        //如果没有指定坐标，那么默认为当前信息文本位置
+        if (!coordinates) {
+            coordinates = elemtxt.attr(['x', 'y']).map((n) => (+n) || 0);
+        }
 
         if (signRotate.length) {
-            signRotate.attr('transform', 'matrix(' + texttransfor.join(', ') + ',0,0)');
+            signRotate.attr('transform', textAttr);
         }
 
         //判断文字显示的方位，文字显示在管脚没有的方向
@@ -770,110 +775,68 @@ PartClass.prototype = {
             coordinates[0] = 0;
         }
 
-        //外形大小
-        const rect = $('.focus-part', this.elementDOM).attr(['width', 'height']).map((n) => Number(n)),
+        const //图纸放大倍数
             exec = (/scale\(([\d.]+?)\)/).exec(actionArea.attr('transform')) || [1, 1],
-            scale = Number(exec[1]);
-
-        let transform = this.elementDOM.attr('transform');
-        if (!transform) {
-            transform = new Matrix([[1, 0], [0, 1]]);
-        } else {
-            const nums = transform.match(/\d+/g)
-                .map((n) => Number(n));
-            transform = new Matrix([[nums[0], nums[1]], [nums[2], nums[3]]]);
-        }
-        const size = transform.multo([rect])[0].map((n) => parseInt(Math.abs(n / 2))),
-            bias = 4;
+            scale = +(exec[1]),
+            //器件此时的外形尺寸
+            rect = $('.focus-part', this.elementDOM).attr(['width', 'height']).map((n) => +(n)),
+            size = this.rotate.multo([rect])[0].map((n) => parseInt(Math.abs(n / 2))),
+            //文字最小偏移量
+            bias = 4,
+            //文本高度
+            height = 16,
+            textRow = elemtspan.length,
+            totalHeight = (height + 2) * (textRow - 1),
+            //id字符串的显示长度
+            idWidth = $(elemtspan[0]).STWidth() + $(elemtspan[1]).STWidth();
 
         if (!coordinates[0]) {
             if (coordinates[1] > 0) {
                 //下
-                const idText = $(elemtspan[0]),
-                    startY = size[1] + idText.height()/scale - bias,
-                    startX = -0.5 * (idText.width()/scale + $(elemtspan[1]).width()/scale);
-
-                elemtxt.attr({
-                    'x': startX,
-                    'y': startY
-                });
-                for (let i = 2; i < elemtspan.length; i++) {
-                    const elem = $(elemtspan[i]);
-                    elem.attr({
-                        'dx': -0.5 * elem.width()/scale + startX,
-                        'dy': elem.height()/scale
-                    });
-                }
-            } else {
-                //上
-                const idText = $(elemtspan[0]),
-                    startX = -0.5 * (idText.width()/scale + $(elemtspan[1]).width()/scale);
-                let startY = 0;
-
+                let last = idWidth / 2;
+                $(elemtspan[0]).attr({ 'dx': - last, 'dy': '0' });
                 for (let i = 2; i < elemtspan.length; i++) {
                     const elem = $(elemtspan[i]),
-                        height = elem.height() / scale;
+                        elemWidth = elem.STWidth() / 2;
 
-                    elem.attr({
-                        'dx': -0.5 * elem.width() / scale + startX,
-                        'dy': height
-                    });
-                    startY -= height;
+                    elem.attr({ 'dx': - (elemWidth + last), 'dy': height });
+                    last = elemWidth;
                 }
-                startY -= (size[1] + bias);
+                elemtxt.attr({ 'x': '0', 'y': size[1] + bias + height - textRow });
+            } else {
+                //上
+                let last = idWidth / 2;
+                $(elemtspan[0]).attr({ 'dx': - last, 'dy': '0' });
+                for (let i = 2; i < elemtspan.length; i++) {
+                    const elem = $(elemtspan[i]),
+                        elemWidth = elem.STWidth() / 2;
 
-                elemtxt.attr({
-                    'x': startX,
-                    'y': startY
-                });
+                    elem.attr({ 'dx': - (elemWidth + last), 'dy': height });
+                    last = elemWidth;
+                }
+                elemtxt.attr({ 'x': '0', 'y': - (size[1] + bias + totalHeight - height - textRow) });
             }
         } else {
             if (coordinates[0] > 0) {
                 //右
-                const startX = size[0] + bias,
-                    idText = $(elemtspan[0]);
-
-                let startY = 0,
-                    biasY = - idText.width()/scale;
-
+                let last = idWidth;
+                $(elemtspan[0]).attr({ 'dx': '0', 'dy': '0' });
                 for (let i = 2; i < elemtspan.length; i++) {
-                    const elem = $(elemtspan[i]);
-                    const height = elem.height()/scale;
-                    elem.attr({
-                        'dx': biasY - $(elemtspan[i - 1]).width()/scale,
-                        'dy': height
-                    });
-                    startY -= height;
-                    biasY = 0;
+                    const text = $(elemtspan[i]);
+                    text.attr({ 'dx': - last, 'dy': height });
+                    last = text.STWidth();
                 }
-                startY = 0.5 * (startY + idText.height()/scale) - bias;
 
-                elemtxt.attr({
-                    'x': startX,
-                    'y': startY
-                });
+                elemtxt.attr({ 'x': size[0] + bias, 'y': - (totalHeight / 2 - height) });
             } else {
                 //左
-                const idText = $(elemtspan[0]),
-                    startX = - (size[0] + bias + idText.width()/scale + $(elemtspan[1]).width()/scale);
-                let startY = 0;
-
+                $(elemtspan[0]).attr({ 'dx': - idWidth, 'dy': '0' });
                 for (let i = 2; i < elemtspan.length; i++) {
-                    const elem = $(elemtspan[i]),
-                        height = elem.height()/scale;
-                    elem.attr({
-                        'dx': - $(elemtspan[i]).width()/scale,
-                        'dy': height
-                    });
-                    startY -= height;
+                    const elem = $(elemtspan[i]);
+                    elem.attr({ 'dx': - elem.STWidth(), 'dy': height });
                 }
 
-                startY = 0.5 * (startY + idText.height()/scale) - bias;
-
-                elemtxt.attr({
-                    'x': startX,
-                    'y': startY
-                });
+                elemtxt.attr({ 'x': - (size[0] + bias), 'y': - (totalHeight / 2 - height) });
             }
         }
     },
@@ -882,7 +845,10 @@ PartClass.prototype = {
         this.position = this.position.rotate(matrix, center);
         this.rotate = this.rotate.mul(matrix);
         this.move();
-        this.textVisition();
+
+        const textPos = $('text.features-text', this.elementDOM)
+            .attr(['x', 'y']).map((n) => (+n) || 0);
+        this.textVisition(matrix.multo([textPos])[0]);
     },
     //取消引脚放大
     shrinkCircle(pointMark) {
@@ -1157,7 +1123,6 @@ PartClass.prototype = {
             const inputGroup = $('<div>', { class: 'st-menu-input-group' });
             inputGroup.append($('<span>', { class: 'st-menu-input-introduce' }));
             inputGroup.append($('<input>', { required: '' }));
-            //inputGroup.append($('<span>', { class: 'st-menu-input-highlight' }));
             inputGroup.append($('<span>', { class: 'st-menu-input-bar' }));
             inputGroup.append($('<span>', { class: 'st-menu-input-unit' }));
             parameterDiv.preappend(inputGroup, parameterBottom);
@@ -1294,17 +1259,16 @@ PartClass.prototype = {
         //变更当前器件的ID
         this.exchangeID(inputID);
         //改变输入参数
-        const temptspan = $('tspan', this.elementDOM);
+        const temptext = $('text.features-text > tspan', this.elementDOM);
         for (let i = 0; i < this.inputTxt.length; i++) {
             this.input[i] = $('#parameter-' + (i + 1) + ' input', parameter).prop('value');
             this.input[i] = this.input[i].replace('u', 'μ');
             if (i < this.visionNum - 1) {
-                temptspan[i + 2].textContent = this.input[i] + this.parameterUnit[i];
+                temptext[i + 2].textContent = this.input[i] + this.parameterUnit[i];
             }
         }
         //修正属性的显示位置
-        const sharptxt = $('text', this.elementDOM);
-        this.textVisition([parseInt(sharptxt.attr('x')), parseInt(sharptxt.attr('y'))]);
+        this.textVisition();
         return (true);
     },
     //移动之后放下器件

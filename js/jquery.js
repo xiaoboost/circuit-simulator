@@ -983,6 +983,10 @@ $.fn = $.prototype = {
     innerHeight() {
         return (this[0].clientHeight);
     },
+    // SVG文本的计算长度（非实际长度）
+    STWidth() {
+        return (this[0].textLength.baseVal.value);
+    },
     // 把当前DOM全部移除出HTML文档流
     remove(index) {
         if (index === u) {
