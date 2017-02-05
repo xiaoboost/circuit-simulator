@@ -1339,6 +1339,8 @@ PartClass.prototype = {
                 }
             }
         }
+        //图纸重新标记
+        this.markSign();
         //新器件入栈
         partsAll.push(this);
         partsNow.push(this);
