@@ -1075,7 +1075,7 @@ PartClass.prototype = {
     //当前器件是否还存在
     isExist() {
         return (
-            actionArea.contains(this.elementDOM) ||
+            actionArea.contains(this.elementDOM) &&
             partsAll.has(this)
         );
     },
@@ -1398,7 +1398,7 @@ partsNow.extend({
                 status = item.current.status;
 
             if (status === 'move') {
-                partsNow.has(item) || item.toFocus();
+                item.toFocus();
                 if (type === 'line') {
                     //导线初始位置为原点，记录当前路径
                     item.current.bias = Point([0, 0]);
@@ -1411,7 +1411,7 @@ partsNow.extend({
         });
         partsAll.forEach((item) => {
             if (item.current.status === 'half') {
-                partsNow.has(item) || item.toFocus();
+                item.toFocus();
                 //导线变形数据初始化
                 item.startPath(false, 'movePart');
             }
@@ -1582,6 +1582,11 @@ partsNow.extend({
                 n.putDown(false, 'movePart');
             }
         });
+
+        //检查当前集合元素是否存在
+        this.deleteParts((n) => n.isExist());
+        //重新确定连接关系
+        this.checkLine();
     }
 });
 Object.freezeMethod(partsNow);

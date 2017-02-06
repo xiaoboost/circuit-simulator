@@ -2176,7 +2176,7 @@ LineClass.prototype = {
     //当前导线是否还存在
     isExist() {
         return (
-            actionArea.contains(this.elementDOM) ||
+            actionArea.contains(this.elementDOM) &&
             partsAll.has(this)
         );
     },
