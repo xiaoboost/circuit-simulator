@@ -153,21 +153,18 @@
       color #5264AE
       font-size 20px
       padding 10px 5px 3px 5px
-      display block
-      width 60%
+      display inline-block
+      width 10vw
       border none
       border-bottom 1px solid color-gray
       &:focus
         outline:none
-      &:focus ~ .st-menu-input-highlight
-        -moz-animation:inputHighlighter time-input bezier-aside
-        animation:inputHighlighter time-input bezier-aside
       &:focus ~ .st-menu-input-bar:before
-        width:100%
+        width 10.5vw
       &:focus ~ label,
       &:valid ~ label
         top -13px
-        font-size:14px
+        font-size 14px
     label
       color #999999
       font-family font-text
@@ -177,11 +174,10 @@
       pointer-events none
       left 5px
       top 10px
-      transition:all time-label bezier-input
+      transition all time-label bezier-input
     .st-menu-input-bar
       position relative
       display block
-      width 60%
       &:before
         content ''
         height 2px
@@ -190,25 +186,10 @@
         position absolute
         background #5264AE
         transition width time-input bezier-aside
-    .st-menu-input-highlight
-      position absolute
-      height 63%
-      width 100px
-      top 25%
-      left 0
-      pointer-events none
-      opacity 0.5
     .st-menu-unit
       color #999999
       font-size 20px
       position relative
-      left 200px
-      top -25px
       font-weight normal
+      left 10px
       cursor default
-
-//输入框动画
-@keyframes inputHighlighter {
-  from { background:#5264AE }
-  to { width:0; background:transparent }
-}
