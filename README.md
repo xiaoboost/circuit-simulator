@@ -45,12 +45,12 @@
 在求解器的效率问题解决之后，会更新它们的非理想建模。  
 
 ## 几个实例 
-[直流电源的一阶零状态响应](https://xiaoboost.github.io/circuitlab/?init=FirstOrderCircuitDC)  
-[交流电源的一阶零状态响应](https://xiaoboost.github.io/circuitlab/?init=FirstOrderCircuitAC)  
-[桥式整流电路](https://xiaoboost.github.io/circuitlab/?init=BridgeRectifier)  
-[运放的同相放大](https://xiaoboost.github.io/circuitlab/?init=PhaseAmplifier)  
-[三极管共射放大](https://xiaoboost.github.io/circuitlab/?init=CommonEmitterAmplifier)  
-[三极管射极跟随](https://xiaoboost.github.io/circuitlab/?init=EmitterFollower)
+[直流电源的一阶零状态响应](https://xiaoboost.github.io/Circuit-Simulator/?init=FirstOrderCircuitDC)  
+[交流电源的一阶零状态响应](https://xiaoboost.github.io/Circuit-Simulator/?init=FirstOrderCircuitAC)  
+[桥式整流电路](https://xiaoboost.github.io/Circuit-Simulator/?init=BridgeRectifier)  
+[运放的同相放大](https://xiaoboost.github.io/Circuit-Simulator/?init=PhaseAmplifier)  
+[三极管共射放大](https://xiaoboost.github.io/Circuit-Simulator/?init=CommonEmitterAmplifier)  
+[三极管射极跟随](https://xiaoboost.github.io/Circuit-Simulator/?init=EmitterFollower)
 
 ## 浏览器支持
 Chrome 42+  
