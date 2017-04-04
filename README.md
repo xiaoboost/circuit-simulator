@@ -1,6 +1,6 @@
 # 在线电路仿真
 
-[电路仿真 (Circuit Simulator)](https://xiaoboost.github.io/circuitlab/)  
+[电路仿真 (Circuit Simulator)](https://xiaoboost.github.io/Circuit-Simulator/)  
 这是个在线的电路图绘制网站，完整的实现了电路图的绘制以及时域部分仿真。  
 
 ## 操作及说明
