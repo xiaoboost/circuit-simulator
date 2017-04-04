@@ -1,10 +1,19 @@
 # 在线电路仿真
 
-[电路仿真 (Circuit Simulator)](https://xiaoboost.github.io/Circuit-Simulator/)  
-这是个在线的电路图绘制网站，完整的实现了电路图的绘制以及时域部分仿真。
-
 ## 相关说明
-这里是较老的代码，采用纯原生JS构建。
+这里是较老的代码，采用纯原生JS构建。  
+原来的`demo`网站现在用来展示新版了，这个版本就没有展示了。  
+
+在命令行运行以下命令可以直接在本地启动服务：
+```node
+npm install gulp -g
+
+npm install
+
+gulp build
+```
+因为要使用`gulp`命令必须要全局安装，所以在运行之前必须先安装它。  
+当然，如果你已经安装过了，自然是可以省略的。
 
 ## 操作及说明
 
@@ -46,14 +55,6 @@
 由于求解器的效率问题，现在所有器件均采用理想数学模型。  
 具体而言就是，二极管、三极管都是分段函数，运放是无穷带宽。  
 在求解器的效率问题解决之后，会更新它们的非理想建模。  
-
-## 几个实例 
-[直流电源的一阶零状态响应](https://xiaoboost.github.io/Circuit-Simulator/?init=FirstOrderCircuitDC)  
-[交流电源的一阶零状态响应](https://xiaoboost.github.io/Circuit-Simulator/?init=FirstOrderCircuitAC)  
-[桥式整流电路](https://xiaoboost.github.io/Circuit-Simulator/?init=BridgeRectifier)  
-[运放的同相放大](https://xiaoboost.github.io/Circuit-Simulator/?init=PhaseAmplifier)  
-[三极管共射放大](https://xiaoboost.github.io/Circuit-Simulator/?init=CommonEmitterAmplifier)  
-[三极管射极跟随](https://xiaoboost.github.io/Circuit-Simulator/?init=EmitterFollower)
 
 ## 浏览器支持
 Chrome 42+  
