@@ -8,6 +8,10 @@ module.exports = {
         'node': true,
         'es6': true
     },
+    // vue文件中依旧检测语法
+    plugins: [
+        'html'
+    ],
     // 自定义规则
     'rules': {
         //允许扩展原生数据结构
