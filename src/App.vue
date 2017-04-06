@@ -1,8 +1,8 @@
 <template>
-  <div id="app">
+<main id="app">
     <img src="./assets/logo.png">
     <router-view></router-view>
-  </div>
+</main>
 </template>
 
 <script>
