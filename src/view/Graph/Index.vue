@@ -1,5 +1,5 @@
 <template>
-<main class="Graph">
+<main class="graph">
 
 </main>
 </template>
