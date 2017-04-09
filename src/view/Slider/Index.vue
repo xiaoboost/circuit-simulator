@@ -62,14 +62,14 @@ size = 50px
         height size
         top 150px - (size / 2)
         right width - (size / 2)
-        background #8bc34a
+        background color-green
         border-radius 50%
         z-index 20
         box-shadow -2px 0 10px #a1a1a1
         cursor pointer
         span:before,
         span:after
-            background #FAFAFA
+            background color-white
             content ''
             height 5px
             width 30px
@@ -78,7 +78,7 @@ size = 50px
             transform translate(10px, 22.5px) rotate(45deg)
         span:after
             transform translate(10px, 22.5px) rotate(135deg)
-    .slider-title
+    header
         color: color-white;
         text-align: center;
         background-color: color-blue;
@@ -91,6 +91,13 @@ size = 50px
             font-size 40px
         h2
             font-size 25px
+    section
+        margin 10px 20px
+        color color-font
+        h1
+            font-weight normal
+            font-size 25px
+            margin 10px 1em
 
 // 动画设定
 .move-slide-enter-active

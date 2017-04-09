@@ -1,10 +1,10 @@
 <template>
-<section class="drawing-main">
+<div class="drawing-main">
     <svg height="100%" width="100%" version="1.1" :xmlns="SVG_NS">
         <g id="area-of-parts">
         </g>
     </svg>
-</section>
+</div>
 </template>
 
 <script>
