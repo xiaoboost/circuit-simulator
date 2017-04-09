@@ -1,6 +1,7 @@
 <template>
 <main id="app">
     <start-loading :show="loading"></start-loading>
+    <action-menu></action-menu>
     <drawing-main></drawing-main>
     <router-view></router-view>
 </main>
@@ -9,6 +10,7 @@
 <script>
 import StartLoading from '@/components/StartLoading.vue';
 import DrawingMain from '@/components/DrawingMain.vue';
+import ActionMenu from '@/components/ActionMenu.vue';
 
 export default {
     name: 'app',
@@ -25,7 +27,8 @@ export default {
     },
     components: {
         'drawing-main': DrawingMain,
-        'start-loading': StartLoading
+        'start-loading': StartLoading,
+        'action-menu': ActionMenu
     }
 };
 </script>
