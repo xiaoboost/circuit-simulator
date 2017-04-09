@@ -60,7 +60,7 @@ size = 50px
         position absolute
         width size
         height size
-        top 100px
+        top 150px - (size / 2)
         right width - (size / 2)
         background #8bc34a
         border-radius 50%
@@ -78,6 +78,19 @@ size = 50px
             transform translate(10px, 22.5px) rotate(45deg)
         span:after
             transform translate(10px, 22.5px) rotate(135deg)
+    .slider-title
+        color: color-white;
+        text-align: center;
+        background-color: color-blue;
+        padding 1px 0
+        font-family font-serif
+        > *
+            font-weight normal
+            margin 20px
+        h1
+            font-size 40px
+        h2
+            font-size 25px
 
 // 动画设定
 .move-slide-enter-active

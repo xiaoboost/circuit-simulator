@@ -1,6 +1,9 @@
 <template>
-<main class="config">
-    设置
+<main class="slider-config">
+    <div class="slider-title">
+        <h1>模拟设置</h1>
+        <h2>Simulation Settings</h2>
+    </div>
 </main>
 </template>
 

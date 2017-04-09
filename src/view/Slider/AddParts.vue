@@ -1,6 +1,9 @@
 <template>
-<main class="add-parts">
-    添加器件
+<main class="slider-add-parts">
+    <div class="slider-title">
+        <h1>添加器件</h1>
+        <h2>Add Parts</h2>
+    </div>
 </main>
 </template>
 
