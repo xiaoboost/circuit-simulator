@@ -1,6 +1,3 @@
-//SVG的命名空间
-const SVG_NS = 'http://www.w3.org/2000/svg';
-
 // 深复制
 function clone(from) {
     if (from instanceof Array) {
@@ -107,5 +104,3 @@ Object.hideAll(String.prototype);
 
 //网页禁止右键和选中
 window.document.oncontextmenu = () => false;
-
-export { SVG_NS };

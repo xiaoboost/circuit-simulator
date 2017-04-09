@@ -48,7 +48,6 @@ export default {
         return {
             zoom,
             icons,
-            SVG_NS,
             action,
             isRun: false
         };
