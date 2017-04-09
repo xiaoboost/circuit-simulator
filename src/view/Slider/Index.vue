@@ -91,13 +91,6 @@ size = 50px
             font-size 40px
         h2
             font-size 25px
-    section
-        margin 10px 20px
-        color color-font
-        h1
-            font-weight normal
-            font-size 25px
-            margin 10px 1em
 
 // 动画设定
 .move-slide-enter-active

@@ -1,12 +1,12 @@
 <template>
-<div class="input-verifiable">
+<span class="input-verifiable">
     <input :placeholder="placeholder" :value="value" @input="update($event.target.value)">
     <span class="input-bar"></span>
     
     <template v-if="message">
         <span v-show="isError" class="input-message">{{message}}</span>
     </template>
-</div>
+</span>
 </template>
 
 <script>
@@ -73,5 +73,32 @@ export default {
 </script>
 
 <style lang="stylus">
+@import '../css/Variable'
 
+.input-verifiable {
+    position: relative;
+    
+    input {
+        width: 100%;
+        font-size: 1.1em;
+        outline: 0;
+        border-bottom: 1px solid #ccc
+        background-color: color-white;
+        color: color-input;
+        padding: 0 5px;
+        box-sizing: border-box;
+    }
+    .input-bar:before {
+        content: '';
+        height: 2px;
+        width: 0;
+        bottom: 0;
+        position: absolute;
+        background: color-input;
+        transition: width 300ms 
+    }
+    input:focus ~ .input-bar:before {
+        width: 100%;
+    }
+}
 </style>
