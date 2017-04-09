@@ -1,6 +1,6 @@
 <template>
 <section class="drawing-main">
-    <svg height="100%" width="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <svg height="100%" width="100%" version="1.1" :xmlns="SVG_NS">
         <g id="area-of-parts">
         </g>
     </svg>
@@ -14,6 +14,11 @@ export default {
         return {
             //
         };
+    },
+    computed: {
+        SVG_NS() {
+            return this.$store.state.SVG_NS;
+        }
     }
 };
 </script>

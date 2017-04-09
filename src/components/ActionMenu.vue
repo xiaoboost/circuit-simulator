@@ -57,10 +57,10 @@ export default {
             console.log('run');
         },
         add() {
-            console.log('add');
+            this.$router.push({ name: 'AddParts' });
         },
         config() {
-            console.log('config');
+            this.$router.push({ name: 'Config' });
         }
     }
 };
