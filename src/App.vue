@@ -1,17 +1,31 @@
 <template>
 <main id="app">
+    <start-loading :show="loading"></start-loading>
     <drawing-main></drawing-main>
     <router-view></router-view>
 </main>
 </template>
 
 <script>
+import StartLoading from '@/components/StartLoading.vue';
 import DrawingMain from '@/components/DrawingMain.vue';
 
 export default {
     name: 'app',
+    data() {
+        return {
+            loading: true
+        };
+    },
+    mounted() {
+        window.onload = () => {
+            console.log('App Ready.');
+            this.loading = false;
+        };
+    },
     components: {
-        'drawing-main': DrawingMain
+        'drawing-main': DrawingMain,
+        'start-loading': StartLoading
     }
 };
 </script>
