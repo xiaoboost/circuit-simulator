@@ -1,22 +1,33 @@
 <template>
 <main id="app">
-    <img src="./assets/logo.png">
+    <drawing-main></drawing-main>
     <router-view></router-view>
 </main>
 </template>
 
 <script>
+import DrawingMain from '@/components/DrawingMain.vue';
+
 export default {
-    name: 'app'
+    name: 'app',
+    components: {
+        'drawing-main': DrawingMain
+    }
 };
 </script>
 
 <style lang="stylus">
-#app
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+@import './css/Variable'
+@import './css/Public'
+@import './css/DrawingMain'
+
+html, body, #app
+  overflow hidden
+  width 100%
+  height 100%
+  user-select none
+  color color-font
+  font-family font-default
+  font-size 16px
+  font-smoothing()
 </style>
