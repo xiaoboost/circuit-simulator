@@ -46,18 +46,10 @@ Object.assign(Object.prototype, {
             return (false);
         }
 
-        for (let i = 0; i < thisKeys.length; i++) {
-            if (this[thisKeys[i]].isEqual) {
-                if (!this[thisKeys[i]].isEqual(obj[thisKeys[i]])) {
-                    return (false);
-                }
-            } else {
-                if (this[thisKeys[i]] !== obj[thisKeys[i]]) {
-                    return (false);
-                }
-            }
-        }
-        return (true);
+        return thisKeys.every((key) => this[key].isEqual
+            ? this[key].isEqual(obj[key])
+            : this[key] === obj[key]
+        );
     }
 });
 
@@ -102,5 +94,5 @@ Object.hideAll(Array.prototype);
 Object.hideAll(Number.prototype);
 Object.hideAll(String.prototype);
 
-//网页禁止右键和选中
+// 网页禁止右键和选中
 window.document.oncontextmenu = () => false;
