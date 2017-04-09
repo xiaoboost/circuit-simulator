@@ -39,12 +39,13 @@ export default {
 @import './css/DrawingMain'
 
 html, body, #app
-  overflow hidden
-  width 100%
-  height 100%
-  user-select none
-  color color-font
-  font-family font-default
-  font-size 16px
-  font-smoothing()
+    overflow hidden
+    width 100%
+    height 100%
+    user-select none
+    cursor default
+    color color-font
+    font-family font-default
+    font-size 16px
+    font-smoothing()
 </style>

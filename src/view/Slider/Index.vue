@@ -66,6 +66,7 @@ size = 50px
         border-radius 50%
         z-index 20
         box-shadow -2px 0 10px #a1a1a1
+        cursor pointer
         span:before,
         span:after
             background #FAFAFA
