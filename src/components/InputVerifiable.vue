@@ -1,7 +1,8 @@
 <template>
 <span class="input-verifiable">
-    <input :placeholder="placeholder" :value="value" @input="update($event.target.value)">
-    <span class="input-bar"></span>
+    <input type="text" :placeholder="placeholder" :value="value" @input="update($event.target.value)">
+    <span class="input-bar correct-bar"></span>
+    <span :class="['input-bar error-bar', { 'error': isError }]"></span>
     
     <template v-if="message">
         <span v-show="isError" class="input-message">{{message}}</span>
@@ -26,8 +27,8 @@ export default {
             default: false
         },
         pattern: {
-            type: String,
-            default: ''
+            type: RegExp,
+            default: /[\d\D]*/
         },
         func: {
             type: Function,
@@ -45,25 +46,25 @@ export default {
     },
     methods: {
         update(value) {
-            this.isError = false;
-
-            if (this.check(value)) {
-                this.$emit('input', value);
-            } else {
-                this.isError = true;
-            }
+            this.check(value);
+            this.$emit('input', value);
         },
         check(value) {
+            value = value || this.value;
+            this.isError = false;
             if (this.required && !value) {
                 this.$emit('error', 'required');
+                this.isError = true;
                 return (false);
             }
-            if (this.pattern && !this.pattern.test(value)) {
+            if (!this.pattern.test(value)) {
                 this.$emit('error', 'pattern');
+                this.isError = true;
                 return (false);
             }
             if (!this.func(value)) {
                 this.$emit('error', 'function');
+                this.isError = true;
                 return (false);
             }
             return (true);
@@ -82,11 +83,14 @@ export default {
         width: 100%;
         font-size: 1.1em;
         outline: 0;
-        border-bottom: 1px solid #ccc
+        border-bottom: 1px solid #ccc;
         background-color: color-white;
         color: color-input;
         padding: 0 5px;
         box-sizing: border-box;
+        &:focus {
+            outline: 0;
+        }
     }
     .input-bar:before {
         content: '';
@@ -97,8 +101,16 @@ export default {
         background: color-input;
         transition: width 300ms 
     }
-    input:focus ~ .input-bar:before {
+    input:focus ~ .correct-bar:before {
         width: 100%;
+    }
+    .error-bar {
+        &:before {
+            background: #f30;
+        }
+        &.error:before {
+            width: 100%;
+        }
     }
 }
 </style>
