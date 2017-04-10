@@ -30,8 +30,8 @@ export default {
     name: 'Config',
     data() {
         return {
-            end: '',
-            step: '',
+            end: this.$store.state.END_TIME,
+            step: this.$store.state.STEP_TIME,
             NUM_REG: this.$store.state.NUM_REG
         };
     },
