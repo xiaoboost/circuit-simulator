@@ -11,12 +11,12 @@
         </h1>
         <div class="form-line">
             <label>结束时间：</label>
-            <v-input class="input-grow"></v-input>
+            <v-input ref="end" v-model="end" :pattern="NUM_REG" class="input-grow"></v-input>
             <span class="unit">秒</span>
         </div>
         <div class="form-line">
             <label>固定步长：</label>
-            <v-input class="input-grow"></v-input>
+            <v-input ref="step" v-model="step" :pattern="NUM_REG" class="input-grow"></v-input>
             <span class="unit">秒</span>
         </div>
     </section>
@@ -30,8 +30,17 @@ export default {
     name: 'Config',
     data() {
         return {
-            //
+            end: '',
+            step: '',
+            NUM_REG: this.$store.state.NUM_REG
         };
+    },
+    beforeRouteLeave(to, from, next) {
+        if (this.$refs['end'].check() && this.$refs['step'].check()) {
+            this.$store.commit('SET_END_TIME', this.end);
+            this.$store.commit('SET_STEP_TIME', this.step);
+            next();
+        }
     },
     components: {
         'v-input': Input
