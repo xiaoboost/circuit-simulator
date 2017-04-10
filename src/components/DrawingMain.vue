@@ -12,13 +12,8 @@ export default {
     name: 'DrawingMain',
     data() {
         return {
-            //
+            SVG_NS: this.$store.state.SVG_NS
         };
-    },
-    computed: {
-        SVG_NS() {
-            return this.$store.state.SVG_NS;
-        }
     }
 };
 </script>
