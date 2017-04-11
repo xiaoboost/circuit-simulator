@@ -24,10 +24,9 @@ function numParse(str) {
     }
 }
 
-export default new Vuex.Store({
+// 时间模块
+const time = {
     state: {
-        SVG_NS,
-        NUM_REG,
         END_TIME: '10m',
         STEP_TIME: '10u'
     },
@@ -42,5 +41,15 @@ export default new Vuex.Store({
         SET_STEP_TIME(state, time) {
             state.STEP_TIME = time;
         }
+    }
+};
+
+export default new Vuex.Store({
+    state: {
+        SVG_NS,
+        NUM_REG
+    },
+    modules: {
+        time
     }
 });
