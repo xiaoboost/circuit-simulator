@@ -13,31 +13,24 @@ class Matrix {
             this.column = row.column;
         } else {
             if (/[EI]/.test(column) || /[EI]/.test(value)) {
+                data.push(...Array(row * row).fill(0));
                 for (let i = 0; i < row; i++) {
-                    const temp = new Array(row).fill(0);
-                    temp[i] = 1;
-                    data.push(...temp);
-                }
-                column = row;
-            } else {
-                for (let i = 0; i < row; i++) {
-                    data.push(...Array(column).fill(value));
+                    data[i * (row + 1)] = 1;
                 }
             }
             this.row = row;
-            this.column = column;
+            this.column = row;
         }
 
         // 开辟内存空间
-        this.buffer = new ArrayBuffer(this.row * this.column * 8);
-        this.view = new Float64Array(this.buffer);
+        const buffer = new ArrayBuffer(this.row * this.column * 8);
+        this.view = new Float64Array(buffer);
         data.forEach((n, i) => this.view[i] = n);
 
         // 矩阵所有属性为只读
         Object.defineProperties(this, {
             row: { writable: false },
             column: { writable: false },
-            buffer: { writable: false },
             view: { writable: false }
         });
     }
@@ -50,13 +43,13 @@ class Matrix {
         // 记录行列数
         const row = ma.length, column = ma[0].length;
         // 行连续
-        if (!Object.keys(ma).every((n, i) => n === i)) {
+        if (!Object.keys(ma).every((n, i) => +n === i)) {
             return (false);
         }
         // 列连续切列长均相等
         if (!Object.values(ma).every((col) => {
             return col.length === column &&
-                Object.keys(col).every((n, i) => n === i) &&
+                Object.keys(col).every((n, i) => +n === i) &&
                 Object.values(col).every((n) => !Number.isNaN(+n));
         })) {
             return (false);
@@ -149,4 +142,8 @@ class Matrix {
     }
 }
 
-export { Matrix };
+function $m(...ma) {
+    return new Matrix(...ma);
+}
+
+export { $m };
