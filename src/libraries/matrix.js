@@ -4,6 +4,7 @@ const unit = /[EI]/;
 class Matrix {
     constructor(row, column = row, value = 0) {
         if (row instanceof Array) {
+            // 从数组创建矩阵
             const data = [], size = Matrix.isMatrix(row);
 
             this.row = size.row;
@@ -14,10 +15,12 @@ class Matrix {
             this._view = new Float64Array(buffer);
             this._view.set(data);
         } else if (row instanceof Matrix) {
+            // 复制矩阵
             this.row = row.row;
             this.column = row.column;
             this._view = Float64Array.from(row._view);
         } else {
+            // 0矩阵或者单位矩阵
             this.row = row;
             this.column = row;
             // 开辟内存空间
@@ -217,5 +220,7 @@ class Matrix {
 function $m(...ma) {
     return new Matrix(...ma);
 }
+
+Object.assign($m, Matrix);
 
 export { $m };
