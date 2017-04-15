@@ -217,10 +217,10 @@ class Matrix {
     }
 }
 
-function $m(...ma) {
-    return new Matrix(...ma);
+function $M(a, b, c) {
+    return new Matrix(a, b, c);
 }
 
-Object.assign($m, Matrix);
+Object.assign($M, Matrix);
 
-export { $m };
+export { $M };

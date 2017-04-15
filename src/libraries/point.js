@@ -14,19 +14,13 @@ class Point {
             this[0] = arr[1][0] - arr[0][0];
             this[1] = arr[1][1] - arr[0][1];
         }
-        this.length = 2;
-        Object.defineProperty(this, 'length', {
-            configurable: false,
-            enumerable: false,
-            writable: false
-        });
     }
 }
 
-function $Pi(...args) {
+function $P(...args) {
     return (new Point(...args));
 }
 
-Object.assign($Pi, Point);
+Object.assign($P, Point);
 
-export { $Pi };
+export { $P };

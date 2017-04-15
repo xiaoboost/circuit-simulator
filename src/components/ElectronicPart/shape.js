@@ -13,6 +13,8 @@
  *
  */
 
+import { $M } from '@/libraries/matrix';
+
 const Electronics = {
     // 电阻
     resistance: {
@@ -681,13 +683,12 @@ Object.keys(Electronics).forEach((key) => {
     data.padding = css2obj(data.padding);
     data.margin = css2obj(data.margin);
 
-    // TODO:管脚方向矩阵
-    // for (let j = 0; j < pointInfor.length; j++) {
-    //     pointInfor[j].direction = new Matrix([pointInfor[j].direction]);
-    // }
+    for (let j = 0; j < pointInfor.length; j++) {
+        pointInfor[j].direction = $M([pointInfor[j].direction]);
+    }
 
     // 冻结只读属性
-    Object.freezeAll(data);
+    Object.freeze(data);
 });
 
-export default Electronics;
+export { Electronics };
