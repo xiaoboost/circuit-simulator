@@ -57,33 +57,23 @@ export default {
             line-height 60px
             color #999
             text-shadow 1px 1px 2px black
-        .spinner
-            animation rotator 1.4s linear infinite
-            .path 
-                stroke-dasharray 187
-                stroke-dashoffset 0
-                transform-origin center
-                animation dash 1.4s ease-in-out infinite,
-                          colors 5.6s ease-in-out infinite
+
+.start-loading .spinner
+    animation rotator 1.4s linear infinite
+    .path 
+        stroke-dasharray 187
+        stroke-dashoffset 0
+        transform-origin center
+        animation dash 1.4s ease-in-out infinite,
+                  colors 5.6s ease-in-out infinite
 
 // fade-enter-active过程不需要渐变
 .fade-leave-active
     transition opacity .5s
+
 .fade-enter,
 .fade-leave-active
     opacity: 0
-
-@-webkit-keyframes colors 
-    0% 
-        stroke #4285F4
-    25% 
-        stroke #DE3E35
-    50% 
-        stroke #F7C223
-    75% 
-        stroke #1B9A59
-    100% 
-        stroke #4285F4
 
 @keyframes colors 
     0% 
@@ -96,18 +86,6 @@ export default {
         stroke #1B9A59
     100% 
         stroke #4285F4
-
-@-webkit-keyframes dash
-    0%
-        stroke-dashoffset 187
-    50% 
-        stroke-dashoffset 46.75
-        -webkit-transform rotate(135deg)
-        transform rotate(135deg)
-    100% 
-        stroke-dashoffset 187
-        -webkit-transform rotate(450deg)
-        transform rotate(450deg)
 
 @keyframes dash 
     0% 

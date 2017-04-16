@@ -113,22 +113,6 @@ export default {
     position relative
     margin .35em 0em
     
-.fab-container span::before
-    height 1.75em
-    width 1.75em
-    display -webkit-box
-    -webkit-box-pack center
-    -webkit-box-align center
-    display -ms-flexbox
-    -ms-flex-pack center
-    -ms-flex-align center
-
-.fab-container:first-of-type span::before
-    font-size 200%
-
-.fab-container:nth-child(n+2) span::before
-    font-size 160%
-    
 .fab-container:first-of-type .fab
     background #66CCCC
     
@@ -186,18 +170,4 @@ export default {
     text-align center
     fill #FFFFFF
     stroke-width 0
-
-.action-menu span#solve-progress
-    //width:auto
-    //height:auto
-    text-align center
-    transform translateY(40%)
-
-.fab#fab-text p
-    display block
-    text-align center
-    font-size 20px
-    line-height 20px
-    color #FFFFFF
-    font-family font-text
 </style>

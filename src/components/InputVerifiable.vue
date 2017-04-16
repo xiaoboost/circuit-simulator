@@ -76,41 +76,36 @@ export default {
 <style lang="stylus">
 @import '../css/Variable'
 
-.input-verifiable {
-    position: relative;
+.input-verifiable
+    position relative
     
-    input {
-        width: 100%;
-        font-size: 1.1em;
-        outline: 0;
-        border-bottom: 1px solid #ccc;
-        background-color: color-white;
-        color: color-input;
-        padding: 0 5px;
-        box-sizing: border-box;
-        &:focus {
-            outline: 0;
-        }
-    }
-    .input-bar:before {
-        content: '';
-        height: 2px;
-        width: 0;
-        bottom: 0;
-        position: absolute;
-        background: color-input;
-        transition: width 300ms 
-    }
-    input:focus ~ .correct-bar:before {
-        width: 100%;
-    }
-    .error-bar {
-        &:before {
-            background: #f30;
-        }
-        &.error:before {
-            width: 100%;
-        }
-    }
-}
+    input
+        width 100%
+        font-size 1.1em
+        outline 0
+        border-bottom 1px solid Gray
+        background-color White
+        color Dark-Blue
+        padding 0 5px
+        box-sizing border-box
+        &:focus
+            outline 0
+
+    .input-bar:before
+        content ''
+        height 2px
+        width 0
+        bottom 0
+        position absolute
+        background Dark-Blue
+        transition width 300ms
+
+    input:focus ~ .correct-bar:before
+        width 100%
+
+    .error-bar
+        &:before
+            background Red
+        &.error:before
+            width 100%
 </style>

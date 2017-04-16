@@ -44,7 +44,7 @@ html, body, #app
     height 100%
     user-select none
     cursor default
-    color color-font
+    color Black
     font-family font-default
     font-size 16px
     font-smoothing()
