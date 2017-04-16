@@ -5,7 +5,7 @@ class Matrix {
     constructor(row, column = row, value = 0) {
         if (row instanceof Array) {
             // 从数组创建矩阵
-            const data = [], size = Matrix.isMatrix(row);
+            const data = [], size = isMatrix(row);
 
             this.row = size.row;
             this.column = size.column;
@@ -33,32 +33,6 @@ class Matrix {
                 }
             }
         }
-    }
-
-    static isMatrix(ma) {
-        if (ma instanceof Matrix) {
-            return ({ row: ma.row, column: ma.column });
-        }
-
-        // 记录行列数
-        const row = ma.length, column = ma[0].length;
-        // 行连续
-        if (!Object.keys(ma).every((n, i) => +n === i)) {
-            return (false);
-        }
-        // 列连续切列长均相等
-        if (!Object.values(ma).every((col) => {
-            return col.length === column &&
-                Object.keys(col).every((n, i) => +n === i) &&
-                Object.values(col).every((n) => !Number.isNaN(+n));
-        })) {
-            return (false);
-        }
-
-        return ({ row, column });
-    }
-    static combination() {
-        //
     }
 
     // 取出矩阵元素
@@ -217,10 +191,34 @@ class Matrix {
     }
 }
 
+function isMatrix(ma) {
+    if (ma instanceof Matrix) {
+        return ({ row: ma.row, column: ma.column });
+    }
+
+    // 记录行列数
+    const row = ma.length, column = ma[0].length;
+    // 行连续
+    if (!Object.keys(ma).every((n, i) => +n === i)) {
+        return (false);
+    }
+    // 列连续且列长均相等
+    if (!Object.values(ma).every((col) => {
+        return col.length === column &&
+            Object.keys(col).every((n, i) => +n === i) &&
+            Object.values(col).every((n) => !Number.isNaN(+n));
+    })) {
+        return (false);
+    }
+
+    return ({ row, column });
+}
+function combination() {
+    //
+}
+
 function $M(a, b, c) {
     return new Matrix(a, b, c);
 }
-
-Object.assign($M, Matrix);
 
 export { $M };

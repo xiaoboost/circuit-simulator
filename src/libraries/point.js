@@ -1,26 +1,33 @@
 //点和向量
 class Point {
-    constructor(arr) {
-        if (arr instanceof Point) {
+    constructor(a, b) {
+        if (a instanceof Point) {
             // 复制
-            this[0] = arr[0];
-            this[1] = arr[1];
-        } else if (Point.isPoint(arr)) {
+            this[0] = a[0];
+            this[1] = a[1];
+        } else if (isPoint(a) && isPoint(b)) {
+            // 输入是两个点，当作向量处理
+            this[0] = b[0] - a[0];
+            this[1] = b[1] - a[1];
+        } else if (isPoint(a)) {
             // 输入是点
-            this[0] = arr[0];
-            this[1] = arr[1];
-        } else if (Point.isVector(arr)){
-            // 输入是向量
-            this[0] = arr[1][0] - arr[0][0];
-            this[1] = arr[1][1] - arr[0][1];
+            this[0] = a[0];
+            this[1] = a[1];
         }
     }
 }
 
-function $P(...args) {
-    return (new Point(...args));
-}
 
-Object.assign($P, Point);
+function isPoint(a) {
+    return (
+        a instanceof Object &&
+        a instanceof Point ||
+        typeof a[0] === 'number' &&
+        typeof a[1] === 'number'
+    );
+}
+function $P(a, b) {
+    return (new Point(a, b));
+}
 
 export { $P };
