@@ -14,13 +14,6 @@ class PartsCollection extends Array {
         }
     }
 
-    static isElectron(part) {
-        if (!part.id) {
-            console.error('part 格式错误');
-            throw new Error(part);
-        }
-    }
-
     push(part) {
         if (isElectron(part) && !this.has(part)) {
             this._hash[part.id] = this.length;
@@ -45,7 +38,6 @@ class PartsCollection extends Array {
         if (!temp) {
             throw ('器件ID格式错误');
         }
-
         let tempid = '', ans = void 0;
         // 输入字符串没有下划线
         if (id.indexOf('_') === -1) {
