@@ -50,6 +50,15 @@ Object.assign(Object.prototype, {
             ? this[key].isEqual(obj[key])
             : this[key] === obj[key]
         );
+    },
+    map(fn) {
+        const ans = {};
+        for (const key in this) {
+            if (this.hasOwnProperty(key)) {
+                ans[key] = fn(this[key], key);
+            }
+        }
+        return (ans);
     }
 });
 

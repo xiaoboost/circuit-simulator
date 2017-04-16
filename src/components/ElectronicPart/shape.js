@@ -244,7 +244,7 @@ const Electronics = {
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class':'white-fill'
+                        'cx': '0', 'cy': '0', 'r': '19', 'class':'fill-white'
                     }
                 },
                 {
@@ -295,7 +295,7 @@ const Electronics = {
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class':'white-fill'
+                        'cx': '0', 'cy': '0', 'r': '19', 'class':'fill-white'
                     }
                 },
                 {
@@ -307,7 +307,7 @@ const Electronics = {
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '0,-14 -5,-4 0,-8 5,-4', 'class': 'fill-whole'//'fill': '#3B4449', 'stroke-width': '0.5', 'stroke-linecap': 'square'
+                        'points': '0,-14 -5,-4 0,-8 5,-4', 'class': 'fill-black'//'fill': '#3B4449', 'stroke-width': '0.5', 'stroke-linecap': 'square'
                     }
                 },
                 {
@@ -379,7 +379,7 @@ const Electronics = {
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'white-fill'
+                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'fill-white'
                     }
                 },
                 {
@@ -436,7 +436,7 @@ const Electronics = {
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '12,0 2,-6 6,0 2,6', 'class':'fill-whole'
+                        'points': '12,0 2,-6 6,0 2,6', 'class':'fill-black'
                     }
                 },
                 {
@@ -497,7 +497,7 @@ const Electronics = {
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '0,-11 -13,11 13,11', 'class': 'fill-whole'//'fill': '#3B4449', 'stroke-width': '1'
+                        'points': '0,-11 -13,11 13,11', 'class': 'fill-black'//'fill': '#3B4449', 'stroke-width': '1'
                     }
                 },
                 {
@@ -567,7 +567,7 @@ const Electronics = {
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '0,0 -11,-6 -7,0 -11,6', 'class': 'fill-whole',
+                        'points': '0,0 -11,-6 -7,0 -11,6', 'class': 'fill-black',
                         'transform': 'translate(18, 26.4) rotate(38.7)'
                     }
                 },
@@ -629,7 +629,7 @@ const Electronics = {
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-25,-35V35L25,0Z', 'class': 'white-fill'
+                        'd': 'M-25,-35V35L25,0Z', 'class': 'fill-white'
                     }
                 },
                 {
