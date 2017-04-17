@@ -1,10 +1,11 @@
 <template>
-<section class="parts">
+<g class="part">
     
-</section>
+</g>
 </template>
 
 <script>
+import { $M } from '@/libraries/matrix';
 import { Electronics } from './shape';
 
 export default {

@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import StartLoading from '@/components/StartLoading.vue';
-import DrawingMain from '@/components/DrawingMain.vue';
-import ActionMenu from '@/components/ActionMenu.vue';
+import ActionMenu from '@/components/ActionMenu';
+import DrawingMain from '@/components/DrawingMain';
+import StartLoading from '@/components/StartLoading';
 
 export default {
     name: 'app',
@@ -21,7 +21,7 @@ export default {
     },
     mounted() {
         window.onload = () => {
-            console.log('App Ready.');
+            console.log('Schematic Ready.');
             this.loading = false;
         };
     },
