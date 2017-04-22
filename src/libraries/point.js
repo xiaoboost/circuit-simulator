@@ -13,9 +13,12 @@ function Point(a, b) {
         this[0] = b[0] - a[0];
         this[1] = b[1] - a[1];
     }
-    this.length = 2;
 }
 Point.prototype = {
+    // 构造函数
+    constructor: Point,
+    // 默认长度为 2
+    length: 2,
     // 加法，如果输入数组，那么逐个相加
     add(label = 1, a) {
         const sum = new Point(0, 0),
