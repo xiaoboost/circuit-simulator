@@ -1,22 +1,21 @@
 //点和向量
-class Point extends Array {
-    constructor(a, b) {
-        super();
-        if (typeof a === 'number' && typeof b === 'number') {
-            // 输入一个点
-            this[0] = a;
-            this[1] = b;
-        } else if (isPoint(a) && b === undefined) {
-            // 输入一个点
-            this[0] = a[0];
-            this[1] = a[1];
-        } else if (isPoint(a) && isPoint(b)) {
-            // 输入是两个点，当作向量处理
-            this[0] = b[0] - a[0];
-            this[1] = b[1] - a[1];
-        }
+function Point(a, b) {
+    if (typeof a === 'number' && typeof b === 'number') {
+        // 输入一个点
+        this[0] = a;
+        this[1] = b;
+    } else if (isPoint(a) && b === undefined) {
+        // 输入一个点
+        this[0] = a[0];
+        this[1] = a[1];
+    } else if (isPoint(a) && isPoint(b)) {
+        // 输入是两个点，当作向量处理
+        this[0] = b[0] - a[0];
+        this[1] = b[1] - a[1];
     }
-
+    this.length = 2;
+}
+Point.prototype = {
     // 加法，如果输入数组，那么逐个相加
     add(label = 1, a) {
         const sum = new Point(0, 0),
@@ -31,7 +30,7 @@ class Point extends Array {
             sum[1] = this[1] + arr[1] * sign;
         }
         return (sum);
-    }
+    },
     // 乘法，如果输入数组，那么逐个相乘
     mul(label = 1, a) {
         const sum = new Point(0, 0),
@@ -49,18 +48,18 @@ class Point extends Array {
             }
         }
         return (sum);
-    }
+    },
     // 向量相乘
     product(a) {
         return (this[0] * a[0] + this[1] * a[1]);
-    }
+    },
     // 绝对值
     abs() {
         return (new Point(
             Math.abs(this[0]),
             Math.abs(this[1])
         ));
-    }
+    },
     // 单位化，符号不变，模变为1
     toUnit(x) {
         const a = +this[0], b = +this[1];
@@ -72,7 +71,33 @@ class Point extends Array {
             factor = x ? +x : 1;
 
         return (new Point([a * scale * factor, b * scale * factor]));
-    }
+    },
+    // 四舍五入
+    round(n = 20) {
+        return (new Point(
+            Math.round(this[0] / n) * n,
+            Math.round(this[1] / n) * n
+        ));
+    },
+    roundToSmall(n = 20) {
+        return (new Point(
+            Math.round(this[0] / n),
+            Math.round(this[1] / n)
+        ));
+    },
+    // 向下取整
+    floor(n = 20) {
+        return (new Point(
+            Math.floor(this[0] / n) * n,
+            Math.floor(this[1] / n) * n
+        ));
+    },
+    floorToSmall(n = 20) {
+        return (new Point(
+            Math.floor(this[0] / n),
+            Math.floor(this[1] / n)
+        ));
+    },
     // 是否是整数点
     isInteger() {
         if (this.length !== 2 ||
@@ -81,29 +106,29 @@ class Point extends Array {
             return (false);
         }
         return (true);
-    }
+    },
     // 是否平行
     isParallel(vector) {
         return (this[0]*vector[1] === this[1]*vector[0]);
-    }
+    },
     // 是否垂直
     isVertical(vector) {
         return (!(this[0]*vector[0] + this[1]*vector[1]));
-    }
+    },
     // 方向相同，0向量输出false
     isSameDire(vector) {
         const vc1 = this.toUnit(),
             vc2 = Point.prototype.toUnit.call(vector);
         return (vc1.isEqual(vc2));
-    }
+    },
     // 方向相反，0向量输出false
     isOppoDire(vector) {
         const vc1 = this.toUnit().mul(-1),
             vc2 = Point.prototype.toUnit.call(vector);
         return (vc1.isEqual(vc2));
     }
-}
-
+};
+Object.setPrototypeOf(Point.prototype, Array.prototype);
 
 function isPoint(a) {
     return (
