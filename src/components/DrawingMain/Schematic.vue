@@ -12,7 +12,6 @@ import part from '@/components/ElectronicPart';
 import line from '@/components/ElectronicLine';
 
 import { $P } from '@/libraries/point';
-import { EventControler } from './EventControler';
 
 export default {
     name: 'DrawingMain',
@@ -24,7 +23,6 @@ export default {
         };
     },
     computed: {
-        // 网格背景图片
         background() {
             const bias = [
                 this.position[0] % (this.zoom * 20),
@@ -39,12 +37,12 @@ export default {
     },
     methods: {
         mousewheel(e) {
-            const mousePosition = $P(event.pageX, event.pageY);
+            const mousePosition = $P(e.pageX, e.pageY);
             let size = this.zoom * 20;
 
-            if (event.deltaY > 0) {
+            if (e.deltaY > 0) {
                 size -= 5;
-            } else if (event.deltaY < 0) {
+            } else if (e.deltaY < 0) {
                 size += 5;
             }
 
