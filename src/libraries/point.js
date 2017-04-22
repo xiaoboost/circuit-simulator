@@ -63,17 +63,16 @@ Point.prototype = {
             Math.abs(this[1])
         ));
     },
-    // 单位化，符号不变，模变为1
-    toUnit(x) {
+    // 单位化，符号不变，模变为 factor
+    toUnit(factor = 1) {
         const a = +this[0], b = +this[1];
+
         if (!a && !b) {
-            return (new Point([0, 0]));
+            return (new Point(0, 0));
         }
 
-        const scale = 1 / Math.sqrt(a * a + b * b),
-            factor = x ? +x : 1;
-
-        return (new Point([a * scale * factor, b * scale * factor]));
+        const scale = 1 / Math.sqrt(a * a + b * b);
+        return (new Point(a * scale * factor, b * scale * factor));
     },
     // 四舍五入
     round(n = 20) {
@@ -103,12 +102,9 @@ Point.prototype = {
     },
     // 是否是整数点
     isInteger() {
-        if (this.length !== 2 ||
-            this[0] !== Math.floor(this[0]) ||
-            this[1] !== Math.floor(this[1])) {
-            return (false);
-        }
-        return (true);
+        return (this.length === 2 &&
+            this[0] === Math.floor(this[0]) &&
+            this[1] === Math.floor(this[1]));
     },
     // 是否平行
     isParallel(vector) {
