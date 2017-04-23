@@ -9,6 +9,7 @@
             <button
                 class="parts-list"
                 v-for="part in list.parts"
+                @click="addPart(part)"
                 @mouseleave.self="disabledTip"
                 @mousemove.stop="setTip($event, part)">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
@@ -22,7 +23,7 @@
 </template>
 
 <script>
-import { Electronics } from '@/components/ElectronicPart/shape';
+import { Electronics } from '@/components/ElectronicPart/Shape';
 
 export default {
     name: 'AddParts',
@@ -81,6 +82,14 @@ export default {
             this.tipStyle = {
                 display: 'none'
             };
+        },
+        addPart(type) {
+            const part = Object.clone(Electronics[type].readWrite),
+                partsAll = this.$store.state.collection.Parts;
+
+            part.type = type;
+            part.id = partsAll.newId(part.id);
+            this.$store.commit('PUSH_PART', part);
         }
     },
     components: {

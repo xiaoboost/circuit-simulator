@@ -59,7 +59,7 @@ function isElectron(elec) {
 function push(set, elec) {
     if (isElectron(elec) && !set.has(elec)) {
         set._hash[elec.id] = set.length;
-        set[set.length] = elec;
+        set[set.length ++] = elec;
     }
 }
 function pop(set) {
