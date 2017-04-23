@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { NUM_REG } from '@/libraries/util';
 import Input from '@/components/InputVerifiable.vue';
 
 export default {
@@ -32,9 +33,9 @@ export default {
         const state = this.$store.state;
 
         return {
+            NUM_REG,
             end: state.time.END_TIME,
-            step: state.time.STEP_TIME,
-            NUM_REG: state.NUM_REG
+            step: state.time.STEP_TIME
         };
     },
     beforeRouteLeave(to, from, next) {
