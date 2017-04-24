@@ -5,7 +5,7 @@
  *   input          输入的值
  *   inputTxt       显示输入值的说明
  *   visionNum      器件参数面板显示参数的数量
- *   pointInfor     管脚方向以及相对器件中心的位置
+ *   points         管脚方向以及相对器件中心的位置
  *   padding        器件内边距
  *   margin         器件外边距
  *   txtLocate      显示的txt文本相对中心的距离
@@ -20,7 +20,7 @@ const Electronics = {
     resistance: {
         readWrite: {
             id: 'R_',
-            input: ['10k']
+            params: ['10k']
         },
         readOnly: {
             type: 'resistance',
@@ -35,7 +35,7 @@ const Electronics = {
                     hidden: false
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [-40, 0],
                     direction: [-1, 0]
@@ -45,7 +45,7 @@ const Electronics = {
                     direction: [1, 0]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -65,7 +65,7 @@ const Electronics = {
     capacitor: {
         readWrite: {
             id: 'C_',
-            input: ['100u']
+            params: ['100u']
         },
         readOnly: {
             type: 'capacitor',
@@ -80,7 +80,7 @@ const Electronics = {
                     hidden: false
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [-40, 0],
                     direction: [-1, 0]
@@ -90,7 +90,7 @@ const Electronics = {
                     direction: [1, 0]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -110,7 +110,7 @@ const Electronics = {
     inductance: {
         readWrite: {
             id: 'L_',
-            input: ['10u']
+            params: ['10u']
         },
         readOnly: {
             type: 'inductance',
@@ -125,7 +125,7 @@ const Electronics = {
                     hidden: false
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [-40, 0],
                     direction: [-1, 0]
@@ -135,7 +135,7 @@ const Electronics = {
                     direction: [1, 0]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -155,7 +155,7 @@ const Electronics = {
     dc_voltage_source: {
         readWrite: {
             id: 'V_',
-            input: ['12']
+            params: ['12']
         },
         readOnly: {
             type: 'dc_voltage_source',
@@ -170,7 +170,7 @@ const Electronics = {
                     hidden: false
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [0, -40],
                     direction: [0, -1]
@@ -180,7 +180,7 @@ const Electronics = {
                     direction: [0, 1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -200,7 +200,7 @@ const Electronics = {
     ac_voltage_source: {
         readWrite: {
             id: 'V_',
-            input: ['220', '50', '0', '0']
+            params: ['220', '50', '0', '0']
         },
         readOnly: {
             type: 'ac_voltage_source',
@@ -230,7 +230,7 @@ const Electronics = {
                     hidden: true
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [0, -40],
                     direction: [0, -1]
@@ -240,7 +240,7 @@ const Electronics = {
                     direction: [0, 1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
@@ -266,7 +266,7 @@ const Electronics = {
     dc_current_source: {
         readWrite: {
             id: 'I_',
-            input: ['10']
+            params: ['10']
         },
         readOnly: {
             type: 'dc_current_source',
@@ -281,7 +281,7 @@ const Electronics = {
                     hidden: false
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [0, 40],
                     direction: [0, 1]
@@ -291,7 +291,7 @@ const Electronics = {
                     direction: [0, -1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
@@ -331,13 +331,13 @@ const Electronics = {
             margin: 1,
             txtLocate:12,
             text: [],
-            pointInfor: [
+            points: [
                 {
                     position: [0, -20],
                     direction: [0, -1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -365,7 +365,7 @@ const Electronics = {
             margin: [1, 0],
             txtLocate: 24,
             text: [],
-            pointInfor: [
+            points: [
                 {
                     position: [0, -40],
                     direction: [0, -1]
@@ -375,7 +375,7 @@ const Electronics = {
                     direction: [0, 1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
@@ -416,7 +416,7 @@ const Electronics = {
             margin: 1,
             txtLocate: 11,
             text: [],
-            pointInfor: [
+            points: [
                 {
                     position: [-20, 0],
                     direction: [-1, 0]
@@ -426,7 +426,7 @@ const Electronics = {
                     direction: [1, 0]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -452,7 +452,7 @@ const Electronics = {
     diode: {
         readWrite: {
             id: 'VD_',
-            input: ['1', '0.5', '5M']
+            params: ['1', '0.5', '5M']
         },
         readOnly: {
             type: 'diode',
@@ -477,7 +477,7 @@ const Electronics = {
                     hidden: true
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [0, -40],
                     direction: [0, -1]
@@ -487,7 +487,7 @@ const Electronics = {
                     direction: [0, 1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -513,7 +513,7 @@ const Electronics = {
     transistor_npn: {
         readWrite: {
             id: 'Q_',
-            input: ['40', '26', '0.6', '1']
+            params: ['40', '26', '0.6', '1']
         },
         readOnly: {
             type: 'transistor_npn',
@@ -543,7 +543,7 @@ const Electronics = {
                     hidden: true
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [-20, 0],
                     direction: [-1, 0]
@@ -557,7 +557,7 @@ const Electronics = {
                     direction: [0, 1]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -584,7 +584,7 @@ const Electronics = {
     operational_amplifier: {
         readWrite: {
             id: 'OP_',
-            input: ['120', '80M', '60']
+            params: ['120', '80M', '60']
         },
         readOnly: {
             type: 'operational_amplifier',
@@ -611,7 +611,7 @@ const Electronics = {
                     hidden: true
                 }
             ],
-            pointInfor: [
+            points: [
                 {
                     position: [-40, -20],
                     direction: [-1, 0]
@@ -625,7 +625,7 @@ const Electronics = {
                     direction: [1, 0]
                 }
             ],
-            aspectInfor: [
+            aspect: [
                 {
                     'name': 'path',
                     'attribute': {
@@ -677,14 +677,14 @@ function css2obj(css) {
 // 部分格式转换
 Object.keys(Electronics).forEach((key) => {
     const data = Electronics[key].readOnly,
-        pointInfor = data.pointInfor;
+        points = data.points;
 
     //内外边距
     data.padding = css2obj(data.padding);
     data.margin = css2obj(data.margin);
 
-    for (let j = 0; j < pointInfor.length; j++) {
-        pointInfor[j].direction = $M([pointInfor[j].direction]);
+    for (let j = 0; j < points.length; j++) {
+        points[j].direction = $M([points[j].direction]);
     }
 
     // 冻结只读属性

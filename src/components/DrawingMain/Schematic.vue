@@ -3,12 +3,14 @@
     <svg height="100%" width="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-part
-                v-for="i in parts.length"
-                :key="parts[i].id">
+                :ref="parts[i].id"
+                v-model="parts[i]"
+                v-for="i in parts.length">
             </elec-part>
             <elec-line
-                v-for="i in lines.length"
-                :key="lines[i].id">
+                :ref="lines[i].id"
+                v-model="lines[i]"
+                v-for="i in lines.length">
             </elec-line>
         </g>
     </svg>
@@ -78,6 +80,9 @@ export default {
                 .round(1);
 
             this.zoom = size / 20;
+        },
+        find(id) {
+            return this.$refs[id];
         }
     },
     mounted() {
