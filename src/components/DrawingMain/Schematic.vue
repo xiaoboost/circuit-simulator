@@ -1,21 +1,32 @@
 <template>
-<section class="drawing-main" :style="background">
+<section class="drawing-main" :style="background" @mousewheel="mousewheel($event)">
     <svg height="100%" width="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
+            <elec-part
+                v-for="i in parts.length"
+                :key="parts[i].id">
+            </elec-part>
+            <elec-line
+                v-for="i in lines.length"
+                :key="lines[i].id">
+            </elec-line>
         </g>
     </svg>
 </section>
 </template>
 
 <script>
-import part from '@/components/ElectronicPart';
-import line from '@/components/ElectronicLine';
+import Part from '@/components/ElectronicPart';
+import Line from '@/components/ElectronicLine';
 
 import { $P } from '@/libraries/point';
 
 export default {
     name: 'DrawingMain',
-    // components: { part, line },
+    components: {
+        'elec-part': Part,
+        'elec-line': Line
+    },
     data() {
         return {
             zoom: 1,
@@ -24,15 +35,20 @@ export default {
     },
     computed: {
         background() {
-            const bias = [
-                this.position[0] % (this.zoom * 20),
-                this.position[1] % (this.zoom * 20)
-            ];
+            const size = this.zoom * 20,
+                biasX = this.position[0] % size,
+                biasY = this.position[1] % size;
 
             return {
-                'background-size': `${this.zoom * 20}px`,
-                'background-position': `${bias[0]}px ${bias[1]}px`
+                'background-size': `${size}px`,
+                'background-position': `${biasX}px ${biasY}px`
             };
+        },
+        parts() {
+            return this.$store.state.collection.Parts;
+        },
+        lines() {
+            return this.$store.state.collection.Lines;
         }
     },
     methods: {
@@ -65,7 +81,7 @@ export default {
         }
     },
     mounted() {
-        this.$el.addEventListener('mousewheel', (e) => this.mousewheel(e));
+
     }
 };
 </script>
