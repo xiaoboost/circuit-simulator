@@ -3,14 +3,17 @@
     <svg height="100%" width="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-part
-                :ref="parts[i].id"
-                v-model="parts[i]"
-                v-for="i in parts.length">
+                :ref="parts[i - 1].id"
+                v-model="parts[i - 1]"
+                v-for="i in parts.length"
+                @setEvent="EventControler($event, parts[i - 1])">
+                {{parts[i]}}
             </elec-part>
             <elec-line
-                :ref="lines[i].id"
-                v-model="lines[i]"
-                v-for="i in lines.length">
+                :ref="lines[i - 1].id"
+                v-model="lines[i - 1]"
+                v-for="i in lines.length"
+                @setEvent="EventControler($event, lines[i - 1])">
             </elec-line>
         </g>
     </svg>
@@ -83,6 +86,9 @@ export default {
         },
         find(id) {
             return this.$refs[id];
+        },
+        EventControler(event) {
+            debugger;
         }
     },
     mounted() {
