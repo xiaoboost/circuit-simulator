@@ -4,6 +4,7 @@
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-part
                 :ref="parts[i - 1].id"
+                :key="parts[i - 1].id"
                 v-model="parts[i - 1]"
                 v-for="i in parts.length"
                 @setEvent="EventControler($event, parts[i - 1])">
@@ -11,6 +12,7 @@
             </elec-part>
             <elec-line
                 :ref="lines[i - 1].id"
+                :key="lines[i - 1].id"
                 v-model="lines[i - 1]"
                 v-for="i in lines.length"
                 @setEvent="EventControler($event, lines[i - 1])">
