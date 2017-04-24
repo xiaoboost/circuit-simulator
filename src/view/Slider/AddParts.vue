@@ -31,7 +31,7 @@ export default {
         return {
             tipStyle: {},
             tipText: '',
-            shapes: Electronics.map((value) => value.readOnly.aspectInfor),
+            shapes: Electronics.map((value) => value.readOnly.aspect),
             texts: Electronics.map((value) => value.readOnly.introduction),
             lists: [
                 {
