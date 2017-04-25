@@ -87,8 +87,8 @@ export default {
             this.$emit('input', {
                 id: this.id,
                 type: this.type,
-                rotate: this.rotate,
                 params: this.params,
+                rotate: this.rotate,
                 connect: this.connect,
                 position: this.position
             });
