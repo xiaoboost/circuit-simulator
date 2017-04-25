@@ -32,8 +32,8 @@ export default {
             this.$emit('input', {
                 id: this.id,
                 type: this.type,
-                rotate: this.rotate,
                 params: this.params,
+                rotate: this.rotate,
                 position: this.position
             });
         },
@@ -67,6 +67,8 @@ export default {
         // 将旋转矩阵以及坐标实例化
         this.rotate = $M(this.rotate);
         this.position = $P(this.position);
+        // 更新原始数据
+        this.update();
         // 如果坐标为无限，说明是新建器件
         if (this.position[0] === 500000) {
             this.setNewEvevt();
