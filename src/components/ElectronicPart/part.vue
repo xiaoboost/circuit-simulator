@@ -40,22 +40,23 @@ export default {
         setNewEvevt() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
-                beforeEvent = () => el.setAttribute('opacity', '0.4'),
-                event = (e) => this.position = e,
-                stopEvent = () => {
-                    parentEl.addEventListener('click', function stop(event) {
-                        debugger;
+                handler = (e) => this.position = e,
+                afterEvent = () => el.removeAttribute('opacity'),
+                stopEvent = () => new Promise((res) => {
+                    parentEl.addEventListener('mousedown', function stop(event) {
                         if (!event.button) {
-                            parentEl.removeEventListener('click', stop);
-                            el.removeAttribute('opacity');
+                            parentEl.removeEventListener('mousedown', stop);
+                            res();
                         }
                     });
-                };
+                });
 
+            el.setAttribute('opacity', '0.4');
             this.$emit('setEvent', {
-                event,
-                beforeEvent,
-                stopEvent
+                handler,
+                stopEvent,
+                afterEvent,
+                elment: this
             });
         }
     },

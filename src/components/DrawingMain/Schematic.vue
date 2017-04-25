@@ -7,15 +7,14 @@
                 :key="parts[i - 1].id"
                 v-model="parts[i - 1]"
                 v-for="i in parts.length"
-                @setEvent="EventControler($event, parts[i - 1])">
-                {{parts[i]}}
+                @setEvent="EventControler">
             </elec-part>
             <elec-line
                 :ref="lines[i - 1].id"
                 :key="lines[i - 1].id"
                 v-model="lines[i - 1]"
                 v-for="i in lines.length"
-                @setEvent="EventControler($event, lines[i - 1])">
+                @setEvent="EventControler">
             </elec-line>
         </g>
     </svg>
@@ -89,8 +88,41 @@ export default {
         find(id) {
             return this.$refs[id];
         },
+        // 事件控制器
         EventControler(event) {
-            debugger;
+            // 给所有回调函数加上矫正鼠标坐标的钩子
+            const toHandler = (fn) => {
+                return (e) => {
+                    const mousePosition = $P(
+                        (e.pageX - this.position[0]) / this.zoom,
+                        (e.pageY - this.position[1]) / this.zoom
+                    );
+                    fn(mousePosition, e);
+                };
+            };
+
+            // 单个事件默认为 mousemove 事件
+            const handlers = event.handler instanceof Function
+                ? [{ event: 'mousemove', handler: toHandler(event.handler) }]
+                : event.handler.forEach((n) => n.handler = toHandler(n.handler));
+
+            // 默认起始事件
+            event.beforeEvent = event.beforeEvent
+                ? event.beforeEvent()
+                : Promise.resolve();
+
+            // 事件开始
+            event.beforeEvent
+                // 绑定事件本身和结束条件
+                .then(() => {
+                    handlers.forEach((n) => this.$el.addEventListener(n.event, n.handler));
+                    return event.stopEvent();
+                })
+                // 事件结束，解除事件绑定
+                .then(() => {
+                    handlers.forEach((n) => this.$el.removeEventListener(n.event, n.handler));
+                    event.afterEvent();
+                });
         }
     },
     mounted() {
