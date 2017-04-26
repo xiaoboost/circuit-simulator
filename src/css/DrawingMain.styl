@@ -1,3 +1,5 @@
+circle-transfrom = r 200ms cubic-bezier(.4,1.3,1,1)
+
 .drawing-main
     position absolute
     top 0
@@ -21,39 +23,13 @@
         stroke-linecap round
         fill transparent
 
-    // 器件导线公共属性（普通状态）
+    // 器件导线公共属性
     path
         stroke Black
         stroke-width 2
-    rect.focus-part,
-    rect.rect-part-point,
-    rect.line-rect,
-    rect.rect-line-point
+    rect
         fill transparent
         stroke transparent
-    rect.rect-part-point,
-    rect.rect-line-point
-        x -8.5
-        y -8.5
-        width 17px
-        height 17px
-    .white-fill
-        fill White
-        stroke Black
-        stroke-width 2
-    polygon.fill-whole
-        fill Black
-        stroke-width 0
-    polygon.fill-stroke
-        fill transparent
-        stroke Black
-        stroke-width 2
-    //器件引脚
-    g.part-point circle
-        fill Black
-        stroke Black
-        stroke-width 2
-    //器件属性文字说明
     text
         fill Black
         font-size 16px
@@ -61,12 +37,53 @@
         stroke-width 0
         tspan:nth-child(2)
             font-size 10px
-    //导线引脚
-    g.line-point circle
-        fill White
-        stroke Black
-        stroke-width 2
-    g.line-point.cross-point circle
-        fill Black
-    g.line-point.dispear
-        opacity 0
+    .part-point
+        rect
+            x -8.5
+            y -8.5
+            width 17px
+            height 17px
+        circle
+            r 0
+            fill Black
+            transition circle-transfrom
+        &:hover circle
+            r 5
+
+    // rect.focus-part,
+    // rect.rect-part-point,
+    // rect.line-rect,
+    // rect.rect-line-point
+    //     fill transparent
+    //     stroke transparent
+    // rect.rect-part-point,
+    // rect.rect-line-point
+    //     x -8.5
+    //     y -8.5
+    //     width 17px
+    //     height 17px
+    // .white-fill
+    //     fill White
+    //     stroke Black
+    //     stroke-width 2
+    // polygon.fill-whole
+    //     fill Black
+    //     stroke-width 0
+    // polygon.fill-stroke
+    //     fill transparent
+    //     stroke Black
+    //     stroke-width 2
+    // //器件引脚
+    // g.part-point circle
+    //     fill Black
+    //     stroke Black
+    //     stroke-width 2
+    // //导线引脚
+    // g.line-point circle
+    //     fill White
+    //     stroke Black
+    //     stroke-width 2
+    // g.line-point.cross-point circle
+    //     fill Black
+    // g.line-point.dispear
+    //     opacity 0
