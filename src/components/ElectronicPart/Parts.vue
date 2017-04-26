@@ -20,7 +20,6 @@
 <script>
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
-import { mouse } from '@/libraries/util';
 import { Electronics } from './Shape';
 
 export default {
@@ -97,7 +96,7 @@ export default {
             const el = this.$el,
                 parentEl = this.$parent.$el,
                 handler = (e) => this.position = e.mouse,
-                stopEvent = mouse(parentEl, 'mousedown', 'left'),
+                stopEvent = { el: parentEl, name: 'mousedown', which: 'left' },
                 afterEvent = () => {
                     el.removeAttribute('opacity');
                     this.position = this.position.round(20);

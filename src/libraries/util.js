@@ -17,17 +17,4 @@ function numParser(str) {
     }
 }
 
-// 生成鼠标点击左键 / 右键的 promise 实例
-function mouse(el, event, button) {
-    const code = { left: 0, right: 2 };
-    return () => new Promise((res) => {
-        el.addEventListener(event, function stop(event) {
-            if (event.button === code[button]) {
-                el.removeEventListener(event, stop);
-                res();
-            }
-        });
-    });
-}
-
-export { NUM_REG, numParser, mouse };
+export { NUM_REG, numParser };
