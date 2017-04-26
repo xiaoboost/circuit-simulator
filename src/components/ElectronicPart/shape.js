@@ -13,8 +13,6 @@
  *
  */
 
-import { $M } from '@/libraries/matrix';
-
 const Electronics = {
     // 电阻
     resistance: {
@@ -682,10 +680,6 @@ Object.keys(Electronics).forEach((key) => {
     //内外边距
     data.padding = css2obj(data.padding);
     data.margin = css2obj(data.margin);
-
-    for (let j = 0; j < points.length; j++) {
-        points[j].direction = $M([points[j].direction]);
-    }
 
     // 冻结只读属性
     Object.freeze(data);

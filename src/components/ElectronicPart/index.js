@@ -1,3 +1,3 @@
-import part from './Part.vue';
+import part from './Parts.vue';
 
 export default part;

@@ -6,10 +6,9 @@
         :class="point.class"
         :transform="`translate(${point.position.join()})`">
         <circle></circle>
-        <rect x="-9" y="-9" width="18" height="18"></rect>
+        <rect></rect>
     </g>
     <text
-        class="features-text"
         transform="matrix(1,0,0,1,20,-2)">
         <tspan dx="0" dy="0">{{texts.label}}</tspan>
         <tspan>{{texts.sub}}</tspan>
@@ -21,6 +20,7 @@
 <script>
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
+import { mouse } from '@/libraries/util';
 import { Electronics } from './Shape';
 
 export default {
@@ -96,23 +96,20 @@ export default {
         setNewEvevt() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
-                handler = (e) => this.position = e,
-                afterEvent = () => el.removeAttribute('opacity'),
-                stopEvent = () => new Promise((res) => {
-                    parentEl.addEventListener('mousedown', function stop(event) {
-                        if (!event.button) {
-                            parentEl.removeEventListener('mousedown', stop);
-                            res();
-                        }
-                    });
-                });
+                handler = (e) => this.position = e.mouse,
+                stopEvent = mouse(parentEl, 'mousedown', 'left'),
+                afterEvent = () => {
+                    el.removeAttribute('opacity');
+                    this.position = this.position.round(20);
+                };
 
             el.setAttribute('opacity', '0.4');
             this.$emit('setEvent', {
                 handler,
                 stopEvent,
                 afterEvent,
-                elment: this
+                element: this,
+                exclusion: true
             });
         }
     },

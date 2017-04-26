@@ -1,3 +1,3 @@
-import line from './Line.vue';
+import line from './Lines.vue';
 
 export default line;
