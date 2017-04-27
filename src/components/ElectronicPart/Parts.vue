@@ -1,19 +1,22 @@
 <template>
 <g class="part" :transform="`matrix(${rotate.join()},${position.join()})`">
-    
-    <g 
+    <aspect
+        v-for="(info, i) in this.shape.aspect"
+        :value="info" :key="i">
+    </aspect>
+    <g
         v-for="point in points"
         :class="point.class"
         :transform="`translate(${point.position.join()})`">
         <circle></circle>
         <rect></rect>
     </g>
-    <text
+    <!--<text
         transform="matrix(1,0,0,1,20,-2)">
         <tspan dx="0" dy="0">{{texts.label}}</tspan>
         <tspan>{{texts.sub}}</tspan>
         <tspan v-for="param in texts.params" dy="16">{{param.text}}</tspan>
-    </text>
+    </text>-->
 </g>
 </template>
 
@@ -127,6 +130,14 @@ export default {
         // 如果坐标为初始值，说明是新建器件
         if (this.position[0] === 500000) {
             this.setNewEvevt();
+        }
+    },
+    components: {
+        'aspect': {
+            props: ['value'],
+            render(ce) {
+                return ce(this.value.name, { attrs: this.value.attribute });
+            }
         }
     }
 };
