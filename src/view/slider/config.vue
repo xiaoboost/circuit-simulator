@@ -30,12 +30,12 @@ import Input from '@/components/input-verifiable.vue';
 export default {
     name: 'Config',
     data() {
-        const state = this.$store.state;
+        const time = this.$store.state.time;
 
         return {
             NUM_REG,
-            end: state.time.END_TIME,
-            step: state.time.STEP_TIME
+            end: time.END_TIME,
+            step: time.STEP_TIME
         };
     },
     beforeRouteLeave(to, from, next) {
