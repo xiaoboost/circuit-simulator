@@ -1,6 +1,6 @@
 import { $P } from '@/libraries/point';
 
-// 生成鼠标点击左键 / 右键的 promise 实例
+// 生成鼠标事件的 promise 实例
 function mouseEvent($event) {
     const code = { left: 0, right: 2 };
     return () => new Promise((res) => {
@@ -36,11 +36,11 @@ export default {
             };
         },
         EventControler(event) {
-            // 如果有互斥事件在运行，那么忽略当前事件
-            if (this.exclusion) {
+            // 如果有互斥事件在运行，且当前事件也是互斥的，那么忽略当前事件
+            if (this.exclusion && event.exclusion) {
                 return (false);
             } else {
-                this.exclusion = event.exclusion;
+                this.exclusion = !!event.exclusion;
             }
 
             // 单个事件默认为 mousemove 事件
