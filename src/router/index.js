@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import Slider from '@/view/Slider/index.vue';
-import Config from '@/view/Slider/Config.vue';
-import AddParts from '@/view/Slider/AddParts.vue';
-import Graph from '@/view/Graph/index.vue';
+import Graph from '@/view/graph';
+import Slider from '@/view/slider';
+import Config from '@/view/slider/config.vue';
+import AddParts from '@/view/slider/add-parts.vue';
 
 Vue.use(Router);
 

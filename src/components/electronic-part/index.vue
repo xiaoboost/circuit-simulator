@@ -16,14 +16,14 @@
         <tspan dx="0" dy="0">{{texts.label}}</tspan>
         <tspan>{{texts.sub}}</tspan>
         <tspan v-for="param in texts.params" dy="16">{{param.text}}</tspan>
-    </text>-->
+    </text>-->  
 </g>
 </template>
 
 <script>
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
-import { Electronics } from './Shape';
+import { Electronics } from './shape';
 
 export default {
     props: {

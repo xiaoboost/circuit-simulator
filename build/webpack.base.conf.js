@@ -25,6 +25,8 @@ module.exports = {
     resolve: {
         // 自动补全的扩展名
         extensions: ['.js', '.vue', '.json'],
+        // 目录下的默认主文件
+        mainFiles: ['index.js', 'index.vue'],
         // 默认路径别名
         alias: {
             '@': resolve('src'),

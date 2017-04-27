@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import Part from '@/components/ElectronicPart';
-import Line from '@/components/ElectronicLine';
+import Part from '@/components/electronic-part';
+import Line from '@/components/electronic-line';
 
-import Event from './EventControler';
+import Event from './event-controler';
 import { $P } from '@/libraries/point';
 
 export default {

@@ -8,9 +8,9 @@
 </template>
 
 <script>
-import ActionMenu from '@/components/ActionMenu';
-import DrawingMain from '@/components/DrawingMain';
-import StartLoading from '@/components/StartLoading';
+import ActionMenu from '@/components/action-menu';
+import DrawingMain from '@/components/drawing-main';
+import StartLoading from '@/components/start-loading';
 
 export default {
     name: 'app',

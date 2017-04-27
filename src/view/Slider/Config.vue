@@ -25,7 +25,7 @@
 
 <script>
 import { NUM_REG } from '@/libraries/util';
-import Input from '@/components/InputVerifiable.vue';
+import Input from '@/components/input-verifiable.vue';
 
 export default {
     name: 'Config',
