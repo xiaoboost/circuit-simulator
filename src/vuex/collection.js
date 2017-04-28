@@ -11,7 +11,7 @@ Collection.prototype = {
     constructor: Collection,
     has(id) {
         id = id.id || id;
-        return (!!this._hash[id]);
+        return (this._hash.hasOwnProperty(id));
     },
     find(id) {
         if (!id) {
