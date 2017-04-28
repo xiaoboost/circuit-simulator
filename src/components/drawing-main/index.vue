@@ -1,5 +1,7 @@
 <template>
-<section class="drawing-main" :style="background">
+<section
+    :style="background"
+    :class="['drawing-main', { 'no-event': !exclusion }]">
     <svg
         height="100%"
         width="100%"

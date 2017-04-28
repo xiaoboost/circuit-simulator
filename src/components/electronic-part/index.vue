@@ -52,19 +52,17 @@ export default {
                     a[0] * b.get(0, 1) + a[1] * b.get(1, 1)
                 ];
             }
-            return this.shape.points.map((point, i) => {
-                return {
-                    position: product(point.position, this.rotate),
-                    direction: product(point.direction, this.rotate),
-                    class: [
-                        'part-point',
-                        {
-                            'point-open': !this.connect[i],
-                            'point-close': !!this.connect[i]
-                        }
-                    ]
-                };
-            });
+            return this.shape.points.map((point, i) => ({
+                position: product(point.position, this.rotate),
+                direction: product(point.direction, this.rotate),
+                class: [
+                    'part-point',
+                    {
+                        'point-open': !this.connect[i],
+                        'point-close': !!this.connect[i]
+                    }
+                ]
+            }));
         },
         texts() {
             const id = this.id.split('_'),
