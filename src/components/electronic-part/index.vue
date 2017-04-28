@@ -11,16 +11,13 @@
         <circle></circle>
         <rect></rect>
     </g>
-    <!--<text
-        transform="matrix(1,0,0,1,20,-2)">
-        <tspan dx="0" dy="0">{{texts.label}}</tspan>
-        <tspan>{{texts.sub}}</tspan>
-        <tspan v-for="param in texts.params" dy="16">{{param.text}}</tspan>
-    </text>-->  
+    <text-params :id="id"></text-params>
 </g>
 </template>
 
 <script>
+import TextParams from './text';
+
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
 import { Electronics } from './shape';
@@ -131,6 +128,7 @@ export default {
         }
     },
     components: {
+        'text-params': TextParams,
         'aspect': {
             props: ['value'],
             render(ce) {
