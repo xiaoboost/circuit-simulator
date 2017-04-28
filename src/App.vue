@@ -34,9 +34,9 @@ export default {
 </script>
 
 <style lang="stylus">
-@import './css/Variable'
-@import './css/Public'
-@import './css/DrawingMain'
+@import './css/variable'
+@import './css/public'
+@import './css/drawing-main'
 
 html, body, #app
     overflow hidden
