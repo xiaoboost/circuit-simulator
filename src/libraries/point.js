@@ -1,10 +1,12 @@
+const u = undefined;
+
 //点和向量
 function Point(a, b) {
-    if (typeof a === 'number' && typeof b === 'number') {
+    if (typeof a === 'number') {
         // 输入一个点
         this[0] = a;
-        this[1] = b;
-    } else if (isPoint(a) && b === undefined) {
+        this[1] = !Number.isNaN(+b) ? +b : a;
+    } else if (isPoint(a) && b === u) {
         // 输入一个点
         this[0] = a[0];
         this[1] = a[1];
@@ -22,8 +24,8 @@ Point.prototype = {
     // 加法，如果输入数组，那么逐个相加
     add(label = 1, a) {
         const sum = new Point(0, 0),
-            sign = (a === undefined) ? 1 : label,
-            arr = (a === undefined) ? label : a;
+            sign = (a === u) ? 1 : label,
+            arr = (a === u) ? label : a;
 
         if (typeof arr === 'number') {
             sum[0] = this[0] + arr * sign;
@@ -37,8 +39,8 @@ Point.prototype = {
     // 乘法，如果输入数组，那么逐个相乘
     mul(label = 1, a) {
         const sum = new Point(0, 0),
-            sign = (a === undefined) ? 1 : label,
-            arr = (a === undefined) ? label : a;
+            sign = (a === u) ? 1 : label,
+            arr = (a === u) ? label : a;
 
         if (typeof arr === 'number') {
             const temp = (sign === -1) ? 1 / arr : arr;
