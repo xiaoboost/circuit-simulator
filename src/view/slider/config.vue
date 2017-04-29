@@ -74,6 +74,8 @@ left = 35px
         display flex
         margin 15px 10px 15px left
 
+        label
+            white-space nowrap
         .input-grow
             flex-grow 1
             margin-right 10px

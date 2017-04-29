@@ -134,7 +134,6 @@ export default {
                 afterEvent = () => this.setText();
 
             this.focus = true;
-            parentEl.style.cursor = 'url(/cur/move_part.cur), crosshair';
             this.$emit('setEvent', {
                 handler,
                 stopEvent,
