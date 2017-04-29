@@ -14,7 +14,6 @@
         <rect></rect>
     </g>
     <g
-        ref="text"
         @mousedown="moveText($event)"
         v-if="this.type !== 'reference_ground'"
         :class="['text-params', textAlign]"

@@ -1,18 +1,5 @@
 import { $P } from '@/libraries/point';
 
-// 生成鼠标事件的 promise 实例
-function mouseEvent($event) {
-    const code = { left: 0, right: 2 };
-    return () => new Promise((res) => {
-        $event.el.addEventListener($event.name, function stop(event) {
-            if (event.button === code[$event.which]) {
-                $event.el.removeEventListener($event.name, stop);
-                res();
-            }
-        });
-    });
-}
-
 export default {
     data() {
         return {
@@ -20,6 +7,21 @@ export default {
         };
     },
     methods: {
+        mouseEvent($event) {
+            const code = { left: 0, right: 2 };
+            return () => new Promise((resolve) => {
+                $event.el.addEventListener($event.name, function stop(event) {
+                    if (event.button === code[$event.which]) {
+                        $event.el.removeEventListener($event.name, stop);
+                        // 将终止事件时的鼠标坐标向下传递
+                        resolve(
+                            $P(event.pageX, event.pageY)
+                                .add(-1, this.position).mul(1 / this.zoom)
+                        );
+                    }
+                });
+            });
+        },
         toHandler(fn) {
             let last = false;
             return (e) => {
@@ -53,7 +55,7 @@ export default {
             // 终止事件
             event.stopEvent = this.stopEvent instanceof Function
                 ? event.stopEvent
-                : mouseEvent(event.stopEvent);
+                : this.mouseEvent(event.stopEvent);
 
             // 事件开始
             event.beforeEvent
@@ -63,9 +65,9 @@ export default {
                     return event.stopEvent();
                 })
                 // 事件结束，解除事件绑定
-                .then(() => {
+                .then((mouse) => {
                     handlers.forEach((n) => this.$el.removeEventListener(n.event, n.handler));
-                    event.afterEvent();
+                    event.afterEvent(mouse);
                     this.exclusion = false;
                 });
         }
