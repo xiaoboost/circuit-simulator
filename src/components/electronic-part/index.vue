@@ -111,7 +111,6 @@ export default {
                     this.position = this.position.round(20);
                 };
 
-            this.setText();
             el.setAttribute('opacity', '0.4');
             this.$emit('setEvent', {
                 handler,
@@ -191,6 +190,7 @@ export default {
         this.shape = Electronics[this.type].readOnly;
         // 器件说明文字位置初始化
         this.textPosition = $P(this.shape.txtLocate);
+        this.setText();
         // 将旋转矩阵以及坐标实例化
         this.rotate = $M(this.rotate);
         this.position = $P(this.position);
