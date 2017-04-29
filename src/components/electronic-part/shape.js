@@ -271,7 +271,7 @@ const Electronics = {
             introduction: '直流电流源',
             padding: [1, 0],
             margin: 1,
-            txtLocate: 20,
+            txtLocate: 24,
             text: [
                 {
                     label: '电流值',

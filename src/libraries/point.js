@@ -65,6 +65,13 @@ Point.prototype = {
             Math.abs(this[1])
         ));
     },
+    // 到另一点的距离
+    disPoint(p) {
+        return Math.sqrt(
+            (this[0] - p[0]) * (this[0] - p[0]) +
+            (this[1] - p[1]) * (this[1] - p[1])
+        );
+    },
     // 单位化，符号不变，模变为 factor
     toUnit(factor = 1) {
         const a = +this[0], b = +this[1];

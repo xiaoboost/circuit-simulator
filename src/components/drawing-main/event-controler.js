@@ -24,11 +24,9 @@ export default {
             let last = false;
             return (e) => {
                 const origin = $P(e.pageX, e.pageY),
-                    mouse = origin
-                        .add(-1, this.position)
-                        .mul(1 / this.zoom),
+                    mouse = origin.add(-1, this.position).mul(1 / this.zoom),
                     bias = last
-                        ? origin.add(-1, last)
+                        ? origin.add(-1, last).mul(1 / this.zoom)
                         : $P(0, 0);
 
                 last = origin;

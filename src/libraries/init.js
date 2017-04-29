@@ -46,7 +46,7 @@ Object.assign(Object.prototype, {
             return (false);
         }
 
-        return thisKeys.every((key) => this[key].isEqual
+        return thisKeys.every((key) => (this[key] instanceof Object)
             ? this[key].isEqual(obj[key])
             : this[key] === obj[key]
         );
@@ -78,7 +78,7 @@ Object.assign(Array.prototype, {
             return (false);
         }
 
-        return this.every((item, i) => item.isEqual
+        return this.every((item, i) => (item instanceof Object)
             ? item.isEqual(arr[i])
             : item === arr[i]
         );

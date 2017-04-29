@@ -30,6 +30,12 @@ circle-transfrom = r 200ms cubic-bezier(.4,1.3,1,1)
     rect
         fill transparent
         stroke transparent
+    .fill-white
+        fill White
+    .fill-black
+        fill Black
+    polygon.fill-black
+        stroke-width 0
     text
         fill Black
         font-size 16px
@@ -49,6 +55,15 @@ circle-transfrom = r 200ms cubic-bezier(.4,1.3,1,1)
             transition circle-transfrom
         &:hover circle
             r 5
+    .text-params
+        text, tspan
+            white-space nowrap
+        &.text-align-center
+            text-anchor middle
+        &.text-align-left
+            text-anchor end
+        &.text-align-right
+            text-anchor start
 
 .drawing-main.no-event
     .part:hover, .line:hover

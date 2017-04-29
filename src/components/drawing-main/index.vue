@@ -101,7 +101,7 @@ export default {
             if (this.exclusion || e.button !== 2) { return (false); }
 
             const el = this.$el,
-                handler = (e) => this.position = this.position.add(e.bias),
+                handler = (e) => this.position = this.position.add(e.bias.mul(this.zoom)),
                 stopEvent = { el, name: 'mouseup', which: 'right' },
                 afterEvent = () => el.style.cursor = 'default';
 
