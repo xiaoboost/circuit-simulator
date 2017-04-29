@@ -43,10 +43,12 @@ export default {
                 this.exclusion = !!event.exclusion;
             }
 
-            // 单个事件默认为 mousemove 事件
-            const handlers = event.handler instanceof Function
-                ? [{ event: 'mousemove', handler: this.toHandler(event.handler) }]
-                : event.handler.forEach((n) => n.handler = this.toHandler(n.handler));
+            const cursor = event.cursor
+                    ? `url(/cur/${event.cursor}.cur), crosshair` : 'default',
+                // 单个事件默认为 mousemove 事件
+                handlers = event.handler instanceof Function
+                    ? [{ event: 'mousemove', handler: this.toHandler(event.handler) }]
+                    : event.handler.forEach((n) => n.handler = this.toHandler(n.handler));
 
             // 默认起始事件
             event.beforeEvent = event.beforeEvent
@@ -62,13 +64,16 @@ export default {
                 // 绑定事件本身和结束条件
                 .then(() => {
                     handlers.forEach((n) => this.$el.addEventListener(n.event, n.handler));
+                    this.$el.style.cursor = cursor;
                     return event.stopEvent();
                 })
                 // 事件结束，解除事件绑定
                 .then((mouse) => {
                     handlers.forEach((n) => this.$el.removeEventListener(n.event, n.handler));
-                    event.afterEvent(mouse);
+                    event.afterEvent && event.afterEvent(mouse);
                     this.exclusion = false;
+                    // 全局鼠标指针恢复默认
+                    this.$el.style.cursor = 'default';
                 });
         }
     }

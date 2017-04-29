@@ -117,7 +117,8 @@ export default {
                 stopEvent,
                 afterEvent,
                 element: this,
-                exclusion: true
+                exclusion: true,
+                cursor: 'move_part'
             });
         },
         moveText(e) {
@@ -133,12 +134,14 @@ export default {
                 afterEvent = () => this.setText();
 
             this.focus = true;
+            parentEl.style.cursor = 'url(/cur/move_part.cur), crosshair';
             this.$emit('setEvent', {
                 handler,
                 stopEvent,
                 afterEvent,
                 element: this,
-                exclusion: true
+                exclusion: true,
+                cursor: 'move_part'
             });
         },
         clickPart() {

@@ -102,16 +102,14 @@ export default {
 
             const el = this.$el,
                 handler = (e) => this.position = this.position.add(e.bias.mul(this.zoom)),
-                stopEvent = { el, name: 'mouseup', which: 'right' },
-                afterEvent = () => el.style.cursor = 'default';
+                stopEvent = { el, name: 'mouseup', which: 'right' };
 
-            el.style.cursor = 'url(/cur/move_map.cur), crosshair';
             this.EventControler({
                 handler,
                 stopEvent,
-                afterEvent,
                 element: this,
-                exclusion: true
+                exclusion: true,
+                cursor: 'move_map'
             });
         }
     }
