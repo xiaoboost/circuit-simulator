@@ -654,22 +654,16 @@ const Electronics = {
 };
 
 // 内外边距转换为标准格式
+// 标准格式为两个点，左上和右下
 function css2obj(css) {
-    if (css.length === 2) {
-        return ({
-            top: css[0], bottom: css[0],
-            left: css[1], right: css[1]
-        });
-    } else if (css.length === 4) {
-        return ({
-            top: css[0], right: css[1],
-            bottom: css[2], left: css[3]
-        });
+    if (css.length === 4) {
+        return ([[-css[0], -css[3]], [+css[2], +css[1]]]);
+    } else if (css.length === 3) {
+        return ([[-css[0], -css[1]], [+css[2], +css[1]]]);
+    } else if (css.length === 2) {
+        return ([[-css[0], -css[1]], [+css[0], +css[1]]]);
     } else {
-        return ({
-            left: +css, right: +css,
-            top: +css, bottom: +css
-        });
+        return ([[-css, -css], [+css, +css]]);
     }
 }
 // 部分格式转换

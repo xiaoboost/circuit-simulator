@@ -1,4 +1,4 @@
-// 私有图纸数据
+// 图纸数据
 const map = {};
 
 // 图纸对外暴露的方法
@@ -100,5 +100,7 @@ const schMap = {
         return schMap.deleteConnectBySmalle(node, connect);
     },
 };
+
+Object.freeze(schMap);
 
 export { schMap };

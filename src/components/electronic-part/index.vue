@@ -16,7 +16,7 @@
     <g
         @mousedown="moveText($event)"
         v-if="this.type !== 'reference_ground'"
-        :class="['text-params', textAlign]"
+        :class="['text-params', `text-placement-${textPlacement}`]"
         :transform="`matrix(${invRotate.join()},${textPosition.join()})`">
         <text>
             <tspan>{{ id.split('_')[0] }}</tspan>
@@ -34,7 +34,16 @@
 <script>
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
+import { schMap } from '@/libraries/maphash';
 import { Electronics } from './shape';
+
+// 2长度的数组 乘以 2*2的矩阵
+function product(a, b) {
+    return $P(
+        a[0] * b.get(0, 0) + a[1] * b.get(1, 0),
+        a[0] * b.get(0, 1) + a[1] * b.get(1, 1)
+    );
+}
 
 export default {
     props: {
@@ -60,12 +69,6 @@ export default {
     },
     computed: {
         points() {
-            function product(a, b) {
-                return [
-                    a[0] * b.get(0, 0) + a[1] * b.get(1, 0),
-                    a[0] * b.get(0, 1) + a[1] * b.get(1, 1)
-                ];
-            }
             return this.shape.points.map((point, i) => ({
                 position: product(point.position, this.rotate),
                 direction: product(point.direction, this.rotate),
@@ -84,10 +87,37 @@ export default {
                 .filter((n) => !n.hidden)
                 .map((n) => (n.value + n.unit).replace(/u/g, 'μ'));
         },
-        textAlign() {
-            return /top|bottom/.test(this.textPlacement)
-                ? 'text-align-center'
-                : `text-align-${this.textPlacement}`;
+        margin() {
+            const box = {}, outter = [], types = ['margin', 'padding'];
+
+            for (let i = 0; i < 2; i++) {
+                const type = types[i],
+                    data = this.shape[type]
+                        .map((n) => product(n, this.rotate));
+
+                box[type] = [
+                    [
+                        Math.min(data[0][0], data[1][0]),
+                        Math.min(data[0][1], data[1][1])
+                    ],
+                    [
+                        Math.max(data[0][0], data[1][0]),
+                        Math.max(data[0][1], data[1][1])
+                    ]
+                ];
+            }
+
+            for (let i = 0; i < 2; i++) {
+                outter[i] = [];
+                for (let j = 0; j < 2; j++) {
+                    outter[i][j] = box.margin[i][j] +box.padding[i][j];
+                }
+            }
+
+            return {
+                outter,
+                inner: box.padding
+            };
         }
     },
     methods: {
@@ -101,6 +131,7 @@ export default {
                 position: this.position
             });
         },
+        // 事件
         newPart() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
@@ -109,6 +140,7 @@ export default {
                 afterEvent = () => {
                     el.removeAttribute('opacity');
                     this.position = this.position.round(20);
+                    this.markSign();
                 };
 
             el.setAttribute('opacity', '0.4');
@@ -143,9 +175,7 @@ export default {
                 cursor: 'move_part'
             });
         },
-        clickPart() {
-
-        },
+        // 渲染
         setText() {
             const textHeight = 11,
                 spaceHeight = 5,
@@ -183,7 +213,53 @@ export default {
                     pend[1] = -((textHeight + spaceHeight) * len + local);
                 }
             }
-        }
+        },
+        // 标记
+        markSign() {
+            const position = this.position.floorToSmall(),
+                inner = this.margin.inner;
+
+            //器件内边距占位
+            for (let i = position[0] + inner[0][0]; i <= position[0] + inner[1][0]; i++) {
+                for (let j = position[1] + inner[0][1]; j <= position[1] + inner[1][1]; j++) {
+                    schMap.setValueBySmalle([i, j], {
+                        id: this.id,
+                        form: 'part'
+                    });
+                }
+            }
+            //器件管脚距占位
+            for (let i = 0; i < this.points.length; i++) {
+                const point = this.points[i].position
+                    .floorToSmall()
+                    .add(position);
+
+                schMap.setValueBySmalle(point, {
+                    id: `${this.id}-${i}`,
+                    form: 'part-point',
+                    connect: []
+                });
+            }
+        },
+        deleteSign() {
+            const position = this.position.floorToSmall(),
+                inner = this.margin.inner;
+
+            //删除器件内边距占位
+            for (let i = position[0] + inner[0][0]; i <= position[0] + inner[1][0]; i++) {
+                for (let j = position[1] + inner[0][1]; j <= position[1] + inner[1][1]; j++) {
+                    schMap.deleteValueBySmalle([i, j]);
+                }
+            }
+            //删除器件引脚占位
+            for (let i = 0; i < this.points.length; i++) {
+                const point = this.points[i].position
+                    .floorToSmall()
+                    .add(position);
+
+                schMap.deleteValueBySmalle(point);
+            }
+        },
     },
     created() {
         // 展开数据

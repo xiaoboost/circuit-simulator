@@ -39,6 +39,17 @@ class Matrix {
     get(i, j) {
         return this._view[i * this.row + j];
     }
+    // 取出矩阵某一行
+    getRow(row) {
+        row = row < 0 ? this.row + row : row;
+        if (row > this.row) { return (false); }
+
+        const ans = [], start = row * this.column;
+        for (let i = 0; i < this.column; i++) {
+            ans[i] = this._view[start + i];
+        }
+        return ans;
+    }
     // 设置矩阵值
     set(i, j, value) {
         this._view[i * this.row + j] = value;
