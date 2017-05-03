@@ -1,6 +1,6 @@
-// This is a karma config file. For more details see
+// Karma配置文件，更多详细的配置请参考下面的链接：
 //   http://karma-runner.github.io/0.13/config/configuration-file.html
-// we are also using it with karma-webpack
+// 对于 karma-webpack，更详细的配置，请参考下面的链接：
 //   https://github.com/webpack/karma-webpack
 
 const webpackConfig = require('../../build/webpack.test.conf');
