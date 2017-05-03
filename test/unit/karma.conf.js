@@ -7,12 +7,11 @@ const webpackConfig = require('../../build/webpack.test.conf');
 
 module.exports = function(config) {
     config.set({
-        // to run in additional browsers:
-        // 1. install corresponding karma launcher
-        //    http://karma-runner.github.io/0.13/config/browsers.html
-        // 2. add it to the `browsers` array below.
         // 测试浏览器
         browsers: ['chrome'],
+        plugins: [
+            'karma-chrome-launcher'
+        ],
         // 测试框架
         frameworks: ['mocha', 'sinon-chai'],
         // 测试报告处理
