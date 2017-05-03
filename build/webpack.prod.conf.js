@@ -76,7 +76,7 @@ const webpackConfig = merge(baseWebpackConfig, {
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency'
         }),
-    // 没有指定输出文件名的文件输出的静态文件名
+        // 没有指定输出文件名的文件输出的静态文件名
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks(module, count) {

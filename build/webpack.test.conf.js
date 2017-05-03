@@ -16,7 +16,7 @@ const utils = require('./utils'),
         ]
     });
 
-// no need for app entry during tests
+// 测试环境中不需要入口文件
 delete webpackConfig.entry;
 
 module.exports = webpackConfig;

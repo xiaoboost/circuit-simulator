@@ -7,5 +7,5 @@ const testsContext = require.context('./specs', true, /\.spec$/);
 testsContext.keys().forEach(testsContext);
 
 // 匹配 src 目录中除 main.js 以外的所有文件
-const srcContext = require.context('../../src', true, /^\.\/(?!main(\.js)?$)/);
+const srcContext = require.context('../../src', true, /^\.\/(?!main(\.js)?|index\.html$)/);
 srcContext.keys().forEach(srcContext);

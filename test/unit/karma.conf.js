@@ -8,10 +8,7 @@ const webpackConfig = require('../../build/webpack.test.conf');
 module.exports = function(config) {
     config.set({
         // 测试浏览器
-        browsers: ['chrome'],
-        plugins: [
-            'karma-chrome-launcher'
-        ],
+        browsers: ['Chrome'],
         // 测试框架
         frameworks: ['mocha', 'sinon-chai'],
         // 测试报告处理
