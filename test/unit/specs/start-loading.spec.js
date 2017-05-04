@@ -1,12 +1,12 @@
 import StartLoading from '@/components/start-loading';
-import { createTest, createVue, destroyVM } from '../util';
+import { createTest, destroyVM } from '../util';
 
 describe('start-loading.vue', () => {
     let vm;
     afterEach(() => destroyVM(vm));
 
     it('Loading page, it should be showed', () => {
-        vm = createTest(StartLoading, { show: true }, true);
+        vm = createTest(StartLoading, { show: true });
 
         const text = vm.$el.querySelectorAll('h3');
         expect(text.length).to.be.equal(2);

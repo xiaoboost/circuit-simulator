@@ -20,7 +20,11 @@ export default {
         },
         placeholder: {
             type: String,
-            default: ''
+            default: '请输入内容'
+        },
+        maxlength: {
+            type: Number,
+            default: Infinity
         },
         required: {
             type: Boolean,
@@ -28,7 +32,7 @@ export default {
         },
         pattern: {
             type: RegExp,
-            default: /[\d\D]*/
+            default: () => /[\d\D]*/
         },
         func: {
             type: Function,

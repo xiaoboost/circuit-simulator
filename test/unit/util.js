@@ -39,10 +39,10 @@ exports.createVue = function(Compo, mounted = false) {
  * @link http://vuejs.org/guide/unit-testing.html#Writing-Testable-Components
  * @param  {Object}  Compo          - 组件对象
  * @param  {Object}  propsData      - props 数据
- * @param  {Boolean=false} mounted  - 是否添加到 DOM 上
+ * @param  {Boolean=true} mounted   - 是否添加到 DOM 上
  * @return {Object} vm
  */
-exports.createTest = function(Compo, propsData = {}, mounted = false) {
+exports.createTest = function(Compo, propsData = {}, mounted = true) {
     if (propsData === true || propsData === false) {
         mounted = propsData;
         propsData = {};
