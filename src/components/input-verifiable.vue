@@ -51,7 +51,10 @@ export default {
     methods: {
         update(value) {
             this.check(value);
-            this.$emit('input', value);
+
+            if (value.length < this.maxlength) {
+                this.$emit('input', value);
+            }
         },
         check(value) {
             value = value || this.value;
