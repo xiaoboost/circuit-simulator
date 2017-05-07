@@ -11,12 +11,22 @@
         </h1>
         <div class="form-line">
             <label>结束时间：</label>
-            <v-input ref="end" v-model="end" :pattern="NUM_REG" class="input-grow"></v-input>
+            <v-input
+                ref="end"
+                v-model="end"
+                :pattern="NUM_REG"
+                class="input-grow">
+            </v-input>
             <span class="unit">秒</span>
         </div>
         <div class="form-line">
             <label>固定步长：</label>
-            <v-input ref="step" v-model="step" :pattern="NUM_REG" class="input-grow"></v-input>
+            <v-input
+                ref="step"
+                v-model="step"
+                :pattern="NUM_REG"
+                class="input-grow">
+            </v-input>
             <span class="unit">秒</span>
         </div>
     </section>

@@ -5,7 +5,7 @@
     <span :class="['input-bar error-bar', { 'error': isError }]"></span>
     
     <template v-if="message">
-        <span v-show="isError" class="input-message">{{message}}</span>
+        <span v-show="isError" class="input-error-message">{{message}}</span>
     </template>
 </span>
 </template>
@@ -52,7 +52,7 @@ export default {
         update(value) {
             this.check(value);
 
-            if (value.length < this.maxlength) {
+            if (value.length <= this.maxlength) {
                 this.$emit('input', value);
             }
         },
@@ -115,4 +115,8 @@ export default {
             background Red
         &.error:before
             width 100%
+    
+    .input-error-message
+        position absolute
+        padding 0 5px
 </style>

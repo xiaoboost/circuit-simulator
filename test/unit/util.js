@@ -1,13 +1,13 @@
 import Vue from 'vue';
 
-let id = 0;
-
+/**
+ * 创建 div 元素并添加到 DOM 上
+ * @return {Obect} DOM
+ */
 const createElm = function() {
     const elm = document.createElement('div');
 
-    elm.id = 'app' + ++id;
     document.body.appendChild(elm);
-
     return elm;
 };
 
@@ -23,11 +23,11 @@ exports.destroyVM = function(vm) {
 
 /**
  * 创建一个 Vue 的实例对象
- * @param  {Object|String} Compo   组件配置，可直接传 template
- * @param  {Boolean=false} mounted 是否添加到 DOM 上
+ * @param  {Object|String} Compo    - 组件配置，可直接传 template
+ * @param  {Boolean} {mounted=true} - 是否添加到 DOM 上
  * @return {Object} vm
  */
-exports.createVue = function(Compo, mounted = false) {
+exports.createVue = function(Compo, mounted = true) {
     if (Object.prototype.toString.call(Compo) === '[object String]') {
         Compo = { template: Compo };
     }
@@ -39,8 +39,8 @@ exports.createVue = function(Compo, mounted = false) {
  * @link http://vuejs.org/guide/unit-testing.html#Writing-Testable-Components
  * @param  {Object}  Compo          - 组件对象
  * @param  {Object}  propsData      - props 数据
- * @param  {Boolean=true} mounted   - 是否添加到 DOM 上
- * @return {Object} vm
+ * @param  {Boolean} {mounted=true} - 是否添加到 DOM 上
+ * @return {Object}  vm
  */
 exports.createTest = function(Compo, propsData = {}, mounted = true) {
     if (propsData === true || propsData === false) {
@@ -89,4 +89,15 @@ exports.triggerClick = function(elm, ...opts) {
     exports.triggerEvent(elm, 'mouseup', ...opts);
 
     return elm;
+};
+
+/**
+ * 等待固定时间的异步函数
+ * @param  {Number} {time=10}
+ * @return {Promise} awit
+ */
+exports.delay = function(time = 10) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, time);
+    });
 };

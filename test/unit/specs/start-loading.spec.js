@@ -15,10 +15,10 @@ describe('start-loading.vue', () => {
     });
     it('Page loading finished, it should be closed', (done) => {
         vm = createTest(StartLoading, { show: false }, true);
-        // loading界面消失时有 200ms 的动画，所以这里设置等待 300ms
-        setTimeout(() => {
+        // 等待页面渲染
+        vm.$nextTick(() => {
             expect(vm.$el.childNodes.length).to.be.equal(0);
             done();
-        }, 300);
+        });
     });
 });
