@@ -216,50 +216,99 @@ export default {
         },
         // 标记
         markSign() {
-            const position = this.position.floorToSmall(),
-                inner = this.margin.inner;
+            const inner = this.margin.inner,
+                position = this.position.floorToSmall();
 
             //器件内边距占位
-            for (let i = position[0] + inner[0][0]; i <= position[0] + inner[1][0]; i++) {
-                for (let j = position[1] + inner[0][1]; j <= position[1] + inner[1][1]; j++) {
-                    schMap.setValueBySmalle([i, j], {
-                        id: this.id,
-                        form: 'part'
-                    });
-                }
-            }
-            //器件管脚距占位
-            for (let i = 0; i < this.points.length; i++) {
-                const point = this.points[i].position
-                    .floorToSmall()
-                    .add(position);
-
-                schMap.setValueBySmalle(point, {
-                    id: `${this.id}-${i}`,
-                    form: 'part-point',
-                    connect: []
-                });
-            }
+            position.around(inner, (x, y) =>
+                schMap.setValueBySmalle([x, y], {
+                    id: this.id,
+                    type: 'part'
+                })
+            );
+            // 器件管脚距占位
+            this.points.forEach((n, i) =>
+                schMap.setValueBySmalle(
+                    n.floorToSmall().add(position),
+                    {
+                        id: `${this.id}-${i}`,
+                        type: 'part-point',
+                        connect: []
+                    }
+                )
+            );
         },
         deleteSign() {
-            const position = this.position.floorToSmall(),
-                inner = this.margin.inner;
+            const inner = this.margin.inner,
+                position = this.position.floorToSmall();
 
-            //删除器件内边距占位
-            for (let i = position[0] + inner[0][0]; i <= position[0] + inner[1][0]; i++) {
-                for (let j = position[1] + inner[0][1]; j <= position[1] + inner[1][1]; j++) {
-                    schMap.deleteValueBySmalle([i, j]);
-                }
-            }
-            //删除器件引脚占位
-            for (let i = 0; i < this.points.length; i++) {
-                const point = this.points[i].position
-                    .floorToSmall()
-                    .add(position);
-
-                schMap.deleteValueBySmalle(point);
-            }
+            // 删除器件内边距占位
+            position.around(inner, (x, y) => schMap.deleteValueBySmalle([x, y]));
+            // 删除器件引脚占位
+            this.points.forEach((n) => 
+                schMap.deleteValueBySmalle(
+                    n.floorToSmall().add(position)
+                )
+            );
         },
+        // 查询操作
+        // 根据 id 查询器件，返回器件component
+        find(id) {
+            return this.$parent.find(id);
+        },
+        // 器件在当前坐标是否被占用
+        isCover(position = this.position) {
+            const coverHash = {}, margin = this.margin;
+
+            let label = false;
+            position = $P(position).floorToSmall();
+            // 检查器件管脚，管脚点不允许存在任何元素
+            for (let i = 0; i < point.length; i++) {
+                const node = position.add(point.position[i].floorToSmall());
+                if (schMap.getValueBySmalle(node)) {
+                    return (true);
+                }
+                coverHash[node.join(',')] = true;
+            }
+
+            // 扫描内边距，内边距中不允许存在任何元素
+            position.around(margin.inner, (x, y, stop) => {
+                schMap.getValueBySmalle([x, y])
+                    ? (label = true, stop())
+                    : coverHash[`${i},${j}`] = true;
+            });
+            if (label) { return (true); }
+
+            // 扫描外边距
+            position.around(margin.outter, (x, y, stop) => {
+                // 跳过内边距
+                if (coverHash[`${i},${j}`]) { return (false); }
+                
+                const status = schMap.getValueBySmalle([x, y]);
+                if (status && status.type === 'part') {
+                    const part = this.find(status.id),
+                        another = part.margin.outter,
+                        distance = position.add(-1, part.position.floorToSmall());
+
+                    if (diff[0] !== 0) {
+                        if (diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
+                            return (true);
+                        } else if (-diff[0] < boxSize.right + partSize.left) {
+                            return (true);
+                        }
+                    }
+                    if (diff[1] !== 0) {
+                        if (diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
+                            return (true);
+                        } else if (-diff[1] < boxSize.bottom + partSize.top) {
+                            return (true);
+                        }
+                    }
+                }
+            });
+
+            return (label);
+        }
     },
     created() {
         // 展开数据

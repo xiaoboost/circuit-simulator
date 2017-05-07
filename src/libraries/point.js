@@ -134,6 +134,19 @@ Point.prototype = {
         const vc1 = this.toUnit().mul(-1),
             vc2 = Point.prototype.toUnit.call(vector);
         return (vc1.isEqual(vc2));
+    },
+    // 以中心点和四角点，枚举范围内的所有点
+    around(margin, fn) {
+        let label = false;
+        const stop = () => label = true;
+
+        for (let i = this[0] + margin[0][0]; i <= this[0] + margin[1][0]; i++) {
+            for (let j = this[1] + margin[0][1]; j <= this[1] + margin[1][1]; j++) {
+                fn(i, j, stop);
+                if (label) { return (false); }
+            }
+        }
+        return (true);
     }
 };
 Object.setPrototypeOf(Point.prototype, Array.prototype);
