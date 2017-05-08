@@ -66,7 +66,7 @@ export default {
     },
     methods: {
         find(id) {
-            return this.$refs[id];
+            return this.$refs[id][0];
         },
         // 滚轮事件 - 放大缩小图纸
         mousewheel(e) {

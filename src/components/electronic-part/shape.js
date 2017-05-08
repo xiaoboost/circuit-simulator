@@ -657,11 +657,11 @@ const Electronics = {
 // 标准格式为两个点，左上和右下
 function css2obj(css) {
     if (css.length === 4) {
-        return ([[-css[0], -css[3]], [+css[2], +css[1]]]);
+        return ([[-css[3], -css[0]], [+css[1], +css[2]]]);
     } else if (css.length === 3) {
-        return ([[-css[0], -css[1]], [+css[2], +css[1]]]);
+        return ([[-css[1], -css[0]], [+css[1], +css[2]]]);
     } else if (css.length === 2) {
-        return ([[-css[0], -css[1]], [+css[0], +css[1]]]);
+        return ([[-css[1], -css[0]], [+css[1], +css[0]]]);
     } else {
         return ([[-css, -css], [+css, +css]]);
     }

@@ -138,9 +138,15 @@ export default {
                 handler = (e) => this.position = e.mouse,
                 stopEvent = { el: parentEl, name: 'mousedown', which: 'left' },
                 afterEvent = () => {
-                    el.removeAttribute('opacity');
-                    this.position = this.position.round(20);
+                    const node = this.position;
+                    this.position = $P(node.round(20)
+                        .aroundInf((node) => this.isCover(node), 20)
+                        .reduce((pre, next) =>
+                            node.distance(pre) < node.distance(next)
+                                ? pre : next
+                        ));
                     this.markSign();
+                    el.removeAttribute('opacity');
                 };
 
             el.setAttribute('opacity', '0.4');
@@ -186,8 +192,9 @@ export default {
                 direction = [$P(0, 1), $P(0, -1), $P(1, 0), $P(-1, 0)]
                     .filter((di) => points.every((point) => !point.isEqual(di)))
                     .map((di) => di.mul(local))
-                    .reduce((pre, next) => pre.disPoint(pend) < next.disPoint(pend)
-                        ? pre : next
+                    .reduce((pre, next) =>
+                        pre.distance(pend) < next.distance(pend)
+                            ? pre : next
                     );
 
             if (direction[0]) {
@@ -229,7 +236,7 @@ export default {
             // 器件管脚距占位
             this.points.forEach((n, i) =>
                 schMap.setValueBySmalle(
-                    n.floorToSmall().add(position),
+                    n.position.floorToSmall().add(position),
                     {
                         id: `${this.id}-${i}`,
                         type: 'part-point',
@@ -245,7 +252,7 @@ export default {
             // 删除器件内边距占位
             position.around(inner, (x, y) => schMap.deleteValueBySmalle([x, y]));
             // 删除器件引脚占位
-            this.points.forEach((n) => 
+            this.points.forEach((n) =>
                 schMap.deleteValueBySmalle(
                     n.floorToSmall().add(position)
                 )
@@ -263,8 +270,8 @@ export default {
             let label = false;
             position = $P(position).floorToSmall();
             // 检查器件管脚，管脚点不允许存在任何元素
-            for (let i = 0; i < point.length; i++) {
-                const node = position.add(point.position[i].floorToSmall());
+            for (let i = 0; i < this.points.length; i++) {
+                const node = position.add(this.points[i].position.floorToSmall());
                 if (schMap.getValueBySmalle(node)) {
                     return (true);
                 }
@@ -275,33 +282,31 @@ export default {
             position.around(margin.inner, (x, y, stop) => {
                 schMap.getValueBySmalle([x, y])
                     ? (label = true, stop())
-                    : coverHash[`${i},${j}`] = true;
+                    : coverHash[`${x},${y}`] = true;
             });
             if (label) { return (true); }
 
             // 扫描外边距
             position.around(margin.outter, (x, y, stop) => {
                 // 跳过内边距
-                if (coverHash[`${i},${j}`]) { return (false); }
-                
+                if (coverHash[`${x},${y}`]) { return (false); }
+                // 外边框被器件占据，那么校验相互距离
                 const status = schMap.getValueBySmalle([x, y]);
-                if (status && status.type === 'part') {
-                    const part = this.find(status.id),
-                        another = part.margin.outter,
-                        distance = position.add(-1, part.position.floorToSmall());
+                if (!status || status.type !== 'part') { return (true); }
 
-                    if (diff[0] !== 0) {
-                        if (diff[0] > 0 && diff[0] < boxSize.left + partSize.right) {
-                            return (true);
-                        } else if (-diff[0] < boxSize.right + partSize.left) {
-                            return (true);
-                        }
-                    }
-                    if (diff[1] !== 0) {
-                        if (diff[1] > 0 && diff[1] < boxSize.top + partSize.bottom) {
-                            return (true);
-                        } else if (-diff[1] < boxSize.bottom + partSize.top) {
-                            return (true);
+                const part = this.find(status.id),
+                    another = part.margin.outter,
+                    distance = position.add(-1, part.position.floorToSmall());
+                // 分别校验 x、y 轴
+                for (let i = 0; i < 2; i++) {
+                    if (distance[i] !== 0) {
+                        const sub = distance[i] > 0 ? 0 : 1,
+                            diff_x = Math.abs(distance[i]),
+                            limit_x = Math.abs(margin.outter[sub][i]) + Math.abs(another[1 - sub][i]);
+
+                        if (diff_x < limit_x) {
+                            label = true;
+                            stop();
                         }
                     }
                 }

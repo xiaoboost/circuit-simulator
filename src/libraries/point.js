@@ -66,7 +66,7 @@ Point.prototype = {
         ));
     },
     // 到另一点的距离
-    disPoint(p) {
+    distance(p) {
         return Math.sqrt(
             (this[0] - p[0]) * (this[0] - p[0]) +
             (this[1] - p[1]) * (this[1] - p[1])
@@ -147,6 +147,25 @@ Point.prototype = {
             }
         }
         return (true);
+    },
+    aroundInf(fn, fa = 1) {
+        const ans = [];
+        let m = 0;
+        while (!ans.length) {
+            for (let k = 0; k <= m; k++) {
+                for (let i = this[0] - m * fa; i <= this[0] + m * fa; i += fa) {
+                    for (let j = this[1] - m * fa; j <= this[1] + m * fa; j += fa) {
+                        if ((Math.abs(i - this[0]) + Math.abs(j - this[1]) === (k + m) * fa) &&
+                            (!fn([i, j]))) {
+                            ans.push([i, j]);
+                        }
+                    }
+                    if (ans.length) break;
+                }
+            }
+            m++;
+        }
+        return ans;
     }
 };
 Object.setPrototypeOf(Point.prototype, Array.prototype);
