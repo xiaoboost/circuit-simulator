@@ -13,7 +13,7 @@ export default new Router({
         { path: '/slider', name: 'Slider', component: Slider,
             children: [
                 { path: 'config', name: 'Config', component: Config },
-                { path: 'add-parts', name: 'AddParts', component: AddParts  }
+                { path: 'add-parts', name: 'AddParts', component: AddParts }
             ]
         },
         { path: '/graph', name: 'Graph', component: Graph }

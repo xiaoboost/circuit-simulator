@@ -5,7 +5,7 @@ describe('start-loading.vue', () => {
     let vm;
     afterEach(() => destroyVM(vm));
 
-    it('Loading page, it should be showed', () => {
+    it('loading page, it should be showed', () => {
         vm = createTest(StartLoading, { show: true });
 
         const text = vm.$el.querySelectorAll('h3');
@@ -13,7 +13,7 @@ describe('start-loading.vue', () => {
         expect(text[0].textContent).to.be.equal('加载中……');
         expect(text[1].textContent).to.be.equal('绘制草图·模拟');
     });
-    it('Page loading finished, it should be closed', (done) => {
+    it('page loading finished, it should be closed', (done) => {
         vm = createTest(StartLoading, { show: false }, true);
         // 等待页面渲染
         vm.$nextTick(() => {

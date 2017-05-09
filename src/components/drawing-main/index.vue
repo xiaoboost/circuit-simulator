@@ -8,13 +8,6 @@
         @mousewheel="mousewheel($event)"
         @mousedown.self="moveMap($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
-            <elec-part
-                :ref="parts[i - 1].id"
-                :key="parts[i - 1].id"
-                v-model="parts[i - 1]"
-                v-for="i in parts.length"
-                @setEvent="EventControler">
-            </elec-part>
             <elec-line
                 :ref="lines[i - 1].id"
                 :key="lines[i - 1].id"
@@ -22,6 +15,13 @@
                 v-for="i in lines.length"
                 @setEvent="EventControler">
             </elec-line>
+            <elec-part
+                :ref="parts[i - 1].id"
+                :key="parts[i - 1].id"
+                v-model="parts[i - 1]"
+                v-for="i in parts.length"
+                @setEvent="EventControler">
+            </elec-part>
         </g>
     </svg>
 </section>

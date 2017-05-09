@@ -54,7 +54,7 @@ export default {
     },
     methods: {
         run() {
-            console.log('run');
+            this.isRun = true;
         },
         add() {
             this.$router.push({ name: 'AddParts' });
