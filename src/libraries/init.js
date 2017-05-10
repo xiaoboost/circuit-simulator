@@ -1,4 +1,5 @@
 // 深复制
+// TODO: 还需要考虑循环引用的情况，此时应当直接抛出错误
 function clone(from) {
     if (from instanceof Array) {
         return Array.clone(from);
@@ -12,10 +13,11 @@ function clone(from) {
 // Object类静态方法扩展
 Object.assign(Object, {
     // 是否含有可枚举属性
-    isEmpty: (from) => !!Object.keys(from).length,
+    isEmpty: (from) => !Object.keys(from).length,
     // 深复制对象
     clone: (from) => Object.keys(from)
-        .reduce((obj, key) => (obj[key] = clone(from[key]), obj), {}),
+        .reduce((obj, key) =>
+            (obj[key] = clone(from[key]), obj), {}),
     // 隐藏所有可枚举的属性
     hideAll: (obj) => Object.keys(obj).forEach((key) => Object.defineProperty(obj, key, {
         configurable: false,
@@ -52,13 +54,9 @@ Object.assign(Object.prototype, {
         );
     },
     map(fn) {
-        const ans = {};
-        for (const key in this) {
-            if (this.hasOwnProperty(key)) {
-                ans[key] = fn(this[key], key);
-            }
-        }
-        return (ans);
+        return Object.keys(this)
+            .reduce((obj, key) =>
+                (obj[key] = fn(this[key], key), obj), {});
     }
 });
 
@@ -89,7 +87,7 @@ Object.assign(Array.prototype, {
             ? index
             : this.length + index;
 
-        return (index >= 0 || index < this.length)
+        return (sub >= 0 && sub < this.length)
             ? this[sub]
             : false;
     }
@@ -103,5 +101,5 @@ Object.hideAll(Array.prototype);
 Object.hideAll(Number.prototype);
 Object.hideAll(String.prototype);
 
-// 网页禁止右键和选中
+// 网页禁止右键
 window.document.oncontextmenu = () => false;
