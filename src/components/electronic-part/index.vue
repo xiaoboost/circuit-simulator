@@ -1,5 +1,7 @@
 <template>
 <g
+    @mouseup="mouseupEvent($event)"
+    @mousedown="mousedownEvent($event)"
     :class="['part', { 'focus': focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <aspect
@@ -7,14 +9,14 @@
         :value="info" :key="i">
     </aspect>
     <g
-        v-for="point in points"
+        v-for="(point, i) in points"
+        :index="i"
         :class="['part-point', point.class]"
         :transform="`translate(${point.position.join()})`">
         <circle></circle>
         <rect></rect>
     </g>
     <g
-        @mousedown="moveText($event)"
         v-if="this.type !== 'reference_ground'"
         :class="['text-params', `text-placement-${textPlacement}`]"
         :transform="`matrix(${invRotate.join()},${textPosition.join()})`">
@@ -24,8 +26,7 @@
         </text>
         <text
             v-for="(txt, i) in texts"
-            :dy="16 * (i + 1)">
-            {{txt}}
+            :dy="16 * (i + 1)">{{txt}}
         </text>
     </g>
 </g>
@@ -134,7 +135,7 @@ export default {
                 position: this.position
             });
         },
-        // 事件
+        // 新建器件
         newPart() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
@@ -158,17 +159,38 @@ export default {
                 handler,
                 stopEvent,
                 afterEvent,
-                element: this,
                 exclusion: true,
                 cursor: 'move_part'
             });
         },
-        moveText(e) {
-            // 不是左键点击文本
-            if (e.button) { return (true); }
-            // 左键点击文本，此时启动移动文本事件
-            // 当前点击事件不再冒泡
-            e.stopPropagation();
+        // 器件 mousedown 事件分发
+        mousedownEvent(event) {
+            const elm = event.target.parentNode;
+
+            if (!event.button) {
+                // 左键
+                if (this.$parent.exclusion) { return (false); }
+                if (elm.classList.contains('text-params')) {
+                    // 器件文本
+                    this.moveText();
+                } else if (elm.classList.contains('part-point')) {
+                    // 器件管脚
+                    const index = elm.getAttribute('index');
+                    this.newLine(index);
+                }
+                // 左键事件全部停止冒泡
+                event.stopPropagation();
+            } else if (event.button === 2) {
+                // 右键
+                // TODO: 器件右键菜单
+            }
+        },
+        // 器件 mouseup 事件分发
+        mouseupEvent(event) {
+            // TODO: 这里是器件本身的mouseup事件，会早于自己绑定的持续事件的终止条件触发
+            // 所以需要特别注意这里的事件是否可以取消冒泡
+        },
+        moveText() {
             // 设定事件
             const parentEl = this.$parent.$el,
                 handler = (e) => this.textPosition = this.textPosition.add(e.bias),
@@ -180,10 +202,12 @@ export default {
                 handler,
                 stopEvent,
                 afterEvent,
-                element: this,
                 exclusion: true,
                 cursor: 'move_part'
             });
+        },
+        newLine() {
+
         },
         // 渲染
         setText() {
