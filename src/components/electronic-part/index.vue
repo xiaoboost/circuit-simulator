@@ -50,6 +50,10 @@ export default {
         value: {
             type: Object,
             default: () => {}
+        },
+        focus: {
+            type: Boolean,
+            default: false
         }
     },
     data() {
@@ -62,7 +66,6 @@ export default {
             position: [500000, 500000],
 
             shape: {},
-            focus: false,
             textPosition: $P(0, 0),
             textPlacement: 'bottom'
         };
@@ -145,6 +148,7 @@ export default {
                             node.distance(pre) < node.distance(next)
                                 ? pre : next
                         ));
+                    this.update();
                     this.markSign();
                     el.removeAttribute('opacity');
                 };
@@ -171,7 +175,7 @@ export default {
                 stopEvent = { el: parentEl, name: 'mouseup', which: 'left' },
                 afterEvent = () => this.setText();
 
-            this.focus = true;
+            this.$emit('on-text', this.id);
             this.$emit('setEvent', {
                 handler,
                 stopEvent,

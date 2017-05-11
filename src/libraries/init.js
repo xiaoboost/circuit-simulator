@@ -21,7 +21,6 @@ Object.assign(Object, {
     // 隐藏所有可枚举的属性
     hideAll: (obj) => Object.keys(obj).forEach((key) => Object.defineProperty(obj, key, {
         configurable: false,
-        writable: false,
         enumerable: false
     })),
     // 深度冻结当前对象

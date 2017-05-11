@@ -9,18 +9,21 @@
         @mousedown.self="moveMap($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
+                v-for="i in lines.length"
+                v-model="lines[i - 1]"
                 :ref="lines[i - 1].id"
                 :key="lines[i - 1].id"
-                v-model="lines[i - 1]"
-                v-for="i in lines.length"
+                :focus="partsNow.includes(lines[i - 1].id)"
                 @setEvent="EventControler">
             </elec-line>
             <elec-part
+                v-for="i in parts.length"
+                v-model="parts[i - 1]"
                 :ref="parts[i - 1].id"
                 :key="parts[i - 1].id"
-                v-model="parts[i - 1]"
-                v-for="i in parts.length"
-                @setEvent="EventControler">
+                :focus="partsNow.includes(parts[i - 1].id)"
+                @setEvent="EventControler"
+                @on-text="clearFocus">
             </elec-part>
         </g>
     </svg>
@@ -44,7 +47,10 @@ export default {
     data() {
         return {
             zoom: 1,
-            position: $P(0, 0)
+            position: $P(0, 0),
+
+            partsNow: [],
+            linesNow: []
         };
     },
     computed: {
@@ -111,6 +117,21 @@ export default {
                 exclusion: true,
                 cursor: 'move_map'
             });
+        },
+
+        // 清空当前操作器件堆栈
+        clearFocus(...args) {
+            this.partsNow.splice(0, this.partsNow.length - 1);
+            this.linesNow.splice(0, this.linesNow.length - 1);
+
+            for (let i = 0; i < args.length; i++) {
+                const id = args[i];
+                if (/^line_\d+$/.test(id)) {
+                    this.linesNow.push(id);
+                } else {
+                    this.partsNow.push(id);
+                }
+            }
         }
     }
 };
