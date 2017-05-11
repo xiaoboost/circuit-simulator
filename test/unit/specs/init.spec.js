@@ -13,6 +13,7 @@ describe('init.js', () => {
             enumerable: false
         });
         expect(Object.isEmpty(unempty)).to.be.true;
+        triggerEvent(document, 'contextmenu');
     });
     it('Object.hideAll', () => {
         const obj = JSON.parse(example);
@@ -99,11 +100,5 @@ describe('init.js', () => {
 
         expect([0, 1, 2].isEqual(null)).to.be.false;
         expect([0, 1, 2].isEqual(undefined)).to.be.false;
-    });
-    it('disabled mouse right click', () => {
-        const fn = sinon.spy();
-        document.addEventListener('contextmenu', fn);
-        triggerEvent(document, 'contextmenu');
-        expect(fn.calledOnce).to.be.true;
     });
 });
