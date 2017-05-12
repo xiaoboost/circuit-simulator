@@ -23,7 +23,8 @@
                 :key="parts[i - 1].id"
                 :focus="partsNow.includes(parts[i - 1].id)"
                 @setEvent="EventControler"
-                @on-text="clearFocus">
+                @select="selectPart"
+                @focus="clearFocus">
             </elec-part>
         </g>
     </svg>
@@ -74,6 +75,20 @@ export default {
         find(id) {
             return this.$refs[id][0];
         },
+        // 清空当前操作器件堆栈
+        clearFocus(...args) {
+            this.partsNow.splice(0, this.partsNow.length);
+            this.linesNow.splice(0, this.linesNow.length);
+
+            for (let i = 0; i < args.length; i++) {
+                const id = args[i];
+                if (/^line_\d+$/.test(id)) {
+                    this.linesNow.push(id);
+                } else {
+                    this.partsNow.push(id);
+                }
+            }
+        },
         // 对图纸空白处按下鼠标
         mousedownSch(e) {
             if (!e.button) {
@@ -82,7 +97,20 @@ export default {
                 this.moveMap();
             }
         },
-        // 滚轮事件 - 放大缩小图纸
+        // 选中器件
+        selectPart(id, button) {
+            if (!this.partsNow.includes(id)) {
+                this.clearFocus(id);
+            }
+            if (button === 'left') {
+                // 左键移动
+                this.moveParts();
+            } else if (button === 'right') {
+                // 右键展开菜单
+                this.contextmenu();
+            }
+        },
+        // 放大缩小图纸
         mousewheel(e) {
             const mousePosition = [e.pageX, e.pageY];
             let size = this.zoom * 20;
@@ -110,14 +138,15 @@ export default {
 
             this.zoom = size / 20;
         },
-        // 空白处按下右键事件 - 移动图纸
+        // 移动图纸
         moveMap(e) {
             if (this.exclusion) { return (false); }
 
             const el = this.$el,
-                handler = (e) => this.position = this.position
-                    .add(e.bias.mul(this.zoom)),
-                stopEvent = { el, name: 'mouseup', which: 'right' };
+                stopEvent = { el, name: 'mouseup', which: 'right' },
+                handler = (e) =>
+                    this.position = this.position
+                        .add(e.bias.mul(this.zoom));
 
             this.EventControler({
                 handler,
@@ -126,23 +155,17 @@ export default {
                 cursor: 'move_map'
             });
         },
-        // 空白处按下左键事件 - 绘制多选框
+        // TODO: 绘制多选框
         selectMore() {
             this.clearFocus();
         },
-        // 清空当前操作器件堆栈
-        clearFocus(...args) {
-            this.partsNow.splice(0, this.partsNow.length);
-            this.linesNow.splice(0, this.linesNow.length);
+        // TODO: 移动选中所有器件
+        moveParts() {
+            // TODO: 根据器件扩展该选择的导线
+        },
+        // TODO: 展开右键菜单
+        contextmenu() {
 
-            for (let i = 0; i < args.length; i++) {
-                const id = args[i];
-                if (/^line_\d+$/.test(id)) {
-                    this.linesNow.push(id);
-                } else {
-                    this.partsNow.push(id);
-                }
-            }
         }
     }
 };

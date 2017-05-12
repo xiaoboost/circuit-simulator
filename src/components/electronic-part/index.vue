@@ -1,6 +1,5 @@
 <template>
 <g
-    @mouseup="mouseupEvent($event)"
     @mousedown="mousedownEvent($event)"
     :class="['part', { 'focus': focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
@@ -165,30 +164,30 @@ export default {
         },
         // 器件 mousedown 事件分发
         mousedownEvent(event) {
-            const elm = event.target.parentNode;
+            if (this.$parent.exclusion) { return (false); }
 
+            const elm = event.target.parentNode;
             if (!event.button) {
                 // 左键
-                if (this.$parent.exclusion) { return (false); }
                 if (elm.classList.contains('text-params')) {
-                    // 器件文本
+                    // 器件文本，移动文本
                     this.moveText();
                 } else if (elm.classList.contains('part-point')) {
-                    // 器件管脚
+                    // 器件管脚，新建导线
                     const index = elm.getAttribute('index');
                     this.newLine(index);
+                } else {
+                    // 器件本体，移动器件
+                    this.$emit('select', this.id, 'left');
                 }
-                // 左键事件全部停止冒泡
-                event.stopPropagation();
             } else if (event.button === 2) {
                 // 右键
                 // TODO: 器件右键菜单
+                this.$emit('select', this.id, 'right');
+                event.stopPropagation();
             }
-        },
-        // 器件 mouseup 事件分发
-        mouseupEvent(event) {
-            // TODO: 这里是器件本身的mouseup事件，会早于自己绑定的持续事件的终止条件触发
-            // 所以需要特别注意这里的事件是否可以取消冒泡
+            // 事件全部停止冒泡
+            event.stopPropagation();
         },
         moveText() {
             // 设定事件
@@ -197,7 +196,7 @@ export default {
                 stopEvent = { el: parentEl, name: 'mouseup', which: 'left' },
                 afterEvent = () => this.setText();
 
-            this.$emit('on-text', this.id);
+            this.$emit('focus', this.id);
             this.$emit('setEvent', {
                 handler,
                 stopEvent,
@@ -207,7 +206,8 @@ export default {
             });
         },
         newLine() {
-
+            
+            this.$emit('focus', this.id);
         },
         // 渲染
         setText() {
