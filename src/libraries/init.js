@@ -92,6 +92,64 @@ Object.assign(Array.prototype, {
     }
 });
 
+// Number类原型方法扩展
+Object.assign(Number.prototype, {
+    /**
+     * 按照有效数字位数进行四舍五入
+     * @param {Number} [bits=6]
+     * @returns {Number}
+     */
+    toRound(bits = 6) {
+        const origin = this.valueOf();
+        if (Number.isNaN(origin)) { return (false); }
+
+        const number = Math.abs(origin),
+            toInt = Math.floor(Math.log10(number)) - bits + 1,
+            transform = 10 ** toInt,
+            // round 一定是整数
+            round = String(Math.round(number / transform)),
+            // 原始数据符号
+            sign = origin < 0 ? '-' : '';
+
+        // 插入小数点
+        let str = '';
+        if (toInt > 0) {
+            str = sign + round + '0'.repeat(toInt);
+        } else if (-toInt >= bits) {
+            str = sign + '0.' + '0'.repeat(-toInt - bits) + round;
+        } else {
+            str = round.slice(0, toInt) + '.' + round.slice(toInt);
+        }
+
+        return parseFloat(str);
+    },
+    // 数量级
+    rank() {
+        const number = Math.abs(this.valueOf());
+        if (Number.isNaN(number)) { return (0); }
+
+        return (10 ** Math.floor(Math.log10(number)));
+    },
+    // 数字有多少位
+    powRank() {
+        const number = Math.abs(this.valueOf());
+        if (Number.isNaN(number)) { return (0); }
+
+        return (Math.floor(Math.log10(number)) + 1);
+    },
+    // 单位化
+    toUnit() {
+        const number = this.valueOf();
+        if (number > 0) {
+            return (1);
+        } else if (number < 0) {
+            return (-1);
+        } else {
+            return (0);
+        }
+    }
+});
+
 // 隐藏所有扩展的原生属性
 Object.hideAll(Array);
 Object.hideAll(Object);
