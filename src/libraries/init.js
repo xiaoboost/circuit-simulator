@@ -121,7 +121,7 @@ Object.assign(Number.prototype, {
             str = round.slice(0, toInt) + '.' + round.slice(toInt);
         }
 
-        return parseFloat(str);
+        return Number.parseFloat(str);
     },
     // 数量级
     rank() {

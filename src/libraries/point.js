@@ -3,10 +3,10 @@ const u = undefined;
 //点和向量
 function Point(a, b) {
     if (typeof a === 'number') {
-        // 输入一个点
+        // 输入一（或二）个数
         this[0] = a;
         this[1] = !Number.isNaN(+b) ? +b : a;
-    } else if (isPoint(a) && b === u) {
+    } else if (isPoint(a) && !isPoint(b)) {
         // 输入一个点
         this[0] = a[0];
         this[1] = a[1];
@@ -67,21 +67,15 @@ Point.prototype = {
     },
     // 到另一点的距离
     distance(p) {
-        return Math.sqrt(
-            (this[0] - p[0]) * (this[0] - p[0]) +
-            (this[1] - p[1]) * (this[1] - p[1])
+        return Math.hypot(
+            (this[0] - p[0]),
+            (this[1] - p[1])
         );
     },
     // 单位化，符号不变，模变为 factor
     toUnit(factor = 1) {
-        const a = +this[0], b = +this[1];
-
-        if (!a && !b) {
-            return (new Point(0, 0));
-        }
-
-        const scale = 1 / Math.sqrt(a * a + b * b);
-        return (new Point(a * scale * factor, b * scale * factor));
+        const scale = 1 / this.distance([0, 0]);
+        return this.mul(scale * factor);
     },
     // 四舍五入
     round(n = 20) {
