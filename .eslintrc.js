@@ -1,6 +1,8 @@
 module.exports = {
     'root': true,
+    'extends': './node_modules/eslint-friendly-formatter/index.js',
     'parserOptions': {
+        'ecmaVersion': 7,
         'sourceType': 'module'
     },
     'env': {

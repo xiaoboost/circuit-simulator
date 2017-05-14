@@ -206,7 +206,6 @@ export default {
             });
         },
         newLine() {
-            
             this.$emit('focus', this.id);
         },
         // 渲染
