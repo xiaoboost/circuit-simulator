@@ -114,28 +114,21 @@ Object.assign(Number.prototype, {
         // 插入小数点
         let str = '';
         if (toInt > 0) {
-            str = sign + round + '0'.repeat(toInt);
+            str = round + '0'.repeat(toInt);
         } else if (-toInt >= bits) {
-            str = sign + '0.' + '0'.repeat(-toInt - bits) + round;
+            str = '0.' + '0'.repeat(-toInt - bits) + round;
         } else {
             str = round.slice(0, toInt) + '.' + round.slice(toInt);
         }
 
-        return Number.parseFloat(str);
+        return Number.parseFloat(sign + str);
     },
     // 数量级
     rank() {
         const number = Math.abs(this.valueOf());
-        if (Number.isNaN(number)) { return (0); }
+        if (Number.isNaN(number)) { return (false); }
 
-        return (10 ** Math.floor(Math.log10(number)));
-    },
-    // 数字有多少位
-    powRank() {
-        const number = Math.abs(this.valueOf());
-        if (Number.isNaN(number)) { return (0); }
-
-        return (Math.floor(Math.log10(number)) + 1);
+        return Math.floor(Math.log10(number));
     },
     // 单位化
     toUnit() {

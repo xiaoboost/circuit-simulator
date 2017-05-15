@@ -101,4 +101,27 @@ describe('init.js', () => {
         expect([0, 1, 2].isEqual(null)).to.be.false;
         expect([0, 1, 2].isEqual(undefined)).to.be.false;
     });
+    it('Number prototype', () => {
+        // 数量级
+        expect((123).rank()).to.be.equal(2);
+        expect((1234).rank()).to.be.equal(3);
+        expect((12.34).rank()).to.be.equal(1);
+        expect((0.1234).rank()).to.be.equal(-1);
+        expect((NaN).rank()).to.be.false;
+        // 单位化
+        expect((123).toUnit()).to.be.equal(1);
+        expect((-0.1).toUnit()).to.be.equal(-1);
+        expect((0).toUnit()).to.be.equal(0);
+        expect((NaN).toUnit()).to.be.equal(0);
+        // 按数量级进行四舍五入
+        expect((123456789).toRound()).to.be.equal(123457000);
+        expect((123.456789).toRound()).to.be.equal(123.457);
+        expect((-123.456789).toRound()).to.be.equal(-123.457);
+        expect((0.123456789).toRound()).to.be.equal(0.123457);
+        expect((0.00123456789).toRound()).to.be.equal(0.00123457);
+        expect((0.00123456789).toRound(2)).to.be.equal(0.0012);
+        expect((-0.00123456789).toRound(2)).to.be.equal(-0.0012);
+        expect((0.00123456789).toRound(8)).to.be.equal(0.0012345679);
+        expect((NaN).toRound()).to.be.false;
+    });
 });
