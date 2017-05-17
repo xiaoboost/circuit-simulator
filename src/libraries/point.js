@@ -80,14 +80,14 @@ Point.prototype = {
     // 四舍五入
     round(n = 20) {
         return (new Point(
-            Math.round(this[0] / n) * n,
-            Math.round(this[1] / n) * n
+            Number.parseInt((this[0] / n).toFixed()) * n,
+            Number.parseInt((this[1] / n).toFixed()) * n
         ));
     },
     roundToSmall(n = 20) {
         return (new Point(
-            Math.round(this[0] / n),
-            Math.round(this[1] / n)
+            Number.parseInt((this[0] / n).toFixed()),
+            Number.parseInt((this[1] / n).toFixed())
         ));
     },
     // 向下取整
