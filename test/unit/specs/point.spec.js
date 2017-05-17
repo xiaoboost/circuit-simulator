@@ -48,6 +48,11 @@ describe('point.js', () => {
         expect($P(912, 835).floor(10)).to.be.equalTo([910, 830]);
         expect($P(-575, -328).floor()).to.be.equalTo([-580, -340]);
         expect($P(-575, -328).floor(10)).to.be.equalTo([-580, -330]);
+        // 向下取整至小单位
+        expect($P(912, 830).floorToSmall()).to.be.equalTo([45, 41]);
+        expect($P(912, 835).floorToSmall(10)).to.be.equalTo([91, 83]);
+        expect($P(-575, -328).floorToSmall()).to.be.equalTo([-29, -17]);
+        expect($P(-575, -328).floorToSmall(10)).to.be.equalTo([-58, -33]);
     });
     it('vector transfrom', () => {
         // 向量相乘
@@ -62,5 +67,21 @@ describe('point.js', () => {
         expect($P(-1, -2).toUnit()).to.be.approximate(unit01);
         expect($P(-1, 8).toUnit()).to.be.approximate(unit02);
         expect($P(-1, 8).toUnit(10)).to.be.approximate(unit03);
+    });
+    it('vector predicate', () => {
+        // 整数点
+        expect($P(1, -2).isInteger()).to.be.true;
+        expect($P(1, -1.8).isInteger()).to.be.false;
+        // 是否平行
+        expect($P(1, -2).isParallel([-1, 2])).to.be.true;
+        expect($P(1, -2).isParallel([0, 0])).to.be.false;
+        // 是否垂直
+        expect($P(1, -2).isVertical([2, 1])).to.be.true;
+        expect($P(1, -4).isVertical([4, 1])).to.be.true;
+        expect($P(0, -4).isVertical([-4, 1])).to.be.false;
+        // 方向相同
+        expect($P(1, -2).isSameDire([2, -4])).to.be.true;
+        // 方向相反
+        expect($P(1, -2).isOppoDire([-2, 4])).to.be.true;
     });
 });

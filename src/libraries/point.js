@@ -111,7 +111,9 @@ Point.prototype = {
     },
     // 是否平行
     isParallel(vector) {
-        return (this[0]*vector[1] === this[1]*vector[0]);
+        return (!vector[0] && !vector[1])
+            ? false
+            : (this[0]*vector[1] === this[1]*vector[0]);
     },
     // 是否垂直
     isVertical(vector) {
@@ -119,15 +121,17 @@ Point.prototype = {
     },
     // 方向相同，0向量输出false
     isSameDire(vector) {
-        const vc1 = this.toUnit(),
-            vc2 = Point.prototype.toUnit.call(vector);
-        return (vc1.isEqual(vc2));
+        return (
+            this.isParallel(vector) &&
+            (vector[0] / this[0]) > 0
+        );
     },
     // 方向相反，0向量输出false
     isOppoDire(vector) {
-        const vc1 = this.toUnit().mul(-1),
-            vc2 = Point.prototype.toUnit.call(vector);
-        return (vc1.isEqual(vc2));
+        return (
+            this.isParallel(vector) &&
+            (vector[0] / this[0]) < 0
+        );
     },
     // 以中心点和四角点，枚举范围内的所有点
     around(margin, fn) {
