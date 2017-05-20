@@ -23,30 +23,34 @@ Point.prototype = {
     length: 2,
     // 加法，如果输入数组，那么逐个相加
     add(label = 1, a) {
-        const sum = new Point(0, 0),
-            sign = (a === u) ? 1 : label,
+        const sign = (a === u) ? 1 : label,
             arr = (a === u) ? label : a;
 
+        let sum = void 0;
         if (typeof arr === 'number') {
-            sum[0] = this[0] + arr * sign;
-            sum[1] = this[1] + arr * sign;
+            sum = $P(
+                this[0] + arr * sign,
+                this[1] + arr * sign
+            );
         } else if (arr.length) {
-            sum[0] = this[0] + arr[0] * sign;
-            sum[1] = this[1] + arr[1] * sign;
+            sum = $P(
+                this[0] + arr[0] * sign,
+                this[1] + arr[1] * sign
+            );
         }
         return (sum);
     },
     // 乘法，如果输入数组，那么逐个相乘
     mul(label = 1, a) {
-        const sum = new Point(0, 0),
-            sign = (a === u) ? 1 : label,
+        const sign = (a === u) ? 1 : label,
             arr = (a === u) ? label : a;
 
+        let sum = void 0;
         if (typeof arr === 'number') {
             const temp = (sign === -1) ? 1 / arr : arr;
-            sum[0] = this[0] * temp;
-            sum[1] = this[1] * temp;
+            sum = $P(this[0] * temp, this[1] * temp);
         } else if (arr.length) {
+            sum = $P(0, 0);
             for (let i = 0; i < 2; i++) {
                 const muled = (sign === -1) ? 1 / arr[i] : arr[i];
                 sum[i] = this[i] * muled;
@@ -153,12 +157,11 @@ Point.prototype = {
             for (let k = 0; k <= m; k++) {
                 for (let i = this[0] - m * fa; i <= this[0] + m * fa; i += fa) {
                     for (let j = this[1] - m * fa; j <= this[1] + m * fa; j += fa) {
-                        if ((Math.abs(i - this[0]) + Math.abs(j - this[1]) === (k + m) * fa) &&
-                            (!fn([i, j]))) {
+                        if ((Math.abs(i - this[0]) + Math.abs(j - this[1]) === (k + m) * fa) && (!fn([i, j]))) {
                             ans.push([i, j]);
                         }
                     }
-                    if (ans.length) break;
+                    if (ans.length) { break; }
                 }
             }
             m++;

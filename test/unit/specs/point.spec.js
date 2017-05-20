@@ -25,12 +25,15 @@ describe('point.js', () => {
         expect(point.add([2, 3])).to.be.equalTo([3, 5]);
         expect(point.add(-1, 5)).to.be.equalTo([-4, -3]);
         expect(point.add(-1, [2, 3])).to.be.equalTo([-1, -1]);
+        expect(point.add({})).to.be.equal(undefined);
         // 乘除
         expect(point.mul(3)).to.be.equalTo([3, 6]);
         expect(point.mul([2, 3])).to.be.equalTo([2, 6]);
         expect(point.mul(-1, 5)).to.be.equalTo([0.2, 0.4]);
         expect(point.mul(-1, [2, 4])).to.be.equalTo([0.5, 0.5]);
+        expect(point.mul({})).to.be.equal(undefined);
         // 点距离
+        expect($P(3, 4).distance([0, 0])).to.be.equal(5);
     });
     it('point standardized', () => {
         // 四舍五入
@@ -83,5 +86,45 @@ describe('point.js', () => {
         expect($P(1, -2).isSameDire([2, -4])).to.be.true;
         // 方向相反
         expect($P(1, -2).isOppoDire([-2, 4])).to.be.true;
+    });
+    it('point around', () => {
+        function initSet(map, x = -Infinity, y = -Infinity) {
+            map.clear();
+            for (let i = -1; i <= 4; i++) {
+                for (let j = -2; j <= 3; j++) {
+                    if ((i === x && j >= y) || i > x) {
+                        map.add(`${i},${j}`);
+                    }
+                }
+            }
+        }
+
+        const point = $P(1, 1), map = new Set(),
+            margin = [[-2, -3], [3, 2]],
+            start_x = point[0] + margin[0][0],
+            start_y = point[1] + margin[0][1];
+
+        initSet(map);
+        expect(map.size).to.be.equal(36);
+        point.around(margin, (x, y, stop) => (!map.delete(`${x},${y}`)) && stop());
+        expect(map.size).to.be.equal(0);
+
+        initSet(map);
+        point.around(margin, (x, y, stop) => {
+            if (x === 0 && y === 0) {
+                stop();
+                return (false);
+            }
+            map.delete(`${x},${y}`);
+        });
+        const mapDefault = new Set();
+        initSet(mapDefault, 0, 0);
+        // 交集与差集
+        const intersect = new Set([...map].filter((x) => mapDefault.has(x)));
+        const difference = new Set([...map].filter((x) => !mapDefault.has(x)));
+        console.log(Array.from(difference).join(' ; '));
+        // 交集等于本身，差集为 0，至此可以判定两个集合完全相等
+        expect(intersect.size).to.be.equal(mapDefault.size);
+        expect(difference.size).to.be.equal(0);
     });
 });
