@@ -143,7 +143,7 @@ export default {
                 afterEvent = () => {
                     const node = this.position;
                     this.position = $P(node.round(20)
-                        .aroundInf((node) => this.isCover(node), 20)
+                        .aroundInf((node) => !this.isCover(node), 20)
                         .reduce((pre, next) =>
                             node.distance(pre) < node.distance(next)
                                 ? pre : next

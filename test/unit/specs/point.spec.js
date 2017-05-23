@@ -87,44 +87,53 @@ describe('point.js', () => {
         // 方向相反
         expect($P(1, -2).isOppoDire([-2, 4])).to.be.true;
     });
-    it('point around', () => {
-        function initSet(map, x = -Infinity, y = -Infinity) {
-            map.clear();
+    it('#point.around', () => {
+        function initSet(map, x = Infinity, y = Infinity) {
+            map.length = 0;
             for (let i = -1; i <= 4; i++) {
                 for (let j = -2; j <= 3; j++) {
-                    if ((i === x && j >= y) || i > x) {
-                        map.add(`${i},${j}`);
+                    if ((i === x && j < y) || i < x) {
+                        map.push([i, j]);
                     }
                 }
             }
         }
 
-        const point = $P(1, 1), map = new Set(),
+        const point = $P(1, 1),
+            map = [], mapDefault = [],
             margin = [[-2, -3], [3, 2]],
             start_x = point[0] + margin[0][0],
             start_y = point[1] + margin[0][1];
 
-        initSet(map);
-        expect(map.size).to.be.equal(36);
-        point.around(margin, (x, y, stop) => (!map.delete(`${x},${y}`)) && stop());
-        expect(map.size).to.be.equal(0);
+        initSet(mapDefault);
+        point.around(margin, (x, y, stop) => (map.push([x, y])));
+        expect(map).to.be.equalWithoutOrder(mapDefault);
 
-        initSet(map);
+        map.length = 0;
+        initSet(mapDefault, 0, 0);
         point.around(margin, (x, y, stop) => {
             if (x === 0 && y === 0) {
                 stop();
                 return (false);
             }
-            map.delete(`${x},${y}`);
+            map.push([x, y]);
         });
-        const mapDefault = new Set();
-        initSet(mapDefault, 0, 0);
-        // 交集与差集
-        const intersect = new Set([...map].filter((x) => mapDefault.has(x)));
-        const difference = new Set([...map].filter((x) => !mapDefault.has(x)));
-        console.log(Array.from(difference).join(' ; '));
-        // 交集等于本身，差集为 0，至此可以判定两个集合完全相等
-        expect(intersect.size).to.be.equal(mapDefault.size);
-        expect(difference.size).to.be.equal(0);
+        expect(map).to.be.equalWithoutOrder(mapDefault);
+    });
+    it('#point.aroundInf', () => {
+        const point = $P(0, 0), abs = Math.abs;
+
+        function distanceLimit(limit) {
+            return (node) => abs(node[0]) + abs(node[1]) > limit;
+        }
+
+        let ans = point.aroundInf(distanceLimit(-1), 5);
+        expect(ans).to.be.equalWithoutOrder([[0, 0]]);
+        ans = point.aroundInf(distanceLimit(0), 5);
+        expect(ans).to.be.equalWithoutOrder([[0, 5], [5, 0], [0, -5], [-5, 0]]);
+        ans = point.aroundInf(distanceLimit(10), 5);
+        expect(ans).to.be.equalWithoutOrder([[0, 15], [0, -15], [-15, 0], [15, 0]]);
+        ans = point.aroundInf(distanceLimit(10));
+        expect(ans).to.be.equalWithoutOrder([[0, 11], [0, -11], [-11, 0], [11, 0]]);
     });
 });

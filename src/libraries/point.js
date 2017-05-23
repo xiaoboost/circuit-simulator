@@ -22,7 +22,7 @@ Point.prototype = {
     // 默认长度为 2
     length: 2,
     // 加法，如果输入数组，那么逐个相加
-    add(label = 1, a) {
+    add(label, a) {
         const sign = (a === u) ? 1 : label,
             arr = (a === u) ? label : a;
 
@@ -41,7 +41,7 @@ Point.prototype = {
         return (sum);
     },
     // 乘法，如果输入数组，那么逐个相乘
-    mul(label = 1, a) {
+    mul(label, a) {
         const sign = (a === u) ? 1 : label,
             arr = (a === u) ? label : a;
 
@@ -151,20 +151,17 @@ Point.prototype = {
         return (true);
     },
     aroundInf(fn, fa = 1) {
-        const ans = [];
-        let m = 0;
-        while (!ans.length) {
-            for (let k = 0; k <= m; k++) {
-                for (let i = this[0] - m * fa; i <= this[0] + m * fa; i += fa) {
-                    for (let j = this[1] - m * fa; j <= this[1] + m * fa; j += fa) {
-                        if ((Math.abs(i - this[0]) + Math.abs(j - this[1]) === (k + m) * fa) && (!fn([i, j]))) {
-                            ans.push([i, j]);
-                        }
-                    }
-                    if (ans.length) { break; }
-                }
+        const ans = fn(this) ? [Array.from(this)] : [];
+        for (let m = 1; !ans.length; m++) {
+            for (let i = 0; i < m; i++) {
+                const x = i * fa, y = (m - i) * fa;
+                const around = (!x)
+                    ? [[0, y], [0, -y], [y, 0], [-y, 0]]
+                    : [[x, y], [x, -y], [-x, y], [-x, -y]];
+                ans.push(...around.filter((point) => fn(point)));
+
+                if (ans.length) { break; }
             }
-            m++;
         }
         return ans;
     }
