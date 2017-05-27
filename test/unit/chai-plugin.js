@@ -1,14 +1,22 @@
 import chai from 'chai';
 import '@/libraries/init';
 
+function compare(actual, expected) {
+    return (actual instanceof Array)
+        ? compareArr(actual, expected)
+        : (actual instanceof Object)
+            ? compareObj(actual, expected)
+            : actual === expected;
+}
+
 /**
  * 比较两个数组是否相等
- * 数组元素必须是严格相等，即 ===；允许嵌套数组
+ * 数组元素必须是严格相等，即 ===；允许嵌套
  * @param {Array} actual
  * @param {Array} expected
  * @returns {Boolean}
  */
-function compare(actual, expected) {
+function compareArr(actual, expected) {
     if (!expected || !actual) {
         return (false);
     }
@@ -16,10 +24,25 @@ function compare(actual, expected) {
         return (false);
     }
 
-    return actual.every((item, i) => (item instanceof Array)
-        ? compare(item, expected[i])
-        : item === expected[i]
-    );
+    return actual.every((item, i) => compare(item, expected[i]));
+}
+
+/**
+ * 比较两个对象是否相等
+ * 对象元素必须是严格相等，即 ===；允许嵌套
+ * @param {Object} actual
+ * @param {Object} expected
+ * @returns {Boolean}
+ */
+function compareObj(actual, expected) {
+    const actualKeys = Object.keys(actual),
+        expectedKeys = Object.keys(expected);
+
+    if (!compareArr(actualKeys, expectedKeys)) {
+        return (false);
+    }
+
+    return actualKeys.every((key) => compare(actual[key], expected[key]));
 }
 
 /**
@@ -29,7 +52,7 @@ function compare(actual, expected) {
  * @param {Array} expected
  * @returns {Boolean}
  */
-function compareSet(actual, expected) {
+function compareArrWithoutOrder(actual, expected) {
     if (!expected || !actual) {
         return (false);
     }
@@ -38,7 +61,7 @@ function compareSet(actual, expected) {
     }
 
     return actual.every((item_a) => (item_a instanceof Array)
-        ? expected.some((item_e) => compare(item_a, item_e))
+        ? expected.some((item_e) => compareArr(item_a, item_e))
         : expected.some((item_e) => item_a === item_e)
     );
 }
@@ -60,13 +83,13 @@ chai.use((chai) => {
     chai.Assertion.addMethod('equalTo', function(values) {
         this.assert(
             compare(this._obj, values),
-            `expected ${JSON.stringify(this._obj)} to be equal to [${values}]`,
-            `expected ${JSON.stringify(this._obj)} not to be equal to [${values}]`
+            `expected ${JSON.stringify(this._obj)} to be equal to ${JSON.stringify(values)}`,
+            `expected ${JSON.stringify(this._obj)} not to be equal to ${JSON.stringify(values)}`
         );
     });
     chai.Assertion.addMethod('equalWithoutOrder', function(values) {
         this.assert(
-            compareSet(this._obj, values),
+            compareArrWithoutOrder(this._obj, values),
             `expected ${JSON.stringify(this._obj)} to be equal to ${JSON.stringify(values)}`,
             `expected ${JSON.stringify(this._obj)} not to be equal to ${JSON.stringify(values)}`
         );
