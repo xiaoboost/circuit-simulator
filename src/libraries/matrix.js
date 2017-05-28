@@ -101,6 +101,10 @@ class Matrix {
         }
         return (str);
     }
+    // 字符串连接
+    join(str) {
+        return this._view.join(str);
+    }
 
     // 交换坐标元素a、b所在行、列
     exchange(a, b) {

@@ -42,7 +42,7 @@ describe('matrix.js', () => {
         ma1.set(1, 1, 10);
         expect(compare(ma1, ma2)).to.be.true;
     });
-    it('get row/column', () => {
+    it('get row / column', () => {
         const ma = $M([[0, 1, 2, 3], [4, 5, 6, 7]]);
         expect(ma.getRow(0)).to.be.equalTo([0, 1, 2, 3]);
         expect(ma.getRow(-1)).to.be.equalTo([4, 5, 6, 7]);
@@ -51,10 +51,12 @@ describe('matrix.js', () => {
         expect(ma.getColumn(-1)).to.be.equalTo([3, 7]);
         expect(ma.getColumn(20)).to.be.false;
     });
-    it('toString', () => {
+    it('toString / join', () => {
         const ma = $M([[0, 1, 2.3, 3], [4, 50, 6, 7], [8, 9, 10, 11]]);
         const str = '0,   1,  2.3,   3;\n4,  50,    6,   7;\n8,   9,   10,  11;\n';
+        const join='0,1,2.3,3,4,50,6,7,8,9,10,11';
         expect(ma.toString()).to.be.equal(str);
+        expect(ma.join(',')).to.be.equal(join);
     });
     it('exchange', () => {
         const ma = $M([[0, 3, 2, 1], [4, 7, 6, 5], [8, 11, 10, 9]]),
