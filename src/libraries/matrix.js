@@ -7,6 +7,8 @@ class Matrix {
             // 从数组创建矩阵
             const data = [], size = isMatrix(row);
 
+            if (!size) { return (false); }
+
             this.row = size.row;
             this.column = size.column;
             row.forEach((n) => data.push(...n));
@@ -19,30 +21,48 @@ class Matrix {
             this.row = row.row;
             this.column = row.column;
             this._view = Float64Array.from(row._view);
-        } else {
-            // 0矩阵或者单位矩阵
+        } else if (unit.test(column) || unit.test(value)) {
+            // 单位矩阵
             this.row = row;
             this.column = row;
-            // 开辟内存空间
             const buffer = new ArrayBuffer(this.row * this.column * 8);
             this._view = new Float64Array(buffer);
-            // 单位矩阵对角线元素赋值
-            if (unit.test(column) || unit.test(value)) {
-                for (let i = 0; i < row; i++) {
-                    this._view[i * (row + 1)] = 1;
-                }
+
+            for (let i = 0; i < row; i++) {
+                this._view[i * (row + 1)] = 1;
             }
+        } else {
+            // 填充矩阵
+            this.row = row;
+            this.column = column;
+            this._view = Float64Array.from(Array(row * column).fill(value));
         }
     }
 
-    // 取出矩阵元素
+    /**
+     * 取出矩阵元素
+     * @param {Number} i 第几行
+     * @param {Number} j 第几列
+     * @returns {Number} 矩阵元素
+     * @memberof Matrix
+     */
     get(i, j) {
-        return this._view[i * this.row + j];
+        return this._view[i * this.column + j];
+    }
+    /**
+     * 设置矩阵值
+     * @param {Number} i 第几行
+     * @param {Number} j 第几列
+     * @param {Number} value 设置的矩阵元素值
+     * @memberof Matrix
+     */
+    set(i, j, value) {
+        this._view[i * this.column + j] = value;
     }
     // 取出矩阵某一行
     getRow(row) {
         row = row < 0 ? this.row + row : row;
-        if (row > this.row) { return (false); }
+        if (row > this.row || row < 0) { return (false); }
 
         const ans = [], start = row * this.column;
         for (let i = 0; i < this.column; i++) {
@@ -50,22 +70,45 @@ class Matrix {
         }
         return ans;
     }
-    // 设置矩阵值
-    set(i, j, value) {
-        this._view[i * this.row + j] = value;
+    // 取出矩阵某一列
+    getColumn(column) {
+        column = column < 0 ? this.column + column : column;
+        if (column > this.column || column < 0) { return (false); }
+
+        const ans = [];
+        for (let i = 0; i < this.row; i++) {
+            ans[i] = this._view[column + i * this.column];
+        }
+        return ans;
     }
     // 输出字符串
-    join(str) {
-        return this._view.join(str);
+    toString() {
+        const maxColumnLen = [];
+        for (let i = 0; i < this.column; i++) {
+            maxColumnLen.push(this.getColumn(i)
+                .map((n) => String(n))
+                .reduce((len, item) => item.length > len
+                    ? item.length : len, 0
+            ));
+        }
+
+        let str = '';
+        for (let i = 0; i < this.row; i++) {
+            str += this.getRow(i)
+                .map((n, i) => String(n)
+                    .padStart(maxColumnLen[i], ' '))
+                .join(',  ') + ';\n';
+        }
+        return (str);
     }
 
     // 交换坐标元素a、b所在行、列
     exchange(a, b) {
         // 交换行
         if (a[0] !== b[0]) {
-            const start = a[0] * this.row,
-                end = b[0] * this.row;
-            for (let i = 0; i < this.row; i++) {
+            const start = a[0] * this.column,
+                end = b[0] * this.column;
+            for (let i = 0; i < this.column; i++) {
                 const temp = this._view[start + i];
                 this._view[start + i] = this._view[end + i];
                 this._view[end + i] = temp;
@@ -73,15 +116,15 @@ class Matrix {
         }
         // 交换列
         if (a[1] !== b[1]) {
-            const start = a[1] * this.column,
-                end = b[1] * this.column;
-            for (let i = 0; i < this.column; i++) {
-                const nowRow = i * this.row,
+            const start = a[1], end = b[1];
+            for (let i = 0; i < this.row; i++) {
+                const nowRow = i * this.column,
                     temp = this._view[nowRow + start];
                 this._view[nowRow + start] = this._view[nowRow + end];
                 this._view[nowRow + end] = temp;
             }
         }
+        return (this);
     }
     // this * ma
     mul(ma) {
@@ -122,7 +165,7 @@ class Matrix {
     // 列主元 LU 三角分解，返回 LUP 矩阵
     luDecompose() {
         if (this.row !== this.column) {
-            throw ('这不是行列式，无法三角分解');
+            return (false);
         }
 
         const n = this.row,             // 行列式的行数
@@ -167,7 +210,9 @@ class Matrix {
     inverse() {
         const [L, U, P] = this.luDecompose(), n = this.row;
         for (let i = 0; i < U.row; i++) {
-            if (!U.get(i, i)) throw ('逆矩阵不存在');
+            if (!U.get(i, i)) {
+                return (false);
+            }
         }
 
         // L、U的逆矩阵初始化
@@ -200,13 +245,27 @@ class Matrix {
         const ans = ui.mul(li).mul(P);
         return (ans);
     }
+
+    // 迭代方法
+    forEach(fn) {
+        for (let i = 0; i < this._view.length; i++) {
+            const x = ~~(i / this.column), y = i % this.column;
+            fn(this._view[i], [x, y], this);
+        }
+        return (this);
+    }
+    every(fn) {
+        let ans;
+        for (let i = 0; i < this._view.length; i++) {
+            const x = ~~(i / this.column), y = i % this.column;
+            ans = fn(this._view[i], [x, y], this);
+            if (!ans) { return (false); }
+        }
+        return (true);
+    }
 }
 
 function isMatrix(ma) {
-    if (ma instanceof Matrix) {
-        return ({ row: ma.row, column: ma.column });
-    }
-
     // 记录行列数
     const row = ma.length, column = ma[0].length;
     // 行连续
@@ -217,16 +276,16 @@ function isMatrix(ma) {
     if (!Object.values(ma).every((col) => {
         return col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
-            Object.values(col).every((n) => !Number.isNaN(+n));
+            Object.values(col).every((n) => typeof n === 'number');
     })) {
         return (false);
     }
 
     return ({ row, column });
 }
-function combination() {
-    //
-}
+// function combination() {
+//     //
+// }
 
 function $M(a, b, c) {
     return new Matrix(a, b, c);
