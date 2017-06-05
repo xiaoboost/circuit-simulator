@@ -59,13 +59,11 @@ export default {
     data() {
         return {
             id: '',
-            type: '',
             params: [],
             connect: [],
             rotate: [[1, 0], [0, 1]],
             position: [500000, 500000],
 
-            shape: {},
             textPosition: $P(0, 0),
             textPlacement: 'bottom'
         };
@@ -125,14 +123,11 @@ export default {
     },
     methods: {
         update() {
-            this.$emit('input', {
-                id: this.id,
-                type: this.type,
-                params: this.params,
-                rotate: this.rotate,
-                connect: this.connect,
-                position: this.position
-            });
+            const keys = ['id', 'params', 'rotate', 'connect', 'position'];
+            this.$emit(
+                'update:value',
+                keys.reduce((v, k) => (v[k] = this[k], v), {})
+            );
         },
         // 新建器件
         newPart() {
@@ -205,8 +200,22 @@ export default {
                 cursor: 'move_part'
             });
         },
-        newLine() {
+        newLine(mark) {
+            const lines = this.$store.state.collection.Lines,
+                id = lines.newId('line_'),
+                point = this.points[mark];
+
+            this.connect[mark] = id;
             this.$emit('focus', this.id);
+            this.$store.commit('PUSH_LINE', {
+                id,
+                type: 'line',
+                connect: [this.id],
+                way: [point.position.add(this.position)],
+                current: {
+                    direction: point.direction
+                }
+            });
         },
         // 渲染
         setText() {

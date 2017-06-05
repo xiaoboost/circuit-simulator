@@ -10,17 +10,18 @@
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
                 v-for="i in lines.length"
-                v-model="lines[i - 1]"
                 :ref="lines[i - 1].id"
                 :key="lines[i - 1].id"
-                :focus="partsNow.includes(lines[i - 1].id)"
-                @setEvent="EventControler">
+                :value.sync="lines[i - 1]"
+                :focus="linesNow.includes(lines[i - 1].id)"
+                @setEvent="EventControler"
+                @focus="clearFocus">
             </elec-line>
             <elec-part
                 v-for="i in parts.length"
-                v-model="parts[i - 1]"
                 :ref="parts[i - 1].id"
                 :key="parts[i - 1].id"
+                :value.sync="parts[i - 1]"
                 :focus="partsNow.includes(parts[i - 1].id)"
                 @setEvent="EventControler"
                 @select="selectPart"
