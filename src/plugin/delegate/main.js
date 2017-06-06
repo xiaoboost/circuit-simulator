@@ -3,7 +3,6 @@ const u = undefined,
     doc = window.document,
     rnotwhite = /\S+/g,
     rkeyEvent = /^key/,
-    rselect = /[^.# ]+/g,
     rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
 
 // 事件代理全局缓存
@@ -26,28 +25,18 @@ $Event.prototype = {
     isDefaultPrevented: returnFalse,
     isPropagationStopped: returnFalse,
     isImmediatePropagationStopped: returnFalse,
-    isSimulated: false,
 
     preventDefault() {
-        const e = this.originalEvent;
         this.isDefaultPrevented = returnTrue;
-        if ( e && !this.isSimulated ) {
-            e.preventDefault();
-        }
+        this.originalEvent.preventDefault();
     },
     stopPropagation() {
-        const e = this.originalEvent;
         this.isPropagationStopped = returnTrue;
-        if ( e && !this.isSimulated ) {
-            e.stopPropagation();
-        }
+        this.originalEvent.stopPropagation();
     },
     stopImmediatePropagation() {
-        const e = this.originalEvent;
         this.isImmediatePropagationStopped = returnTrue;
-        if ( e && !this.isSimulated ) {
-            e.stopImmediatePropagation();
-        }
+        this.originalEvent.stopImmediatePropagation();
         this.stopPropagation();
     }
 };
@@ -58,12 +47,12 @@ Object.defineProperty($Event.prototype, new Proxy({}, {
 }));
 
 // 添加委托
-function add(elem, types, handler, data, selector) {
+function add(elem, types, selector, data, handler) {
     // 取出当前 DOM 的委托数据
     const elemData = cache.get(elem) || {};
     // 初始化
     const events = elemData.events = elemData.events || {};
-    elemData.handle = elemData.handle || (() => dispatch.apply(elem, arguments));
+    elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, ...args));
     // 分割事件名称
     types = (types || '').match(rnotwhite) || [''];
     types.forEach((type) => {
@@ -76,7 +65,7 @@ function add(elem, types, handler, data, selector) {
             data,
             handler,
             selector,
-            matches: {}
+            matches: elem.querySelectorAll(selector)
         };
         //这个事件是初次定义
         if (!events[type]) {
@@ -103,11 +92,24 @@ function dispatch(...args) {
     event.delegateTarget = this;
     // 沿捕获路径，依次运行回调
     const handlerQueue = handlers.call(this, event, elemhandlers);
-    handlerQueue.forEach((handle) => {
+    handlerQueue.some((handleObj) => {
         // 如果事件停止捕获，那么跳出
-        if (event.isPropagationStopped()) { return; }
+        if (event.isPropagationStopped()) { return (true); }
 
+        const fn = handleObj.handlers.handler;
+        event.currentTarget = handleObj.elem;
+        event.handleObj = handleObj;
+        event.data = handleObj.handlers.data;
+        event.type = handleObj.handlers.type;
 
+        // 运行回调
+        const ret = event.result = fn.apply(handleObj.elem, args);
+        //若回调完成返回 true，则阻止事件继续捕获
+        if (ret === true) {
+            event.preventDefault();
+            event.stopPropagation();
+            return (true);
+        }
     });
 }
 
