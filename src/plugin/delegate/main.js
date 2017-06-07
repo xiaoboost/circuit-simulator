@@ -20,7 +20,10 @@ function returnFalse() {
 function $Event(origin) {
     this.originalEvent = origin;
 }
-$Event.prototype = {
+$Event.prototype = Object.create(new Proxy({}, {
+    get: (target, property, receiver) => receiver.originalEvent[property]
+}));
+Object.assign($Event.prototype, {
     constructor: $Event,
     isDefaultPrevented: returnFalse,
     isPropagationStopped: returnFalse,
@@ -39,20 +42,17 @@ $Event.prototype = {
         this.originalEvent.stopImmediatePropagation();
         this.stopPropagation();
     }
-};
-Object.defineProperty($Event.prototype, new Proxy({}, {
-    get(target, property) {
-        return this.originalEvent.property;
-    }
-}));
+});
 
 // 添加委托
 function add(elem, types, selector, data, handler) {
+    // 如果缓存中没有数据，那么存入空对象
+    if (!cache.has(elem)) { cache.set(elem, {}); }
     // 取出当前 DOM 的委托数据
     const elemData = cache.get(elem) || {};
-    // 初始化
     const events = elemData.events = elemData.events || {};
-    elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, ...args));
+    // 若是初次绑定，那么定义事件回调函数
+    elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, args));
     // 分割事件名称
     types = (types || '').match(rnotwhite) || [''];
     types.forEach((type) => {
@@ -82,12 +82,21 @@ function add(elem, types, selector, data, handler) {
     });
 }
 
+// 沿着捕获路径，将所有回调函数包装成队列
+function handlers(event, elemhandlers) {
+    const path = event.path;
+    path.splice(0, path.indexOf(this));
+
+    return [];
+}
+
 // 分发事件
 function dispatch(...args) {
     const event = new $Event(args[0]),
         elemEvents = (cache.get(this) || {})['events'] || {},
         elemhandlers = elemEvents[args[0].type] || [];
 
+    debugger;
     // 委托元素赋值
     event.delegateTarget = this;
     // 沿捕获路径，依次运行回调
@@ -104,7 +113,7 @@ function dispatch(...args) {
 
         // 运行回调
         const ret = event.result = fn.apply(handleObj.elem, args);
-        //若回调完成返回 true，则阻止事件继续捕获
+        // 若回调完成且返回 true，则阻止事件继续捕获
         if (ret === true) {
             event.preventDefault();
             event.stopPropagation();
@@ -118,9 +127,4 @@ function remove() {
 
 }
 
-// 沿着捕获路径，将所有回调函数包装成队列
-function handlers() {
-
-}
-
-export default { add, remove, dispatch, handlers };
+export default { add, remove };

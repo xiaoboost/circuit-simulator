@@ -5,6 +5,9 @@ import App from './App';
 import store  from './vuex';
 import router from './router';
 
+import delegate from './plugin/delegate';
+
+Vue.use(delegate);
 Vue.config.productionTip = false;
 
 new Vue({

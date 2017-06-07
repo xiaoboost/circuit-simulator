@@ -26,7 +26,7 @@ function fixOnParameters(...args) {
 // 统一解除绑定时的输入参数格式
 // 标准格式为 type, selector, fn
 function fixOffParameters(...args) {
-    const f = 'function', s = 'string';
+    const f = 'function', s = 'string', u = undefined;
 
     switch (args.length) {
         // () 解除所有事件
@@ -98,12 +98,12 @@ function install(Vue, options) {
         }
     });
     // 添加实例方法
-    Vue.prototype.$$on = function(options) {
-        // 逻辑...
+    Vue.prototype.$$on = function(...args) {
+        delegate.add(this.$el, ...fixOnParameters(...args));
     };
-    Vue.prototype.$$off = function(options) {
-        // 逻辑...
+    Vue.prototype.$$off = function(...args) {
+        delegate.remove(this.$el, ...fixOffParameters(...args));
     };
 }
 
-export { install };
+export default { install };
