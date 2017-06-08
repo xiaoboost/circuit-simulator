@@ -82,12 +82,34 @@ function add(elem, types, selector, data, handler) {
     });
 }
 
-// 沿着捕获路径，将所有回调函数包装成队列
-function handlers(event, elemhandlers) {
-    const path = event.path;
-    path.splice(0, path.indexOf(this));
+function isContains(elem, handler) {
 
-    return [];
+}
+
+// 沿着捕获路径，将所有回调函数包装成队列
+function tohandlers(event, handlers) {
+    const path = event.path;
+    path.splice(path.indexOf(this));
+
+    debugger;
+    // 委托元素本身的事件
+    const handlerQueue = handlers
+        .filter((n) => !n.selector)
+        .map((n) => ({ elem: this, handler: n }));
+
+    // 沿着委托元素向下
+    for (let i = path.length - 1; i >= 0; i--) {
+        // 若节点不是 Node.ELEMENT_NODE，则跳过
+        if (path[i].nodeType !== 1) { continue; }
+
+        handlerQueue.push(
+            ...handlers
+                .filter((n) => n.selector && isContains(path[i], n))
+                .map((n) => ({ elem: path[i], handler: n }))
+        );
+    }
+
+    return handlerQueue;
 }
 
 // 分发事件
@@ -96,11 +118,12 @@ function dispatch(...args) {
         elemEvents = (cache.get(this) || {})['events'] || {},
         elemhandlers = elemEvents[args[0].type] || [];
 
-    debugger;
     // 委托元素赋值
     event.delegateTarget = this;
     // 沿捕获路径，依次运行回调
-    const handlerQueue = handlers.call(this, event, elemhandlers);
+    const handlerQueue = tohandlers.call(this, event, elemhandlers);
+
+    debugger;
     handlerQueue.some((handleObj) => {
         // 如果事件停止捕获，那么跳出
         if (event.isPropagationStopped()) { return (true); }

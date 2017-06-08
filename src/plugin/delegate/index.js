@@ -59,7 +59,7 @@ function fixOffParameters(...args) {
 function packageCallback(callback, modifiers) {
     function packFn(e) {
         // 等于自身
-        const self = !modifiers.self || (e.target === e.path[0]);
+        const self = !modifiers.self || (e.currentTarget === e.path[0]);
         // 左键
         const left = !modifiers.left || (!e.button);
         // 右键
