@@ -1,12 +1,16 @@
 // 全局常量
-const u = undefined,
-    doc = window.document,
-    rnotwhite = /\S+/g,
-    rkeyEvent = /^key/,
-    rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
-
+const u = undefined, rnotwhite = /\S+/g;
 // 事件代理全局缓存
 const cache = new Map();
+// 特殊事件必须有特殊的判断函数
+const special = {
+    mouseenter(event) {
+        return event.currentTarget === event.target;
+    },
+    mouseleave(event) {
+        return event.currentTarget === event.target;
+    }
+};
 
 //有效以及无效函数
 function returnTrue() {
@@ -61,7 +65,7 @@ function paserSelector(selector) {
 }
 
 // 根据选择器匹配被选中的 DOM
-function isContains(elem, handler) {
+function isContains(delegate, elem, handler) {
     const includes = Array.prototype.includes;
     // 选择器缓存中含有被测试 DOM
     if (includes.call(handler.matches, elem)) {
@@ -84,11 +88,11 @@ function isContains(elem, handler) {
     }
 
     // 重置选择器选择器件，并再次匹配
-    handler.matches = handler.delegate.querySelectorAll(handler.selector);
+    handler.matches = delegate.querySelectorAll(handler.selector);
     return (includes.call(handler.matches, elem));
 }
 
-// 沿着捕获路径，将所有回调函数包装成队列
+// 沿着捕获路径，将满足条件的回调函数包装成队列
 function tohandlers(event, handlers) {
     const path = event.path;
     path.splice(path.indexOf(this));
@@ -105,7 +109,7 @@ function tohandlers(event, handlers) {
 
         handlerQueue.push(
             ...handlers
-                .filter((n) => n.selector && isContains(path[i], n))
+                .filter((n) => n.selector && isContains(this, path[i], n))
                 .map((n) => ({ elem: path[i], handler: n }))
         );
     }
@@ -133,6 +137,11 @@ function dispatch(...args) {
         event.currentTarget = handleObj.elem;
         event.data = handleObj.handler.data;
         event.type = handleObj.handler.type;
+
+        // 特殊类型事件的额外校验
+        if (special[event.type] && !special[event.type](event)) {
+            return (false);
+        }
 
         // 运行回调
         const ret = fn.call(handleObj.elem, event);
@@ -166,14 +175,13 @@ function add(elem, types, selector, data, callback) {
     types.forEach((type) => {
         //非法名称，跳过
         if (!type) { return; }
-        // TODO: 在捕获状态，特殊事件是否需要特殊处理？比如 mouseenter、mouseleave
+
         //句柄对象
         const handleObj = {
             type,
             data,
             callback,
             selector,
-            delegate: elem,
             characteristic: paserSelector(selector),
             matches: elem.querySelectorAll(selector)
         };
