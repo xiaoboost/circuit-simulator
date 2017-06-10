@@ -29,6 +29,12 @@ module.exports = function(config) {
                 { type: 'lcov', subdir: '.' },
                 { type: 'text-summary' }
             ]
+        },
+        customLaunchers: {
+            'headlessChrome': {
+                base: 'Chrome',
+                flags: ['--headless', '--disable-gpu', '--remote-debugging-port=9222', '--no-sandbox']
+            }
         }
     });
 };
