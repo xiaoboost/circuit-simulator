@@ -84,20 +84,18 @@ function install(Vue, options) {
     // 添加全局指令
     Vue.directive('delegate', {
         bind(el, binding) {
-            const modifiers = Object.keys(binding.modifiers),
-                [type, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
-                handler = packageCallback(fn, modifiers);
+            const [type, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
+                handler = packageCallback(fn, binding.modifiers);
 
             functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
         unbind(el, binding) {
-            const modifiers = Object.keys(binding.modifiers),
-                [type, selector, data, fn] = fixOffParameters(binding.arg, ...binding.value),
+            const [type, selector, fn] = fixOffParameters(binding.arg, ...binding.value),
                 handler = functionMap.get(fn);
 
             functionMap.delete(fn);
-            delegate.remove(el, type, selector, data, handler);
+            delegate.remove(el, type, selector, handler);
         }
     });
     // 添加实例方法
