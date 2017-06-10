@@ -3,8 +3,10 @@ import delegate from './main';
 // 全局函数映射
 const functionMap = new Map();
 
-// 统一绑定事件时的输入参数格式
-// 标准格式为 type, selector, data, fn
+/**
+ * 统一绑定事件时的输入参数格式
+ * 标准格式为 type, selector, data, fn
+ */
 function fixOnParameters(...args) {
     if (args.length === 2) {
         // ( types, fn )
@@ -23,8 +25,10 @@ function fixOnParameters(...args) {
     }
 }
 
-// 统一解除绑定时的输入参数格式
-// 标准格式为 type, selector, fn
+/**
+ * 统一解除绑定时的输入参数格式
+ * 标准格式为 type, selector, fn
+ */
 function fixOffParameters(...args) {
     const f = 'function', s = 'string', u = undefined;
 

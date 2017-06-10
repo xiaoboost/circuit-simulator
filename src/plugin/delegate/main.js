@@ -44,46 +44,48 @@ Object.assign($Event.prototype, {
     }
 });
 
-// 添加委托
-function add(elem, types, selector, data, handler) {
-    // 如果缓存中没有数据，那么存入空对象
-    if (!cache.has(elem)) { cache.set(elem, {}); }
-    // 取出当前 DOM 的委托数据
-    const elemData = cache.get(elem) || {};
-    const events = elemData.events = elemData.events || {};
-    // 若是初次绑定，那么定义事件回调函数
-    elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, args));
-    // 分割事件名称
-    types = (types || '').match(rnotwhite) || [''];
-    types.forEach((type) => {
-        //非法名称，跳过
-        if (!type) { return; }
-        // TODO: 在捕获状态，特殊事件是否需要特殊处理？比如 mouseenter、mouseleave
-        //句柄对象
-        const handleObj = {
-            type,
-            data,
-            handler,
-            selector,
-            matches: elem.querySelectorAll(selector)
-        };
-        //这个事件是初次定义
-        if (!events[type]) {
-            events[type] = [];
-            //绑定监听事件（捕获阶段）
-            if (elem.addEventListener) {
-                elem.addEventListener(type, elemData.handle, true);
-            }
-        }
-        //selector有重复的，那么就覆盖，没有重复的那就添加到末尾
-        if (!(events[type].some((n, i, arr) => (selector === n.selector) && (arr[i] = handleObj)))) {
-            events[type].push(handleObj);
-        }
-    });
+// 分解选择器
+function paserSelector(selector) {
+    if (!selector) { return (false); }
+
+    selector = selector.split(' ').pop();
+    let tag = /^[a-z]+/.exec(selector),
+        id = /\#([a-z]+)/.exec(selector),
+        clas = selector.match(/\.[a-z]+/g);
+
+    id = id && id[1];
+    tag = tag && tag[0].toLocaleUpperCase();
+    clas = clas && clas.map((n) => n.substr(1));
+
+    return { tag, id, clas };
 }
 
+// 根据选择器匹配被选中的 DOM
 function isContains(elem, handler) {
+    const includes = Array.prototype.includes;
+    // 选择器缓存中含有被测试 DOM
+    if (includes.call(handler.matches, elem)) {
+        return (true);
+    }
+    // 初次匹配选择
+    const {tag, id, clas} = handler.characteristic,
+        matchTag = tag && elem.tagName !== tag,
+        matchId = id && elem.getAttribute() !== tag;
 
+    if (matchTag || matchId) {
+        return (false);
+    }
+
+    const className = elem.getAttribute('class'),
+        matchClass = clas && !clas.every((n) => className && className.includes(n));
+
+    if (matchClass) {
+        return (false);
+    }
+
+    // 重置选择器选择器件，并再次匹配
+    handler.matches = handler.delegate.querySelectorAll(handler.selector);
+    return (includes.call(handler.matches, elem));
 }
 
 // 沿着捕获路径，将所有回调函数包装成队列
@@ -91,7 +93,6 @@ function tohandlers(event, handlers) {
     const path = event.path;
     path.splice(path.indexOf(this));
 
-    debugger;
     // 委托元素本身的事件
     const handlerQueue = handlers
         .filter((n) => !n.selector)
@@ -122,25 +123,64 @@ function dispatch(...args) {
     event.delegateTarget = this;
     // 沿捕获路径，依次运行回调
     const handlerQueue = tohandlers.call(this, event, elemhandlers);
-
-    debugger;
     handlerQueue.some((handleObj) => {
         // 如果事件停止捕获，那么跳出
-        if (event.isPropagationStopped()) { return (true); }
+        if (event.isPropagationStopped()) {
+            return (true);
+        }
 
-        const fn = handleObj.handlers.handler;
+        const fn = handleObj.handler.callback;
         event.currentTarget = handleObj.elem;
-        event.handleObj = handleObj;
-        event.data = handleObj.handlers.data;
-        event.type = handleObj.handlers.type;
+        event.data = handleObj.handler.data;
+        event.type = handleObj.handler.type;
 
         // 运行回调
-        const ret = event.result = fn.apply(handleObj.elem, args);
+        const ret = fn.call(handleObj.elem, event);
         // 若回调完成且返回 true，则阻止事件继续捕获
         if (ret === true) {
             event.preventDefault();
             event.stopPropagation();
             return (true);
+        }
+    });
+}
+
+// 添加委托
+function add(elem, types, selector, data, callback) {
+    // 如果缓存中没有数据，那么存入空对象
+    if (!cache.has(elem)) { cache.set(elem, {}); }
+    // 取出当前 DOM 的委托数据
+    const elemData = cache.get(elem) || {};
+    const events = elemData.events = elemData.events || {};
+    // 若是初次绑定，那么定义事件回调函数
+    elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, args));
+    // 分割事件名称
+    types = (types || '').match(rnotwhite) || [''];
+    types.forEach((type) => {
+        //非法名称，跳过
+        if (!type) { return; }
+        // TODO: 在捕获状态，特殊事件是否需要特殊处理？比如 mouseenter、mouseleave
+        //句柄对象
+        const handleObj = {
+            type,
+            data,
+            callback,
+            selector,
+            delegate: elem,
+            characteristic: paserSelector(selector),
+            matches: elem.querySelectorAll(selector)
+        };
+        //这个事件是初次定义
+        if (!events[type]) {
+            events[type] = [];
+            //绑定监听事件（捕获阶段）
+            if (elem.addEventListener) {
+                elem.addEventListener(type, elemData.handle, true);
+            }
+        }
+        //selector有重复的，那么就覆盖，没有重复的那就添加到末尾
+        if (!(events[type].some((n, i, arr) => (selector === n.selector) && (arr[i] = handleObj)))) {
+            events[type].push(handleObj);
         }
     });
 }
