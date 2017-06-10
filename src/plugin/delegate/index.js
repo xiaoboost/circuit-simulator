@@ -74,17 +74,10 @@ function packageCallback(callback, modifiers) {
 
             modifiers.stop && e.stopPropagation();
             modifiers.prevent && e.preventDefault();
-
-            if (modifiers.once) {
-                // TODO: 移除委托事件
-            }
         }
     }
 
-    const $callback$ = Object.isEmpty(modifiers) ? callback : packFn;
-    functionMap.set(callback, $callback$);
-
-    return $callback$;
+    return Object.isEmpty(modifiers) ? callback : packFn;
 }
 
 function install(Vue, options) {
@@ -95,10 +88,16 @@ function install(Vue, options) {
                 [type, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
                 handler = packageCallback(fn, modifiers);
 
+            functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
         unbind(el, binding) {
-            // ..
+            const modifiers = Object.keys(binding.modifiers),
+                [type, selector, data, fn] = fixOffParameters(binding.arg, ...binding.value),
+                handler = functionMap.get(fn);
+
+            functionMap.delete(fn);
+            delegate.remove(el, type, selector, data, handler);
         }
     });
     // 添加实例方法

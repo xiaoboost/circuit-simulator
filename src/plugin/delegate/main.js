@@ -145,7 +145,14 @@ function dispatch(...args) {
     });
 }
 
-// 添加委托
+/**
+ * 添加事件委托
+ * @param {Object} elem DOM对象
+ * @param {String} types 事件类型，多个类型用空格分割
+ * @param {String} selector 被委托元素的选择器
+ * @param {Object} data 事件运行时候的数据
+ * @param {Function} callback 事件回调
+ */
 function add(elem, types, selector, data, callback) {
     // 如果缓存中没有数据，那么存入空对象
     if (!cache.has(elem)) { cache.set(elem, {}); }
@@ -185,8 +192,14 @@ function add(elem, types, selector, data, callback) {
     });
 }
 
-// 移除委托事件
-function remove(elem, types, handler, selector) {
+/**
+ * 移除事件委托
+ * @param {Object} elem DOM对象
+ * @param {String} types 事件类型，多个类型用空格分割
+ * @param {String} selector 被委托元素的选择器
+ * @param {Function} callback 事件回调
+ */
+function remove(elem, types, selector, callback) {
     const elemData = cache.get(elem),
         events = elemData.events;
 
@@ -202,30 +215,30 @@ function remove(elem, types, handler, selector) {
         types = Object.keys(events);
     }
     if (types.length > 1) {
-        types.forEach((type) => remove(elem, type, handler, selector));
+        types.forEach((type) => remove(elem, type, selector, callback));
     }
 
-    const type = types[0], deleteHandler = [];
-    events[type].filter((handler) => {
-        if (selector === '*' || (!selector && !handler)) {
+    const type = types[0];
+    events[type] = events[type].filter((handlerObj) => {
+        if (selector === '*' || (!selector && !callback)) {
             return (false);
         }
-        if ((selector && !handler && selector === handler.selector) ||
-            (!selector && handler && handler === handler.handler) ||
-            (selector === handler.selector && handler === handler.handler)) {
+        if ((selector && !callback && selector === handlerObj.selector) ||
+            (!selector && callback && callback === handlerObj.callback) ||
+            (selector === handlerObj.selector && callback === handlerObj.callback)) {
             return (false);
         }
         return (true);
     });
 
     // 当前类型的事件已经空了
-    if (!events.length) {
+    if (!events[type].length) {
         elem.removeEventListener(type, elemData.handle, true);
         delete events[type];
     }
 
     // 当前委托元素已经没有委托事件了
-    if (Object.isEmpty(elemData)) {
+    if (Object.isEmpty(events)) {
         cache.delete(elem);
     }
 }
