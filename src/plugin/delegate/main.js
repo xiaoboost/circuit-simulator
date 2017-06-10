@@ -6,7 +6,7 @@ const u = undefined,
     rmouseEvent = /^(?:mouse|pointer|contextmenu|drag|drop)|click/;
 
 // 事件代理全局缓存
-const cache = new WeakMap();
+const cache = new Map();
 
 //有效以及无效函数
 function returnTrue() {
@@ -186,8 +186,48 @@ function add(elem, types, selector, data, callback) {
 }
 
 // 移除委托事件
-function remove() {
+function remove(elem, types, handler, selector) {
+    const elemData = cache.get(elem),
+        events = elemData.events;
 
+    // 没有找到委托事件数据，直接退出
+    if (!elemData || !events) {
+        return;
+    }
+
+    // 拆分事件类型
+    types = ( types || '' ).match(rnotwhite) || [''];
+    // 空类型，表示输入是空数据，当前元素的所有事件都要删除
+    if (!types.length) {
+        types = Object.keys(events);
+    }
+    if (types.length > 1) {
+        types.forEach((type) => remove(elem, type, handler, selector));
+    }
+
+    const type = types[0], deleteHandler = [];
+    events[type].filter((handler) => {
+        if (selector === '*' || (!selector && !handler)) {
+            return (false);
+        }
+        if ((selector && !handler && selector === handler.selector) ||
+            (!selector && handler && handler === handler.handler) ||
+            (selector === handler.selector && handler === handler.handler)) {
+            return (false);
+        }
+        return (true);
+    });
+
+    // 当前类型的事件已经空了
+    if (!events.length) {
+        elem.removeEventListener(type, elemData.handle, true);
+        delete events[type];
+    }
+
+    // 当前委托元素已经没有委托事件了
+    if (Object.isEmpty(elemData)) {
+        cache.delete(elem);
+    }
 }
 
 export default { add, remove };
