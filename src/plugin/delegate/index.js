@@ -34,16 +34,16 @@ function fixOffParameters(...args) {
 
     switch (args.length) {
         // () 解除所有事件
-        case 0: return [];
+        case 0: return ['', '*', u];
         // ( type )
-        case 1: return [args[0], '', u];
+        case 1: return [args[0], '*', u];
         // ( type, selector, fn )
         case 3: return args;
 
         case 2: {
             if (typeof args[1] === f) {
                 // ( type, fn )
-                return [args[0], '', args[1]];
+                return [args[0], '*', args[1]];
             } else if (typeof args[1] === s) {
                 // ( type, selector )
                 return [args[0], args[1], u];

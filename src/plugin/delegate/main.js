@@ -218,9 +218,9 @@ function remove(elem, types, selector, callback) {
     }
 
     // 拆分事件类型
-    types = ( types || '' ).match(rnotwhite) || [''];
+    types = ( types || '' ).match(rnotwhite);
     // 空类型，表示输入是空数据，当前元素的所有事件都要删除
-    if (!types.length) {
+    if (!types) {
         types = Object.keys(events);
     }
     if (types.length > 1) {
