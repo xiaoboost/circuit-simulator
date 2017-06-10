@@ -58,7 +58,7 @@ function paserSelector(selector) {
         clas = selector.match(/\.[a-z]+/g);
 
     id = id && id[1];
-    tag = tag && tag[0].toLocaleUpperCase();
+    tag = tag && (new RegExp(tag[0], 'i'));
     clas = clas && clas.map((n) => n.substr(1));
 
     return { tag, id, clas };
@@ -71,10 +71,11 @@ function isContains(delegate, elem, handler) {
     if (includes.call(handler.matches, elem)) {
         return (true);
     }
+
     // 初次匹配选择
     const {tag, id, clas} = handler.characteristic,
-        matchTag = tag && elem.tagName !== tag,
-        matchId = id && elem.getAttribute() !== tag;
+        matchTag = tag && !tag.test(elem.tagName),
+        matchId = id && elem.getAttribute() !== id;
 
     if (matchTag || matchId) {
         return (false);
