@@ -36,7 +36,7 @@ exports.createVue = function(Compo, mounted = true) {
 
 /**
  * 创建一个测试组件实例
- * @link http://vuejs.org/guide/unit-testing.html#Writing-Testable-Components
+ * @link https://cn.vuejs.org/v2/guide/unit-testing.html#编写可被测试的组件
  * @param  {Object}  Compo          - 组件对象
  * @param  {Object}  propsData      - props 数据
  * @param  {Boolean} {mounted=true} - 是否添加到 DOM 上
@@ -59,19 +59,17 @@ exports.createTest = function(Compo, propsData = {}, mounted = true) {
  * @param  {String} name
  * @param  {*} opts
  */
-exports.triggerEvent = function(elm, name, ...opts) {
-    let eventName;
+exports.triggerEvent = function(elm, name, opts) {
+    let evt;
 
     if (/^mouse|click/.test(name)) {
-        eventName = 'MouseEvents';
+        evt = new MouseEvent(name, opts);
     } else if (/^key/.test(name)) {
-        eventName = 'KeyboardEvent';
+        evt = new KeyboardEvent(name, opts);
     } else {
-        eventName = 'HTMLEvents';
+        evt = new Event(name, opts);
     }
-    const evt = document.createEvent(eventName);
 
-    evt.initEvent(name, ...opts);
     elm.dispatchEvent
         ? elm.dispatchEvent(evt)
         : elm.fireEvent('on' + name, evt);
@@ -84,9 +82,9 @@ exports.triggerEvent = function(elm, name, ...opts) {
  * @param {Element} elm
  * @param {*} opts
  */
-exports.triggerClick = function(elm, ...opts) {
-    exports.triggerEvent(elm, 'mousedown', ...opts);
-    exports.triggerEvent(elm, 'mouseup', ...opts);
+exports.triggerClick = function(elm, opts) {
+    exports.triggerEvent(elm, 'mousedown', opts);
+    exports.triggerEvent(elm, 'mouseup', opts);
 
     return elm;
 };

@@ -33,14 +33,17 @@ Object.assign($Event.prototype, {
     isPropagationStopped: returnFalse,
     isImmediatePropagationStopped: returnFalse,
 
+    // 取消默认行为
     preventDefault() {
         this.isDefaultPrevented = returnTrue;
         this.originalEvent.preventDefault();
     },
+    // 阻止捕获和冒泡阶段中当前事件的进一步传播
     stopPropagation() {
         this.isPropagationStopped = returnTrue;
         this.originalEvent.stopPropagation();
     },
+    // 阻止调用相同事件的其他侦听器
     stopImmediatePropagation() {
         this.isImmediatePropagationStopped = returnTrue;
         this.originalEvent.stopImmediatePropagation();
@@ -50,8 +53,6 @@ Object.assign($Event.prototype, {
 
 // 分解选择器
 function paserSelector(selector) {
-    if (!selector) { return (false); }
-
     selector = selector.split(' ').pop();
     let tag = /^[a-z]+/.exec(selector),
         id = /\#([a-z]+)/.exec(selector),
@@ -75,7 +76,7 @@ function isContains(delegate, elem, handler) {
     // 初次匹配选择
     const {tag, id, clas} = handler.characteristic,
         matchTag = tag && !tag.test(elem.tagName),
-        matchId = id && elem.getAttribute() !== id;
+        matchId = id && elem.getAttribute('id') !== id;
 
     if (matchTag || matchId) {
         return (false);
@@ -128,10 +129,10 @@ function dispatch(...args) {
     event.delegateTarget = this;
     // 沿捕获路径，依次运行回调
     const handlerQueue = tohandlers.call(this, event, elemhandlers);
-    handlerQueue.some((handleObj) => {
+    handlerQueue.every((handleObj) => {
         // 如果事件停止捕获，那么跳出
         if (event.isPropagationStopped()) {
-            return (true);
+            return (false);
         }
 
         const fn = handleObj.handler.callback;
@@ -141,17 +142,18 @@ function dispatch(...args) {
 
         // 特殊类型事件的额外校验
         if (special[event.type] && !special[event.type](event)) {
-            return (false);
+            return (true);
         }
 
         // 运行回调
         const ret = fn.call(handleObj.elem, event);
-        // 若回调完成且返回 true，则阻止事件继续捕获
-        if (ret === true) {
+        // 若回调完成且返回 false，则阻止事件继续捕获
+        if (ret === false) {
             event.preventDefault();
             event.stopPropagation();
-            return (true);
+            return (false);
         }
+        return (true);
     });
 }
 
@@ -167,7 +169,7 @@ function add(elem, types, selector, data, callback) {
     // 如果缓存中没有数据，那么存入空对象
     if (!cache.has(elem)) { cache.set(elem, {}); }
     // 取出当前 DOM 的委托数据
-    const elemData = cache.get(elem) || {};
+    const elemData = cache.get(elem);
     const events = elemData.events = elemData.events || {};
     // 若是初次绑定，那么定义事件回调函数
     elemData.handle = elemData.handle || ((...args) => dispatch.apply(elem, args));
@@ -183,8 +185,8 @@ function add(elem, types, selector, data, callback) {
             data,
             callback,
             selector,
-            characteristic: paserSelector(selector),
-            matches: elem.querySelectorAll(selector)
+            characteristic: !!selector && paserSelector(selector),
+            matches: !!selector && elem.querySelectorAll(selector)
         };
         // 这个事件是初次定义
         if (!events[type]) {

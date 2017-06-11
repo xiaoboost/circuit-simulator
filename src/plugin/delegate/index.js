@@ -7,21 +7,21 @@ const functionMap = new Map();
  * 统一绑定事件时的输入参数格式
  * 标准格式为 type, selector, data, fn
  */
-function fixOnParameters(...args) {
-    if (args.length === 2) {
+function fixOnParameters(type, args) {
+    if (typeof args === 'function') {
         // ( types, fn )
-        return [args[0], '', {}, args[1]];
-    } else if (args.length === 3) {
-        if (typeof args[1] === 'string') {
+        return [type, '', {}, args];
+    } else if (args.length === 2) {
+        if (typeof args[0] === 'string') {
             // ( types, selector, fn )
-            return [args[0], args[1], {}, args[2]];
+            return [type, args[0], {}, args[1]];
         } else {
             // ( types, data, fn )
-            return [args[0], '', args[1], args[2]];
+            return [args[0], '', args[0], args[1]];
         }
     } else if (args.length === 3) {
         // ( type, selector, data, fn )
-        return args;
+        return [type, ...args];
     }
 }
 
@@ -29,27 +29,21 @@ function fixOnParameters(...args) {
  * 统一解除绑定时的输入参数格式
  * 标准格式为 type, selector, fn
  */
-function fixOffParameters(...args) {
-    const f = 'function', s = 'string', u = undefined;
+function fixOffParameters(type, args) {
+    const u = undefined;
 
-    switch (args.length) {
+    if (type === u) {
         // () 解除所有事件
-        case 0: return ['', '*', u];
-        // ( type )
-        case 1: return [args[0], '*', u];
+        return ['', '*', u];
+    } else if (typeof args === 'function') {
+        // ( type, fn )
+        return [type, '', args];
+    } else if (typeof args === 'string') {
+        // ( type, selector )
+        return [type, args, u];
+    } else {
         // ( type, selector, fn )
-        case 3: return args;
-
-        case 2: {
-            if (typeof args[1] === f) {
-                // ( type, fn )
-                return [args[0], '*', args[1]];
-            } else if (typeof args[1] === s) {
-                // ( type, selector )
-                return [args[0], args[1], u];
-            }
-        }
-        default: return false;
+        return [type, args[0], args[1]];
     }
 }
 
@@ -80,7 +74,6 @@ function packageCallback(callback, modifiers) {
     return Object.isEmpty(modifiers) ? callback : packFn;
 }
 
-
 /**
  * 修正输入类型的编号
  * 如果格式错误，则输出 false
@@ -96,7 +89,7 @@ function install(Vue, options) {
     // 添加全局指令
     Vue.directive('delegate', {
         bind(el, binding) {
-            const [typeOri, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
+            const [typeOri, selector, data, fn] = fixOnParameters(binding.arg, binding.value),
                 handler = packageCallback(fn, binding.modifiers),
                 type = fixType(typeOri);
 
@@ -108,7 +101,7 @@ function install(Vue, options) {
             delegate.add(el, type, selector, data, handler);
         },
         unbind(el, binding) {
-            const [typeOri, selector, fn] = fixOffParameters(binding.arg, ...binding.value),
+            const [typeOri, selector, fn] = fixOffParameters(binding.arg, binding.value),
                 handler = functionMap.get(fn),
                 type = fixType(typeOri);
 
