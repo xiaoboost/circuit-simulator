@@ -12,7 +12,7 @@ const special = {
     }
 };
 
-//有效以及无效函数
+// 有效以及无效函数
 function returnTrue() {
     return true;
 }
@@ -174,10 +174,10 @@ function add(elem, types, selector, data, callback) {
     // 分割事件名称
     types = (types || '').match(rnotwhite) || [''];
     types.forEach((type) => {
-        //非法名称，跳过
+        // 非法名称，跳过
         if (!type) { return; }
 
-        //句柄对象
+        // 句柄对象
         const handleObj = {
             type,
             data,
@@ -186,10 +186,10 @@ function add(elem, types, selector, data, callback) {
             characteristic: paserSelector(selector),
             matches: elem.querySelectorAll(selector)
         };
-        //这个事件是初次定义
+        // 这个事件是初次定义
         if (!events[type]) {
             events[type] = [];
-            //绑定监听事件（捕获阶段）
+            // 绑定监听事件（捕获阶段）
             if (elem.addEventListener) {
                 elem.addEventListener(type, elemData.handle, true);
             }

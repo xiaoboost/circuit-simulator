@@ -31,7 +31,7 @@ exports.createVue = function(Compo, mounted = true) {
     if (Object.prototype.toString.call(Compo) === '[object String]') {
         Compo = { template: Compo };
     }
-    return new Vue(Compo).$mount(mounted === false ? null : createElm());
+    return new Vue(Compo).$mount(mounted ? createElm() : null);
 };
 
 /**
@@ -49,7 +49,7 @@ exports.createTest = function(Compo, propsData = {}, mounted = true) {
     }
     const elm = createElm();
     const Ctor = Vue.extend(Compo);
-    return new Ctor({ propsData }).$mount(mounted === false ? null : elm);
+    return new Ctor({ propsData }).$mount(mounted ? elm : null);
 };
 
 /**

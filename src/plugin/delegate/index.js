@@ -80,19 +80,37 @@ function packageCallback(callback, modifiers) {
     return Object.isEmpty(modifiers) ? callback : packFn;
 }
 
+
+/**
+ * 修正输入类型的编号
+ * 如果格式错误，则输出 false
+ * @param {String} type - 原类型
+ * @returns {String|Boolean} type
+ */
+function fixType(type) {
+    const match = type.match(/^[a-z]+/);
+    return !!match && match[0];
+}
+
 function install(Vue, options) {
     // 添加全局指令
     Vue.directive('delegate', {
         bind(el, binding) {
-            const [type, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
-                handler = packageCallback(fn, binding.modifiers);
+            const [typeOri, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
+                handler = packageCallback(fn, binding.modifiers),
+                type = fixType(typeOri);
+
+            if (!type) {
+                throw (new Error('Event type is wrong!'));
+            }
 
             functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
         unbind(el, binding) {
-            const [type, selector, fn] = fixOffParameters(binding.arg, ...binding.value),
-                handler = functionMap.get(fn);
+            const [typeOri, selector, fn] = fixOffParameters(binding.arg, ...binding.value),
+                handler = functionMap.get(fn),
+                type = fixType(typeOri);
 
             functionMap.delete(fn);
             delegate.remove(el, type, selector, handler);
