@@ -180,8 +180,7 @@ describe('plugin-delegate.js', () => {
 
             const a = vm.$el.querySelector('.inner a');
 
-            // 必须强制设定事件是可以取消的，不然 prevent 不会起作用
-            triggerEvent(a, 'click', { cancelable: true });
+            triggerEvent(a, 'click');
             expect(/#test$/.test(window.location.href)).to.be.false;
         });
     });

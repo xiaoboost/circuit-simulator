@@ -13,7 +13,7 @@ const createElm = function() {
 
 /**
  * 回收 vm
- * @param  {Object} vm
+ * @param {Object} vm
  */
 exports.destroyVM = function(vm) {
     vm.$el &&
@@ -55,13 +55,17 @@ exports.createTest = function(Compo, propsData = {}, mounted = true) {
 /**
  * 触发一个事件
  * mouseenter, mouseleave, mouseover, keyup, change, click 等
- * @param  {Element} elm
- * @param  {String} name
- * @param  {*} opts
+ * @param {Element} elm
+ * @param {String} name
+ * @param {Object} {opts={}}
  */
-exports.triggerEvent = function(elm, name, opts) {
+exports.triggerEvent = function(elm, name, opts = {}) {
     let evt;
-
+    // 默认全部模拟事件允许取消，允许冒泡
+    opts = Object.assign(opts, {
+        bubbles: true,
+        cancelable: true
+    });
     if (/^mouse|click/.test(name)) {
         evt = new MouseEvent(name, opts);
     } else if (/^key/.test(name)) {
@@ -80,9 +84,9 @@ exports.triggerEvent = function(elm, name, opts) {
 /**
  * 触发 “mouseup” 和 “mousedown” 事件
  * @param {Element} elm
- * @param {*} opts
+ * @param {Object} {opts={}}
  */
-exports.triggerClick = function(elm, opts) {
+exports.triggerClick = function(elm, opts = {}) {
     exports.triggerEvent(elm, 'mousedown', opts);
     exports.triggerEvent(elm, 'mouseup', opts);
 
