@@ -1,11 +1,11 @@
 import '@/libraries/init';
 
 import Vue from 'vue';
-import App from './App';
-import store  from './vuex';
-import router from './router';
+import App from '@/App';
+import store  from '@/vuex';
+import router from '@/router';
 
-import delegate from './plugin/delegate';
+import delegate from '@/plugin/delegate';
 
 Vue.use(delegate);
 Vue.config.productionTip = false;
