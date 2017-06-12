@@ -45,7 +45,6 @@ describe('plugin-delegate.js', () => {
                 }
             }
         };
-
         it('click', () => {
             vm = createVue(template);
 
@@ -77,6 +76,10 @@ describe('plugin-delegate.js', () => {
             expect(vm.mouseleave).to.equal(1);
             triggerEvent(text2, 'mouseleave');
             expect(vm.mouseleave).to.equal(1);
+        });
+        it('remove', () => {
+            vm = createVue(template);
+            vm.$destroy();
         });
     });
     describe('directives with modifiers', () => {
@@ -182,6 +185,245 @@ describe('plugin-delegate.js', () => {
 
             triggerEvent(a, 'click');
             expect(/#test$/.test(window.location.href)).to.be.false;
+        });
+    });
+    describe('fix on parameters', () => {
+        const template = {
+            template: `
+                <div class="outter">
+                    <div class="inner">
+                        <span class="text1">第一个文本</span>
+                        <span class="text2">第二个文本</span>
+                    </div>
+                </div>`,
+            data() {
+                return {
+                    click: 0
+                };
+            }
+        };
+        it('( type, fn )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', () => this.click++);
+                }
+            }));
+
+            triggerEvent(vm.$el, 'click');
+            expect(vm.click).to.equal(1);
+        });
+        it('( types, selector, fn )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.inner', () => this.click++);
+                }
+            }));
+
+            const inner = vm.$el.querySelector('.inner');
+            triggerEvent(inner, 'click');
+            expect(vm.click).to.equal(1);
+        });
+        it('( types, data, fn )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', {test: 2008}, (e) => this.click = e.data.test);
+                }
+            }));
+
+            triggerEvent(vm.$el, 'click');
+            expect(vm.click).to.equal(2008);
+        });
+        it('( type, selector, data, fn )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.inner', {test: 2008}, (e) => this.click = e.data.test);
+                }
+            }));
+
+            const inner = vm.$el.querySelector('.inner');
+            triggerEvent(inner, 'click');
+            expect(vm.click).to.equal(2008);
+        });
+    });
+    describe('fix off parameters', () => {
+        const template = {
+            template: `
+                <div class="outter">
+                    <div class="inner">
+                        <span class="text1">第一个文本</span>
+                        <span class="text2">第二个文本</span>
+                    </div>
+                </div>`,
+            data() {
+                return {
+                    text1: 0,
+                    text2: 0
+                };
+            }
+        };
+        it('( )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.text1', () => this.text1++);
+                    this.$$on('mouseenter', '.text2', () => this.text2++);
+                },
+                methods: {
+                    clear() {
+                        this.$$off();
+                    }
+                }
+            }));
+
+            const text1 = vm.$el.querySelector('.text1'),
+                text2 = vm.$el.querySelector('.text2');
+
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(1);
+
+            vm.clear();
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(1);
+        });
+        it('( type )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.text1', () => this.text1++);
+                    this.$$on('mouseenter', '.text2', () => this.text2++);
+                }
+            }));
+
+            const text1 = vm.$el.querySelector('.text1'),
+                text2 = vm.$el.querySelector('.text2');
+
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(1);
+
+            vm.$$off('click');
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(2);
+
+            vm.$$off('mouseenter');
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(2);
+        });
+        it('( type, fn )', () => {
+            let sign = 0;
+            const handler = () => sign ++;
+
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.text1', handler);
+                }
+            }));
+
+            const text1 = vm.$el.querySelector('.text1');
+
+            triggerEvent(text1, 'click');
+            expect(sign).to.equal(1);
+
+            vm.$$off('click', handler);
+            triggerEvent(text1, 'click');
+            expect(sign).to.equal(1);
+        });
+        it('( type, selector )', () => {
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.text1', () => this.text1++);
+                    this.$$on('mouseenter', '.text2', () => this.text2++);
+                }
+            }));
+
+            const text1 = vm.$el.querySelector('.text1'),
+                text2 = vm.$el.querySelector('.text2');
+
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(1);
+
+            vm.$$off('click', '.text1');
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(2);
+
+            vm.$$off('mouseenter', '.text2');
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(vm.text1).to.equal(1);
+            expect(vm.text2).to.equal(2);
+        });
+        it('( type, selector, fn )', () => {
+            let sign1 = 0, sign2 = 0;
+            const handler1 = () => sign1 ++;
+            const handler2 = () => sign2 ++;
+
+            vm = createVue(Object.assign(template, {
+                mounted() {
+                    this.$$on('click', '.text1', handler1);
+                    this.$$on('mouseenter', '.text2', handler2);
+                }
+            }));
+
+            const text1 = vm.$el.querySelector('.text1'),
+                text2 = vm.$el.querySelector('.text2');
+
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(sign1).to.equal(1);
+            expect(sign2).to.equal(1);
+
+            vm.$$off('click', '.text1', handler2);
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(sign1).to.equal(2);
+            expect(sign2).to.equal(2);
+
+            vm.$$off('click', '.text1', handler1);
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(sign1).to.equal(2);
+            expect(sign2).to.equal(3);
+
+            vm.$$off('mouseenter', '.text2', handler2);
+            triggerEvent(text1, 'click');
+            triggerEvent(text2, 'mouseenter');
+            expect(sign1).to.equal(2);
+            expect(sign2).to.equal(3);
+        });
+    });
+    describe('error test', () => {
+        it('type error', () => {
+            const template = {
+                template: `
+                    <div
+                        class="outter"
+                        v-delegate="['span.text1', handler]">
+                        <div class="inner">
+                            <span class="text1">第一个文本</span>
+                            <span class="text2">第二个文本</span>
+                        </div>
+                    </div>`,
+                methods: {
+                    handler() {}
+                }
+            };
+
+            try {
+                vm = createVue(template);
+            } catch (err) {
+                expect(err.toString()).to.equal('Error: Event type is wrong!');
+            }
         });
     });
 });

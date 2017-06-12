@@ -227,6 +227,7 @@ function remove(elem, types, selector, callback) {
     }
     if (types.length > 1) {
         types.forEach((type) => remove(elem, type, selector, callback));
+        return;
     }
 
     const type = types[0];
