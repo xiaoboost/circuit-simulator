@@ -192,9 +192,7 @@ function add(elem, types, selector, data, callback) {
         if (!events[type]) {
             events[type] = [];
             // 绑定监听事件（捕获阶段）
-            if (elem.addEventListener) {
-                elem.addEventListener(type, elemData.handle, true);
-            }
+            elem.addEventListener(type, elemData.handle, true);
         }
         //selector有重复的，那么就覆盖，没有重复的那就添加到末尾
         if (!(events[type].some((n, i, arr) => (selector === n.selector) && (arr[i] = handleObj)))) {
@@ -220,7 +218,7 @@ function remove(elem, types, selector, callback) {
     }
 
     // 拆分事件类型
-    types = ( types || '' ).match(rnotwhite);
+    types = (types || '').match(rnotwhite);
     // 空类型，表示输入是空数据，当前元素的所有事件都要删除
     if (!types) {
         types = Object.keys(events);

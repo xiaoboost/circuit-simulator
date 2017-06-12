@@ -57,6 +57,9 @@ describe('plugin-delegate.js', () => {
             triggerEvent(text2, 'click');
             expect(vm.text_click_1).to.equal(1);
             expect(vm.text_click_2).to.equal(1);
+
+            vm.$$on();
+            vm.$destroy();
         });
         it('mouse(enter|leave)', () => {
             vm = createVue(template);
@@ -76,10 +79,6 @@ describe('plugin-delegate.js', () => {
             expect(vm.mouseleave).to.equal(1);
             triggerEvent(text2, 'mouseleave');
             expect(vm.mouseleave).to.equal(1);
-        });
-        it('remove', () => {
-            vm = createVue(template);
-            vm.$destroy();
         });
     });
     describe('directives with modifiers', () => {
@@ -403,7 +402,7 @@ describe('plugin-delegate.js', () => {
         });
     });
     describe('error test', () => {
-        it('type error', () => {
+        it('directives type error', () => {
             const template = {
                 template: `
                     <div
@@ -424,6 +423,60 @@ describe('plugin-delegate.js', () => {
             } catch (err) {
                 expect(err.toString()).to.equal('Error: Event type is wrong!');
             }
+        });
+    });
+    describe('callback', () => {
+        it('return false', () => {
+            vm = createVue({
+                template: `
+                    <div class="outter">
+                        <a class="inner" href="#test">
+                            <span class="text">第一个文本</span>
+                        </a>
+                    </div>`,
+                data() {
+                    return {
+                        click: 0
+                    };
+                },
+                mounted() {
+                    this.$$on('click', 'a.inner', () => false);
+                    this.$$on('click', '.text', () => this.click++);
+                }
+            });
+
+            const a = vm.$el.querySelector('a.inner'),
+                text = vm.$el.querySelector('.text');
+
+            triggerEvent(text, 'click');
+            expect(vm.click).to.equal(0);
+            expect(/#test$/.test(window.location.href)).to.be.false;
+        });
+        it('event.stopImmediatePropagation()', () => {
+            let sign = 'test';
+            const text1 = '原生事件', text2 = '委托事件';
+
+            vm = createVue({
+                template: `
+                    <div class="outter">
+                        <div class="inner"></div>
+                    </div>`,
+                mounted() {
+                    this.$$on('click', '.inner', (e) => {
+                        sign = text2;
+                        e.stopImmediatePropagation();
+                    });
+                }
+            });
+
+            vm.$el.addEventListener('click', (e) => {
+                sign = text1;
+                e.stopImmediatePropagation();
+            });
+
+            const inner = vm.$el.querySelector('.inner');
+            triggerEvent(inner, 'click');
+            expect(sign).to.equal(text2);
         });
     });
 });

@@ -8,7 +8,7 @@ const functionMap = new Map();
  * 标准格式为 type, selector, data, fn
  */
 function fixOnParameters(type, selector, data, fn) {
-    if (!!selector.apply) {
+    if (selector && !!selector.apply) {
         // ( types, fn )
         return [type, '', {}, selector];
     } else if (!fn) {
