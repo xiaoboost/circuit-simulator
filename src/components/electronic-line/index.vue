@@ -12,7 +12,7 @@ export default {
     props: {
         value: {
             type: Object,
-            default: () => {}
+            default: () => ({})
         },
         focus: {
             type: Boolean,

@@ -3,8 +3,7 @@
     :style="background"
     :class="['drawing-main', { 'no-event': !exclusion }]">
     <svg
-        height="100%"
-        width="100%"
+        height="100%" width="100%"
         @mousewheel="mousewheel($event)"
         @mousedown.self.stop="mousedownSch($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
