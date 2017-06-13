@@ -479,4 +479,31 @@ describe('plugin-delegate.js', () => {
             expect(sign).to.equal(text2);
         });
     });
+    it('event after bind', (done) => {
+        vm = createVue({
+            template: `
+                <div class="outter">
+                    <span v-if="vision" class="inner">
+                        <a id="jump">第一个文本</a>
+                    </span>
+                </div>`,
+            data() {
+                return {
+                    vision: false,
+                    click: 0
+                };
+            },
+            mounted() {
+                this.$$on('click', '#jump', () => this.click++);
+            }
+        });
+
+        vm.vision = true;
+        vm.$nextTick(() => {
+            const a = vm.$el.querySelector('#jump');
+            triggerEvent(a, 'click');
+            expect(vm.click).to.equal(1);
+            done();
+        });
+    });
 });

@@ -52,17 +52,19 @@ Object.assign($Event.prototype, {
 });
 
 // 分解选择器
-function paserSelector(selector) {
-    selector = selector.split(' ').pop();
-    let tag = /^[a-z]+/.exec(selector),
-        id = /\#([a-z]+)/.exec(selector),
-        clas = selector.match(/\.[a-z]+/g);
+function paserSelector(all) {
+    return (all || '').split(',').map((str) => {
+        const selector = str.trim().split(' ').pop();
+        let tag = /^[a-z]+/.exec(selector),
+            id = /\#([^.#]+)/.exec(selector),
+            clas = selector.match(/\.[^.#]+/g);
 
-    id = id && id[1];
-    tag = tag && (new RegExp(tag[0], 'i'));
-    clas = clas && clas.map((n) => n.substr(1));
+        id = id && id[1];
+        tag = tag && (new RegExp(tag[0], 'i'));
+        clas = clas && clas.map((n) => n.substr(1));
 
-    return { tag, id, clas };
+        return { tag, id, class: clas };
+    });
 }
 
 // 根据选择器匹配被选中的 DOM
@@ -73,19 +75,17 @@ function isContains(delegate, elem, handler) {
         return (true);
     }
 
-    // 初次匹配选择
-    const {tag, id, clas} = handler.characteristic,
-        matchTag = tag && !tag.test(elem.tagName),
-        matchId = id && elem.getAttribute('id') !== id;
+    // 当前 DOM 元素属性
+    const el_tag = elem.tagName,
+        el_id = elem.getAttribute('id'),
+        el_class = elem.classList;
 
-    if (matchTag || matchId) {
-        return (false);
-    }
-
-    const className = elem.getAttribute('class'),
-        matchClass = clas && !clas.every((n) => className && className.includes(n));
-
-    if (matchClass) {
+    // 匹配选择器
+    if (handler.characteristic.every((selector) =>
+        ((selector.tag && !selector.tag.test(el_tag)) ||
+        (selector.id && selector.id !== el_id) ||
+        (selector.class && !selector.class.every((n) => el_class.contains(n))))
+    )) {
         return (false);
     }
 
@@ -185,7 +185,7 @@ function add(elem, types, selector, data, callback) {
             data,
             callback,
             selector,
-            characteristic: !!selector && paserSelector(selector),
+            characteristic: paserSelector(selector),
             matches: !!selector && elem.querySelectorAll(selector)
         };
         // 这个事件是初次定义
