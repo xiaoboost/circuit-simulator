@@ -7,7 +7,8 @@ function Collection() {
     this._hash = {};
     this.length = 0;
 }
-Collection.prototype = {
+Collection.prototype = Object.create(Array.prototype);
+Object.assign(Collection.prototype, {
     constructor: Collection,
     has(id) {
         id = id.id || id;
@@ -49,8 +50,7 @@ Collection.prototype = {
         }
         throw ('器件数量超出最大限制');
     }
-};
-Object.setPrototypeOf(Collection.prototype, Array.prototype);
+});
 
 // 是否是器件对象
 // TODO: 现在是包含id属性的就算，等之后器件数据结构定下来之后就能更精确的判断了

@@ -16,7 +16,8 @@ function Point(a, b) {
         this[1] = b[1] - a[1];
     }
 }
-Point.prototype = {
+Point.prototype = Object.create(Array.prototype);
+Object.assign(Point.prototype, {
     // 构造函数
     constructor: Point,
     // 默认长度为 2
@@ -165,8 +166,7 @@ Point.prototype = {
         }
         return ans;
     }
-};
-Object.setPrototypeOf(Point.prototype, Array.prototype);
+});
 
 function isPoint(a) {
     return (
