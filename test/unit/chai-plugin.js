@@ -12,9 +12,9 @@ function compare(actual, expected) {
 /**
  * 比较两个数组是否相等
  * 数组元素必须是严格相等，即 ===；允许嵌套
- * @param {Array} actual
- * @param {Array} expected
- * @returns {Boolean}
+ * @param {array} actual
+ * @param {array} expected
+ * @returns {boolean}
  */
 function compareArr(actual, expected) {
     if (!expected || !actual) {
@@ -30,9 +30,9 @@ function compareArr(actual, expected) {
 /**
  * 比较两个对象是否相等
  * 对象元素必须是严格相等，即 ===；允许嵌套
- * @param {Object} actual
- * @param {Object} expected
- * @returns {Boolean}
+ * @param {object} actual
+ * @param {object} expected
+ * @returns {boolean}
  */
 function compareObj(actual, expected) {
     const actualKeys = Object.keys(actual),
@@ -48,9 +48,9 @@ function compareObj(actual, expected) {
 /**
  * 比较数组是否相等
  * 与上面那个的不同点在于，这里这个不在乎顺序，重复元素将会被当作只有一个
- * @param {Array} actual
- * @param {Array} expected
- * @returns {Boolean}
+ * @param {array} actual
+ * @param {array} expected
+ * @returns {boolean}
  */
 function compareArrWithoutOrder(actual, expected) {
     if (!expected || !actual) {
@@ -69,9 +69,9 @@ function compareArrWithoutOrder(actual, expected) {
 /**
  * 约等于
  * a, b 中下标为 0 和 1 的两个数字，在10位有效数字内相等是否都相等
- * @param {Point|Array} a
- * @param {Point|Array} b
- * @return {Boolean}
+ * @param {point|array} a
+ * @param {point|array} b
+ * @return {boolean}
  */
 function approximate(actual, expected) {
     const i = 10;
