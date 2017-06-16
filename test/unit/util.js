@@ -2,7 +2,7 @@ import Vue from 'vue';
 
 /**
  * 创建 div 元素并添加到 DOM 上
- * @return {Obect} DOM
+ * @return {object} DOM
  */
 const createElm = function() {
     const elm = document.createElement('div');
@@ -13,7 +13,7 @@ const createElm = function() {
 
 /**
  * 回收 vm
- * @param {Object} vm
+ * @param {object} vm
  */
 exports.destroyVM = function(vm) {
     vm.$el &&
@@ -23,9 +23,9 @@ exports.destroyVM = function(vm) {
 
 /**
  * 创建一个 Vue 的实例对象
- * @param  {Object|String} Compo    - 组件配置，可直接传 template
- * @param  {Boolean} {mounted=true} - 是否添加到 DOM 上
- * @return {Object} vm
+ * @param  {object|string} Compo    - 组件配置，可直接传 template
+ * @param  {boolean} {mounted=true} - 是否添加到 DOM 上
+ * @return {object} vm
  */
 exports.createVue = function(Compo, mounted = true) {
     if (Object.prototype.toString.call(Compo) === '[object String]') {
@@ -37,10 +37,10 @@ exports.createVue = function(Compo, mounted = true) {
 /**
  * 创建一个测试组件实例
  * @link https://cn.vuejs.org/v2/guide/unit-testing.html#编写可被测试的组件
- * @param  {Object}  Compo          - 组件对象
- * @param  {Object}  propsData      - props 数据
- * @param  {Boolean} {mounted=true} - 是否添加到 DOM 上
- * @return {Object}  vm
+ * @param  {object}  Compo          - 组件对象
+ * @param  {object}  propsData      - props 数据
+ * @param  {boolean} {mounted=true} - 是否添加到 DOM 上
+ * @return {object}  vm
  */
 exports.createTest = function(Compo, propsData = {}, mounted = true) {
     if (propsData === true || propsData === false) {
@@ -55,9 +55,9 @@ exports.createTest = function(Compo, propsData = {}, mounted = true) {
 /**
  * 触发一个事件
  * mouseenter, mouseleave, mouseover, keyup, change, click 等
- * @param {Element} elm
- * @param {String} name
- * @param {Object} {opts={}}
+ * @param {element} elm
+ * @param {string} name
+ * @param {object} {opts={}}
  */
 exports.triggerEvent = function(elm, name, opts = {}) {
     let evt;
@@ -83,8 +83,8 @@ exports.triggerEvent = function(elm, name, opts = {}) {
 
 /**
  * 触发 “mouseup” 和 “mousedown” 事件
- * @param {Element} elm
- * @param {Object} {opts={}}
+ * @param {element} elm
+ * @param {object} {opts={}}
  */
 exports.triggerClick = function(elm, opts = {}) {
     exports.triggerEvent(elm, 'mousedown', opts);
@@ -95,8 +95,8 @@ exports.triggerClick = function(elm, opts = {}) {
 
 /**
  * 等待固定时间的异步函数
- * @param  {Number} {time=10}
- * @return {Promise} awit
+ * @param  {number} {time = 10}
+ * @return {promise} awit
  */
 exports.delay = function(time = 10) {
     return new Promise((resolve) => {
