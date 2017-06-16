@@ -109,7 +109,8 @@ function install(Vue, options) {
                 type = fixType(typeOri);
 
             functionMap.delete(fn);
-            delegate.remove(el, type, selector, handler);
+            // 删除绑定在当前 DOM 上的所有事件
+            delegate.remove(el, '', '*');
         }
     });
     // 添加实例方法
