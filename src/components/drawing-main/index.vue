@@ -8,8 +8,8 @@
         @mousedown.self.stop="mousedownSch($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
+                ref="lines"
                 v-for="i in lines.length"
-                :ref="lines[i - 1].id"
                 :key="lines[i - 1].id"
                 :value.sync="lines[i - 1]"
                 :focus="linesNow.includes(lines[i - 1].id)"
@@ -17,8 +17,8 @@
                 @event="EventControler">
             </elec-line>
             <elec-part
+                ref="parts"
                 v-for="i in parts.length"
-                :ref="parts[i - 1].id"
                 :key="parts[i - 1].id"
                 :value.sync="parts[i - 1]"
                 :focus="partsNow.includes(parts[i - 1].id)"
@@ -69,11 +69,18 @@ export default {
         },
         lines() {
             return this.$store.state.collection.Lines;
+        },
+        components() {
+            const parts = this.$refs.parts || [],
+                lines = this.$refs.lines || [];
+
+            return parts.concat(lines);
         }
     },
     methods: {
         find(id) {
-            return this.$refs[id][0];
+            const property = typeof id === 'string' ? 'id' : '$el';
+            return this.components.filter((n) => id === n[property])[0];
         },
         // 清空当前操作器件堆栈
         clearFocus(...args) {

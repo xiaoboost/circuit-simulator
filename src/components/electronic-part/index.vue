@@ -34,10 +34,10 @@
 </template>
 
 <script>
+import { Electronics } from './shape';
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
 import { schMap } from '@/libraries/maphash';
-import { Electronics } from './shape';
 
 // 2长度的数组 乘以 2*2的矩阵
 function product(a, b) {
@@ -136,7 +136,7 @@ export default {
             const el = this.$el,
                 parentEl = this.$parent.$el,
                 handlers = (e) => this.position = e.$mouse,
-                stopEvent = { el: parentEl, name: 'mousedown', which: 'left' },
+                stopEvent = { el: parentEl, type: 'mousedown', which: 'left' },
                 afterEvent = () => {
                     const node = this.position;
                     this.position = $P(node.round(20)
@@ -185,7 +185,7 @@ export default {
         moveText() {
             const parentEl = this.$parent.$el,
                 afterEvent = () => this.setText(),
-                stopEvent = { el: parentEl, name: 'mouseup', which: 'left' },
+                stopEvent = { el: parentEl, type: 'mouseup', which: 'left' },
                 handlers = (e) => this.textPosition = this.textPosition.add(e.$bias);
 
             this.$emit('focus', this.id);
@@ -208,8 +208,8 @@ export default {
                 id,
                 type: 'line',
                 connect: [this.id],
-                way: [point.position.add(this.position)],
                 current: {
+                    start: point.position.add(this.position),
                     direction: point.direction
                 }
             });

@@ -1,4 +1,13 @@
 import { $P } from '@/libraries/point';
+import { schMap } from '@/libraries/maphash';
+
+// 四方向
+const rotate = [
+    [[1, 0], [0, 1]],   //同相
+    [[0, 1], [-1, 0]],  //顺时针
+    [[0, -1], [1, 0]],  //逆时针
+    [[-1, 0], [0, -1]]  //反相
+];
 
 // 导线路径类
 function LineWay(args) {
@@ -32,4 +41,11 @@ Object.assign(LineWay.prototype, {
     },
 });
 
-export { LineWay };
+/**
+ * 导线路径搜索
+ */
+function lineSearch(e, current) {
+
+}
+
+export { lineSearch };
