@@ -13,8 +13,8 @@
                 :key="lines[i - 1].id"
                 :value.sync="lines[i - 1]"
                 :focus="linesNow.includes(lines[i - 1].id)"
-                @setEvent="EventControler"
-                @focus="clearFocus">
+                @focus="clearFocus"
+                @event="EventControler">
             </elec-line>
             <elec-part
                 v-for="i in parts.length"
@@ -22,9 +22,9 @@
                 :key="parts[i - 1].id"
                 :value.sync="parts[i - 1]"
                 :focus="partsNow.includes(parts[i - 1].id)"
-                @setEvent="EventControler"
                 @select="selectPart"
-                @focus="clearFocus">
+                @focus="clearFocus"
+                @event="EventControler">
             </elec-part>
         </g>
     </svg>

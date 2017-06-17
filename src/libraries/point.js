@@ -179,5 +179,6 @@ function isPoint(a) {
 function $P(a, b) {
     return (new Point(a, b));
 }
+$P.isPoint = isPoint;
 
 export { $P };

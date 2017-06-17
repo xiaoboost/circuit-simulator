@@ -1,8 +1,10 @@
 <template>
+    <!--@mousedown="mousedownEvent($event)"-->
 <g
-    @mousedown="mousedownEvent($event)"
     :class="['part', { 'focus': focus }]"
-    :transform="`matrix(${rotate.join()},${position.join()})`">
+    :transform="`matrix(${rotate.join()},${position.join()})`"
+    v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
+    v-delegate:mousedown-b.left.stop="['.text-params', moveText]">
     <aspect
         v-for="(info, i) in this.shape.aspect"
         :value="info" :key="i">
@@ -133,7 +135,7 @@ export default {
         newPart() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
-                handler = (e) => this.position = e.mouse,
+                handlers = (e) => this.position = e.$mouse,
                 stopEvent = { el: parentEl, name: 'mousedown', which: 'left' },
                 afterEvent = () => {
                     const node = this.position;
@@ -149,59 +151,54 @@ export default {
                 };
 
             el.setAttribute('opacity', '0.4');
-            this.$emit('setEvent', {
-                handler,
+            this.$emit('event', {
+                handlers,
                 stopEvent,
                 afterEvent,
-                exclusion: true,
                 cursor: 'move_part'
             });
         },
         // 器件 mousedown 事件分发
-        mousedownEvent(event) {
-            if (this.$parent.exclusion) { return (false); }
-
-            const elm = event.target.parentNode;
-            if (!event.button) {
-                // 左键
-                if (elm.classList.contains('text-params')) {
-                    // 器件文本，移动文本
-                    this.moveText();
-                } else if (elm.classList.contains('part-point')) {
-                    // 器件管脚，新建导线
-                    const index = elm.getAttribute('index');
-                    this.newLine(index);
-                } else {
-                    // 器件本体，移动器件
-                    this.$emit('select', this.id, 'left');
-                }
-            } else if (event.button === 2) {
-                // 右键
-                // TODO: 器件右键菜单
-                this.$emit('select', this.id, 'right');
-                event.stopPropagation();
-            }
-            // 事件全部停止冒泡
-            event.stopPropagation();
-        },
+        // mousedownEvent(event) {
+        //     const elm = event.target.parentNode;
+        //     if (!event.button) {
+        //         // 左键
+        //         if (elm.classList.contains('text-params')) {
+        //             // 器件文本，移动文本
+        //             this.moveText();
+        //         } else if (elm.classList.contains('part-point')) {
+        //             // 器件管脚，新建导线
+        //             const index = elm.getAttribute('index');
+        //             this.newLine(index);
+        //         } else {
+        //             // 器件本体，移动器件
+        //             this.$emit('select', this.id, 'left');
+        //         }
+        //     } else if (event.button === 2) {
+        //         // 右键
+        //         // TODO: 器件右键菜单
+        //         this.$emit('select', this.id, 'right');
+        //     }
+        //     // 事件全部停止冒泡
+        //     event.stopPropagation();
+        // },
         moveText() {
-            // 设定事件
             const parentEl = this.$parent.$el,
-                handler = (e) => this.textPosition = this.textPosition.add(e.bias),
+                afterEvent = () => this.setText(),
                 stopEvent = { el: parentEl, name: 'mouseup', which: 'left' },
-                afterEvent = () => this.setText();
+                handlers = (e) => this.textPosition = this.textPosition.add(e.$bias);
 
             this.$emit('focus', this.id);
-            this.$emit('setEvent', {
-                handler,
+            this.$emit('event', {
+                handlers,
                 stopEvent,
                 afterEvent,
-                exclusion: true,
                 cursor: 'move_part'
             });
         },
-        newLine(mark) {
-            const lines = this.$store.state.collection.Lines,
+        newLine(event) {
+            const mark = event.currentTarget.getAttribute('index'),
+                lines = this.$store.state.collection.Lines,
                 id = lines.newId('line_'),
                 point = this.points[mark];
 

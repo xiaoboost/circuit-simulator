@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { LineWay } from './line-way';
 import { $M } from '@/libraries/matrix';
 
 export default {
@@ -30,7 +31,7 @@ export default {
             return 'M' + this.way.map((n) => n.join(',')).join('L');
         },
         pathRects() {
-            return false;
+            return [];
         }
     },
     method: {
@@ -41,6 +42,7 @@ export default {
     mounted() {
         // 展开数据
         Object.assign(this, this.value);
+        this.way = new LineWay(this.way);
         // 路径只有一个点，绘制新导线
         if (this.way.length === 1) {
             this.startDrawing();
