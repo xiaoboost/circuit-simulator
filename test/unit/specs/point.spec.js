@@ -121,19 +121,19 @@ describe('point.js', () => {
         expect(map).to.be.equalWithoutOrder(mapDefault);
     });
     it('#point.aroundInf', () => {
-        const point = $P(0, 0), abs = Math.abs;
+        const point = $P(5, -4), abs = Math.abs;
 
         function distanceLimit(limit) {
-            return (node) => abs(node[0]) + abs(node[1]) > limit;
+            return (node) => (abs(node[0] - point[0]) + abs(node[1] - point[1]) > limit);
         }
 
         let ans = point.aroundInf(distanceLimit(-1), 5);
-        expect(ans).to.be.equalWithoutOrder([[0, 0]]);
+        expect(ans).to.be.equalWithoutOrder([[5, -4]]);
         ans = point.aroundInf(distanceLimit(0), 5);
-        expect(ans).to.be.equalWithoutOrder([[0, 5], [5, 0], [0, -5], [-5, 0]]);
+        expect(ans).to.be.equalWithoutOrder([[5, 1], [10, -4], [5, -9], [0, -4]]);
         ans = point.aroundInf(distanceLimit(10), 5);
-        expect(ans).to.be.equalWithoutOrder([[0, 15], [0, -15], [-15, 0], [15, 0]]);
+        expect(ans).to.be.equalWithoutOrder([[5, 11], [5, -19], [-10, -4], [20, -4]]);
         ans = point.aroundInf(distanceLimit(10));
-        expect(ans).to.be.equalWithoutOrder([[0, 11], [0, -11], [-11, 0], [11, 0]]);
+        expect(ans).to.be.equalWithoutOrder([[5, 7], [5, -15], [-6, -4], [16, -4]]);
     });
 });

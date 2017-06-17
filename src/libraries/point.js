@@ -155,11 +155,13 @@ Object.assign(Point.prototype, {
         const ans = fn(this) ? [Array.from(this)] : [];
         for (let m = 1; !ans.length; m++) {
             for (let i = 0; i < m; i++) {
-                const x = i * fa, y = (m - i) * fa;
-                const around = (!x)
-                    ? [[0, y], [0, -y], [y, 0], [-y, 0]]
-                    : [[x, y], [x, -y], [-x, y], [-x, -y]];
-                ans.push(...around.filter((point) => fn(point)));
+                const x = i * fa, y = (m - i) * fa,
+                    around = (!x)
+                        ? [[0, y], [0, -y], [y, 0], [-y, 0]]
+                        : [[x, y], [x, -y], [-x, y], [-x, -y]],
+                    points = around.map((n) => this.add(n));
+
+                ans.push(...points.filter((point) => fn(point)));
 
                 if (ans.length) { break; }
             }
