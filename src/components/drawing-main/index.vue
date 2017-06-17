@@ -123,11 +123,11 @@ export default {
 
             if (size < 20) {
                 size = 20;
-                return (true);
+                return (false);
             }
             if (size > 80) {
                 size = 80;
-                return (true);
+                return (false);
             }
 
             this.position = this.position
@@ -140,20 +140,13 @@ export default {
         },
         // 移动图纸
         moveMap(e) {
-            if (this.exclusion) { return (false); }
-
             const el = this.$el,
                 stopEvent = { el, name: 'mouseup', which: 'right' },
-                handler = (e) =>
+                handlers = (e) =>
                     this.position = this.position
-                        .add(e.bias.mul(this.zoom));
+                        .add(e.$bias.mul(this.zoom));
 
-            this.EventControler({
-                handler,
-                stopEvent,
-                exclusion: true,
-                cursor: 'move_map'
-            });
+            this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
         },
         // TODO: 绘制多选框
         selectMore() {
