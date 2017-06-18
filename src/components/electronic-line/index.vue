@@ -80,7 +80,7 @@ export default {
                 mouseenter = (e) => current.onPart = this.find(e.currentTarget),
                 mouseleaves = () => current.onPart = false,
                 draw = (e) => {
-                    current.end = $P(e.pageX, e.pageY);
+                    current.end = e.$mouse;
                     this.way = lineSearch(current);
                 },
                 afterEvent = () => {
