@@ -85,11 +85,14 @@ class Matrix {
     toString() {
         const maxColumnLen = [];
         for (let i = 0; i < this.column; i++) {
-            maxColumnLen.push(this.getColumn(i)
-                .map((n) => String(n))
-                .reduce((len, item) => item.length > len
-                    ? item.length : len, 0
-            ));
+            maxColumnLen.push(
+                this.getColumn(i)
+                    .map((n) => String(n))
+                    .reduce(
+                        (len, item) =>
+                            item.length > len ? item.length : len, 0
+                    )
+            );
         }
 
         let str = '';
