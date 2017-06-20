@@ -1,6 +1,5 @@
 <template>
-<g
-    :class="['line', { 'focus': focus }]">
+<g :class="['line', { 'focus': focus }]">
     <path :d="way2path"></path>
     <rect
         class="line-rect"

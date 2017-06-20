@@ -259,6 +259,8 @@ function AStartSearch(start, end, vector, opt) {
         point: start, junction: 0,
         parent: false, straight: true, vector
     };
+    // 起点的 junctionParent 等于其自身
+    first.junctionParent = first;
     first.value = rule.calValue(first);
     stack.push(first);
 
@@ -272,7 +274,7 @@ function AStartSearch(start, end, vector, opt) {
         for (let i = 0; i < 3; i++) {
             // 生成扩展节点
             const nodeExpand = newNode(nodenow, rotate[i]);
-            //节点性质计算
+            // 节点性质计算
             nodeExpand.straight = true;
             nodeExpand.parent = nodenow;
             nodeExpand.value = rule.calValue(nodeExpand);
@@ -292,12 +294,11 @@ function AStartSearch(start, end, vector, opt) {
         }
         // 没有可能路径，直接返回
         if (!stack.openSize && !endStatus) {
-            return (new LineWay($P(start)));
+            return (new LineWay(start));
         }
     }
     // 终点回溯，生成路径
     const way = new LineWay();
-    //起点的 junctionParent 等于其自身
     while (endStatus === endStatus.junctionParent) {
         way.push($P(endStatus.point).mul(20));
         endStatus = endStatus.junctionParent;

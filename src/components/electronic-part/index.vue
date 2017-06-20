@@ -1,5 +1,4 @@
 <template>
-    <!--@mousedown="mousedownEvent($event)"-->
 <g
     :class="['part', { 'focus': focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`"
@@ -158,30 +157,6 @@ export default {
                 cursor: 'move_part'
             });
         },
-        // 器件 mousedown 事件分发
-        // mousedownEvent(event) {
-        //     const elm = event.target.parentNode;
-        //     if (!event.button) {
-        //         // 左键
-        //         if (elm.classList.contains('text-params')) {
-        //             // 器件文本，移动文本
-        //             this.moveText();
-        //         } else if (elm.classList.contains('part-point')) {
-        //             // 器件管脚，新建导线
-        //             const index = elm.getAttribute('index');
-        //             this.newLine(index);
-        //         } else {
-        //             // 器件本体，移动器件
-        //             this.$emit('select', this.id, 'left');
-        //         }
-        //     } else if (event.button === 2) {
-        //         // 右键
-        //         // TODO: 器件右键菜单
-        //         this.$emit('select', this.id, 'right');
-        //     }
-        //     // 事件全部停止冒泡
-        //     event.stopPropagation();
-        // },
         moveText() {
             const parentEl = this.$parent.$el,
                 afterEvent = () => this.setText(),
