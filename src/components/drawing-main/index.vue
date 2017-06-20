@@ -79,8 +79,8 @@ export default {
     },
     methods: {
         find(id) {
-            const property = typeof id === 'string' ? 'id' : '$el';
-            return this.components.filter((n) => id === n[property])[0];
+            const prop = typeof id === 'string' ? 'id' : '$el';
+            return this.components.find((n) => id === n[prop]);
         },
         // 清空当前操作器件堆栈
         clearFocus(...args) {
