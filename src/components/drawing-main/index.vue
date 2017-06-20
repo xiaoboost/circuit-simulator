@@ -5,7 +5,7 @@
     <svg
         height="100%" width="100%"
         @mousewheel="mousewheel($event)"
-        @mousedown.self.stop="mousedownSch($event)">
+        @mousedown.self.stop.right="moveMap($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
                 ref="lines"
@@ -96,14 +96,6 @@ export default {
                 }
             }
         },
-        // 对图纸空白处按下鼠标
-        mousedownSch(e) {
-            if (!e.button) {
-                this.selectMore();
-            } else if (e.button === 2) {
-                this.moveMap();
-            }
-        },
         // 选中器件
         selectPart(id, button) {
             if (!this.partsNow.includes(id)) {
@@ -148,7 +140,7 @@ export default {
         // 移动图纸
         moveMap(e) {
             const el = this.$el,
-                stopEvent = { el, name: 'mouseup', which: 'right' },
+                stopEvent = { el, type: 'mouseup', which: 'right' },
                 handlers = (e) =>
                     this.position = this.position
                         .add(e.$bias.mul(this.zoom));
