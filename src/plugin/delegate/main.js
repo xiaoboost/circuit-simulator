@@ -210,7 +210,7 @@ function add(elem, types, selector, data, callback) {
  */
 function remove(elem, types, selector, callback) {
     const elemData = cache.get(elem),
-        events = elemData.events;
+        events = elemData && elemData.events;
 
     // 没有找到委托事件数据，直接退出
     if (!elemData || !events) {

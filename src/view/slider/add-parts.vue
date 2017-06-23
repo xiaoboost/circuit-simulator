@@ -4,14 +4,14 @@
         <h1>添加器件</h1>
         <h2>Add Parts</h2>
     </header>
-    <section>
+    <section
+        v-delegate:click="['.parts-list', addPart]"
+        v-delegate:mousemove="['.parts-list', setTip]"
+        v-delegate:mouseleave="['.parts-list', disabledTip]">
         <div v-for="list in lists" class="parts-menu">
             <button
-                class="parts-list"
                 v-for="part in list.parts"
-                @click="addPart(part)"
-                @mouseleave.self="disabledTip"
-                @mousemove.stop="setTip($event, part)">
+                :data="part" class="parts-list">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <part-shape :info="shapes[part]" :type="part"></part-shape>
                 </svg>
@@ -70,7 +70,9 @@ export default {
         };
     },
     methods: {
-        setTip(event, type) {
+        setTip(event) {
+            const type = event.currentTarget.getAttribute('data');
+
             this.tipText = this.texts[type];
             this.tipStyle = {
                 display: 'inline',
@@ -83,8 +85,9 @@ export default {
                 display: 'none'
             };
         },
-        addPart(type) {
-            const part = Object.clone(Electronics[type].readWrite),
+        addPart(event) {
+            const type = event.currentTarget.getAttribute('data'),
+                part = Object.clone(Electronics[type].readWrite),
                 partsAll = this.$store.state.collection.Parts;
 
             part.type = type;
