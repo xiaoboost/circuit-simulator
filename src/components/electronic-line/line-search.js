@@ -221,9 +221,7 @@ function SearchRules(start, end, opt) {
 
 }
 
-/**
- * 生成新节点
- */
+// 生成新节点
 function newNode(node, rotate) {
     const ans = {};
     ans.vector = [
@@ -307,11 +305,32 @@ function AStartSearch(start, end, vector, opt) {
     way.reverse();
     return (way);
 }
-/**
- * 导线路径搜索入口
- */
-function lineSearch(current) {
 
+// 绘图部分
+function drawing({ start, end, bias, gridL, onPart, enforceLabel }) {
+    const mouseRound = end.round(),
+        mouseFloor = end.floor(),
+        option = { process: 'drawing' },
+        status = schMap.getValueByOrigin(mouseRound);
+
+    // 当前终点状态
+    if (status.type === 'line-point' || status.type === 'cross-point' && status.connect.length === 3) {
+        option.status = 'point';
+    } else if (status.type === 'line' || status.type === 'cross-point' &&
+        status.connect.length === 4) {
+        option.status = 'line';
+    } else if (enforceLabel && onPart) {
+        option.status = 'align';
+    } else {
+        option.status = 'space';
+    }
+}
+
+// 导线路径搜索入口
+function lineSearch(current, type) {
+    if (type === 'drawing') {
+        return drawing(current);
+    }
 }
 
 export { lineSearch };
