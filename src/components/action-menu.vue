@@ -1,5 +1,5 @@
 <template>
-<section class="action-menu">
+<footer class="action-menu">
     <div v-if="isRun" class="fab-container">
         <div class="fab" id="fab-text"></div>
     </div>
@@ -16,7 +16,7 @@
             </svg>
         </div>
     </div>
-</section>
+</footer>
 </template>
 
 <script>
