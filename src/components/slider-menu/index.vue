@@ -1,26 +1,52 @@
 <template>
-<transition name="move-slide">
-    <main class="slider">
-        <router-view></router-view>
-        <div v-if="isAddParts" @click="close" class="close-button" key="0">
-            <span></span>
-        </div>
-        <div v-else @click="close" class="gray-cover" key="1"></div>
-    </main>
+<transition
+    name="move-slide"
+    @before-enter="beforeEnter"
+    @after-leave="afterLeave">
+    <aside class="slider" v-show="vision">
+        <add-parts v-show="isAddParts"></add-parts>
+        <main-config v-show="isMainConfig"></main-config>
+        <div v-show="isAddParts" @click="close" class="close-button"><span></span></div>
+        <div v-show="isMainConfig" @click="close" class="gray-cover"></div>
+    </aside>
 </transition>
 </template>
 
 <script>
+import AddParts from './add-parts';
+import MainConfig from './main-config';
+
 export default {
     name: 'Slider',
+    components: {
+        AddParts,
+        MainConfig,
+    },
+    data() {
+        return {
+            isAddParts: false,
+            isMainConfig: false
+        };
+    },
     computed: {
-        isAddParts() {
-            return this.$route.name === 'AddParts';
-        }
+        page() {
+            return this.$store.state.page;
+        },
+        vision() {
+            return this.page && this.page !== 'graph';
+        },
     },
     methods: {
         close() {
-            this.$router.push('/');
+            this.$store.commit('SET_PAGE', '');
+        },
+        beforeEnter() {
+            this.isAddParts = (this.page === 'add-parts');
+            this.isMainConfig = (this.page === 'main-config');
+        },
+        afterLeave() {
+            this.isAddParts = false;
+            this.isMainConfig = false;
         }
     }
 };
@@ -34,7 +60,7 @@ width = 380px
 size = 50px
 
 .slider
-    aside
+    section
         position fixed
         height 100%
         width width
@@ -88,23 +114,23 @@ size = 50px
             font-size 40px
         h2
             font-size 25px
-    section
+    article
         margin 10px 20px
         color Black
 
 // 动画设定
-.move-slide-enter-active
+.move-slide-enter-active,
 .move-slide-leave-active
     transition opacity time
-    aside
+    section
         transition transform time
     .close-button
         transition transform time, right time
 
 .move-slide-enter,
-.move-slide-leave-active
+.move-slide-leave-to
     opacity 0
-    aside
+    section
         transform translateX(100%)
     .close-button
         transform scale(.5, .5)

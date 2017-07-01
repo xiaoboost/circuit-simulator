@@ -3,8 +3,8 @@
     <path :d="way2path"></path>
     <rect
         class="line-rect"
-        v-for="item in pathRects"
-        :x="item.x" :y="item.y"
+        v-for="(item, i) in pathRects"
+        :x="item.x" :y="item.y" :key="i"
         :height="item.height" :width="item.width">
     </rect>
 </g>
@@ -13,7 +13,7 @@
 <script>
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
-import { lineSearch } from './line-way';
+import { lineSearch } from './line-search';
 import { schMap } from '@/libraries/maphash';
 
 export default {
@@ -73,14 +73,13 @@ export default {
             );
         },
         drawing(current) {
-            this.$emit('focus', this.id, this.connect[0]);
-
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
                 mouseenter = (e) => current.onPart = this.find(e.currentTarget),
                 mouseleaves = () => current.onPart = false,
                 draw = (e) => {
                     current.end = e.$mouse;
-                    this.way = lineSearch(current);
+                    current.bias = e.$bias;
+                    this.way = lineSearch(current, 'drawing');
                 },
                 afterEvent = () => {
                     debugger;
@@ -88,7 +87,7 @@ export default {
                     this.markSign();
                 };
 
-            current.type = 'drawing';
+            this.$emit('focus', this.id, this.connect[0]);
             this.$emit('event', { stopEvent, afterEvent, cursor: 'draw_line',
                 handlers: [
                     draw,

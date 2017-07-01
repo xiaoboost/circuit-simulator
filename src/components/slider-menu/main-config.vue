@@ -1,10 +1,10 @@
 <template>
-<aside class="slider-config">
+<section class="slider-config">
     <header>
         <h1>模拟设置</h1>
         <h2>Simulation Settings</h2>
     </header>
-    <section>
+    <article>
         <h1>
             <label>T</label>
             <span>时域模拟</span>
@@ -29,8 +29,8 @@
             </v-input>
             <span class="unit">秒</span>
         </div>
-    </section>
-</aside>
+    </article>
+</section>
 </template>
 
 <script>
@@ -66,7 +66,7 @@ export default {
 
 left = 35px
 
-.slider-config section
+.slider-config article
     h1
         font-size 25px
         line-height 1.5

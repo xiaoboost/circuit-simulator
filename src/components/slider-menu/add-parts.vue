@@ -1,10 +1,10 @@
 <template>
-<aside class="slider-add-parts">
+<section class="slider-add-parts">
     <header>
         <h1>添加器件</h1>
         <h2>Add Parts</h2>
     </header>
-    <section
+    <article
         v-delegate:click="['.parts-list', addPart]"
         v-delegate:mousemove="['.parts-list', setTip]"
         v-delegate:mouseleave="['.parts-list', disabledTip]">
@@ -17,9 +17,9 @@
                 </svg>
             </button>
         </div>
-    </section>
+    </article>
     <footer class="tool-tip" :style="tipStyle">{{tipText}}</footer>
-</aside>
+</section>
 </template>
 
 <script>

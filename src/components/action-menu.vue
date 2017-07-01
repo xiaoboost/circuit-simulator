@@ -3,7 +3,11 @@
     <div v-if="isRun" class="fab-container">
         <div class="fab" id="fab-text"></div>
     </div>
-    <div v-show="!isRun" v-for="icon in icons" class="fab-container" :tip="icon.tip">
+    <div
+        v-for="(icon, i) in icons"
+        v-show="!isRun"
+        :tip="icon.tip" :key="i"
+        class="fab-container">
         <div class="fab" @click="icon.func">
             <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
                 <g :transform="`translate(${icon.translate}) scale(${zoom}, ${zoom})`">
@@ -57,10 +61,10 @@ export default {
             this.isRun = true;
         },
         add() {
-            this.$router.push({ name: 'AddParts' });
+            this.$store.commit('SET_PAGE', 'add-parts');
         },
         config() {
-            this.$router.push({ name: 'Config' });
+            this.$store.commit('SET_PAGE', 'main-config');
         }
     }
 };

@@ -1,34 +1,25 @@
 <template>
 <main id="app">
-    <start-loading :show="loading"></start-loading>
-    <action-menu></action-menu>
+    <start-loading></start-loading>
     <drawing-main></drawing-main>
-    <router-view></router-view>
+    <slider-menu></slider-menu>
+    <action-menu></action-menu>
 </main>
 </template>
 
 <script>
 import ActionMenu from '@/components/action-menu';
+import SliderMenu from '@/components/slider-menu';
 import DrawingMain from '@/components/drawing-main';
 import StartLoading from '@/components/start-loading';
 
 export default {
     name: 'app',
-    data() {
-        return {
-            loading: true
-        };
-    },
-    mounted() {
-        window.onload = () => {
-            console.log('Schematic Ready.');
-            this.loading = false;
-        };
-    },
     components: {
-        'drawing-main': DrawingMain,
-        'start-loading': StartLoading,
-        'action-menu': ActionMenu
+        ActionMenu,
+        SliderMenu,
+        DrawingMain,
+        StartLoading
     }
 };
 </script>

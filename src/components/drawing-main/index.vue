@@ -22,7 +22,6 @@
                 :key="parts[i - 1].id"
                 :value.sync="parts[i - 1]"
                 :focus="partsNow.includes(parts[i - 1].id)"
-                @select="selectPart"
                 @focus="clearFocus"
                 @event="EventControler">
             </elec-part>

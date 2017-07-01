@@ -1,6 +1,6 @@
 <template>
 <transition name="fade">
-    <section v-if="show" class="start-loading">
+    <section v-if="loading" class="start-loading">
         <div>
             <h3 style="font-style: italic;">加载中……</h3>
             <svg class="spinner" width="55px" height="55px" viewBox="0 0 66 66">
@@ -15,11 +15,16 @@
 <script>
 export default {
     name: 'StartLoading',
-    props: {
-        show: {
-            type: Boolean,
-            default: true
-        }
+    data() {
+        return {
+            loading: true
+        };
+    },
+    mounted() {
+        window.onload = () => {
+            console.log('Schematic Ready.');
+            this.loading = false;
+        };
     }
 };
 </script>
