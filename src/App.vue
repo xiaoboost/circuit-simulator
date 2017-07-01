@@ -1,6 +1,6 @@
 <template>
 <main id="app">
-    <start-loading></start-loading>
+    <start-loading :show="ready"></start-loading>
     <drawing-main></drawing-main>
     <slider-menu></slider-menu>
     <action-menu></action-menu>
@@ -20,6 +20,17 @@ export default {
         SliderMenu,
         DrawingMain,
         StartLoading
+    },
+    data() {
+        return {
+            ready: true
+        };
+    },
+    beforeCreate() {
+        window.onload = () => {
+            console.log('Schematic Ready.');
+            this.ready = false;
+        };
     }
 };
 </script>

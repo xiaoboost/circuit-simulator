@@ -1,9 +1,7 @@
 import Vue from 'vue';
-import Router from 'vue-router';
+import store  from '@/vuex';
 import ActionMenu from '@/components/action-menu';
 import { createTest, createVue, destroyVM, triggerEvent } from '../util';
-
-Vue.use(Router);
 
 describe('action-menu.vue', () => {
     let vm;
@@ -35,16 +33,12 @@ describe('action-menu.vue', () => {
             done();
         });
     });
-    it('switch router to addParts page', (done) => {
-        const addText = '虚拟添加器件页面',
-            AddParts = createVue({ template: `<div id="add-parts">${addText}</div>` }),
-            router = new Router({routes: [{ path: 'add-parts', name: 'AddParts', component: AddParts }]});
-
+    it('switch aside', () => {
         vm = createVue({
             template: `
                 <action-menu></action-menu>
             `,
-            router,
+            store,
             components: {
                 'action-menu': ActionMenu
             }
@@ -53,34 +47,10 @@ describe('action-menu.vue', () => {
         // 点击添加器件按钮
         const buttonAdd = vm.$el.querySelector('[tip=添加器件] .fab');
         triggerEvent(buttonAdd, 'click');
-        vm.$nextTick(() => {
-            const elm = document.getElementById('add-parts');
-            expect(elm.textContent).to.equal(addText);
-            done();
-        });
-    });
-    it('switch router to config page', (done) => {
-        const configText = '虚拟运行设置页面',
-            Config = createVue({ template: `<div id="config">${configText}</div>` }),
-            router = new Router({routes: [{ path: 'config', name: 'Config', component: Config }]});
-
-        vm = createVue({
-            template: `
-                <action-menu></action-menu>
-            `,
-            router,
-            components: {
-                'action-menu': ActionMenu
-            }
-        });
-
+        expect(vm.$store.state.page).to.be.equal('add-parts');
         // 点击运行设置按钮
         const buttonConfig = vm.$el.querySelector('[tip=运行设置] .fab');
         triggerEvent(buttonConfig, 'click');
-        vm.$nextTick(() => {
-            const elm = document.getElementById('config');
-            expect(elm.textContent).to.equal(configText);
-            done();
-        });
+        expect(vm.$store.state.page).to.be.equal('main-config');
     });
 });
