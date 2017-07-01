@@ -68,18 +68,16 @@ export default {
         },
         lines() {
             return this.$store.state.collection.Lines;
-        },
-        components() {
-            const parts = this.$refs.parts || [],
-                lines = this.$refs.lines || [];
-
-            return parts.concat(lines);
         }
     },
     methods: {
         find(id) {
-            const prop = typeof id === 'string' ? 'id' : '$el';
-            return this.components.find((n) => id === n[prop]);
+            const prop = typeof id === 'string' ? 'id' : '$el',
+                parts = this.$refs.parts || [],
+                lines = this.$refs.lines || [],
+                components = parts.concat(lines);
+
+            return components.find((n) => id === n[prop]);
         },
         // 清空当前操作器件堆栈
         clearFocus(...args) {
