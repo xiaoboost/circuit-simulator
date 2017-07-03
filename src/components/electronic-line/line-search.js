@@ -9,12 +9,7 @@ const rotate = [
     [[-1, 0], [0, -1]]  //反相
 ];
 
-/**
- * 检索并删除数组内元素
- * @param {array} arr
- * @param {any} item
- * @return {boolean} ans 删除是否成功
- */
+// 检索并删除数组内元素
 function deleteArrayItem(arr, item) {
     const index = arr.indexOf(item);
     if (index !== -1) {
@@ -25,10 +20,7 @@ function deleteArrayItem(arr, item) {
     }
 }
 
-/**
- * 导线路径类
- * @class LineWay
- */
+// 导线路径类
 function LineWay(args) {
     this.length = 0;
 
@@ -60,10 +52,7 @@ Object.assign(LineWay.prototype, {
     },
 });
 
-/**
- * [点->路径]键值对 类
- * @class WayMap
- */
+// [点 -> 路径] 键值对 类
 class WayMap {
     constructor(...args) {
         Object.defineProperty(this, 'size', {
@@ -306,24 +295,33 @@ function AStartSearch(start, end, vector, opt) {
     return (way);
 }
 
+// 绘图部分，求终点状态
+function pointStatus(point, onPart) {
+    const ans = {},
+        status = schMap.getValueByOrigin(point);
+
+    if (status.type === 'line-point' || status.type === 'cross-point' && status.connect.length === 3) {
+        ans.status = 'point';
+    } else if (status.type === 'line' || status.type === 'cross-point' && status.connect.length === 4) {
+        ans.status = 'line';
+    } else if (onPart) {
+        ans.status = 'align';
+    } else {
+        ans.status = 'space';
+    }
+
+    return ans;
+}
+
 // 绘图部分
-function drawing({ start, end, bias, gridL, onPart, enforceLabel }) {
+function drawing({ start, end, bias, gridL, onPart, enforcePoint }) {
     const mouseRound = end.round(),
         mouseFloor = end.floor(),
-        option = { process: 'drawing' },
-        status = schMap.getValueByOrigin(mouseRound);
+        option = Object.assign(
+            { process: 'drawing' },
+            pointStatus(end, onPart)
+        );
 
-    // 当前终点状态
-    if (status.type === 'line-point' || status.type === 'cross-point' && status.connect.length === 3) {
-        option.status = 'point';
-    } else if (status.type === 'line' || status.type === 'cross-point' &&
-        status.connect.length === 4) {
-        option.status = 'line';
-    } else if (enforceLabel && onPart) {
-        option.status = 'align';
-    } else {
-        option.status = 'space';
-    }
 }
 
 // 导线路径搜索入口

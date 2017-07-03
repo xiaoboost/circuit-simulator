@@ -4,17 +4,19 @@
     :transform="`matrix(${rotate.join()},${position.join()})`"
     v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
     v-delegate:mousedown-b.left.stop="['.text-params', moveText]">
-    <aspect
-        v-for="(info, i) in this.shape.aspect"
-        :value="info" :key="i">
-    </aspect>
-    <g
-        v-for="(point, i) in points"
-        :index="i"
-        :class="['part-point', point.class]"
-        :transform="`translate(${point.position.join()})`">
-        <circle></circle>
-        <rect></rect>
+    <g class="focus-part">
+        <aspect
+            v-for="(info, i) in this.shape.aspect"
+            :value="info" :key="i">
+        </aspect>
+        <g
+            v-for="(point, i) in points"
+            :index="i" :key="i"
+            :class="['part-point', point.class]"
+            :transform="`translate(${point.position.join()})`">
+            <circle></circle>
+            <rect></rect>
+        </g>
     </g>
     <g
         v-if="this.type !== 'reference_ground'"
@@ -26,7 +28,7 @@
         </text>
         <text
             v-for="(txt, i) in texts"
-            :dy="16 * (i + 1)">{{txt}}
+            :dy="16 * (i + 1)" :key="i">{{txt}}
         </text>
     </g>
 </g>

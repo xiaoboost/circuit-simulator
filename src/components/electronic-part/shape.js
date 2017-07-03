@@ -53,7 +53,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-13', 'width':'60', 'height':'26', 'class':'focus-part'
+                        'x': '-30', 'y':'-13', 'width':'60', 'height':'26'
                     }
                 }
             ]
@@ -98,7 +98,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-15', 'width':'60', 'height':'30', 'class':'focus-part'
+                        'x': '-30', 'y':'-15', 'width':'60', 'height':'30'
                     }
                 }
             ]
@@ -143,7 +143,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-10', 'width':'60', 'height':'15', 'class':'focus-part'
+                        'x': '-30', 'y':'-10', 'width':'60', 'height':'15'
                     }
                 }
             ]
@@ -188,7 +188,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-16', 'y':'-30', 'width':'32', 'height':'60', 'class':'focus-part'
+                        'x': '-16', 'y':'-30', 'width':'32', 'height':'60'
                     }
                 }
             ]
@@ -254,7 +254,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60', 'class':'focus-part'
+                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
                     }
                 }
             ]
@@ -311,7 +311,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60', 'class':'focus-part'
+                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
                     }
                 }
             ]
@@ -345,7 +345,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-15', 'y':'-10', 'width':'30', 'height':'26', 'class':'focus-part'
+                        'x': '-15', 'y':'-10', 'width':'30', 'height':'26'
                     }
                 }
             ],
@@ -396,7 +396,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60', 'class':'focus-part'
+                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
                     }
                 }
             ],
@@ -440,7 +440,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-10', 'y':'-8', 'width':'20', 'height':'16', 'class':'focus-part'
+                        'x': '-10', 'y':'-8', 'width':'20', 'height':'16'
                     }
                 }
             ]
@@ -501,7 +501,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-13', 'y':'-30', 'width':'26', 'height':'60', 'class':'focus-part'
+                        'x': '-13', 'y':'-30', 'width':'26', 'height':'60'
                     }
                 }
             ]
@@ -572,7 +572,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-10', 'y':'-30', 'width':'30', 'height':'60', 'class':'focus-part'
+                        'x': '-10', 'y':'-30', 'width':'30', 'height':'60'
                     }
                 }
             ]
@@ -645,7 +645,7 @@ const Electronics = {
                 {
                     'name':'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-35', 'width':'60', 'height':'70', 'class':'focus-part'
+                        'x': '-30', 'y':'-35', 'width':'60', 'height':'70'
                     }
                 }
             ]

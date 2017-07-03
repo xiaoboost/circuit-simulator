@@ -91,8 +91,18 @@ export default {
             this.$emit('event', { stopEvent, afterEvent, cursor: 'draw_line',
                 handlers: [
                     draw,
-                    { delegate: true, type: 'mouseenter', callback: mouseenter },
-                    { delegate: true, type: 'mouseleaves', callback: mouseleaves },
+                    {
+                        delegate: true,
+                        type: 'mouseenter',
+                        callback: mouseenter,
+                        select: '.part .focus-part'
+                    },
+                    {
+                        delegate: true,
+                        type: 'mouseleaves',
+                        callback: mouseleaves,
+                        select: '.part .focus-part'
+                    }
                 ]
             });
         }
