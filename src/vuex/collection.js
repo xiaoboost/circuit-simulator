@@ -4,25 +4,18 @@ const maxNumber = 100;
 // 器件集合类，类方法只有查询操作
 // 修改集合只能通过 mutations
 function Collection() {
-    this._hash = {};
     this.length = 0;
 }
 Collection.prototype = Object.create(Array.prototype);
 Object.assign(Collection.prototype, {
     constructor: Collection,
-    has(id) {
-        id = id.id || id;
-        return (this._hash.hasOwnProperty(id));
+    has(elec) {
+        const id = elec.id || elec;
+        return this.some((elec) => elec.id === id);
     },
-    find(id) {
-        if (!id) {
-            return (false);
-        }
-        const pre = id.split('-')[0];
-        if (!this.has(pre)) {
-            return (false);
-        }
-        return (this[this._hash[pre]]);
+    findIndex(elec) {
+        const id = elec.id || elec;
+        return this.findIndex((elec) => elec.id === id);
     },
     newId(input) {
         const temp = input.match(/^[^_]+(_[^_]+)?/),
@@ -53,34 +46,40 @@ Object.assign(Collection.prototype, {
 });
 
 // 是否是器件对象
-// TODO: 现在是包含id属性的就算，等之后器件数据结构定下来之后就能更精确的判断了
 function isElectron(elec) {
-    return !!elec.id;
+    return !!elec.id && !!elec.connect;
 }
 function push(set, elec) {
     if (isElectron(elec) && !set.has(elec)) {
-        set._hash[elec.id] = set.length;
-        set[set.length ++] = elec;
+        set.push(elec);
     }
+    return set.length;
 }
 function pop(set) {
-    const temp = Array.prototype.pop.call(set);
-    if (temp) {
-        delete this._hash[temp.id];
-        return (temp);
-    }
+    return set.pop();
 }
 function deleted(set, elec) {
-    const id = elec.id || elec;
+    const index = set.findIndex(elec);
 
-    if (!set.has(id)) {
+    if (index !== -1) {
+        set.splice(index, 1);
+        return (true);
+    } else {
         return (false);
     }
+}
+function moveToIndex(set, elec, to = 0) {
+    const index = set.findIndex(elec);
+    if (index === -1) { return (false); }
 
-    const sub = this.hash[id];
-    this.splice(sub, 1);
-    this.forEach((n, i) => (i > sub && this._hash[n.id]--));
-    delete this._hash[sub];
+    to = (to < 0) ? (set.length + to) : to;
+    if (index === to) { return (true); }
+
+    elec = set[index];
+    set.splice(index, 1);
+    set.splice(to, 0, elec);
+
+    return (true);
 }
 
 export default {
@@ -90,26 +89,28 @@ export default {
     },
     mutations: {
         PUSH_PART(state, part) {
-            const set = state.Parts;
-            push(set, part);
-            return set.length;
-        },
-        PUSH_LINE(state, line) {
-            const set = state.Lines;
-            push(set, line);
-            return set.length;
+            return push(state.Parts, part);
         },
         POP_PART(state) {
             return pop(state.Parts);
         },
-        POP_LINE(state) {
-            return pop(state.Lines);
-        },
         DELETE_PART(state, part) {
             return deleted(state.Parts, part);
         },
+        PUSH_LINE(state, line) {
+            return push(state.Lines, line);
+        },
+        POP_LINE(state) {
+            return pop(state.Lines);
+        },
         DELETE_LINE(state, line) {
             return deleted(state.Parts, line);
+        },
+        LINE_TO_TOP(state, line) {
+            return moveToIndex(state.Lines, line, -1);
+        },
+        LINE_TO_BOTTOM(state, line) {
+            return moveToIndex(state.Lines, line);
         }
     }
 };
