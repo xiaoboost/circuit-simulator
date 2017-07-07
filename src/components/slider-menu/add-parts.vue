@@ -184,6 +184,7 @@ bezier = cubic-bezier(.3,.3,.1,1)
                 fill Black
             path
                 stroke-width 2
+            rect,
             polygon.fill-black
                 stroke-width 0
 </style>
