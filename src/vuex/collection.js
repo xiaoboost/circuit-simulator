@@ -13,10 +13,6 @@ Object.assign(Collection.prototype, {
         const id = elec.id || elec;
         return this.some((elec) => elec.id === id);
     },
-    findIndex(elec) {
-        const id = elec.id || elec;
-        return this.findIndex((elec) => elec.id === id);
-    },
     newId(input) {
         const temp = input.match(/^[^_]+(_[^_]+)?/),
             id = temp && temp[0];
@@ -49,24 +45,9 @@ Object.assign(Collection.prototype, {
 function isElectron(elec) {
     return !!elec.id && !!elec.connect;
 }
-function push(set, elec) {
-    if (isElectron(elec) && !set.has(elec)) {
-        set.push(elec);
-    }
-    return set.length;
-}
-function pop(set) {
-    return set.pop();
-}
-function deleted(set, elec) {
-    const index = set.findIndex(elec);
-
-    if (index !== -1) {
-        set.splice(index, 1);
-        return (true);
-    } else {
-        return (false);
-    }
+function deleteElec(arr, id) {
+    const i = arr.findIndex((elec) => elec.id === id);
+    arr.splice(i, 1);
 }
 function moveToIndex(set, elec, to = 0) {
     const index = set.findIndex(elec);
@@ -89,28 +70,28 @@ export default {
     },
     mutations: {
         PUSH_PART(state, part) {
-            return push(state.Parts, part);
+            isElectron(part) && state.Parts.push(part);
         },
         POP_PART(state) {
-            return pop(state.Parts);
+            state.Parts.pop();
         },
         DELETE_PART(state, part) {
-            return deleted(state.Parts, part);
+            deleteElec(state.Parts, part);
         },
         PUSH_LINE(state, line) {
-            return push(state.Lines, line);
+            isElectron(line) && state.Parts.push(line);
         },
         POP_LINE(state) {
-            return pop(state.Lines);
+            state.Lines.pop();
         },
         DELETE_LINE(state, line) {
-            return deleted(state.Parts, line);
+            deleteElec(state.Lines, line);
         },
         LINE_TO_TOP(state, line) {
-            return moveToIndex(state.Lines, line, -1);
+            moveToIndex(state.Lines, line, -1);
         },
         LINE_TO_BOTTOM(state, line) {
-            return moveToIndex(state.Lines, line);
+            moveToIndex(state.Lines, line);
         }
     }
 };
