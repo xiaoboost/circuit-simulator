@@ -43,7 +43,7 @@ Object.assign(Collection.prototype, {
 
 // 是否是器件对象
 function isElectron(elec) {
-    return !!elec.id && !!elec.connect;
+    return !!elec.id && (!!elec.params || !!elec.way);
 }
 function deleteElec(arr, id) {
     const i = arr.findIndex((elec) => elec.id === id);
