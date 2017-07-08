@@ -89,6 +89,16 @@ Object.assign(Array.prototype, {
         return (sub >= 0 && sub < this.length)
             ? this[sub]
             : false;
+    },
+    // 删除回调返回第一个 true 的元素
+    delete(fn) {
+        const index = this.findIndex(fn);
+        if (index !== -1) {
+            this.splice(index, 1);
+            return (true);
+        } else {
+            return (false);
+        }
     }
 });
 

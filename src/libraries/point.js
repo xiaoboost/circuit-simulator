@@ -167,7 +167,16 @@ Object.assign(Point.prototype, {
             }
         }
         return ans;
-    }
+    },
+    // 在points中与this距离最短的点
+    closest(points) {
+        return !points.length
+            ? false
+            : $P(points.reduce(
+                (pre, next) =>
+                    this.distance(pre) < this.distance(next) ? pre : next
+            ));
+    },
 });
 
 function isPoint(a) {

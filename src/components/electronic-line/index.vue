@@ -79,6 +79,7 @@ export default {
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
+                    current.wayL = this.way;
                     this.way = lineSearch(current, 'drawing');
                 },
                 afterEvent = () => {

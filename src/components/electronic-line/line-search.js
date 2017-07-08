@@ -9,17 +9,6 @@ const rotate = [
     [[-1, 0], [0, -1]]  //反相
 ];
 
-// 检索并删除数组内元素
-function deleteArrayItem(arr, item) {
-    const index = arr.indexOf(item);
-    if (index !== -1) {
-        arr.splice(index, 1);
-        return (true);
-    } else {
-        return (false);
-    }
-}
-
 // 导线路径类
 function LineWay(args) {
     this.length = 0;
@@ -33,6 +22,7 @@ function LineWay(args) {
     args.forEach((n) => this.push(n));
 }
 LineWay.prototype = Object.create(Array.prototype);
+LineWay.prototype[Symbol.isConcatSpreadable] = true;
 Object.assign(LineWay.prototype, {
     constructor: LineWay,
     push(node) {
@@ -49,6 +39,28 @@ Object.assign(LineWay.prototype, {
         }
         this.length = this.length + len;
         return (this.length);
+    },
+    // 路径标准化
+    standardize(bias) {
+        for (let i = 0; i < this.length; i++) {
+            this[i] = bias
+                ? this[i].add(bias).round()
+                : this[i].round();
+        }
+        return (this);
+    },
+    // 去除节点冗余
+    checkWayRepeat() {
+        for (let i = 0; i < this.length - 2; i++) {
+            if (((this[i][0] === this[i + 1][0]) && (this[i + 1][0] === this[i + 2][0])) ||
+                ((this[i][1] === this[i + 1][1]) && (this[i + 1][1] === this[i + 2][1])) ||
+                ((this[i][0] === this[i + 1][0]) && (this[i][1] == this[i + 1][1]))) {
+                this.splice(i + 1, 1);
+                i -= 2;
+                if (i < -1) i = -1;
+            }
+        }
+        return (this);
     },
 });
 
@@ -176,10 +188,10 @@ function SearchStack(start) {
         }
         // 取当前扩展点的状态，原状态从堆栈中抛弃
         if (status && column) {
-            deleteArrayItem(column, status);
+            column.delete(status);
             if (!column.length) {
                 delete stack[status.value];
-                deleteArrayItem(hash, status.value);
+                hash.delete(status.value);
             }
         }
 
@@ -295,17 +307,25 @@ function AStartSearch(start, end, vector, opt) {
     return (way);
 }
 
-// 绘图部分，求终点状态
-function pointStatus(point, onPart) {
-    const ans = {},
+// 绘图部分，预处理
+function drawingStatus(point, onPart) {
+    const ans = { process: 'drawing' },
         status = schMap.getValueByOrigin(point);
 
-    if (status.type === 'line-point' || status.type === 'cross-point' && status.connect.length === 3) {
+    if (status.type === 'line-point' ||
+        status.type === 'cross-point' && status.connect.length === 3) {
         ans.status = 'point';
-    } else if (status.type === 'line' || status.type === 'cross-point' && status.connect.length === 4) {
+    } else if (status.type === 'line' ||
+        status.type === 'cover-point' ||
+        status.type === 'cross-point' && status.connect.length === 4) {
         ans.status = 'line';
     } else if (onPart) {
         ans.status = 'align';
+        ans.align = point.closest(
+            onPart.points
+                .filter((n) => n.class['point-open'])
+                .map((n) => n.position.add(onPart.position))
+        );
     } else {
         ans.status = 'space';
     }
@@ -314,21 +334,29 @@ function pointStatus(point, onPart) {
 }
 
 // 绘图部分
-function drawing({ start, end, bias, gridL, onPart, enforcePoint }) {
+function drawing({ start, end, bias, wayL, gridL, onPart }) {
     const mouseRound = end.round(),
         mouseFloor = end.floor(),
-        option = Object.assign(
-            { process: 'drawing' },
-            pointStatus(end, onPart)
-        );
+        grid = Array.clone(gridL),
+        opt = drawingStatus(end, onPart),
+        lastEnd = schMap.getValueByOrigin(wayL.get(-1));
+
+    // 记录当前小四方格定位点
+    gridL[0] = mouseFloor[0];
+    gridL[1] = mouseFloor[1];
+
+    if (opt.align && !opt.align.isEqual(wayL.get(-1))) {
+        // TODO: lastend 所在点需要缩小
+        const way = AStartSearch(start, end, opt);
+    } else if (!mouseFloor.isEqual(grid)) {
+
+    }
 
 }
 
 // 导线路径搜索入口
-function lineSearch(current, type) {
+exports.lineSearch = function(current, type) {
     if (type === 'drawing') {
         return drawing(current);
     }
-}
-
-export { lineSearch };
+};
