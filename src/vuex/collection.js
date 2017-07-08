@@ -49,16 +49,16 @@ function deleteElec(arr, id) {
     const i = arr.findIndex((elec) => elec.id === id);
     arr.splice(i, 1);
 }
-function moveToIndex(set, elec, to = 0) {
-    const index = set.findIndex(elec);
+function moveToIndex(set, id, to = 0) {
+    const index = set.findIndex((elec) => elec.id === id);
     if (index === -1) { return (false); }
 
     to = (to < 0) ? (set.length + to) : to;
     if (index === to) { return (true); }
 
-    elec = set[index];
+    id = set[index];
     set.splice(index, 1);
-    set.splice(to, 0, elec);
+    set.splice(to, 0, id);
 
     return (true);
 }
