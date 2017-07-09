@@ -177,6 +177,15 @@ Object.assign(Point.prototype, {
                     this.distance(pre) < this.distance(next) ? pre : next
             ));
     },
+    // 以当前点为左上角，生成四方格坐标
+    toGrid(len = 20) {
+        return ([
+            new $P(this),
+            new $P(this[0] + len, this[1]),
+            new $P(this[0], this[1] + len),
+            new $P(this[0] + len, this[1] + len)
+        ]);
+    },
 });
 
 function isPoint(a) {

@@ -4,7 +4,7 @@
     <rect
         class="line-rect"
         v-for="(item, i) in pathRects"
-        :x="item.x" :y="item.y" :key="i"
+        :key="i" :index="i" :x="item.x" :y="item.y"
         :height="item.height" :width="item.width">
     </rect>
 </g>
@@ -35,7 +35,9 @@ export default {
     },
     computed: {
         way2path() {
-            return 'M' + this.way.map((n) => n.join(',')).join('L');
+            return !this.way.length
+                ? ''
+                : 'M' + this.way.map((n) => n.join(',')).join('L');
         },
         pathRects() {
             const ans = [], wide = 14;
@@ -61,7 +63,7 @@ export default {
             return ans;
         }
     },
-    method: {
+    methods: {
         find(arg) {
             return this.$parent.find(arg);
         },
@@ -79,7 +81,7 @@ export default {
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
-                    current.wayL = this.way;
+                    current.way = this.way;
                     this.way = lineSearch(current, 'drawing');
                 },
                 afterEvent = () => {
@@ -88,6 +90,7 @@ export default {
                     this.markSign();
                 };
 
+            current.location = [];
             this.$store.commit('LINE_TO_BOTTOM', this.id);
             this.$emit('focus', this.id, this.connect[0]);
             this.$emit('event', { stopEvent, afterEvent, cursor: 'draw_line',
@@ -109,9 +112,8 @@ export default {
             });
         }
     },
-    mounted() {
+    created() {
         this.id = this.value.id;
-        this.way = this.value.way || [];
         this.connect = this.value.connect;
 
         if (!this.way.length) {

@@ -62,6 +62,24 @@ Object.assign(LineWay.prototype, {
         }
         return (this);
     },
+    // 去除路径冗余
+    checkWayExcess() {
+        return this;
+    },
+    // 终点/起点指向指定坐标
+    endToMouse(node, dir = 1) {
+        if (this.length <= 1) { return; }
+
+        const end = (dir === 1) ? this.length - 1 : 0,
+            last = (dir === 1) ? this.length - 2 : 1;
+
+        if (this[end][0] === this[last][0]) {
+            this[last][0] = node[0];
+        } else {
+            this[last][1] = node[1];
+        }
+        this[end] = $P(node);
+    },
 });
 
 // [点 -> 路径] 键值对 类
@@ -320,6 +338,7 @@ function drawingStatus(point, onPart) {
         status.type === 'cross-point' && status.connect.length === 4) {
         ans.status = 'line';
     } else if (onPart) {
+        debugger;
         ans.status = 'align';
         ans.align = point.closest(
             onPart.points
@@ -334,29 +353,48 @@ function drawingStatus(point, onPart) {
 }
 
 // 绘图部分
-function drawing({ start, end, bias, wayL, gridL, onPart }) {
+function drawing({ start, end, direction, way, gridWay, location, onPart }) {
     const mouseRound = end.round(),
         mouseFloor = end.floor(),
-        grid = Array.clone(gridL),
+        locationL = $P(location),
         opt = drawingStatus(end, onPart),
-        lastEnd = schMap.getValueByOrigin(wayL.get(-1));
+        lastEnd = schMap.getValueByOrigin(way.get(-1));
 
     // 记录当前小四方格定位点
-    gridL[0] = mouseFloor[0];
-    gridL[1] = mouseFloor[1];
+    location[0] = mouseFloor[0];
+    location[1] = mouseFloor[1];
 
-    if (opt.align && !opt.align.isEqual(wayL.get(-1))) {
-        // TODO: lastend 所在点需要缩小
-        const way = AStartSearch(start, end, opt);
-    } else if (!mouseFloor.isEqual(grid)) {
-
+    let ans;
+    debugger;
+    if (opt.align && !opt.align.isEqual(way.get(-1))) {
+        ans = AStartSearch(start, opt.align, direction, opt)
+            .checkWayExcess(direction, opt);
+    } else if (!mouseFloor.isEqual(locationL)) {
+        const waysL = gridWay;
+        gridWay = new WayMap();
+        mouseFloor.toGrid().forEach((point) =>
+            (waysL && waysL.has(point))
+                ? gridWay.set(point, waysL.get(point))
+                : gridWay.set(point,
+                    AStartSearch(start, point, direction, opt)
+                        .checkWayExcess(direction, opt)
+                )
+        );
     }
 
+    // TODO: lastend 所在点需要缩小
+
+    // 保存当前路径
+    way.splice(0, way.length, ...ans);
+
+    return ans;
 }
 
 // 导线路径搜索入口
-exports.lineSearch = function(current, type) {
+function lineSearch(current, type) {
     if (type === 'drawing') {
         return drawing(current);
     }
-};
+}
+
+export { lineSearch };

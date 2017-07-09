@@ -43,7 +43,7 @@ Object.assign(Collection.prototype, {
 
 // 是否是器件对象
 function isElectron(elec) {
-    return !!elec.id && (!!elec.params || !!elec.way);
+    return !!elec.id && (!!elec.params || !!elec.connect);
 }
 function deleteElec(arr, id) {
     const i = arr.findIndex((elec) => elec.id === id);
@@ -79,7 +79,7 @@ export default {
             deleteElec(state.Parts, part);
         },
         PUSH_LINE(state, line) {
-            isElectron(line) && state.Parts.push(line);
+            isElectron(line) && state.Lines.push(line);
         },
         POP_LINE(state) {
             state.Lines.pop();
