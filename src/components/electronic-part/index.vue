@@ -68,7 +68,9 @@ export default {
             position: [500000, 500000],
 
             textPosition: $P(0, 0),
-            textPlacement: 'bottom'
+            textPlacement: 'bottom',
+
+            pointLarge: []
         };
     },
     computed: {
@@ -78,7 +80,8 @@ export default {
                 direction: product(point.direction, this.rotate),
                 class: {
                     'point-open': !this.connect[i],
-                    'point-close': !!this.connect[i]
+                    'point-close': !!this.connect[i],
+                    'point-large': !!this.pointLarge[i]
                 }
             }));
         },

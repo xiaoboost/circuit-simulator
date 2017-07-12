@@ -82,7 +82,7 @@ Object.assign(LineWay.prototype, {
     },
 });
 
-// [点 -> 路径] 键值对 类
+// [点 -> 路径] 键值对
 class WayMap {
     constructor(...args) {
         Object.defineProperty(this, 'size', {
@@ -109,6 +109,15 @@ class WayMap {
     }
     has(key) {
         return (!!this.get(key));
+    }
+    clear() {
+        Object.keys(this).forEach((n) => delete this[n]);
+    }
+    clone() {
+        return new WayMap(
+            this.keys()
+                .map((point) => ({ point, way: this.get(point) }))
+        );
     }
     /**
      * 设置键值对
@@ -331,20 +340,22 @@ function drawingStatus(point, onPart) {
         status = schMap.getValueByOrigin(point);
 
     if (status.type === 'line-point' ||
-        status.type === 'cross-point' && status.connect.length === 3) {
+        status.type === 'cross-point' &&
+        status.connect.length === 3) {
         ans.status = 'point';
     } else if (status.type === 'line' ||
         status.type === 'cover-point' ||
-        status.type === 'cross-point' && status.connect.length === 4) {
+        status.type === 'cross-point' &&
+        status.connect.length === 4) {
         ans.status = 'line';
     } else if (onPart) {
         debugger;
-        ans.status = 'align';
         ans.align = point.closest(
             onPart.points
                 .filter((n) => n.class['point-open'])
                 .map((n) => n.position.add(onPart.position))
         );
+        ans.status = ans.align ? 'point' : 'part';
     } else {
         ans.status = 'space';
     }
@@ -352,49 +363,49 @@ function drawingStatus(point, onPart) {
     return ans;
 }
 
-// 绘图部分
-function drawing({ start, end, direction, way, gridWay, location, onPart }) {
-    const mouseRound = end.round(),
-        mouseFloor = end.floor(),
-        locationL = $P(location),
-        opt = drawingStatus(end, onPart),
-        lastEnd = schMap.getValueByOrigin(way.get(-1));
 
-    // 记录当前小四方格定位点
-    location[0] = mouseFloor[0];
-    location[1] = mouseFloor[1];
+export default {
+    methods: {
+        drawing({ start, end, direction, gridWay, location, onPart }) {
+            const mouseRound = end.round(),
+                mouseFloor = end.floor(),
+                locationL = $P(location),
+                mouseGrid = mouseFloor.toGrid(),
+                opt = drawingStatus(end, onPart),
+                lastEnd = schMap.getValueByOrigin(this.way.get(-1));
 
-    let ans;
-    debugger;
-    if (opt.align && !opt.align.isEqual(way.get(-1))) {
-        ans = AStartSearch(start, opt.align, direction, opt)
-            .checkWayExcess(direction, opt);
-    } else if (!mouseFloor.isEqual(locationL)) {
-        const waysL = gridWay;
-        gridWay = new WayMap();
-        mouseFloor.toGrid().forEach((point) =>
-            (waysL && waysL.has(point))
-                ? gridWay.set(point, waysL.get(point))
-                : gridWay.set(point,
-                    AStartSearch(start, point, direction, opt)
-                        .checkWayExcess(direction, opt)
-                )
-        );
+            // 记录当前小四方格定位点
+            location.splice(0, 2, mouseFloor[0], mouseFloor[1]);
+
+            debugger;
+            if (opt.align && !opt.align.isEqual(this.way.get(-1))) {
+                this.way =
+                    AStartSearch(start, opt.align, direction, opt)
+                        .checkWayExcess(direction, opt);
+            } else if (!mouseFloor.isEqual(locationL)) {
+                const waysL = gridWay.clone();
+                gridWay.clear();
+
+                mouseGrid.forEach((point) =>
+                    (waysL && waysL.has(point))
+                        ? gridWay.set(point, waysL.get(point))
+                        : gridWay.set(point,
+                            AStartSearch(start, point, direction, opt)
+                                .checkWayExcess(direction, opt)
+                        )
+                );
+            }
+
+            // TODO: lastend 所在点需要缩小
+            if (opt.status === 'line') {
+
+            } else if (opt.status === 'point') {
+
+            } else if (opt.status === 'align') {
+
+            } else {
+
+            }
+        }
     }
-
-    // TODO: lastend 所在点需要缩小
-
-    // 保存当前路径
-    way.splice(0, way.length, ...ans);
-
-    return ans;
-}
-
-// 导线路径搜索入口
-function lineSearch(current, type) {
-    if (type === 'drawing') {
-        return drawing(current);
-    }
-}
-
-export { lineSearch };
+};

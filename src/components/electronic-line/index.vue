@@ -7,6 +7,14 @@
         :key="i" :index="i" :x="item.x" :y="item.y"
         :height="item.height" :width="item.width">
     </rect>
+    <g
+        v-for="(point, i) in points"
+        :index="i" :key="i"
+        :class="['line-point', point.class]"
+        :transform="`translate(${point.position.join()})`">
+        <circle></circle>
+        <rect></rect>
+    </g>
 </g>
 </template>
 
@@ -17,6 +25,7 @@ import { lineSearch } from './line-search';
 import { schMap } from '@/libraries/maphash';
 
 export default {
+    mixins: [lineSearch],
     props: {
         value: {
             type: Object,
@@ -30,7 +39,9 @@ export default {
     data() {
         return {
             way: [],
-            connect: []
+            connect: [],
+
+            pointLarge: []
         };
     },
     computed: {
@@ -61,6 +72,16 @@ export default {
             }
 
             return ans;
+        },
+        points() {
+            return Array(2).fill(false).map((u, i) => ({
+                position: $P(this.way[-i]),
+                class: {
+                    'point-open': !this.connect[i],
+                    'point-close': !!this.connect[i],
+                    'point-large': !!this.pointLarge[i]
+                }
+            }));
         }
     },
     methods: {
@@ -74,15 +95,15 @@ export default {
                 keys.reduce((v, k) => (v[k] = this[k], v), {})
             );
         },
-        drawing(current) {
+        setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
                 mouseenter = (e) => current.onPart = this.find(e.currentTarget),
-                mouseleaves = () => current.onPart = false,
+                mouseleaves = () => { current.onPart = false; current.location = [NaN, NaN] },
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
                     current.way = this.way;
-                    this.way = lineSearch(current, 'drawing');
+                    this.drawing(current);
                 },
                 afterEvent = () => {
                     debugger;
@@ -117,7 +138,7 @@ export default {
         this.connect = this.value.connect;
 
         if (!this.way.length) {
-            this.drawing(this.value.current);
+            this.setDrawing(this.value.current);
         }
     },
 };
