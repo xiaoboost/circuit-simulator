@@ -101,12 +101,10 @@ describe('point.js', () => {
 
         const point = $P(1, 1),
             map = [], mapDefault = [],
-            margin = [[-2, -3], [3, 2]],
-            start_x = point[0] + margin[0][0],
-            start_y = point[1] + margin[0][1];
+            margin = [[-2, -3], [3, 2]];
 
         initSet(mapDefault);
-        point.around(margin, (x, y, stop) => (map.push([x, y])));
+        point.around(margin, (x, y) => (map.push([x, y])));
         expect(map).to.be.equalWithoutOrder(mapDefault);
 
         map.length = 0;

@@ -10,11 +10,11 @@ module.exports = {
         sourceMap: isProduction
             ? config.build.productionSourceMap
             : config.dev.cssSourceMap,
-        extract: isProduction
+        extract: isProduction,
     }),
     postcss: [
         require('autoprefixer')({
-            browsers: ['ie > 8', 'last 2 versions', 'Chrome > 24']
-        })
-    ]
+            browsers: ['ie > 8', 'last 2 versions', 'Chrome > 24'],
+        }),
+    ],
 };

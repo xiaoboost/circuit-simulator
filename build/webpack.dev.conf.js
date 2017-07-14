@@ -16,14 +16,14 @@ module.exports = merge(baseWebpackConfig, {
     module: {
         // 使用 styleLoaders
         rules: utils.styleLoaders({
-            sourceMap: config.dev.cssSourceMap
-        })
+            sourceMap: config.dev.cssSourceMap,
+        }),
     },
     // 使用 #eval-source-map 模式作为开发工具
     devtool: '#cheap-module-eval-source-map',
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': config.dev.env
+            'process.env': config.dev.env,
         }),
         // HotModule插件在页面进行变更的时候只会重绘对应的页面模块，不会重绘整个页面
         // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
@@ -35,8 +35,8 @@ module.exports = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: './src/index.html',
-            inject: true
+            inject: true,
         }),
-        new FriendlyErrorsPlugin()
-    ]
+        new FriendlyErrorsPlugin(),
+    ],
 });

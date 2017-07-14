@@ -1,2 +1,5 @@
-.deploy_git/*.js
+.deploy_git/*
+.vscode/*
+node_modules/*
 dist/*
+_文档/*

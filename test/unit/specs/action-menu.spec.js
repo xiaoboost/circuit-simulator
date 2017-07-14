@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import store  from '@/vuex';
 import ActionMenu from '@/components/action-menu';
 import { createTest, createVue, destroyVM, triggerEvent } from '../util';
@@ -40,8 +39,8 @@ describe('action-menu.vue', () => {
             `,
             store,
             components: {
-                'action-menu': ActionMenu
-            }
+                'action-menu': ActionMenu,
+            },
         });
 
         // 点击添加器件按钮

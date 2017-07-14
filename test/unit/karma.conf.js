@@ -17,24 +17,24 @@ module.exports = function(config) {
         files: ['./index.js'],
         // 预处理文件
         preprocessors: {
-            './index.js': ['webpack', 'sourcemap']
+            './index.js': ['webpack', 'sourcemap'],
         },
         webpack: webpackConfig,
         webpackMiddleware: {
-            noInfo: true
+            noInfo: true,
         },
         coverageReporter: {
             dir: './coverage',
             reporters: [
                 { type: 'lcov', subdir: '.' },
-                { type: 'text-summary' }
-            ]
+                { type: 'text-summary' },
+            ],
         },
         customLaunchers: {
             'headlessChrome': {
                 base: 'Chrome',
-                flags: ['--headless', '--disable-gpu', '--remote-debugging-port=9222', '--no-sandbox']
-            }
-        }
+                flags: ['--headless', '--disable-gpu', '--remote-debugging-port=9222', '--no-sandbox'],
+            },
+        },
     });
 };

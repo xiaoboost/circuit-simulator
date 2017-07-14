@@ -18,11 +18,11 @@ Object.assign(Collection.prototype, {
             id = temp && temp[0];
 
         if (!temp) {
-            throw ('器件ID格式错误');
+            throw new Error('器件ID格式错误');
         }
 
         let tempid = '', ans = void 0;
-        //输入字符串没有下划线
+        // 输入字符串没有下划线
         if (id.indexOf('_') === -1) {
             tempid = id + '_';
         } else if (!this.has(input)) {
@@ -37,8 +37,8 @@ Object.assign(Collection.prototype, {
                 return (ans);
             }
         }
-        throw ('器件数量超出最大限制');
-    }
+        throw new Error('器件数量超出最大限制');
+    },
 });
 
 // 是否是器件对象
@@ -66,7 +66,7 @@ function moveToIndex(set, id, to = 0) {
 export default {
     state: {
         Parts: new Collection(),
-        Lines: new Collection()
+        Lines: new Collection(),
     },
     mutations: {
         PUSH_PART(state, part) {
@@ -92,6 +92,6 @@ export default {
         },
         LINE_TO_BOTTOM(state, line) {
             moveToIndex(state.Lines, line);
-        }
-    }
+        },
+    },
 };

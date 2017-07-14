@@ -88,7 +88,7 @@ function fixType(type) {
     return !!match && match[0];
 }
 
-function install(Vue, options) {
+function install(Vue) {
     // 添加全局指令
     Vue.directive('delegate', {
         bind(el, binding) {
@@ -104,14 +104,12 @@ function install(Vue, options) {
             delegate.add(el, type, selector, data, handler);
         },
         unbind(el, binding) {
-            const [typeOri, selector, fn] = fixOffParameters(binding.arg, ...binding.value),
-                handler = functionMap.get(fn),
-                type = fixType(typeOri);
+            const [,, fn] = fixOffParameters(binding.arg, ...binding.value);
 
             functionMap.delete(fn);
             // 删除绑定在当前 DOM 上的所有事件
             delegate.remove(el, '', '*');
-        }
+        },
     });
     // 添加实例方法
     Vue.prototype.$$on = function(type, selector, data, fn) {

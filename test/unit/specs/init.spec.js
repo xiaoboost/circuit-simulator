@@ -10,7 +10,7 @@ describe('init.js', () => {
         expect(Object.isEmpty(unempty)).to.be.false;
 
         Object.defineProperty(unempty, 'key', {
-            enumerable: false
+            enumerable: false,
         });
         expect(Object.isEmpty(unempty)).to.be.true;
         triggerEvent(document, 'contextmenu');

@@ -1,5 +1,5 @@
 // 全局常量
-const u = undefined, rnotwhite = /\S+/g;
+const rnotwhite = /\S+/g;
 // 事件代理全局缓存
 const cache = new Map();
 // 特殊事件必须有特殊的判断函数
@@ -9,7 +9,7 @@ const special = {
     },
     mouseleave(event) {
         return event.currentTarget === event.target;
-    }
+    },
 };
 
 // 有效以及无效函数
@@ -25,7 +25,7 @@ function $Event(origin) {
     this.originalEvent = origin;
 }
 $Event.prototype = Object.create(new Proxy({}, {
-    get: (target, property, receiver) => receiver.originalEvent[property]
+    get: (target, property, receiver) => receiver.originalEvent[property],
 }));
 Object.assign($Event.prototype, {
     constructor: $Event,
@@ -48,7 +48,7 @@ Object.assign($Event.prototype, {
         this.isImmediatePropagationStopped = returnTrue;
         this.originalEvent.stopImmediatePropagation();
         this.stopPropagation();
-    }
+    },
 });
 
 // 分解选择器
@@ -56,7 +56,7 @@ function paserSelector(all) {
     return (all || '').split(',').map((str) => {
         const selector = str.trim().split(' ').pop();
         let tag = /^[a-z]+/.exec(selector),
-            id = /\#([^.#]+)/.exec(selector),
+            id = /#([^.#]+)/.exec(selector),
             clas = selector.match(/\.[^.#]+/g);
 
         id = id && id[1];
@@ -186,7 +186,7 @@ function add(elem, types, selector, data, callback) {
             callback,
             selector,
             characteristic: paserSelector(selector),
-            matches: !!selector && elem.querySelectorAll(selector)
+            matches: !!selector && elem.querySelectorAll(selector),
         };
         // 这个事件是初次定义
         if (!events[type]) {
@@ -194,7 +194,7 @@ function add(elem, types, selector, data, callback) {
             // 绑定监听事件（捕获阶段）
             elem.addEventListener(type, elemData.handle, true);
         }
-        //selector有重复的，那么就覆盖，没有重复的那就添加到末尾
+        // selector有重复的，那么就覆盖，没有重复的那就添加到末尾
         if (!(events[type].some((n, i, arr) => (selector === n.selector) && (arr[i] = handleObj)))) {
             events[type].push(handleObj);
         }

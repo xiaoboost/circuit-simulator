@@ -27,23 +27,23 @@ describe('plugin-delegate.js', () => {
                     text_click_1: 0,
                     text_click_2: 0,
                     mouseenter: 0,
-                    mouseleave: 0
+                    mouseleave: 0,
                 };
             },
             methods: {
                 click_handler1() {
-                    this.text_click_1 ++;
+                    this.text_click_1++;
                 },
                 click_handler2() {
-                    this.text_click_2 ++;
+                    this.text_click_2++;
                 },
                 mouseenter_handler() {
-                    this.mouseenter ++;
+                    this.mouseenter++;
                 },
                 mouseleave_handler() {
-                    this.mouseleave ++;
-                }
-            }
+                    this.mouseleave++;
+                },
+            },
         };
         it('click', () => {
             vm = createVue(template);
@@ -101,20 +101,20 @@ describe('plugin-delegate.js', () => {
                     return {
                         a_click: 0,
                         div_click: 0,
-                        text_click: 0
+                        text_click: 0,
                     };
                 },
                 methods: {
                     div_handler() {
-                        this.div_click ++;
+                        this.div_click++;
                     },
                     text_handler() {
-                        this.text_click ++;
+                        this.text_click++;
                     },
                     a_handler() {
-                        this.a_click ++;
-                    }
-                }
+                        this.a_click++;
+                    },
+                },
             };
         }
         it('no modifiers', () => {
@@ -197,15 +197,15 @@ describe('plugin-delegate.js', () => {
                 </div>`,
             data() {
                 return {
-                    click: 0
+                    click: 0,
                 };
-            }
+            },
         };
         it('( type, fn )', () => {
             vm = createVue(Object.assign(template, {
                 mounted() {
                     this.$$on('click', () => this.click++);
-                }
+                },
             }));
 
             triggerEvent(vm.$el, 'click');
@@ -215,7 +215,7 @@ describe('plugin-delegate.js', () => {
             vm = createVue(Object.assign(template, {
                 mounted() {
                     this.$$on('click', '.inner', () => this.click++);
-                }
+                },
             }));
 
             const inner = vm.$el.querySelector('.inner');
@@ -225,8 +225,8 @@ describe('plugin-delegate.js', () => {
         it('( types, data, fn )', () => {
             vm = createVue(Object.assign(template, {
                 mounted() {
-                    this.$$on('click', {test: 2008}, (e) => this.click = e.data.test);
-                }
+                    this.$$on('click', { test: 2008 }, (e) => (this.click = e.data.test));
+                },
             }));
 
             triggerEvent(vm.$el, 'click');
@@ -235,8 +235,8 @@ describe('plugin-delegate.js', () => {
         it('( type, selector, data, fn )', () => {
             vm = createVue(Object.assign(template, {
                 mounted() {
-                    this.$$on('click', '.inner', {test: 2008}, (e) => this.click = e.data.test);
-                }
+                    this.$$on('click', '.inner', { test: 2008 }, (e) => (this.click = e.data.test));
+                },
             }));
 
             const inner = vm.$el.querySelector('.inner');
@@ -256,9 +256,9 @@ describe('plugin-delegate.js', () => {
             data() {
                 return {
                     text1: 0,
-                    text2: 0
+                    text2: 0,
                 };
-            }
+            },
         };
         it('( )', () => {
             vm = createVue(Object.assign(template, {
@@ -269,8 +269,8 @@ describe('plugin-delegate.js', () => {
                 methods: {
                     clear() {
                         this.$$off();
-                    }
-                }
+                    },
+                },
             }));
 
             const text1 = vm.$el.querySelector('.text1'),
@@ -292,7 +292,7 @@ describe('plugin-delegate.js', () => {
                 mounted() {
                     this.$$on('click', '.text1', () => this.text1++);
                     this.$$on('mouseenter', '.text2', () => this.text2++);
-                }
+                },
             }));
 
             const text1 = vm.$el.querySelector('.text1'),
@@ -317,12 +317,12 @@ describe('plugin-delegate.js', () => {
         });
         it('( type, fn )', () => {
             let sign = 0;
-            const handler = () => sign ++;
+            const handler = () => sign++;
 
             vm = createVue(Object.assign(template, {
                 mounted() {
                     this.$$on('click', '.text1', handler);
-                }
+                },
             }));
 
             const text1 = vm.$el.querySelector('.text1');
@@ -339,7 +339,7 @@ describe('plugin-delegate.js', () => {
                 mounted() {
                     this.$$on('click', '.text1', () => this.text1++);
                     this.$$on('mouseenter', '.text2', () => this.text2++);
-                }
+                },
             }));
 
             const text1 = vm.$el.querySelector('.text1'),
@@ -364,14 +364,14 @@ describe('plugin-delegate.js', () => {
         });
         it('( type, selector, fn )', () => {
             let sign1 = 0, sign2 = 0;
-            const handler1 = () => sign1 ++;
-            const handler2 = () => sign2 ++;
+            const handler1 = () => sign1++;
+            const handler2 = () => sign2++;
 
             vm = createVue(Object.assign(template, {
                 mounted() {
                     this.$$on('click', '.text1', handler1);
                     this.$$on('mouseenter', '.text2', handler2);
-                }
+                },
             }));
 
             const text1 = vm.$el.querySelector('.text1'),
@@ -414,8 +414,8 @@ describe('plugin-delegate.js', () => {
                         </div>
                     </div>`,
                 methods: {
-                    handler() {}
-                }
+                    handler() {},
+                },
             };
 
             try {
@@ -436,17 +436,16 @@ describe('plugin-delegate.js', () => {
                     </div>`,
                 data() {
                     return {
-                        click: 0
+                        click: 0,
                     };
                 },
                 mounted() {
                     this.$$on('click', 'a.inner', () => false);
                     this.$$on('click', '.text', () => this.click++);
-                }
+                },
             });
 
-            const a = vm.$el.querySelector('a.inner'),
-                text = vm.$el.querySelector('.text');
+            const text = vm.$el.querySelector('.text');
 
             triggerEvent(text, 'click');
             expect(vm.click).to.equal(0);
@@ -466,7 +465,7 @@ describe('plugin-delegate.js', () => {
                         sign = text2;
                         e.stopImmediatePropagation();
                     });
-                }
+                },
             });
 
             vm.$el.addEventListener('click', (e) => {
@@ -490,12 +489,12 @@ describe('plugin-delegate.js', () => {
             data() {
                 return {
                     vision: false,
-                    click: 0
+                    click: 0,
                 };
             },
             mounted() {
                 this.$$on('click', '#jump', () => this.click++);
-            }
+            },
         });
 
         vm.vision = true;

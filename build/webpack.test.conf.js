@@ -6,14 +6,14 @@ const utils = require('./utils'),
     webpackConfig = merge(baseConfig, {
         // use inline sourcemap for karma-sourcemap-loader
         module: {
-            rules: utils.styleLoaders()
+            rules: utils.styleLoaders(),
         },
         devtool: '#inline-source-map',
         plugins: [
             new webpack.DefinePlugin({
-                'process.env': require('../config/test.env')
-            })
-        ]
+                'process.env': require('../config/test.env'),
+            }),
+        ],
     });
 
 // 测试环境中不需要入口文件

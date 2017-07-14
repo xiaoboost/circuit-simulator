@@ -30,18 +30,18 @@ export default {
                 {
                     name: 'run',
                     tip: '时域模拟',
-                    func: () => this.run()
+                    func: () => this.run(),
                 },
                 {
                     name: 'add',
                     tip: '添加器件',
-                    func: () => this.add()
+                    func: () => this.add(),
                 },
                 {
                     name: 'config',
                     tip: '运行设置',
-                    func: () => this.config()
-                }
+                    func: () => this.config(),
+                },
             ].map((icon) => {
                 Object.assign(icon, Object.clone(action[icon.name]));
                 icon.translate = icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(',');
@@ -53,7 +53,7 @@ export default {
             zoom,
             icons,
             action,
-            isRun: false
+            isRun: false,
         };
     },
     methods: {
@@ -65,8 +65,8 @@ export default {
         },
         config() {
             this.$store.commit('SET_PAGE', 'main-config');
-        }
-    }
+        },
+    },
 };
 </script>
 

@@ -18,7 +18,7 @@ const Electronics = {
     resistance: {
         readWrite: {
             id: 'R_',
-            params: ['10k']
+            params: ['10k'],
         },
         readOnly: {
             type: 'resistance',
@@ -30,40 +30,40 @@ const Electronics = {
                 {
                     label: '阻值',
                     unit: 'Ω',
-                    hidden: false
-                }
+                    hidden: false,
+                },
             ],
             points: [
                 {
                     position: [-40, 0],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [40, 0],
-                    direction: [1, 0]
-                }
+                    direction: [1, 0],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-40,0H-24L-20,-9L-12,9L-4,-9L4,9L12,-9L20,9L24,0H40'
-                    }
+                        'd': 'M-40,0H-24L-20,-9L-12,9L-4,-9L4,9L12,-9L20,9L24,0H40',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-13', 'width':'60', 'height':'26'
-                    }
-                }
-            ]
-        }
+                        'x': '-30', 'y': '-13', 'width': '60', 'height': '26',
+                    },
+                },
+            ],
+        },
     },
     // 电容
     capacitor: {
         readWrite: {
             id: 'C_',
-            params: ['100u']
+            params: ['100u'],
         },
         readOnly: {
             type: 'capacitor',
@@ -75,40 +75,40 @@ const Electronics = {
                 {
                     label: '电容量',
                     unit: 'F',
-                    hidden: false
-                }
+                    hidden: false,
+                },
             ],
             points: [
                 {
                     position: [-40, 0],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [40, 0],
-                    direction: [1, 0]
-                }
+                    direction: [1, 0],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M5,0H40M-40,0H-5M-5,-16V16M5,-16V16'
-                    }
+                        'd': 'M5,0H40M-40,0H-5M-5,-16V16M5,-16V16',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-15', 'width':'60', 'height':'30'
-                    }
-                }
-            ]
-        }
+                        'x': '-30', 'y': '-15', 'width': '60', 'height': '30',
+                    },
+                },
+            ],
+        },
     },
     // 电感
     inductance: {
         readWrite: {
             id: 'L_',
-            params: ['10u']
+            params: ['10u'],
         },
         readOnly: {
             type: 'inductance',
@@ -120,40 +120,40 @@ const Electronics = {
                 {
                     label: '电感量',
                     unit: 'H',
-                    hidden: false
-                }
+                    hidden: false,
+                },
             ],
             points: [
                 {
                     position: [-40, 0],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [40, 0],
-                    direction: [1, 0]
-                }
+                    direction: [1, 0],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-40,0H-24M24,0H40M-24,0Q-18,-12,-12,0M-12,0Q-6,-12,0,0M0,0Q6,-12,12,0M12,0Q18,-12,24,0'
-                    }
+                        'd': 'M-40,0H-24M24,0H40M-24,0Q-18,-12,-12,0M-12,0Q-6,-12,0,0M0,0Q6,-12,12,0M12,0Q18,-12,24,0',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-10', 'width':'60', 'height':'15'
-                    }
-                }
-            ]
-        }
+                        'x': '-30', 'y': '-10', 'width': '60', 'height': '15',
+                    },
+                },
+            ],
+        },
     },
     // 直流电压源
     dc_voltage_source: {
         readWrite: {
             id: 'V_',
-            params: ['12']
+            params: ['12'],
         },
         readOnly: {
             type: 'dc_voltage_source',
@@ -165,40 +165,40 @@ const Electronics = {
                 {
                     label: '电压值',
                     unit: 'V',
-                    hidden: false
-                }
+                    hidden: false,
+                },
             ],
             points: [
                 {
                     position: [0, -40],
-                    direction: [0, -1]
+                    direction: [0, -1],
                 },
                 {
                     position: [0, 40],
-                    direction: [0, 1]
-                }
+                    direction: [0, 1],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-40V-5M0,5V40M-16,-5H16M-10.5,5H10.5M-10,-12H-5M-7.5,-15V-9'
-                    }
+                        'd': 'M0,-40V-5M0,5V40M-16,-5H16M-10.5,5H10.5M-10,-12H-5M-7.5,-15V-9',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-16', 'y':'-30', 'width':'32', 'height':'60'
-                    }
-                }
-            ]
-        }
+                        'x': '-16', 'y': '-30', 'width': '32', 'height': '60',
+                    },
+                },
+            ],
+        },
     },
     // 交流电压源
     ac_voltage_source: {
         readWrite: {
             id: 'V_',
-            params: ['220', '50', '0', '0']
+            params: ['220', '50', '0', '0'],
         },
         readOnly: {
             type: 'ac_voltage_source',
@@ -210,61 +210,61 @@ const Electronics = {
                 {
                     label: '峰值电压',
                     unit: 'V',
-                    hidden: false
+                    hidden: false,
                 },
                 {
                     label: '频率',
                     unit: 'Hz',
-                    hidden: false
+                    hidden: false,
                 },
                 {
                     label: '偏置电压',
                     unit: 'V',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: '初始相角',
                     unit: '°',
-                    hidden: true
-                }
+                    hidden: true,
+                },
             ],
             points: [
                 {
                     position: [0, -40],
-                    direction: [0, -1]
+                    direction: [0, -1],
                 },
                 {
                     position: [0, 40],
-                    direction: [0, 1]
-                }
+                    direction: [0, 1],
+                },
             ],
             aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class':'fill-white'
-                    }
+                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'fill-white',
+                    },
                 },
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,15H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0'
-                    }
+                        'd': 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,15H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
-                    }
-                }
-            ]
-        }
+                        'x': '-20', 'y': '-30', 'width': '40', 'height': '60',
+                    },
+                },
+            ],
+        },
     },
     // 直流电流源
     dc_current_source: {
         readWrite: {
             id: 'I_',
-            params: ['10']
+            params: ['10'],
         },
         readOnly: {
             type: 'dc_current_source',
@@ -276,85 +276,85 @@ const Electronics = {
                 {
                     label: '电流值',
                     unit: 'A',
-                    hidden: false
-                }
+                    hidden: false,
+                },
             ],
             points: [
                 {
                     position: [0, 40],
-                    direction: [0, 1]
+                    direction: [0, 1],
                 },
                 {
                     position: [0, -40],
-                    direction: [0, -1]
-                }
+                    direction: [0, -1],
+                },
             ],
             aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class':'fill-white'
-                    }
+                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'fill-white',
+                    },
                 },
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-40V-20M0,20V40M0,-12V12'
-                    }
+                        'd': 'M0,-40V-20M0,20V40M0,-12V12',
+                    },
                 },
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '0,-14 -5,-4 0,-8 5,-4', 'class': 'fill-black'//'fill': '#3B4449', 'stroke-width': '0.5', 'stroke-linecap': 'square'
-                    }
+                        'points': '0,-14 -5,-4 0,-8 5,-4', 'class': 'fill-black', // 'fill': '#3B4449', 'stroke-width': '0.5', 'stroke-linecap': 'square'
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
-                    }
-                }
-            ]
-        }
+                        'x': '-20', 'y': '-30', 'width': '40', 'height': '60',
+                    },
+                },
+            ],
+        },
     },
     // 参考地
     reference_ground: {
         readWrite: {
-            id: 'GND_'
+            id: 'GND_',
         },
         readOnly: {
             type: 'reference_ground',
             introduction: '参考地',
             padding: 0,
             margin: 1,
-            txtLocate:12,
+            txtLocate: 12,
             text: [],
             points: [
                 {
                     position: [0, -20],
-                    direction: [0, -1]
-                }
+                    direction: [0, -1],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-20V0M-12,0H12M-7,5H7M-2,10H2'
-                    }
+                        'd': 'M0,-20V0M-12,0H12M-7,5H7M-2,10H2',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-15', 'y':'-10', 'width':'30', 'height':'26'
-                    }
-                }
+                        'x': '-15', 'y': '-10', 'width': '30', 'height': '26',
+                    },
+                },
             ],
-        }
+        },
     },
     // 电压表
     voltage_meter: {
         readWrite: {
-            id: 'VM_'
+            id: 'VM_',
         },
         readOnly: {
             type: 'voltage_meter',
@@ -366,46 +366,46 @@ const Electronics = {
             points: [
                 {
                     position: [0, -40],
-                    direction: [0, -1]
+                    direction: [0, -1],
                 },
                 {
                     position: [0, 40],
-                    direction: [0, 1]
-                }
+                    direction: [0, 1],
+                },
             ],
             aspect: [
                 {
                     'name': 'circle',
                     'attribute': {
-                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'fill-white'
-                    }
+                        'cx': '0', 'cy': '0', 'r': '19', 'class': 'fill-white',
+                    },
                 },
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-40V-20M0,20V40M0,-16V-8M-4,-12H4M-4,12H4'
-                    }
+                        'd': 'M0,-40V-20M0,20V40M0,-16V-8M-4,-12H4M-4,12H4',
+                    },
                 },
                 {
                     'name': 'path',
                     'non-rotate': true,
                     'attribute': {
-                        'd': 'M-7,-6L0,7L7,-6'
-                    }
+                        'd': 'M-7,-6L0,7L7,-6',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-20', 'y':'-30', 'width':'40', 'height':'60'
-                    }
-                }
+                        'x': '-20', 'y': '-30', 'width': '40', 'height': '60',
+                    },
+                },
             ],
-        }
+        },
     },
     // 电流表
     current_meter: {
         readWrite: {
-            id: 'IM_'
+            id: 'IM_',
         },
         readOnly: {
             type: 'current_meter',
@@ -417,40 +417,40 @@ const Electronics = {
             points: [
                 {
                     position: [-20, 0],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [20, 0],
-                    direction: [1, 0]
-                }
+                    direction: [1, 0],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-20,0H20'
-                    }
+                        'd': 'M-20,0H20',
+                    },
                 },
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '12,0 2,-6 6,0 2,6', 'class':'fill-black'
-                    }
+                        'points': '12,0 2,-6 6,0 2,6', 'class': 'fill-black',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-10', 'y':'-8', 'width':'20', 'height':'16'
-                    }
-                }
-            ]
-        }
+                        'x': '-10', 'y': '-8', 'width': '20', 'height': '16',
+                    },
+                },
+            ],
+        },
     },
     // 二极管
     diode: {
         readWrite: {
             id: 'VD_',
-            params: ['1', '0.5', '5M']
+            params: ['1', '0.5', '5M'],
         },
         readOnly: {
             type: 'diode',
@@ -462,56 +462,56 @@ const Electronics = {
                 {
                     label: '导通电压',
                     unit: 'V',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: '导通电阻',
                     unit: 'Ω',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: '关断电阻',
                     unit: 'Ω',
-                    hidden: true
-                }
+                    hidden: true,
+                },
             ],
             points: [
                 {
                     position: [0, -40],
-                    direction: [0, -1]
+                    direction: [0, -1],
                 },
                 {
                     position: [0, 40],
-                    direction: [0, 1]
-                }
+                    direction: [0, 1],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M0,-40V40M-13,-11H13'
-                    }
+                        'd': 'M0,-40V40M-13,-11H13',
+                    },
                 },
                 {
                     'name': 'polygon',
                     'attribute': {
-                        'points': '0,-11 -13,11 13,11', 'class': 'fill-black'//'fill': '#3B4449', 'stroke-width': '1'
-                    }
+                        'points': '0,-11 -13,11 13,11', 'class': 'fill-black', // 'fill': '#3B4449', 'stroke-width': '1'
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-13', 'y':'-30', 'width':'26', 'height':'60'
-                    }
-                }
-            ]
-        }
+                        'x': '-13', 'y': '-30', 'width': '26', 'height': '60',
+                    },
+                },
+            ],
+        },
     },
     // NPN三极管
     transistor_npn: {
         readWrite: {
             id: 'Q_',
-            params: ['40', '26', '0.6', '1']
+            params: ['40', '26', '0.6', '1'],
         },
         readOnly: {
             type: 'transistor_npn',
@@ -523,66 +523,66 @@ const Electronics = {
                 {
                     label: '电流放大倍数',
                     unit: '',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: 'B极电阻',
                     unit: 'Ω',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: 'BE饱和压降',
                     unit: 'V',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: 'CE饱和压降',
                     unit: 'V',
-                    hidden: true
-                }
+                    hidden: true,
+                },
             ],
             points: [
                 {
                     position: [-20, 0],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [20, -40],
-                    direction: [0, -1]
+                    direction: [0, -1],
                 },
                 {
                     position: [20, 40],
-                    direction: [0, 1]
-                }
+                    direction: [0, 1],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-20,0H0M0,-25V25M20,-40V-28L0,-12M0,12L20,28V40'
-                    }
+                        'd': 'M-20,0H0M0,-25V25M20,-40V-28L0,-12M0,12L20,28V40',
+                    },
                 },
                 {
                     'name': 'polygon',
                     'attribute': {
                         'points': '0,0 -11,-6 -7,0 -11,6', 'class': 'fill-black',
-                        'transform': 'translate(18, 26.4) rotate(38.7)'
-                    }
+                        'transform': 'translate(18, 26.4) rotate(38.7)',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-10', 'y':'-30', 'width':'30', 'height':'60'
-                    }
-                }
-            ]
-        }
+                        'x': '-10', 'y': '-30', 'width': '30', 'height': '60',
+                    },
+                },
+            ],
+        },
     },
     // 运放
     operational_amplifier: {
         readWrite: {
             id: 'OP_',
-            params: ['120', '80M', '60']
+            params: ['120', '80M', '60'],
         },
         readOnly: {
             type: 'operational_amplifier',
@@ -596,61 +596,61 @@ const Electronics = {
                 {
                     label: '开环增益',
                     unit: 'dB',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: '输入电阻',
                     unit: 'Ω',
-                    hidden: true
+                    hidden: true,
                 },
                 {
                     label: '输出电阻',
                     unit: 'Ω',
-                    hidden: true
-                }
+                    hidden: true,
+                },
             ],
             points: [
                 {
                     position: [-40, -20],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [-40, 20],
-                    direction: [-1, 0]
+                    direction: [-1, 0],
                 },
                 {
                     position: [40, 0],
-                    direction: [1, 0]
-                }
+                    direction: [1, 0],
+                },
             ],
             aspect: [
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-25,-35V35L25,0Z', 'class': 'fill-white'
-                    }
+                        'd': 'M-25,-35V35L25,0Z', 'class': 'fill-white',
+                    },
                 },
                 {
                     'name': 'path',
                     'attribute': {
-                        'd': 'M-40,-20H-25M-40,20H-25M25,0H40'
-                    }
+                        'd': 'M-40,-20H-25M-40,20H-25M25,0H40',
+                    },
                 },
                 {
-                    'name':'path',
+                    'name': 'path',
                     'attribute': {
-                        'd': 'M-22,-20H-16M-22,20H-16M-19,17V23', 'stroke-width': '1'
-                    }
+                        'd': 'M-22,-20H-16M-22,20H-16M-19,17V23', 'stroke-width': '1',
+                    },
                 },
                 {
-                    'name':'rect',
+                    'name': 'rect',
                     'attribute': {
-                        'x': '-30', 'y':'-35', 'width':'60', 'height':'70'
-                    }
-                }
-            ]
-        }
-    }
+                        'x': '-30', 'y': '-35', 'width': '60', 'height': '70',
+                    },
+                },
+            ],
+        },
+    },
 };
 
 // 内外边距转换为标准格式
@@ -668,10 +668,9 @@ function css2obj(css) {
 }
 // 部分格式转换
 Object.keys(Electronics).forEach((key) => {
-    const data = Electronics[key].readOnly,
-        points = data.points;
+    const data = Electronics[key].readOnly;
 
-    //内外边距
+    // 内外边距
     data.padding = css2obj(data.padding);
     data.margin = css2obj(data.margin);
 

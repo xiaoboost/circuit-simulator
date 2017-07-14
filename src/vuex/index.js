@@ -9,15 +9,15 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         time,
-        collection
+        collection,
     },
     // 页面状态
     state: {
-        page: ''
+        page: '',
     },
     mutations: {
         SET_PAGE(state, page) {
             state.page = page;
-        }
-    }
+        },
+    },
 });

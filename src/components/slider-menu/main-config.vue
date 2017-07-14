@@ -45,7 +45,7 @@ export default {
         return {
             NUM_REG,
             end: time.END_TIME,
-            step: time.STEP_TIME
+            step: time.STEP_TIME,
         };
     },
     beforeRouteLeave(to, from, next) {
@@ -56,8 +56,8 @@ export default {
         }
     },
     components: {
-        'v-input': Input
-    }
+        'v-input': Input,
+    },
 };
 </script>
 

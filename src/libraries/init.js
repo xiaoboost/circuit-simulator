@@ -17,11 +17,11 @@ Object.assign(Object, {
     // 深复制对象
     clone: (from) => Object.keys(from)
         .reduce((obj, key) =>
-            (obj[key] = clone(from[key]), obj), {}),
+            ((obj[key] = clone(from[key])), obj), {}),
     // 隐藏所有可枚举的属性
     hideAll: (obj) => Object.keys(obj).forEach((key) => Object.defineProperty(obj, key, {
         configurable: false,
-        enumerable: false
+        enumerable: false,
     })),
     // 深度冻结当前对象
     freezeAll(obj) {
@@ -34,7 +34,7 @@ Object.assign(Object, {
         if (!(obj instanceof Object)) { return (false); }
         Object.keys(obj).forEach((key) => Object.sealAll(obj[key]));
         Object.seal(obj);
-    }
+    },
 });
 // Object类原型方法扩展
 Object.assign(Object.prototype, {
@@ -53,16 +53,17 @@ Object.assign(Object.prototype, {
         );
     },
     map(fn) {
-        return Object.keys(this)
+        return Object
+            .keys(this)
             .reduce((obj, key) =>
-                (obj[key] = fn(this[key], key), obj), {});
-    }
+                ((obj[key] = fn(this[key])), obj), {});
+    },
 });
 
 // Array类静态方法扩展
 Object.assign(Array, {
     // 数组深复制
-    clone: (from) => from.map((n) => clone(n))
+    clone: (from) => from.map((n) => clone(n)),
 });
 // Array类原型方法扩展
 Object.assign(Array.prototype, {
@@ -80,7 +81,7 @@ Object.assign(Array.prototype, {
             : item === arr[i]
         );
     },
-    //取出下标为index的元素
+    // 取出下标为index的元素
     get(index) {
         const sub = (index >= 0)
             ? index
@@ -99,7 +100,7 @@ Object.assign(Array.prototype, {
         } else {
             return (false);
         }
-    }
+    },
 });
 
 // Number类原型方法扩展
@@ -150,7 +151,7 @@ Object.assign(Number.prototype, {
         } else {
             return (0);
         }
-    }
+    },
 });
 
 // 隐藏所有扩展的原生属性

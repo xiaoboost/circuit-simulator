@@ -20,28 +20,28 @@
 
 <script>
 import { $P } from '@/libraries/point';
-import { $M } from '@/libraries/matrix';
+// import { $M } from '@/libraries/matrix';
 import { lineSearch } from './line-search';
-import { schMap } from '@/libraries/maphash';
+// import { schMap } from '@/libraries/maphash';
 
 export default {
     mixins: [lineSearch],
     props: {
         value: {
             type: Object,
-            default: () => ({})
+            default: () => ({}),
         },
         focus: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     data() {
         return {
             way: [],
             connect: [],
 
-            pointLarge: []
+            pointLarge: [],
         };
     },
     computed: {
@@ -74,15 +74,16 @@ export default {
             return ans;
         },
         points() {
+            console.log('line-point change');
             return Array(2).fill(false).map((u, i) => ({
                 position: $P(this.way[-i]),
                 class: {
                     'point-open': !this.connect[i],
                     'point-close': !!this.connect[i],
-                    'point-large': !!this.pointLarge[i]
-                }
+                    'point-large': !!this.pointLarge[i],
+                },
             }));
-        }
+        },
     },
     methods: {
         find(arg) {
@@ -92,13 +93,13 @@ export default {
             const keys = ['id', 'way', 'connect'];
             this.$emit(
                 'update:value',
-                keys.reduce((v, k) => (v[k] = this[k], v), {})
+                keys.reduce((v, k) => ((v[k] = this[k]), v), {})
             );
         },
         setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
-                mouseenter = (e) => current.onPart = this.find(e.currentTarget),
-                mouseleaves = () => { current.onPart = false; current.location = [NaN, NaN] },
+                mouseenter = (e) => (current.onPart = this.find(e.currentTarget)),
+                mouseleaves = () => { current.onPart = false; current.location = [NaN, NaN]; },
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
@@ -121,17 +122,17 @@ export default {
                         delegate: true,
                         type: 'mouseenter',
                         callback: mouseenter,
-                        select: '.part .focus-part'
+                        select: '.part .focus-part',
                     },
                     {
                         delegate: true,
                         type: 'mouseleaves',
                         callback: mouseleaves,
-                        select: '.part .focus-part'
-                    }
-                ]
+                        select: '.part .focus-part',
+                    },
+                ],
             });
-        }
+        },
     },
     created() {
         this.id = this.value.id;

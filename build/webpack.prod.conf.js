@@ -23,8 +23,8 @@ const webpackConfig = merge(baseWebpackConfig, {
         // css的 loader
         rules: utils.styleLoaders({
             sourceMap: config.build.productionSourceMap,
-            extract: true
-        })
+            extract: true,
+        }),
     },
     // 是否使用 #source-map
     devtool: config.build.productionSourceMap ? '#source-map' : false,
@@ -34,29 +34,29 @@ const webpackConfig = merge(baseWebpackConfig, {
         // 编译输出文件名
         filename: utils.assetsPath('js/[name].[chunkhash].js'),
         // 没有指定输出文件名的输出文件名
-        chunkFilename: utils.assetsPath('js/[id].[chunkhash].js')
+        chunkFilename: utils.assetsPath('js/[id].[chunkhash].js'),
     },
     plugins: [
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
         new webpack.DefinePlugin({
-            'process.env': env
+            'process.env': env,
         }),
         // js压缩插件
         new webpack.optimize.UglifyJsPlugin({
             compress: {
-                warnings: false
+                warnings: false,
             },
-            sourceMap: false
+            sourceMap: false,
         }),
         // 从文件中分离css部分
         new ExtractTextPlugin({
-            filename: utils.assetsPath('css/[name].[contenthash].css')
+            filename: utils.assetsPath('css/[name].[contenthash].css'),
         }),
         // 压缩提取出来的css文本，这里将会把不同组件中重复的css合并
         new OptimizeCSSPlugin({
             cssProcessorOptions: {
-                safe: true
-            }
+                safe: true,
+            },
         }),
         // 输出 index.html文件，你也可以通过编辑 index.html自定义输出，具体请参考下面的链接
         // https://github.com/ampedandwired/html-webpack-plugin
@@ -69,17 +69,17 @@ const webpackConfig = merge(baseWebpackConfig, {
             minify: {
                 removeComments: true,
                 collapseWhitespace: true,
-                removeAttributeQuotes: true
+                removeAttributeQuotes: true,
                 // 更多选项请参考下面的链接:
                 // https://github.com/kangax/html-minifier#options-quick-reference
             },
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-            chunksSortMode: 'dependency'
+            chunksSortMode: 'dependency',
         }),
         // 没有指定输出文件名的文件输出的静态文件名
         new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
-            minChunks(module, count) {
+            minChunks(module) {
                 // any required modules inside node_modules are extracted to vendor
                 return (
                     module.resource &&
@@ -88,21 +88,21 @@ const webpackConfig = merge(baseWebpackConfig, {
                         path.join(__dirname, '../node_modules')
                     ) === 0
                 );
-            }
+            },
         }),
         // extract webpack runtime and module manifest to its own file in order to
         // prevent vendor hash from being updated whenever app bundle is updated
         new webpack.optimize.CommonsChunkPlugin({
             name: 'manifest',
-            chunks: ['vendor']
+            chunks: ['vendor'],
         }),
         // copy custom static assets
         new CopyWebpackPlugin([{
             from: path.resolve(__dirname, '../static'),
             to: config.build.assetsSubDirectory,
-            ignore: ['.*']
-        }])
-    ]
+            ignore: ['.*'],
+        }]),
+    ],
 });
 
 // 如果开启了 Gzip，那么启用下方的配置
@@ -121,7 +121,7 @@ if (config.build.productionGzip) {
                 ')$'
             ),
             threshold: 10240,
-            minRatio: 0.8
+            minRatio: 0.8,
         })
     );
 }

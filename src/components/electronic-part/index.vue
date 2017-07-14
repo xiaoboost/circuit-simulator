@@ -52,12 +52,12 @@ export default {
     props: {
         value: {
             type: Object,
-            default: () => ({})
+            default: () => ({}),
         },
         focus: {
             type: Boolean,
-            default: false
-        }
+            default: false,
+        },
     },
     data() {
         return {
@@ -70,19 +70,20 @@ export default {
             textPosition: $P(0, 0),
             textPlacement: 'bottom',
 
-            pointLarge: []
+            pointLarge: [],
         };
     },
     computed: {
         points() {
+            console.log('part-point change');
             return this.shape.points.map((point, i) => ({
                 position: product(point.position, this.rotate),
                 direction: product(point.direction, this.rotate),
                 class: {
                     'point-open': !this.connect[i],
                     'point-close': !!this.connect[i],
-                    'point-large': !!this.pointLarge[i]
-                }
+                    'point-large': !!this.pointLarge[i],
+                },
             }));
         },
         invRotate() {
@@ -105,41 +106,41 @@ export default {
                 box[type] = [
                     [
                         Math.min(data[0][0], data[1][0]),
-                        Math.min(data[0][1], data[1][1])
+                        Math.min(data[0][1], data[1][1]),
                     ],
                     [
                         Math.max(data[0][0], data[1][0]),
-                        Math.max(data[0][1], data[1][1])
-                    ]
+                        Math.max(data[0][1], data[1][1]),
+                    ],
                 ];
             }
 
             for (let i = 0; i < 2; i++) {
                 outter[i] = [];
                 for (let j = 0; j < 2; j++) {
-                    outter[i][j] = box.margin[i][j] +box.padding[i][j];
+                    outter[i][j] = box.margin[i][j] + box.padding[i][j];
                 }
             }
 
             return {
                 outter,
-                inner: box.padding
+                inner: box.padding,
             };
-        }
+        },
     },
     methods: {
         update() {
             const keys = ['id', 'params', 'rotate', 'connect', 'position'];
             this.$emit(
                 'update:value',
-                keys.reduce((v, k) => (v[k] = this[k], v), {})
+                keys.reduce((v, k) => ((v[k] = this[k]), v), {})
             );
         },
         // 新建器件
         newPart() {
             const el = this.$el,
                 parentEl = this.$parent.$el,
-                handlers = (e) => this.position = e.$mouse,
+                handlers = (e) => (this.position = e.$mouse),
                 stopEvent = { el: parentEl, type: 'mousedown', which: 'left' },
                 afterEvent = () => {
                     const node = this.position;
@@ -159,21 +160,21 @@ export default {
                 handlers,
                 stopEvent,
                 afterEvent,
-                cursor: 'move_part'
+                cursor: 'move_part',
             });
         },
         moveText() {
             const parentEl = this.$parent.$el,
                 afterEvent = () => this.setText(),
                 stopEvent = { el: parentEl, type: 'mouseup', which: 'left' },
-                handlers = (e) => this.textPosition = this.textPosition.add(e.$bias);
+                handlers = (e) => (this.textPosition = this.textPosition.add(e.$bias));
 
             this.$emit('focus', this.id);
             this.$emit('event', {
                 handlers,
                 stopEvent,
                 afterEvent,
-                cursor: 'move_part'
+                cursor: 'move_part',
             });
         },
         newLine(event) {
@@ -190,8 +191,8 @@ export default {
                 connect: [this.id],
                 current: {
                     start: point.position.add(this.position),
-                    direction: point.direction
-                }
+                    direction: point.direction,
+                },
             });
         },
         // 渲染
@@ -239,11 +240,11 @@ export default {
             const inner = this.margin.inner,
                 position = this.position.floorToSmall();
 
-            //器件内边距占位
+            // 器件内边距占位
             position.around(inner, (x, y) =>
                 schMap.setValueBySmalle([x, y], {
                     id: this.id,
-                    type: 'part'
+                    type: 'part',
                 })
             );
             // 器件管脚距占位
@@ -253,7 +254,7 @@ export default {
                     {
                         id: `${this.id}-${i}`,
                         type: 'part-point',
-                        connect: []
+                        connect: [],
                     }
                 )
             );
@@ -326,7 +327,7 @@ export default {
             });
 
             return (label);
-        }
+        },
     },
     created() {
         // 展开数据
@@ -353,8 +354,8 @@ export default {
             props: ['value'],
             render(ce) {
                 return ce(this.value.name, { attrs: this.value.attribute });
-            }
-        }
-    }
+            },
+        },
+    },
 };
 </script>

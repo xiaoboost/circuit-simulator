@@ -10,7 +10,7 @@ function resolve(dir) {
 module.exports = {
     entry: {
         // 编译文件入口
-        app: './src/main.js'
+        app: './src/main.js',
     },
     output: {
         // 编译输出的静态资源根路径
@@ -20,7 +20,7 @@ module.exports = {
         // 根据当前环境配置静态资源路径
         publicPath: process.env.NODE_ENV === 'production'
             ? config.build.assetsPublicPath
-            : config.dev.assetsPublicPath
+            : config.dev.assetsPublicPath,
     },
     resolve: {
         // 自动补全的扩展名
@@ -30,8 +30,8 @@ module.exports = {
         // 默认路径别名
         alias: {
             '@': resolve('src'),
-            'vue$': 'vue/dist/vue.esm.js'
-        }
+            'vue$': 'vue/dist/vue.esm.js',
+        },
     },
     module: {
         rules: [
@@ -41,13 +41,13 @@ module.exports = {
                 enforce: 'pre',
                 include: [resolve('src'), resolve('test')],
                 options: {
-                    formatter: require('eslint-friendly-formatter')
-                }
+                    formatter: require('eslint-friendly-formatter'),
+                },
             },
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: vueLoaderConfig
+                options: vueLoaderConfig,
             },
             // {
             //     test: /\.js$/,
@@ -59,17 +59,17 @@ module.exports = {
                 loader: 'url-loader',
                 options: {
                     limit: 10000,
-                    name: utils.assetsPath('img/[name].[hash:7].[ext]')
-                }
+                    name: utils.assetsPath('img/[name].[hash:7].[ext]'),
+                },
             },
             {
                 test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
                 loader: 'url-loader',
                 options: {
                     limit: 10000,
-                    name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
-                }
-            }
-        ]
-    }
+                    name: utils.assetsPath('fonts/[name].[hash:7].[ext]'),
+                },
+            },
+        ],
+    },
 };

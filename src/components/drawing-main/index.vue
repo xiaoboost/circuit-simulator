@@ -42,7 +42,7 @@ export default {
     mixins: [Event],
     components: {
         'elec-part': Part,
-        'elec-line': Line
+        'elec-line': Line,
     },
     data() {
         return {
@@ -50,7 +50,7 @@ export default {
             position: $P(0, 0),
 
             partsNow: [],
-            linesNow: []
+            linesNow: [],
         };
     },
     computed: {
@@ -60,7 +60,7 @@ export default {
                 biasY = this.position[1] % size;
             return {
                 'background-size': `${size}px`,
-                'background-position': `${biasX}px ${biasY}px`
+                'background-position': `${biasX}px ${biasY}px`,
             };
         },
         parts() {
@@ -68,7 +68,7 @@ export default {
         },
         lines() {
             return this.$store.state.collection.Lines;
-        }
+        },
     },
     methods: {
         find(id) {
@@ -135,12 +135,13 @@ export default {
             this.zoom = size / 20;
         },
         // 移动图纸
-        moveMap(e) {
+        moveMap() {
             const el = this.$el,
                 stopEvent = { el, type: 'mouseup', which: 'right' },
-                handlers = (e) =>
+                handlers = (e) => {
                     this.position = this.position
                         .add(e.$bias.mul(this.zoom));
+                };
 
             this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
         },
@@ -155,7 +156,7 @@ export default {
         // TODO: 展开右键菜单
         contextmenu() {
 
-        }
-    }
+        },
+    },
 };
 </script>

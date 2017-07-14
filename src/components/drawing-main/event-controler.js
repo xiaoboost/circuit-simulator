@@ -26,7 +26,7 @@ class Handlers {
             if (obj instanceof Function) {
                 return {
                     type: 'mousemove',
-                    callback: component.toHandler(obj)
+                    callback: component.toHandler(obj),
                 };
             } else {
                 obj.callback = component.toHandler(obj.callback);
@@ -59,7 +59,7 @@ class Handlers {
 export default {
     data() {
         return {
-            exclusion: false
+            exclusion: false,
         };
     },
     methods: {
@@ -119,6 +119,6 @@ export default {
                     afterEvent && afterEvent();
                     this.$el.style.cursor = 'default';
                 });
-        }
-    }
+        },
+    },
 };

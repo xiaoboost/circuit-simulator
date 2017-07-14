@@ -1,6 +1,6 @@
 const u = undefined;
 
-//点和向量
+// 点和向量
 function Point(a, b) {
     if (typeof a === 'number') {
         // 输入一（或二）个数
@@ -118,11 +118,11 @@ Object.assign(Point.prototype, {
     isParallel(vector) {
         return (!vector[0] && !vector[1])
             ? false
-            : (this[0]*vector[1] === this[1]*vector[0]);
+            : (this[0] * vector[1] === this[1] * vector[0]);
     },
     // 是否垂直
     isVertical(vector) {
-        return (!(this[0]*vector[0] + this[1]*vector[1]));
+        return (!(this[0] * vector[0] + this[1] * vector[1]));
     },
     // 方向相同，0向量输出false
     isSameDire(vector) {
@@ -141,7 +141,7 @@ Object.assign(Point.prototype, {
     // 以中心点和四角点，枚举范围内的所有点
     around(margin, fn) {
         let label = false;
-        const stop = () => label = true;
+        const stop = () => (label = true);
 
         for (let i = this[0] + margin[0][0]; i <= this[0] + margin[1][0]; i++) {
             for (let j = this[1] + margin[0][1]; j <= this[1] + margin[1][1]; j++) {
@@ -183,7 +183,7 @@ Object.assign(Point.prototype, {
             new $P(this),
             new $P(this[0] + len, this[1]),
             new $P(this[0], this[1] + len),
-            new $P(this[0] + len, this[1] + len)
+            new $P(this[0] + len, this[1] + len),
         ]);
     },
 });

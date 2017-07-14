@@ -19,11 +19,11 @@ export default {
         ActionMenu,
         SliderMenu,
         DrawingMain,
-        StartLoading
+        StartLoading,
     },
     data() {
         return {
-            ready: true
+            ready: true,
         };
     },
     beforeCreate() {
@@ -31,7 +31,7 @@ export default {
             console.log('Schematic Ready.');
             this.ready = false;
         };
-    }
+    },
 };
 </script>
 

@@ -8,10 +8,10 @@
         v-delegate:click="['.parts-list', addPart]"
         v-delegate:mousemove="['.parts-list', setTip]"
         v-delegate:mouseleave="['.parts-list', disabledTip]">
-        <div v-for="list in lists" class="parts-menu">
+        <div v-for="(list, i) in lists" class="parts-menu" :key="i">
             <button
                 v-for="part in list.parts"
-                :data="part" class="parts-list">
+                :data="part" :key="part" class="parts-list">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <part-shape :info="shapes[part]" :type="part"></part-shape>
                 </svg>
@@ -39,34 +39,34 @@ export default {
                     parts: [
                         'reference_ground',
                         'voltage_meter',
-                        'current_meter'
-                    ]
+                        'current_meter',
+                    ],
                 },
                 {
                     header: '电源',
                     parts: [
                         'dc_voltage_source',
                         'ac_voltage_source',
-                        'dc_current_source'
-                    ]
+                        'dc_current_source',
+                    ],
                 },
                 {
                     header: '无源器件',
                     parts: [
                         'resistance',
                         'capacitor',
-                        'inductance'
-                    ]
+                        'inductance',
+                    ],
                 },
                 {
                     header: '半导体器件',
                     parts: [
                         'diode',
                         'transistor_npn',
-                        'operational_amplifier'
-                    ]
-                }
-            ]
+                        'operational_amplifier',
+                    ],
+                },
+            ],
         };
     },
     methods: {
@@ -77,12 +77,12 @@ export default {
             this.tipStyle = {
                 display: 'inline',
                 left: `${event.pageX - 10}px`,
-                top: `${event.pageY - 10}px`
+                top: `${event.pageY - 10}px`,
             };
         },
         disabledTip() {
             this.tipStyle = {
-                display: 'none'
+                display: 'none',
             };
         },
         addPart(event) {
@@ -93,7 +93,7 @@ export default {
             part.type = type;
             part.id = partsAll.newId(part.id);
             this.$store.commit('PUSH_PART', part);
-        }
+        },
     },
     components: {
         'part-shape': {
@@ -105,9 +105,9 @@ export default {
                             { attrs: dom.attribute }
                         )),
                     special = {
-                        'current_meter' : 'scale(1.2, 1.2)',
-                        'reference_ground' : 'scale(1.2, 1.2)',
-                        'transistor_npn' : 'translate(-5,0)'
+                        'current_meter': 'scale(1.2, 1.2)',
+                        'reference_ground': 'scale(1.2, 1.2)',
+                        'transistor_npn': 'translate(-5,0)',
                     },
                     attrs = special.hasOwnProperty(this.type)
                         ? {  transform: 'translate(40,40) ' + special[this.type] }
@@ -118,15 +118,15 @@ export default {
             props: {
                 info: {
                     type: Array,
-                    default: () => []
+                    default: () => [],
                 },
                 type: {
                     type: String,
-                    default: ''
-                }
-            }
-        }
-    }
+                    default: '',
+                },
+            },
+        },
+    },
 };
 </script>
 

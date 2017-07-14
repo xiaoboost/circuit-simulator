@@ -16,36 +16,36 @@ export default {
     props: {
         value: {
             type: String,
-            default: ''
+            default: '',
         },
         placeholder: {
             type: String,
-            default: '请输入内容'
+            default: '请输入内容',
         },
         maxlength: {
             type: Number,
-            default: Infinity
+            default: Infinity,
         },
         required: {
             type: Boolean,
-            default: false
+            default: false,
         },
         pattern: {
             type: RegExp,
-            default: () => /[\d\D]*/
+            default: () => /[\d\D]*/,
         },
         func: {
             type: Function,
-            default: () => true
+            default: () => true,
         },
         message: {
             type: String,
-            default: ''
-        }
+            default: '',
+        },
     },
     data() {
         return {
-            isError: false
+            isError: false,
         };
     },
     methods: {
@@ -75,8 +75,8 @@ export default {
                 return (false);
             }
             return (true);
-        }
-    }
+        },
+    },
 };
 </script>
 

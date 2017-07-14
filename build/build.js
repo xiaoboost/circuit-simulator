@@ -22,7 +22,7 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), (err) =>
             modules: false,
             children: false,
             chunks: false,
-            chunkModules: false
+            chunkModules: false,
         }) + '\n\n');
 
         console.log(chalk.cyan('  Build complete.\n'));

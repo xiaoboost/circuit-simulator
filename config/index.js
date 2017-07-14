@@ -25,7 +25,7 @@ module.exports = {
         // 运行带有额外参数的 build命令以在构建完成后查看 bundle分析器报告：
         // npm run build --report
         // 直接设置为 true 或 false 可以直接打开或者关闭它
-        bundleAnalyzerReport: process.env.npm_config_report
+        bundleAnalyzerReport: process.env.npm_config_report,
     },
     // 开发环境
     dev: {
@@ -39,6 +39,6 @@ module.exports = {
         // CSS SourceMaps默认关闭，因为它使用相对路径似乎有bug，参考 CSS-Loader的 README：
         // https://github.com/webpack/css-loader#sourcemaps
         // 根据我们的经验，通常情况下一般是没问题的，启用此选项时请注意此问题。
-        cssSourceMap: false
-    }
+        cssSourceMap: false,
+    },
 };

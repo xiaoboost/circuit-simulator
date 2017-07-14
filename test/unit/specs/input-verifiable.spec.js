@@ -24,7 +24,7 @@ describe('input-verifiable.vue', () => {
                     value="${input}"
                     placeholder="${placeholder}">
                 </v-input>
-            `
+            `,
         });
 
         const inputElm = vm.$el.querySelector('input'),
@@ -45,14 +45,14 @@ describe('input-verifiable.vue', () => {
             data() {
                 return {
                     data: 'start',
-                    error: false
+                    error: false,
                 };
             },
             methods: {
                 hasError() {
                     this.error = true;
-                }
-            }
+                },
+            },
         });
 
         const inputElm = vm.$el.querySelector('input'),
@@ -79,9 +79,9 @@ describe('input-verifiable.vue', () => {
             `,
             data() {
                 return {
-                    data: ''
+                    data: '',
                 };
-            }
+            },
         });
 
         const inputElm = vm.$el.querySelector('input');
@@ -104,14 +104,14 @@ describe('input-verifiable.vue', () => {
             data() {
                 return {
                     data: '',
-                    error: ''
+                    error: '',
                 };
             },
             methods: {
                 event(name) {
                     this.error = name;
-                }
-            }
+                },
+            },
         });
 
         const inputElm = vm.$el.querySelector('input');
@@ -137,14 +137,14 @@ describe('input-verifiable.vue', () => {
                 return {
                     reg: /[a-zA-Z]/,
                     data: '',
-                    error: ''
+                    error: '',
                 };
             },
             methods: {
                 event(name) {
                     this.error = name;
-                }
-            }
+                },
+            },
         });
 
         const inputElm = vm.$el.querySelector('input');
@@ -170,14 +170,14 @@ describe('input-verifiable.vue', () => {
                 return {
                     func: () => false,
                     data: '',
-                    error: ''
+                    error: '',
                 };
             },
             methods: {
                 event(name) {
                     this.error = name;
-                }
-            }
+                },
+            },
         });
 
         const inputElm = vm.$el.querySelector('input');
@@ -201,9 +201,9 @@ describe('input-verifiable.vue', () => {
             data() {
                 return {
                     data: '',
-                    message: errorText
+                    message: errorText,
                 };
-            }
+            },
         });
 
         const inputElm = vm.$el.querySelector('input'),

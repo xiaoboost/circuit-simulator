@@ -25,7 +25,7 @@ export default {
     data() {
         return {
             isAddParts: false,
-            isMainConfig: false
+            isMainConfig: false,
         };
     },
     computed: {
@@ -47,8 +47,8 @@ export default {
         afterLeave() {
             this.isAddParts = false;
             this.isMainConfig = false;
-        }
-    }
+        },
+    },
 };
 </script>
 
