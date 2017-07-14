@@ -150,6 +150,7 @@ export default {
                             node.distance(pre) < node.distance(next)
                                 ? pre : next
                         ));
+
                     this.update();
                     this.markSign();
                     el.removeAttribute('opacity');
