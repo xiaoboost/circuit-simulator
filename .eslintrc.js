@@ -1,6 +1,9 @@
 module.exports = {
     'root': true,
-    'extends': 'eslint:recommended',
+    'extends': [
+        'eslint:recommended',
+        'plugin:vue/recommended',
+    ],
     'parserOptions': {
         'ecmaVersion': 7,
         'sourceType': 'module',
@@ -11,13 +14,26 @@ module.exports = {
         'es6': true,
     },
     plugins: [
-        'html',
+        'vue',
     ],
     globals: {
         'window': true,
     },
     // 自定义规则
     rules: {
+        // vue 规则
+        // 有闭合标签元素的闭合标签必须存在
+        'vue/html-end-tags': 2,
+        // 不允许 img 等元素的自闭合符号
+        'vue/html-no-self-closing': 2,
+        // 不允许存在双重属性
+        'vue/no-duplicate-attributes': 2,
+        // 不允许令人困惑的 v-for v-if，v-for 必须在 v-if 的前面，或者是上级
+        'vue/no-confusing-v-for-v-if': 2,
+        // v-for 的 key 属性是必须的
+        'vue/require-v-for-key': 2,
+
+        // JavaScript 规则
         // 允许扩展原生数据结构
         'no-extend-native': 0,
         // 允许debugger语句

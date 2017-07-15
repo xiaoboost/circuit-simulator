@@ -97,7 +97,7 @@ export default {
 .action-menu .fab-container:nth-child(n+2)
     margin -0.5em 0em
 
-.action-menu:hover 
+.action-menu:hover
     .fab-container:nth-child(n+2)
         margin .35em 0em
     .fab-container:nth-child(2)
@@ -116,13 +116,13 @@ export default {
 .fab-container
     position relative
     margin .35em 0em
-    
+
 .fab-container:first-of-type .fab
     background #66CCCC
-    
+
 .fab-container:nth-child(2) .fab
     background #2196F3
-    
+
 .fab-container:nth-child(3) .fab
     background #E53935
 

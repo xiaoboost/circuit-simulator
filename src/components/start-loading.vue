@@ -60,7 +60,7 @@ export default {
 
 .start-loading .spinner
     animation rotator 1.4s linear infinite
-    .path 
+    .path
         stroke-dasharray 187
         stroke-dashoffset 0
         transform-origin center
@@ -75,26 +75,26 @@ export default {
 .fade-leave-active
     opacity: 0
 
-@keyframes colors 
-    0% 
+@keyframes colors
+    0%
         stroke #4285F4
-    25% 
+    25%
         stroke #DE3E35
-    50% 
+    50%
         stroke #F7C223
-    75% 
+    75%
         stroke #1B9A59
-    100% 
+    100%
         stroke #4285F4
 
-@keyframes dash 
-    0% 
+@keyframes dash
+    0%
         stroke-dashoffset 187
-    50% 
+    50%
         stroke-dashoffset 46.75
         -webkit-transform rotate(135deg)
         transform rotate(135deg)
-    100% 
+    100%
         stroke-dashoffset 187
         -webkit-transform rotate(450deg)
         transform rotate(450deg)

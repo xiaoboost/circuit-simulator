@@ -3,7 +3,6 @@
     <input type="text" :placeholder="placeholder" :value="value" @input="update($event.target.value)">
     <span class="input-bar correct-bar"></span>
     <span :class="['input-bar error-bar', { 'error': isError }]"></span>
-    
     <template v-if="message">
         <span v-show="isError" class="input-error-message">{{message}}</span>
     </template>
@@ -85,7 +84,7 @@ export default {
 
 .input-verifiable
     position relative
-    
+
     input
         width 100%
         font-size 1.1em
@@ -115,7 +114,7 @@ export default {
             background Red
         &.error:before
             width 100%
-    
+
     .input-error-message
         position absolute
         padding 0 5px
