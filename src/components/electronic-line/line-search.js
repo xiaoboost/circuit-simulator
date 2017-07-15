@@ -66,6 +66,21 @@ Object.assign(LineWay.prototype, {
     checkWayExcess() {
         return this;
     },
+    // 路径有且仅有最后两个节点不同
+    isSimilar(tempway) {
+        if (this.length !== tempway.length) {
+            return (false);
+        }
+        for (let i = 0; i < this.length - 2; i++) {
+            if (!(this[i].isEqual(tempway[i]))) {
+                return (false);
+            }
+        }
+        return (
+            (!this.get(-1).isEqual(tempway.get(-1))) &&
+            (!this.get(-2).isEqual(tempway.get(-2)))
+        );
+    },
     // 终点/起点指向指定坐标
     endToMouse(node, dir = 1) {
         if (this.length <= 1) { return; }
@@ -79,6 +94,20 @@ Object.assign(LineWay.prototype, {
             this[last][1] = node[1];
         }
         this[end] = $P(node);
+    },
+    // 终点指向指定线段
+    endToLine(line, point) {
+        if (line[0][0] === line[1][0]) {
+            // 竖着的
+            this[this.length - 1][1] = point[1];
+            this[this.length - 2][1] = point[1];
+            this[this.length - 1][0] = line[0][0];
+        } else {
+            // 横着的
+            this[this.length - 1][1] = line[0][1];
+            this[this.length - 1][0] = point[0];
+            this[this.length - 2][0] = point[0];
+        }
     },
 });
 
@@ -373,7 +402,7 @@ export default {
                     part = this.$parent.find(id);
 
                 part.pointSize[mark] = size;
-            } else if (/line|cross-point/.test(status.type)) {
+            } else if (/line-point|cross-point/.test(status.type)) {
                 status.id.split(' ').forEach((id) => {
                     const line = this.$parent.find(id),
                         mark = [line.way[0], line.way.get(-1)]
@@ -417,23 +446,48 @@ export default {
             }
 
             // 默认当前导线终点节点缩小
-            this.pointLarge[1] = false;
+            this.pointSize[1] = 'point-small';
 
-            // TODO: lastend 所在点需要缩小
+            const ways = last.gridWay;
             if (opt.status === 'line') {
+                // 终点在导线上
+                // 与鼠标四舍五入的点相连坐标集合与四方格坐标集合的交集
+                const status = schMap.getValueByOrigin(endRound),
+                    roundSet = status.connect.filter((con) =>
+                        endGrid.find((p) => p.mul(0.05).isEqual(con)) &&
+                        schMap.getValueBySmalle(con).type !== 'part-point'
+                    );
 
-            } else if (opt.status === 'part') {
-            
+                // 交集不为空
+                if (roundSet.length) {
+                    // 交集中离鼠标最近的点
+                    const closest = end.closest(roundSet),
+                        roundWay = ways.get(endRound);
+
+                    // 导线最后两个节点不同
+                    if (roundWay.isSimilar(endGrid.get(closest))) {
+                        this.way = new LineWay(roundWay);
+                        this.way.endToLine([endRound, closest], end);
+                    }
+                } else {
+                    this.way = ways.get(endRound);
+                }
             } else if (opt.status === 'point') {
-                this.way = last.gridWay.get(endRound);
-                this.pointSize[1] = 'point-small';
+                // 主动对齐模式，选取对齐点为路径
+                this.way = ways.get(endRound);
                 this.setPointSize(this.way.get(-1), 'point-large');
             } else if (opt.status === 'align') {
-                this.pointSize[1] = 'point-small';
+                // 强制对齐模式
                 this.setPointSize(this.way.get(-1), 'point-large');
             } else {
-                // 其余情况，选取节点最多的路径
-
+                // 普通状态，选取节点最多的路径
+                const end = endGrid.reduce(
+                    (pre, next) =>
+                        (ways.get(pre).length >= ways.get(next).length)
+                            ? pre : next
+                );
+                this.way = new LineWay(ways.get(end));
+                this.way.endToMouse(end);
                 this.pointSize[1] = 'point-large';
             }
         },
