@@ -12,7 +12,7 @@
         <g
             v-for="(point, i) in points"
             :index="i" :key="i"
-            :class="['part-point', point.class]"
+            :class="['part-point', point.class, pointSize[i]]"
             :transform="`translate(${point.position.join()})`">
             <circle></circle>
             <rect></rect>
@@ -70,7 +70,7 @@ export default {
             textPosition: $P(0, 0),
             textPlacement: 'bottom',
 
-            pointLarge: [],
+            pointSize: [],
         };
     },
     computed: {
@@ -82,7 +82,6 @@ export default {
                 class: {
                     'point-open': !this.connect[i],
                     'point-close': !!this.connect[i],
-                    'point-large': !!this.pointLarge[i],
                 },
             }));
         },
@@ -274,10 +273,6 @@ export default {
             );
         },
         // 查询操作
-        // 根据 id 查询器件，返回器件component
-        find(id) {
-            return this.$parent.find(id);
-        },
         // 器件在当前坐标是否被占用
         isCover(position = this.position) {
             const coverHash = {}, margin = this.margin;

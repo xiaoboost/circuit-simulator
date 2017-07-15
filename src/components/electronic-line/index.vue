@@ -10,7 +10,7 @@
     <g
         v-for="(point, i) in points"
         :index="i" :key="i"
-        :class="['line-point', point.class]"
+        :class="['line-point', point.class, pointSize[i]]"
         :transform="`translate(${point.position.join()})`">
         <circle></circle>
         <rect></rect>
@@ -41,7 +41,7 @@ export default {
             way: [],
             connect: [],
 
-            pointLarge: [],
+            pointSize: [],
         };
     },
     computed: {
@@ -80,15 +80,11 @@ export default {
                 class: {
                     'point-open': !this.connect[i],
                     'point-close': !!this.connect[i],
-                    'point-large': !!this.pointLarge[i],
                 },
             }));
         },
     },
     methods: {
-        find(arg) {
-            return this.$parent.find(arg);
-        },
         update() {
             const keys = ['id', 'way', 'connect'];
             this.$emit(
@@ -103,7 +99,6 @@ export default {
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
-                    current.way = this.way;
                     this.drawing(current);
                 },
                 afterEvent = () => {
@@ -112,7 +107,7 @@ export default {
                     this.markSign();
                 };
 
-            current.location = [];
+            current.last = {};
             this.$store.commit('LINE_TO_BOTTOM', this.id);
             this.$emit('focus', this.id, this.connect[0]);
             this.$emit('event', { stopEvent, afterEvent, cursor: 'draw_line',
