@@ -18,13 +18,13 @@ const schMap = {
         return (schMap.getValueBySmalle(x / 20, y / 20));
     },
     // 设定节点属性，默认为覆盖模式
-    setValueBySmalle(node, attribute, flag = false) {
+    setValueBySmalle(node, attribute, cover = false) {
         const [x, y] = node;
 
         if (!map[x]) {
             map[x] = [];
         }
-        if (flag) {
+        if (cover) {
             // 删除原来的属性
             map[x][y] = {};
         } else if (!map[x][y]) {
@@ -34,8 +34,8 @@ const schMap = {
 
         Object.assign(map[x][y], attribute);
     },
-    setValueByOrigin(node, attribute, flag = false) {
-        schMap.setValueBySmalle([node[0] / 20, node[1] / 20], attribute, flag);
+    setValueByOrigin(node, attribute, cover = false) {
+        schMap.setValueBySmalle([node[0] / 20, node[1] / 20], attribute, cover);
     },
     // 删除节点
     deleteValueBySmalle(x, y) {
@@ -106,6 +106,58 @@ const schMap = {
         connect = [connect[0] / 20, connect[1] / 20];
 
         return schMap.deleteConnectBySmalle(node, connect);
+    },
+    isLineBySmall(x, y) {
+        if (x.length) { [x, y] = x; }
+
+        const status = schMap.getValueBySmalle(x, y);
+
+        return (
+            status &&
+            status.type === 'line' ||
+            status.type === 'cross-point' ||
+            status.type === 'cover-point'
+        );
+    },
+    isLineByOrigin(x, y) {
+        if (x.length) { [x, y] = x; }
+
+        return schMap.isLineBySmall([x[0] * 0.05, y[1] * 0.05]);
+    },
+    // 在 [start、end] 范围中沿着 vector 直行，求最后一点的坐标
+    alongTheLineBySmall(
+        start,
+        end = [Infinity, Infinity],
+        vector = [end[0] - start[0], end[1] - start[1]]
+    ) {
+        // 单位向量
+        vector = vector.map((n) => Math.sign(n));
+
+        // 起点并不是导线或者起点等于终点，直接返回
+        if (!schMap.isLineBySmall(start) || start.isEqual(end)) {
+            return (start);
+        }
+
+        let node = [start[0], start[1]],
+            next = [node[0] + vector[0], node[1] + vector[1]];
+        // 当前点没有到达终点，还在导线所在直线内部，那就前进
+        while (schMap.isLineBySmall(next) && !node.isEqual(end)) {
+            if (schMap.nodeInConnectBySmall(node, next)) {
+                node = next;
+                next = [node[0] + vector[0], node[1] + vector[1]];
+            } else {
+                break;
+            }
+        }
+
+        return node;
+    },
+    alongTheLineByOrigin(a, b, c) {
+        const start = [a[0] / 20, a[1] / 20],
+            end = [b[0] / 20, b[1] / 20],
+            ans = schMap.alongTheLineBySmall(start, end, c);
+
+        return ([ans[0] * 20, ans[1] * 20]);
     },
 };
 

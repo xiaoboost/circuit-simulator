@@ -70,6 +70,10 @@ Object.assign(Point.prototype, {
             Math.abs(this[1])
         ));
     },
+    // 符号化
+    sign() {
+        return $P(this.map((n) => Math.sign(n)));
+    },
     // 到另一点的距离
     distance(p) {
         return Math.hypot(
@@ -110,9 +114,11 @@ Object.assign(Point.prototype, {
     },
     // 是否是整数点
     isInteger() {
-        return (this.length === 2 &&
+        return (
+            this.length === 2 &&
             this[0] === Math.floor(this[0]) &&
-            this[1] === Math.floor(this[1]));
+            this[1] === Math.floor(this[1])
+        );
     },
     // 是否平行
     isParallel(vector) {
