@@ -340,10 +340,10 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         return end.isEqual(node.point);
     }
     // 在终线中
-    function isInEndLines(node) {
-        return endLines.find((line) => isNodeInLine(node.point, line));
-    }
-    // 绘制导线时，判断是否终点
+    // function isInEndLines(node) {
+    //     return endLines.find((line) => isNodeInLine(node.point, line));
+    // }
+    // 绘制导线时，终点在导线中
     function checkNodeInLineWhenDraw(node) {
         // 优先判断是否等于终点
         if (node.point.isEqual(end)) {
@@ -409,13 +409,13 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         }
     }
     // 排除指定器件
-    function isLegalPointWhenPart(node) {
+    function isLegalPointExcludePart(node) {
         const status = schMap.getValueBySmalle(node.point);
         if (!status) {
             return (true);
-        } else if (status.form === 'part') {
+        } else if (status.type === 'part') {
             return excludeParts.includes(status.id);
-        } else if (status.form === 'part-point') {
+        } else if (status.type === 'part-point') {
             const [part] = status.id.split('-');
             return (
                 excludeParts.includes(part) ||
@@ -427,7 +427,63 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return (true);
         }
     }
+    // 排除指定线段
+    // function isLegalPointExcludeLine(node) {
+    //     const status = schMap.getValueBySmalle(node.point);
+    //     if (!status) {
+    //         return (true);
+    //     } else if (/part/.test(status.type)) {
+    //         return (false);
+    //     } else if (schMap.isLineBySmall(node.point)) {
+    //         return excludeLines.some((line) => isNodeInLine(node.point, line));
+    //     } else {
+    //         return (true);
+    //     }
+    // }
 
+    // 根据输入模式指定规则
+    if (mode.process === 'drawing') {
+        // 绘制情况下，end 只可能是点，根据终点属性来分类
+        const status = schMap.getValueBySmalle(end);
+        // 节点估值
+        self.calValue = calToPoint;
+
+        if (schMap.isLineBySmall(end)) {
+            // 终点在导线上
+            endLines.push(...getSegment(end));
+            self.isEnd = checkNodeInLineWhenDraw;
+            self.checkPoint = isLegalPointWhenAlign;
+        } else if (status.type === 'part-point') {
+            // 终点是器件引脚
+            self.isEnd = isEndPoint;
+            self.checkPoint = isLegalPointWhenAlign;
+        } else if (status.type === 'part') {
+            // 终点在器件上
+            excludeParts.push(getPart(end));
+            self.isEnd = isEndPoint;
+            self.checkPoint = isLegalPointExcludePart;
+        } else {
+            // 一般状态
+            self.isEnd = isEndPoint;
+            self.checkPoint = isLegalPointWhenSpace;
+        }
+    }
+
+    // 当前节点允许的扩展数量
+    self.limitExpand = function(node) {
+        if (schMap.isLineBySmall(node.point)) {
+            if (node.point.isEqual(start)) {
+                return (4);
+            } else if (excludeLines.some((line) =>
+                isNodeInLine(node.point, line))) {
+                return (3);
+            } else {
+                return (1);
+            }
+        } else {
+            return (3);
+        }
+    };
     return self;
 }
 
@@ -468,13 +524,8 @@ function mergeInitSearch(init, search) {
  */
 function AStartSearch(start, end, direction, opt) {
     // 初始化
-    const rule = SearchRules(start, end, opt),
-        stack = SearchStack();
-
-    // 检查是否有结束标记
-    if (rule.length) {
-        return (rule);
-    }
+    const stack = SearchStack(),
+        rule = SearchRules(start, end, opt);
 
     // 装载起点
     const first = {
@@ -488,13 +539,19 @@ function AStartSearch(start, end, direction, opt) {
     stack.push(first);
 
     let endStatus;
-    // A*搜索，搜索极限为 300
-    while (endStatus && (stack.closeSize < 300)) {
-        // 栈顶元素弹出为当前结点
-        const nodenow = stack.pop();
+    // 检查起点
+    if (rule.isEnd(first)) {
+        endStatus = first;
+    }
 
-        // 三个方向扩展
-        for (let i = 0; i < 3; i++) {
+    // A*搜索，搜索极限为 300
+    while (!endStatus && (stack.closeSize < 300)) {
+        // 栈顶元素弹出为当前结点
+        const nodenow = stack.pop(),
+            limit = rule.limitExpand(nodenow);
+
+        // 按方向扩展
+        for (let i = 0; i < limit; i++) {
             // 生成扩展节点
             const nodeExpand = newNode(nodenow, rotate[i]);
             // 节点性质计算
@@ -504,7 +561,7 @@ function AStartSearch(start, end, direction, opt) {
             nodeExpand.junction = nodenow.junction + (!!i);
             nodeExpand.junctionParent = i ? nodenow : nodenow.junctionParent;
             // 判断是否是终点
-            if (rule.checkEnd(nodeExpand)) {
+            if (rule.isEnd(nodeExpand)) {
                 endStatus = nodeExpand;
                 break;
             }
@@ -659,6 +716,9 @@ export default {
                 this.way.endToMouse(end);
                 this.pointSize[1] = 'point-large';
             }
+        },
+        drawEnd() {
+
         },
     },
 };
