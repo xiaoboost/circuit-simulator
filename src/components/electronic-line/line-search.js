@@ -717,8 +717,24 @@ export default {
                 this.pointSize[1] = 'point-large';
             }
         },
-        drawEnd() {
+        drawEnd({ start, direction }) {
+            const end = this.way.get(-1),
+                endRound = end.round(),
+                status = schMap.getValueByOrigin(endRound);
 
+            // 起点和终点相等或者只有一个点，则删除当前导线
+            if (this.way.length < 2 || endRound.isEqual(start)) {
+                this.$store.commit('DELETE_LINE', this.id);
+                return (false);
+            }
+
+            if (status.type === 'part-point') {
+                const [id, mark] = status.id.split('-'),
+                    part = this.$parent.find(id);
+
+                this.connect[1] = `${part.id}-${mark}`;
+                part.connect[mark] = this.id;
+            }
         },
     },
 };

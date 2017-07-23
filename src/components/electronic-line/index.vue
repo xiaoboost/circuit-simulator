@@ -22,7 +22,7 @@
 import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
 import { lineSearch } from './line-search';
-// import { schMap } from '@/libraries/maphash';
+import { schMap } from '@/libraries/maphash';
 
 export default {
     mixins: [lineSearch],
@@ -79,7 +79,8 @@ export default {
                 position: $P(this.way[-i]),
                 class: {
                     'point-open': !this.connect[i],
-                    'point-close': !!this.connect[i],
+                    'line-point-part': /[a-zA-Z]+_\d+-\d+/.test(this.connect[i]),
+                    'line-point-cross': /(line_\d+ ?)+/.test(this.connect[i]),
                 },
             }));
         },
@@ -92,10 +93,83 @@ export default {
                 keys.reduce((v, k) => ((v[k] = this[k]), v), {})
             );
         },
+        // 是否存在连接
+        hasConnect(id) {
+            return this.connect.join(' ').includes(id);
+        },
+        // 查询导线起点/终点
+        findConnectIndex(node) {
+            if (node.isEqual(this.way[0])) {
+                return (0);
+            } else if (node.isEqual(this.way.get(-1))) {
+                return (1);
+            } else {
+                return (-1);
+            }
+        },
+        setConnectByWay(index) {
+            if (index === undefined) {
+                this.setConnect(0);
+                this.setConnect(1);
+                return;
+            }
+
+            // 清除节点临时状态
+            this.pointSize[index] = '';
+
+            const node = this.way.get(-1 * index).round(),
+                status = schMap.getValueByOrigin(node);
+
+            if (!status) {
+                // 当前节点为空
+                this.connect[index] = '';
+            } else if (status.type === 'part-point') {
+                // 节点为器件引脚
+                const [id, mark] = status.id.split('-'),
+                    part = this.$parent.find(id);
+
+                // 器件引脚的临时状态也要清除
+                part.pointSize[mark] = '';
+                part.connect[mark] = this.id;
+                this.connect[index] = `${part.id}-${mark}`;
+            } else if (status.type === 'line-point') {
+                // 节点为导线空引脚
+                this.merge(status.id);
+            } else if (status.type === 'line') {
+                // 节点在导线上
+                this.hasConnect(status.id)
+                    ? this.deleteSelf()
+                    : this.split(status.id);
+            } else if (status.type === 'cross-point') {
+                // 节点在交错节点
+                const lines = status.id.split(' ').filter((n) => n !== this.id);
+
+                if (lines.length === 1) {
+                    this.merge(lines[0]);
+                } else {
+                    this.connect[index] = lines.join(' ');
+                    lines.forEach((id) => {
+                        const line = this.$parent.find(id),
+                            mark = line.findConnectIndex(node),
+                            connect = lines.filter((n) => n !== line.id);
+
+                        if (mark !== -1) {
+                            line.connect[mark] = `${connect.join(' ')} ${this.id}`;
+                        }
+                    });
+                }
+            }
+        },
+        merge(id) {
+            // TODO:  合并导线
+        },
+        split(id) {
+            // TODO:  切割导线
+        },
         setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
                 mouseenter = (e) => (current.onPart = this.find(e.currentTarget)),
-                mouseleaves = () => { current.onPart = false; current.location = [NaN, NaN]; },
+                mouseleaves = () => (current.onPart = false),
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
@@ -103,6 +177,7 @@ export default {
                 },
                 afterEvent = () => {
                     debugger;
+                    this.drawEnd();
                     this.update();
                     this.markSign();
                 };
