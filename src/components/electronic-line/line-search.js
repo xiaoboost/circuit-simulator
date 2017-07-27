@@ -728,13 +728,22 @@ export default {
                 return (false);
             }
 
-            if (status.type === 'part-point') {
-                const [id, mark] = status.id.split('-'),
-                    part = this.$parent.find(id);
+            // 当前节点被占用，需要重新计算路径
+            if (status.type === 'part' ||
+                (status.type === 'part-point' && status.connect.length)) {
+                const end = $P(endRound
+                    .aroundInf((node) => schMap.getValueByOrigin(node), 20)
+                    .reduce((pre, next) =>
+                        end.distance(pre) < end.distance(next) ? pre : next
+                    )
+                );
 
-                this.connect[1] = `${part.id}-${mark}`;
-                part.connect[mark] = this.id;
+                this.way = AStartSearch(start, end, direction, { process: 'modified' })
+                    .checkWayExcess(direction, 'drawEnd');
             }
+
+            this.setConnectByWay(1);
+            this.$emit('focus', this.id, ...this.connect.join(' ').split(' '));
         },
     },
 };
