@@ -134,15 +134,23 @@ Object.assign(Point.prototype, {
     isSameDire(vector) {
         return (
             this.isParallel(vector) &&
-            (vector[0] / this[0]) > 0
+            (vector[0] * this[0]) > 0
         );
     },
     // 方向相反，0向量输出false
     isOppoDire(vector) {
         return (
             this.isParallel(vector) &&
-            (vector[0] / this[0]) < 0
+            (vector[0] * this[0]) < 0
         );
+    },
+    // 是否在线段内
+    isInLine(segment) {
+        // 点到线段两端的向量方向相反，即表示其在线段内
+        const toStart = $P(this, segment[0]),
+            toEnd = $P(this, (segment[1] || [Infinity, Infinity]));
+
+        return toStart.isOppoDire(toEnd);
     },
     // 以中心点和四角点，枚举范围内的所有点
     around(margin, fn) {

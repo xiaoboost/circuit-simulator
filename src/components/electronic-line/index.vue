@@ -19,10 +19,16 @@
 </template>
 
 <script>
+import { LineWay } from './line-way';
 import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
 import { lineSearch } from './line-search';
 import { schMap } from '@/libraries/maphash';
+
+// 器件 ID 匹配
+const rePart = /[a-zA-Z]+_\d+-\d+/;
+// 导线 ID 匹配
+const reLine = /(line_\d+ ?)+/;
 
 export default {
     mixins: [lineSearch],
@@ -79,10 +85,13 @@ export default {
                 position: $P(this.way[-i]),
                 class: {
                     'point-open': !this.connect[i],
-                    'line-point-part': /[a-zA-Z]+_\d+-\d+/.test(this.connect[i]),
-                    'line-point-cross': /(line_\d+ ?)+/.test(this.connect[i]),
+                    'line-point-part': rePart.test(this.connect[i]),
+                    'line-point-cross': reLine.test(this.connect[i]),
                 },
             }));
+        },
+        lines() {
+            return this.$store.state.collection.Lines;
         },
     },
     methods: {
@@ -107,10 +116,14 @@ export default {
                 return (-1);
             }
         },
+        // 是否存在
+        isExist() {
+            return (this.lines.findIndex((line) => this.id === line.id) !== -1);
+        },
         setConnectByWay(index) {
             if (index === undefined) {
-                this.setConnect(0);
-                this.setConnect(1);
+                this.setConnectByWay(0);
+                this.setConnectByWay(1);
                 return;
             }
 
@@ -160,12 +173,94 @@ export default {
                 }
             }
         },
-        // merge(id) {
-        //     // TODO:  合并导线
-        // },
-        // split(id) {
-        //     // TODO:  切割导线
-        // },
+
+        markSign() {
+
+        },
+        deleteSign() {
+
+        },
+
+        // 导线反转
+        reverse() {
+            this.way.reverse();
+            this.connect.reverse();
+        },
+        // 删除连接
+        deleteConnect(id) {
+            const re = new RegExp(`${id} ?`, 'i');
+            this.connect[0].replace(re, '');
+            this.connect[1].replace(re, '');
+        },
+        // 删除导线
+        remove() {
+            // 导线已经被删除
+            if (!this.isExist()) { return; }
+
+            this.deleteSign();
+            this.$store.commit('DELETE_LINE', this.id);
+            // 删除与当前导线有关的关联信息
+            this.connect.forEach((connect) => {
+                if (rePart.test(connect)) {
+                    const [id, mark] = connect.split('-');
+                    this.$parent.find(id).connect[mark] = '';
+                } else if (reLine.test(connect)) {
+                    const lines = connect.split(' ');
+                    if (lines.length === 2) {
+                        this.$parent.find(lines[0]).merge(lines[1]);
+                    } else {
+                        lines.forEach((line) => line.deleteConnect(this.id));
+                    }
+                }
+            });
+        },
+        // 合并导线，删除输入 id 的导线
+        merge(id) {
+            const fragment = this.$parent.find(id);
+
+            if (this.way[0].isEqual(fragment.way[0])) {
+                this.reverse();
+            } else if (this.way[0].isEqual(fragment.way.get(-1))) {
+                this.reverse();
+                fragment.reverse();
+            } else if (this.way.get(-1).isEqual(fragment.way.get(-1))) {
+                fragment.reverse();
+            }
+
+            fragment.remove();
+            this.way.push(...fragment.way);
+            this.way.checkWayRepeat();
+            this.markSign();
+            this.setConnectByWay(1);
+        },
+        // 切割导线
+        split(id, sub) {
+            const splited = this.$parent.find(id),
+                crossNode = $P(this.way.get(-1 * sub)),
+                newLine = { id: this.lines.newId('line_'), connect: [] },
+                crossSub = splited.way.findIndex((o, i, arr) => crossNode.isInLine(arr.slice(i, 2)));
+
+            // 拆分路径
+            newLine.way = new LineWay(splited.way.slice(crossSub + 1));
+            newLine.way.unshift(crossNode);
+            splited.way.splice(crossSub + 1, splited.way.length);
+            splited.way.push(crossNode);
+
+            // 图纸标志
+            this.markSign();
+            splited.markSign();
+            // TODO: 是否可行？
+            this.markSign.call(newLine);
+
+            // 设定新的连接关系
+            this.connect[sub] = `${splited.id} ${newLine.id}`;
+            splited.setConnectByWay();
+            // TODO: 是否可行？
+            splited.setConnect.call(newLine);
+
+            // 渲染新器件
+            this.$store.commit('PUSH_LINE', newLine);
+        },
         setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
                 mouseenter = (e) => (current.onPart = this.find(e.currentTarget)),
@@ -210,6 +305,8 @@ export default {
 
         if (!this.way.length) {
             this.setDrawing(this.value.current);
+        } else {
+            this.update();
         }
     },
 };
