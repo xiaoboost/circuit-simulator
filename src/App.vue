@@ -18,11 +18,6 @@ export default {
         SliderMenu,
         DrawingMain,
     },
-    data() {
-        return {
-            ready: true,
-        };
-    },
     beforeCreate() {
         window.onload = () => {
             const loading = document.getElementById('start-loading');
