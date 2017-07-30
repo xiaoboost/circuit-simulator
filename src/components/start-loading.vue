@@ -3,9 +3,7 @@
     <section v-if="show" class="start-loading">
         <div>
             <h3 style="font-style: italic;">加载中……</h3>
-            <svg class="spinner" width="55px" height="55px" viewBox="0 0 66 66">
-                <circle class="path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle>
-            </svg>
+            <span class="loader"><span class="loader-inner"></span></span>
             <h3>绘制草图·模拟</h3>
         </div>
     </section>
@@ -57,15 +55,22 @@ export default {
             line-height 60px
             color #999
             text-shadow 1px 1px 2px black
-
-.start-loading .spinner
-    animation rotator 1.4s linear infinite
-    .path
-        stroke-dasharray 187
-        stroke-dashoffset 0
-        transform-origin center
-        animation dash 1.4s ease-in-out infinite,
-                  colors 5.6s ease-in-out infinite
+    .loader
+        display inline-block
+        width 30px
+        height 30px
+        position relative
+        border 4px solid #fff
+        border-radius 5px
+        animation loader 2s infinite ease,
+                   border-colors 2s infinite ease
+    .loader-inner
+        vertical-align top
+        display inline-block
+        width 100%
+        background-color #fff
+        animation loader-inner 2s infinite ease-in,
+                   background-colors 2s infinite ease
 
 // fade-enter-active过程不需要渐变
 .fade-leave-active
@@ -73,29 +78,53 @@ export default {
 
 .fade-enter,
 .fade-leave-active
-    opacity: 0
+    opacity 0
 
-@keyframes colors
+@keyframes border-colors
     0%
-        stroke #4285F4
+        border-color #4285F4
     25%
-        stroke #DE3E35
+        border-color #DE3E35
     50%
-        stroke #F7C223
+        border-color #F7C223
     75%
-        stroke #1B9A59
+        border-color #1B9A59
     100%
-        stroke #4285F4
+        border-color #4285F4
 
-@keyframes dash
+@keyframes background-colors
     0%
-        stroke-dashoffset 187
+        background-color #4285F4
+    25%
+        background-color #DE3E35
     50%
-        stroke-dashoffset 46.75
-        -webkit-transform rotate(135deg)
-        transform rotate(135deg)
+        background-color #F7C223
+    75%
+        background-color #1B9A59
     100%
-        stroke-dashoffset 187
-        -webkit-transform rotate(450deg)
-        transform rotate(450deg)
+        background-color #4285F4
+
+@keyframes loader
+    0%
+        transform rotate(0deg)
+    25%
+        transform rotate(180deg)
+    50%
+        transform rotate(180deg)
+    75%
+        transform rotate(360deg)
+    100%
+        transform rotate(360deg)
+
+@keyframes loader-inner
+    0%
+        height 0%
+    25%
+        height 0%
+    50%
+        height 100%
+    75%
+        height 100%
+    100%
+        height 0%
 </style>
