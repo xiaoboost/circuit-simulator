@@ -1,6 +1,5 @@
 <template>
 <main id="app">
-    <start-loading :show="ready"></start-loading>
     <drawing-main></drawing-main>
     <slider-menu></slider-menu>
     <action-menu></action-menu>
@@ -11,7 +10,6 @@
 import ActionMenu from '@/components/action-menu';
 import SliderMenu from '@/components/slider-menu';
 import DrawingMain from '@/components/drawing-main';
-import StartLoading from '@/components/start-loading';
 
 export default {
     name: 'app',
@@ -19,7 +17,6 @@ export default {
         ActionMenu,
         SliderMenu,
         DrawingMain,
-        StartLoading,
     },
     data() {
         return {
@@ -28,8 +25,11 @@ export default {
     },
     beforeCreate() {
         window.onload = () => {
+            const loading = document.getElementById('start-loading');
+            loading.style.opacity = 0;
+            loading.style.transition = 'opacity .5s';
+            setTimeout(() => loading.remove(), 500);
             console.log('Schematic Ready.');
-            this.ready = false;
         };
     },
 };
@@ -38,6 +38,7 @@ export default {
 <style lang="stylus">
 @import './css/variable'
 @import './css/public'
+@import './css/start-loading'
 @import './css/drawing-main'
 
 html, body, #app
