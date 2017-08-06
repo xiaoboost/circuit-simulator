@@ -18,6 +18,7 @@ module.exports = {
     ],
     globals: {
         'window': true,
+        '$debug': true,
     },
     // 自定义规则
     rules: {

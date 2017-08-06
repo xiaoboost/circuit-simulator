@@ -34,12 +34,13 @@ Object.assign(LineWay.prototype, {
     // 去除节点冗余
     checkWayRepeat() {
         for (let i = 0; i < this.length - 2; i++) {
+            // 相邻三点共线或者相邻两点相等
             if (((this[i][0] === this[i + 1][0]) && (this[i + 1][0] === this[i + 2][0])) ||
                 ((this[i][1] === this[i + 1][1]) && (this[i + 1][1] === this[i + 2][1])) ||
                 ((this[i][0] === this[i + 1][0]) && (this[i][1] === this[i + 1][1]))) {
                 this.splice(i + 1, 1);
                 i -= 2;
-                if (i < -1) i = -1;
+                if (i < -1) { i = -1; }
             }
         }
         return (this);
@@ -80,12 +81,12 @@ Object.assign(LineWay.prototype, {
     // 终点指向指定线段
     endToLine(line, point) {
         if (line[0][0] === line[1][0]) {
-            // 竖着的
+            // 竖
             this[this.length - 1][1] = point[1];
             this[this.length - 2][1] = point[1];
             this[this.length - 1][0] = line[0][0];
         } else {
-            // 横着的
+            // 横
             this[this.length - 1][1] = line[0][1];
             this[this.length - 1][0] = point[0];
             this[this.length - 2][0] = point[0];

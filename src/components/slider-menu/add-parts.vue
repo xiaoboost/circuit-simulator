@@ -98,12 +98,9 @@ export default {
     components: {
         'part-shape': {
             render(createElement) {
-                const shape = this.info.filter((n) => !Object
-                        .values(n.attribute).some((n) => n === 'focus-part'))
-                        .map((dom) => createElement(
-                            dom.name,
-                            { attrs: dom.attribute }
-                        )),
+                const shape = this.info
+                        .filter((n) => !Object.values(n.attribute).some((n) => n === 'focus-part'))
+                        .map((dom) => createElement(dom.name, { attrs: dom.attribute })),
                     special = {
                         'current_meter': 'scale(1.2, 1.2)',
                         'reference_ground': 'scale(1.2, 1.2)',

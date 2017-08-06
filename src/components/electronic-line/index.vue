@@ -20,14 +20,13 @@
 
 <script>
 import { LineWay } from './line-way';
+import lineSearch from './line-search';
 import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
-import { lineSearch } from './line-search';
 import { schMap } from '@/libraries/maphash';
 
-// 器件 ID 匹配
+// 器件与导线的 ID 匹配
 const rePart = /[a-zA-Z]+_\d+-\d+/;
-// 导线 ID 匹配
 const reLine = /(line_\d+ ?)+/;
 
 export default {
