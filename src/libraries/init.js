@@ -47,9 +47,11 @@ Object.assign(Object.prototype, {
             return (false);
         }
 
-        return thisKeys.every((key) => (this[key] instanceof Object)
-            ? this[key].isEqual(obj[key])
-            : this[key] === obj[key]
+        return thisKeys.every(
+            (key) =>
+                (this[key] instanceof Object)
+                    ? this[key].isEqual(obj[key])
+                    : this[key] === obj[key]
         );
     },
     map(fn) {
@@ -76,9 +78,11 @@ Object.assign(Array.prototype, {
             return (false);
         }
 
-        return this.every((item, i) => (item instanceof Object)
-            ? item.isEqual(arr[i])
-            : item === arr[i]
+        return this.every(
+            (item, i) =>
+                (item instanceof Object)
+                    ? item.isEqual(arr[i])
+                    : item === arr[i]
         );
     },
     // 取出下标为index的元素
@@ -141,17 +145,6 @@ Object.assign(Number.prototype, {
 
         return Math.floor(Math.log10(number));
     },
-    // 单位化
-    toUnit() {
-        const number = this.valueOf();
-        if (number > 0) {
-            return (1);
-        } else if (number < 0) {
-            return (-1);
-        } else {
-            return (0);
-        }
-    },
 });
 
 // 隐藏所有扩展的原生属性
@@ -164,3 +157,5 @@ Object.hideAll(String.prototype);
 
 // 网页禁止右键
 window.document.oncontextmenu = () => false;
+// SVG 命名空间
+window.$SVG_NS = 'http://www.w3.org/2000/svg';

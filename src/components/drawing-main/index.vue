@@ -3,6 +3,7 @@
     :style="background"
     :class="['drawing-main', { 'no-event': !exclusion }]">
     <svg
+        version="1.1" :xmlns="NS"
         height="100%" width="100%"
         @mousewheel="mousewheel($event)"
         @mousedown.self.stop.right="moveMap($event)">
@@ -48,6 +49,7 @@ export default {
         return {
             zoom: 1,
             position: $P(0, 0),
+            NS: window.$SVG_NS,
 
             partsNow: [],
             linesNow: [],
