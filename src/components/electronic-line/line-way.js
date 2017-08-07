@@ -96,13 +96,8 @@ Object.assign(LineWay.prototype, {
 
 // [点 -> 路径] 键值对
 class WayMap {
-    constructor(...args) {
-        Object.defineProperty(this, 'size', {
-            enumerable: false,
-            configurable: false,
-            value: 0,
-        });
-        args.forEach(({ point, way }) => this.set(point, way));
+    constructor() {
+        this.size = 0;
     }
     // 将键转换为内部 hash 的键
     static keyToHash(key) {
@@ -124,12 +119,6 @@ class WayMap {
     }
     clear() {
         Object.keys(this).forEach((n) => delete this[n]);
-    }
-    clone() {
-        return new WayMap(
-            this.keys()
-                .map((point) => ({ point, way: this.get(point) }))
-        );
     }
     /**
      * 设置键值对
