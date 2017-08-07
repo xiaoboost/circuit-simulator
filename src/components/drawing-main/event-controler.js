@@ -25,6 +25,7 @@ class Handlers {
         this.handlers = queue.map((obj) => {
             if (obj instanceof Function) {
                 return {
+                    capture: false,
                     type: 'mousemove',
                     callback: component.toHandler(obj),
                 };
@@ -40,7 +41,7 @@ class Handlers {
             if (obj.delegate) {
                 component.$$on(obj.type, obj.select, obj.callback);
             } else {
-                component.$el.addEventListener(obj.type, obj.callback, true);
+                component.$el.addEventListener(obj.type, obj.callback, obj.capture);
             }
         });
     }
@@ -50,7 +51,7 @@ class Handlers {
             if (obj.delegate) {
                 component.$$off(obj.type, obj.select, obj.callback);
             } else {
-                component.$el.removeEventListener(obj.type, obj.callback, true);
+                component.$el.removeEventListener(obj.type, obj.callback, obj.capture);
             }
         });
     }
