@@ -1,22 +1,24 @@
 <template>
-<footer class="action-menu">
-    <div v-if="isRun" class="fab-container">
-        <div class="fab" id="fab-text"></div>
-    </div>
-    <div
-        v-for="(icon, i) in icons"
-        v-show="!isRun"
-        :tip="icon.tip" :key="i"
-        class="fab-container">
-        <div class="fab" @click="icon.func">
-            <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
-                <g :transform="`translate(${icon.translate}) scale(${zoom}, ${zoom})`">
-                    <path :d="icon.d"></path>
-                </g>
-            </svg>
+<transition name="fade">
+    <footer class="action-menu" v-show="hidden">
+        <div v-if="isRun" class="fab-container">
+            <div class="fab" id="fab-text"></div>
         </div>
-    </div>
-</footer>
+        <div
+            v-for="(icon, i) in icons"
+            v-show="!isRun"
+            :tip="icon.tip" :key="i"
+            class="fab-container">
+            <div class="fab" @click="icon.func">
+                <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
+                    <g :transform="`translate(${icon.translate}) scale(${zoom}, ${zoom})`">
+                        <path :d="icon.d"></path>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </footer>
+</transition>
 </template>
 
 <script>
@@ -25,29 +27,29 @@ import { action } from '@/libraries/icon';
 export default {
     name: 'ActionMenu',
     data() {
-        const zoom = 0.6,
-            icons = [
-                {
-                    name: 'run',
-                    tip: '时域模拟',
-                    func: () => this.run(),
-                },
-                {
-                    name: 'add',
-                    tip: '添加器件',
-                    func: () => this.add(),
-                },
-                {
-                    name: 'config',
-                    tip: '运行设置',
-                    func: () => this.config(),
-                },
-            ].map((icon) => {
-                Object.assign(icon, Object.clone(action[icon.name]));
-                icon.translate = icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(',');
+        const zoom = 0.6;
+        const icons = [
+            {
+                name: 'run',
+                tip: '时域模拟',
+                func: () => this.run(),
+            },
+            {
+                name: 'add',
+                tip: '添加器件',
+                func: () => this.add(),
+            },
+            {
+                name: 'config',
+                tip: '运行设置',
+                func: () => this.config(),
+            },
+        ].map((icon) => {
+            Object.assign(icon, Object.clone(action[icon.name]));
+            icon.translate = icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(',');
 
-                return icon;
-            });
+            return icon;
+        });
 
         return {
             zoom,
@@ -55,6 +57,11 @@ export default {
             action,
             isRun: false,
         };
+    },
+    computed: {
+        hidden() {
+            return !this.$store.state.page;
+        },
     },
     methods: {
         run() {
