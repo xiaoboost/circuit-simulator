@@ -94,10 +94,15 @@ function isContains(delegate, elem, handler) {
     return (includes.call(handler.matches, elem));
 }
 
-// 沿着捕获路径，将满足条件的回调函数包装成队列
+// 沿着冒泡路径，将满足条件的回调函数包装成队列
 function tohandlers(event, handlers) {
-    const path = event.path;
-    path.splice(path.indexOf(this));
+    // 组成路径
+    const path = [];
+    for (let i = event.target; i !== event.currentTarget; i = i.parentNode) {
+        path.push(i);
+    }
+    path.push(event.currentTarget);
+    path.reverse();
 
     // 委托元素本身的事件
     const handlerQueue = handlers

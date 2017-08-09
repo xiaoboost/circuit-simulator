@@ -5,7 +5,7 @@
     <svg
         version="1.1" :xmlns="NS"
         height="100%" width="100%"
-        @mousewheel="mousewheel($event)"
+        @wheel="mousewheel($event)"
         @mousedown.self.stop.right="moveMap($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
