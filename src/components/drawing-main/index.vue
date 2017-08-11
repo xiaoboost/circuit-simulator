@@ -36,7 +36,7 @@ import Part from '@/components/electronic-part';
 import Line from '@/components/electronic-line';
 
 import Event from './event-controler';
-import { $P } from '@/libraries/point';
+// import { $P } from '@/libraries/point';
 
 export default {
     name: 'DrawingMain',
@@ -47,8 +47,6 @@ export default {
     },
     data() {
         return {
-            zoom: 1,
-            position: $P(0, 0),
             NS: window.$SVG_NS,
 
             partsNow: [],
@@ -60,10 +58,17 @@ export default {
             const size = this.zoom * 20,
                 biasX = this.position[0] % size,
                 biasY = this.position[1] % size;
+
             return {
                 'background-size': `${size}px`,
                 'background-position': `${biasX}px ${biasY}px`,
             };
+        },
+        zoom() {
+            return this.$store.state.drawing.zoom;
+        },
+        position() {
+            return this.$store.state.drawing.position;
         },
         parts() {
             return this.$store.state.collection.Parts;
@@ -128,22 +133,26 @@ export default {
                 return (false);
             }
 
-            this.position = this.position
-                .add(-1, mousePosition)
-                .mul(size / this.zoom / 20)
-                .add(mousePosition)
-                .round(1);
+            this.$store.commit(
+                'SET_POSITION',
+                this.position
+                    .add(-1, mousePosition)
+                    .mul(size / this.zoom / 20)
+                    .add(mousePosition)
+                    .round(1)
+            );
 
-            this.zoom = size / 20;
+            this.$store.commit('SET_ZOOM', size / 20);
         },
         // 移动图纸
         moveMap() {
             const el = this.$el,
                 stopEvent = { el, type: 'mouseup', which: 'right' },
-                handlers = (e) => {
-                    this.position = this.position
-                        .add(e.$bias.mul(this.zoom));
-                };
+                handlers = (e) => this.$store.commit(
+                    'SET_POSITION',
+                    this.position
+                        .add(e.$bias.mul(this.zoom))
+                );
 
             this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
         },

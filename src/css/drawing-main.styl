@@ -1,5 +1,3 @@
-circle-transfrom = r 200ms cubic-bezier(.4,1.3,1,1)
-
 .drawing-main
     position absolute
     top 0
@@ -45,17 +43,8 @@ circle-transfrom = r 200ms cubic-bezier(.4,1.3,1,1)
         tspan:nth-child(2)
             font-size 10px
     .part-point
-        rect
-            x -8.5
-            y -8.5
-            width 17px
-            height 17px
         circle
-            r 0
             fill Black
-            transition circle-transfrom
-        &:hover circle
-            r 5
     .text-params
         text, tspan
             white-space nowrap

@@ -9,14 +9,12 @@
             v-for="(info, i) in this.shape.aspect"
             :value="info" :key="i">
         </aspect>
-        <g
+        <electron-point
             v-for="(point, i) in points"
             :index="i" :key="i"
             :class="['part-point', point.class, pointSize[i]]"
             :transform="`translate(${point.position.join()})`">
-            <circle></circle>
-            <rect></rect>
-        </g>
+        </electron-point>
     </g>
     <g
         v-if="this.type !== 'reference_ground'"
@@ -40,6 +38,8 @@ import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
 import { schMap } from '@/libraries/maphash';
 
+import ElectronPoint from '@/components/electron-point';
+
 // 2长度的数组 乘以 2*2的矩阵
 function product(a, b) {
     return $P(
@@ -49,6 +49,15 @@ function product(a, b) {
 }
 
 export default {
+    components: {
+        ElectronPoint,
+        'aspect': {
+            props: ['value'],
+            render(ce) {
+                return ce(this.value.name, { attrs: this.value.attribute });
+            },
+        },
+    },
     props: {
         value: {
             type: Object,
@@ -344,14 +353,6 @@ export default {
         if (this.position[0] === 500000) {
             this.newPart();
         }
-    },
-    components: {
-        'aspect': {
-            props: ['value'],
-            render(ce) {
-                return ce(this.value.name, { attrs: this.value.attribute });
-            },
-        },
     },
 };
 </script>
