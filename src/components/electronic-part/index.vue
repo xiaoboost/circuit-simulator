@@ -50,7 +50,7 @@ function product(a, b) {
 
 export default {
     components: {
-        ElectronPoint,
+        'electron-point': ElectronPoint,
         'aspect': {
             props: ['value'],
             render(ce) {

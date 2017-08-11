@@ -7,14 +7,12 @@
         :key="i" :index="i" :x="item.x" :y="item.y"
         :height="item.height" :width="item.width">
     </rect>
-    <g
+    <electron-point
         v-for="(point, i) in points"
         :index="i" :key="i"
         :class="['line-point', point.class, pointSize[i]]"
         :transform="`translate(${point.position.join()})`">
-        <circle></circle>
-        <rect></rect>
-    </g>
+    </electron-point>
 </g>
 </template>
 
@@ -25,11 +23,16 @@ import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
 import { schMap } from '@/libraries/maphash';
 
+import ElectronPoint from '@/components/electron-point';
+
 // 器件与导线的 ID 匹配
 const rePart = /[a-zA-Z]+_\d+-\d+/;
 const reLine = /(line_\d+ ?)+/;
 
 export default {
+    components: {
+        'electron-point': ElectronPoint,
+    },
     mixins: [lineSearch],
     props: {
         value: {
