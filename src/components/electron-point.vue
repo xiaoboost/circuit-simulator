@@ -72,14 +72,7 @@ export default {
         },
     },
     watch: {
-        actual(value) {
-            // 确定新的终点值
-            this.animateTo = value;
-            // 计算当前值
-            this.animateFrom = this.$refs.circle.getClientRects()[0].width / this.zoom / 2;
-            // 动画启动
-            this.$refs.animate.beginElement();
-        },
+        actual: 'setAnimate',
     },
     methods: {
         mouseenter() {
@@ -96,9 +89,18 @@ export default {
 
             this.inner = status ? radius.normal[status] : 0;
         },
+        setAnimate(value) {
+            // 确定新的终点值
+            this.animateTo = value;
+            // 计算当前值
+            this.animateFrom = this.$refs.circle.getClientRects()[0].width / this.zoom / 2;
+            // 动画启动
+            this.$refs.animate.beginElement();
+        },
     },
     mounted() {
         this.mouseleave();
+        this.setAnimate(this.actual);
     },
 };
 </script>

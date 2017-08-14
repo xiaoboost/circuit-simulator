@@ -135,16 +135,16 @@ export default {
 
             if (!status) {
                 // 当前节点为空
-                this.connect[index] = '';
+                this.connect.$set(index, '');
             } else if (status.type === 'part-point') {
                 // 节点为器件引脚
                 const [id, mark] = status.id.split('-'),
                     part = this.$parent.find(id);
 
                 // 器件引脚的临时状态也要清除
-                part.pointSize[mark] = '';
-                part.connect[mark] = this.id;
-                this.connect[index] = status.id;
+                part.pointSize.$set(mark, -1);
+                part.connect.$set(mark, this.id);
+                this.status[index] = status.id;
             } else if (status.type === 'line-point') {
                 // 节点为导线空引脚
                 this.merge(status.id);
@@ -160,14 +160,14 @@ export default {
                 if (lines.length === 1) {
                     this.merge(lines[0]);
                 } else {
-                    this.connect[index] = lines.join(' ');
+                    this.connect.$set(index, lines.join(' '));
                     lines.forEach((id) => {
                         const line = this.$parent.find(id),
                             mark = line.findConnectIndex(node),
                             connect = lines.filter((n) => n !== line.id);
 
                         if (mark !== -1) {
-                            line.connect[mark] = `${connect.join(' ')} ${this.id}`;
+                            line.connect.$set(mark, `${connect.join(' ')} ${this.id}`);
                         }
                     });
                 }
@@ -189,8 +189,7 @@ export default {
         // 删除连接
         deleteConnect(id) {
             const re = new RegExp(`${id} ?`, 'i');
-            this.connect[0].replace(re, '');
-            this.connect[1].replace(re, '');
+            this.connect = this.connect.map((item) => item.replace(re, ''));
         },
         // 删除导线
         remove() {
@@ -203,7 +202,7 @@ export default {
             this.connect.forEach((connect) => {
                 if (rePart.test(connect)) {
                     const [id, mark] = connect.split('-');
-                    this.$parent.find(id).connect[mark] = '';
+                    this.$parent.find(id).connect.$set(mark, '');
                 } else if (reLine.test(connect)) {
                     const lines = connect.split(' ');
                     if (lines.length === 2) {
@@ -272,7 +271,7 @@ export default {
                 },
                 afterEvent = () => {
                     debugger;
-                    this.drawEnd();
+                    this.drawEnd(current);
                     this.update();
                     this.markSign();
                 };

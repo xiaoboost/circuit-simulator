@@ -465,7 +465,7 @@ function drawingStatus(point, onPart) {
 
 export default {
     methods: {
-        setPointSize(point, size = '') {
+        setPointSize(point, size = -1) {
             if (!point) { return; }
 
             const status = schMap.getValueByOrigin(point);
@@ -473,7 +473,7 @@ export default {
                 const [id, mark] = status.split('-'),
                     part = this.$parent.find(id);
 
-                part.pointSize[mark] = size;
+                part.pointSize.$set(mark, size);
             } else if (/line-point|cross-point/.test(status.type)) {
                 status.id.split(' ').forEach((id) => {
                     const line = this.$parent.find(id),
@@ -481,7 +481,7 @@ export default {
                             .findIndex((p) => p.isEqual(point));
 
                     if (mark !== -1) {
-                        line.pointSize[mark] = size;
+                        line.pointSize.$set(mark, size);
                     }
                 });
             }
@@ -493,7 +493,6 @@ export default {
                 locationL = $P(last.location),
                 opt = drawingStatus(endRound, onPart);
 
-            debugger;
             // 记录当前小四方格定位点
             last.location = $P(endFloor);
             // 旧路径终点所在点缩小
@@ -561,12 +560,11 @@ export default {
                 );
                 this.way = new LineWay(ways.get(key));
                 this.way.endToMouse(end);
-                this.pointSize[1] = 'point-large';
+                this.pointSize.$set(1, 8);
             }
         },
         drawEnd({ start, direction }) {
-            const end = this.way.get(-1),
-                endRound = end.round(),
+            const endRound = this.way.get(-1).round(),
                 status = schMap.getValueByOrigin(endRound);
 
             // 起点和终点相等或者只有一个点，则删除当前导线
@@ -575,19 +573,21 @@ export default {
                 return (false);
             }
 
-            // 当前节点被占用，需要重新计算路径
-            if (status.type === 'part' ||
-                (status.type === 'part-point' && status.connect.length)) {
-                const end = $P(endRound
-                    .aroundInf((node) => schMap.getValueByOrigin(node), 20)
-                    .reduce((pre, next) =>
-                        end.distance(pre) < end.distance(next) ? pre : next
-                    )
+            let end = endRound;
+            // 当前节点被占用，需要重新确定终点
+            if (status.type === 'part' || (status.type === 'part-point' && status.connect.length)) {
+                end = $P(
+                    endRound
+                        .aroundInf((node) => schMap.getValueByOrigin(node), 20)
+                        .reduce((pre, next) =>
+                            end.distance(pre) < end.distance(next) ? pre : next
+                        )
                 );
-
-                this.way = AStartSearch(start, end, direction, { process: 'modified' })
-                    .checkWayExcess(direction, 'drawEnd');
             }
+
+            // 以新终点重新计算路径
+            this.way = AStartSearch(start, end, direction, { process: 'modified' })
+                .checkWayExcess(direction, 'drawEnd');
 
             this.setConnectByWay(1);
             this.$emit('focus', this.id, ...this.connect.join(' ').split(' '));
