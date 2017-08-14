@@ -97,6 +97,9 @@ Object.assign(Array.prototype, {
     },
     // 删除回调返回第一个 true 的元素
     delete(fn) {
+        if (!(fn instanceof Function)) {
+            fn = (item) => item === fn;
+        }
         const index = this.findIndex(fn);
         if (index !== -1) {
             this.splice(index, 1);
@@ -104,6 +107,10 @@ Object.assign(Array.prototype, {
         } else {
             return (false);
         }
+    },
+    // 用于 vue 数组的元素赋值
+    $set(i, item) {
+        this.splice(i, 1, item);
     },
 });
 

@@ -3,7 +3,7 @@
     :style="background"
     :class="['drawing-main', { 'no-event': !exclusion }]">
     <svg
-        version="1.1" :xmlns="NS"
+        version="2" :xmlns="NS"
         height="100%" width="100%"
         @wheel="mousewheel($event)"
         @mousedown.self.stop.right="moveMap($event)">

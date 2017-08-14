@@ -44,17 +44,14 @@
         tspan:nth-child(2)
             font-size 10px
     .part-point
-        rect
-            x -8.5
-            y -8.5
-            width 17px
-            height 17px
         circle
-            r 0
             fill Black
-            transition r 200ms cubic-bezier(.4,1.3,1,1)
+    .line-point-open
+        circle
+            fill White
+            stroke-dasharray 1.5,4
         &:hover circle
-            r 5
+            stroke-dasharray 3,4
     .text-params
         text, tspan
             white-space nowrap
@@ -81,7 +78,7 @@
 .drawing-main.no-event
     .part:hover, .line:hover
         cursor url(/cur/move_part.cur), crosshair
-    .part .point-open:hover
+    .part .part-point-open:hover
         cursor url(/cur/draw_line.cur), crosshair
-    .part .point-close:hover
+    .part .part-point-close:hover
         cursor url(/cur/close_point.cur), crosshair

@@ -5,6 +5,7 @@
         <h2>Add Parts</h2>
     </header>
     <article
+        v-once
         v-delegate:click="['.parts-list', addPart]"
         v-delegate:mousemove="['.parts-list', setTip]"
         v-delegate:mouseleave="['.parts-list', disabledTip]">

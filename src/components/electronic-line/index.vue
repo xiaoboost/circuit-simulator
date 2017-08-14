@@ -9,8 +9,8 @@
     </rect>
     <electron-point
         v-for="(point, i) in points"
-        :index="i" :key="i"
-        :class="['line-point', point.class, pointSize[i]]"
+        :index="i" :key="i" :r="pointSize[i]"
+        :class="['line-point', point.class]"
         :transform="`translate(${point.position.join()})`">
     </electron-point>
 </g>
@@ -47,9 +47,8 @@ export default {
     data() {
         return {
             way: [],
-            connect: [],
-
-            pointSize: [],
+            connect: ['', ''],
+            pointSize: [-1, -1],
         };
     },
     computed: {
@@ -82,11 +81,10 @@ export default {
             return ans;
         },
         points() {
-            console.log('line-point change');
             return Array(2).fill(false).map((u, i) => ({
-                position: $P(this.way[-i]),
+                position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
                 class: {
-                    'point-open': !this.connect[i],
+                    'line-point-open': !this.connect[i],
                     'line-point-part': rePart.test(this.connect[i]),
                     'line-point-cross': reLine.test(this.connect[i]),
                 },
@@ -130,7 +128,7 @@ export default {
             }
 
             // 清除节点临时状态
-            this.pointSize[index] = '';
+            this.pointSize.$set(index, -1);
 
             const node = this.way.get(-1 * index).round(),
                 status = schMap.getValueByOrigin(node);
@@ -278,6 +276,9 @@ export default {
                     this.update();
                     this.markSign();
                 };
+
+            // 绘制期间，导线终点默认最大半径
+            this.pointSize.$set(1, 8);
 
             current.last = {};
             this.$store.commit('LINE_TO_BOTTOM', this.id);

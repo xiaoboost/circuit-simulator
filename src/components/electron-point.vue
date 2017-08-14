@@ -13,17 +13,34 @@
     </circle>
     <rect
         x="-8.5" y="-8.5" height="17" width="17"
-        @mouseenter="inner = 5" @mouseleave="inner = 0">
+        @mouseenter="mouseenter" @mouseleave="mouseleave">
     </rect>
 </g>
 </template>
 
 <script>
+const radius = {
+    normal: {
+        'part-point-open': 0,
+        'part-point-close': 2,
+        'line-point-open': 4,
+        'line-point-part': 2,
+        'line-point-cross': 2,
+    },
+    hover: {
+        'part-point-open': 5,
+        'part-point-close': 2,
+        'line-point-open': 8,
+        'line-point-part': 2,
+        'line-point-cross': 6,
+    },
+};
+
 export default {
     props: {
         r: {
             type: Number,
-            default: 0,
+            default: -1,
         },
         index: {
             type: Number,
@@ -46,7 +63,9 @@ export default {
     },
     computed: {
         actual() {
-            return this.r ? this.r : this.inner;
+            return (this.r >= 0)
+                ? this.r
+                : this.inner;
         },
         zoom() {
             return this.$store.state.drawing.zoom;
@@ -61,6 +80,25 @@ export default {
             // 动画启动
             this.$refs.animate.beginElement();
         },
+    },
+    methods: {
+        mouseenter() {
+            const status = Array.prototype
+                .slice.call(this.$el.classList)
+                .find((item) => radius.hover.hasOwnProperty(item));
+
+            this.inner = status ? radius.hover[status] : 5;
+        },
+        mouseleave() {
+            const status = Array.prototype
+                .slice.call(this.$el.classList)
+                .find((item) => radius.normal.hasOwnProperty(item));
+
+            this.inner = status ? radius.normal[status] : 0;
+        },
+    },
+    mounted() {
+        this.mouseleave();
     },
 };
 </script>

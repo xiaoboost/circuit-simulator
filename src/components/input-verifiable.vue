@@ -102,6 +102,7 @@ export default {
         height 2px
         width 0
         bottom 0
+        left 0
         position absolute
         background Dark-Blue
         transition width 300ms

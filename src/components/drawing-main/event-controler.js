@@ -30,6 +30,7 @@ class Handlers {
                     callback: component.toHandler(obj),
                 };
             } else {
+                obj.capture = !!obj.capture;
                 obj.callback = component.toHandler(obj.callback);
                 return obj;
             }

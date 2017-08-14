@@ -7,12 +7,12 @@
     <g class="focus-part">
         <aspect
             v-for="(info, i) in this.shape.aspect"
-            :value="info" :key="i">
+            v-once :value="info" :key="i">
         </aspect>
         <electron-point
             v-for="(point, i) in points"
-            :index="i" :key="i"
-            :class="['part-point', point.class, pointSize[i]]"
+            :index="i" :key="i" :r="pointSize[i]"
+            :class="['part-point', point.class]"
             :transform="`translate(${point.position.join()})`">
         </electron-point>
     </g>
@@ -84,14 +84,10 @@ export default {
     },
     computed: {
         points() {
-            console.log('part-point change');
             return this.shape.points.map((point, i) => ({
                 position: product(point.position, this.rotate),
                 direction: product(point.direction, this.rotate),
-                class: {
-                    'point-open': !this.connect[i],
-                    'point-close': !!this.connect[i],
-                },
+                class: this.connect[i] ? 'part-point-close' : 'part-point-open',
             }));
         },
         invRotate() {
@@ -192,7 +188,7 @@ export default {
                 id = lines.newId('line_'),
                 point = this.points[mark];
 
-            this.connect[mark] = id;
+            this.connect.$set(mark, id);
             this.$emit('focus', this.id);
             this.$store.commit('PUSH_LINE', {
                 id,
@@ -340,6 +336,10 @@ export default {
         // 外观属性
         this.shape = Electronics[this.type].readOnly;
         this.textPosition = $P(this.shape.txtLocate);
+        // point 相关属性初始化
+        const pointNum = this.shape.points.length;
+        this.connect.push(...Array(pointNum).fill(''));
+        this.pointSize.push(...Array(pointNum).fill(-1));
         // 将旋转矩阵以及坐标实例化
         this.rotate = $M(this.rotate);
         this.position = $P(this.position);

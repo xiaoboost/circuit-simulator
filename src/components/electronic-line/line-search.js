@@ -41,7 +41,7 @@ function SearchMap() {
  * @returns {object}
  */
 function SearchStack() {
-    const self = {}, stack = [],
+    const self = {}, stack = {},
         hash = [], map = SearchMap();
 
     self.openSize = 0;
@@ -80,8 +80,14 @@ function SearchStack() {
         // 将状态插入 open 堆栈
         if (!stack[value]) {
             stack[value] = [];
-            if (!hash.some((n, i, arr) =>
-                (n > value) && arr.splice(i - 1, 0, value) || true)) {
+            if (hash.every((n, i, arr) => {
+                if (n > value) {
+                    arr.splice(i, 0, value);
+                    return false;
+                } else {
+                    return true;
+                }
+            })) {
                 hash.push(value);
             }
         }
@@ -315,6 +321,14 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return (3);
         }
     };
+    // 调试用函数
+    self.insertDebugNode = window.$debug
+        ? (a, b, c) => window.$debug.point(a, b, c)
+        : () => {};
+    self.clearDebug = window.$debug
+        ? () => window.$debug.clearAll()
+        : () => {};
+
     return self;
 }
 
@@ -356,14 +370,12 @@ function mergeInitSearch(init, search) {
 function AStartSearch(start, end, direction, opt) {
     // 初始化
     const stack = SearchStack(),
-        rule = SearchRules(start, end, opt);
+        rule = SearchRules(start, end, opt),
+        first = {
+            direction, point: start.mul(0.05),
+            junction: 0, parent: false, straight: true,
+        };
 
-    // 装载起点
-    const first = {
-        direction,
-        point: start, junction: 0,
-        parent: false, straight: true,
-    };
     // 起点的 junctionParent 等于其自身
     first.junctionParent = first;
     first.value = rule.calValue(first);
@@ -378,9 +390,10 @@ function AStartSearch(start, end, direction, opt) {
     // A*搜索，搜索极限为 300
     while (!endStatus && (stack.closeSize < 300)) {
         // 栈顶元素弹出为当前结点
-        const nodenow = stack.pop(),
+        const nodenow = stack.shift(),
             limit = rule.limitExpand(nodenow);
 
+        rule.insertDebugNode(nodenow.point, 'blue', 20);
         // 按方向扩展
         for (let i = 0; i < limit; i++) {
             // 生成扩展节点
@@ -388,11 +401,13 @@ function AStartSearch(start, end, direction, opt) {
             // 节点性质计算
             nodeExpand.straight = true;
             nodeExpand.parent = nodenow;
-            nodeExpand.value = rule.calValue(nodeExpand);
             nodeExpand.junction = nodenow.junction + (!!i);
             nodeExpand.junctionParent = i ? nodenow : nodenow.junctionParent;
+            nodeExpand.value = rule.calValue(nodeExpand);
+            rule.insertDebugNode(nodeExpand.point, 'black', 20);
             // 判断是否是终点
             if (rule.isEnd(nodeExpand)) {
+                rule.clearDebug();
                 endStatus = nodeExpand;
                 break;
             }
@@ -410,7 +425,7 @@ function AStartSearch(start, end, direction, opt) {
     }
     // 终点回溯，生成路径
     const way = new LineWay();
-    while (endStatus === endStatus.junctionParent) {
+    while (endStatus.parent && endStatus !== endStatus.junctionParent) {
         way.push($P(endStatus.point).mul(20));
         endStatus = endStatus.junctionParent;
     }
@@ -451,8 +466,9 @@ function drawingStatus(point, onPart) {
 export default {
     methods: {
         setPointSize(point, size = '') {
-            const status = schMap.getValueByOrigin(point);
+            if (!point) { return; }
 
+            const status = schMap.getValueByOrigin(point);
             if (status.type === 'part-point') {
                 const [id, mark] = status.split('-'),
                     part = this.$parent.find(id);
@@ -538,12 +554,12 @@ export default {
                 this.setPointSize(this.way.get(-1), 'point-large');
             } else {
                 // 普通状态，选取节点最多的路径
-                const end = endGrid.reduce(
+                const key = endGrid.reduce(
                     (pre, next) =>
                         (ways.get(pre).length >= ways.get(next).length)
                             ? pre : next
                 );
-                this.way = new LineWay(ways.get(end));
+                this.way = new LineWay(ways.get(key));
                 this.way.endToMouse(end);
                 this.pointSize[1] = 'point-large';
             }
