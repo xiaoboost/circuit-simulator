@@ -495,8 +495,8 @@ export default {
 
             // 记录当前小四方格定位点
             last.location = $P(endFloor);
-            // 旧路径终点所在点缩小
-            this.setPointSize(this.way.get(-1), 'point-small');
+            // 旧路径终点所在器件端点缩小
+            this.setPointSize(this.way.get(-1), -1);
 
             if (opt.align && !opt.align.isEqual(this.way.get(-1))) {
                 this.way =
@@ -518,7 +518,7 @@ export default {
             }
 
             // 默认当前导线终点节点缩小
-            this.pointSize[1] = 'point-small';
+            this.pointSize.$set(1, 2);
 
             const ways = last.gridWay;
             if (opt.status === 'line') {
@@ -547,10 +547,10 @@ export default {
             } else if (opt.status === 'point') {
                 // 主动对齐模式，选取对齐点为路径
                 this.way = ways.get(endRound);
-                this.setPointSize(this.way.get(-1), 'point-large');
+                this.setPointSize(this.way.get(-1), 5);
             } else if (opt.status === 'align') {
                 // 强制对齐模式
-                this.setPointSize(this.way.get(-1), 'point-large');
+                this.setPointSize(this.way.get(-1), 5);
             } else {
                 // 普通状态，选取节点最多的路径
                 const key = endGrid.reduce(
@@ -560,6 +560,7 @@ export default {
                 );
                 this.way = new LineWay(ways.get(key));
                 this.way.endToMouse(end);
+                // 普通状态，导线末端节点保持放大
                 this.pointSize.$set(1, 8);
             }
         },

@@ -110,7 +110,9 @@ Object.assign(Array.prototype, {
     },
     // 用于 vue 数组的元素赋值
     $set(i, item) {
-        this.splice(i, 1, item);
+        if (this[i] !== item) {
+            this.splice(i, 1, item);
+        }
     },
 });
 
