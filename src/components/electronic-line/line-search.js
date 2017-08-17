@@ -304,6 +304,8 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             self.isEnd = isEndPoint;
             self.checkPoint = isLegalPointWhenSpace;
         }
+    } else if (mode.process === 'modified') {
+        console.log('modified');
     }
 
     // 当前节点允许的扩展数量
@@ -436,8 +438,9 @@ function AStartSearch(start, end, direction, opt) {
 
 // 绘图部分，预处理
 function drawingStatus(point, onPart) {
-    const ans = { process: 'drawing' },
-        status = schMap.getValueByOrigin(point);
+    const round = point.round(),
+        ans = { process: 'drawing' },
+        status = schMap.getValueByOrigin(round);
 
     if (status.type === 'line-point' ||
         status.type === 'cross-point' &&
@@ -448,11 +451,10 @@ function drawingStatus(point, onPart) {
         status.type === 'cross-point' &&
         status.connect.length === 4) {
         ans.status = 'line';
-    } else if (onPart) {
-        debugger;
+    } else if (onPart && onPart.$el) {
         ans.align = point.closest(
             onPart.points
-                .filter((n) => n.class['point-open'])
+                .filter((n) => n.class === 'part-point-open')
                 .map((n) => n.position.add(onPart.position))
         );
         ans.status = ans.align ? 'align' : 'part';
@@ -470,7 +472,7 @@ export default {
 
             const status = schMap.getValueByOrigin(point);
             if (status.type === 'part-point') {
-                const [id, mark] = status.split('-'),
+                const [id, mark] = status.id.split('-'),
                     part = this.$parent.find(id);
 
                 part.pointSize.$set(mark, size);
@@ -491,7 +493,7 @@ export default {
                 endFloor = end.floor(),
                 endGrid = endFloor.toGrid(),
                 locationL = $P(last.location),
-                opt = drawingStatus(endRound, onPart);
+                opt = drawingStatus(end, onPart);
 
             // 记录当前小四方格定位点
             last.location = $P(endFloor);
@@ -502,7 +504,7 @@ export default {
                 this.way =
                     AStartSearch(start, opt.align, direction, opt)
                         .checkWayExcess(direction, opt);
-            } else if (!endFloor.isEqual(locationL)) {
+            } else if (!endFloor.isEqual(locationL) || onPart === 'leave') {
                 const waysL = last.gridWay,
                     ways = last.gridWay = new WayMap(),
                     vector = mergeInitSearch(direction, $P(start, end));
@@ -515,6 +517,10 @@ export default {
                                 .checkWayExcess(vector, opt)
                         )
                 );
+                // 更新后强制把 onPart 标志置低
+                if (onPart === 'leave') {
+                    arguments[0].onPart = false;
+                }
             }
 
             // 默认当前导线终点节点缩小
@@ -587,7 +593,7 @@ export default {
             }
 
             // 以新终点重新计算路径
-            this.way = AStartSearch(start, end, direction, { process: 'modified' })
+            this.way = AStartSearch(start, end, direction, { process: 'drawing' })
                 .checkWayExcess(direction, 'drawEnd');
 
             this.setConnectByWay(1);

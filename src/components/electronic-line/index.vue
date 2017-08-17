@@ -144,7 +144,7 @@ export default {
                 // 器件引脚的临时状态也要清除
                 part.pointSize.$set(mark, -1);
                 part.connect.$set(mark, this.id);
-                this.status[index] = status.id;
+                this.connect.$set(1, status.id);
             } else if (status.type === 'line-point') {
                 // 节点为导线空引脚
                 this.merge(status.id);
@@ -262,15 +262,15 @@ export default {
         },
         setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
-                mouseenter = (e) => (current.onPart = this.find(e.currentTarget)),
-                mouseleaves = () => (current.onPart = false),
+                mouseenter = (e) => (current.onPart = this.$parent.find(e.currentTarget.parentNode)),
+                // TODO: 离开时也需要强制更新
+                mouseleave = () => (current.onPart = 'leave'),
                 draw = (e) => {
                     current.end = e.$mouse;
                     current.bias = e.$bias;
                     this.drawing(current);
                 },
                 afterEvent = () => {
-                    debugger;
                     this.drawEnd(current);
                     this.update();
                     this.markSign();
@@ -293,8 +293,8 @@ export default {
                     },
                     {
                         delegate: true,
-                        type: 'mouseleaves',
-                        callback: mouseleaves,
+                        type: 'mouseleave',
+                        callback: mouseleave,
                         select: '.part .focus-part',
                     },
                 ],

@@ -78,9 +78,16 @@
         fill Dark-Green
 
 .drawing-main.no-event
-    .part:hover, .line:hover
-        cursor url(/cur/move_part.cur), crosshair
-    .part .part-point-open:hover
-        cursor url(/cur/draw_line.cur), crosshair
-    .part .part-point-close:hover
-        cursor url(/cur/close_point.cur), crosshair
+    .part
+        &:hover
+            cursor url(/cur/move_part.cur), crosshair
+        .part-point-open:hover
+            cursor url(/cur/draw_line.cur), crosshair
+        .part-point-close:hover
+            cursor url(/cur/close_point.cur), crosshair
+
+    .line
+        .line-rect:hover
+            cursor url(/cur/move_part.cur), crosshair
+        .line-point-open:hover
+            cursor url(/cur/draw_line.cur), crosshair

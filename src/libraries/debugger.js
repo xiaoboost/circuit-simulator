@@ -1,7 +1,13 @@
 'use strict';
 // import { schMap } from './maphash';
 
+// 全局常量
 const doc = document, NS = window.$SVG_NS;
+
+// 开关
+const Switch = {
+    point: false,
+};
 
 class MapDebug {
     constructor() {
@@ -9,6 +15,8 @@ class MapDebug {
         this.$el.setAttribute('class', 'map-debugger');
     }
     point(node, color = 'black', mul = 1) {
+        if (!Switch.point) { return; }
+
         const el = doc.createElementNS(NS, 'circle');
         el.setAttribute('stroke-width', '3');
         el.setAttribute('fill', 'transparent');
