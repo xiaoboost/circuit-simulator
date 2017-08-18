@@ -82,16 +82,12 @@ export default {
     },
     methods: {
         mouseenter() {
-            if (this.r >= 0) { return; }
-
             const status = this.className.split(' ')
                 .find((item) => radius.hover.hasOwnProperty(item));
 
             this.inner = status ? radius.hover[status] : 5;
         },
         mouseleave() {
-            if (this.r >= 0) { return; }
-
             const status = this.className.split(' ')
                 .find((item) => radius.normal.hasOwnProperty(item));
 
