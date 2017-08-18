@@ -523,9 +523,6 @@ export default {
                 }
             }
 
-            // 默认当前导线终点节点缩小
-            this.pointSize.$set(1, 2);
-
             const ways = last.gridWay;
             if (opt.status === 'line') {
                 // 终点在导线上
@@ -550,13 +547,16 @@ export default {
                 } else {
                     this.way = ways.get(endRound);
                 }
+                this.pointSize.$set(1, 2);
             } else if (opt.status === 'point') {
                 // 主动对齐模式，选取对齐点为路径
                 this.way = ways.get(endRound);
                 this.setPointSize(this.way.get(-1), 5);
+                this.pointSize.$set(1, 2);
             } else if (opt.status === 'align') {
                 // 强制对齐模式
                 this.setPointSize(this.way.get(-1), 5);
+                this.pointSize.$set(1, 2);
             } else {
                 // 普通状态，选取节点最多的路径
                 const key = endGrid.reduce(

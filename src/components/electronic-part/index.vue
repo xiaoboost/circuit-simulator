@@ -12,7 +12,7 @@
         <electron-point
             v-for="(point, i) in points"
             :index="i" :key="i" :r="pointSize[i]"
-            :class="['part-point', point.class]"
+            :class-list="['part-point', point.class]"
             :transform="`translate(${point.position.join()})`">
         </electron-point>
     </g>
@@ -189,11 +189,10 @@ export default {
                 point = this.points[mark];
 
             this.connect.$set(mark, id);
-            this.$emit('focus', this.id);
             this.$store.commit('PUSH_LINE', {
                 id,
                 type: 'line',
-                connect: [this.id],
+                connect: [`${this.id}-${mark}`],
                 current: {
                     start: point.position.add(this.position),
                     direction: point.direction,

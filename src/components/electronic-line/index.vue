@@ -10,7 +10,7 @@
     <electron-point
         v-for="(point, i) in points"
         :index="i" :key="i" :r="pointSize[i]"
-        :class="['line-point', point.class]"
+        :class-list="['line-point', point.class]"
         :transform="`translate(${point.position.join()})`">
     </electron-point>
 </g>

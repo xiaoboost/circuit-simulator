@@ -1,7 +1,5 @@
 <template>
-<g
-    :index="index"
-    :transform="transform">
+<g :class="className">
     <circle ref="circle" cx="0" cy="0">
         <animate
             ref="animate" fill="freeze"
@@ -42,13 +40,9 @@ export default {
             type: Number,
             default: -1,
         },
-        index: {
-            type: Number,
-            default: 0,
-        },
-        transform: {
-            type: String,
-            default: 'translate(0,0)',
+        classList: {
+            type: Array || String,
+            default: () => [],
         },
     },
     data() {
@@ -70,21 +64,35 @@ export default {
         zoom() {
             return this.$store.state.drawing.zoom;
         },
+        className() {
+            // 输入是字符串，直接其本身
+            if (typeof this.classList === 'string') {
+                return this.classList;
+            }
+            // 是数组，解析其 class
+            return this.classList.map((item) => (typeof item === 'string')
+                ? item
+                : Object.keys(item).filter((key) => item[key]).join(' ')
+            ).join(' ');
+        },
     },
     watch: {
         actual: 'setAnimate',
+        className: 'mouseleave',
     },
     methods: {
         mouseenter() {
-            const status = Array.prototype
-                .slice.call(this.$el.classList)
+            if (this.r >= 0) { return; }
+
+            const status = this.className.split(' ')
                 .find((item) => radius.hover.hasOwnProperty(item));
 
             this.inner = status ? radius.hover[status] : 5;
         },
         mouseleave() {
-            const status = Array.prototype
-                .slice.call(this.$el.classList)
+            if (this.r >= 0) { return; }
+
+            const status = this.className.split(' ')
                 .find((item) => radius.normal.hasOwnProperty(item));
 
             this.inner = status ? radius.normal[status] : 0;

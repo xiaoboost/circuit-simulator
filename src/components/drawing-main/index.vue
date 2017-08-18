@@ -79,12 +79,13 @@ export default {
     },
     methods: {
         find(id) {
-            const prop = typeof id === 'string' ? 'id' : '$el',
+            const prop = (typeof id === 'string') ? 'id' : '$el',
+                item = (prop === 'id') ? id.split('-')[0] : id,
                 parts = this.$refs.parts || [],
                 lines = this.$refs.lines || [],
                 components = parts.concat(lines);
 
-            return components.find((n) => id === n[prop]);
+            return components.find((n) => item === n[prop]);
         },
         // 清空当前操作器件堆栈
         clearFocus(...args) {
@@ -96,7 +97,7 @@ export default {
                 if (/^line_\d+$/.test(id)) {
                     this.linesNow.push(id);
                 } else {
-                    this.partsNow.push(id);
+                    this.partsNow.push(id.split('-')[0]);
                 }
             }
         },
