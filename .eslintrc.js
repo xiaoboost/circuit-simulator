@@ -19,6 +19,7 @@ module.exports = {
     globals: {
         'window': true,
         '$debug': true,
+        '$map': true,
         '$SVG_NS': true,
     },
     // 自定义规则

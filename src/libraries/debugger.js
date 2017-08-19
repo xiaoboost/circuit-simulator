@@ -1,12 +1,23 @@
-'use strict';
-// import { schMap } from './maphash';
+import collection from '@/vuex/collection';
 
 // 全局常量
 const doc = document, NS = window.$SVG_NS;
 
 // 开关
 const Switch = {
-    point: false,
+    point: true,
+    path: true,
+    text: true,
+};
+
+// 点颜色
+const color = {
+    'line': 'green',
+    'part': 'black',
+    'part-point': 'red',
+    'line-point': 'orange',
+    'cross-point': 'blue',
+    'cover-point': 'yellow',
 };
 
 class MapDebug {
@@ -24,7 +35,32 @@ class MapDebug {
         el.setAttribute('stroke', color);
         el.setAttribute('cx', node[0] * mul);
         el.setAttribute('cy', node[1] * mul);
-        el.setAttribute('r', '3');
+        el.setAttribute('r', '4');
+
+        this.$el.appendChild(el);
+    }
+    path(way, color = 'black') {
+        if (!Switch.point) { return; }
+
+        const el = doc.createElementNS(NS, 'path');
+        el.setAttribute('d', `M${way.map((point) => point.join(',')).join('L')}`);
+        el.setAttribute('class', 'debug-path');
+        el.setAttribute('stroke-width', '2');
+        el.setAttribute('fill', 'transparent');
+        el.setAttribute('stroke', color);
+
+        this.$el.appendChild(el);
+    }
+    text([x, y], text, mul = 1) {
+        const el = doc.createElementNS(NS, 'text');
+
+        el.textContent = text;
+        el.setAttribute('x', x * mul);
+        el.setAttribute('y', y * mul);
+        el.setAttribute('fill', '#3B4449');
+        el.setAttribute('font-size', '14');
+        el.setAttribute('stroke-width', '0');
+        el.setAttribute('class', 'debug-text');
 
         this.$el.appendChild(el);
     }
@@ -37,131 +73,50 @@ class MapDebug {
         Array.from(this.$el.childNodes)
             .forEach((el) => el.remove());
     }
+    whole() {
+        let count = 0;
+        collection.state.Lines.forEach((line) => {
+            this.text(
+                [1000, count * 25 + 50],
+                `${line.connect[0]} ---> ${line.id} ---> ${line.connect[1]}`
+            );
+            count++;
+        });
+        count++;
+
+        const points = Object.keys(window.$map)
+            .reduce((ans, x) => ans.concat(Object.keys(window.$map[x]).map((y) => [x, y])), []);
+
+        points.forEach((point) => {
+            const status = window.$map[point[0]][point[1]];
+            // 点本身
+            this.point(point, color[status.type], 20);
+            // 点的 ID
+            if (status.type === 'line') {
+                this.text(point, status.id.split('_')[1], 20);
+            } else if (status.type === 'part-point') {
+                this.text([point[0], point[1] - 0.5], status.id, 20);
+            } else if (/(cross-point|cover-point)/.test(status.type)) {
+                this.path([[point[0] * 20, point[1] * 20], [1000, count * 25 + 50]], '#222222');
+                this.text([1000, count * 25 + 50], status.id);
+                count++;
+            }
+            // 点的连接关系
+            status.connect && status.connect.forEach(([tx, ty]) => {
+                const [x, y] = point;
+
+                if (x - tx < 0) {
+                    this.path([[x * 20, y * 20 - 3], [tx * 20, ty * 20 - 3]]);
+                } else if (x - tx > 0) {
+                    this.path([[x * 20, y * 20 + 3], [tx * 20, ty * 20 + 3]]);
+                } else if (y - ty < 0) {
+                    this.path([[x * 20 - 3, y * 20], [tx * 20 - 3, ty * 20]]);
+                } else if (y - ty > 0) {
+                    this.path([[x * 20 + 3, y * 20], [tx * 20 + 3, ty * 20]]);
+                }
+            });
+        });
+    }
 }
-// function MapDebug() {
-//     this.$el = doc.createElement('g');
-//     this.$el.setAttribute('class', 'map-debugger');
-// }
-// MapDebug.prototype = {
-//     point([x, y], color = '#00ff00', mul = 1) {
-//         const el = doc.createElement('circle');
-
-//         this.test.append($('<circle>', {
-//             'stroke-width': '3',
-//             'fill': 'transparent',
-//             'stroke': color,
-//             'cx': x * mul,
-//             'cy': y * mul,
-//             'r': 3,
-//         }));
-//     },
-// path(way, color = '#ff0000') {
-//     let wayData = 'M' + way[0].join(', ');
-//     for (let i = 1; i < way.length; i++) {
-//         wayData += 'L' + way[i].join(', ');
-//     }
-//     this.test.append($('<path>', SVG_NS, {
-//         'stroke-width': '2',
-//         'fill': 'transparent',
-//         'stroke': color,
-//         'd': wayData,
-//         'class': 'testPath'
-//     }));
-// },
-// text([x, y], text) {
-//     this.test.append($('<text>', SVG_NS, {
-//         x,
-//         y,
-//         fill: '#3B4449',
-//         'stroke-width': '0',
-//         'font-size': '14'
-//     })).text(text);
-// },
-// clear(className) {
-//     switch (className) {
-//         case 'Point' :
-//             this.test.childrens('.testPoint').remove();
-//             return true;
-//         case 'Path' :
-//             this.test.childrens('.testPath').remove();
-//             return true;
-//         case undefined :
-//             this.test.childrens().remove();
-//             return true;
-//         default :
-//             return (false);
-//     }
-// },
-// whole() {
-//     let countx = 0;
-//     for (let i = 0; i < partsAll.length; i++) {
-//         if (partsAll[i].partType === 'line') {
-//             this.text(
-//                 [1000, countx * 25 + 50],
-//                 partsAll[i].connect[0] + '--->' + partsAll[i].id + '--->' + partsAll[i].connect[1]
-//             );
-//             countx ++;
-//         }
-//     }
-//     countx ++;
-//     const mapNodes = schMap.toSmallNodes();
-//     for (let k = 0; k < mapNodes.length; k++) {
-//         const i = mapNodes[k][0],
-//             j = mapNodes[k][1],
-//             tempstatus = schMap.getValueBySmalle(mapNodes[k]);
-
-//         if (tempstatus.form === 'part-point') {
-//             //红色
-//             this.point([i, j], '#ff0000', 20, 4);
-//         } else if (tempstatus.form === 'part') {
-//             //黑色
-//             this.point([i, j], '#000000', 20, 4);
-//         }
-
-//         if (tempstatus.connect) {
-//             for (let k = 0; k < tempstatus.connect.length; k++) {
-//                 const connect = tempstatus.connect,
-//                     tempx = connect[k][0] - i,
-//                     tempy = connect[k][1] - j;
-//                 if (tempx < 0) {
-//                     this.path([[i * 20, j * 20 - 3], [connect[k][0] * 20, connect[k][1] * 20 - 3]], '#000000');
-//                 } else if (tempx > 0) {
-//                     this.path([[i * 20, j * 20 + 3], [connect[k][0] * 20, connect[k][1] * 20 + 3]], '#000000');
-//                 } else if (tempy < 0) {
-//                     this.path([[i * 20 - 3, j * 20], [connect[k][0] * 20 - 3, connect[k][1] * 20]], '#000000');
-//                 } else if (tempy > 0) {
-//                     this.path([[i * 20 + 3, j * 20], [connect[k][0] * 20 + 3, connect[k][1] * 20]], '#000000');
-//                 }
-//             }
-//             if (tempstatus.form === 'line') {
-//                 //蓝色
-//                 this.point([i, j], '#0000ff', 20, 4);
-//             } else if (tempstatus.form === 'cross-point') {
-//                 //黄色
-//                 this.point([i, j], '#dcfc02', 20, 4);
-//             } else if (tempstatus.form === 'line-point') {
-//                 //绿色
-//                 this.point([i, j], '#02fc31', 20, 4);
-//             } else if (tempstatus.form === 'cover-point') {
-//                 //绿色
-//                 this.point([i, j], '#E9967A', 20, 4);
-//             }
-//         }
-//         if (tempstatus.form === 'line') {
-//             this.text([i * 20 + 5, j * 20 + 15], tempstatus.id.split('_')[1]);
-//         } else if (tempstatus.form === 'part-point') {
-//             this.text([i * 20 + 5, j * 20 + 15], tempstatus.id.split('-')[1]);
-//         } else if (tempstatus.form === 'cross-point') {
-//             this.path([[i * 20, j * 20], [1000, countx * 25 + 50]], '#222222');
-//             this.text([1000, countx * 25 + 50], tempstatus.id);
-//             countx++;
-//         } else if (tempstatus.form === 'cover-point') {
-//             this.path([[i * 20, j * 20], [1000, countx * 25 + 50]], '#222222');
-//             this.text([1000, countx * 25 + 50], tempstatus.id);
-//             countx++;
-//         }
-//     }
-// },
-// };
 
 export default MapDebug;

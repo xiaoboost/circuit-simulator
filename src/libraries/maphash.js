@@ -1,5 +1,5 @@
 // 图纸数据
-const map = window.__map__ = {};
+const map = window.$map = {};
 
 // 图纸对外暴露的方法
 const schMap = {
@@ -100,6 +100,22 @@ const schMap = {
             }
         }
         return (true);
+    },
+    // node 和 connect 是否相连
+    isNodeInConnectBySmall(node, connect) {
+        const status = schMap.getValueBySmalle(node);
+
+        return (
+            status &&
+            /(line|point)/.test(status.type) &&
+            status.connect.some((point) => point.isEqual(connect))
+        );
+    },
+    isNodeInConnectByOrigin(a, b) {
+        const node = [a[0] / 20, a[1] / 20],
+            connect = [b[0] / 20, b[1] / 20];
+
+        return schMap.nodeInConnectBySmall(node, connect);
     },
     deleteConnectByOrigin(node, connect) {
         node = [node[0] / 20, node[1] / 20];
