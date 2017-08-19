@@ -101,6 +101,25 @@ Object.assign(LineWay.prototype, {
             this[this.length - 2][0] = point[0];
         }
     },
+    // 返回导线的所有节点
+    nodeCollection() {
+        const ans = [];
+
+        for (let i = 0; i < this.length - 1; i++) {
+            const vector = $P(this[i], this[i + 1]).toUnit().mul(20);
+
+            for (
+                let node = $P(this[i]);
+                !node.isEqual(this[i + 1]);
+                node = node.add(vector)
+            ) {
+                ans.push(node);
+            }
+        }
+        ans.push($P(this.get(-1)));
+
+        return (ans);
+    },
 });
 
 // [点 -> 路径] 键值对

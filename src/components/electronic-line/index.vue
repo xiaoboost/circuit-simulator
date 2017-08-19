@@ -174,7 +174,67 @@ export default {
         },
 
         markSign() {
+            const nodes = this.way.nodeCollection();
 
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i], last = nodes[i - 1],
+                    status = schMap.getValueByOrigin(node);
+
+                if (i && i !== nodes.length - 1) {
+                    // 非端点
+                    if (
+                        status && status.form === 'line' &&
+                        !schMap.nodeInConnectByOrigin(node, last)
+                    ) {
+                        status.form = 'cover-point';
+                        status.id += ` ${this.id}`;
+                    } else if (status && status.form === 'cover-point') {
+                        const ver = node.add($P(last, node).reverse()),
+                            verSta = schMap.getValueByOrigin(ver);
+
+                        if (verSta.form === 'line') {
+                            status.id = `${verSta.id} ${this.id}`;
+                        } else if (verSta.form === 'part-point') {
+                            const line = this
+                                .$parent.find(verSta.id)
+                                .connect[verSta.id.split('-')[1]];
+
+                            status.id = `${line} ${this.id}`;
+                        }
+                    } else {
+                        schMap.setValueByOrigin(node, {
+                            type: 'line',
+                            id: this.id,
+                            connect: [],
+                        });
+                    }
+                } else {
+                    // 导线端点
+                    if (!status) {
+                        schMap.setValueByOrigin(node, {
+                            type: 'line-point',
+                            id: this.id,
+                            connect: [],
+                        });
+                    } else if (
+                        status.form === 'cross-point' &&
+                        status.id.includes(this.id)
+                    ) {
+                        status.id = status.id
+                            ? `${status.id} ${this.id}`
+                            : this.id;
+                    } else if (status.form === 'line-point') {
+                        schMap.setValueByOrigin(node, {
+                            form: 'cross-point',
+                            id: `${this.id} ${status.id}`,
+                        });
+                    }
+                }
+                if (last) {
+                    schMap.pushConnectByOrigin(node, last);
+                    schMap.pushConnectByOrigin(last, node);
+                }
+            }
         },
         deleteSign() {
 
