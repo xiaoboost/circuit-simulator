@@ -70,8 +70,7 @@ class MapDebug {
             .forEach((el) => el.remove());
     }
     clearAll() {
-        Array.from(this.$el.childNodes)
-            .forEach((el) => el.remove());
+        this.$el.innerHTML = '';
     }
     whole() {
         let count = 0;
