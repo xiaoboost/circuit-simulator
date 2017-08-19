@@ -17,11 +17,10 @@
 </template>
 
 <script>
-import { LineWay } from './line-way';
-import lineSearch from './line-search';
 import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
 import { schMap } from '@/libraries/maphash';
+import lineSearch, { LineWay } from './line-search';
 
 import ElectronPoint from '@/components/electron-point';
 
