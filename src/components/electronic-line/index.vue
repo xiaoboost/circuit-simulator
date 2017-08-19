@@ -237,7 +237,42 @@ export default {
             }
         },
         deleteSign() {
+            const nodes = this.way.nodeCollection();
 
+            for (let i = 0; i < nodes.length; i++) {
+                const node = nodes[i], last = nodes[i - 1],
+                    status = schMap.getValueByOrigin(node);
+
+                if (i && i !== nodes.length - 1) {
+                    // 非端点节点
+                    if (status.type === 'cover-point') {
+                        status.type = 'line';
+                        status.id = status.id.split(' ').find((n) => n !== this.id);
+
+                        schMap.deleteConnectByOrigin(node, last);
+                        schMap.deleteConnectByOrigin(last, node);
+                    } else if (status.type === 'line') {
+                        schMap.deleteValueByOrigin(node);
+                    }
+                } else {
+                    // 导线端点
+                    if (status.type === 'line-point') {
+                        schMap.deleteValueByOrigin(node);
+                    } else if (status.type === 'cross-point') {
+                        status.id = status.id.split(' ')
+                            .filter((n) => n !== this.id).join(' ');
+
+                        // 当前交错节点为空，那么删除此点
+                        if (!status.id) {
+                            schMap.deleteValueByOrigin(node);
+                        }
+                        if (last) {
+                            schMap.deleteConnectByOrigin(node, last);
+                            schMap.deleteConnectByOrigin(last, node);
+                        }
+                    }
+                }
+            }
         },
 
         // 导线反转
