@@ -45,7 +45,7 @@ const schMap = {
         if (status && status.connect) {
             // 删除与当前点相连的点的连接信息
             for (let i = 0; i < status.connect.length; i++) {
-                schMap.deleteConnectBySmalle(status.connect[i], x);
+                schMap.deleteConnectBySmalle(status.connect[i], [x, y]);
             }
         }
         if (status) {
@@ -130,9 +130,7 @@ const schMap = {
 
         return (
             status &&
-            status.type === 'line' ||
-            status.type === 'cross-point' ||
-            status.type === 'cover-point'
+            /(line|cross-point|cover-point)/.test(status.type)
         );
     },
     isLineByOrigin(x, y) {

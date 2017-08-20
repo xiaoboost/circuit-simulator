@@ -266,10 +266,6 @@ export default {
                         if (!status.id) {
                             schMap.deleteValueByOrigin(node);
                         }
-                        if (last) {
-                            schMap.deleteConnectByOrigin(node, last);
-                            schMap.deleteConnectByOrigin(last, node);
-                        }
                     }
                 }
             }
@@ -357,7 +353,6 @@ export default {
         setDrawing(current) {
             const stopEvent = { el: this.$parent.$el, type: 'mouseup', which: 'left' },
                 mouseenter = (e) => (current.onPart = this.$parent.find(e.currentTarget.parentNode)),
-                // TODO: 离开时也需要强制更新
                 mouseleave = () => (current.onPart = 'leave'),
                 draw = (e) => {
                     current.end = e.$mouse;

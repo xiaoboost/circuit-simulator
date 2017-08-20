@@ -393,7 +393,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         } else if (status.type === 'part') {
             // 器件节点
             return false;
-        } else if (status.type === 'part-point') {
+        } else if (/(line-point|part-point)/.test(status.type)) {
             // 当前节点在引脚时在终点周围距离为1的地方都可行
             return (distance(node.point, end) < 2);
         } else if (schMap.isLineBySmall(node.point)) {
@@ -410,7 +410,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return true;
         } else if (status.type === 'part') {
             return false;
-        } else if (status.type === 'part-point') {
+        } else if (/(line-point|part-point)/.test(status.type)) {
             // 必须等于终点
             return (node.point.isEqual(end));
         } else if (schMap.isLineBySmall(node.point)) {
@@ -422,8 +422,8 @@ function SearchRules(nodeStart, nodeEnd, mode) {
     // 排除指定器件
     function isLegalPointExcludePart(node) {
         const status = schMap.getValueBySmalle(node.point);
-        if (!status) {
-            return (true);
+        if (status.type === 'line-point') {
+            return (false);
         } else if (status.type === 'part') {
             return excludeParts.includes(status.id);
         } else if (status.type === 'part-point') {
@@ -434,9 +434,8 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             );
         } else if (schMap.isLineBySmall(node.point)) {
             return (isNodeVerticalLine(node));
-        } else {
-            return (true);
         }
+        return (true);
     }
     // 排除指定线段
     // function isLegalPointExcludeLine(node) {
