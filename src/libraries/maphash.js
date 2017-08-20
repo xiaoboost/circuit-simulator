@@ -115,7 +115,7 @@ const schMap = {
         const node = [a[0] / 20, a[1] / 20],
             connect = [b[0] / 20, b[1] / 20];
 
-        return schMap.nodeInConnectBySmall(node, connect);
+        return schMap.isNodeInConnectBySmall(node, connect);
     },
     deleteConnectByOrigin(node, connect) {
         node = [node[0] / 20, node[1] / 20];
@@ -130,7 +130,7 @@ const schMap = {
 
         return (
             status &&
-            /(line|cross-point|cover-point)/.test(status.type)
+            /^(line|cross-point|cover-point)$/.test(status.type)
         );
     },
     isLineByOrigin(x, y) {
@@ -156,7 +156,7 @@ const schMap = {
             next = [node[0] + vector[0], node[1] + vector[1]];
         // 当前点没有到达终点，还在导线所在直线内部，那就前进
         while (schMap.isLineBySmall(next) && !node.isEqual(end)) {
-            if (schMap.nodeInConnectBySmall(node, next)) {
+            if (schMap.isNodeInConnectBySmall(node, next)) {
                 node = next;
                 next = [node[0] + vector[0], node[1] + vector[1]];
             } else {

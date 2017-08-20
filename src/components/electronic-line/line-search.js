@@ -8,6 +8,8 @@ const rotate = [
     [[0, -1], [1, 0]],  // 逆时针
     [[-1, 0], [0, -1]],  // 反相
 ];
+// 全局的 Point 类原型引用
+const Point = $P();
 
 // 导线路径类
 function LineWay(args) {
@@ -318,7 +320,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
     }
     // node 是否在某线段内
     function isNodeInLine(node, line) {
-        return node.isInLine(line);
+        return Point.isInLine.call(node, line);
     }
     // 距离表征，以直角三角形直角边之和表征斜边
     function distance(a, b) {
@@ -351,9 +353,9 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         return end.isEqual(node.point);
     }
     // 在终线中
-    // function isInEndLines(node) {
-    //     return endLines.find((line) => isNodeInLine(node.point, line));
-    // }
+    function isInEndLines(node) {
+        return endLines.find((line) => isNodeInLine(node, line));
+    }
     // 绘制导线时，终点在导线中
     function checkNodeInLineWhenDraw(node) {
         // 优先判断是否等于终点
@@ -361,7 +363,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return (true);
         }
         // 是否在终点等效线段中
-        const exLine = isNodeInLine(node.point);
+        const exLine = isInEndLines(node.point);
         // 不在等效终线中
         if (!exLine) {
             return false;
@@ -393,7 +395,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         } else if (status.type === 'part') {
             // 器件节点
             return false;
-        } else if (/(line-point|part-point)/.test(status.type)) {
+        } else if (/^(line-point|part-point)$/.test(status.type)) {
             // 当前节点在引脚时在终点周围距离为1的地方都可行
             return (distance(node.point, end) < 2);
         } else if (schMap.isLineBySmall(node.point)) {
@@ -410,7 +412,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return true;
         } else if (status.type === 'part') {
             return false;
-        } else if (/(line-point|part-point)/.test(status.type)) {
+        } else if (/^(line-point|part-point)$/.test(status.type)) {
             // 必须等于终点
             return (node.point.isEqual(end));
         } else if (schMap.isLineBySmall(node.point)) {
@@ -651,7 +653,7 @@ export default {
                     part = this.$parent.find(id);
 
                 part.pointSize.$set(mark, size);
-            } else if (/line-point|cross-point/.test(status.type)) {
+            } else if (/^(line-point|cross-point)$/.test(status.type)) {
                 status.id.split(' ').forEach((id) => {
                     const line = this.$parent.find(id),
                         mark = [line.way[0], line.way.get(-1)]
