@@ -27,11 +27,11 @@ class Handlers {
                 return {
                     capture: false,
                     type: 'mousemove',
-                    callback: component.toHandler(obj),
+                    callback: component.toHandler(obj, 'mousemove'),
                 };
             } else {
                 obj.capture = !!obj.capture;
-                obj.callback = component.toHandler(obj.callback);
+                obj.callback = component.toHandler(obj.callback, obj.type);
                 return obj;
             }
         });
@@ -71,9 +71,9 @@ export default {
          * @param {function} fn
          * @returns {function} callback
          */
-        toHandler(fn) {
+        toHandler(fn, type) {
             let last = false;
-            return (e) => {
+            const callbackOutter = (e) => {
                 const origin = $P(e.pageX, e.pageY),
                     mouse = origin.add(-1, this.position).mul(1 / this.zoom),
                     bias = last
@@ -85,6 +85,11 @@ export default {
                 e.$bias = bias;
                 fn(e);
             };
+
+            // TODO: 生产环境时，mousemove 事件不需要异步调用
+            return (type !== 'mousemove')
+                ? callbackOutter
+                : (e) => setTimeout(() => callbackOutter(e));
         },
         EventControler({ exclusion = true, cursor, handlers, beforeEvent, stopEvent, afterEvent }) {
             // 如果有互斥事件在运行，且当前事件也是互斥的，那么忽略当前事件
