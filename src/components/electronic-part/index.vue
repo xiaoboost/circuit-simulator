@@ -308,7 +308,7 @@ export default {
                 const status = schMap.getValueBySmalle([x, y]);
                 if (!status || status.type !== 'part') { return (true); }
 
-                const part = this.find(status.id),
+                const part = this.$parent.find(status.id),
                     another = part.margin.outter,
                     distance = position.add(-1, part.position.floorToSmall());
                 // 分别校验 x、y 轴

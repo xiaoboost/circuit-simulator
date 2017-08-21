@@ -112,6 +112,10 @@ Object.assign(Point.prototype, {
             Math.floor(this[1] / n)
         ));
     },
+    // 是零向量
+    isZero() {
+        return (this[0] === 0 && this[1] === 0);
+    },
     // 是否是整数点
     isInteger() {
         return (
@@ -150,7 +154,11 @@ Object.assign(Point.prototype, {
         const toStart = $P(this, segment[0]),
             toEnd = $P(this, (segment[1] || [Infinity, Infinity]));
 
-        return toStart.isOppoDire(toEnd);
+        return (
+            toEnd.isZero() ||
+            toStart.isZero() ||
+            toStart.isOppoDire(toEnd)
+        );
     },
     // 以中心点和四角点，枚举范围内的所有点
     around(margin, fn) {

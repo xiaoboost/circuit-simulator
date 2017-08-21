@@ -373,7 +373,7 @@ function SearchRules(nodeStart, nodeEnd, mode) {
             return true;
         }
         // 所在等效线段方向和当前节点的关系
-        if (($P(exLine)).isParallel(node.direction)) {
+        if ($P(...exLine).isParallel(node.direction)) {
             // 等效线段和当前节点方向平行
             return true;
         } else {
@@ -708,7 +708,7 @@ export default {
                     roundSet = status.connect.filter((con) =>
                         endGrid.find((p) => p.mul(0.05).isEqual(con)) &&
                         schMap.getValueBySmalle(con).type !== 'part-point'
-                    );
+                    ).map((point) => $P(point).mul(20));
 
                 // 交集不为空
                 if (roundSet.length) {
@@ -717,23 +717,23 @@ export default {
                         roundWay = ways.get(endRound);
 
                     // 导线最后两个节点不同
-                    if (roundWay.isSimilar(endGrid.get(closest))) {
+                    if (roundWay.isSimilar(ways.get(closest))) {
                         this.way = new LineWay(roundWay);
                         this.way.endToLine([endRound, closest], end);
                     }
                 } else {
                     this.way = ways.get(endRound);
                 }
-                this.pointSize.$set(1, 2);
+                this.pointSize.$set(1, 3);
             } else if (opt.status === 'point') {
                 // 主动对齐模式，选取对齐点为路径
                 this.way = ways.get(endRound);
                 this.setPointSize(this.way.get(-1), 5);
-                this.pointSize.$set(1, 2);
+                this.pointSize.$set(1, 3);
             } else if (opt.status === 'align') {
                 // 强制对齐模式
                 this.setPointSize(this.way.get(-1), 5);
-                this.pointSize.$set(1, 2);
+                this.pointSize.$set(1, 3);
             } else {
                 // 普通状态，选取节点最多的路径
                 const key = endGrid.reduce(
