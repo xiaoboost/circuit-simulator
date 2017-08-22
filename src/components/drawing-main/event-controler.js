@@ -89,7 +89,13 @@ export default {
             // TODO: 生产环境时，mousemove 事件不需要异步调用
             return (type !== 'mousemove')
                 ? callbackOutter
-                : (e) => setTimeout(() => callbackOutter(e));
+                /**
+                 *     chrome 浏览器（v59）的 mousemove 事件有 bug，表现为 debug 时浏览器的 UI 进程被阻塞了，
+                 * 无法进行实时的 UI 更新。目测是因为有某个进程阻塞的 UI 进程，所以这里用异步来运行回调，
+                 * 等那某个进程运行完毕就行了。但是又因为回调是异步的，所以经常会造成 afterEvent 运行之后
+                 * 又运行了一次回调的情况发生，所以这里必须再进行一次判断，以确保事件被取消之后回调不会被运行。
+                 */
+                : (e) => setTimeout(() => this.exclusion && callbackOutter(e));
         },
         EventControler({ exclusion = true, cursor, handlers, beforeEvent, stopEvent, afterEvent }) {
             // 如果有互斥事件在运行，且当前事件也是互斥的，那么忽略当前事件
