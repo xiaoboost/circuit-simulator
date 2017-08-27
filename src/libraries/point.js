@@ -218,9 +218,10 @@ function isPoint(a) {
         typeof a[1] === 'number')
     );
 }
-function $P(a, b) {
+function $P(a = [0, 0], b) {
     return (new Point(a, b));
 }
 $P.isPoint = isPoint;
+$P.constructor = Point;
 
 export { $P };

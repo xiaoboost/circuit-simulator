@@ -6,7 +6,8 @@
         version="2" :xmlns="NS"
         height="100%" width="100%"
         @wheel="mousewheel($event)"
-        @mousedown.self.stop.right="moveMap($event)">
+        @mousedown.self.stop.right="moveMap($event)"
+        @mousedown.self.stop.left="selectMore($event)">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <elec-line
                 ref="lines"
@@ -26,6 +27,10 @@
                 @focus="clearFocus"
                 @event="EventControler">
             </elec-part>
+            <selections-box
+                v-if="Boolean(selections)"
+                :location="selections">
+            </selections-box>
         </g>
     </svg>
 </section>
@@ -34,6 +39,7 @@
 <script>
 import Part from '@/components/electronic-part';
 import Line from '@/components/electronic-line';
+import SelectionsBox from '@/components/selections-box';
 
 import Event from './event-controler';
 // import { $P } from '@/libraries/point';
@@ -44,10 +50,12 @@ export default {
     components: {
         'elec-part': Part,
         'elec-line': Line,
+        'selections-box': SelectionsBox,
     },
     data() {
         return {
             NS: window.$SVG_NS,
+            selections: false,
 
             partsNow: [],
             linesNow: [],
@@ -158,7 +166,7 @@ export default {
             this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
         },
         // TODO: 绘制多选框
-        selectMore() {
+        selectMore(e) {
             this.clearFocus();
         },
         // TODO: 移动选中所有器件
