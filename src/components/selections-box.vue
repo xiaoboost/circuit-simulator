@@ -1,6 +1,6 @@
 <template>
 <g class="selections-box">
-    <polygon :points="points"></polygon>
+    <polygon :points="points" :stroke-width="1.5 / zoom"></polygon>
 </g>
 </template>
 
@@ -20,8 +20,11 @@ export default {
         };
     },
     computed: {
+        zoom() {
+            return this.$store.state.drawing.zoom;
+        },
         points() {
-            const s = this.location[0], m = this.location[1];
+            const s = this.location[0] || [0, 0], m = this.location[1] || s;
             return `${s.join()} ${m[0]},${s[1]} ${m.join()} ${s[0]},${m[1]}`;
         },
     },

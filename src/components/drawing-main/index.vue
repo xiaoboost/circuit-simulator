@@ -42,7 +42,7 @@ import Line from '@/components/electronic-line';
 import SelectionsBox from '@/components/selections-box';
 
 import Event from './event-controler';
-// import { $P } from '@/libraries/point';
+import { $P } from '@/libraries/point';
 
 export default {
     name: 'DrawingMain',
@@ -167,7 +167,20 @@ export default {
         },
         // TODO: 绘制多选框
         selectMore(e) {
+            const el = this.$el,
+                stopEvent = { el, type: 'mouseup', which: 'left' },
+                handlers = (e) => this.selections.splice(1, 1, e.$mouse),
+                afterEvent = () => {
+                    debugger;
+                };
+
             this.clearFocus();
+            this.selections = [
+                $P(e.pageX, e.pageY)
+                    .add(-1, this.position)
+                    .mul(1 / this.zoom),
+            ];
+            this.EventControler({ handlers, stopEvent, afterEvent, cursor: 'select_box' });
         },
         // TODO: 移动选中所有器件
         moveParts() {
