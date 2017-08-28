@@ -12,17 +12,20 @@ function mouseEvent($event) {
     });
 }
 
+function toCursor(cursor) {
+    return (!cursor || cursor === 'default')
+        ? 'default'
+        : `url(/cur/${cursor}.cur), crosshair`;
+}
+
 /**
  * 事件回调队列类
  * @class Handlers
  */
 class Handlers {
     constructor(component, args) {
-        const queue = (args instanceof Array)
-            ? args : [args];
-
         this.component = component;
-        this.handlers = queue.map((obj) => {
+        this.handlers = args.map((obj) => {
             if (obj instanceof Function) {
                 return {
                     capture: false,
@@ -106,8 +109,12 @@ export default {
             }
 
             // 设定鼠标指针
-            cursor = cursor ? `url(/cur/${cursor}.cur), crosshair` : 'default';
+            const cursorResult = (cursor.call)
+                ? (e) => (this.$el.style.cursor = toCursor(cursor(e)))
+                : toCursor(cursor);
             // 回调事件队列
+            handlers = (handlers instanceof Array) ? handlers : [handlers];
+            (cursorResult.call) && handlers.push(cursorResult);
             handlers = new Handlers(this, handlers);
 
             // 起始事件
@@ -122,7 +129,7 @@ export default {
                 // 绑定事件本身和结束条件
                 .then(() => {
                     handlers.bind();
-                    this.$el.style.cursor = cursor;
+                    (!cursorResult.call) && (this.$el.style.cursor = cursorResult);
                     return stopEvent();
                 })
                 // 事件结束，解除事件绑定

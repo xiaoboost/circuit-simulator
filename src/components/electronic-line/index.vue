@@ -370,7 +370,7 @@ export default {
 
             current.last = {};
             this.$store.commit('LINE_TO_BOTTOM', this.id);
-            this.$emit('focus', this.id, this.connect[0]);
+            this.$emit('focus', [this.id, this.connect[0]]);
             this.$emit('event', { stopEvent, afterEvent, cursor: 'draw_line',
                 handlers: [
                     draw,

@@ -96,12 +96,13 @@ export default {
             return components.find((n) => item === n[prop]);
         },
         // 清空当前操作器件堆栈
-        clearFocus(...args) {
+        clearFocus(args = []) {
             this.partsNow.splice(0, this.partsNow.length);
             this.linesNow.splice(0, this.linesNow.length);
 
+            args = (args instanceof Array) ? args : [args];
             for (let i = 0; i < args.length; i++) {
-                const id = args[i];
+                const id = args[i].id || args[i];
                 if (/^line_\d+$/.test(id)) {
                     this.linesNow.push(id);
                 } else {
@@ -165,22 +166,32 @@ export default {
 
             this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
         },
-        // TODO: 绘制多选框
         selectMore(e) {
             const el = this.$el,
                 stopEvent = { el, type: 'mouseup', which: 'left' },
+                mouseStart = $P(e.pageX, e.pageY),
+                start = mouseStart.add(-1, this.position).mul(1 / this.zoom),
                 handlers = (e) => this.selections.splice(1, 1, e.$mouse),
+                cursor = (e) => (mouseStart.distance([e.pageX, e.pageY]) > 15) && 'select_box',
                 afterEvent = () => {
-                    debugger;
+                    // TODO: 导线多选
+                    const axisX = this.selections.map((point) => point[0]),
+                        axisY = this.selections.map((point) => point[1]),
+                        range = [Math.min(...axisX), Math.max(...axisX), Math.min(...axisY), Math.max(...axisY)],
+                        parts = (this.$refs.parts || [])
+                            .filter(
+                                (part) =>
+                                    (part.position[0] > range[0]) && (part.position[0] < range[1]) &&
+                                    (part.position[1] > range[2]) && (part.position[1] < range[3])
+                            );
+
+                    this.selections = false;
+                    this.clearFocus(parts);
                 };
 
             this.clearFocus();
-            this.selections = [
-                $P(e.pageX, e.pageY)
-                    .add(-1, this.position)
-                    .mul(1 / this.zoom),
-            ];
-            this.EventControler({ handlers, stopEvent, afterEvent, cursor: 'select_box' });
+            this.selections = [start, start];
+            this.EventControler({ handlers, stopEvent, afterEvent, cursor });
         },
         // TODO: 移动选中所有器件
         moveParts() {
