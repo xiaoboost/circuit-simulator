@@ -1,3 +1,8 @@
+// 部分规则在开发环境中警告就足够了
+function process(level = 1) {
+    return ((!process.env) || process.env.NODE_ENV === 'development') ? level : 2;
+}
+
 module.exports = {
     'root': true,
     'extends': [
@@ -39,8 +44,8 @@ module.exports = {
         // JavaScript 规则
         // 允许扩展原生数据结构
         'no-extend-native': 0,
-        // 允许debugger语句
-        'no-debugger': 0,
+        // 调试时允许 debugger 语句，构建产品时禁止
+        'no-debugger': process(0),
         // 箭头表达式的括号不可省
         'arrow-parens': [2, 'always'],
         // 箭头表达式前后空格
@@ -75,7 +80,7 @@ module.exports = {
         'no-implied-eval': 2,
         // 警告使用未声明的变量
         'no-undef': 1,
-        // 禁止将undefined作为标识符
+        // 禁止将 undefined 作为标识符
         'no-undefined': 0,
         // 不允许在变量定义之前使用它们
         'no-use-before-define': 0,
@@ -103,11 +108,11 @@ module.exports = {
         'no-var': 2,
         // 字符串全部为单引号
         'quotes': [2, 'single'],
-        // 变量未改变时强制使用const
+        // 变量未改变时强制使用 const
         'prefer-const': 2,
-        // 强制使用ES6缩写
+        // 强制使用 ES6 缩写
         'object-shorthand': 2,
-        // 类继承的构造函数强制使用super
+        // 类继承的构造函数强制使用 super
         'constructor-super': 2,
         // super之前禁止使用this
         'no-this-before-super': 2,
@@ -117,7 +122,7 @@ module.exports = {
         'camelcase': [0, { 'properties': 'always' }],
         // 对象末尾与另一个元素或属性的结尾处于不同的行时需要逗号，同一行时不需要
         'comma-dangle': ['error', 'always-multiline'],
-        // 强制getter/setter成对出现在对象中 
+        // 强制 getter/setter 成对出现在对象中 
         'accessor-pairs': 2,
         // 强制在单行代码块中使用空格 
         'block-spacing': [2, 'always'],
@@ -195,7 +200,7 @@ module.exports = {
         'no-multiple-empty-lines': [2, { 'max': 1 }],
         // 禁止原生内置变量的重新赋值
         'no-global-assign': 2,
-        // 禁止不安全的 !运算
+        // 禁止不安全的 ! 运算
         'no-unsafe-negation': 2,
         // 禁止使用 Object 构造函数来创建对象
         'no-new-object': 2,
@@ -242,7 +247,7 @@ module.exports = {
         // 禁止在 finally 语句块中出现控制流语句
         'no-unsafe-finally': 2,
         // 禁止未使用过的变量，在函数参数中，最后一个参数必须使用
-        'no-unused-vars': [2, { 'vars': 'all', 'args': 'after-used' }],
+        'no-unused-vars': [process(), { 'vars': 'all', 'args': 'after-used' }],
         // 禁用不必要的 .call() 和 .apply()
         'no-useless-call': 2,
         // 禁止对象中不必要的计算属性键
