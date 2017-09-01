@@ -71,3 +71,15 @@ exports.styleLoaders = function(options) {
     }
     return output;
 };
+
+// Generate tag of version
+exports.createVersionTag = function() {
+    const now = new Date(),
+        year = now.getFullYear(),
+        month = String(now.getMonth() + 1).padStart(2, '0'),
+        date = String(now.getDate()).padStart(2, '0'),
+        time = now.toTimeString().slice(0, 8),
+        version = Math.random().toString(36).substr(2, 12);
+
+    return `${year}/${month}/${date} ${time} - ${version}`;
+};

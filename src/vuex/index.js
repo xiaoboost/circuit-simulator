@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuex from 'Vuex';
+import Vuex from 'vuex';
 
 import time from './time';
 import drawing from './drawing';

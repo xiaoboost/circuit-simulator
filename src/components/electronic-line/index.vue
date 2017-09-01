@@ -19,7 +19,7 @@
 <script>
 import { $P } from '@/libraries/point';
 // import { $M } from '@/libraries/matrix';
-import { schMap } from '@/libraries/maphash';
+import { schMap } from '@/libraries/map';
 import lineSearch, { LineWay } from './line-search';
 
 import ElectronPoint from '@/components/electron-point';

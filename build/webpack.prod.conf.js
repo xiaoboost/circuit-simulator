@@ -3,6 +3,7 @@ const path = require('path'),
     webpack = require('webpack'),
     config = require('../config'),
     merge = require('webpack-merge'),
+    version = utils.createVersionTag(),
     // 基础配置
     baseWebpackConfig = require('./webpack.base.conf'),
     CopyWebpackPlugin = require('copy-webpack-plugin'),
@@ -33,37 +34,40 @@ const webpackConfig = merge(baseWebpackConfig, {
         path: config.build.assetsRoot,
         // 编译输出文件名
         filename: utils.assetsPath('js/[name].[chunkhash].js'),
-        // 没有指定输出文件名的输出文件名
-        chunkFilename: utils.assetsPath('js/[id].[chunkhash].js'),
     },
     plugins: [
+        // 给每个文件创建顶部注释
+        new webpack.BannerPlugin({
+            banner: `Project: Circuit Simulator\nAuthor: Xiao\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]`,
+        }),
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
         new webpack.DefinePlugin({
             'process.env': env,
         }),
         // js压缩插件
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false,
-            },
-            sourceMap: false,
-        }),
-        // 从文件中分离css部分
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false,
+        //     },
+        //     sourceMap: false,
+        // }),
+        // 从文件中分离 css 部分
         new ExtractTextPlugin({
-            filename: utils.assetsPath('css/[name].[contenthash].css'),
+            filename: utils.assetsPath('css/[name].[contenthash:20].css'),
         }),
-        // 压缩提取出来的css文本，这里将会把不同组件中重复的css合并
+        // 压缩提取出来的 css 文本，这里将会把不同组件中重复的 css 合并
         new OptimizeCSSPlugin({
             cssProcessorOptions: {
                 safe: true,
             },
         }),
-        // 输出 index.html文件，你也可以通过编辑 index.html自定义输出，具体请参考下面的链接
+        // 输出 index.html 文件，你也可以通过编辑 index.html 自定义输出，具体请参考下面的链接
         // https://github.com/ampedandwired/html-webpack-plugin
         new HtmlWebpackPlugin({
             filename: process.env.NODE_ENV === 'testing'
                 ? 'index.html'
                 : config.build.index,
+            data: { version },
             template: './src/index.html',
             inject: true,
             minify: {
@@ -76,27 +80,12 @@ const webpackConfig = merge(baseWebpackConfig, {
             // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency',
         }),
-        // 没有指定输出文件名的文件输出的静态文件名
+        // 指定 common 文件
         new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
-            minChunks(module) {
-                // any required modules inside node_modules are extracted to vendor
-                return (
-                    module.resource &&
-                    /\.js$/.test(module.resource) &&
-                    module.resource.indexOf(
-                        path.join(__dirname, '../node_modules')
-                    ) === 0
-                );
-            },
+            name: 'common',
+            filename: 'js/common.[chunkhash].js',
         }),
-        // extract webpack runtime and module manifest to its own file in order to
-        // prevent vendor hash from being updated whenever app bundle is updated
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'manifest',
-            chunks: ['vendor'],
-        }),
-        // copy custom static assets
+        // 复制静态资源文件
         new CopyWebpackPlugin([{
             from: path.resolve(__dirname, '../static'),
             to: config.build.assetsSubDirectory,
@@ -104,27 +93,6 @@ const webpackConfig = merge(baseWebpackConfig, {
         }]),
     ],
 });
-
-// 如果开启了 Gzip，那么启用下方的配置
-if (config.build.productionGzip) {
-    // 加载 compression-webpack-plugin 插件
-    const CompressionWebpackPlugin = require('compression-webpack-plugin');
-    // 向 webpackconfig.plugins 中加入下方的插件
-    webpackConfig.plugins.push(
-        // 启用插件对文件进行压缩
-        new CompressionWebpackPlugin({
-            asset: '[path].gz[query]',
-            algorithm: 'gzip',
-            test: new RegExp(
-                '\\.(' +
-                config.build.productionGzipExtensions.join('|') +
-                ')$'
-            ),
-            threshold: 10240,
-            minRatio: 0.8,
-        })
-    );
-}
 
 if (config.build.bundleAnalyzerReport) {
     const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;

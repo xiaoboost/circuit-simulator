@@ -1,4 +1,5 @@
-const path = require('path'),
+const fs = require('fs'),
+    path = require('path'),
     utils = require('./utils'),
     config = require('../config'),
     vueLoaderConfig = require('./vue-loader.conf');
@@ -6,11 +7,35 @@ const path = require('path'),
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
+function readdir(dir) {
+    const ans = [];
+
+    fs.readdirSync(resolve(`src/${dir}`)).forEach((name) => {
+        const nextPath = path.join(dir, name),
+            filePath = resolve(`src/${nextPath}`),
+            file = fs.statSync(filePath);
+
+        if (file.isDirectory()) {
+            ans.push(...readdir(nextPath));
+        } else if (name.slice(-3) === '.js') {
+            ans.push(filePath);
+        }
+    });
+
+    return (ans);
+}
 
 module.exports = {
     entry: {
-        // 编译文件入口
-        app: './src/main.js',
+        // 库集合文件
+        common: [
+            'vue',
+            'vuex',
+            ...readdir('plugin'),
+            ...readdir('libraries'),
+        ],
+        // 主业务逻辑文件
+        main: resolve('./src/main.js'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -31,6 +56,7 @@ module.exports = {
         alias: {
             '@': resolve('src'),
             'vue$': 'vue/dist/vue.esm.js',
+            'vuex$': 'vuex/dist/vuex.esm.js',
         },
     },
     module: {

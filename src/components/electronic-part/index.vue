@@ -36,7 +36,7 @@
 import { Electronics } from './shape';
 import { $P } from '@/libraries/point';
 import { $M } from '@/libraries/matrix';
-import { schMap } from '@/libraries/maphash';
+import { schMap } from '@/libraries/map';
 
 import ElectronPoint from '@/components/electron-point';
 
