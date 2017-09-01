@@ -12,20 +12,11 @@ import SliderMenu from '@/components/slider-menu';
 import DrawingMain from '@/components/drawing-main';
 
 export default {
-    name: 'app',
+    name: 'main',
     components: {
         ActionMenu,
         SliderMenu,
         DrawingMain,
-    },
-    beforeCreate() {
-        window.onload = () => {
-            const loading = document.getElementById('start-loading');
-            loading.style.opacity = 0;
-            loading.style.transition = 'opacity .5s';
-            setTimeout(() => loading.remove(), 500);
-            console.log('Schematic Ready.');
-        };
     },
 };
 </script>

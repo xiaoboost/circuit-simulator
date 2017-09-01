@@ -1,7 +1,9 @@
 <template>
-<g class="selections-box">
-    <polygon :points="points" :stroke-width="1.5 / zoom"></polygon>
-</g>
+<transition name="fade">
+    <g class="selections-box">
+        <polygon :points="points" :stroke-width="1.5 / zoom"></polygon>
+    </g>
+</transition>
 </template>
 
 <script>
@@ -33,7 +35,3 @@ export default {
     },
 };
 </script>
-
-<style lang="stylus">
-
-</style>
