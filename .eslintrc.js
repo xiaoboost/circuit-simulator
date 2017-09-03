@@ -26,6 +26,7 @@ module.exports = {
         '$debug': true,
         '$map': true,
         '$SVG_NS': true,
+        '$env': true,
     },
     // 自定义规则
     rules: {

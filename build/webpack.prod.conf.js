@@ -42,7 +42,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         }),
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
         new webpack.DefinePlugin({
-            'process.env': env,
+            '$env': env,
         }),
         // js压缩插件
         // new webpack.optimize.UglifyJsPlugin({

@@ -24,7 +24,7 @@ module.exports = merge(baseWebpackConfig, {
     devtool: '#cheap-module-eval-source-map',
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': config.dev.env,
+            '$env': config.dev.env,
         }),
         // HotModule 插件在页面进行变更的时候只会重绘对应的页面模块，不会重绘整个页面
         // https://github.com/glenjamin/webpack-hot-middleware#installation--usage

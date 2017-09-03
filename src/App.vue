@@ -20,21 +20,3 @@ export default {
     },
 };
 </script>
-
-<style lang="stylus">
-@import './css/variable'
-@import './css/public'
-@import './css/start-loading'
-@import './css/drawing-main'
-
-html, body, #app
-    overflow hidden
-    width 100%
-    height 100%
-    user-select none
-    cursor default
-    color Black
-    font-family font-default
-    font-size 16px
-    font-smoothing()
-</style>

@@ -499,10 +499,10 @@ function SearchRules(nodeStart, nodeEnd, mode) {
         }
     };
     // 调试用函数
-    self.insertDebugNode = window.$debug
+    self.insertDebugNode = ($env.NODE_ENV === 'development')
         ? (a, b, c) => window.$debug.point(a, b, c)
         : () => {};
-    self.clearDebug = window.$debug
+    self.clearDebug = ($env.NODE_ENV === 'development')
         ? () => window.$debug.clearAll()
         : () => {};
 

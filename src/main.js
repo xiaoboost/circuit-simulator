@@ -1,3 +1,4 @@
+import '@/css/main';
 import '@/libraries/init';
 
 import Vue from 'vue';
@@ -17,7 +18,7 @@ const instance = {
 };
 
 // 调试状态时运行这段代码
-if ((!process.env) || process.env.NODE_ENV === 'development') {
+if ($env.NODE_ENV === 'development') {
     instance.mounted = function() {
         const area = document.querySelector('.drawing-main svg g'),
             Compo = require('@/libraries/debugger').default;
