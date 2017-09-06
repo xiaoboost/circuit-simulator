@@ -17,7 +17,7 @@ function readdir(dir) {
 
         if (file.isDirectory()) {
             ans.push(...readdir(nextPath));
-        } else if (name.slice(-3) === '.js') {
+        } else if (name.slice(-3) === '.js' && name !== 'debugger.js') {
             ans.push(filePath);
         }
     });

@@ -76,8 +76,9 @@ const webpackConfig = merge(baseWebpackConfig, {
                 // 更多选项请参考下面的链接:
                 // https://github.com/kangax/html-minifier#options-quick-reference
             },
-            // necessary to consistently work with multiple chunks via CommonsChunkPlugin
             chunksSortMode: 'dependency',
+            // 排除部分包
+            excludeChunks: [],
         }),
         // 指定 common 文件
         new webpack.optimize.CommonsChunkPlugin({
