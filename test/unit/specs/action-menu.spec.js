@@ -1,13 +1,15 @@
 import store  from '@/vuex';
 import ActionMenu from '@/components/action-menu';
-import { createTest, createVue, destroyVM, triggerEvent } from '../util';
+import { createTest, destroyVM, triggerEvent } from '../util';
 
 describe('action-menu.vue', () => {
     let vm;
     afterEach(() => destroyVM(vm));
 
     it('create', () => {
-        vm = createTest(ActionMenu);
+        vm = createTest(ActionMenu, { store });
+
+        expect(vm.vision).to.be.true;
         expect(vm.isRun).to.be.false;
 
         const button = vm.$el.querySelectorAll('.fab-container');
@@ -16,7 +18,7 @@ describe('action-menu.vue', () => {
         expect(button[2].getAttribute('tip')).to.be.equal('运行设置');
     });
     it('click the button of run', (done) => {
-        vm = createTest(ActionMenu);
+        vm = createTest(ActionMenu, { store });
         // 点击运行按钮
         const buttonConfig = vm.$el.querySelector('[tip=时域模拟] .fab');
         triggerEvent(buttonConfig, 'click');
@@ -33,15 +35,7 @@ describe('action-menu.vue', () => {
         });
     });
     it('switch aside', () => {
-        vm = createVue({
-            template: `
-                <action-menu></action-menu>
-            `,
-            store,
-            components: {
-                'action-menu': ActionMenu,
-            },
-        });
+        vm = createTest(ActionMenu, { store });
 
         // 点击添加器件按钮
         const buttonAdd = vm.$el.querySelector('[tip=添加器件] .fab');

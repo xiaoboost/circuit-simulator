@@ -108,11 +108,6 @@ describe('init.js', () => {
         expect((12.34).rank()).to.be.equal(1);
         expect((0.1234).rank()).to.be.equal(-1);
         expect((NaN).rank()).to.be.false;
-        // 单位化
-        expect((123).toUnit()).to.be.equal(1);
-        expect((-0.1).toUnit()).to.be.equal(-1);
-        expect((0).toUnit()).to.be.equal(0);
-        expect((NaN).toUnit()).to.be.equal(0);
         // 按数量级进行四舍五入
         expect((123456789).toRound()).to.be.equal(123457000);
         expect((123.456789).toRound()).to.be.equal(123.457);

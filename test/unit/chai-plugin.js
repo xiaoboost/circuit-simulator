@@ -103,4 +103,4 @@ chai.use((chai) => {
     });
 });
 
-exports.expect = chai.expect;
+export const expect = chai.expect;

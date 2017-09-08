@@ -1,12 +1,12 @@
 <template>
 <transition name="fade">
-    <footer class="action-menu" v-show="hidden">
+    <footer class="action-menu" v-show="vision">
         <div v-if="isRun" class="fab-container">
             <div class="fab" id="fab-text"></div>
         </div>
         <div
-            v-for="(icon, i) in icons"
             v-show="!isRun"
+            v-for="(icon, i) in icons"
             :tip="icon.tip" :key="i"
             class="fab-container">
             <div class="fab" @click="icon.func">
@@ -59,7 +59,7 @@ export default {
         };
     },
     computed: {
-        hidden() {
+        vision() {
             return !this.$store.state.page;
         },
     },

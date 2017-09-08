@@ -38,18 +38,18 @@ export function createVue(Compo, mounted = true) {
  * 创建一个测试组件实例
  * @link https://cn.vuejs.org/v2/guide/unit-testing.html#编写可被测试的组件
  * @param  {object}  Compo          - 组件对象
- * @param  {object}  propsData      - props 数据
+ * @param  {object}  option         - 初始化选项（初始化测试组件中，props 数据需要用 propsData 字段）
  * @param  {boolean} {mounted=true} - 是否添加到 DOM 上
  * @return {object}  vm
  */
-export function createTest(Compo, propsData = {}, mounted = true) {
-    if (propsData === true || propsData === false) {
-        mounted = propsData;
-        propsData = {};
+export function createTest(Compo, option = {}, mounted = true) {
+    if (option instanceof Boolean) {
+        mounted = option;
+        option = {};
     }
     const elm = createElm();
     const Ctor = Vue.extend(Compo);
-    return new Ctor({ propsData }).$mount(mounted ? elm : null);
+    return new Ctor(option).$mount(mounted ? elm : null);
 }
 
 /**

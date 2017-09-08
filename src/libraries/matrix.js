@@ -281,7 +281,7 @@ function isMatrix(ma) {
     }
     // 列连续且列长均相等
     if (!Object.values(ma).every((col) => {
-        return col.length === column &&
+        return col && col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
             Object.values(col).every((n) => typeof n === 'number');
     })) {

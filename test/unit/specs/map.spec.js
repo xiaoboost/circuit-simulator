@@ -1,9 +1,9 @@
-import { schMap } from '@/libraries/maphash';
+import { schMap } from '@/libraries/map';
 import { expect } from '../chai-plugin';
 
 const map = window.__map__;
 
-describe('maphash.js', () => {
+describe('map.js', () => {
     it('get and set', () => {
         const obj1 = { id: 'r_1', type: 'part1', test: 'test1' },
             obj2 = { id: 'r_2', type: 'part2', test: 'test1' },
