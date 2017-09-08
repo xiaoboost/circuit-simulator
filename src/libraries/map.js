@@ -1,16 +1,29 @@
+import { $P } from './point';
+
 // 图纸数据
-const map = window.$map = {};
+const map = {};
+
+function point2key(x, y) {
+    if (x.length) { [x, y] = x; }
+    return `${x},${y}`;
+}
+
+function key2point(key) {
+    const [x, y] = key.split(',').map((o) => +o.trim());
+    return $P(x, y);
+}
+
+function outputAll() {
+    return Object.keys(map).map((key) => Object.assign(Object.clone(map[key]), { point: key2point(key) }));
+}
 
 // 图纸对外暴露的方法
 const schMap = {
     // 取得节点属性
     getValueBySmalle(x, y) {
-        if (x.length) { [x, y] = x; }
+        const key = point2key(x, y);
 
-        if (!map[x] || !map[x][y]) {
-            return (false);
-        }
-        return (map[x][y]);
+        return (map[key]);
     },
     getValueByOrigin(x, y) {
         if (x.length) { [x, y] = x; }
@@ -19,28 +32,19 @@ const schMap = {
     },
     // 设定节点属性，默认为覆盖模式
     setValueBySmalle(node, attribute, cover = false) {
-        const [x, y] = node;
+        const key = point2key(node);
 
-        if (!map[x]) {
-            map[x] = [];
-        }
-        if (cover) {
-            // 删除原来的属性
-            map[x][y] = {};
-        } else if (!map[x][y]) {
-            // 覆盖模式下只有当节点为空的之后才会重新创建
-            map[x][y] = {};
+        if (cover || !map[key]) {
+            map[key] = {};
         }
 
-        Object.assign(map[x][y], attribute);
+        Object.assign(map[key], attribute);
     },
     setValueByOrigin(node, attribute, cover = false) {
         schMap.setValueBySmalle([node[0] / 20, node[1] / 20], attribute, cover);
     },
     // 删除节点
     deleteValueBySmalle(x, y) {
-        if (x.length) { [x, y] = x; }
-
         const status = schMap.getValueBySmalle(x, y);
         if (status && status.connect) {
             // 删除与当前点相连的点的连接信息
@@ -49,10 +53,8 @@ const schMap = {
             }
         }
         if (status) {
-            delete map[x][y];
-        }
-        if (Object.isEmpty(map[x])) {
-            delete map[x];
+            delete map[point2key(x, y)];
+            return true;
         }
     },
     deleteValueByOrigin(x, y) {
@@ -175,4 +177,4 @@ const schMap = {
     },
 };
 
-export { schMap };
+export { schMap, outputAll };

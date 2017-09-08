@@ -38,7 +38,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     plugins: [
         // 给每个文件创建顶部注释
         new webpack.BannerPlugin({
-            banner: `Project: Circuit Simulator\nAuthor: Xiao\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]`,
+            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]\nReleased under the MIT License.`,
         }),
         // http://vuejs.github.io/vue-loader/en/workflow/production.html
         new webpack.DefinePlugin({

@@ -1,4 +1,5 @@
 import collection from '@/vuex/collection';
+import { outputAll } from '@/libraries/map';
 
 // 全局常量
 const doc = document, NS = window.$SVG_NS;
@@ -83,11 +84,10 @@ class MapDebug {
         });
         count++;
 
-        const points = Object.keys(window.$map)
-            .reduce((ans, x) => ans.concat(Object.keys(window.$map[x]).map((y) => [x, y])), []);
+        const points = outputAll();
 
-        points.forEach((point) => {
-            const status = window.$map[point[0]][point[1]];
+        points.forEach((status) => {
+            const point = status.point;
             // 点本身
             this.point(point, color[status.type], 20);
             // 点的 ID
