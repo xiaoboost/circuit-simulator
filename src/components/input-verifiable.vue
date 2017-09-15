@@ -101,7 +101,7 @@ export default {
         content ''
         height 2px
         width 0
-        bottom 0
+        bottom 2px
         left 0
         position absolute
         background Dark-Blue
