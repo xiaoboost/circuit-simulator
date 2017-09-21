@@ -12,7 +12,7 @@ import { $P } from '@/libraries/point';
 export default {
     props: {
         location: {
-            type: Array || Boolean,
+            type: [Array, Boolean],
             default: () => [$P(), $P()],
         },
     },
