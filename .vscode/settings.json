@@ -1,4 +1,6 @@
 {
     "eslint.enable": true,
+    "eslint.validate": ["javascript", "vue"],
+
     "tslint.enable": false
 }
