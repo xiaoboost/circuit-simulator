@@ -1,4 +1,4 @@
-import { $P } from '@/libraries/point';
+import { $P } from 'src/libraries/point';
 
 export default {
     state: {

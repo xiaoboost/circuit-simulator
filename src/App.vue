@@ -7,9 +7,9 @@
 </template>
 
 <script>
-import ActionMenu from '@/components/action-menu';
-import SliderMenu from '@/components/slider-menu';
-import DrawingMain from '@/components/drawing-main';
+import ActionMenu from 'src/components/action-menu';
+import SliderMenu from 'src/components/slider-menu';
+import DrawingMain from 'src/components/drawing-main';
 
 export default {
     name: 'main',

@@ -36,6 +36,7 @@ Object.assign(Object, {
         Object.seal(obj);
     },
 });
+
 // Object类原型方法扩展
 Object.assign(Object.prototype, {
     // 对象是否相等

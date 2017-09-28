@@ -1,4 +1,4 @@
-import { numParser } from '@/libraries/util';
+import { numParser } from 'src/libraries/util';
 
 export default {
     state: {

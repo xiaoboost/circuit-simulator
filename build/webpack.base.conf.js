@@ -54,7 +54,7 @@ module.exports = {
         mainFiles: ['index.js', 'index.vue'],
         // 默认路径别名
         alias: {
-            '@': resolve('src'),
+            'src': resolve('src'),
             'vue$': 'vue/dist/vue.esm.js',
             'vuex$': 'vuex/dist/vuex.esm.js',
         },
