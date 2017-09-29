@@ -1,4 +1,3 @@
-
 declare interface ObjectConstructor {
     /**
      * 输入对象是否含有可枚举元素
@@ -10,6 +9,7 @@ declare interface ObjectConstructor {
     isEmpty(from: object): boolean,
     /**
      * 深复制输入对象
+     * 
      * 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
      * 
      * @param {object} from 
@@ -18,7 +18,7 @@ declare interface ObjectConstructor {
      */
     clone(from: object): object,
     /**
-     * 将输入数据的所有可枚举属性全部隐藏
+     * 将输入对象的所有可枚举属性全部隐藏
      * 
      * @param {*} from 
      * @memberof ObjectConstructor
@@ -53,11 +53,11 @@ declare interface Object {
      * 原对象的 key 不变，生成新的对象
      * 
      * @template U 
-     * @param {(value: any, key: string) => any} fn 
+     * @param {(value: any, key: string) => object} fn 
      * @returns {U} 
      * @memberof Object
      */
-    map(fn: (value: any, key: string) => any): any,
+    map(fn: (value: any, key: string) => any): object,
 }
 
 declare interface ArrayConstructor {
@@ -109,6 +109,7 @@ declare interface Array {
 declare interface Number {
     /**
      * 按照有效数字的位数进行四舍五入
+     * 
      * 默认 6 位有效数字
      * 
      * @param {number} [bits=6] 
