@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { Electronics } from './shape';
+import Electronics from './shape';
 import { $P } from 'src/libraries/point';
 import { $M } from 'src/libraries/matrix';
 import * as schMap from 'src/libraries/map';
