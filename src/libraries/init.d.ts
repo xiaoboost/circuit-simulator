@@ -8,140 +8,119 @@ declare interface ObjectConstructor {
      * @memberof ObjectConstructor
      */
     isEmpty(from: object): boolean,
+    /**
+     * 深复制输入对象
+     * 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
+     * 
+     * @param {object} from 
+     * @returns {object} 
+     * @memberof ObjectConstructor
+     */
     clone(from: object): object,
+    /**
+     * 将输入数据的所有可枚举属性全部隐藏
+     * 
+     * @param {*} from 
+     * @memberof ObjectConstructor
+     */
     hideAll(from: any): void,
+    /**
+     * 将输入对象以及下属所有对象全部冻结
+     * 
+     * @param {*} from 
+     * @memberof ObjectConstructor
+     */
     freezeAll(from: any): void,
+    /**
+     * 将输入对象以及下属所有对象全部封闭
+     * 
+     * @param {*} from 
+     * @memberof ObjectConstructor
+     */
     sealAll(from: any): void,
 };
 
 declare interface Object {
     /**
-     * 当前对象实例与输入元素是否相等
+     * 当前对象实例与输入对象是否相等
      * 
      * @param {*} obj 
      * @returns {boolean} 
      * @memberof Object
      */
     isEqual(obj: any): boolean,
-
+    /**
+     * 原对象的 key 不变，生成新的对象
+     * 
+     * @template U 
+     * @param {(value: any, key: string) => any} fn 
+     * @returns {U} 
+     * @memberof Object
+     */
+    map(fn: (value: any, key: string) => any): any,
 }
 
-// Object类原型方法扩展
-Object.assign(Object.prototype, {
-    // 对象是否相等
-    isEqual(obj) {
-        const thisKeys = Object.keys(this),
-            fromKeys = Object.keys(obj);
-
-        if (!thisKeys.isEqual(fromKeys)) {
-            return (false);
-        }
-
-        return thisKeys.every(
-            (key) =>
-                (this[key] instanceof Object)
-                    ? this[key].isEqual(obj[key])
-                    : this[key] === obj[key]
-        );
-    },
-    map(fn) {
-        return Object
-            .keys(this)
-            .reduce((obj, key) =>
-                ((obj[key] = fn(this[key])), obj), {});
-    },
-});
-
-// Array类静态方法扩展
-Object.assign(Array, {
-    // 数组深复制
-    clone: (from) => from.map((n) => clone(n)),
-});
-// Array类原型方法扩展
-Object.assign(Array.prototype, {
-    // 数组是否相等
-    isEqual(arr) {
-        if (!arr) {
-            return (false);
-        }
-        if (this.length !== arr.length) {
-            return (false);
-        }
-
-        return this.every(
-            (item, i) =>
-                (item instanceof Object)
-                    ? item.isEqual(arr[i])
-                    : item === arr[i]
-        );
-    },
-    // 取出下标为index的元素
-    get(index) {
-        const sub = (index >= 0)
-            ? index
-            : this.length + index;
-
-        return (sub >= 0 && sub < this.length)
-            ? this[sub]
-            : false;
-    },
-    // 删除回调返回第一个 true 的元素
-    delete(fn) {
-        if (!(fn instanceof Function)) {
-            fn = (item) => item === fn;
-        }
-        const index = this.findIndex(fn);
-        if (index !== -1) {
-            this.splice(index, 1);
-            return (true);
-        } else {
-            return (false);
-        }
-    },
-    // 用于 vue 数组的元素赋值
-    $set(i, item) {
-        if (this[i] !== item) {
-            this.splice(i, 1, item);
-        }
-    },
-});
-
-// Number类原型方法扩展
-Object.assign(Number.prototype, {
+declare interface ArrayConstructor {
     /**
-     * 按照有效数字位数进行四舍五入
-     * @param {Number} [bits=6]
-     * @returns {Number}
+     * 复制数组
+     * 
+     * @param {any[]} from 
+     * @returns {any[]} 
+     * @memberof ArrayConstructor
      */
-    toRound(bits = 6) {
-        const origin = this.valueOf();
-        if (Number.isNaN(origin)) { return (false); }
+    clone<U>(from: U[]): U[],
+}
 
-        const number = Math.abs(origin),
-            toInt = Math.floor(Math.log10(number)) - bits + 1,
-            transform = 10 ** toInt,
-            // round 一定是整数
-            round = String(Math.round(number / transform)),
-            // 原始数据符号
-            sign = origin < 0 ? '-' : '';
+declare interface Array {
+    /**
+     * 当前数组与输入数组是否相等
+     * 
+     * @param {any[]} arr 
+     * @returns {boolean} 
+     * @memberof Array
+     */
+    isEqual(arr: any[]): boolean,
+    /**
+     * 根据下标取出当前数组元素
+     * 
+     * @param {number} index 
+     * @returns {*} 
+     * @memberof Array
+     */
+    get(index: number): any,
+    /**
+     * 从下标 0 开始，删除 predicate 第一个返回 true 的元素
+     * 
+     * @param {(value: any, index: number) => boolean} predicate 
+     * @returns {boolean} 
+     * @memberof Array
+     */
+    delete(predicate: (value: any, index: number) => boolean): boolean,
+    /**
+     * 用于 vue 的数组更新
+     * 
+     * @param {number} i 
+     * @param {*} item 
+     * @memberof Array
+     */
+    $set(i: number, item: any): void,
+}
 
-        // 插入小数点
-        let str = '';
-        if (toInt > 0) {
-            str = round + '0'.repeat(toInt);
-        } else if (-toInt >= bits) {
-            str = '0.' + '0'.repeat(-toInt - bits) + round;
-        } else {
-            str = round.slice(0, toInt) + '.' + round.slice(toInt);
-        }
-
-        return Number.parseFloat(sign + str);
-    },
-    // 数量级
-    rank() {
-        const number = Math.abs(this.valueOf());
-        if (Number.isNaN(number)) { return (false); }
-
-        return Math.floor(Math.log10(number));
-    },
-});
+declare interface Number {
+    /**
+     * 按照有效数字的位数进行四舍五入
+     * 默认 6 位有效数字
+     * 
+     * @param {number} [bits=6] 
+     * @returns {number} 
+     * @memberof Number
+     */
+    toRound(bits: number = 6): number,
+    /**
+     * 求数字的数量级
+     * 
+     * @returns {number} 
+     * @memberof Number
+     */
+    rank(): number,
+}
