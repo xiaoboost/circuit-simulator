@@ -8,8 +8,7 @@ declare interface ObjectConstructor {
      */
     isEmpty(from: object): boolean,
     /**
-     * 深复制输入对象
-     * 
+     * 深复制输入对象。
      * 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
      * 
      * @param {object} from 
@@ -108,8 +107,7 @@ declare interface Array {
 
 declare interface Number {
     /**
-     * 按照有效数字的位数进行四舍五入
-     * 
+     * 按照有效数字的位数进行四舍五入。
      * 默认 6 位有效数字
      * 
      * @param {number} [bits=6] 
