@@ -223,6 +223,5 @@ function $P(a = [0, 0], b) {
 }
 
 $P.isPoint = Point.isPoint;
-$P.constructor = Point;
 
 export { $P, Point };
