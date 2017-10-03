@@ -24,9 +24,9 @@ class Point {
         );
     }
 
-    [0]: number;
-    [1]: number;
-    length: 2;
+    0: number;
+    1: number;
+    readonly length: 2;
 
     /**
      * Creates an instance of Point.
@@ -39,14 +39,14 @@ class Point {
             // 输入一（或二）个数
             this[0] = start;
             this[1] = !Number.isNaN(+end) ? +end : start;
-        } else if (Point.isPoint(end) && !Point.isPoint(end)) {
+        } else if (Point.isPoint(start) && !Point.isPoint(end)) {
             // 输入一个点
             this[0] = start[0];
             this[1] = start[1];
-        } else if (Point.isPoint(start) && Point.isPoint(start)) {
+        } else if (Point.isPoint(start) && Point.isPoint(end)) {
             // 输入是两个点，当作向量处理
-            this[0] = end[0] - start[0];
-            this[1] = end[1] - start[1];
+            this[0] = end[0] as number - start[0];
+            this[1] = end[1] as number - start[1];
         }
 
         Object.defineProperty(this, 'length', {
@@ -68,17 +68,13 @@ class Point {
      * @memberof Point
      */
     add(added: PointInput, label: number = 1): Point {
-        let sum = void 0;
+        const sum = new Point(0);
         if (typeof added === 'number') {
-            sum = new Point(
-                this[0] + added * label,
-                this[1] + added * label,
-            );
+            sum[0] = this[0] + added * label;
+            sum[1] = this[1] + added * label;
         } else if (Point.isPoint(added)) {
-            sum = new Point(
-                this[0] + added[0] * label,
-                this[1] + added[1] * label,
-            );
+            sum[0] = this[0] + added[0] * label;
+            sum[1] = this[1] + added[1] * label;
         }
         return (sum);
     }
@@ -93,17 +89,13 @@ class Point {
      * @memberof Point
      */
     mul(multiplier: PointInput, label: number = 1): Point {
-        let sum = void 0;
+        const sum = new Point(0);
         if (typeof multiplier === 'number') {
-            sum = new Point(
-                this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier),
-                this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier),
-            );
+            sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
+            sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
         } else if (Point.isPoint(multiplier)) {
-            sum = new Point(
-                this[0] * ((label < 0) ? (1 / (- multiplier[0])) : multiplier[0]),
-                this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1]),
-            );
+            sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier[0])) : multiplier[0]);
+            sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1]);
         }
         return (sum);
     }
@@ -247,7 +239,7 @@ class Point {
      * @memberof Point
      */
     isParallel(vector: PointLike): boolean {
-        return (!vector[0] && !vector[1])
+        return (Boolean(vector[0]) && Boolean(vector[1]))
             ? false
             : (this[0] * vector[1] === this[1] * vector[0]);
     }
@@ -259,7 +251,7 @@ class Point {
      * @memberof Point
      */
     isVertical(vector: PointLike): boolean {
-        return (!(this[0] * vector[0] + this[1] * vector[1]));
+        return (Boolean(this[0] * vector[0] + this[1] * vector[1]));
     }
     /**
      * 是否和输入向量方向相同。
@@ -299,7 +291,7 @@ class Point {
     isInLine(segment: PointLike[]): boolean {
         // 点到线段两端的向量方向相反，即表示其在线段内
         const toStart = new Point(this, segment[0]),
-            toEnd = new Point(this, (segment[1] || [Infinity, Infinity]));
+            toEnd = new Point(this, segment[1]);
 
         return (
             toEnd.isZero() ||
@@ -315,7 +307,7 @@ class Point {
      * @returns {boolean}
      * @memberof Point
      */
-    around(margin: number[], predicate: (x: number, y: number, stop: () => void) => boolean): boolean {
+    around(margin: number[][], predicate: (x: number, y: number, stop: () => void) => boolean): boolean {
         let label = false;
         const stop = () => (label = true);
 
@@ -338,17 +330,19 @@ class Point {
     aroundInf(predicate: (point: PointLike) => boolean, factor: number = 1): Point[] {
         const ans: Point[] = predicate(this) ? [new Point(this)] : [];
 
-        for (let m = 1; !ans.length; m++) {
+        for (let m = 1; ans.length < 1; m++) {
             for (let i = 0; i < m; i++) {
                 const x = i * factor, y = (m - i) * factor,
-                    around = (!x)
+                    around = (x === 0)
                         ? [[0, y], [0, -y], [y, 0], [-y, 0]]
                         : [[x, y], [x, -y], [-x, y], [-x, -y]],
                     points = around.map((n) => this.add(n as [number, number]));
 
                 ans.push(...points.filter(predicate));
 
-                if (ans.length) { break; }
+                if (ans.length > 0) {
+                    break;
+                }
             }
         }
         return ans;
@@ -361,7 +355,7 @@ class Point {
      * @memberof Point
      */
     closest(points: PointLike[]): boolean | Point {
-        return !points.length
+        return points.length === 0
             ? false
             : new Point(points.reduce(
                 (pre, next) =>
