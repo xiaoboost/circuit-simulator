@@ -10,7 +10,7 @@
         // 避免带有副作用的 import 语句
         "no-import-side-effect": true,
         // 数字、字符串、布尔类型的变量不需要显式的类型声明
-        "no-inferrable-types": true,
+        "no-inferrable-types": [true, "ignore-params", "ignore-properties"],
         // 禁止使用 non-null 断言
         "no-non-null-assertion": true,
         // 禁止对形参重新赋值
@@ -124,6 +124,12 @@
         // switch 语句的最后一个分支不需要 break
         "switch-final-break": true,
         // 类型字面量使用分号进行分割
-        "type-literal-delimiter": true
+        "type-literal-delimiter": true,
+        // 使用 parseInt 时必须强制指定进制
+        "radix": true,
+        // 对象属性不排序
+        "object-literal-sort-keys": false,
+        // 每行代码长度无限制
+        "max-line-length": false
     }
 }

@@ -1,3 +1,6 @@
+// tslint:disable-next-line
+/// <reference path="./init.d.ts" />
+
 // 深复制
 // TODO: 还需要考虑循环引用的情况，此时应当直接抛出错误
 function clone(from: any): any {
@@ -10,34 +13,35 @@ function clone(from: any): any {
     }
 }
 
-// Object类静态方法扩展
 Object.assign(Object, {
-    // 是否含有可枚举属性
     isEmpty: (from) => !Object.keys(from).length,
-    // 深复制对象
-    clone: (from) => Object.keys(from)
-        .reduce((obj, key) =>
-            ((obj[key] = clone(from[key])), obj), {}),
-    // 隐藏所有可枚举的属性
+
+    clone: (from) => Object
+        .keys(from)
+        .reduce((obj, key) => ((obj[key] = clone(from[key])), obj), {}),
+
     hideAll: (obj) => Object.keys(obj).forEach((key) => Object.defineProperty(obj, key, {
         configurable: false,
         enumerable: false,
     })),
-    // 深度冻结当前对象
     freezeAll(obj) {
-        if (!(obj instanceof Object)) { return (false); }
+        if (!(obj instanceof Object)) {
+            return (false);
+        }
         Object.keys(obj).forEach((key) => Object.freezeAll(obj[key]));
         Object.freeze(obj);
+        return (true);
     },
-    // 深封闭对象
     sealAll(obj) {
-        if (!(obj instanceof Object)) { return (false); }
+        if (!(obj instanceof Object)) {
+            return (false);
+        }
         Object.keys(obj).forEach((key) => Object.sealAll(obj[key]));
         Object.seal(obj);
+        return (true);
     },
 });
 
-// Object类原型方法扩展
 Object.assign(Object.prototype, {
     // 对象是否相等
     isEqual(obj) {
@@ -52,26 +56,22 @@ Object.assign(Object.prototype, {
             (key) =>
                 (this[key] instanceof Object)
                     ? this[key].isEqual(obj[key])
-                    : this[key] === obj[key]
+                    : this[key] === obj[key],
         );
     },
     map(fn) {
         return Object
             .keys(this)
-            .reduce((obj, key) =>
-                ((obj[key] = fn(this[key], key)), obj), {});
+            .reduce((obj, key) => ((obj[key] = fn(this[key], key)), obj), {});
     },
 });
 
-// Array类静态方法扩展
 Object.assign(Array, {
-    // 数组深复制
-    clone: (from) => from.map((n) => clone(n)),
+    clone: (from) => from.map((n, i) => clone(n)),
 });
-// Array类原型方法扩展
+
 Object.assign(Array.prototype, {
-    // 数组是否相等
-    isEqual(arr) {
+    isEqual(arr: any[]): boolean {
         if (!arr) {
             return (false);
         }
@@ -83,25 +83,26 @@ Object.assign(Array.prototype, {
             (item, i) =>
                 (item instanceof Object)
                     ? item.isEqual(arr[i])
-                    : item === arr[i]
+                    : item === arr[i],
         );
     },
     // 取出下标为index的元素
-    get(index) {
+    get(index: number): any {
         const sub = (index >= 0)
             ? index
-            : this.length + index;
+            : this.length as number + index;
 
         return (sub >= 0 && sub < this.length)
             ? this[sub]
             : false;
     },
     // 删除回调返回第一个 true 的元素
-    delete(fn) {
-        if (!(fn instanceof Function)) {
-            fn = (item) => item === fn;
-        }
+    delete(predicate: (value: any, index: number) => boolean): boolean {
+        const fn = (predicate instanceof Function)
+            ? predicate
+            : (item) => item === predicate;
         const index = this.findIndex(fn);
+
         if (index !== -1) {
             this.splice(index, 1);
             return (true);
@@ -110,29 +111,27 @@ Object.assign(Array.prototype, {
         }
     },
     // 用于 vue 数组的元素赋值
-    $set(i, item) {
+    $set(i: number, item: any): void {
         if (this[i] !== item) {
             this.splice(i, 1, item);
         }
     },
 });
 
-// Number类原型方法扩展
 Object.assign(Number.prototype, {
-    /**
-     * 按照有效数字位数进行四舍五入
-     * @param {Number} [bits=6]
-     * @returns {Number}
-     */
-    toRound(bits = 6) {
+    // 按照有效数字位数进行四舍五入
+    toRound(bits: number = 6): number {
         const origin = this.valueOf();
-        if (Number.isNaN(origin)) { return (false); }
 
-        const number = Math.abs(origin),
-            toInt = Math.floor(Math.log10(number)) - bits + 1,
+        if (Number.isNaN(origin)) {
+            throw new Error('Illegal Number');
+        }
+
+        const value = Math.abs(this.valueOf()),
+            toInt = Math.floor(Math.log10(value)) - bits + 1,
             transform = 10 ** toInt,
             // round 一定是整数
-            round = String(Math.round(number / transform)),
+            round = String(Math.round(value / transform)),
             // 原始数据符号
             sign = origin < 0 ? '-' : '';
 
@@ -141,19 +140,22 @@ Object.assign(Number.prototype, {
         if (toInt > 0) {
             str = round + '0'.repeat(toInt);
         } else if (-toInt >= bits) {
-            str = '0.' + '0'.repeat(-toInt - bits) + round;
+            str = `0.${'0'.repeat(-toInt - bits)}${round}`;
         } else {
-            str = round.slice(0, toInt) + '.' + round.slice(toInt);
+            str = `${round.slice(0, toInt)}.${round.slice(toInt)}`;
         }
 
         return Number.parseFloat(sign + str);
     },
     // 数量级
-    rank() {
-        const number = Math.abs(this.valueOf());
-        if (Number.isNaN(number)) { return (false); }
+    rank(): number {
+        const value = Math.abs(this.valueOf());
 
-        return Math.floor(Math.log10(number));
+        if (Number.isNaN(value)) {
+            throw new Error('Illegal Number');
+        }
+
+        return Math.floor(Math.log10(value));
     },
 });
 
@@ -167,5 +169,3 @@ Object.hideAll(String.prototype);
 
 // 网页禁止右键
 window.document.oncontextmenu = () => false;
-// SVG 命名空间
-window.$SVG_NS = 'http://www.w3.org/2000/svg';

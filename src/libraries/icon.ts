@@ -4,7 +4,7 @@ interface Icon {
     readonly d: string;
 }
 
-export const action: { run: Icon, add: Icon, config: Icon } = {
+export const action: { run: Icon; add: Icon; config: Icon } = {
     run: {
         long: 1580,
         transform: [86, 100],

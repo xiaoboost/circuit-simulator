@@ -7,6 +7,23 @@ type PointInput = PointLike | number;
  * @class Point
  */
 class Point {
+    /**
+     * 检测输入是否是标准点对象
+     *
+     * @static
+     * @param {*} point
+     * @returns {boolean}
+     * @memberof Point
+     */
+    static isPoint(point: any): boolean {
+        return (
+            point instanceof Point ||
+            (point instanceof Object &&
+            typeof point[0] === 'number' &&
+            typeof point[1] === 'number')
+        );
+    }
+
     [0]: number;
     [1]: number;
     length: 2;
@@ -41,22 +58,6 @@ class Point {
     }
 
     /**
-     * 检测输入是否是标准点对象
-     *
-     * @static
-     * @param {*} point
-     * @returns {boolean}
-     * @memberof Point
-     */
-    static isPoint(point: any): boolean {
-        return (
-            point instanceof Point ||
-            (point instanceof Object &&
-            typeof point[0] === 'number' &&
-            typeof point[1] === 'number')
-        );
-    }
-    /**
      * 加法：
      * 第一项将会调用 Point 构造函数生成实例，然后参与运算；
      * 第二项输入 -1 表示是减法，且 this 是被减数；
@@ -71,12 +72,12 @@ class Point {
         if (typeof added === 'number') {
             sum = new Point(
                 this[0] + added * label,
-                this[1] + added * label
+                this[1] + added * label,
             );
         } else if (Point.isPoint(added)) {
             sum = new Point(
                 this[0] + added[0] * label,
-                this[1] + added[1] * label
+                this[1] + added[1] * label,
             );
         }
         return (sum);
@@ -96,12 +97,12 @@ class Point {
         if (typeof multiplier === 'number') {
             sum = new Point(
                 this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier),
-                this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier)
+                this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier),
             );
         } else if (Point.isPoint(multiplier)) {
             sum = new Point(
                 this[0] * ((label < 0) ? (1 / (- multiplier[0])) : multiplier[0]),
-                this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1])
+                this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1]),
             );
         }
         return (sum);
@@ -125,7 +126,7 @@ class Point {
     abs(): Point {
         return (new Point(
             Math.abs(this[0]),
-            Math.abs(this[1])
+            Math.abs(this[1]),
         ));
     }
     /**
@@ -137,7 +138,7 @@ class Point {
     sign(): Point {
         return (new Point(
             Math.sign(this[0]),
-            Math.sign(this[1])
+            Math.sign(this[1]),
         ));
     }
     /**
@@ -150,7 +151,7 @@ class Point {
     distance(point: PointLike): number {
         return Math.hypot(
             (this[0] - point[0]),
-            (this[1] - point[1])
+            (this[1] - point[1]),
         );
     }
     /**
@@ -174,7 +175,7 @@ class Point {
     round(fixed: number = 20): Point {
         return (new Point(
             Number.parseInt((this[0] / fixed).toFixed()) * fixed,
-            Number.parseInt((this[1] / fixed).toFixed()) * fixed
+            Number.parseInt((this[1] / fixed).toFixed()) * fixed,
         ));
     }
     /**
@@ -187,7 +188,7 @@ class Point {
     roundToSmall(fixed: number = 20): Point {
         return (new Point(
             Number.parseInt((this[0] / fixed).toFixed()),
-            Number.parseInt((this[1] / fixed).toFixed())
+            Number.parseInt((this[1] / fixed).toFixed()),
         ));
     }
     /**
@@ -200,7 +201,7 @@ class Point {
     floor(fixed: number = 20): Point {
         return (new Point(
             Math.floor(this[0] / fixed) * fixed,
-            Math.floor(this[1] / fixed) * fixed
+            Math.floor(this[1] / fixed) * fixed,
         ));
     }
     /**
@@ -213,7 +214,7 @@ class Point {
     floorToSmall(fixed: number = 20): Point {
         return (new Point(
             Math.floor(this[0] / fixed),
-            Math.floor(this[1] / fixed)
+            Math.floor(this[1] / fixed),
         ));
     }
     /**
@@ -343,9 +344,9 @@ class Point {
                     around = (!x)
                         ? [[0, y], [0, -y], [y, 0], [-y, 0]]
                         : [[x, y], [x, -y], [-x, y], [-x, -y]],
-                    points = around.map((n) => this.add(<[number, number]>n));
+                    points = around.map((n) => this.add(n as [number, number]));
 
-                ans.push(...points.filter((point) => predicate(point)));
+                ans.push(...points.filter(predicate));
 
                 if (ans.length) { break; }
             }
@@ -364,7 +365,7 @@ class Point {
             ? false
             : new Point(points.reduce(
                 (pre, next) =>
-                    this.distance(pre) < this.distance(next) ? pre : next
+                    this.distance(pre) < this.distance(next) ? pre : next,
             ));
     }
     /**

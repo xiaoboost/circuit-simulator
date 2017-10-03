@@ -1,125 +1,128 @@
 interface ObjectConstructor {
     /**
      * 输入对象是否含有可枚举元素
-     * 
-     * @param {object} from 
-     * @returns {boolean} 
+     *
+     * @param {object} from
+     * @returns {boolean}
      * @memberof ObjectConstructor
      */
-    isEmpty(from: object): boolean,
+    isEmpty(from: object): boolean;
     /**
      * 深复制输入对象。
      * 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
-     * 
-     * @param {object} from 
-     * @returns {object} 
+     *
+     * @template T
+     * @param {T} from
+     * @returns {T}
      * @memberof ObjectConstructor
      */
-    clone(from: object): object,
+    clone<T>(from: T): T;
     /**
      * 将输入对象的所有可枚举属性全部隐藏
-     * 
-     * @param {*} from 
+     *
+     * @param {*} from
+     * @returns {boolean}
      * @memberof ObjectConstructor
      */
-    hideAll(from: any): void,
+    hideAll(from: any): void;
     /**
      * 将输入对象以及下属所有对象全部冻结
-     * 
-     * @param {*} from 
+     *
+     * @param {*} from
+     * @returns {boolean}
      * @memberof ObjectConstructor
      */
-    freezeAll(from: any): void,
+    freezeAll(from: any): boolean;
     /**
      * 将输入对象以及下属所有对象全部封闭
-     * 
-     * @param {*} from 
+     *
+     * @param {*} from
+     * @returns {boolean}
      * @memberof ObjectConstructor
      */
-    sealAll(from: any): void,
+    sealAll(from: any): boolean;
 }
 
 interface Object {
     /**
      * 当前对象实例与输入对象是否相等
-     * 
-     * @param {*} obj 
-     * @returns {boolean} 
+     *
+     * @param {*} obj
+     * @returns {boolean}
      * @memberof Object
      */
-    isEqual(obj: any): boolean,
+    isEqual(obj: any): boolean;
     /**
      * 原对象的 key 不变，生成新的对象
-     * 
-     * @template U 
-     * @param {(value: any, key: string) => object} fn 
-     * @returns {U} 
+     *
+     * @param {(value: any, key: string) => any} fn
+     * @returns {object}
      * @memberof Object
      */
-    map(fn: (value: any, key: string) => any): object,
+    map(fn: (value: any, key: string) => any): object;
 }
 
 interface ArrayConstructor {
     /**
      * 复制数组
-     * 
-     * @param {any[]} from 
-     * @returns {any[]} 
+     *
+     * @param {any[]} from
+     * @returns {any[]}
      * @memberof ArrayConstructor
      */
-    clone<U>(from: U[]): U[],
+    clone<U>(from: U[]): U[];
 }
 
 interface Array<T> {
     /**
      * 当前数组与输入数组是否相等
-     * 
-     * @param {any[]} arr 
-     * @returns {boolean} 
+     *
+     * @param {any[]} arr
+     * @returns {boolean}
      * @memberof Array
      */
-    isEqual(arr: any[]): boolean,
+    isEqual(arr: any[]): boolean;
     /**
      * 根据下标取出当前数组元素
-     * 
-     * @param {number} index 
-     * @returns {*} 
+     *
+     * @param {number} index
+     * @returns {*}
      * @memberof Array
      */
-    get(index: number): any,
+    get(index: number): any;
     /**
      * 从下标 0 开始，删除 predicate 第一个返回 true 的元素
-     * 
-     * @param {(value: any, index: number) => boolean} predicate 
-     * @returns {boolean} 
+     *
+     * @param {(value: any, index: number) => boolean} predicate
+     * @returns {boolean}
      * @memberof Array
      */
-    delete(predicate: (value: any, index: number) => boolean): boolean,
+    delete(predicate: (value: any, index: number) => boolean): boolean;
     /**
      * 用于 vue 的数组更新
-     * 
-     * @param {number} i 
-     * @param {*} item 
+     *
+     * @param {number} index
+     * @param {*} value
      * @memberof Array
      */
-    $set(i: number, item: any): void,
+    $set(index: number, value: any): void;
 }
 
 interface Number {
     /**
      * 按照有效数字的位数进行四舍五入。
      * 默认 6 位有效数字
-     * 
-     * @param {number} [bits=6] 
-     * @returns {number} 
+     *
+     * @param {number} [bits=6]
+     * @returns {number}
      * @memberof Number
      */
-    toRound(bits: number = 6): number,
+    toRound(bits?: number): number;
     /**
      * 求数字的数量级
-     * 
-     * @returns {number} 
+     *
+     * @returns {number}
      * @memberof Number
      */
-    rank(): number,
+    rank(): number;
 }
