@@ -1,4 +1,4 @@
-declare interface ObjectConstructor {
+interface ObjectConstructor {
     /**
      * 输入对象是否含有可枚举元素
      * 
@@ -37,9 +37,9 @@ declare interface ObjectConstructor {
      * @memberof ObjectConstructor
      */
     sealAll(from: any): void,
-};
+}
 
-declare interface Object {
+interface Object {
     /**
      * 当前对象实例与输入对象是否相等
      * 
@@ -59,7 +59,7 @@ declare interface Object {
     map(fn: (value: any, key: string) => any): object,
 }
 
-declare interface ArrayConstructor {
+interface ArrayConstructor {
     /**
      * 复制数组
      * 
@@ -70,7 +70,7 @@ declare interface ArrayConstructor {
     clone<U>(from: U[]): U[],
 }
 
-declare interface Array {
+interface Array<T> {
     /**
      * 当前数组与输入数组是否相等
      * 
@@ -105,7 +105,7 @@ declare interface Array {
     $set(i: number, item: any): void,
 }
 
-declare interface Number {
+interface Number {
     /**
      * 按照有效数字的位数进行四舍五入。
      * 默认 6 位有效数字

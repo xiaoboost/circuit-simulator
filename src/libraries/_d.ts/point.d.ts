@@ -8,7 +8,7 @@ export declare class Point {
     '0': number;
     '1': number;
     length: 2;
-    constructor(start: number[] | number | Point = 0, end?: number[] | number | Point);
+    constructor(start: (number[] | number | Point) = 0, end?: number[] | number | Point);
 
     /**
      * 加法：

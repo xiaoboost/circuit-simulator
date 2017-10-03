@@ -1,4 +1,10 @@
-export const action = {
+interface Icon {
+    readonly long: number;
+    readonly transform: [number, number];
+    readonly d: string;
+}
+
+export const action: { run: Icon, add: Icon, config: Icon } = {
     run: {
         long: 1580,
         transform: [86, 100],

@@ -1,6 +1,6 @@
 // 深复制
 // TODO: 还需要考虑循环引用的情况，此时应当直接抛出错误
-function clone(from) {
+function clone(from: any): any {
     if (from instanceof Array) {
         return Array.clone(from);
     } else if (from instanceof Object) {
@@ -59,7 +59,7 @@ Object.assign(Object.prototype, {
         return Object
             .keys(this)
             .reduce((obj, key) =>
-                ((obj[key] = fn(this[key])), obj), {});
+                ((obj[key] = fn(this[key], key)), obj), {});
     },
 });
 
