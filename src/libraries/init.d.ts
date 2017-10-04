@@ -4,7 +4,6 @@ interface ObjectConstructor {
      *
      * @param {object} from
      * @returns {boolean}
-     * @memberof ObjectConstructor
      */
     isEmpty(from: object): boolean;
     /**
@@ -14,7 +13,6 @@ interface ObjectConstructor {
      * @template T
      * @param {T} from
      * @returns {T}
-     * @memberof ObjectConstructor
      */
     clone<T>(from: T): T;
     /**
@@ -22,7 +20,6 @@ interface ObjectConstructor {
      *
      * @param {*} from
      * @returns {boolean}
-     * @memberof ObjectConstructor
      */
     hideAll(from: any): void;
     /**
@@ -30,7 +27,6 @@ interface ObjectConstructor {
      *
      * @param {*} from
      * @returns {boolean}
-     * @memberof ObjectConstructor
      */
     freezeAll(from: any): boolean;
     /**
@@ -38,7 +34,6 @@ interface ObjectConstructor {
      *
      * @param {*} from
      * @returns {boolean}
-     * @memberof ObjectConstructor
      */
     sealAll(from: any): boolean;
 }
@@ -49,7 +44,6 @@ interface Object {
      *
      * @param {*} obj
      * @returns {boolean}
-     * @memberof Object
      */
     isEqual(obj: any): boolean;
     /**
@@ -57,7 +51,6 @@ interface Object {
      *
      * @param {(value: any, key: string) => any} fn
      * @returns {object}
-     * @memberof Object
      */
     map(fn: (value: any, key: string) => any): object;
 }
@@ -68,7 +61,6 @@ interface ArrayConstructor {
      *
      * @param {any[]} from
      * @returns {any[]}
-     * @memberof ArrayConstructor
      */
     clone<U>(from: U[]): U[];
 }
@@ -79,7 +71,6 @@ interface Array<T> {
      *
      * @param {any[]} arr
      * @returns {boolean}
-     * @memberof Array
      */
     isEqual(arr: any[]): boolean;
     /**
@@ -87,7 +78,6 @@ interface Array<T> {
      *
      * @param {number} index
      * @returns {*}
-     * @memberof Array
      */
     get(index: number): any;
     /**
@@ -95,7 +85,6 @@ interface Array<T> {
      *
      * @param {(value: any, index: number) => boolean} predicate
      * @returns {boolean}
-     * @memberof Array
      */
     delete(predicate: (value: any, index: number) => boolean): boolean;
     /**
@@ -103,7 +92,6 @@ interface Array<T> {
      *
      * @param {number} index
      * @param {*} value
-     * @memberof Array
      */
     $set(index: number, value: any): void;
 }
@@ -115,14 +103,12 @@ interface Number {
      *
      * @param {number} [bits=6]
      * @returns {number}
-     * @memberof Number
      */
     toRound(bits?: number): number;
     /**
      * 求数字的数量级
      *
      * @returns {number}
-     * @memberof Number
      */
     rank(): number;
 }
