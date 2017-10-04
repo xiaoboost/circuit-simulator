@@ -54,7 +54,7 @@ export default {
     },
     data() {
         return {
-            NS: window.$SVG_NS,
+            NS: this.$store.state.$SVG_NS,
             selections: false,
 
             partsNow: [],
