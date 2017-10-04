@@ -1,16 +1,81 @@
-import { $P } from './point';
+import { $P } from 'src/libraries/point';
 
-// 图纸数据
+// 图纸标记缓存
 const map = {};
 
-function point2key(x, y) {
-    if (x.length) { [x, y] = x; }
+/**
+ * 将坐标转化为标记数据中的键值
+ * 
+ * @param {number | string} x 
+ * @param {number | string} y 
+ * @returns {string}
+ */
+function smallPoint2key(x, y) {
     return `${x},${y}`;
 }
 
-function key2point(key) {
-    const [x, y] = key.split(',').map((o) => +o.trim());
-    return $P(x, y);
+/**
+ * 图纸标记数据类
+ * 
+ * @class MapData
+ */
+class MapData {
+    /**
+     * Creates an instance of MapData.
+     * @param {{} | [number, number]} data
+     */
+    constructor(data) {
+
+    }
+
+    setMap() {
+
+    }
+    mergeMap() {
+
+    }
+    isExist() {
+
+    }
+    deleteDate() {
+
+    }
+
+    addConnect() {
+
+    }
+    hasConnect() {
+
+    }
+    deleteConnect() {
+
+    }
+
+    alongTheLine() {
+
+    }
+}
+
+/**
+ * 强制更新所有图纸标记
+ * 
+ * @param {string} [map='{}']
+ * @return
+ */
+export function forceUpdateMap(map = '{}') {
+    const data = JSON.parse(map);
+
+    Object
+        .keys(map)
+        .forEach((key) => Reflect.deleteProperty(map, key));
+
+    Object
+        .entries(data)
+        .forEach(([key, value]) => (map[key] = value));
+}
+
+export function $MD() {
+    return new MapData();
 }
 
 export function outputAll() {
