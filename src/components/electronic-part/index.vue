@@ -33,12 +33,12 @@
 </template>
 
 <script>
-import { Electronics } from './shape';
-import { $P } from '@/libraries/point';
-import { $M } from '@/libraries/matrix';
-import { schMap } from '@/libraries/map';
+import Electronics from './shape';
+import { $P } from 'src/libraries/point';
+import { $M } from 'src/libraries/matrix';
+import * as schMap from 'src/libraries/map';
 
-import ElectronPoint from '@/components/electron-point';
+import ElectronPoint from 'src/components/electron-point';
 
 // 2长度的数组 乘以 2*2的矩阵
 function product(a, b) {

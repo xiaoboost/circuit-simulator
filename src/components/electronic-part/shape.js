@@ -678,4 +678,4 @@ Object.keys(Electronics).forEach((key) => {
     Object.freeze(data);
 });
 
-export { Electronics };
+export default Electronics;

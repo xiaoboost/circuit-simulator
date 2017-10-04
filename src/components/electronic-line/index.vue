@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import { $P } from '@/libraries/point';
-// import { $M } from '@/libraries/matrix';
-import { schMap } from '@/libraries/map';
+import { $P } from 'src/libraries/point';
+// import { $M } from 'src/libraries/matrix';
+import * as schMap from 'src/libraries/map';
 import lineSearch, { LineWay } from './line-search';
 
-import ElectronPoint from '@/components/electron-point';
+import ElectronPoint from 'src/components/electron-point';
 
 // 器件与导线的 ID 匹配
 const rePart = /[a-zA-Z]+_\d+-\d+/;
@@ -184,7 +184,7 @@ export default {
                     // 非端点
                     if (
                         status && status.form === 'line' &&
-                        !schMap.nodeInConnectByOrigin(node, last)
+                        !schMap.isNodeInConnectByOrigin(node, last)
                     ) {
                         status.form = 'cover-point';
                         status.id += ` ${this.id}`;

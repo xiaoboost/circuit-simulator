@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { Electronics } from '@/components/electronic-part/shape';
+import Electronics from 'src/components/electronic-part/shape';
 
 export default {
     name: 'AddParts',

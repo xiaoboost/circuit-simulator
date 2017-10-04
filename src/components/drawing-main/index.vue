@@ -37,12 +37,12 @@
 </template>
 
 <script>
-import Part from '@/components/electronic-part';
-import Line from '@/components/electronic-line';
-import SelectionsBox from '@/components/selections-box';
+import Part from 'src/components/electronic-part';
+import Line from 'src/components/electronic-line';
+import SelectionsBox from 'src/components/selections-box';
 
 import Event from './event-controler';
-import { $P } from '@/libraries/point';
+import { $P } from 'src/libraries/point';
 
 export default {
     name: 'DrawingMain',
@@ -54,7 +54,7 @@ export default {
     },
     data() {
         return {
-            NS: window.$SVG_NS,
+            NS: this.$store.state.$SVG_NS,
             selections: false,
 
             partsNow: [],

@@ -1,11 +1,11 @@
-import '@/css/main';
-import '@/libraries/init';
+import 'src/css/main';
+import 'src/libraries/init';
 
 import Vue from 'vue';
-import App from '@/App';
-import store  from '@/vuex';
+import App from 'src/App';
+import store  from 'src/vuex';
 
-import delegate from '@/plugin/delegate';
+import delegate from 'src/plugin/delegate';
 
 Vue.use(delegate);
 Vue.config.productionTip = false;
@@ -21,7 +21,7 @@ const instance = {
 if ($env.NODE_ENV === 'development') {
     instance.mounted = function() {
         const area = document.querySelector('.drawing-main svg g'),
-            Compo = require('@/libraries/debugger').default;
+            Compo = require('src/libraries/debugger').default;
 
         // 调试组件独立于 app，挂在全局变量上
         window.$debug = new Compo();

@@ -34,8 +34,8 @@
 </template>
 
 <script>
-import { NUM_REG } from '@/libraries/util';
-import Input from '@/components/input-verifiable.vue';
+import { NUM_REG } from 'src/libraries/util';
+import Input from 'src/components/input-verifiable.vue';
 
 export default {
     name: 'Config',

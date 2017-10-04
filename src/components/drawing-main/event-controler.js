@@ -1,4 +1,4 @@
-import { $P } from '@/libraries/point';
+import { $P } from 'src/libraries/point';
 
 function mouseEvent($event) {
     const code = { left: 0, right: 2 };

@@ -1,5 +1,5 @@
-import { $P } from '@/libraries/point';
-import { schMap } from '@/libraries/map';
+import { $P } from 'src/libraries/point';
+import * as schMap from 'src/libraries/map';
 
 // 四方向
 const rotate = [
@@ -648,6 +648,8 @@ export default {
             if (!point) { return; }
 
             const status = schMap.getValueByOrigin(point);
+            if (!status) { return; }
+
             if (status.type === 'part-point') {
                 const [id, mark] = status.id.split('-'),
                     part = this.$parent.find(id);
