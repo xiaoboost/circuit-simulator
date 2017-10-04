@@ -13,7 +13,6 @@ class Point {
      * @static
      * @param {*} point
      * @returns {boolean}
-     * @memberof Point
      */
     static isPoint(point: any): boolean {
         return (
@@ -32,7 +31,6 @@ class Point {
      * Creates an instance of Point.
      * @param {PointInput} start
      * @param {PointInput} [end]
-     * @memberof Point
      */
     constructor(start: PointInput, end?: PointInput) {
         if (typeof start === 'number') {
@@ -65,7 +63,6 @@ class Point {
      * @param {PointInput} added
      * @param {number} [label=1]
      * @returns {Point}
-     * @memberof Point
      */
     add(added: PointInput, label: number = 1): Point {
         const sum = new Point(0);
@@ -86,7 +83,6 @@ class Point {
      * @param {PointInput} multiplier
      * @param {number} [label=1]
      * @returns {Point}
-     * @memberof Point
      */
     mul(multiplier: PointInput, label: number = 1): Point {
         const sum = new Point(0);
@@ -104,7 +100,6 @@ class Point {
      *
      * @param {PointLike} vector
      * @returns {number}
-     * @memberof Point
      */
     product(vector: PointLike): number {
         return (this[0] * vector[0] + this[1] * vector[1]);
@@ -113,7 +108,6 @@ class Point {
      * 返回对 x, y 坐标分别求绝对值后组成的新 Point 实例
      *
      * @returns {Point}
-     * @memberof Point
      */
     abs(): Point {
         return (new Point(
@@ -125,7 +119,6 @@ class Point {
      * 返回 x, y 坐标分别单位化后组成的新 Point 实例
      *
      * @returns {Point}
-     * @memberof Point
      */
     sign(): Point {
         return (new Point(
@@ -138,7 +131,6 @@ class Point {
      *
      * @param {PointLike} point
      * @returns {number}
-     * @memberof Point
      */
     distance(point: PointLike): number {
         return Math.hypot(
@@ -151,7 +143,6 @@ class Point {
      *
      * @param {number} [factor=1]
      * @returns {Point}
-     * @memberof Point
      */
     toUnit(factor: number = 1): Point {
         const scale = 1 / this.distance([0, 0]);
@@ -162,7 +153,6 @@ class Point {
      *
      * @param {number} [fixed=20]
      * @returns {Point}
-     * @memberof Point
      */
     round(fixed: number = 20): Point {
         return (new Point(
@@ -175,7 +165,6 @@ class Point {
      *
      * @param {number} [fixed=20]
      * @returns {Point}
-     * @memberof Point
      */
     roundToSmall(fixed: number = 20): Point {
         return (new Point(
@@ -188,7 +177,6 @@ class Point {
      *
      * @param {number} [fixed=20]
      * @returns {Point}
-     * @memberof Point
      */
     floor(fixed: number = 20): Point {
         return (new Point(
@@ -201,7 +189,6 @@ class Point {
      *
      * @param {number} [fixed=20]
      * @returns {Point}
-     * @memberof Point
      */
     floorToSmall(fixed: number = 20): Point {
         return (new Point(
@@ -213,7 +200,6 @@ class Point {
      * 是否是零向量
      *
      * @returns {boolean}
-     * @memberof Point
      */
     isZero(): boolean {
         return (this[0] === 0 && this[1] === 0);
@@ -222,7 +208,6 @@ class Point {
      * 是否是整数点
      *
      * @returns {boolean}
-     * @memberof Point
      */
     isInteger(): boolean {
         return (
@@ -236,7 +221,6 @@ class Point {
      *
      * @param {PointLike} vector
      * @returns {boolean}
-     * @memberof Point
      */
     isParallel(vector: PointLike): boolean {
         return (Boolean(vector[0]) && Boolean(vector[1]))
@@ -248,7 +232,6 @@ class Point {
      *
      * @param {PointLike} vector
      * @returns {boolean}
-     * @memberof Point
      */
     isVertical(vector: PointLike): boolean {
         return (Boolean(this[0] * vector[0] + this[1] * vector[1]));
@@ -259,7 +242,6 @@ class Point {
      *
      * @param {PointLike} vector
      * @returns {boolean}
-     * @memberof Point
      */
     isSameDire(vector: PointLike): boolean {
         return (
@@ -273,7 +255,6 @@ class Point {
      *
      * @param {PointLike} vector
      * @returns {boolean}
-     * @memberof Point
      */
     isOppoDire(vector: PointLike): boolean {
         return (
@@ -286,7 +267,6 @@ class Point {
      *
      * @param {PointLike[]} segment
      * @returns {boolean}
-     * @memberof Point
      */
     isInLine(segment: PointLike[]): boolean {
         // 点到线段两端的向量方向相反，即表示其在线段内
@@ -305,7 +285,6 @@ class Point {
      * @param {number[]} margin
      * @param {(x: number, y: number, stop: () => void) => boolean} predicate
      * @returns {boolean}
-     * @memberof Point
      */
     around(margin: number[][], predicate: (x: number, y: number, stop: () => void) => boolean): boolean {
         let label = false;
@@ -325,7 +304,6 @@ class Point {
      * @param {(point: PointLike) => boolean} predicate
      * @param {number} [factor=1]
      * @returns {Point[]}
-     * @memberof Point
      */
     aroundInf(predicate: (point: PointLike) => boolean, factor: number = 1): Point[] {
         const ans: Point[] = predicate(this) ? [new Point(this)] : [];
@@ -352,7 +330,6 @@ class Point {
      *
      * @param {PointLike[]} points
      * @returns {(boolean | Point)}
-     * @memberof Point
      */
     closest(points: PointLike[]): boolean | Point {
         return points.length === 0
@@ -367,7 +344,6 @@ class Point {
      *
      * @param {number} [len=20]
      * @returns {[Point, Point, Point, Point]}
-     * @memberof Point
      */
     toGrid(len: number = 20): [Point, Point, Point, Point] {
         return ([
@@ -382,7 +358,6 @@ class Point {
      *
      * @param {string} [str=',']
      * @returns
-     * @memberof Point
      */
     join(str: string = ',') {
         return `${this[0]}${str}${this[1]}`;
