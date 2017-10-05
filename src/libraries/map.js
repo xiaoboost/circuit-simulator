@@ -1,17 +1,21 @@
-import { $P } from 'src/libraries/point';
+/*
+ * TODO: 在部分方法中，为了提高速度，会出现直接引用 $map 中数据的情况，虽然几率很小，但也可能会发生其中数据被无意更改的情况
+ * 所以可以考虑存入 $map 的数据添加拦截器，所有的 set 操作均需要进一步验证，直接手动更改是不允许的
+ */
+
+import { $P, Point } from 'src/libraries/point';
 
 // 图纸标记缓存
-const map = {};
+const $map = {};
 
 /**
  * 将坐标转化为标记数据中的键值
  * 
- * @param {number | string} x 
- * @param {number | string} y 
+ * @param {Point} node
  * @returns {string}
  */
-function smallPoint2key(x, y) {
-    return `${x},${y}`;
+function point2key(node) {
+    return node.join();
 }
 
 /**
@@ -23,36 +27,160 @@ class MapData {
     /**
      * Creates an instance of MapData.
      * @param {{} | [number, number]} data
+     * @param {boolean} [large=false]
      */
-    constructor(data) {
+    constructor(data, large = false) {
+        if (Point.isPoint(data)) {
+            const node = large ? $P(data).mul(0.05) : $P(data);
+            const key = point2key(node);
 
+            return Boolean($map[key])
+                ? Object.clone($map[key])
+                // TODO: isExist 键值可能需要改变，此值表示当前对象是否被修改过
+                : { point: node, isExist: true };
+        } else {
+            return Object.clone(data);
+        }
     }
 
+    /**
+     * 将当前数据覆盖到 Map 对应的点标记中
+     *
+     * @returns {void}
+     */
     setMap() {
+        if (this.isExist) {
+            return;
+        }
 
+        const key = point2key(this.point);
+        $map[key] = Object.clone(this);
     }
+    /**
+     * 将当前数据与 $map 中已有的数据进行合并
+     * 
+     * @returns {void}
+     */
     mergeMap() {
+        if (this.isExist) {
+            return;
+        }
 
-    }
-    isExist() {
+        const exclude = ['connect'],
+            key = point2key(this.point),
+            origin = $map[key];
 
+        if (Boolean(origin)) {
+            Object
+                .keys(this)
+                .filter((key) => !exclude.includes(key))
+                .forEach((key) => (origin[key] = this[key]));
+
+            this.connect
+                .filter((point) => !origin.hasConnect(point))
+                .forEach((point) => origin.connect.push(Array.from(point)));
+        } else {
+            $map[key] = Object.clone(this);
+        }
     }
+    /**
+     * 将当前点所指向的真实数据从 $map 中删除，返回值表示当前删除操作是否成功
+     * 
+     * @returns {boolean}
+     */
     deleteDate() {
-
+        return Reflect.deleteProperty($map, point2key(this.point));
     }
+    /**
+     * 当前实例的连接点中是否含有输入的节点坐标，如果输入点坐标和当前点相同，则输出 false
+     * 
+     * @param {Point | [number, number]} point
+     * @param {boolean} [large=false]
+     * @returns {boolean}
+     */
+    hasConnect(point, large = false) {
+        if (!Point.isPoint(point)) {
+            throw new Error('Must be a Point');
+        }
 
-    addConnect() {
-
+        const node = large ? $P(point).mul(0.05) : $P(point);
+        return this.connect.some((origin) => origin.isEqual(node));
     }
-    hasConnect() {
+    /**
+     * 给当前实例添加连接点，如果该连接点已经存在，则放弃操作
+     * 
+     * @param {Point | [number, number]} point
+     * @param {boolean} [large=false]
+     * @returns {void}
+     */
+    addConnect(point, large = false) {
+        const node = large ? $P(point).mul(0.05) : $P(point);
 
+        if (!this.hasConnect(node)) {
+            this.connect.push(Array.from(node));
+        }
     }
-    deleteConnect() {
+    /**
+     * 从当前实例的连接点中删除输入点，如果输入点不存在，那么返回 false， 否则返回 true
+     * 
+     * @param {Point | [number, number]} point
+     * @param {boolean} [large=false]
+     * @returns {boolean}
+     */
+    deleteConnect(point, large = false) {
+        const node = large ? $P(point).mul(0.05) : $P(point);
+        const index = this.connect.findIndex((con) => con.isEqual(node));
 
+        if (index === -1) {
+            return (false);
+        }
+
+        this.connect.splice(index, 1);
+        return (true);
     }
+    /**
+     * 当前点是否在导线上
+     * 
+     * @return {boolean}
+     */
+    isLine() {
+        return (this && /^(line|cross-point|cover-point)$/.test(this.type));
+    }
+    /**
+     * 以当前点为起点，沿着 vector 的方向，直到等于输入的 end，或者是导线方向与 vector 不相等，输出最后一点坐标
+     * 
+     * @param {Point | [number, number]} [end=[Infinity, Infinity]] 
+     * @param {Point | [number, number]} [vector=$P(end, this.point)] 
+     * @param {boolean} [large=false]
+     * @returns {Point}
+     */
+    alongTheLineBySmall(
+        end = [Infinity, Infinity],
+        vector = $P(end, this.point),
+        large = false
+    ) {
+        const
+            start = $P(this.point),
+            unitVector = vector.sign();
 
-    alongTheLine() {
+        // 起点并不是导线或者起点等于终点，直接返回
+        if (!this.isLine() || start.isEqual(end)) {
+            return (start);
+        }
 
+        let node = $P(start),
+            next = node.add(unitVector);
+        // 当前点没有到达终点，还在导线所在直线内部，那就前进
+        while (this.isLine.call($map[point2key(next)]) && !node.isEqual(end)) {
+            if (this.hasConnect.call($map[point2key(node)], next)) {
+                node = next;
+                next = node.add(unitVector);
+            } else {
+                break;
+            }
+        }
+
+        return node;
     }
 }
 
@@ -60,7 +188,7 @@ class MapData {
  * 强制更新所有图纸标记
  * 
  * @param {string} [map='{}']
- * @return
+ * @return {void}
  */
 export function forceUpdateMap(map = '{}') {
     const data = JSON.parse(map);
@@ -74,167 +202,12 @@ export function forceUpdateMap(map = '{}') {
         .forEach(([key, value]) => (map[key] = value));
 }
 
-export function $MD() {
-    return new MapData();
-}
-
-export function outputAll() {
-    return Object.keys(map).map((key) => Object.assign(Object.clone(map[key]), { point: key2point(key) }));
-}
-
-// 取得节点属性
-export function getValueBySmalle(x, y) {
-    const key = point2key(x, y);
-    return (map[key] || false);
-}
-
-export function getValueByOrigin(x, y) {
-    if (x.length) { [x, y] = x; }
-
-    return (getValueBySmalle(x / 20, y / 20));
-}
-// 设定节点属性，默认为覆盖模式
-export function setValueBySmalle(node, attribute, cover = false) {
-    const key = point2key(node);
-
-    if (cover || !map[key]) {
-        map[key] = {};
-    }
-
-    Object.assign(map[key], attribute);
-}
-export function setValueByOrigin(node, attribute, cover = false) {
-    setValueBySmalle([node[0] / 20, node[1] / 20], attribute, cover);
-}
-// 删除节点
-export function deleteValueBySmalle(x, y) {
-    const status = getValueBySmalle(x, y);
-    if (status && status.connect) {
-        // 删除与当前点相连的点的连接信息
-        for (let i = 0; i < status.connect.length; i++) {
-            deleteConnectBySmalle(status.connect[i], [x, y]);
-        }
-    }
-    if (status) {
-        delete map[point2key(x, y)];
-        return true;
-    }
-}
-export function deleteValueByOrigin(x, y) {
-    if (x.length) { [x, y] = x; }
-
-    return (deleteValueBySmalle(x / 20, y / 20));
-}
-// 添加连接关系，如果重复那么就忽略
-export function pushConnectBySmalle(node, connect) {
-    let status = getValueBySmalle(node);
-
-    if (!status) {
-        return (false);
-    }
-    if (!status.connect) {
-        status.connect = [];
-    }
-    status = status.connect;
-    for (let i = 0; i < status.length; i++) {
-        if (status[i].isEqual(connect)) {
-            return (false);
-        }
-    }
-    status.push(connect);
-    return (true);
-}
-export function pushConnectByOrigin(node, connect) {
-    node = [node[0] / 20, node[1] / 20];
-    connect = [connect[0] / 20, connect[1] / 20];
-
-    return pushConnectBySmalle(node, connect);
-}
-// 删除连接关系，如果没有那么忽略
-export function deleteConnectBySmalle(node, connect) {
-    const status = getValueBySmalle(node);
-
-    if (!status || !status.connect) {
-        return (false);
-    }
-
-    for (let i = 0; i < status.connect.length; i++) {
-        if (status.connect[i].isEqual(connect)) {
-            status.connect.splice(i, 1);
-            break;
-        }
-    }
-    return (true);
-}
-// node 和 connect 是否相连
-export function isNodeInConnectBySmall(node, connect) {
-    const status = getValueBySmalle(node);
-
-    return (
-        status &&
-        /(line|point)/.test(status.type) &&
-        status.connect.some((point) => point.isEqual(connect))
-    );
-}
-export function isNodeInConnectByOrigin(a, b) {
-    const node = [a[0] / 20, a[1] / 20],
-        connect = [b[0] / 20, b[1] / 20];
-
-    return isNodeInConnectBySmall(node, connect);
-}
-export function deleteConnectByOrigin(node, connect) {
-    node = [node[0] / 20, node[1] / 20];
-    connect = [connect[0] / 20, connect[1] / 20];
-
-    return deleteConnectBySmalle(node, connect);
-}
-export function isLineBySmall(x, y) {
-    if (x.length) { [x, y] = x; }
-
-    const status = getValueBySmalle(x, y);
-
-    return (
-        status &&
-        /^(line|cross-point|cover-point)$/.test(status.type)
-    );
-}
-export function isLineByOrigin(x, y) {
-    if (x.length) { [x, y] = x; }
-
-    return isLineBySmall([x[0] * 0.05, y[1] * 0.05]);
-}
-// 在 [start、end] 范围中沿着 vector 直行，求最后一点的坐标
-export function alongTheLineBySmall(
-    start,
-    end = [Infinity, Infinity],
-    vector = [end[0] - start[0], end[1] - start[1]]
-) {
-    // 单位向量
-    vector = vector.map((n) => Math.sign(n));
-
-    // 起点并不是导线或者起点等于终点，直接返回
-    if (!isLineBySmall(start) || start.isEqual(end)) {
-        return (start);
-    }
-
-    let node = [start[0], start[1]],
-        next = [node[0] + vector[0], node[1] + vector[1]];
-    // 当前点没有到达终点，还在导线所在直线内部，那就前进
-    while (isLineBySmall(next) && !node.isEqual(end)) {
-        if (isNodeInConnectBySmall(node, next)) {
-            node = next;
-            next = [node[0] + vector[0], node[1] + vector[1]];
-        } else {
-            break;
-        }
-    }
-
-    return node;
-}
-export function alongTheLineByOrigin(a, b, c) {
-    const start = [a[0] / 20, a[1] / 20],
-        end = [b[0] / 20, b[1] / 20],
-        ans = alongTheLineBySmall(start, end, c);
-
-    return ([ans[0] * 20, ans[1] * 20]);
+/**
+ * new MapData(data, large) 运算的封装
+ * @param {{} | [number, number]} data
+ * @param {boolean} [large=false]
+ * @returns {MapData}
+ */
+export function $MD(data, large = false) {
+    return new MapData(data, large);
 }
