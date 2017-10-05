@@ -40,11 +40,17 @@ import * as schMap from 'src/libraries/map';
 
 import ElectronPoint from 'src/components/electron-point';
 
-// 2长度的数组 乘以 2*2的矩阵
-function product(a, b) {
+/**
+ * 点乘以旋转矩阵
+ * 
+ * @param {[number, number] | Point} point
+ * @param {Matrix} matrix
+ * @returns {Point}
+ */
+function product(point, matrix) {
     return $P(
-        a[0] * b.get(0, 0) + a[1] * b.get(1, 0),
-        a[0] * b.get(0, 1) + a[1] * b.get(1, 1)
+        point[0] * matrix.get(0, 0) + point[1] * matrix.get(1, 0),
+        point[0] * matrix.get(0, 1) + point[1] * matrix.get(1, 1)
     );
 }
 
