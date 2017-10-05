@@ -189,8 +189,17 @@ export function forceUpdateMap(map = '{}') {
         .forEach((key) => Reflect.deleteProperty(map, key));
 
     Object
-        .entries(data)
-        .forEach(([key, value]) => (map[key] = value));
+        .values(data)
+        .forEach((value) => new MapData(value).setMap());
+}
+
+/**
+ * 将整个图纸数据用 JSON 字符串的形式输出
+ * 
+ * @returns {string}
+ */
+export function outputMap() {
+    return JSON.stringify($map);
 }
 
 /**
