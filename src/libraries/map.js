@@ -1,8 +1,3 @@
-/*
- * TODO: 在部分方法中，为了提高速度，会出现直接引用 $map 中数据的情况，虽然几率很小，但也可能会发生其中数据被无意更改的情况
- * 所以可以考虑存入 $map 的数据添加拦截器，所有的 set 操作均需要进一步验证，直接手动更改是不允许的
- */
-
 import { $P, Point } from 'src/libraries/point';
 
 // 图纸标记缓存
@@ -31,13 +26,12 @@ class MapData {
      */
     constructor(data, large = false) {
         if (Point.isPoint(data)) {
-            const node = large ? $P(data).mul(0.05) : $P(data);
-            const key = point2key(node);
+            const point = large ? $P(data).mul(0.05) : $P(data);
+            const key = point2key(point);
 
-            return Boolean($map[key])
+            return $map[key]
                 ? Object.clone($map[key])
-                // TODO: isExist 键值可能需要改变，此值表示当前对象是否被修改过
-                : { point: node, isExist: true };
+                : { point };
         } else {
             return Object.clone(data);
         }
@@ -49,12 +43,10 @@ class MapData {
      * @returns {void}
      */
     setMap() {
-        if (this.isExist) {
-            return;
-        }
+        const data = Object.clone(this);
 
-        const key = point2key(this.point);
-        $map[key] = Object.clone(this);
+        Object.freezeAll(data);
+        $map[point2key(this.point)] = data;
     }
     /**
      * 将当前数据与 $map 中已有的数据进行合并
@@ -62,25 +54,24 @@ class MapData {
      * @returns {void}
      */
     mergeMap() {
-        if (this.isExist) {
-            return;
-        }
-
         const exclude = ['connect'],
             key = point2key(this.point),
-            origin = $map[key];
+            origin = $map[key],
+            ans = Object.clone();
 
-        if (Boolean(origin)) {
+        if (origin) {
             Object
                 .keys(this)
                 .filter((key) => !exclude.includes(key))
-                .forEach((key) => (origin[key] = this[key]));
+                .forEach((key) => (ans[key] = this[key]));
 
             this.connect
                 .filter((point) => !origin.hasConnect(point))
-                .forEach((point) => origin.connect.push(Array.from(point)));
+                .forEach((point) => ans.connect.push(Array.from(point)));
+
+            this.setMap.call(ans);
         } else {
-            $map[key] = Object.clone(this);
+            this.setMap();
         }
     }
     /**
@@ -154,24 +145,24 @@ class MapData {
      * @param {boolean} [large=false]
      * @returns {Point}
      */
-    alongTheLineBySmall(
+    alongTheLine(
         end = [Infinity, Infinity],
         vector = $P(end, this.point),
         large = false
     ) {
-        const
-            start = $P(this.point),
-            unitVector = vector.sign();
+        const start = $P(this.point),
+            unitVector = vector.sign(),
+            endPoint = large ? $P(end).mul(0.05) : $P(end);
 
         // 起点并不是导线或者起点等于终点，直接返回
-        if (!this.isLine() || start.isEqual(end)) {
+        if (!this.isLine() || start.isEqual(endPoint)) {
             return (start);
         }
 
         let node = $P(start),
             next = node.add(unitVector);
         // 当前点没有到达终点，还在导线所在直线内部，那就前进
-        while (this.isLine.call($map[point2key(next)]) && !node.isEqual(end)) {
+        while (this.isLine.call($map[point2key(next)]) && !node.isEqual(endPoint)) {
             if (this.hasConnect.call($map[point2key(node)], next)) {
                 node = next;
                 next = node.add(unitVector);
@@ -180,7 +171,7 @@ class MapData {
             }
         }
 
-        return node;
+        return large ? node.mul(20) : node;
     }
 }
 
