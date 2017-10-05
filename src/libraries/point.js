@@ -1,5 +1,3 @@
-// TODO: 应该设置 Point 继承迭代器，以方便解构赋值
-
 /**
  * 点和向量类
  *
@@ -50,6 +48,14 @@ class Point {
         });
     }
 
+    /**
+     * 迭代器函数
+     * 
+     * @returns {Generator}
+     */
+    [Symbol.iterator]() {
+        return ([this[0], this[1]])[Symbol.iterator]();
+    }
     /**
      * 加法：
      * 第一项将会调用 Point 构造函数生成实例，然后参与运算；
