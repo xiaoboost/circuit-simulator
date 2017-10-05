@@ -8,9 +8,9 @@ const unit = /[EI]/;
 class Matrix {
     /**
      * Creates an instance of Matrix.
-     * @param {any} row 
-     * @param {any} [column=row] 
-     * @param {number} [value=0] 
+     * @param {number[][] | Matrix | number} row
+     * @param {number | string} [column=row]
+     * @param {number | string} [value=0]
      */
     constructor(row, column = row, value = 0) {
         if (row instanceof Array) {
@@ -307,35 +307,54 @@ class Matrix {
         const ans = ui.mul(li).mul(P);
         return (ans);
     }
-
-    // 迭代方法
-    forEach(fn) {
+    /**
+     * forEach 迭代方法，类似 Array.prototype.forEach
+     * 
+     * @param {(value: number, [x, y]: [number, number], martix: Matrix) => any} callback
+     * @returns {void}
+     */
+    forEach(callback) {
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            fn(this._view[i], [x, y], this);
+            callback(this._view[i], [x, y], this);
         }
         return (this);
     }
-    every(fn) {
+    /**
+     * every 迭代方法，类似 Array.prototype.every
+     * 
+     * @param {(value: number, [x, y]: [number, number], martix: Matrix) => boolean} callback
+     * @returns {boolean}
+     */
+    every(callback) {
         let ans;
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            ans = fn(this._view[i], [x, y], this);
+            ans = callback(this._view[i], [x, y], this);
             if (!ans) { return (false); }
         }
         return (true);
     }
 }
 
-function isMatrix(ma) {
+/**
+ * 是否是标准矩阵。
+ * 标准矩阵的标准是：数组是稠密书组，内部的值全是 number
+ * 
+ * @param {number[][] | Matrix} matrix 
+ * @returns {{ row: number, column: number } | boolean}
+ */
+function isMatrix(matrix) {
     // 记录行列数
-    const row = ma.length, column = ma[0].length;
+    const row = matrix.length, column = matrix[0].length;
+
     // 行连续
-    if (!Object.keys(ma).every((n, i) => +n === i)) {
+    if (!Object.keys(matrix).every((n, i) => +n === i)) {
         return (false);
     }
+
     // 列连续且列长均相等
-    if (!Object.values(ma).every((col) => {
+    if (!Object.values(matrix).every((col) => {
         return col && col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
             Object.values(col).every((n) => typeof n === 'number');
@@ -349,8 +368,15 @@ function isMatrix(ma) {
 //     //
 // }
 
-function $M(a, b, c) {
-    return new Matrix(a, b, c);
+/**
+ * new Matrix(row, column, value) 运算的封装
+ * 
+ * @param {number[][] | Matrix | number} row
+ * @param {number | string} [column=row]
+ * @param {number | string} [value=0]
+ */
+export function $M(row, column = row, value = 0) {
+    return new Matrix(row, column, value);
 }
 
 // 旋转矩阵
@@ -360,5 +386,3 @@ function $M(a, b, c) {
 //     $M([[1, 0], [0, -1]]),  // 沿 X 轴镜像
 //     $M([[-1, 0], [0, 1]]),   // 沿 Y 轴镜像
 // ];
-
-export { $M };

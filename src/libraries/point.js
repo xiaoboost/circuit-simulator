@@ -10,7 +10,7 @@ class Point {
      * 检测输入是否是标准点对象
      *
      * @static
-     * @param {*} point
+     * @param {any} point
      * @returns {boolean}
      */
     static isPoint(point) {
