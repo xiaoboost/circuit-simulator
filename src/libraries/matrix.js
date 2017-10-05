@@ -1,7 +1,17 @@
 const unit = /[EI]/;
 
-// 矩阵类
+/**
+ * 矩阵类
+ * 
+ * @class Matrix
+ */
 class Matrix {
+    /**
+     * Creates an instance of Matrix.
+     * @param {any} row 
+     * @param {any} [column=row] 
+     * @param {number} [value=0] 
+     */
     constructor(row, column = row, value = 0) {
         if (row instanceof Array) {
             // 从数组创建矩阵
@@ -41,25 +51,31 @@ class Matrix {
 
     /**
      * 取出矩阵元素
-     * @param {Number} i 第几行
-     * @param {Number} j 第几列
-     * @returns {Number} 矩阵元素
-     * @memberof Matrix
+     * 
+     * @param {number} i
+     * @param {number} j
+     * @returns {number}
      */
     get(i, j) {
         return this._view[i * this.column + j];
     }
     /**
-     * 设置矩阵值
-     * @param {Number} i 第几行
-     * @param {Number} j 第几列
-     * @param {Number} value 设置的矩阵元素值
-     * @memberof Matrix
+     * 设置矩阵第 i 行、第 j 列的值为 value
+     * 
+     * @param {number} i
+     * @param {number} j
+     * @param {number} value
+     * @returns {void}
      */
     set(i, j, value) {
         this._view[i * this.column + j] = value;
     }
-    // 取出矩阵某一行
+    /**
+     * 取出矩阵第 row 行
+     * 
+     * @param {number} row 
+     * @returns {number[]}
+     */
     getRow(row) {
         row = row < 0 ? this.row + row : row;
         if (row > this.row || row < 0) { return (false); }
@@ -70,7 +86,12 @@ class Matrix {
         }
         return ans;
     }
-    // 取出矩阵某一列
+    /**
+     * 取出矩阵的第 column 列
+     * 
+     * @param {number} column 
+     * @returns {number[]}
+     */
     getColumn(column) {
         column = column < 0 ? this.column + column : column;
         if (column > this.column || column < 0) { return (false); }
@@ -81,7 +102,11 @@ class Matrix {
         }
         return ans;
     }
-    // 输出字符串
+    /**
+     * 以字符串形式输出字符串
+     * 
+     * @returns {string}
+     */
     toString() {
         const maxColumnLen = [];
         for (let i = 0; i < this.column; i++) {
@@ -98,18 +123,30 @@ class Matrix {
         let str = '';
         for (let i = 0; i < this.row; i++) {
             str += this.getRow(i)
-                .map((n, i) => String(n)
-                    .padStart(maxColumnLen[i], ' '))
+                .map(
+                    (n, i) =>
+                        String(n).padStart(maxColumnLen[i], ' ')
+                )
                 .join(',  ') + ';\n';
         }
         return (str);
     }
-    // 字符串连接
-    join(str) {
+    /**
+     * 将矩阵通过字符串连接起来
+     * 
+     * @param {string} [str=','] 
+     * @returns {string}
+     */
+    join(str = ',') {
         return this._view.join(str);
     }
-
-    // 交换坐标元素a、b所在行、列
+    /**
+     * 交换坐标元素 a、b 所在行、列
+     * 
+     * @param {[number, number]} a 
+     * @param {[number, number]} b 
+     * @returns {void}
+     */
     exchange(a, b) {
         // 交换行
         if (a[0] !== b[0]) {
@@ -133,7 +170,12 @@ class Matrix {
         }
         return (this);
     }
-    // this * ma
+    /**
+     * this * ma 矩阵乘法运算
+     * 
+     * @param {MatrixLike} ma
+     * @returns {Matrix}
+     */
     mul(ma) {
         const a = (ma instanceof Matrix)
             ? ma
@@ -161,7 +203,12 @@ class Matrix {
 
         return (ans);
     }
-    // ma * this
+    /**
+     * ma * this 矩阵乘法运算
+     * 
+     * @param {MatrixLike} ma
+     * @returns {Matrix}
+     */
     multo(ma) {
         const a = (ma instanceof Matrix)
             ? ma
@@ -169,7 +216,11 @@ class Matrix {
 
         return a.mul(this);
     }
-    // 列主元 LU 三角分解，返回 LUP 矩阵
+    /**
+     * 列主元 LU 三角分解，返回 LUP 矩阵
+     * 
+     * @returns {[Matrix, Matrix, Matrix]}
+     */
     luDecompose() {
         if (this.row !== this.column) {
             return (false);
@@ -213,7 +264,11 @@ class Matrix {
         }
         return ([L, U, P]);
     }
-    // 基于LU分解的矩阵求逆
+    /**
+     * 基于LU分解的矩阵求逆
+     * 
+     * @returns {Matrix}
+     */
     inverse() {
         const [L, U, P] = this.luDecompose(), n = this.row;
         for (let i = 0; i < U.row; i++) {
