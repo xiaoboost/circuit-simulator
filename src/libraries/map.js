@@ -21,7 +21,7 @@ function point2key(node) {
 class MapData {
     /**
      * Creates an instance of MapData.
-     * @param {{} | [number, number]} data
+     * @param {{} | [number, number] | Point} data
      * @param {boolean} [large=false]
      */
     constructor(data, large = false) {
@@ -204,7 +204,8 @@ export function outputMap() {
 
 /**
  * new MapData(data, large) 运算的封装
- * @param {{} | [number, number]} data
+ * 
+ * @param {{} | [number, number] | Point} data
  * @param {boolean} [large=false]
  * @returns {MapData}
  */
