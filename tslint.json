@@ -1,14 +1,11 @@
 {
     "defaultSeverity": "error",
-    "extends": [
-        // 默认规则
-        "tslint:recommended"
-    ],
+    "extends":"tslint:recommended",
     "rules": {
         // 类定义时，不需要写出 public 关键字
         "member-access": [true, "no-public"],
-        // 避免带有副作用的 import 语句
-        "no-import-side-effect": true,
+        // 允许带有副作用的 import 语句
+        "no-import-side-effect": false,
         // 数字、字符串、布尔类型的变量不需要显式的类型声明
         "no-inferrable-types": [true, "ignore-params", "ignore-properties"],
         // 禁止使用 non-null 断言
@@ -130,6 +127,8 @@
         // 对象属性不排序
         "object-literal-sort-keys": false,
         // 每行代码长度无限制
-        "max-line-length": false
+        "max-line-length": false,
+        // 变量名必须是驼峰或者以下划线开头
+        "variable-name": [true, "allow-leading-underscore"]
     }
 }

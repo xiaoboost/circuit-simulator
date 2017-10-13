@@ -1,14 +1,6 @@
-// 部分规则在开发环境中警告就足够了
-function process(level = 1) {
-    return ((!process.env) || process.env.NODE_ENV === 'development') ? level : 2;
-}
-
 module.exports = {
     'root': true,
-    'extends': [
-        'eslint:recommended',
-        'plugin:vue/recommended',
-    ],
+    'extends': 'eslint:recommended',
     'parserOptions': {
         'ecmaVersion': 7,
         'sourceType': 'module',
@@ -18,35 +10,16 @@ module.exports = {
         'node': true,
         'es6': true,
     },
-    plugins: [
-        'vue',
-    ],
     globals: {
         'window': true,
-        '$debug': true,
-        '$map': true,
-        '$SVG_NS': true,
-        '$env': true,
+        'global': true,
     },
     // 自定义规则
     rules: {
-        // vue 规则
-        // 有闭合标签元素的闭合标签必须存在
-        'vue/html-end-tags': 2,
-        // 不允许 img 等元素的自闭合符号
-        'vue/html-no-self-closing': 2,
-        // 不允许存在双重属性
-        'vue/no-duplicate-attributes': 2,
-        // 不允许令人困惑的 v-for v-if，v-for 必须在 v-if 的前面，或者是上级
-        'vue/no-confusing-v-for-v-if': 2,
-        // v-for 的 key 属性是必须的
-        'vue/require-v-for-key': 2,
-
-        // JavaScript 规则
         // 允许扩展原生数据结构
         'no-extend-native': 0,
-        // 调试时允许 debugger 语句，构建产品时禁止
-        'no-debugger': process(0),
+        // 允许 debugger 语句
+        'no-debugger': 0,
         // 箭头表达式的括号不可省
         'arrow-parens': [2, 'always'],
         // 箭头表达式前后空格
@@ -248,7 +221,7 @@ module.exports = {
         // 禁止在 finally 语句块中出现控制流语句
         'no-unsafe-finally': 2,
         // 禁止未使用过的变量，在函数参数中，最后一个参数必须使用
-        'no-unused-vars': [process(), { 'vars': 'all', 'args': 'after-used' }],
+        'no-unused-vars': [2, { 'vars': 'all', 'args': 'after-used' }],
         // 禁用不必要的 .call() 和 .apply()
         'no-useless-call': 2,
         // 禁止对象中不必要的计算属性键
