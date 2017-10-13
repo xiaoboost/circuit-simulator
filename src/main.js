@@ -1,5 +1,5 @@
 import 'src/css/main';
-import 'src/libraries/init';
+import 'src/lib/init';
 
 import Vue from 'vue';
 import App from 'src/App';
@@ -21,7 +21,7 @@ const instance = {
 if ($env.NODE_ENV === 'development') {
     instance.mounted = function() {
         const area = document.querySelector('.drawing-main svg g'),
-            Compo = require('src/libraries/debugger').default;
+            Compo = require('src/lib/debugger').default;
 
         // 调试组件独立于 app，挂在全局变量上
         window.$debug = new Compo();

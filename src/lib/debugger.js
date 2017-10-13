@@ -1,5 +1,5 @@
 import collection from 'src/vuex/collection';
-import { outputAll } from 'src/libraries/map';
+import { outputAll } from 'src/lib/map';
 
 // 全局常量
 const doc = document, NS = window.$SVG_NS;

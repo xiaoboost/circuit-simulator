@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { action } from 'src/libraries/icon';
+import { action } from 'src/lib/icon';
 
 export default {
     name: 'ActionMenu',

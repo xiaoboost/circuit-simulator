@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { $P } from 'src/libraries/point';
+import { $P } from 'src/lib/point';
 
 export default {
     props: {

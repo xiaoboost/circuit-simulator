@@ -34,9 +34,9 @@
 
 <script>
 import Electronics from './shape';
-import { $P } from 'src/libraries/point';
-import { $M } from 'src/libraries/matrix';
-import * as schMap from 'src/libraries/map';
+import { $P } from 'src/lib/point';
+import { $M } from 'src/lib/matrix';
+import * as schMap from 'src/lib/map';
 
 import ElectronPoint from 'src/components/electron-point';
 

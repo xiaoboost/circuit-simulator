@@ -1,5 +1,5 @@
-import { $P } from 'src/libraries/point';
-import * as schMap from 'src/libraries/map';
+import { $P } from 'src/lib/point';
+import * as schMap from 'src/lib/map';
 
 // 四方向
 const rotate = [
