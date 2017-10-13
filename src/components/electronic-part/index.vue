@@ -36,7 +36,7 @@
 import Electronics from './shape';
 import { $P } from 'src/libraries/point';
 import { $M } from 'src/libraries/matrix';
-import * as schMap from 'src/libraries/map';
+import { mapData, hasMapData } from 'src/libraries/map';
 
 import ElectronPoint from 'src/components/electron-point';
 
@@ -251,36 +251,34 @@ export default {
                 position = this.position.floorToSmall();
 
             // 器件内边距占位
-            position.around(inner, (x, y) =>
-                schMap.setValueBySmalle([x, y], {
+            position.around(inner, (x, y) => {
+                debugger;
+                mapData({
+                    point: $P(x, y),
                     id: this.id,
                     type: 'part',
-                })
-            );
+                }).setMap();
+            });
             // 器件管脚距占位
-            this.points.forEach((n, i) =>
-                schMap.setValueBySmalle(
-                    n.position.floorToSmall().add(position),
-                    {
-                        id: `${this.id}-${i}`,
-                        type: 'part-point',
-                        connect: [],
-                    }
-                )
-            );
+            this.points.forEach((point, i) => {
+                mapData({
+                    connect: [],
+                    type: 'part-point',
+                    id: `${this.id}-${i}`,
+                    point: point.position
+                        .floorToSmall()
+                        .add(position),
+                }).setMap();
+            });
         },
         deleteSign() {
             const inner = this.margin.inner,
                 position = this.position.floorToSmall();
 
             // 删除器件内边距占位
-            position.around(inner, (x, y) => schMap.deleteValueBySmalle([x, y]));
+            position.around(inner, (x, y) => mapData([x, y]).deleteDate());
             // 删除器件引脚占位
-            this.points.forEach((n) =>
-                schMap.deleteValueBySmalle(
-                    n.floorToSmall().add(position)
-                )
-            );
+            this.points.forEach((node) => mapData(node.floorToSmall().add(position)).deleteDate());
         },
         // 查询操作
         // 器件在当前坐标是否被占用
@@ -292,7 +290,7 @@ export default {
             // 检查器件管脚，管脚点不允许存在任何元素
             for (let i = 0; i < this.points.length; i++) {
                 const node = position.add(this.points[i].position.floorToSmall());
-                if (schMap.getValueBySmalle(node)) {
+                if (hasMapData(node)) {
                     return (true);
                 }
                 coverHash[node.join(',')] = true;
@@ -300,23 +298,34 @@ export default {
 
             // 扫描内边距，内边距中不允许存在任何元素
             position.around(margin.inner, (x, y, stop) => {
-                schMap.getValueBySmalle([x, y])
+                hasMapData([x, y])
                     ? (label = true, stop())
                     : coverHash[`${x},${y}`] = true;
             });
-            if (label) { return (true); }
+            if (label) {
+                return (true);
+            }
 
             // 扫描外边距
             position.around(margin.outter, (x, y, stop) => {
                 // 跳过内边距
-                if (coverHash[`${x},${y}`]) { return (false); }
-                // 外边框被器件占据，那么校验相互距离
-                const status = schMap.getValueBySmalle([x, y]);
-                if (!status || status.type !== 'part') { return (true); }
+                if (coverHash[`${x},${y}`]) {
+                    return (false);
+                }
+                // 外边框为空
+                if (!hasMapData([x, y])) {
+                    return (true);
+                }
+                // 外边框不是由器件占据
+                if (mapData([x, y]).type !== 'part') {
+                    return (true);
+                }
 
+                // 校验相互距离
                 const part = this.$parent.find(status.id),
                     another = part.margin.outter,
-                    distance = position.add(-1, part.position.floorToSmall());
+                    distance = position.add(part.position.floorToSmall(), -1);
+
                 // 分别校验 x、y 轴
                 for (let i = 0; i < 2; i++) {
                     if (distance[i] !== 0) {

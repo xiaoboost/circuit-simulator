@@ -14,6 +14,23 @@ function point2key(node) {
 }
 
 /**
+ * 复制地图标记数据
+ * 
+ * @param {{}} data
+ * @returns {{}}
+ */
+function dataClone(data) {
+    const ans = Object.assign({}, data);
+    ans.point = $P(ans.point);
+
+    if (data.connect) {
+        ans.connect = data.connect.map((node) => Array.from(node));
+    }
+
+    return (ans);
+}
+
+/**
  * 图纸标记数据类
  * 
  * @class MapData
@@ -29,11 +46,14 @@ class MapData {
             const point = large ? $P(data).mul(0.05) : $P(data);
             const key = point2key(point);
 
-            return $map[key]
-                ? Object.clone($map[key])
-                : { point };
+            Object.assign(
+                this,
+                $map[key]
+                    ? dataClone($map[key])
+                    : { point }
+            );
         } else {
-            return Object.clone(data);
+            Object.assign(this, dataClone(data));
         }
     }
 
@@ -43,7 +63,8 @@ class MapData {
      * @returns {void}
      */
     setMap() {
-        const data = Object.clone(this);
+        const data = dataClone(this);
+        debugger;
 
         Object.freezeAll(data);
         $map[point2key(this.point)] = data;
@@ -57,7 +78,7 @@ class MapData {
         const exclude = ['connect'],
             key = point2key(this.point),
             origin = $map[key],
-            ans = Object.clone();
+            ans = dataClone();
 
         if (origin) {
             Object
@@ -194,6 +215,16 @@ export function forceUpdateMap(map = '{}') {
 }
 
 /**
+ * 此点是否含有数据
+ * 
+ * @param {[number, number] | Point} point
+ * @returns {boolean}
+ */
+export function hasMapData(point) {
+    return (!!$map[point2key(point)]);
+}
+
+/**
  * 将整个图纸数据用 JSON 字符串的形式输出
  * 
  * @returns {string}
@@ -209,6 +240,6 @@ export function outputMap() {
  * @param {boolean} [large=false]
  * @returns {MapData}
  */
-export function $MD(data, large = false) {
+export function mapData(data, large = false) {
     return new MapData(data, large);
 }

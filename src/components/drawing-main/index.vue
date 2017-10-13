@@ -146,7 +146,7 @@ export default {
             this.$store.commit(
                 'SET_POSITION',
                 this.position
-                    .add(-1, mousePosition)
+                    .add(mousePosition, -1)
                     .mul(size / this.zoom / 20)
                     .add(mousePosition)
                     .round(1)
@@ -170,7 +170,7 @@ export default {
             const el = this.$el,
                 stopEvent = { el, type: 'mouseup', which: 'left' },
                 mouseStart = $P(e.pageX, e.pageY),
-                start = mouseStart.add(-1, this.position).mul(1 / this.zoom),
+                start = mouseStart.add(this.position, -1).mul(1 / this.zoom),
                 handlers = (e) => this.selections.splice(1, 1, e.$mouse),
                 cursor = (e) => (mouseStart.distance([e.pageX, e.pageY]) > 15) && 'select_box',
                 afterEvent = () => {
