@@ -25,6 +25,7 @@
     "cross-env": "^5.0.5",
     "cross-spawn": "^5.1.0",
     "css-loader": "^0.28.7",
+    "chromedriver": "^2.33.1",
     "eslint": "^4.8.0",
     "eventsource-polyfill": "^0.9.6",
     "express": "^4.16.2",
