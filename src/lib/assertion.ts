@@ -30,6 +30,16 @@ export default {
     },
 
     /**
+     * 断言：输入是否是 Symbol 类型
+     *
+     * @param {*} x
+     * @returns {x is symbol}
+     */
+    isSymbol(x: any): x is symbol {
+        return (typeof x === 'symbol');
+    },
+
+    /**
      * 断言：输入是否是函数
      *
      * @param {*} x
