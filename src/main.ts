@@ -15,19 +15,22 @@ const instance = {
     el: '#app',
     template: '<App/>',
     components: { App },
+    mounted: () => { return; },
 };
 
 // 调试状态时运行这段代码
-if (window.$env.NODE_ENV === 'development') {
+if (window.$ENV.NODE_ENV === 'development') {
     instance.mounted = () => {
         const area = document.querySelector('.drawing-main svg g') as Element,
+            // tslint:disable-next-line:no-require-imports
             Compo = require('src/lib/debugger').default;
 
         // 调试组件独立于 app，挂在全局变量上
-        window.$debug = new Compo();
-        area.appendChild(window.$debug.$el);
+        window.$DEBUG = new Compo();
+        area.appendChild(window.$DEBUG.$el);
     };
 }
+
 // init vue
 new Vue(instance);
 
