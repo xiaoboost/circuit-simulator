@@ -284,7 +284,7 @@ class Point {
     /**
      * 以 this 中心点，margin 为四角顶点，如果范围内有坐标能使 predicate 返回 true，那么该方法返回 true
      *
-     * @param {number[]} margin
+     * @param {number[][]} margin
      * @param {(x: number, y: number, stop: () => void) => boolean} predicate
      * @returns {boolean}
      */
@@ -313,10 +313,10 @@ class Point {
         for (let m = 1; ans.length < 1; m++) {
             for (let i = 0; i < m; i++) {
                 const x = i * factor, y = (m - i) * factor,
-                    around = (x === 0)
+                    around: Array<[number, number]> = (x === 0)
                         ? [[0, y], [0, -y], [y, 0], [-y, 0]]
                         : [[x, y], [x, -y], [-x, y], [-x, -y]],
-                    points = around.map((n) => this.add(n as [number, number]));
+                    points = around.map((n) => this.add(n));
 
                 ans.push(...points.filter(predicate));
 
