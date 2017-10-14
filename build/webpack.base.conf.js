@@ -34,11 +34,12 @@ module.exports = {
         common: [
             'vue',
             'vuex',
+
             ...readdir('plugin'),
-            ...readdir('libraries'),
+            ...readdir('lib'),
         ],
         // 主业务逻辑文件
-        main: resolve('./src/main.js'),
+        main: resolve('./src/main.ts'),
     },
     output: {
         // 编译输出的静态资源根路径
