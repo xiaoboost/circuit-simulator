@@ -7,8 +7,8 @@ interface ObjectConstructor {
      */
     isEmpty(from: object): boolean;
     /**
-     * 深复制输入对象。
-     * 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
+     * 深复制输入对象
+     *  - 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
      *
      * @template T
      * @param {T} from
@@ -18,10 +18,10 @@ interface ObjectConstructor {
     /**
      * 将输入对象的所有可枚举属性全部隐藏
      *
-     * @param {*} from
+     * @param {object} from
      * @returns {boolean}
      */
-    hideAll(from: any): void;
+    hideAll(from: object): void;
     /**
      * 将输入对象以及下属所有对象全部冻结
      *
@@ -38,6 +38,7 @@ interface ObjectConstructor {
     sealAll(from: any): boolean;
 }
 
+type AnyValueObject<T> = { [P in keyof T]: any };
 interface Object {
     /**
      * 当前对象实例与输入对象是否相等
@@ -46,18 +47,20 @@ interface Object {
      * @returns {boolean}
      */
     isEqual(obj: any): boolean;
-    /**
-     * 原对象的 key 不变，生成新的对象
-     *
-     * @param {(value: any, key: string) => any} fn
-     * @returns {object}
-     */
-    map(fn: (value: any, key: string) => any): object;
+     /**
+      * 原对象的 key 不变，生成新的对象
+      * 
+      * @template T
+      * @param {T} this
+      * @param {(value: any, key: string) => any} callback
+      * @returns {toAny<T>}
+      */
+    map<T>(this: T, callback: (value: any, key: string) => any): AnyValueObject<T>;
 }
 
 interface ArrayConstructor {
     /**
-     * 复制数组
+     * 深复制数组
      *
      * @param {any[]} from
      * @returns {any[]}
@@ -67,12 +70,12 @@ interface ArrayConstructor {
 
 interface Array<T> {
     /**
-     * 当前数组与输入数组是否相等
+     * 当前数组与输入是否相等
      *
-     * @param {any[]} arr
+     * @param {any} to
      * @returns {boolean}
      */
-    isEqual(arr: any[]): boolean;
+    isEqual(to: any): boolean;
     /**
      * 根据下标取出当前数组元素
      *
@@ -99,7 +102,7 @@ interface Array<T> {
 interface Number {
     /**
      * 按照有效数字的位数进行四舍五入。
-     * 默认 6 位有效数字
+     *  - 默认 6 位有效数字 [bits=6]
      *
      * @param {number} [bits=6]
      * @returns {number}

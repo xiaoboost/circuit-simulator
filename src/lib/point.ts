@@ -58,9 +58,9 @@ class Point {
     }
 
     /**
-     * 加法：
-     * 第一项将会调用 Point 构造函数生成实例，然后参与运算；
-     * 第二项输入 -1 表示是减法，且 this 是被减数；
+     * 加法
+     *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
+     *  - 第二项输入 -1 表示是减法，且 this 是被减数
      *
      * @param {PointInput} added
      * @param {number} [label=1]
@@ -78,9 +78,9 @@ class Point {
         return (sum);
     }
     /**
-     * 乘法：
-     * 第一项将会调用 Point 构造函数生成实例，然后参与运算；
-     * 第二项输入 -1 表示是除法，且 this 是被除数；
+     * 乘法
+     *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
+     *  - 第二项输入 -1 表示是除法，且 this 是被除数
      *
      * @param {PointInput} multiplier
      * @param {number} [label=1]
@@ -239,8 +239,8 @@ class Point {
         return (Boolean(this[0] * vector[0] + this[1] * vector[1]));
     }
     /**
-     * 是否和输入向量方向相同。
-     * 如果输入向量是 0 向量，则输出 false
+     * 是否和输入向量方向相同
+     *  - 如果输入向量是 0 向量，则输出 false
      *
      * @param {PointLike} vector
      * @returns {boolean}
@@ -252,8 +252,8 @@ class Point {
         );
     }
     /**
-     * 是否和输入向量方向相反。
-     * 如果输入向量是 0 向量，则输出 false
+     * 是否和输入向量方向相反
+     *  - 如果输入向量是 0 向量，则输出 false
      *
      * @param {PointLike} vector
      * @returns {boolean}

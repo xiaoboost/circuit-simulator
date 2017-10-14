@@ -1,35 +1,15 @@
-// tslint:disable-next-line
-/// <reference path="./init.d.ts" />
-
-// 深复制
-// TODO: 还需要考虑循环引用的情况，此时应当直接抛出错误
-function clone(from: any): any {
-    if (from instanceof Array) {
-        return Array.clone(from);
-    } else if (from instanceof Object) {
-        return Object.clone(from);
-    } else {
-        return from;
-    }
-}
+import assert from './assertion';
 
 Object.assign(Object, {
     isEmpty: (from: {}) => Object.keys(from).length === 0,
-
-    clone(from: {}): {} {
-        return Object
-            .keys(from)
-            .reduce((obj, key) => ((obj[key] = clone(from[key])), obj), {});
-    },
-
     hideAll: (obj: {}): void => Object.keys(obj).forEach((key) => {
         Object.defineProperty(obj, key, {
             configurable: false,
             enumerable: false,
         });
     }),
-    freezeAll(obj: {}): boolean {
-        if (!(obj instanceof Object)) {
+    freezeAll(obj: any): boolean {
+        if (!assert.isObject(obj)) {
             return (false);
         }
 
@@ -37,8 +17,8 @@ Object.assign(Object, {
         Object.freeze(obj);
         return (true);
     },
-    sealAll(obj: {}): boolean {
-        if (!(obj instanceof Object)) {
+    sealAll(obj: any): boolean {
+        if (!assert.isObject(obj)) {
             return (false);
         }
 
@@ -51,21 +31,20 @@ Object.assign(Object, {
 Object.assign(Object.prototype, {
     // 对象是否相等
     isEqual(this: {}, obj: {}) {
-        const thisKeys = Object.keys(this),
-            fromKeys = Object.keys(obj);
-
-        if (!thisKeys.isEqual(fromKeys)) {
+        if (!assert.isObject(obj)) {
+            return (false);
+        }
+        if (!Object.keys(this).isEqual(Object.keys(obj))) {
             return (false);
         }
 
-        return thisKeys.every(
-            (key) => {
-                const value = this[key] as {};
-                return (Boolean(value) && Boolean(value.isEqual))
+        return Object.entries(this).every(
+            ([key, value]) =>
+                (assert.isObject(value) && assert.isFuncton(value.isEqual))
                     ? value.isEqual(obj[key])
-                    : value === obj[key];
-            },
+                    : value === obj[key],
         );
+
     },
     map(this: {}, fn: (value: any, key: string) => any) {
         return Object
@@ -74,42 +53,35 @@ Object.assign(Object.prototype, {
     },
 });
 
-Object.assign(Array, {
-    clone: (from: any[]) => from.map(clone),
-});
-
 Object.assign(Array.prototype, {
-    isEqual(this: any[], arr: any): boolean {
-        if (Boolean(arr)) {
+    isEqual(this: any[], to: any): boolean {
+        if (!assert.isArray(to)) {
             return (false);
         }
-        if (this.length !== arr.length) {
+        if (this.length !== to.length) {
             return (false);
         }
 
         return this.every(
             (item, i) =>
-                (Boolean(item) && Boolean((item as any[]).isEqual))
-                    ? (item as  any[]).isEqual(arr[i])
-                    : item === arr[i],
+                (assert.isObject(item) && assert.isFuncton(item.isEqual))
+                    ? item.isEqual(to[i])
+                    : item === to[i],
         );
     },
     // 取出下标为 index 的元素
     get(this: any[], index: number): any {
-        const sub = (index >= 0)
-            ? index
-            : this.length + index;
+        const sub = (index >= 0) ? index : this.length + index;
 
-        return (sub >= 0 && sub < this.length)
-            ? this[sub]
-            : false;
+        if (sub < 0 || sub >= this.length) {
+            throw new Error('(array) index out of bounds.');
+        }
+
+        return this[sub];
     },
     // 删除回调返回第一个 true 的元素
     delete(this: any[], predicate: (value: any, index: number) => boolean): boolean {
-        const fn = (predicate instanceof Function)
-            ? predicate
-            : (item) => item === predicate;
-        const index = this.findIndex(fn);
+        const index = this.findIndex(predicate);
 
         if (index !== -1) {
             this.splice(index, 1);
@@ -135,7 +107,7 @@ Object.assign(Number.prototype, {
             throw new Error('Illegal Number');
         }
 
-        const value = Math.abs(this.valueOf()),
+        const value = Math.abs(origin),
             toInt = Math.floor(Math.log10(value)) - bits + 1,
             transform = 10 ** toInt,
             // round 一定是整数
