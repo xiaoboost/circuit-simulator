@@ -79,4 +79,14 @@ export default {
     isRegExp(x: any): x is RegExp {
         return (Object.prototype.toString.call(x) === '[object RegExp]');
     },
+
+    /**
+     * 断言：输入是否是 DOM 元素
+     *
+     * @param {*} x
+     * @returns {x is HTMLElement}
+     */
+    isElement(x: any): x is HTMLElement {
+        return (/^\[object HTML([a-zA-Z]+)Element\]$/.test(Object.prototype.toString.call(x)));
+    },
 };
