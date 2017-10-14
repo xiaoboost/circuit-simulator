@@ -128,7 +128,12 @@
         "object-literal-sort-keys": false,
         // 每行代码长度无限制
         "max-line-length": false,
-        // 变量名必须是驼峰或者以下划线开头
-        "variable-name": [true, "allow-leading-underscore"]
+        // 变量名必须避开关键字，允许是驼峰形式，允许以下划线开头，允许首字母大写
+        "variable-name": [true,
+            "allow-leading-underscore",
+            "ban-keywords",
+            "check-format",
+            "allow-pascal-case"
+        ]
     }
 }
