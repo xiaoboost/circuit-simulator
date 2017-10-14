@@ -15,7 +15,6 @@ export default new Vuex.Store({
     },
     state: {
         page: '',
-        $SVG_NS: 'http://www.w3.org/2000/svg',
     },
     mutations: {
         SET_PAGE(state, page) {

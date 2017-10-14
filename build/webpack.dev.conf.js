@@ -1,13 +1,13 @@
 const utils = require('./utils'),
     webpack = require('webpack'),
-    config = require('../config'),
+    config = require('../config/dev'),
     merge = require('webpack-merge'),
     version = utils.createVersionTag(),
     baseWebpackConfig = require('./webpack.base.conf'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
-// 将 Hol-reload相对路径添加到webpack.base.conf对应entry前
+// 将 Hol-reload 相对路径添加到 webpack.base.conf对应 entry 前
 Object.keys(baseWebpackConfig.entry).forEach((name) => {
     baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name]);
 });
@@ -23,9 +23,6 @@ module.exports = merge(baseWebpackConfig, {
     // 使用 #eval-source-map 模式作为开发工具
     devtool: '#cheap-module-eval-source-map',
     plugins: [
-        new webpack.DefinePlugin({
-            '$env': config.dev.env,
-        }),
         // HotModule 插件在页面进行变更的时候只会重绘对应的页面模块，不会重绘整个页面
         // https://github.com/glenjamin/webpack-hot-middleware#installation--usage
         new webpack.HotModuleReplacementPlugin(),

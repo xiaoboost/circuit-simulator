@@ -1,7 +1,7 @@
 const path = require('path'),
     utils = require('./utils'),
     webpack = require('webpack'),
-    config = require('../config'),
+    config = require('../config/prod'),
     merge = require('webpack-merge'),
     version = utils.createVersionTag(),
     // 基础配置
@@ -12,26 +12,22 @@ const path = require('path'),
     // webpack插件，从文件中分离代码
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
     // webpack插件，优化、最小化css文件
-    OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin'),
-    // 当前环境
-    env = process.env.NODE_ENV === 'testing'
-        ? require('../config/test.env')
-        : config.build.env;
+    OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 // 将基础配置和当前配置合并
 const webpackConfig = merge(baseWebpackConfig, {
     module: {
         // css的 loader
         rules: utils.styleLoaders({
-            sourceMap: config.build.productionSourceMap,
+            sourceMap: config.productionSourceMap,
             extract: true,
         }),
     },
     // 是否使用 #source-map
-    devtool: config.build.productionSourceMap ? '#source-map' : false,
+    devtool: config.productionSourceMap ? '#source-map' : false,
     output: {
         // 编译输出路径
-        path: config.build.assetsRoot,
+        path: config.assetsRoot,
         // 编译输出文件名
         filename: utils.assetsPath('js/[name].[chunkhash].js'),
     },
@@ -39,10 +35,6 @@ const webpackConfig = merge(baseWebpackConfig, {
         // 给每个文件创建顶部注释
         new webpack.BannerPlugin({
             banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]\nReleased under the MIT License.`,
-        }),
-        // http://vuejs.github.io/vue-loader/en/workflow/production.html
-        new webpack.DefinePlugin({
-            '$env': env,
         }),
         // js压缩插件
         // new webpack.optimize.UglifyJsPlugin({
@@ -66,7 +58,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         new HtmlWebpackPlugin({
             filename: process.env.NODE_ENV === 'testing'
                 ? 'index.html'
-                : config.build.index,
+                : config.index,
             data: { version },
             template: './src/index.html',
             inject: true,
@@ -88,13 +80,13 @@ const webpackConfig = merge(baseWebpackConfig, {
         // 复制静态资源文件
         new CopyWebpackPlugin([{
             from: path.resolve(__dirname, '../static'),
-            to: config.build.assetsSubDirectory,
+            to: config.assetsSubDirectory,
             ignore: ['.*'],
         }]),
     ],
 });
 
-if (config.build.bundleAnalyzerReport) {
+if (config.bundleAnalyzerReport) {
     const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
     webpackConfig.plugins.push(new BundleAnalyzerPlugin());
 }

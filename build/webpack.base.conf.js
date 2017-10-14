@@ -1,8 +1,11 @@
 const fs = require('fs'),
     path = require('path'),
+    webpack = require('webpack'),
     utils = require('./utils'),
-    config = require('../config'),
-    vueLoaderConfig = require('./vue-loader.conf');
+    vueLoaderConfig = require('./vue-loader.conf'),
+    config = (process.env.NODE_ENV !== 'production')
+        ? require('../config/dev')
+        : require('../config/prod');
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
@@ -39,13 +42,11 @@ module.exports = {
     },
     output: {
         // 编译输出的静态资源根路径
-        path: config.build.assetsRoot,
+        path: config.assetsRoot,
         // 编译输出的文件名
         filename: '[name].js',
         // 根据当前环境配置静态资源路径
-        publicPath: process.env.NODE_ENV === 'production'
-            ? config.build.assetsPublicPath
-            : config.dev.assetsPublicPath,
+        publicPath: config.assetsPublicPath,
     },
     resolve: {
         // 自动补全的扩展名
@@ -105,4 +106,10 @@ module.exports = {
             },
         ],
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            '$ENV': JSON.stringify(config.$ENV),
+            '$DATA': JSON.stringify(config.$DATA),
+        }),
+    ],
 };
