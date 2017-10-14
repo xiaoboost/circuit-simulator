@@ -1,3 +1,5 @@
+import assert from './assertion';
+
 type PointLike = [number, number] | Point;
 type PointInput = PointLike | number;
 
@@ -14,7 +16,7 @@ class Point {
      * @param {*} point
      * @returns {boolean}
      */
-    static isPoint(point: any): boolean {
+    static isPoint(point: any): point is Point {
         return (
             point instanceof Point ||
             (point instanceof Object &&
@@ -33,18 +35,18 @@ class Point {
      * @param {PointInput} [end]
      */
     constructor(start: PointInput, end?: PointInput) {
-        if (typeof start === 'number') {
+        if (assert.isNumber(start)) {
             // 输入一（或二）个数
             this[0] = start;
-            this[1] = !Number.isNaN(+end) ? +end : start;
+            this[1] = assert.isNumber(end) ? end : start;
         } else if (Point.isPoint(start) && !Point.isPoint(end)) {
             // 输入一个点
             this[0] = start[0];
             this[1] = start[1];
         } else if (Point.isPoint(start) && Point.isPoint(end)) {
             // 输入是两个点，当作向量处理
-            this[0] = end[0] as number - start[0];
-            this[1] = end[1] as number - start[1];
+            this[0] = end[0] - start[0];
+            this[1] = end[1] - start[1];
         }
 
         Object.defineProperty(this, 'length', {
@@ -66,7 +68,7 @@ class Point {
      */
     add(added: PointInput, label: number = 1): Point {
         const sum = new Point(0);
-        if (typeof added === 'number') {
+        if (assert.isNumber(added)) {
             sum[0] = this[0] + added * label;
             sum[1] = this[1] + added * label;
         } else if (Point.isPoint(added)) {
@@ -86,7 +88,7 @@ class Point {
      */
     mul(multiplier: PointInput, label: number = 1): Point {
         const sum = new Point(0);
-        if (typeof multiplier === 'number') {
+        if (assert.isNumber(multiplier)) {
             sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
             sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
         } else if (Point.isPoint(multiplier)) {
