@@ -51,7 +51,7 @@ module.exports = {
         // 自动补全的扩展名
         extensions: ['.js', '.ts', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
-        mainFiles: ['index.js', 'index.ts', 'index.vue'],
+        mainFiles: ['index.vue', 'index.js', 'index.ts'],
         // 默认路径别名
         alias: {
             'src': resolve('src'),
@@ -62,16 +62,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|vue)$/,
-                loader: 'eslint-loader',
-                enforce: 'pre',
-                include: [resolve('src'), resolve('test')],
-                options: {
-                    formatter: require('eslint-friendly-formatter'),
-                },
-            },
-            {
-                test: /\.tsx?$/,
+                test: /\.(tsx?|vue)$/,
                 loader: 'tslint-loader',
                 enforce: 'pre',
                 include: [resolve('src'), resolve('test')],
