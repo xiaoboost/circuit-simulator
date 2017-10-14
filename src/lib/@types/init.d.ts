@@ -38,7 +38,6 @@ interface ObjectConstructor {
     sealAll(from: any): boolean;
 }
 
-type AnyValueObject<T> = { [P in keyof T]: any };
 interface Object {
     /**
      * 当前对象实例与输入对象是否相等
@@ -47,15 +46,16 @@ interface Object {
      * @returns {boolean}
      */
     isEqual(obj: any): boolean;
-     /**
-      * 原对象的 key 不变，生成新的对象
-      * 
-      * @template T
-      * @param {T} this
-      * @param {(value: any, key: string) => any} callback
-      * @returns {toAny<T>}
-      */
-    map<T>(this: T, callback: (value: any, key: string) => any): AnyValueObject<T>;
+      /**
+       * 原对象的 key 不变，生成新的对象
+       * 
+       * @template T
+       * @template U
+       * @param {T} this
+       * @param {(value: any, key: string) => U} callback
+       * @returns {{ [P in keyof T]: U }}
+       */
+    map<T, U>(this: T, callback: (value: any, key: string) => U): { [P in keyof T]: U };
 }
 
 interface ArrayConstructor {
