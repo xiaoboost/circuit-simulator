@@ -87,6 +87,6 @@ export default {
      * @returns {x is HTMLElement}
      */
     isElement(x: any): x is HTMLElement {
-        return (/^\[object HTML([a-zA-Z]+)Element\]$/.test(Object.prototype.toString.call(x)));
+        return (/^\[object HTML([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x)));
     },
 };
