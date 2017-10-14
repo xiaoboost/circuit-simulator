@@ -58,6 +58,16 @@ class Point {
     }
 
     /**
+     * 迭代器函数
+     *  - 用于解构赋值
+     *
+     * @returns {Generator}
+     */
+    [Symbol.iterator]() {
+        return ([this[0], this[1]])[Symbol.iterator]();
+    }
+
+    /**
      * 加法
      *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
      *  - 第二项输入 -1 表示是减法，且 this 是被减数
@@ -377,4 +387,4 @@ function $P(start: PointInput = [0, 0], end?: PointInput): Point {
     return (new Point(start, end));
 }
 
-export { $P, Point };
+export { $P, Point, PointLike };
