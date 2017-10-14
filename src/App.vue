@@ -6,7 +6,7 @@
 </main>
 </template>
 
-<script>
+<script lang="ts">
 import ActionMenu from 'src/components/action-menu';
 import SliderMenu from 'src/components/slider-menu';
 import DrawingMain from 'src/components/drawing-main';
