@@ -80,16 +80,16 @@ interface Array<T> {
      * 根据下标取出当前数组元素
      *
      * @param {number} index
-     * @returns {*}
+     * @returns {T}
      */
-    get(index: number): any;
+    get(index: number): T;
     /**
      * 从下标 0 开始，删除 predicate 第一个返回 true 的元素
      *
-     * @param {(value: any, index: number) => boolean} predicate
+     * @param {(value: T, index: number) => boolean} predicate
      * @returns {boolean}
      */
-    delete(predicate: (value: any, index: number) => boolean): boolean;
+    delete(predicate: (value: T, index: number) => boolean): boolean;
     /**
      * 用于 vue 的数组更新
      *
