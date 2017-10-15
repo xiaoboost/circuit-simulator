@@ -48,7 +48,7 @@ interface Object {
     isEqual(obj: any): boolean;
       /**
        * 原对象的 key 不变，生成新的对象
-       * 
+       *
        * @template T
        * @template U
        * @param {T} this
