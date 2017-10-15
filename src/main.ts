@@ -1,3 +1,4 @@
+import 'src/lib/@types';
 import 'src/css/main';
 import 'src/lib/init';
 
