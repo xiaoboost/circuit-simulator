@@ -17,7 +17,7 @@ module.exports = merge(baseWebpackConfig, {
     module: {
         // 使用 styleLoaders
         rules: utils.styleLoaders({
-            sourceMap: config.dev.cssSourceMap,
+            sourceMap: config.cssSourceMap,
         }),
     },
     // 使用 #eval-source-map 模式作为开发工具

@@ -1,12 +1,11 @@
 const path = require('path'),
-    config = require('../config'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin');
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    config = (process.env.NODE_ENV === 'production')
+        ? require('../config/prod')
+        : require('../config/dev');
 
 exports.assetsPath = function(_path) {
-    const assetsSubDirectory = process.env.NODE_ENV === 'production'
-        ? config.build.assetsSubDirectory
-        : config.dev.assetsSubDirectory;
-    return path.posix.join(assetsSubDirectory, _path);
+    return path.posix.join(config.assetsSubDirectory, _path);
 };
 
 exports.cssLoaders = function(options) {

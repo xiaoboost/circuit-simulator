@@ -3,9 +3,9 @@ const fs = require('fs'),
     webpack = require('webpack'),
     utils = require('./utils'),
     vueLoaderConfig = require('./vue-loader.conf'),
-    config = (process.env.NODE_ENV !== 'production')
-        ? require('../config/dev')
-        : require('../config/prod');
+    config = (process.env.NODE_ENV === 'production')
+        ? require('../config/prod')
+        : require('../config/dev');
 
 function resolve(dir) {
     return path.join(__dirname, '..', dir);

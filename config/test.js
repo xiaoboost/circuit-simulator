@@ -1,7 +1,8 @@
 const devEnv = require('./dev.env');
-const { merge, data } = require('./common');
+const common = require('./common');
+const merge = require('./merge');
 
 module.exports = merge(
-    devEnv, data,
+    {}, devEnv, common,
     { $ENV: { NODE_ENV: 'testing' }}
 );

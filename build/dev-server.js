@@ -1,30 +1,31 @@
 // 检查当前运行环境
 require('./check-versions')();
 // 读取当前配置文件
-const config = require('../config');
-// 如果当前系统环境设置为空，那么使用config中的环境设置
+const config = require('../config/dev');
+
+// 如果当前系统环境设置为空，那么使用 config 中的环境设置
 if (!process.env.NODE_ENV) {
-    process.env.NODE_ENV = JSON.parse(config.dev.env.NODE_ENV);
+    process.env.NODE_ENV = config.$ENV.NODE_ENV;
 }
 
-const // opn插件可以强制打开浏览器并跳转到指定url
+const // opn 插件可以强制打开浏览器并跳转到指定 url
     opn = require('opn'),
     path = require('path'),
     express = require('express'),
     webpack = require('webpack'),
-    // http代理中间件
+    // http 代理中间件
     proxyMiddleware = require('http-proxy-middleware'),
     // 读取dev版本配置
     webpackConfig = process.env.NODE_ENV === 'testing'
         ? require('./webpack.prod.conf')
         : require('./webpack.dev.conf'),
     // 调试时运行的端口
-    port = process.env.PORT || config.dev.port,
+    port = process.env.PORT || config.port,
     // 是否自动打开浏览器，如果没有设置那么此项将会为false
-    autoOpenBrowser = !!config.dev.autoOpenBrowser,
+    autoOpenBrowser = !!config.autoOpenBrowser,
     // 读取http代理的配置
     // 配置详情请看：https://github.com/chimurai/http-proxy-middleware
-    proxyTable = config.dev.proxyTable,
+    proxyTable = config.proxyTable,
     // 生成服务器
     app = express(),
     // webpack加载编译配置并生成编译器
@@ -61,7 +62,7 @@ app.use(devMiddleware);
 // 将热更新的资源也挂载到express的服务器上
 app.use(hotMiddleware);
 // serve pure static assets
-const staticPath = path.posix.join(config.dev.assetsPublicPath, config.dev.assetsSubDirectory);
+const staticPath = path.posix.join(config.assetsPublicPath, config.assetsSubDirectory);
 app.use(staticPath, express.static('./static'));
 
 console.log('> Starting dev server...');

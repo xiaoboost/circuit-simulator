@@ -2,14 +2,16 @@
 // 默认只有两项，sourceMap 和 postcss 的配置
 
 const utils = require('./utils'),
-    config = require('../config'),
-    isProduction = process.env.NODE_ENV === 'production';
+    isProduction = process.env.NODE_ENV === 'production',
+    config = (process.env.NODE_ENV === 'production')
+        ? require('../config/prod')
+        : require('../config/dev');
 
 module.exports = {
     loaders: utils.cssLoaders({
         sourceMap: isProduction
-            ? config.build.productionSourceMap
-            : config.dev.cssSourceMap,
+            ? config.productionSourceMap
+            : config.cssSourceMap,
         extract: isProduction,
     }),
     postcss: [

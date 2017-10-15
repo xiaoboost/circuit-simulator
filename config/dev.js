@@ -1,6 +1,7 @@
-const { merge, data } = require('./common');
+const common = require('./common');
+const merge = require('./merge');
 
-module.exports = merge(data, {
+module.exports = merge({}, common, {
     // 环境参数
     $ENV: {
         NODE_ENV: 'development',
