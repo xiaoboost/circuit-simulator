@@ -1,41 +1,6 @@
 import assert from './assertion';
 
 /**
- * 是否是矩阵类
- *
- * @param {*} ma
- * @returns {ma is Matrix}
- */
-function isMatrix(ma: any): ma is Matrix {
-    return (ma instanceof Matrix);
-}
-
-/**
- * 输入的二维数组能否转化为矩阵
- *
- * @param {number[][]} ma
- * @returns {(false | { row: number; column: number })}
- */
-function allowMatrix(ma: number[][]): false | { row: number; column: number } {
-    // 记录行列数
-    const row = ma.length, column = ma[0].length;
-    // 行连续
-    if (!Object.keys(ma).every((n, i) => +n === i)) {
-        return (false);
-    }
-    // 列连续且列长均相等
-    if (!Object.values(ma).every((col) => {
-        return col && col.length === column &&
-            Object.keys(col).every((n, i) => +n === i) &&
-            Object.values(col).every((n) => typeof n === 'number');
-    })) {
-        return (false);
-    }
-
-    return ({ row, column });
-}
-
-/**
  * 矩阵类
  *
  * @class Matrix
@@ -158,7 +123,7 @@ class Matrix {
     getColumn(column: number): number[] {
         const index = column < 0 ? this.column + column : column;
 
-        if (column > this.column || column < 0) {
+        if (index > this.column || column < 0) {
             throw new Error('(matrix) index of column out of bounds.');
         }
 
@@ -332,15 +297,15 @@ class Matrix {
      */
     inverse(): Matrix | false {
         const [L, U, P] = this.luDecompose(), n = this.row;
+
         for (let i = 0; i < U.row; i++) {
-            if (!U.get(i, i)) {
+            if (U.get(i, i) === 0) {
                 return (false);
             }
         }
 
         // L、U的逆矩阵初始化
-        const li = new Matrix(n),
-            ui = new Matrix(n);
+        const li = new Matrix(n), ui = new Matrix(n);
 
         // U的逆矩阵
         for (let i = 0; i < n; i++) {
@@ -401,6 +366,41 @@ class Matrix {
         }
         return (true);
     }
+}
+
+/**
+ * 是否是矩阵类
+ *
+ * @param {*} ma
+ * @returns {ma is Matrix}
+ */
+function isMatrix(ma: any): ma is Matrix {
+    return (ma instanceof Matrix);
+}
+
+/**
+ * 输入的二维数组能否转化为矩阵
+ *
+ * @param {number[][]} ma
+ * @returns {(false | { row: number; column: number })}
+ */
+function allowMatrix(ma: number[][]): false | { row: number; column: number } {
+    // 记录行列数
+    const row = ma.length, column = ma[0].length;
+    // 行连续
+    if (!Object.keys(ma).every((n, i) => +n === i)) {
+        return (false);
+    }
+    // 列连续且列长均相等
+    if (!ma.every((col) => {
+        return assert.isArray(col) && col.length === column &&
+            Object.keys(col).every((n, i) => +n === i) &&
+            Object.values(col).every((n) => typeof n === 'number');
+    })) {
+        return (false);
+    }
+
+    return ({ row, column });
 }
 
 // function combination() {
