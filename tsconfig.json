@@ -20,18 +20,22 @@
         // 启用设计类型元数据（用于反射）
         "emitDecoratorMetadata": true,
         // 在表达式和声明上有隐含的 any 类型时报错
-        "noImplicitAny": false,
-        // 不是函数的所有返回路径都有返回值时报错。
-        "noImplicitReturns": true,
-        // 从 tslib 导入外部帮助库: 比如__extends，__rest等
+        "noImplicitAny": true,
+        // 不允许 this 为隐式 any
+        "noImplicitThis": true,
+        // 函数并不需要有显式的 return
+        "noImplicitReturns": false,
+        // 严格的 null 检查
+        "strictNullChecks": true,
+        // 从 tslib 导入外部帮助库: 比如 __extends, __rest 等
         "importHelpers": true,
         // 编译过程中打印文件名
-        "listFiles": true,
-        // 移除注释
-        "removeComments": true,
-        // 缺少签名索引时禁用 ‘noImplicitAny’ 错误
+        "listFiles": false,
+        // 不移除注释
+        "removeComments": false,
+        // 缺少签名索引时禁用 'noImplicitAny' 错误
         "suppressImplicitAnyIndexErrors": true,
-        // 允许编译javascript文件
+        // 允许编译 javascript 文件
         "allowJs": true,
         // 包含的库定义文件
         "lib": ["es2015", "es2016", "es2017", "dom"],
