@@ -45,7 +45,7 @@ function isSymbol(x: any): x is symbol {
  * @returns {(x is null | undefined)}
  */
 function isNull(x: any): x is null | undefined {
-    const type: string = Object.prototype.toString.call(x);
+    const type: string = Object.prototype.toString.call(x) as string;
     return (type === '[object Null]' || type === '[object Undefined]');
 }
 
@@ -112,7 +112,7 @@ function isRegExp(x: any): x is RegExp {
  * @returns {x is HTMLElement}
  */
 function isElement(x: any): x is HTMLElement {
-    return (/^\[object HTML([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x)));
+    return (/^\[object HTML([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x) as string));
 }
 
 /**
