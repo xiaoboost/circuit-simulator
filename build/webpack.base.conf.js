@@ -1,5 +1,4 @@
-const fs = require('fs'),
-    path = require('path'),
+const path = require('path'),
     webpack = require('webpack'),
     utils = require('./utils'),
     vueLoaderConfig = require('./vue-loader.conf'),
@@ -10,34 +9,9 @@ const fs = require('fs'),
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
-function readdir(dir) {
-    const ans = [];
-
-    fs.readdirSync(resolve(`src/${dir}`)).forEach((name) => {
-        const nextPath = path.join(dir, name),
-            filePath = resolve(`src/${nextPath}`),
-            file = fs.statSync(filePath);
-
-        if (file.isDirectory()) {
-            ans.push(...readdir(nextPath));
-        } else if (/\.(js|tsx?)$/.test(name) && name !== 'debugger.js') {
-            ans.push(filePath);
-        }
-    });
-
-    return (ans);
-}
 
 module.exports = {
     entry: {
-        // 库集合文件
-        common: [
-            'vue',
-            'vuex',
-
-            ...readdir('plugin'),
-            ...readdir('lib'),
-        ],
         // 主业务逻辑文件
         main: resolve('./src/main.ts'),
     },

@@ -17,7 +17,7 @@ const path = require('path'),
 // 将基础配置和当前配置合并
 const webpackConfig = merge(baseWebpackConfig, {
     module: {
-        // css的 loader
+        // css 的 loader
         rules: utils.styleLoaders({
             sourceMap: config.productionSourceMap,
             extract: true,
@@ -36,7 +36,7 @@ const webpackConfig = merge(baseWebpackConfig, {
         new webpack.BannerPlugin({
             banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]\nReleased under the MIT License.`,
         }),
-        // js压缩插件
+        // js 压缩插件
         // new webpack.optimize.UglifyJsPlugin({
         //     compress: {
         //         warnings: false,
@@ -76,6 +76,18 @@ const webpackConfig = merge(baseWebpackConfig, {
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
             filename: 'js/common.[chunkhash].js',
+
+            minChunks(module) {
+                const source = module.resource;
+                const commons = ['../node_modules', '../src/lib', '../src/plugin'];
+
+                return (
+                    source && /\.(js|tsx?)$/.test(source) &&
+                    commons.some(
+                        (dir) => source.indexOf(path.join(__dirname, dir)) === 0
+                    )
+                );
+            },
         }),
         // 复制静态资源文件
         new CopyWebpackPlugin([{
