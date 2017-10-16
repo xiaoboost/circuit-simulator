@@ -7,12 +7,12 @@ const ora = require('ora'),
     path = require('path'),
     chalk = require('chalk'),
     webpack = require('webpack'),
-    config = require('../config'),
+    config = require('../config/prod'),
     webpackConfig = require('./webpack.prod.conf'),
     spinner = ora('building for production...');
 
 spinner.start();
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), (err) => {
+rm(path.join(config.assetsRoot, config.assetsSubDirectory), (err) => {
     if (err) throw err;
     webpack(webpackConfig, function(err, stats) {
         spinner.stop();
