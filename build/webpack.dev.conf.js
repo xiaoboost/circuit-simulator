@@ -7,7 +7,7 @@ const utils = require('./utils'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
-// 将 Hol-reload 相对路径添加到 webpack.base.conf对应 entry 前
+// 将 Hol-reload 相对路径添加到 webpack.base.conf 对应 entry 前
 Object.keys(baseWebpackConfig.entry).forEach((name) => {
     baseWebpackConfig.entry[name] = ['./build/dev-client'].concat(baseWebpackConfig.entry[name]);
 });

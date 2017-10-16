@@ -64,7 +64,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(tsx?|vue)$/,
+                test: /\.tsx?$/,
                 loader: 'tslint-loader',
                 enforce: 'pre',
                 include: [resolve('src'), resolve('test')],

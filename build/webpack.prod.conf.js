@@ -7,11 +7,11 @@ const path = require('path'),
     // 基础配置
     baseWebpackConfig = require('./webpack.base.conf'),
     CopyWebpackPlugin = require('copy-webpack-plugin'),
-    // webpack插件，用于生成html文件
+    // webpack 插件，用于生成 html 文件
     HtmlWebpackPlugin = require('html-webpack-plugin'),
-    // webpack插件，从文件中分离代码
+    // webpack 插件，从文件中分离代码
     ExtractTextPlugin = require('extract-text-webpack-plugin'),
-    // webpack插件，优化、最小化css文件
+    // webpack 插件，优化、最小化 css 文件
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 // 将基础配置和当前配置合并
