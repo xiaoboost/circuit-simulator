@@ -44,13 +44,16 @@ Object.assign(Object.prototype, {
                     ? value.isEqual(obj[key])
                     : value === obj[key],
         );
+    },
+    // map<T, U, K extends keyof T>(this: T, callback: (value: T[K], key: string) => U): { K: U } {
+    //     const ans = Object.assign({}, this) as T;
 
-    },
-    map(this: {}, fn: (value: any, key: string) => any) {
-        return Object
-            .keys(this)
-            .reduce((obj, key) => ((obj[key] = fn(this[key], key)), obj), {});
-    },
+    //     Object.entries(this).forEach(([key, value]) => {
+    //         ans[key] = callback(value, key);
+    //     });
+
+    //     return (ans);
+    // },
 });
 
 Object.assign(Array.prototype, {

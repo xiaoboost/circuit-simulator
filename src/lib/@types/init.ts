@@ -14,7 +14,7 @@ interface ObjectConstructor {
      * @param {T} from
      * @returns {T}
      */
-    clone<T>(from: T): T;
+    // clone<T>(from: T): T;
     /**
      * 将输入对象的所有可枚举属性全部隐藏
      *
@@ -55,18 +55,18 @@ interface Object {
        * @param {(value: any, key: string) => U} callback
        * @returns {{ [P in keyof T]: U }}
        */
-    map<T, U>(this: T, callback: (value: any, key: string) => U): { [P in keyof T]: U };
+    // map<T, U>(this: T, callback: (value: any, key: string) => U): { [P in keyof T]: U };
 }
 
-interface ArrayConstructor {
-    /**
-     * 深复制数组
-     *
-     * @param {any[]} from
-     * @returns {any[]}
-     */
-    clone<U>(from: U[]): U[];
-}
+// interface ArrayConstructor {
+//     /**
+//      * 深复制数组
+//      *
+//      * @param {any[]} from
+//      * @returns {any[]}
+//      */
+//     clone<U>(from: U[]): U[];
+// }
 
 interface Array<T> {
     /**
