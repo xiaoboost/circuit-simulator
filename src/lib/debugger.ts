@@ -1,6 +1,6 @@
 // import collection from 'src/vuex/collection';
 // import { outputAll } from 'src/lib/map';
-import assert from './assertion';
+// import assert from './assertion';
 import { PointLike } from './point';
 
 // 全局常量
@@ -14,14 +14,14 @@ const Switch = {
 };
 
 // 点颜色
-const nodeColor = {
-    'line': 'green',
-    'part': 'black',
-    'part-point': 'red',
-    'line-point': 'orange',
-    'cross-point': 'blue',
-    'cover-point': 'yellow',
-};
+// const nodeColor = {
+//     'line': 'green',
+//     'part': 'black',
+//     'part-point': 'red',
+//     'line-point': 'orange',
+//     'cross-point': 'blue',
+//     'cover-point': 'yellow',
+// };
 
 class MapDebug {
     /**

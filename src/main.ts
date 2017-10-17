@@ -4,15 +4,15 @@ import 'src/lib/init';
 
 import Vue from 'vue';
 import App from 'src/App.vue';
-import store from 'src/vuex';
+// import store from 'src/vuex';
 
-import delegate from 'src/plugin/delegate';
+// import delegate from 'src/plugin/delegate';
 
-Vue.use(delegate);
+// Vue.use(delegate);
 Vue.config.productionTip = false;
 
 const instance = {
-    store,
+    // store,
     el: '#app',
     template: '<App/>',
     components: { App },
@@ -20,17 +20,17 @@ const instance = {
 };
 
 // 调试状态时运行这段代码
-if (window.$ENV.NODE_ENV === 'development') {
-    instance.mounted = () => {
-        const area = document.querySelector('.drawing-main svg g') as Element,
-            // tslint:disable-next-line:no-require-imports
-            Compo = require('src/lib/debugger').default;
+// if (window.$ENV.NODE_ENV === 'development') {
+//     instance.mounted = () => {
+//         const area = document.querySelector('.drawing-main svg g') as Element,
+//             // tslint:disable-next-line:no-require-imports
+//             Compo = require('src/lib/debugger').default;
 
-        // 调试组件独立于 app，挂在全局变量上
-        window.$DEBUG = new Compo();
-        area.appendChild(window.$DEBUG.$el);
-    };
-}
+//         // 调试组件独立于 app，挂在全局变量上
+//         window.$DEBUG = new Compo();
+//         area.appendChild(window.$DEBUG.$el);
+//     };
+// }
 
 // init vue
 new Vue(instance);
