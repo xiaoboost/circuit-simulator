@@ -4,7 +4,7 @@
 import { PointLike } from './point';
 
 // 全局常量
-const doc = document, NS = window.$DATA.SVG_NS;
+const doc = document, NS = $DATA.SVG_NS;
 
 // 开关
 const Switch = {
