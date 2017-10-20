@@ -12,7 +12,7 @@ const chalk = require('chalk'),
 baseConfig.plugins.push(new FriendlyErrorsPlugin());
 
 // start info
-console.log(`${chalk.red('>')} Start Compile:`);
+console.log(chalk.yellow('> Start Compile:...'));
 // delete all files
 shell.rm('-rf', path.join(__dirname, '../dist/'));
 

@@ -7,31 +7,26 @@ const chalk = require('chalk'),
     webpack = require('webpack'),
     config = require('./config'),
     baseConfig = require('./webpack.base'),
-    spinner = require('ora')('building for production...'),
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
+// TODO: 使用 uglify-es 压缩 js 代码
 baseConfig.plugins.push(
     new OptimizeCSSPlugin({
         cssProcessorOptions: {
             safe: true,
         },
-    }),
-    new webpack.optimize.UglifyJsPlugin({
-        compress: {
-            warnings: false,
-        },
     })
 );
 
-spinner.start();
+console.log(chalk.yellow('> Start Compile:...'));
 shell.rm('-rf', config.output);
 
 webpack(baseConfig, (err, stats) => {
-    spinner.stop();
     if (err) {
         throw err;
     }
 
+    console.log('\x1Bc');
     process.stdout.write(stats.toString({
         colors: true,
         modules: false,
