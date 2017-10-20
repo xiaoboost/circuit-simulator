@@ -1,19 +1,43 @@
-// 这里是在webpack中的 vue-loader 的具体配置
-// 默认只有两项，sourceMap 和 postcss 的配置
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const isProduction = process.env.NODE_ENV === 'production';
 
-const utils = require('./utils'),
-    isProduction = process.env.NODE_ENV === 'production',
-    config = (process.env.NODE_ENV === 'production')
-        ? require('../config/prod')
-        : require('../config/dev');
+function generateLoaders(loader, loaderOptions) {
+    const loaders = [{
+        loader: 'css-loader',
+        options: {
+            minimize: isProduction,
+            sourceMap: false,
+        },
+    }];
+
+    if (loader) {
+        loaders.push({
+            loader: loader + '-loader',
+            options: Object.assign(
+                {}, loaderOptions,
+                { sourceMap: false }
+            ),
+        });
+    }
+
+    return ExtractTextPlugin.extract({
+        use: loaders,
+        fallback: 'vue-style-loader',
+    });
+}
 
 module.exports = {
-    loaders: utils.cssLoaders({
-        sourceMap: isProduction
-            ? config.productionSourceMap
-            : config.cssSourceMap,
-        extract: isProduction,
-    }),
+    loaders: {
+        css: generateLoaders(),
+        postcss: generateLoaders(),
+        less: generateLoaders('less'),
+        sass: generateLoaders('sass', {
+            indentedSyntax: true,
+        }),
+        scss: generateLoaders('sass'),
+        stylus: generateLoaders('stylus'),
+        styl: generateLoaders('stylus'),
+    },
     postcss: [
         require('autoprefixer')({
             browsers: ['ie > 8', 'last 2 versions', 'Chrome > 24'],
