@@ -129,8 +129,8 @@ module.exports = {
             template: './src/index.html',
             inject: true,
             minify: {
-                removeComments: true,
-                collapseWhitespace: true,
+                removeComments: !isDevelopment,
+                collapseWhitespace: !isDevelopment,
                 // 更多选项请参考下面的链接:
                 // https://github.com/kangax/html-minifier#options-quick-reference
             },
