@@ -73,8 +73,6 @@ module.exports = {
                 loader: 'ts-loader',
                 exclude: /node_modules/,
                 options: {
-                    // FIXME: 编译时忽略类型检查
-                    transpileOnly: true,
                     appendTsSuffixTo: [/\.vue$/],
                 },
             },
