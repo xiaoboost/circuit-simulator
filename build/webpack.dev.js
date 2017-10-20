@@ -55,6 +55,6 @@ compiler.watch(
                 .filter((line) => !/\.(png|ttf|woff2?|eot|svg|ico|cur)/.test(line))
                 .join('\n')
         );
-        console.log(chalk.yellow(`The website is already set at http://localhost: ${config.port}/.`));
+        console.log('\n' + chalk.yellow(`The website is already set at http://localhost:${config.port}/.`));
     }
 );
