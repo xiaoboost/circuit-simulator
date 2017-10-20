@@ -18,6 +18,11 @@ baseConfig.plugins.push(
     })
 );
 
+if (config.bundleAnalyzer) {
+    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+    baseConfig.plugins.push(new BundleAnalyzerPlugin());
+}
+
 console.log(chalk.yellow('> Start Compile:...'));
 shell.rm('-rf', config.output);
 
