@@ -6,7 +6,6 @@ const path = require('path'),
     config = require('./config'),
     version = utils.createVersionTag(),
     isDevelopment = process.env.NODE_ENV === 'development',
-    vueLoaderConfig = require('./vue-loader.conf'),
     CopyWebpackPlugin = require('copy-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -57,7 +56,17 @@ module.exports = {
             {
                 test: /\.vue$/,
                 loader: 'vue-loader',
-                options: vueLoaderConfig,
+                options: {
+                    loaders: {
+                        stylus: utils.createLoader('stylus'),
+                        styl: utils.createLoader('stylus'),
+                    },
+                    postcss: [
+                        require('autoprefixer')({
+                            browsers: ['ie > 8', 'last 2 versions', 'Chrome > 24'],
+                        }),
+                    ],
+                },
             },
             {
                 test: /\.tsx?$/,
@@ -71,7 +80,7 @@ module.exports = {
             },
             {
                 test: /\.styl(us)?$/,
-                loader: 'stylus-loader',
+                use: utils.createLoader('stylus'),
             },
         ],
     },
