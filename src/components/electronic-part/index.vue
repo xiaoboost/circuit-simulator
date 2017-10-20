@@ -34,9 +34,15 @@
 
 <script>
 import Electronics from './shape';
+<<<<<<< HEAD
 import { $P } from 'src/libraries/point';
 import { $M } from 'src/libraries/matrix';
 import { mapData, hasMapData } from 'src/libraries/map';
+=======
+import { $P } from 'src/lib/point';
+import { $M } from 'src/lib/matrix';
+import * as schMap from 'src/lib/map';
+>>>>>>> vue-typescript
 
 import ElectronPoint from 'src/components/electron-point';
 

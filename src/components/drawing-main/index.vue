@@ -42,7 +42,7 @@ import Line from 'src/components/electronic-line';
 import SelectionsBox from 'src/components/selections-box';
 
 import Event from './event-controler';
-import { $P } from 'src/libraries/point';
+import { $P } from 'src/lib/point';
 
 export default {
     name: 'DrawingMain',

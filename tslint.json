@@ -1,0 +1,141 @@
+{
+    "defaultSeverity": "error",
+    "extends":"tslint:recommended",
+    "rules": {
+        // 类定义时，不需要写出 public 关键字
+        "member-access": [true, "no-public"],
+        // 允许带有副作用的 import 语句
+        "no-import-side-effect": false,
+        // 数字、字符串、布尔类型的变量不需要显式的类型声明
+        "no-inferrable-types": [true, "ignore-params", "ignore-properties"],
+        // 禁止使用 non-null 断言
+        "no-non-null-assertion": true,
+        // 禁止对形参重新赋值
+        "no-parameter-reassignment": true,
+        // 允许 magic-numbers 存在
+        "no-magic-numbers": false,
+        // 检查类型声明的存在
+        // https://palantir.github.io/tslint/rules/typedef/
+        "typedef": true,
+        // 一个单位为4个空格
+        "indent": [true, "spaces", 4],
+        // 除 new 语句之外，不允许独立存在的表达式
+        "no-unused-expression": [true, "allow-new"],
+        // 允许 console.log
+        "no-console": false,
+        // 允许位运算
+        "no-bitwise": false,
+        // 允许 debugger
+        "no-debugger": false,
+        // 禁止非法的模板字符串
+        "no-invalid-template-strings": true,
+        // 不允许使用 null 关键字
+        "no-null-keyword": true,
+        // 禁止对象字面量的类型断言
+        "no-object-literal-type-assertion": true,
+        // 禁止稀疏数组
+        "no-sparse-arrays": true,
+        // 允许子模块的导入
+        "no-submodule-imports": false,
+        // 禁止 switch-case 语句中的 fall-through 行为
+        "no-switch-case-fall-through": true,
+        // 不允许对 this 的重新赋值
+        "no-this-assignment": true,
+        // 允许 void 表达式
+        "no-void-expression": false,
+        // 推荐使用三元运算符
+        "prefer-conditional-expression": true,
+        // 推荐使用对象展开运算符，而不是 Object.assign()，因为这样类型推断会更方便
+        "prefer-object-spread": true,
+        // switch 语言必须要要有 default 分支
+        "switch-default": true,
+        // 必须使用严格（不）等于
+        "triple-equals": true,
+        // 循环复杂度限定在 20
+        // @link: https://palantir.github.io/tslint/rules/cyclomatic-complexity/
+        "cyclomatic-complexity": [true, 20],
+        // 强制 LF 换行
+        "linebreak-style": [true, "LF"],
+        // 每个文件最多声明多少个类
+        "max-classes-per-file": [true, 5],
+        // 允许模块的 default 导出
+        "no-default-export": false,
+        // 不允许对同一模块使用多次 import 语句
+        "no-duplicate-imports": true,
+        // 禁止在同一文件中合并命名空间
+        "no-mergeable-namespace": true,
+        // 禁止使用 require
+        "no-require-imports": true,
+        // 接口名不做强制规范
+        "interface-name": false,
+        // 强制对齐
+        "align": [true, "parameters", "arguments", "statements", "members", "elements"],
+        // 强制使用 UTF-8 编码
+        "encoding": true,
+        // 禁止不必要的回掉函数封装
+        "no-unnecessary-callback-wrapper": true,
+        // 小数必须是 0.x 的形式
+        "number-literal-format": true,
+        // 允许一句话声明多个变量
+        "one-variable-per-declaration": false,
+        // 不允许 import 的自动排序
+        "ordered-imports": false,
+        // 如果类方法没有用 this，那么提出警告
+        "prefer-function-over-method": [true, "allow-protected"],
+        // 方法标记应该使用 foo(): void 这种形式
+        "prefer-method-signature": true,
+        // 多字符串相连时应该使用字符串模板
+        "prefer-template": [true, "allow-single-concat"],
+        // 字符串强制使用单引号
+        "quotemark": [true, "single"],
+        // switch 语句的最后一个分支不需要 break
+        "switch-final-break": true,
+        // 类型字面量使用分号进行分割
+        "type-literal-delimiter": true,
+        // 使用 parseInt 时必须强制指定进制
+        "radix": true,
+        // 对象属性不排序
+        "object-literal-sort-keys": false,
+        // 每行代码长度无限制
+        "max-line-length": false,
+        // 变量名必须避开关键字，允许是驼峰形式，允许以下划线开头，允许首字母大写
+        "variable-name": [true,
+            "allow-leading-underscore",
+            "ban-keywords",
+            "check-format",
+            "allow-pascal-case"
+        ],
+
+        // need type Checking
+        // 禁止变量在 declare 之前使用
+        "no-use-before-declare": true,
+        // 禁止不必要的类型断言
+        "no-unnecessary-type-assertion": true,
+        // promise 函数全部用 async 封装
+        "promise-function-async": true,
+        // await 的值必须是 Promise
+        "await-promise": [true, "Thenable"],
+        // 所有的 Promise 实例都必须有后续的处理
+        "no-floating-promises": true,
+        // 不允许使用 for..in 来迭代数组
+        "no-for-in-array": true,
+        // 在函数和构造函数调用站点中禁止 {}（空对象类型）的类型推断
+        "no-inferred-empty-object-type": true,
+        // 禁止不安全的 any
+        "no-unsafe-any": true,
+        // 禁止存在未使用的变量和库
+        "no-unused-variable": true,
+        // + 运算必须同时是数字或者字符串
+        "restrict-plus-operands": true,
+        // 严格的 boolean 表达式，所有的非 boolean 值都必须显式的转换为 boolean 才能参与相关运算
+        "strict-boolean-expressions": true,
+        // 不允许指定的类型参数是该类型参数的默认值
+        "use-default-type-parameter": true,
+        // 不允许使用被弃用的 API
+        "deprecation": true,
+        // 不允许使用 x === true 形式的比较
+        "no-boolean-literal-compare": true,
+        // 在 void 函数中使用 reture，而在有值返回函数中使用 return undefined
+        "return-undefined": true
+    }
+}

@@ -10,13 +10,13 @@ function exec(cmd) {
 const versionRequirements = [
     {
         name: 'node',
-        // 子进程查询node版本
+        // 子进程查询 node 版本
         currentVersion: semver.clean(process.version),
         versionRequirement: packageConfig.engines.node,
     },
     {
         name: 'npm',
-        // 子进程查询npm版本
+        // 子进程查询 npm 版本
         currentVersion: exec('npm --version'),
         versionRequirement: packageConfig.engines.npm,
     },

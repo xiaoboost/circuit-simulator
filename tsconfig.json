@@ -1,0 +1,47 @@
+{
+    // @link: https://go.microsoft.com/fwlink/?LinkId=759670
+    "compilerOptions": {
+        // 是否包含可以用于 debug 的 sourceMap
+        "sourceMap": false,
+        // 以严格模式解析
+        "strict": true,
+        // 采用的模块系统
+        "module": "esnext",
+        // 如何处理模块
+        "moduleResolution": "node",
+        // 编译输出目标 ES 版本
+        "target": "es2016",
+        // 允许从没有设置默认导出的模块中默认导入
+        "allowSyntheticDefaultImports": true,
+        // 将每个文件作为单独的模块
+        "isolatedModules": false,
+        // 启用装饰器
+        "experimentalDecorators": true,
+        // 启用设计类型元数据（用于反射）
+        "emitDecoratorMetadata": true,
+        // 在表达式和声明上有隐含的 any 类型时报错
+        "noImplicitAny": true,
+        // 不允许 this 为隐式 any
+        "noImplicitThis": true,
+        // 函数并不需要有显式的 return
+        "noImplicitReturns": false,
+        // 严格的 null 检查
+        "strictNullChecks": true,
+        // 从 tslib 导入外部帮助库: 比如 __extends, __rest 等
+        "importHelpers": true,
+        // 编译过程中打印文件名
+        "listFiles": false,
+        // 不移除注释
+        "removeComments": false,
+        // 缺少签名索引时禁用 'noImplicitAny' 错误
+        "suppressImplicitAnyIndexErrors": true,
+        // 允许编译 javascript 文件
+        "allowJs": true,
+        // 包含的库定义文件
+        "lib": ["es2015", "es2016", "es2017", "dom"],
+        // 编译的基础路径
+        "baseUrl": "."
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "dist"]
+}

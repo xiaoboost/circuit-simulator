@@ -1,23 +1,49 @@
-const unit = /[EI]/;
+import assert from './assertion';
 
 /**
  * 矩阵类
- * 
+ *
  * @class Matrix
  */
 class Matrix {
     /**
-     * Creates an instance of Matrix.
-     * @param {number[][] | Matrix | number} row
-     * @param {number | string} [column=row]
-     * @param {number | string} [value=0]
+     * 矩阵的行数
+     *
+     * @type {number}
      */
-    constructor(row, column = row, value = 0) {
-        if (row instanceof Array) {
-            // 从数组创建矩阵
-            const data = [], size = isMatrix(row);
+    row: number;
 
-            if (!size) { return (false); }
+    /**
+     * 矩阵的列数
+     *
+     * @type {number}
+     */
+    column: number;
+
+    /**
+     * 矩阵数据
+     *  - 一维数组
+     *  - 64位 double 类型浮点数
+     *
+     * @private
+     * @type {Float64Array}
+     */
+    private _view: Float64Array;
+
+    /**
+     * Creates an instance of Matrix.
+     * @param {(number | number[][] | Matrix)} row
+     * @param {(number | 'E')} [column]
+     * @param {number} [value=0]
+     */
+    constructor(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
+        if (assert.isArray(row)) {
+            // 从数组创建矩阵
+            const data: number[] = [], size = allowMatrix(row);
+
+            if (!size) {
+                return;
+            }
 
             this.row = size.row;
             this.column = size.column;
@@ -26,12 +52,12 @@ class Matrix {
             const buffer = new ArrayBuffer(this.row * this.column * 8);
             this._view = new Float64Array(buffer);
             this._view.set(data);
-        } else if (row instanceof Matrix) {
+        } else if (isMatrix(row)) {
             // 复制矩阵
             this.row = row.row;
             this.column = row.column;
             this._view = Float64Array.from(row._view);
-        } else if (unit.test(column) || unit.test(value)) {
+        } else if (column === 'E') {
             // 单位矩阵
             this.row = row;
             this.column = row;
@@ -41,7 +67,7 @@ class Matrix {
             for (let i = 0; i < row; i++) {
                 this._view[i * (row + 1)] = 1;
             }
-        } else {
+        } else if (assert.isNumber(column)) {
             // 填充矩阵
             this.row = row;
             this.column = column;
@@ -51,103 +77,101 @@ class Matrix {
 
     /**
      * 取出矩阵元素
-     * 
+     *
      * @param {number} i
      * @param {number} j
      * @returns {number}
      */
-    get(i, j) {
+    get(i: number, j: number) {
         return this._view[i * this.column + j];
     }
     /**
-     * 设置矩阵第 i 行、第 j 列的值为 value
-     * 
+     * 设置矩阵值
+     *
      * @param {number} i
      * @param {number} j
      * @param {number} value
-     * @returns {void}
      */
-    set(i, j, value) {
+    set(i: number, j: number, value: number) {
         this._view[i * this.column + j] = value;
     }
     /**
-     * 取出矩阵第 row 行
-     * 
-     * @param {number} row 
+     * 取出矩阵某一行
+     *
+     * @param {number} row
      * @returns {number[]}
      */
-    getRow(row) {
-        row = row < 0 ? this.row + row : row;
-        if (row > this.row || row < 0) { return (false); }
+    getRow(row: number): number[] {
+        const index = row < 0 ? this.row + row : row;
 
-        const ans = [], start = row * this.column;
+        if (index > this.row || index < 0) {
+            throw new Error('(matrix) index of row out of bounds.');
+        }
+
+        const ans: number[] = [], start = row * this.column;
         for (let i = 0; i < this.column; i++) {
             ans[i] = this._view[start + i];
         }
         return ans;
     }
     /**
-     * 取出矩阵的第 column 列
-     * 
-     * @param {number} column 
+     * 取出矩阵某一列
+     *
+     * @param {number} column
      * @returns {number[]}
      */
-    getColumn(column) {
-        column = column < 0 ? this.column + column : column;
-        if (column > this.column || column < 0) { return (false); }
+    getColumn(column: number): number[] {
+        const index = column < 0 ? this.column + column : column;
 
-        const ans = [];
+        if (index > this.column || column < 0) {
+            throw new Error('(matrix) index of column out of bounds.');
+        }
+
+        const ans: number[] = [];
         for (let i = 0; i < this.row; i++) {
             ans[i] = this._view[column + i * this.column];
         }
         return ans;
     }
     /**
-     * 以字符串形式输出字符串
-     * 
+     * 输出字符串
+     *
      * @returns {string}
      */
-    toString() {
-        const maxColumnLen = [];
+    toString(): string {
+        const maxColumnLen: number[] = [];
         for (let i = 0; i < this.column; i++) {
             maxColumnLen.push(
-                this.getColumn(i)
-                    .map((n) => String(n))
-                    .reduce(
-                        (len, item) =>
-                            item.length > len ? item.length : len, 0
-                    )
+                this.getColumn(i).map(String)
+                    .reduce((len, item) =>  item.length > len ? item.length : len, 0),
             );
         }
 
         let str = '';
         for (let i = 0; i < this.row; i++) {
             str += this.getRow(i)
-                .map(
-                    (n, i) =>
-                        String(n).padStart(maxColumnLen[i], ' ')
-                )
+                .map((n) => String(n).padStart(maxColumnLen[i], ' '))
                 .join(',  ') + ';\n';
         }
         return (str);
     }
     /**
-     * 将矩阵通过字符串连接起来
-     * 
-     * @param {string} [str=','] 
+     * 字符串连接
+     *
+     * @param {string} str
      * @returns {string}
      */
-    join(str = ',') {
+    join(str: string): string {
         return this._view.join(str);
     }
     /**
      * 交换坐标元素 a、b 所在行、列
-     * 
-     * @param {[number, number]} a 
-     * @param {[number, number]} b 
-     * @returns {void}
+     *
+     * @param {[number, number]} a
+     * @param {[number, number]} b
+     * @returns {this}
      */
-    exchange(a, b) {
+    exchange(a: [number, number], b: [number, number]): this {
         // 交换行
         if (a[0] !== b[0]) {
             const start = a[0] * this.column,
@@ -171,18 +195,17 @@ class Matrix {
         return (this);
     }
     /**
-     * this * ma 矩阵乘法运算
-     * 
-     * @param {MatrixLike} ma
+     * 矩阵乘法
+     *   - this * ma
+     *
+     * @param {(number[][] | Matrix)} ma
      * @returns {Matrix}
      */
-    mul(ma) {
-        const a = (ma instanceof Matrix)
-            ? ma
-            : (new Matrix(ma));
+    mul(ma: number[][] | Matrix): Matrix {
+        const a = isMatrix(ma) ? ma : (new Matrix(ma));
 
         if (this.column !== a.row) {
-            return (false);
+            throw new Error('this can not be multiplied with ma.');
         }
 
         // 乘法结果的行与列
@@ -204,26 +227,29 @@ class Matrix {
         return (ans);
     }
     /**
-     * ma * this 矩阵乘法运算
-     * 
-     * @param {MatrixLike} ma
+     * 矩阵乘法
+     *   - ma * this
+     *
+     * @param {(number[][] | Matrix)} ma
      * @returns {Matrix}
      */
-    multo(ma) {
-        const a = (ma instanceof Matrix)
-            ? ma
-            : new Matrix(ma);
+    multo(ma: number[][] | Matrix): Matrix {
+        const a = isMatrix(ma) ? ma : (new Matrix(ma));
+
+        if (this.column !== a.row) {
+            throw new Error('ma can not be multiplied with this.');
+        }
 
         return a.mul(this);
     }
     /**
-     * 列主元 LU 三角分解，返回 LUP 矩阵
-     * 
+     * 列主元 LU 三角分解，返回 L、U、P 矩阵
+     *
      * @returns {[Matrix, Matrix, Matrix]}
      */
-    luDecompose() {
+    luDecompose(): [Matrix, Matrix, Matrix] {
         if (this.row !== this.column) {
-            return (false);
+            throw new Error('Only the matrix can be decomposed.');
         }
 
         const n = this.row,             // 行列式的行数
@@ -266,20 +292,20 @@ class Matrix {
     }
     /**
      * 基于LU分解的矩阵求逆
-     * 
-     * @returns {Matrix}
+     *
+     * @returns {(false | Matrix)}
      */
-    inverse() {
+    inverse(): Matrix | false {
         const [L, U, P] = this.luDecompose(), n = this.row;
+
         for (let i = 0; i < U.row; i++) {
-            if (!U.get(i, i)) {
+            if (U.get(i, i) === 0) {
                 return (false);
             }
         }
 
         // L、U的逆矩阵初始化
-        const li = new Matrix(n),
-            ui = new Matrix(n);
+        const li = new Matrix(n), ui = new Matrix(n);
 
         // U的逆矩阵
         for (let i = 0; i < n; i++) {
@@ -308,54 +334,68 @@ class Matrix {
         return (ans);
     }
     /**
-     * forEach 迭代方法，类似 Array.prototype.forEach
-     * 
-     * @param {(value: number, [x, y]: [number, number], martix: Matrix) => any} callback
-     * @returns {void}
+     * forEach 迭代
+     *  - 从第一行开始，从左至右
+     *
+     * @param {(value: number, position: [number, number]) => void} callback
+     * @returns {this}
      */
-    forEach(callback) {
+    forEach(callback: (value: number, position: [number, number]) => void): this {
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            callback(this._view[i], [x, y], this);
+            callback(this._view[i], [x, y]);
         }
         return (this);
     }
     /**
-     * every 迭代方法，类似 Array.prototype.every
-     * 
-     * @param {(value: number, [x, y]: [number, number], martix: Matrix) => boolean} callback
+     * every 迭代
+     *  - 从第一行开始，从左至右
+     *
+     * @param {(value: number, position: [number, number]) => boolean} callback
      * @returns {boolean}
      */
-    every(callback) {
+    every(callback: (value: number, position: [number, number]) => boolean): boolean {
         let ans;
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            ans = callback(this._view[i], [x, y], this);
-            if (!ans) { return (false); }
+            ans = callback(this._view[i], [x, y]);
+
+            if (!ans) {
+                return (false);
+            }
         }
         return (true);
     }
 }
 
 /**
- * 是否是标准矩阵。
- * 标准矩阵的标准是：数组是稠密书组，内部的值全是 number
- * 
- * @param {number[][] | Matrix} matrix 
- * @returns {{ row: number, column: number } | boolean}
+ * 是否是矩阵类
+ *
+ * @param {*} ma
+ * @returns {ma is Matrix}
  */
-function isMatrix(matrix) {
+function isMatrix(ma: any): ma is Matrix {
+    return (ma instanceof Matrix);
+}
+
+/**
+ * 输入的二维数组能否转化为矩阵
+ *
+ * @param {number[][]} ma
+ * @returns {(false | { row: number; column: number })}
+ */
+function allowMatrix(ma: number[][]): false | { row: number; column: number } {
     // 记录行列数
-    const row = matrix.length, column = matrix[0].length;
+    const row = ma.length, column = ma[0].length;
 
     // 行连续
-    if (!Object.keys(matrix).every((n, i) => +n === i)) {
+    if (!Object.keys(ma).every((n, i) => +n === i)) {
         return (false);
     }
 
     // 列连续且列长均相等
-    if (!Object.values(matrix).every((col) => {
-        return col && col.length === column &&
+    if (!ma.every((col) => {
+        return assert.isArray(col) && col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
             Object.values(col).every((n) => typeof n === 'number');
     })) {
@@ -364,25 +404,29 @@ function isMatrix(matrix) {
 
     return ({ row, column });
 }
+
 // function combination() {
 //     //
 // }
 
 /**
  * new Matrix(row, column, value) 运算的封装
- * 
- * @param {number[][] | Matrix | number} row
- * @param {number | string} [column=row]
- * @param {number | string} [value=0]
+ *
+ * @param {(number | number[][] | Matrix)} row
+ * @param {(number | 'E')} [column]
+ * @param {number} [value=0]
+ * @returns {Matrix}
  */
-export function $M(row, column = row, value = 0) {
+function $M(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
     return new Matrix(row, column, value);
 }
 
 // 旋转矩阵
-// const rotateMatrix = [
-//     $M([[0, 1], [-1, 0]]),  // 顺时针
-//     $M([[0, -1], [1, 0]]),  // 逆时针
-//     $M([[1, 0], [0, -1]]),  // 沿 X 轴镜像
-//     $M([[-1, 0], [0, 1]]),   // 沿 Y 轴镜像
-// ];
+const rotates: [Matrix, Matrix, Matrix, Matrix] = [
+    $M([[0, 1], [-1, 0]]),  // 顺时针
+    $M([[0, -1], [1, 0]]),  // 逆时针
+    $M([[1, 0], [0, -1]]),  // 沿 X 轴镜像
+    $M([[-1, 0], [0, 1]]),  // 沿 Y 轴镜像
+];
+
+export { $M, rotates };
