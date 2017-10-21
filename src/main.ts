@@ -3,7 +3,7 @@ import 'src/lib/init';
 
 import Vue from 'vue';
 import App from 'src/App.vue';
-// import store from 'src/vuex';
+import store from 'src/vuex';
 
 // import delegate from 'src/plugin/delegate';
 
@@ -11,7 +11,7 @@ import App from 'src/App.vue';
 Vue.config.productionTip = false;
 
 const instance = {
-    // store,
+    store,
     el: '#app',
     template: '<App/>',
     components: { App },
