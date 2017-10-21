@@ -103,14 +103,14 @@ interface NumberConstructor {
     /**
      * 用于匹配科学记数法表示的字符串
      */
-    readonly SCI_NOTA: RegExp;
+    readonly SCIMatch: RegExp;
     /**
-     * 将用科学记数法表示数字的字符串转换为对应的数字
+     * 将用科学记数法的字符串转换为对应的数字
      *
      * @param {string} notation
      * @returns {number}
      */
-    SCI_Parser(notation: string): number;
+    SCIParser(notation: string): number;
 }
 
 interface Number {

@@ -154,15 +154,15 @@ Object.assign(Number, {
     /**
      * 用于匹配科学记数法表示的字符串
      */
-    SCI_NOTA: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
+    SCIMatch: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
     /**
-     * 将用科学记数法表示数字的字符串转换为对应的数字
+     * 将用科学记数法的字符串转换为对应的数字
      *
      * @param {string} notation
      * @returns {number}
      */
-    SCI_Parser(notation: string): number {
-        if (Number.SCI_NOTA.test(notation)) {
+    SCIParser(notation: string): number {
+        if (Number.SCIMatch.test(notation)) {
             return NaN;
         }
         else if (/[eE]/.test(notation)) {
