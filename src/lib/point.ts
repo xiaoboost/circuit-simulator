@@ -10,13 +10,23 @@ type PointInput = PointLike | number;
  */
 class Point {
     /**
-     * 检测输入是否是标准点对象
+     * 断言：输入是否是 Point 类实例
      *
      * @static
      * @param {*} point
      * @returns {boolean}
      */
     static isPoint(point: any): point is Point {
+        return (point instanceof Point);
+    }
+    /**
+     * 断言：输入是否是类似 Point 实例的对象
+     *
+     * @static
+     * @param {*} point
+     * @returns {boolean}
+     */
+    static isPointLike(point: any): point is PointLike {
         return (
             point instanceof Point ||
             (point instanceof Object &&
@@ -39,11 +49,11 @@ class Point {
             // 输入一（或二）个数
             this[0] = start;
             this[1] = assert.isNumber(end) ? end : start;
-        } else if (Point.isPoint(start) && !Point.isPoint(end)) {
+        } else if (Point.isPointLike(start) && !Point.isPointLike(end)) {
             // 输入一个点
             this[0] = start[0];
             this[1] = start[1];
-        } else if (Point.isPoint(start) && Point.isPoint(end)) {
+        } else if (Point.isPointLike(start) && Point.isPointLike(end)) {
             // 输入是两个点，当作向量处理
             this[0] = end[0] - start[0];
             this[1] = end[1] - start[1];
@@ -81,7 +91,7 @@ class Point {
         if (assert.isNumber(added)) {
             sum[0] = this[0] + added * label;
             sum[1] = this[1] + added * label;
-        } else if (Point.isPoint(added)) {
+        } else if (Point.isPointLike(added)) {
             sum[0] = this[0] + added[0] * label;
             sum[1] = this[1] + added[1] * label;
         }
@@ -101,7 +111,7 @@ class Point {
         if (assert.isNumber(multiplier)) {
             sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
             sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
-        } else if (Point.isPoint(multiplier)) {
+        } else if (Point.isPointLike(multiplier)) {
             sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier[0])) : multiplier[0]);
             sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1]);
         }
