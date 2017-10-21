@@ -66,7 +66,7 @@ function isFuncton(x: any): x is () => any {
  * @param {*} x
  * @returns {x is object}
  */
-function isStrictObject(x: any): x is object {
+function isStrictObject(x: any): x is { [key: string]: any } {
     return (Object.prototype.toString.call(x) === '[object object]');
 }
 
@@ -77,7 +77,7 @@ function isStrictObject(x: any): x is object {
  * @param {*} x
  * @returns {x is object}
  */
-function isObject(x: any): x is object {
+function isObject(x: any): x is { [key: string]: any } {
     const type = typeof x;
     return (
         (type === 'object') ||
