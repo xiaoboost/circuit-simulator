@@ -99,6 +99,20 @@ interface Array<T> {
     $set(index: number, value: any): void;
 }
 
+interface NumberConstructor {
+    /**
+     * 用于匹配科学记数法表示的字符串
+     */
+    readonly SCI_NOTA: RegExp;
+    /**
+     * 将用科学记数法表示数字的字符串转换为对应的数字
+     *
+     * @param {string} notation
+     * @returns {number}
+     */
+    SCI_Parser(notation: string): number;
+}
+
 interface Number {
     /**
      * 按照有效数字的位数进行四舍五入。
