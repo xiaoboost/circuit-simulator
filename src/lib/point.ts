@@ -78,6 +78,17 @@ class Point {
     }
 
     /**
+     * 判断`this`与`point`是否相等
+     *  - 此处的相等将会兼容`[number, number]`类型
+     *
+     * @param {PointLike} point
+     * @returns {boolean}
+     * @memberof Point
+     */
+    isEqual(point: PointLike): boolean {
+        return Array.prototype.isEqual.call(this, point);
+    }
+    /**
      * 加法
      *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
      *  - 第二项输入 -1 表示是减法，且 this 是被减数
