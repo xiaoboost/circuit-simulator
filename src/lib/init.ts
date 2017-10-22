@@ -160,7 +160,7 @@ Object.assign(Array.prototype, {
         const labelMap: { [key: string]: boolean } = {};
         return this
             .map((value, index) => ({ value, key: label(value, index) }))
-            .filter(({ key }) => (labelMap[key] ? (labelMap[key] = true) : false))
+            .filter(({ key }) => (labelMap[key] ? false : (labelMap[key] = true)))
             .map(({ value }) => value);
 
     },
