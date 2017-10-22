@@ -142,6 +142,28 @@ Object.assign(Array.prototype, {
             return (false);
         }
     },
+    /**
+     * 数组去重
+     *  - 如果没有输入 label 函数，则对数组元素直接去重
+     *  - 如果输入了 label 函数，将会使用该函数对数组元素做一次转换，对转换之后的值进行去重，最后再映射回原数组
+     *
+     * @template T
+     * @param {T[]} this
+     * @param {((value: T, index: number) => number | string)} [label]
+     * @returns {T[]}
+     */
+    unique<T>(this: T[], label?: (value: T, index: number) => number | string): T[] {
+        if (assert.isNull(label)) {
+            return [...new Set(this)];
+        }
+
+        const labelMap: { [key: string]: boolean } = {};
+        return this
+            .map((value, index) => ({ value, key: label(value, index) }))
+            .filter(({ key }) => (labelMap[key] ? (labelMap[key] = true) : false))
+            .map(({ value }) => value);
+
+    },
     // 用于 vue 数组的元素赋值
     $set(this: any[], i: number, item: any): void {
         if (this[i] !== item) {

@@ -79,6 +79,7 @@ interface Array<T> {
     /**
      * 根据下标取出当前数组元素
      *
+     * @param {T[]} this
      * @param {number} index
      * @returns {T}
      */
@@ -86,10 +87,21 @@ interface Array<T> {
     /**
      * 从下标 0 开始，删除 predicate 第一个返回 true 的元素
      *
+     * @param {T[]} this
      * @param {(value: T, index: number) => boolean} predicate
      * @returns {boolean}
      */
     delete(predicate: (value: T, index: number) => boolean): boolean;
+    /**
+     * 数组去重
+     *  - 如果没有输入 label 函数，则对数组元素直接去重
+     *  - 如果输入了 label 函数，将会使用该函数对数组元素做一次转换，对转换之后的值进行去重，最后再映射回原数组
+     * 
+     * @param {T[]} this
+     * @param {((value: T, index: number) => number | string)} [label]
+     * @returns {T[]}
+     */
+    unique(label?: (value: T, index: number) => number | string): T[];
     /**
      * 用于 vue 的数组更新
      *
