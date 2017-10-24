@@ -1,5 +1,3 @@
-require('./check-versions')();
-
 const path = require('path'),
     webpack = require('webpack'),
     utils = require('./utils'),
