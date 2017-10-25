@@ -191,9 +191,9 @@ Object.assign(Number, {
             const [base, power] = notation.split(/[eE]/);
             return Number(base) * Math.pow(10, Number(power));
         }
-        else if (/[puμnmkMG]/.test(notation)) {
+        else if (/[puμnmkMG]$/.test(notation)) {
             const exp = { p: -12, u: -9, μ: -9, n: -6, m: -3, k: 3, M: 6, G: 9 },
-                power = exp[notation[notation.length - 1]],
+                power = exp[notation[notation.length - 1]] as number,
                 base = notation.substring(0, notation.length - 1);
 
             return Number(base) * Math.pow(10, power);
