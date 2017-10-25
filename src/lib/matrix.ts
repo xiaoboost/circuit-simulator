@@ -429,4 +429,4 @@ const rotates: [Matrix, Matrix, Matrix, Matrix] = [
     $M([[-1, 0], [0, 1]]),  // 沿 Y 轴镜像
 ];
 
-export { $M, rotates };
+export { $M, Matrix, rotates };
