@@ -28,10 +28,12 @@ class Point {
      */
     static isPointLike(point: any): point is PointLike {
         return (
-            point instanceof Point ||
-            (point instanceof Object &&
-            typeof point[0] === 'number' &&
-            typeof point[1] === 'number')
+            Point.isPoint(point) ||
+            (
+                point instanceof Object &&
+                typeof (point as any[])[0] === 'number' &&
+                typeof (point as any[])[1] === 'number'
+            )
         );
     }
 
@@ -86,7 +88,7 @@ class Point {
      * @memberof Point
      */
     isEqual(point: PointLike): boolean {
-        return Array.prototype.isEqual.call(this, point);
+        return Array.prototype.isEqual.call(this, point) as boolean;
     }
     /**
      * 加法
