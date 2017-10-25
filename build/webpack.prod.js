@@ -5,13 +5,20 @@ const chalk = require('chalk'),
     webpack = require('webpack'),
     config = require('./config'),
     baseConfig = require('./webpack.base'),
+    UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
-// TODO: 使用 uglify-es 压缩 js 代码
 baseConfig.plugins.push(
     new OptimizeCSSPlugin({
         cssProcessorOptions: {
             safe: true,
+        },
+    }),
+    new UglifyJSPlugin({
+        test: /\.js$/i,
+        cache: false,
+        uglifyOptions: {
+            ecma: 7,  // 2016
         },
     })
 );
