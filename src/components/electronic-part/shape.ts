@@ -1,6 +1,4 @@
-/**
- * 器件每项参数的说明
- */
+/** 器件每项参数的说明 */
 interface ParmasDescription {
     /**
      * 该参数的文字描述
@@ -24,9 +22,7 @@ interface ParmasDescription {
     readonly default: string;
 }
 
-/**
- * 器件每个节点的描述
- */
+/** 器件每个节点的描述 */
 interface PointDescription {
     /**
      * 该节点距离器件中心点的相对位置
@@ -40,9 +36,7 @@ interface PointDescription {
     readonly direction: [number, number];
 }
 
-/**
- * 外形元素描述
- */
+/** 外形元素描述 */
 interface AspectDescription {
     /**
      * DOM 元素名称
@@ -61,9 +55,7 @@ interface AspectDescription {
     readonly 'non-rotate'?: true;
 }
 
-/**
- * 器件原型数据类型
- */
+/** 器件原型数据类型 */
 interface Electronic {
     /**
      * 器件编号的前置标记
@@ -114,9 +106,7 @@ interface Electronic {
     readonly shape: AspectDescription[];
 }
 
-/**
- * 电阻
- */
+/** 电阻 */
 export const Resistance: Electronic = {
     pre: 'R',
     type: 'resistance',
@@ -158,9 +148,7 @@ export const Resistance: Electronic = {
     ],
 };
 
-/**
- * 电容
- */
+/** 电容 */
 export const Capacitor: Electronic = {
     pre: 'C',
     type: 'capacitor',
@@ -202,9 +190,7 @@ export const Capacitor: Electronic = {
     ],
 };
 
-/**
- * 电感
- */
+/** 电感 */
 export const Inductance: Electronic = {
     pre: 'L',
     type: 'inductance',
@@ -246,9 +232,7 @@ export const Inductance: Electronic = {
     ],
 };
 
-/**
- * 直流电压源
- */
+/** 直流电压源 */
 export const DCVoltageSource: Electronic = {
     pre: 'V',
     type: 'dc_voltage_source',
@@ -290,9 +274,7 @@ export const DCVoltageSource: Electronic = {
     ],
 };
 
-/**
- * 交流电压源
- */
+/** 交流电压源 */
 export const ACVoltageSource: Electronic = {
     pre: 'V',
     type: 'ac_voltage_source',
@@ -358,9 +340,7 @@ export const ACVoltageSource: Electronic = {
     ],
 };
 
-/**
- * 直流电流源
- */
+/** 直流电流源 */
 export const DCCurrentSource: Electronic = {
     pre: 'I',
     type: 'dc_current_source',
@@ -414,9 +394,7 @@ export const DCCurrentSource: Electronic = {
     ],
 };
 
-/**
- * 参考地
- */
+/** 参考地 */
 export const ReferenceGround: Electronic = {
     pre: 'GND',
     type: 'reference_ground',
@@ -447,9 +425,7 @@ export const ReferenceGround: Electronic = {
     ],
 };
 
-/**
- * 电压表
- */
+/** 电压表 */
 export const VoltageMeter: Electronic = {
     pre: 'VM',
     type: 'voltage_meter',
@@ -497,9 +473,7 @@ export const VoltageMeter: Electronic = {
     ],
 };
 
-/**
- * 电流表
- */
+/** 电流表 */
 export const CurrentMeter: Electronic = {
     pre: 'IM',
     type: 'current_meter',
@@ -540,9 +514,7 @@ export const CurrentMeter: Electronic = {
     ],
 };
 
-/**
- * 二极管
- */
+/** 二极管 */
 export const Diode: Electronic = {
     pre: 'VD',
     type: 'diode',
@@ -602,9 +574,7 @@ export const Diode: Electronic = {
     ],
 };
 
-/**
- * NPN型三极管
- */
+/** NPN型三极管 */
 export const TransistorNPN: Electronic = {
     pre: 'Q',
     type: 'transistor_npn',
@@ -676,9 +646,7 @@ export const TransistorNPN: Electronic = {
     ],
 };
 
-/**
- * 运算放大器
- */
+/** 运算放大器 */
 export const OperationalAmplifier: Electronic = {
     pre: 'OP',
     type: 'operational_amplifier',
