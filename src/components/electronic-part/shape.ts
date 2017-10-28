@@ -37,7 +37,7 @@ interface PointDescription {
 }
 
 /** 外形元素描述 */
-interface AspectDescription {
+interface ShapeDescription {
     /**
      * DOM 元素名称
      * @type {string}
@@ -103,7 +103,7 @@ interface Electronic {
      * 器件外形元素的描述
      * @type {AspectDescription[]}
      */
-    readonly shape: AspectDescription[];
+    readonly shape: ShapeDescription[];
 }
 
 /** 电阻 */
