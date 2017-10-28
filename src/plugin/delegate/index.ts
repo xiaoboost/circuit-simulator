@@ -1,6 +1,7 @@
 /* tslint:disable:unified-signatures */
 
 import {
+    Vue,
     Callback,
     AnyObject,
     Modifiers,
@@ -87,7 +88,7 @@ function packageCallback(callback: Callback, modifiers: Modifiers) {
         // 等于自身
         const self = !modifiers.self || (e.currentTarget === e.target);
         // 左键
-        const left = !modifiers.left || (!e.button);
+        const left = !modifiers.left || (e.button === 0);
         // 右键
         const right = !modifiers.right || (e.button === 2);
 
@@ -122,19 +123,20 @@ function fixType(type: string): string {
     return match[0];
 }
 
-function install(Vue: VueConstructor) {
+function install(App: VueConstructor) {
     // 添加全局指令
-    Vue.directive('delegate', {
+    App.directive('delegate', {
         bind(el: HTMLElement, binding: VNodeDirective) {
-            const [typeOri, selector, data, fn] = fixOnParameters(binding.arg, ...binding.value),
+            const params = binding.value as [string, AnyObject, Callback],
+                [typeOri, selector, data, fn] = fixOnParameters(binding.arg, params[0], params[1], params[2]),
                 handler = packageCallback(fn, binding.modifiers),
                 type = fixType(typeOri);
 
             functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
-        unbind(el: HTMLElement, binding) {
-            const [, , fn] = fixOffParameters(binding.arg, ...binding.value);
+        unbind(el: HTMLElement, binding: VNodeDirective) {
+            const [, , fn] = fixOffParameters(binding.arg, ...binding.value as any[]);
 
             functionMap.delete(fn);
             // 删除绑定在当前 DOM 上的所有事件
@@ -142,11 +144,13 @@ function install(Vue: VueConstructor) {
         },
     });
     // 添加实例方法
-    Vue.prototype.$$on = function(type, selector, data, fn) {
-        delegate.add(this.$el, ...fixOnParameters(type, selector, data, fn));
+    App.prototype.$$on = function(this: Vue, type: string, selector: string, data: AnyObject, fn: Callback) {
+        const [_type, _selector, _data, _fn] = fixOnParameters(type, selector, data, fn);
+        delegate.add(this.$el, _type, _selector, _data, _fn);
     };
-    Vue.prototype.$$off = function(type, selector, fn) {
-        delegate.remove(this.$el, ...fixOffParameters(type, selector, fn));
+    App.prototype.$$off = function(this: Vue, type: string, selector: string, fn: Callback) {
+        const [_type, _selector, _fn] = fixOffParameters(type, selector, fn);
+        delegate.remove(this.$el, _type, _selector, _fn);
     };
 }
 

@@ -26,7 +26,7 @@ const returnTrue = () => true;
 /** 无效函数 */
 const returnFalse = () => false;
 
-class $Event {
+class $Event implements CustomEvent {
     /**
      * 原生绑定事件的元素
      * @type {HTMLElement}
@@ -48,6 +48,10 @@ class $Event {
      */
     delegateTarget: HTMLElement;
 
+    /** 这两个属性是为了兼容用的，实际并未使用它们 */
+    target: HTMLElement;
+    button: number;
+
     /** 事件默认行为是否被取消 */
     isDefaultPrevented = returnFalse;
     /** 当前事件的进一步穿鼻是否被取消 */
@@ -60,38 +64,36 @@ class $Event {
      * @private
      * @type {Event}
      */
-    private _originalEvent: Event;
+    originalEvent: Event;
 
     constructor(origin: Event) {
-        this._originalEvent = origin;
+        this.originalEvent = origin;
     }
 
     /** 取消默认行为 */
     preventDefault(): void {
         this.isDefaultPrevented = returnTrue;
-        this._originalEvent.preventDefault();
+        this.originalEvent.preventDefault();
     }
     /** 阻止捕获和冒泡阶段中当前事件的进一步传播 */
     stopPropagation(): void {
         this.isPropagationStopped = returnTrue;
-        this._originalEvent.stopPropagation();
+        this.originalEvent.stopPropagation();
     }
     /** 阻止调用相同事件的其他侦听器 */
     stopImmediatePropagation(): void {
         this.isImmediatePropagationStopped = returnTrue;
-        this._originalEvent.stopImmediatePropagation();
+        this.originalEvent.stopImmediatePropagation();
         this.stopPropagation();
     }
 }
 
 /** 对 $Event 类的修饰 */
-(function decoration() {
-    const prototype = $Event.prototype;
-    $Event.prototype = Object.create(new Proxy({}, {
-        get: (target, property, receiver) => receiver.originalEvent[property],
-    }));
-    Object.assign($Event.prototype, prototype);
-}());
+Object.setPrototypeOf($Event.prototype, new Proxy({}, {
+    get(target, property, receiver: $Event) {
+        return receiver.originalEvent[property];
+    },
+}));
 
 /**
  * 分解选择器
@@ -148,19 +150,19 @@ function isContains(delegate: HTMLElement, elem: HTMLElement, handler: HandleObj
 }
 
 // 沿着冒泡路径，将满足条件的回调函数包装成队列
-function tohandlers(this: HTMLElement, event: Event, handlers: HandleObj[]): HandlerQueueObj[] {
+function tohandlers(elem: HTMLElement, event: $Event, handlers: HandleObj[]): HandlerQueueObj[] {
     // 组成路径
     const path: HTMLElement[] = [];
-    for (let i: HTMLElement | null = event.target as HTMLElement; i !== event.currentTarget; i = (i as HTMLElement).parentElement) {
+    for (let i: HTMLElement | null = event.target; i !== event.currentTarget; i = (i as HTMLElement).parentElement) {
         path.push(i as HTMLElement);
     }
-    path.push(event.currentTarget as HTMLElement);
+    path.push(event.currentTarget);
     path.reverse();
 
     // 委托元素本身的事件
     const handlerQueue: HandlerQueueObj[] = handlers
         .filter((n) => !n.selector)
-        .map((n) => ({ elem: this, handler: n }));
+        .map((n) => ({ elem, handler: n }));
 
     // 沿着委托元素向下
     for (let i = path.length - 1; i >= 0; i--) {
@@ -171,7 +173,7 @@ function tohandlers(this: HTMLElement, event: Event, handlers: HandleObj[]): Han
 
         handlerQueue.push(
             ...handlers
-                .filter((n) => n.selector && isContains(this, path[i], n))
+                .filter((n) => n.selector && isContains(elem, path[i], n))
                 .map((n) => ({ elem: path[i], handler: n })),
         );
     }
@@ -180,15 +182,15 @@ function tohandlers(this: HTMLElement, event: Event, handlers: HandleObj[]): Han
 }
 
 // 分发事件
-function dispatch(this: HTMLElement, args: Event) {
+function dispatch(elem: HTMLElement, args: Event): void {
     const event = new $Event(args),
-        elemEvents: EventsObj = ($Cache.get(this) || {}).events || {},
+        elemEvents: EventsObj = (($Cache.get(elem) || {}) as ElementData).events || {},
         elemhandlers: HandleObj[] = elemEvents[args.type] || [];
 
     // 委托元素赋值
-    event.delegateTarget = this;
+    event.delegateTarget = elem;
     // 沿捕获路径，依次运行回调
-    const handlerQueue = tohandlers.call(this, event, elemhandlers);
+    const handlerQueue = tohandlers(elem, event, elemhandlers);
     handlerQueue.every((handleObj: HandlerQueueObj) => {
         // 如果事件停止捕获，那么跳出
         if (event.isPropagationStopped()) {
@@ -201,12 +203,12 @@ function dispatch(this: HTMLElement, args: Event) {
         event.type = handleObj.handler.type;
 
         // 特殊类型事件的额外校验
-        if (special[event.type] && !special[event.type](event)) {
+        if (special[event.type] && !(special[event.type] as (e: CustomEvent) => boolean)(event)) {
             return (true);
         }
 
         // 运行回调
-        const ret = fn.call(handleObj.elem, event);
+        const ret = fn.call(handleObj.elem, event) as boolean | undefined;
         // 若回调完成且返回 false，则阻止事件继续捕获
         if (ret === false) {
             event.preventDefault();
@@ -231,10 +233,11 @@ function add(elem: HTMLElement, types: string, selector: string, data: AnyObject
         $Cache.set(elem, {});
     }
     // 取出当前 DOM 的委托数据
-    const elemData: ElementData = $Cache.get(elem);
+    const elemData = $Cache.get(elem) as ElementData;
     const events: EventsObj = elemData.events = elemData.events || {};
+
     // 若是初次绑定，那么定义事件回调函数
-    elemData.handle = elemData.handle || ((evevt: Event) => dispatch.call(elem, evevt));
+    elemData.handle = elemData.handle || ((evevt: Event): void => dispatch(elem, evevt));
 
     // 分割事件并绑定
     (types.match(rnotwhite) || ['']).forEach((type) => {
@@ -267,17 +270,17 @@ function add(elem: HTMLElement, types: string, selector: string, data: AnyObject
 
 /**
  * 移除事件委托
- * @param {Object} elem DOM对象
- * @param {String} types 事件类型，多个类型用空格分割
- * @param {String} selector 被委托元素的选择器
- * @param {Function} callback 事件回调
+ * @param {object} elem DOM对象
+ * @param {string} types 事件类型，多个类型用空格分割
+ * @param {string} selector 被委托元素的选择器
+ * @param {Callback} callback 事件回调
  */
-function remove(elem: HTMLElement, types: string, selector: string, callback: Callback) {
-    const elemData: ElementData = $Cache.get(elem),
+function remove(elem: HTMLElement, types?: string, selector?: string, callback?: Callback) {
+    const elemData = $Cache.get(elem) as ElementData,
         events = elemData && elemData.events;
 
     // 没有找到委托事件数据，直接退出
-    if (!elemData || !events) {
+    if (!elemData || !events || !types) {
         return;
     }
 
@@ -298,8 +301,8 @@ function remove(elem: HTMLElement, types: string, selector: string, callback: Ca
         if (selector === '*' || (!selector && !callback)) {
             return (false);
         }
-        if ((selector && !callback && selector === handlerObj.selector) ||
-            (!selector && callback && callback === handlerObj.callback) ||
+        if ((assert.isString(selector) && assert.isNull(callback) && selector === handlerObj.selector) ||
+            (assert.isNull(selector) && assert.isFuncton(callback) && callback === handlerObj.callback) ||
             (selector === handlerObj.selector && callback === handlerObj.callback)) {
             return (false);
         }
@@ -307,7 +310,7 @@ function remove(elem: HTMLElement, types: string, selector: string, callback: Ca
     });
 
     // 当前类型的事件已经空了
-    if (!events[type].length) {
+    if (events[type].length === 0) {
         elem.removeEventListener(type, elemData.handle, true);
         delete events[type];
     }
@@ -318,4 +321,4 @@ function remove(elem: HTMLElement, types: string, selector: string, callback: Ca
     }
 }
 
-export { add, remove };
+export default { add, remove };

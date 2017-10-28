@@ -1,4 +1,4 @@
-export { VueConstructor } from 'vue/types/vue';
+export { Vue, VueConstructor } from 'vue/types/vue';
 export { VNodeDirective } from 'vue/types/vnode';
 
 export interface Modifiers {
@@ -15,7 +15,6 @@ export interface CustomEvent {
     currentTarget: HTMLElement;
     target: HTMLElement;
     button: number;
-    delegateTarget: HTMLElement;
     stopPropagation(): void;
     preventDefault(): void;
 }
@@ -33,7 +32,7 @@ export type UnBindFunction = (type?: string, selector?: string | Callback, fn?: 
 
 export interface ElementData {
     events: EventsObj;
-    handle(): any;
+    handle(): void;
 }
 
 export interface HandlerQueueObj {
