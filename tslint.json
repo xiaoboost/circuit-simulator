@@ -130,8 +130,8 @@
         "no-unused-variable": true,
         // + 运算必须同时是数字或者字符串
         "restrict-plus-operands": true,
-        // 严格的 boolean 表达式，所有的非 boolean 值都必须显式的转换为 boolean 才能参与相关运算
-        "strict-boolean-expressions": true,
+        // 宽松的 boolean 表达式，允许 boolean 值的隐式类型转换
+        "strict-boolean-expressions": false,
         // 不允许指定的类型参数是该类型参数的默认值
         "use-default-type-parameter": true,
         // 不允许使用被弃用的 API
