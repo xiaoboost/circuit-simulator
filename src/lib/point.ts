@@ -26,13 +26,13 @@ class Point {
      * @param {*} point
      * @returns {boolean}
      */
-    static isPointLike(point: any): point is PointLike {
+    static isPointLike(point: any | any[]): point is PointLike {
         return (
             Point.isPoint(point) ||
             (
-                point instanceof Object &&
-                typeof (point as any[])[0] === 'number' &&
-                typeof (point as any[])[1] === 'number'
+                assert.isObject(point) &&
+                typeof point[0] === 'number' &&
+                typeof point[1] === 'number'
             )
         );
     }
@@ -88,7 +88,11 @@ class Point {
      * @memberof Point
      */
     isEqual(point: PointLike): boolean {
-        return Array.prototype.isEqual.call(this, point) as boolean;
+        return (
+            this.length === point.length &&
+            this[0] === point[0] &&
+            this[1] === point[1]
+        );
     }
     /**
      * 加法
