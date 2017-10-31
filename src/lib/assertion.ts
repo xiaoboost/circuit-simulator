@@ -45,7 +45,7 @@ function isSymbol(x: any): x is symbol {
  * @returns {(x is null | undefined)}
  */
 function isNull(x: any): x is null | undefined {
-    const type: string = Object.prototype.toString.call(x) as string;
+    const type = Object.prototype.toString.call(x) as string;
     return (type === '[object Null]' || type === '[object Undefined]');
 }
 
