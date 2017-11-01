@@ -3,12 +3,11 @@
     name="move-slide"
     @before-enter="beforeEnter"
     @after-leave="afterLeave">
-    <!-- @before-enter="beforeEnter" -->
     <aside class="slider" v-show="vision">
-        <!-- <add-parts v-show="isAddParts"></add-parts>
-        <main-config v-show="isMainConfig"></main-config> -->
-        <div v-show="showButton" @click="close" class="close-button"><span></span></div>
-        <div v-show="showCover" @click="close" class="gray-cover"></div>
+        <!-- <add-parts v-show="showAddParts"></add-parts> -->
+        <main-config v-show="showMainConfig"></main-config>
+        <div v-show="showAddParts" @click="close" class="close-button"><span></span></div>
+        <div v-show="showMainConfig" @click="close" class="gray-cover"></div>
     </aside>
 </transition>
 </template>
@@ -26,8 +25,8 @@ export default Vue.extend({
     },
     data() {
         return {
-            showButton: false,
-            showCover: false,
+            showAddParts: false,
+            showMainConfig: false,
         };
     },
     computed: {
@@ -46,12 +45,12 @@ export default Vue.extend({
             this.$store.commit('CLOSE_SLIDER');
         },
         beforeEnter(): void {
-            this.showButton = this.isAddParts;
-            this.showCover = this.isMainConfig;
+            this.showAddParts = this.isAddParts;
+            this.showMainConfig = this.isMainConfig;
         },
         afterLeave(): void {
-            this.showButton = false;
-            this.showCover = false;
+            this.showAddParts = false;
+            this.showMainConfig = false;
         },
     },
 });

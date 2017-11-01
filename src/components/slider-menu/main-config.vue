@@ -14,7 +14,7 @@
             <v-input
                 ref="end"
                 v-model="end"
-                :pattern="NUM_REG"
+                :pattern="pattern"
                 class="input-grow">
             </v-input>
             <span class="unit">秒</span>
@@ -24,7 +24,7 @@
             <v-input
                 ref="step"
                 v-model="step"
-                :pattern="NUM_REG"
+                :pattern="pattern"
                 class="input-grow">
             </v-input>
             <span class="unit">秒</span>
@@ -33,32 +33,30 @@
 </section>
 </template>
 
-<script>
-import { NUM_REG } from 'src/lib/util';
-import Input from 'src/components/input-verifiable.vue';
+<script lang="ts">
+import Vue from 'vue';
+import Input from 'src/components/input-verifiable';
 
-export default {
+export default Vue.extend({
     name: 'Config',
-    data() {
-        const time = this.$store.state.time;
-
-        return {
-            NUM_REG,
-            end: time.END_TIME,
-            step: time.STEP_TIME,
-        };
-    },
-    beforeRouteLeave(to, from, next) {
-        if (this.$refs['end'].check() && this.$refs['step'].check()) {
-            this.$store.commit('SET_END_TIME', this.end);
-            this.$store.commit('SET_STEP_TIME', this.step);
-            next();
-        }
-    },
     components: {
         'v-input': Input,
     },
-};
+    data() {
+        return {
+            pattern: Number.SCIMatch,
+            end: this.$store.state.END_TIME,
+            step: this.$store.state.STEP_TIME,
+        };
+    },
+    // beforeRouteLeave(to, from, next) {
+    //     if (this.$refs['end'].check() && this.$refs['step'].check()) {
+    //         this.$store.commit('SET_END_TIME', this.end);
+    //         this.$store.commit('SET_STEP_TIME', this.step);
+    //         next();
+    //     }
+    // },
+});
 </script>
 
 <style lang="stylus">

@@ -9,8 +9,10 @@
 </span>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue';
+
+export default Vue.extend({
     name: 'InputVerifiable',
     props: {
         value: {
@@ -48,14 +50,14 @@ export default {
         };
     },
     methods: {
-        update(value) {
+        update(value: string): void {
             this.check(value);
 
             if (value.length <= this.maxlength) {
                 this.$emit('input', value);
             }
         },
-        check(value) {
+        check(value: string): boolean {
             value = value || this.value;
             this.isError = false;
             if (this.required && !value) {
@@ -76,11 +78,11 @@ export default {
             return (true);
         },
     },
-};
+});
 </script>
 
 <style lang="stylus">
-@import '../css/Variable'
+@import '../../css/Variable'
 
 .input-verifiable
     position relative
