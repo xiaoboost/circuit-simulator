@@ -5,21 +5,13 @@ import Vue from 'vue';
 import App from 'src/App.vue';
 import store from 'src/vuex';
 
-// import delegate from 'src/plugin/delegate';
+import delegate from 'src/plugin/delegate';
 
-// Vue.use(delegate);
-Vue.config.productionTip = false;
-
-const instance = {
-    store,
-    el: '#app',
-    template: '<App/>',
-    components: { App },
-    mounted: () => { return; },
-};
+Vue.use(delegate);
+Vue.config.productionTip = ($ENV.NODE_ENV === 'development');
 
 // 调试状态时运行这段代码
-// if (window.$ENV.NODE_ENV === 'development') {
+// if ($ENV.NODE_ENV === 'development') {
 //     instance.mounted = () => {
 //         const area = document.querySelector('.drawing-main svg g') as Element,
 //             // tslint:disable-next-line:no-require-imports
@@ -32,11 +24,22 @@ const instance = {
 // }
 
 // init vue
-new Vue(instance);
+new Vue({
+    store,
+    el: '#app',
+    name: 'App',
+    components: { App },
+    render: (h) => h('App', { ref: 'main' }),
+});
 
 // remove loading
 window.onload = () => {
-    const loading = document.getElementById('start-loading') as HTMLElement;
+    const loading = document.getElementById('start-loading');
+
+    if (!loading) {
+        return;
+    }
+
     loading.style.opacity = '0';
     loading.style.transition = 'opacity .5s';
     setTimeout(() => loading.remove(), 500);

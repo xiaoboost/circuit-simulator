@@ -1,4 +1,4 @@
-interface Icon {
+export interface Icon {
     readonly long: number;
     readonly transform: [number, number];
     readonly d: string;

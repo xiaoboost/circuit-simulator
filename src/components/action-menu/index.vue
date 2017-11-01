@@ -21,10 +21,11 @@
 </transition>
 </template>
 
-<script>
-import { action } from 'src/lib/icon';
+<script lang="ts">
+import Vue from 'vue';
+import { action, Icon } from 'src/lib/icon';
 
-export default {
+export default Vue.extend({
     name: 'ActionMenu',
     data() {
         const zoom = 0.6;
@@ -44,22 +45,24 @@ export default {
                 tip: '运行设置',
                 func: () => this.config(),
             },
-        ].map((icon) => {
-            Object.assign(icon, Object.clone(action[icon.name]));
-            icon.translate = icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(',');
+        ].map((data) => {
+            const icon = action[data.name] as Icon;
 
-            return icon;
+            return {
+                ...data,
+                ...icon,
+                translate: icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(','),
+            };
         });
 
         return {
             zoom,
             icons,
-            action,
             isRun: false,
         };
     },
     computed: {
-        vision() {
+        vision(): boolean {
             return !this.$store.state.page;
         },
     },
@@ -74,11 +77,11 @@ export default {
             this.$store.commit('SET_PAGE', 'main-config');
         },
     },
-};
+});
 </script>
 
 <style lang="stylus">
-@import '../css/Variable'
+@import '../../css/Variable'
 
 .action-menu
     position fixed
