@@ -56,7 +56,7 @@ const returnFalse = () => false;
 /** 对 $Event 类的修饰 */
 function decorate<T extends { prototype: object }>(target: T): T {
     Reflect.setPrototypeOf(target.prototype, new Proxy({}, {
-        get(_, property, receiver: { _data: any }) {
+        get(_, property, receiver: { _data: { [x: string]: any }}) {
             return receiver._data[property];
         },
     }));
