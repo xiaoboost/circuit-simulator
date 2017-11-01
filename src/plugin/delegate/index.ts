@@ -1,28 +1,39 @@
-/* tslint:disable:unified-signatures */
-
-import {
-    Vue,
-    Callback,
-    AnyObject,
-    Modifiers,
-    CustomEvent,
-    BindFunction,
-    UnBindFunction,
-    VueConstructor,
-    VNodeDirective,
-} from './options';
-
 import delegate from './main';
 import assert from 'src/lib/assertion';
 
+import { Vue, VueConstructor } from 'vue/types/vue';
+import { VNodeDirective } from 'vue/types/vnode';
+
+interface AnyObject { [x: string]: any; }
+type Callback = (e?: Event) => boolean | void;
+
+interface DelegateModifiers {
+    readonly self: boolean;
+    readonly left: boolean;
+    readonly right: boolean;
+    readonly stop: boolean;
+    readonly prevent: boolean;
+    // TODO:
+    readonly once: boolean;
+
+    readonly [x: string]: boolean;
+}
+
+interface DelegateDirective extends VNodeDirective {
+    readonly name: 'delegate';
+    readonly value: [string | Callback, AnyObject | Callback | undefined, Callback | undefined];
+    readonly arg: string;
+    readonly modifiers: DelegateModifiers;
+}
+
 // 全局函数映射
-const functionMap = new Map();
+const functionMap = new Map<Callback, Callback>();
 
 /**
  * 统一绑定事件时的输入参数格式
  * 标准格式为 type, selector, fn
  */
-const fixOnParameters: BindFunction = (type, selector, data, fn) => {
+function fixOnParameters(type: string, selector: string | AnyObject | Callback, data?: AnyObject | Callback, fn?: Callback): [string, string, AnyObject, Callback] {
     // ( types, fn )
     if (assert.isFuncton(selector)) {
         return [type, '', {}, selector];
@@ -43,13 +54,13 @@ const fixOnParameters: BindFunction = (type, selector, data, fn) => {
     else {
         throw new Error('Illegal Delegate');
     }
-};
+}
 
 /**
  * 统一解除绑定时的输入参数格式
  * 标准格式为 type, selector, fn
  */
-const fixOffParameters: UnBindFunction = (type, selector, fn) => {
+function fixOffParameters(type?: string, selector?: string | AnyObject | Callback, data?: AnyObject | Callback, fn?: Callback): [string, string, Callback | undefined] {
     // ()
     if (assert.isNull(type)) {
         return ['', '*', undefined];
@@ -74,7 +85,7 @@ const fixOffParameters: UnBindFunction = (type, selector, fn) => {
     else {
         throw new Error('Illegal Delegate');
     }
-};
+}
 
 /**
  * 封装回调函数
@@ -83,8 +94,8 @@ const fixOffParameters: UnBindFunction = (type, selector, fn) => {
  * @param {Object} modifiers
  * @return {Function} fn
  */
-function packageCallback(callback: Callback, modifiers: Modifiers) {
-    function packFn(e: CustomEvent) {
+function packageCallback(callback: Callback, modifiers: DelegateModifiers): Callback {
+    function packFn(e: MouseEvent) {
         // 等于自身
         const self = !modifiers.self || (e.currentTarget === e.target);
         // 左键
@@ -93,7 +104,7 @@ function packageCallback(callback: Callback, modifiers: Modifiers) {
         const right = !modifiers.right || (e.button === 2);
 
         if (self && left && right) {
-            callback(e);
+            const ans = callback(e);
 
             if (modifiers.stop) {
                 e.stopPropagation();
@@ -101,6 +112,8 @@ function packageCallback(callback: Callback, modifiers: Modifiers) {
             if (modifiers.prevent) {
                 e.preventDefault();
             }
+
+            return ans;
         }
     }
 
@@ -126,19 +139,22 @@ function fixType(type: string): string {
 function install(App: VueConstructor) {
     // 添加全局指令
     App.directive('delegate', {
-        bind(el: HTMLElement, binding: VNodeDirective) {
-            const params = binding.value as [string, AnyObject, Callback],
-                [typeOri, selector, data, fn] = fixOnParameters(binding.arg, params[0], params[1], params[2]),
+        bind(el: HTMLElement, binding: DelegateDirective) {
+            const [_selector, _data, _fn] = binding.value,
+                [typeOri, selector, data, fn] = fixOnParameters(binding.arg, _selector, _data, _fn),
                 handler = packageCallback(fn, binding.modifiers),
                 type = fixType(typeOri);
 
             functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
-        unbind(el: HTMLElement, binding: VNodeDirective) {
-            const [, , fn] = fixOffParameters(binding.arg, ...binding.value as any[]);
+        unbind(el: HTMLElement, binding: DelegateDirective) {
+            const [, , fn] = fixOffParameters(binding.arg, ...binding.value);
 
-            functionMap.delete(fn);
+            if (fn) {
+                functionMap.delete(fn);
+            }
+
             // 删除绑定在当前 DOM 上的所有事件
             delegate.remove(el, '', '*');
         },
@@ -149,7 +165,7 @@ function install(App: VueConstructor) {
         delegate.add(this.$el, _type, _selector, _data, _fn);
     };
     App.prototype.$$off = function(this: Vue, type: string, selector: string, fn: Callback) {
-        const [_type, _selector, _fn] = fixOffParameters(type, selector, fn);
+        const [_type, _selector, _fn] = fixOffParameters(type, selector, undefined, fn);
         delegate.remove(this.$el, _type, _selector, _fn);
     };
 }

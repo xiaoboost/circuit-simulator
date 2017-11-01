@@ -1,24 +1,51 @@
-import {
-    CustomEvent,
-    SelectorParsed,
-    AnyObject,
-    Callback,
-    HandleObj,
-    EventsObj,
-    ElementData,
-    HandlerQueueObj,
-} from './options';
-
 import assert from 'src/lib/assertion';
+
+interface SelectorParsed {
+    tag: string;
+    id: string;
+    class: string[];
+}
+
+interface $Event extends Event {
+    button: number;
+    target: HTMLElement;
+    currentTarget: HTMLElement;
+    preventDefault(): void;
+    stopPropagation(): void;
+    stopImmediatePropagation(): void;
+}
+
+interface ElementData {
+    events: EventsObj;
+    handle?(e: Event): void;
+}
+
+interface HandlerQueueObj {
+    elem: HTMLElement;
+    handler: HandleObj;
+}
+
+interface HandleObj {
+    type: string;
+    selector: string;
+    matches: Element[];
+    data: { [x: string]: any };
+    characteristic: SelectorParsed[];
+    callback(e?: $Event): boolean | void;
+}
+
+interface EventsObj {
+    [x: string]: HandleObj[];
+}
 
 /** 全局常量 */
 const rnotwhite = /\S+/g;
 /** 事件代理全局缓存 */
-const $Cache = new Map();
+const $Cache = new Map<HTMLElement, ElementData>();
 /** 特殊事件必须有特殊的判断函数 */
-const special = {
-    mouseenter: (event: CustomEvent) => event.currentTarget === event.target,
-    mouseleave: (event: CustomEvent) => event.currentTarget === event.target,
+const special: { [x: string]: (e: Event) => boolean } = {
+    mouseenter: (event) => event.currentTarget === event.target,
+    mouseleave: (event) => event.currentTarget === event.target,
 };
 
 /** 有效函数 */
@@ -26,32 +53,24 @@ const returnTrue = () => true;
 /** 无效函数 */
 const returnFalse = () => false;
 
-class $Event implements CustomEvent {
-    /**
-     * 原生绑定事件的元素
-     * @type {HTMLElement}
-     */
-    currentTarget: HTMLElement;
-    /**
-     * 被委托的事件附带的数据
-     * @type {AnyObject}
-     */
-    data: AnyObject;
-    /**
-     * 事件类型
-     * @type {string}
-     */
+/** 对 $Event 类的修饰 */
+function decorate<T extends { prototype: object }>(target: T): T {
+    Reflect.setPrototypeOf(target.prototype, new Proxy({}, {
+        get(_, property, receiver: { _data: any }) {
+            return receiver._data[property];
+        },
+    }));
+    return target;
+}
+
+@decorate
+class $Event {
+    /** 委托事件的类型 */
     type: string;
-    /**
-     * 被委托事件的元素
-     * @type {HTMLElement}
-     */
+    /** 委托事件内绑定时数据 */
+    data: { [x: string]: any };
+    /** 被委托事件的元素 */
     delegateTarget: HTMLElement;
-
-    /** 这两个属性是为了兼容用的，实际并未使用它们 */
-    target: HTMLElement;
-    button: number;
-
     /** 事件默认行为是否被取消 */
     isDefaultPrevented = returnFalse;
     /** 当前事件的进一步穿鼻是否被取消 */
@@ -64,41 +83,34 @@ class $Event implements CustomEvent {
      * @private
      * @type {Event}
      */
-    originalEvent: Event;
+    private _data: Event;
 
     constructor(origin: Event) {
-        this.originalEvent = origin;
+        this._data = origin;
     }
 
     /** 取消默认行为 */
     preventDefault(): void {
         this.isDefaultPrevented = returnTrue;
-        this.originalEvent.preventDefault();
+        this._data.preventDefault();
     }
     /** 阻止捕获和冒泡阶段中当前事件的进一步传播 */
     stopPropagation(): void {
         this.isPropagationStopped = returnTrue;
-        this.originalEvent.stopPropagation();
+        this._data.stopPropagation();
     }
     /** 阻止调用相同事件的其他侦听器 */
     stopImmediatePropagation(): void {
         this.isImmediatePropagationStopped = returnTrue;
-        this.originalEvent.stopImmediatePropagation();
+        this._data.stopImmediatePropagation();
         this.stopPropagation();
     }
 }
 
-/** 对 $Event 类的修饰 */
-Object.setPrototypeOf($Event.prototype, new Proxy({}, {
-    get(target, property, receiver: $Event) {
-        return receiver.originalEvent[property];
-    },
-}));
-
 /**
  * 分解选择器
  * @param {string} all
- * @returns
+ * @returns {SelectorParsed[]}
  */
 function paserSelector(all: string): SelectorParsed[] {
     return all
@@ -149,12 +161,19 @@ function isContains(delegate: HTMLElement, elem: HTMLElement, handler: HandleObj
     return handler.matches.includes(elem);
 }
 
-// 沿着冒泡路径，将满足条件的回调函数包装成队列
+/**
+ * 沿着冒泡路径，将满足条件的回调函数包装成队列
+ *
+ * @param {HTMLElement} elem
+ * @param {$Event} event
+ * @param {HandleObj[]} handlers
+ * @returns {HandlerQueueObj[]}
+ */
 function tohandlers(elem: HTMLElement, event: $Event, handlers: HandleObj[]): HandlerQueueObj[] {
     // 组成路径
     const path: HTMLElement[] = [];
-    for (let i: HTMLElement | null = event.target; i !== event.currentTarget; i = (i as HTMLElement).parentElement) {
-        path.push(i as HTMLElement);
+    for (let i = event.target; i !== event.currentTarget && i.parentElement; i = i.parentElement) {
+        path.push(i);
     }
     path.push(event.currentTarget);
     path.reverse();
@@ -184,8 +203,13 @@ function tohandlers(elem: HTMLElement, event: $Event, handlers: HandleObj[]): Ha
 // 分发事件
 function dispatch(elem: HTMLElement, args: Event): void {
     const event = new $Event(args),
-        elemEvents: EventsObj = (($Cache.get(elem) || {}) as ElementData).events || {},
-        elemhandlers: HandleObj[] = elemEvents[args.type] || [];
+        elemData = $Cache.get(elem),
+        elemEvents = elemData && elemData.events,
+        elemhandlers = elemEvents && elemEvents[args.type];
+
+    if (!elemhandlers) {
+        throw new Error('This Element does not bind events');
+    }
 
     // 委托元素赋值
     event.delegateTarget = elem;
@@ -203,12 +227,12 @@ function dispatch(elem: HTMLElement, args: Event): void {
         event.type = handleObj.handler.type;
 
         // 特殊类型事件的额外校验
-        if (special[event.type] && !(special[event.type] as (e: CustomEvent) => boolean)(event)) {
+        if (special[event.type] && !(special[event.type])(event)) {
             return (true);
         }
 
         // 运行回调
-        const ret = fn.call(handleObj.elem, event) as boolean | undefined;
+        const ret = fn.call(handleObj.elem, event);
         // 若回调完成且返回 false，则阻止事件继续捕获
         if (ret === false) {
             event.preventDefault();
@@ -224,21 +248,14 @@ function dispatch(elem: HTMLElement, args: Event): void {
  * @param {HTMLElement} elem
  * @param {string} types
  * @param {string} selector
- * @param {AnyObject} data
+ * @param {{ [x: string]: any }} data
  * @param {Callback} callback
  */
-function add(elem: HTMLElement, types: string, selector: string, data: AnyObject, callback: Callback) {
-    // 如果缓存中没有数据，那么存入空对象
-    if (!$Cache.has(elem)) {
-        $Cache.set(elem, {});
-    }
+function add(elem: HTMLElement, types: string, selector: string, data: { [x: string]: any }, callback: (e?: $Event) => boolean | void) {
     // 取出当前 DOM 的委托数据
-    const elemData = $Cache.get(elem) as ElementData;
-    const events: EventsObj = elemData.events = elemData.events || {};
-
+    const elemData = $Cache.get(elem) || { events: {}}, events = elemData.events;
     // 若是初次绑定，那么定义事件回调函数
-    elemData.handle = elemData.handle || ((evevt: Event): void => dispatch(elem, evevt));
-
+    elemData.handle = elemData.handle || ((event: Event): void => dispatch(elem, event));
     // 分割事件并绑定
     (types.match(rnotwhite) || ['']).forEach((type) => {
         // 非法名称，跳过
@@ -259,13 +276,18 @@ function add(elem: HTMLElement, types: string, selector: string, data: AnyObject
         if (!events[type]) {
             events[type] = [];
             // 绑定监听事件（捕获阶段）
-            elem.addEventListener(type, elemData.handle, true);
+            elem.addEventListener(type, (elemData.handle as () => void), true);
         }
         // selector 有重复的，那么就覆盖，没有重复的那就添加到末尾
         if (!(events[type].some((n, i, arr) => (selector === n.selector) && (Boolean(arr[i] = handleObj))))) {
             events[type].push(handleObj);
         }
     });
+
+    // 如果缓存中没有数据，那么存入当前数据
+    if (!$Cache.has(elem)) {
+        $Cache.set(elem, elemData);
+    }
 }
 
 /**
@@ -275,8 +297,8 @@ function add(elem: HTMLElement, types: string, selector: string, data: AnyObject
  * @param {string} selector 被委托元素的选择器
  * @param {Callback} callback 事件回调
  */
-function remove(elem: HTMLElement, types?: string, selector?: string, callback?: Callback) {
-    const elemData = $Cache.get(elem) as ElementData,
+function remove(elem: HTMLElement, types?: string, selector?: string, callback?: (e?: $Event) => boolean | void) {
+    const elemData = $Cache.get(elem),
         events = elemData && elemData.events;
 
     // 没有找到委托事件数据，直接退出
