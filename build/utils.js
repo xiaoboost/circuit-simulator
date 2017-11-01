@@ -3,9 +3,9 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 /**
  * create css-loader
- * 
- * @param {string} loader 
- * @param {object} loaderOptions 
+ *
+ * @param {string} loader
+ * @param {object} loaderOptions
  * @returns {object}
  */
 exports.createLoader = function(loader, loaderOptions) {
@@ -51,7 +51,7 @@ exports.createVersionTag = function() {
 
 /**
  * Translate a normal object to a object that used in DefinePlugin
- * 
+ *
  * @param {object}
  * @returns {object}
  */
