@@ -57,15 +57,28 @@ const state: StateType = {
     Lines: [],
 };
 
+const getters: { [x: string]: (context: StateType) => void } = {
+    isEmpty: (context) => !context.page,
+    isAddParts: (context) => context.page === 'add-parts',
+    isMainConfig: (context) => context.page === 'main-config',
+    isGraphView: (context) => context.page === 'graph-view',
+};
+
 const mutations: { [x: string]: (context: StateType, params: any) => void } = {
-    /** 添加器件侧边栏 */
-    SET_AddParts: (context, page: string) => context.page = 'add-parts',
-    /** 总设置侧边栏 */
-    SET_MainConfig: (context, page: string) => context.page = 'main-config',
+    /** 关闭侧边栏 */
+    CLOSE_SLIDER: (context) => context.page = '',
+    /** 打开添加器件侧边栏 */
+    OPEN_ADD_PARTS: (context, page: string) => context.page = 'add-parts',
+    /** 打开总设置侧边栏 */
+    OPEN_MAIN_CONFIG: (context, page: string) => context.page = 'main-config',
+    /** 打开波形界面 */
+    OPEN_GRAPH_VIEW: (context, page: string) => context.page = 'graph-view',
+
     /** 设置终止时间 */
     SET_END_TIME: (context, time: string) => context.END_TIME = time,
     /** 设置步进时间 */
     SET_STEP_TIME: (context, time: string) => context.STEP_TIME = time,
+
     /** 新器件压栈 */
     PUSH_PART: (context, part: PartData) => context.Parts.push(part),
     /** 新导线压栈 */
@@ -87,6 +100,7 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
 
 export default new Vuex.Store({
     state,
+    getters,
     mutations,
 });
 
