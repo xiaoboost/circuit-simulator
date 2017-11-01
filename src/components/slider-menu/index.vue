@@ -3,53 +3,58 @@
     name="move-slide"
     @before-enter="beforeEnter"
     @after-leave="afterLeave">
+    <!-- @before-enter="beforeEnter" -->
     <aside class="slider" v-show="vision">
-        <add-parts v-show="isAddParts"></add-parts>
-        <main-config v-show="isMainConfig"></main-config>
-        <div v-show="isAddParts" @click="close" class="close-button"><span></span></div>
-        <div v-show="isMainConfig" @click="close" class="gray-cover"></div>
+        <!-- <add-parts v-show="isAddParts"></add-parts>
+        <main-config v-show="isMainConfig"></main-config> -->
+        <div v-show="showButton" @click="close" class="close-button"><span></span></div>
+        <div v-show="showCover" @click="close" class="gray-cover"></div>
     </aside>
 </transition>
 </template>
 
-<script>
-import AddParts from './add-parts';
-import MainConfig from './main-config';
+<script lang="ts">
+import Vue from 'vue';
+// import AddParts from './add-parts.vue';
+import MainConfig from './main-config.vue';
 
-export default {
+export default Vue.extend({
     name: 'Slider',
     components: {
-        AddParts,
+        // AddParts,
         MainConfig,
     },
     data() {
         return {
-            isAddParts: false,
-            isMainConfig: false,
+            showButton: false,
+            showCover: false,
         };
     },
     computed: {
-        page() {
-            return this.$store.state.page;
+        isAddParts(): boolean {
+            return this.$store.getters.isAddParts;
         },
-        vision() {
-            return this.page && this.page !== 'graph';
+        isMainConfig(): boolean {
+            return this.$store.getters.isMainConfig;
+        },
+        vision(): boolean {
+            return (this.isAddParts || this.isMainConfig);
         },
     },
     methods: {
-        close() {
-            this.$store.commit('SET_PAGE', '');
+        close(): void {
+            this.$store.commit('CLOSE_SLIDER');
         },
-        beforeEnter() {
-            this.isAddParts = (this.page === 'add-parts');
-            this.isMainConfig = (this.page === 'main-config');
+        beforeEnter(): void {
+            this.showButton = this.isAddParts;
+            this.showCover = this.isMainConfig;
         },
-        afterLeave() {
-            this.isAddParts = false;
-            this.isMainConfig = false;
+        afterLeave(): void {
+            this.showButton = false;
+            this.showCover = false;
         },
     },
-};
+});
 </script>
 
 <style lang="stylus">
