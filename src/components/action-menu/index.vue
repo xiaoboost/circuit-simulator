@@ -71,10 +71,10 @@ export default Vue.extend({
             this.isRun = true;
         },
         add() {
-            this.$store.commit('SET_PAGE', 'add-parts');
+            this.$store.commit('OPEN_ADD_PARTS');
         },
         config() {
-            this.$store.commit('SET_PAGE', 'main-config');
+            this.$store.commit('OPEN_MAIN_CONFIG');
         },
     },
 });
