@@ -34,19 +34,18 @@ exports.createLoader = function(loader, loaderOptions) {
 };
 
 /**
- * Generate tag of version
+ * Generate tag of build
  *
  * @returns {string}
  */
-exports.createVersionTag = function() {
+exports.createBuildTag = function() {
     const now = new Date(),
         year = now.getFullYear(),
         month = String(now.getMonth() + 1).padStart(2, '0'),
         date = String(now.getDate()).padStart(2, '0'),
-        time = now.toTimeString().slice(0, 8),
-        version = Math.random().toString(36).substr(2, 12);
+        time = now.toTimeString().slice(0, 8);
 
-    return `${year}/${month}/${date} ${time} - ${version}`;
+    return `${year}.${month}.${date} - ${time}`;
 };
 
 /**

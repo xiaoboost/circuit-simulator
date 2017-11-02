@@ -2,7 +2,7 @@ const path = require('path'),
     webpack = require('webpack'),
     utils = require('./utils'),
     config = require('./config'),
-    version = utils.createVersionTag(),
+    buildTag = utils.createBuildTag(),
     isDevelopment = process.env.NODE_ENV === 'development',
     CopyWebpackPlugin = require('copy-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
@@ -82,7 +82,7 @@ module.exports = {
     },
     plugins: [
         new webpack.BannerPlugin({
-            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]\nReleased under the MIT License.`,
+            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${buildTag}\nfilename: [name], chunkhash: [chunkhash]\n\nNice to meet you ~ o(*￣▽￣*)ブ\nReleased under the MIT License.`,
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
@@ -122,7 +122,7 @@ module.exports = {
         }]),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            data: { version },
+            data: { build: buildTag },
             template: './src/index.html',
             inject: true,
             minify: {
