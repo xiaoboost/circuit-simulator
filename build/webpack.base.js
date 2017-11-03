@@ -128,6 +128,7 @@ module.exports = {
             minify: {
                 removeComments: !isDevelopment,
                 collapseWhitespace: !isDevelopment,
+                ignoreCustomComments: [/^-/],
                 // 更多选项请参考下面的链接:
                 // https://github.com/kangax/html-minifier#options-quick-reference
             },
