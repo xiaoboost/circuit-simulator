@@ -1,5 +1,5 @@
 /** 器件每项参数的说明 */
-interface ParmasDescription {
+export interface ParmasDescription {
     /**
      * 该参数的文字描述
      * @type {string}
@@ -23,7 +23,7 @@ interface ParmasDescription {
 }
 
 /** 器件每个节点的描述 */
-interface PointDescription {
+export interface PointDescription {
     /**
      * 该节点距离器件中心点的相对位置
      * @type {[number, number]}
@@ -37,7 +37,7 @@ interface PointDescription {
 }
 
 /** 外形元素描述 */
-interface ShapeDescription {
+export interface ShapeDescription {
     /**
      * DOM 元素名称
      * @type {string}
@@ -56,7 +56,7 @@ interface ShapeDescription {
 }
 
 /** 器件原型数据类型 */
-interface Electronic {
+export interface Electronic {
     /**
      * 器件编号的前置标记
      * @type {string}
@@ -106,8 +106,47 @@ interface Electronic {
     readonly shape: ShapeDescription[];
 }
 
+export const categories = [
+    {
+        key: 'virtual_device',
+        name: '虚拟器件',
+        parts: [
+            'ReferenceGround',
+            'VoltageMeter',
+            'CurrentMeter',
+        ],
+    },
+    {
+        key: 'power',
+        name: '电源',
+        parts: [
+            'DCVoltageSource',
+            'ACVoltageSource',
+            'DCCurrentSource',
+        ],
+    },
+    {
+        key: 'passive_device',
+        name: '无源器件',
+        parts: [
+            'Resistance',
+            'Capacitor',
+            'Inductance',
+        ],
+    },
+    {
+        key: 'semiconductor_device',
+        name: '半导体器件',
+        parts: [
+            'Diode',
+            'TransistorNPN',
+            'OperationalAmplifier',
+        ],
+    },
+];
+
 /** 电阻 */
-export const Resistance: Electronic = {
+const Resistance: Electronic = {
     pre: 'R',
     type: 'resistance',
     introduction: '电阻器',
@@ -149,7 +188,7 @@ export const Resistance: Electronic = {
 };
 
 /** 电容 */
-export const Capacitor: Electronic = {
+const Capacitor: Electronic = {
     pre: 'C',
     type: 'capacitor',
     introduction: '电容器',
@@ -191,7 +230,7 @@ export const Capacitor: Electronic = {
 };
 
 /** 电感 */
-export const Inductance: Electronic = {
+const Inductance: Electronic = {
     pre: 'L',
     type: 'inductance',
     introduction: '电感器',
@@ -233,7 +272,7 @@ export const Inductance: Electronic = {
 };
 
 /** 直流电压源 */
-export const DCVoltageSource: Electronic = {
+const DCVoltageSource: Electronic = {
     pre: 'V',
     type: 'dc_voltage_source',
     introduction: '直流电压源',
@@ -275,7 +314,7 @@ export const DCVoltageSource: Electronic = {
 };
 
 /** 交流电压源 */
-export const ACVoltageSource: Electronic = {
+const ACVoltageSource: Electronic = {
     pre: 'V',
     type: 'ac_voltage_source',
     introduction: '交流电压源',
@@ -341,7 +380,7 @@ export const ACVoltageSource: Electronic = {
 };
 
 /** 直流电流源 */
-export const DCCurrentSource: Electronic = {
+const DCCurrentSource: Electronic = {
     pre: 'I',
     type: 'dc_current_source',
     introduction: '直流电流源',
@@ -395,7 +434,7 @@ export const DCCurrentSource: Electronic = {
 };
 
 /** 参考地 */
-export const ReferenceGround: Electronic = {
+const ReferenceGround: Electronic = {
     pre: 'GND',
     type: 'reference_ground',
     introduction: '参考地',
@@ -426,7 +465,7 @@ export const ReferenceGround: Electronic = {
 };
 
 /** 电压表 */
-export const VoltageMeter: Electronic = {
+const VoltageMeter: Electronic = {
     pre: 'VM',
     type: 'voltage_meter',
     introduction: '电压表',
@@ -474,7 +513,7 @@ export const VoltageMeter: Electronic = {
 };
 
 /** 电流表 */
-export const CurrentMeter: Electronic = {
+const CurrentMeter: Electronic = {
     pre: 'IM',
     type: 'current_meter',
     introduction: '电流表',
@@ -515,7 +554,7 @@ export const CurrentMeter: Electronic = {
 };
 
 /** 二极管 */
-export const Diode: Electronic = {
+const Diode: Electronic = {
     pre: 'VD',
     type: 'diode',
     introduction: '二极管',
@@ -575,7 +614,7 @@ export const Diode: Electronic = {
 };
 
 /** NPN型三极管 */
-export const TransistorNPN: Electronic = {
+const TransistorNPN: Electronic = {
     pre: 'Q',
     type: 'transistor_npn',
     introduction: 'NPN型三极管',
@@ -647,7 +686,7 @@ export const TransistorNPN: Electronic = {
 };
 
 /** 运算放大器 */
-export const OperationalAmplifier: Electronic = {
+const OperationalAmplifier: Electronic = {
     pre: 'OP',
     type: 'operational_amplifier',
     introduction: '运算放大器',
@@ -721,4 +760,19 @@ export const OperationalAmplifier: Electronic = {
             },
         },
     ],
+};
+
+export default {
+    Resistance,
+    Capacitor,
+    Inductance,
+    DCVoltageSource,
+    ACVoltageSource,
+    DCCurrentSource,
+    ReferenceGround,
+    VoltageMeter,
+    CurrentMeter,
+    Diode,
+    TransistorNPN,
+    OperationalAmplifier,
 };
