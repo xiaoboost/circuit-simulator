@@ -3,8 +3,8 @@ interface Environment {
 }
 
 interface Extend {
-    target: HTMLElement & EventTarget;
-    currentTarget: HTMLElement & EventTarget;
+    target: HTMLElement;
+    currentTarget: HTMLElement;
 }
 
 declare const $ENV: Environment;
