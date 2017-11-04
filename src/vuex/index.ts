@@ -82,6 +82,11 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
     /** 设置步进时间 */
     SET_STEP_TIME: (context, time: string) => context.STEP_TIME = time,
 
+    /** 设置图纸缩放比例 */
+    SET_ZOOM: (context, zoom: number) => context.zoom = zoom,
+    /** 设置图纸偏移量 */
+    SET_POSITION: (context, position: Point) => context.position = position,
+
     /** 新器件压栈 */
     PUSH_PART: (context, part: PartData) => context.Parts.push(part),
     /** 新导线压栈 */
@@ -97,10 +102,10 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
             ? context.Lines.delete((item) => item.id === line)
             : context.Lines.delete((item) => item.id === line.id),
 
-    /** 获取新ID怎么办 */
     /** 导线放置到底层 */
 };
 
+// Parts 堆栈获取新 器件ID
 Object.defineProperties(state.Parts, {
     createPartId: {
         writable: false,
