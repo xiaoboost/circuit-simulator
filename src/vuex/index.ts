@@ -9,6 +9,9 @@ import { LineData } from 'src/components/electronic-line/type';
 
 Vue.use(Vuex);
 
+/** 每类器件的最大数量 */
+const maxNumber = 100;
+
 interface StateType {
     /**
      * 页面状态
@@ -98,45 +101,33 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
     /** 导线放置到底层 */
 };
 
+Object.defineProperties(state.Parts, {
+    createPartId: {
+        writable: false,
+        enumerable: false,
+        configurable: false,
+        value(this: PartData[], id: string): string {
+            const pre = id.match(/^([^_]+)(_[^_]+)?$/);
+
+            if (!pre || !pre[1]) {
+                throw new Error('Device ID format is wrong');
+            }
+
+            let ans = '';
+            for (let i = 1; i <= maxNumber; i++) {
+                ans = `${pre[1]}_${i}`;
+                if (this.findIndex((part) => part.id === ans) === -1) {
+                    return (ans);
+                }
+            }
+
+            return '';
+        },
+    },
+});
+
 export default new Vuex.Store({
     state,
     getters,
     mutations,
 });
-
-// 单个器件的最大数量
-// const maxNumber = 100;
-
-// Object.assign(Collection.prototype, {
-//     constructor: Collection,
-//     has(elec) {
-//         const id = elec.id || elec;
-//         return this.some((elec) => elec.id === id);
-//     },
-//     newId(input) {
-//         const temp = input.match(/^[^_]+(_[^_]+)?/),
-//             id = temp && temp[0];
-
-//         if (!temp) {
-//             throw new Error('器件ID格式错误');
-//         }
-
-//         let tempid = '', ans = void 0;
-//         // 输入字符串没有下划线
-//         if (id.indexOf('_') === -1) {
-//             tempid = id + '_';
-//         } else if (!this.has(input)) {
-//             return (input);
-//         } else {
-//             tempid = id.split('_')[0] + '_';
-//         }
-
-//         for (let i = 1; i <= maxNumber; i++) {
-//             ans = tempid + i;
-//             if (!this.has(ans)) {
-//                 return (ans);
-//             }
-//         }
-//         throw new Error('器件数量超出最大限制');
-//     },
-// });

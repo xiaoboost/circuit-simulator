@@ -4,7 +4,7 @@
     @before-enter="beforeEnter"
     @after-leave="afterLeave">
     <aside class="slider" v-show="vision">
-        <!-- <add-parts v-show="showAddParts"></add-parts> -->
+        <add-parts v-show="showAddParts"></add-parts>
         <main-config v-show="showMainConfig"></main-config>
         <div v-show="showAddParts" @click="close" class="close-button"><span></span></div>
         <div v-show="showMainConfig" @click="close" class="gray-cover"></div>
@@ -14,13 +14,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-// import AddParts from './add-parts.vue';
+import AddParts from './add-parts.vue';
 import MainConfig from './main-config.vue';
 
 export default Vue.extend({
     name: 'Slider',
     components: {
-        // AddParts,
+        AddParts,
         MainConfig,
     },
     data() {
