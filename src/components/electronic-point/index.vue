@@ -16,7 +16,10 @@
 </g>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
+import assert from 'src/lib/assertion';
+
 const radius = {
     normal: {
         'part-point-open': 0,
@@ -34,15 +37,15 @@ const radius = {
     },
 };
 
-export default {
+export default Vue.extend({
     props: {
         r: {
             type: Number,
             default: -1,
         },
         classList: {
-            type: Array || String,
-            default: () => [],
+            type: [Array, String],
+            default: '',
         },
     },
     data() {
@@ -56,24 +59,23 @@ export default {
         };
     },
     computed: {
-        actual() {
-            return (this.r >= 0)
-                ? this.r
-                : this.inner;
+        actual(): number {
+            return (this.r >= 0) ? this.r : this.inner;
         },
-        zoom() {
-            return this.$store.state.drawing.zoom;
+        zoom(): number {
+            return this.$store.state.zoom;
         },
-        className() {
-            // 输入是字符串，直接其本身
-            if (typeof this.classList === 'string') {
-                return this.classList;
-            }
-            // 是数组，解析其 class
-            return this.classList.map((item) => (typeof item === 'string')
-                ? item
-                : Object.keys(item).filter((key) => item[key]).join(' ')
-            ).join(' ');
+        className(): string {
+            return (
+                assert.isString(this.classList)
+                    // 输入是字符串，返回本身
+                    ? this.classList
+                    // 输入是数组，解析其 class
+                    : this.classList.map(
+                        (item) =>
+                            (assert.isString(item)) ? item : Object.keys(item).filter((key) => item[key]).join(' ')
+                    ).join(' ')
+            );
         },
     },
     watch: {
@@ -81,30 +83,33 @@ export default {
         className: 'mouseleave',
     },
     methods: {
-        mouseenter() {
+        mouseenter(): void {
             const status = this.className.split(' ')
                 .find((item) => radius.hover.hasOwnProperty(item));
 
             this.inner = status ? radius.hover[status] : 5;
         },
-        mouseleave() {
+        mouseleave(): void {
             const status = this.className.split(' ')
                 .find((item) => radius.normal.hasOwnProperty(item));
 
             this.inner = status ? radius.normal[status] : 0;
         },
-        setAnimate(value) {
+        setAnimate(value: number): void {
+            const circle = this.$refs.circle as HTMLElement;
+            const animate = this.$refs.animate as SVGAnimationElement;
+
             // 确定新的终点值
             this.animateTo = value;
             // 计算当前值
-            this.animateFrom = this.$refs.circle.getClientRects()[0].width / this.zoom / 2;
+            this.animateFrom = circle.getClientRects()[0].width / this.zoom / 2;
             // 动画启动
-            this.$refs.animate.beginElement();
+            animate.beginElement();
         },
     },
     mounted() {
         this.mouseleave();
         this.setAnimate(this.actual);
     },
-};
+});
 </script>
