@@ -1,4 +1,4 @@
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 import { $P, Point, PointLike } from 'src/lib/point';
 
 interface MapData {

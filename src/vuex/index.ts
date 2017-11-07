@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 
 import { PartData } from 'src/components/electronic-part/type';

@@ -1,4 +1,4 @@
-import assert from './assertion';
+import * as assert from './assertion';
 
 /**
  * 矩阵类

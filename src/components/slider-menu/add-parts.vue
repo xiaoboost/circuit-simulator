@@ -27,7 +27,7 @@
 import Vue from 'vue';
 import { $P } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 import { PartData } from 'src/components/electronic-part/type';
 import Electronics, { categories, Electronic } from 'src/components/electronic-part/shape';
 
@@ -111,7 +111,7 @@ export default Vue.extend({
             this.$store.commit('PUSH_PART', {
                 id: partsAll.createPartId(partData.pre),
                 type: partData.type,
-                rotate: $M(2, 2),
+                rotate: $M(2, 'E'),
                 // 初始状态：0, 0 表示是新建器件
                 position: $P(0, 0),
                 params: partData.params.map((params) => params.default),

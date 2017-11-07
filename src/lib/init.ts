@@ -1,4 +1,4 @@
-import assert from './assertion';
+import * as assert from './assertion';
 
 Object.assign(Object, {
     /**
