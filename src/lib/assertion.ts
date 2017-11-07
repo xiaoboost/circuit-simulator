@@ -4,7 +4,7 @@
  * @param {*} x
  * @returns {x is number}
  */
-function isNumber(x: any): x is number {
+export function isNumber(x: any): x is number {
     return (typeof x === 'number');
 }
 
@@ -14,7 +14,7 @@ function isNumber(x: any): x is number {
  * @param {*} x
  * @returns {x is string}
  */
-function isString(x: any): x is string {
+export function isString(x: any): x is string {
     return (typeof x === 'string');
 }
 
@@ -24,7 +24,7 @@ function isString(x: any): x is string {
  * @param {*} x
  * @returns {x is boolean}
  */
-function isBoolean(x: any): x is boolean {
+export function isBoolean(x: any): x is boolean {
     return (typeof x === 'boolean');
 }
 
@@ -34,7 +34,7 @@ function isBoolean(x: any): x is boolean {
  * @param {*} x
  * @returns {x is symbol}
  */
-function isSymbol(x: any): x is symbol {
+export function isSymbol(x: any): x is symbol {
     return (typeof x === 'symbol');
 }
 
@@ -44,7 +44,7 @@ function isSymbol(x: any): x is symbol {
  * @param {*} x
  * @returns {(x is null | undefined)}
  */
-function isNull(x: any): x is null | undefined {
+export function isNull(x: any): x is null | undefined {
     const type = Object.prototype.toString.call(x) as string;
     return (type === '[object Null]' || type === '[object Undefined]');
 }
@@ -55,18 +55,18 @@ function isNull(x: any): x is null | undefined {
  * @param {*} x
  * @returns {x is () => any}
  */
-function isFuncton(x: any): x is () => any {
+export function isFuncton(x: any): x is () => any {
     return (typeof x === 'function');
 }
 
 /**
  * 断言：输入是否是严格意义上的对象
- *  - 不包括 Array、Function、Promise 等内建类的实例以及它们继承类的实例
+ *  - 不包括 Array、export function、Promise 等内建类的实例以及它们继承类的实例
  *
  * @param {*} x
  * @returns {x is object}
  */
-function isStrictObject(x: any): x is { [key: string]: any } {
+export function isStrictObject(x: any): x is { [key: string]: any } {
     return (Object.prototype.toString.call(x) === '[object object]');
 }
 
@@ -77,7 +77,7 @@ function isStrictObject(x: any): x is { [key: string]: any } {
  * @param {*} x
  * @returns {x is object}
  */
-function isObject(x: any): x is { [key: string]: any } {
+export function isObject(x: any): x is { [key: string]: any } {
     const type = typeof x;
     return (
         (type === 'object') ||
@@ -91,7 +91,7 @@ function isObject(x: any): x is { [key: string]: any } {
  * @param {*} x
  * @returns {x is any[]}
  */
-function isArray(x: any): x is any[] {
+export function isArray(x: any): x is any[] {
     return (Object.prototype.toString.call(x) === '[object Array]');
 }
 
@@ -101,7 +101,7 @@ function isArray(x: any): x is any[] {
  * @param {*} x
  * @returns {x is RegExp}
  */
-function isRegExp(x: any): x is RegExp {
+export function isRegExp(x: any): x is RegExp {
     return (Object.prototype.toString.call(x) === '[object RegExp]');
 }
 
@@ -111,7 +111,7 @@ function isRegExp(x: any): x is RegExp {
  * @param {*} x
  * @returns {x is HTMLElement}
  */
-function isElement(x: any): x is HTMLElement {
+export function isElement(x: any): x is HTMLElement {
     return (/^\[object HTML([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x) as string));
 }
 
@@ -121,7 +121,7 @@ function isElement(x: any): x is HTMLElement {
  * @param {*} x
  * @returns {(x is number | string | boolean | symbol | null | undefined)}
  */
-function isBaseType(x: any): x is number | string | boolean | symbol | null | undefined {
+export function isBaseType(x: any): x is number | string | boolean | symbol | null | undefined {
     return (!isObject(x));
 }
 
@@ -131,24 +131,28 @@ function isBaseType(x: any): x is number | string | boolean | symbol | null | un
  * @param {*} x
  * @returns {(x is number | string | boolean | symbol)}
  */
-function isBaseTypeExNull(x: any): x is number | string | boolean | symbol {
+export function isBaseTypeExNull(x: any): x is number | string | boolean | symbol {
     return (
         isBaseType(x) && !isNull(x)
     );
 }
 
-export default {
-    isNumber,
-    isString,
-    isBoolean,
-    isSymbol,
-    isNull,
-    isBaseType,
-    isBaseTypeExNull,
-    isFuncton,
-    isObject,
-    isStrictObject,
-    isArray,
-    isRegExp,
-    isElement,
-};
+/**
+ * 断言：输入事件是否是鼠标事件
+ *
+ * @param {Event} e
+ * @returns {x is MouseEvent}
+ */
+export function isMouseEvent(e: Event): e is MouseEvent {
+    return (/(mouse|click)/i.test(e.type));
+}
+
+/**
+ * 断言：输入事件是否是键盘事件
+ *
+ * @param {Event} e
+ * @returns {x is MouseEvent}
+ */
+export function isKeyboardEvent(e: Event): e is KeyboardEvent {
+    return (/^key/i.test(e.type));
+}
