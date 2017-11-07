@@ -55,7 +55,8 @@ export function isNull(x: any): x is null | undefined {
  * @param {*} x
  * @returns {x is () => any}
  */
-export function isFuncton(x: any): x is () => any {
+/* tslint:disable-next-line:ban-types  */
+export function isFuncton(x: any): x is Function {
     return (typeof x === 'function');
 }
 
