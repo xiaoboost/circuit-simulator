@@ -27,6 +27,25 @@ interface SVGAnimationElement extends SVGElement {
     endElementAt(offset: number): void;
 }
 
+/** 委托事件公共接口 */
+interface $Event extends Event {
+    /** 触发事件的元素 */
+    target: HTMLElement;
+    /** 绑定事件的元素 */
+    currentTarget: HTMLElement;
+    /** 被委托事件的元素 */
+    delegateTarget: HTMLElement;
+    /** 委托事件内绑定时数据 */
+    data: { [x: string]: any };
+
+    /** 当前委托事件默认行为是否被取消 */
+    isDefaultPrevented: boolean;
+    /** 当前委托事件的进一步穿鼻是否被取消 */
+    isPropagationStopped: boolean;
+    /** 当前委托事件的其他侦听器是否被取消 */
+    isImmediatePropagationStopped: boolean;
+}
+
 declare const SVGAnimationElement: {
     prototype: SVGAnimationElement;
     new(): SVGAnimationElement;
@@ -34,3 +53,4 @@ declare const SVGAnimationElement: {
 
 declare const $ENV: Environment;
 declare type EventExtend = Extend;
+declare type DelegateEvent = $Event;
