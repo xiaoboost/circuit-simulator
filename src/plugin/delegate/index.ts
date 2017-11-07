@@ -1,39 +1,22 @@
 import delegate from './main';
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 
 import { Vue, VueConstructor } from 'vue/types/vue';
 import { VNodeDirective } from 'vue/types/vnode';
 
 interface AnyObject { [x: string]: any; }
-type Callback = (e?: Event) => boolean | void;
-
-interface DelegateModifiers {
-    readonly self: boolean;
-    readonly left: boolean;
-    readonly right: boolean;
-    readonly stop: boolean;
-    readonly prevent: boolean;
-    // TODO:
-    readonly once: boolean;
-
-    readonly [x: string]: boolean;
-}
-
-interface DelegateDirective extends VNodeDirective {
-    readonly name: 'delegate';
-    readonly value: [string | Callback, AnyObject | Callback | undefined, Callback | undefined];
-    readonly arg: string;
-    readonly modifiers: DelegateModifiers;
-}
+interface Modifiers { [key: string]: boolean; }
+type outterCallback = (e?: DelegateEvent) => boolean | void;
+type innerCallback = (e: DelegateEvent) => boolean | void;
 
 // 全局函数映射
-const functionMap = new Map<Callback, Callback>();
+const functionMap = new Map<outterCallback, innerCallback>();
 
 /**
  * 统一绑定事件时的输入参数格式
  * 标准格式为 type, selector, fn
  */
-function fixOnParameters(type: string, selector: string | AnyObject | Callback, data?: AnyObject | Callback, fn?: Callback): [string, string, AnyObject, Callback] {
+function fixOnParameters(type: string, selector: string | AnyObject | outterCallback, data?: AnyObject | outterCallback, fn?: outterCallback): [string, string, AnyObject, outterCallback] {
     // ( types, fn )
     if (assert.isFuncton(selector)) {
         return [type, '', {}, selector];
@@ -60,7 +43,7 @@ function fixOnParameters(type: string, selector: string | AnyObject | Callback, 
  * 统一解除绑定时的输入参数格式
  * 标准格式为 type, selector, fn
  */
-function fixOffParameters(type?: string, selector?: string | AnyObject | Callback, data?: AnyObject | Callback, fn?: Callback): [string, string, Callback | undefined] {
+function fixOffParameters(type?: string, selector?: string | AnyObject | outterCallback, data?: AnyObject | outterCallback, fn?: outterCallback): [string, string, outterCallback | undefined] {
     // ()
     if (assert.isNull(type)) {
         return ['', '*', undefined];
@@ -94,23 +77,25 @@ function fixOffParameters(type?: string, selector?: string | AnyObject | Callbac
  * @param {Object} modifiers
  * @return {Function} fn
  */
-function packageCallback(callback: Callback, modifiers: DelegateModifiers): Callback {
-    function packFn(e: MouseEvent) {
+function packageCallback(callback: outterCallback, modifiers: Modifiers): innerCallback {
+    function packFn(event: DelegateEvent) {
         // 等于自身
-        const self = !modifiers.self || (e.currentTarget === e.target);
+        const self = !modifiers.self || (event.currentTarget === event.target);
         // 左键
-        const left = !modifiers.left || (e.button === 0);
+        const left = !modifiers.left || (assert.isMouseEvent(event) && (event.button === 0));
         // 右键
-        const right = !modifiers.right || (e.button === 2);
+        const right = !modifiers.right || (assert.isMouseEvent(event) && (event.button === 2));
+
+        // TODO: 一次性事件 once
 
         if (self && left && right) {
-            const ans = callback(e);
+            const ans = callback(event);
 
             if (modifiers.stop) {
-                e.stopPropagation();
+                event.stopPropagation();
             }
             if (modifiers.prevent) {
-                e.preventDefault();
+                event.preventDefault();
             }
 
             return ans;
@@ -139,7 +124,7 @@ function fixType(type: string): string {
 function install(App: VueConstructor) {
     // 添加全局指令
     App.directive('delegate', {
-        bind(el: HTMLElement, binding: DelegateDirective) {
+        bind(el: HTMLElement, binding: VNodeDirective): void {
             const [_selector, _data, _fn] = binding.value,
                 [typeOri, selector, data, fn] = fixOnParameters(binding.arg, _selector, _data, _fn),
                 handler = packageCallback(fn, binding.modifiers),
@@ -148,7 +133,7 @@ function install(App: VueConstructor) {
             functionMap.set(fn, handler);
             delegate.add(el, type, selector, data, handler);
         },
-        unbind(el: HTMLElement, binding: DelegateDirective) {
+        unbind(el: HTMLElement, binding: VNodeDirective): void {
             const [, , fn] = fixOffParameters(binding.arg, ...binding.value);
 
             if (fn) {
@@ -160,13 +145,13 @@ function install(App: VueConstructor) {
         },
     });
     // 添加实例方法
-    App.prototype.$$on = function(this: Vue, type: string, selector: string, data: AnyObject, fn: Callback) {
+    App.prototype.$$on = (el: HTMLElement, type: string, selector: string, data: AnyObject, fn: outterCallback) => {
         const [_type, _selector, _data, _fn] = fixOnParameters(type, selector, data, fn);
-        delegate.add(this.$el, _type, _selector, _data, _fn);
+        delegate.add(el, _type, _selector, _data, _fn);
     };
-    App.prototype.$$off = function(this: Vue, type: string, selector: string, fn: Callback) {
+    App.prototype.$$off = (el: HTMLElement, type: string, selector: string, fn: outterCallback) => {
         const [_type, _selector, _fn] = fixOffParameters(type, selector, undefined, fn);
-        delegate.remove(this.$el, _type, _selector, _fn);
+        delegate.remove(el, _type, _selector, _fn);
     };
 }
 

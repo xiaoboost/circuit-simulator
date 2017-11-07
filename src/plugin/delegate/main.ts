@@ -1,4 +1,4 @@
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 
 interface SelectorParsed {
     tag: string;
@@ -6,18 +6,9 @@ interface SelectorParsed {
     class: string[];
 }
 
-interface $Event extends Event {
-    button: number;
-    target: HTMLElement;
-    currentTarget: HTMLElement;
-    preventDefault(): void;
-    stopPropagation(): void;
-    stopImmediatePropagation(): void;
-}
-
 interface ElementData {
     events: EventsObj;
-    handle?(e: Event): void;
+    handle(e: Event): void;
 }
 
 interface HandlerQueueObj {
@@ -31,7 +22,7 @@ interface HandleObj {
     matches: Element[];
     data: { [x: string]: any };
     characteristic: SelectorParsed[];
-    callback(e?: $Event): boolean | void;
+    callback(e: $Event): boolean | void;
 }
 
 interface EventsObj {
@@ -48,61 +39,62 @@ const special: { [x: string]: (e: Event) => boolean } = {
     mouseleave: (event) => event.currentTarget === event.target,
 };
 
-/** 有效函数 */
-const returnTrue = () => true;
-/** 无效函数 */
-const returnFalse = () => false;
-
 /** 对 $Event 类的修饰 */
 function decorate<T extends { prototype: object }>(target: T): T {
     Reflect.setPrototypeOf(target.prototype, new Proxy({}, {
-        get(_, property, receiver: { _data: { [x: string]: any }}) {
-            return receiver._data[property];
+        get(_, property, receiver: { _origin: { [x: string]: any }}) {
+            return receiver._origin[property];
         },
     }));
     return target;
 }
 
 @decorate
-class $Event {
+class $Event extends Event {
     /** 委托事件的类型 */
     type: string;
     /** 委托事件内绑定时数据 */
     data: { [x: string]: any };
     /** 被委托事件的元素 */
     delegateTarget: HTMLElement;
+    /** 触发事件的元素 */
+    target: HTMLElement;
+    /** 绑定事件的元素 */
+    currentTarget: HTMLElement;
+
     /** 事件默认行为是否被取消 */
-    isDefaultPrevented = returnFalse;
+    isDefaultPrevented = false;
     /** 当前事件的进一步穿鼻是否被取消 */
-    isPropagationStopped = returnFalse;
+    isPropagationStopped = false;
     /** 当前事件的其他侦听器是否被取消 */
-    isImmediatePropagationStopped = returnFalse;
+    isImmediatePropagationStopped = false;
 
     /**
      * 被代理的原事件数据
      * @private
      * @type {Event}
      */
-    private _data: Event;
+    private _origin: Event;
 
     constructor(origin: Event) {
-        this._data = origin;
+        super(origin.type, origin);
+        this._origin = origin;
     }
 
     /** 取消默认行为 */
     preventDefault(): void {
-        this.isDefaultPrevented = returnTrue;
-        this._data.preventDefault();
+        this.isDefaultPrevented = true;
+        this._origin.preventDefault();
     }
     /** 阻止捕获和冒泡阶段中当前事件的进一步传播 */
     stopPropagation(): void {
-        this.isPropagationStopped = returnTrue;
-        this._data.stopPropagation();
+        this.isPropagationStopped = true;
+        this._origin.stopPropagation();
     }
     /** 阻止调用相同事件的其他侦听器 */
     stopImmediatePropagation(): void {
-        this.isImmediatePropagationStopped = returnTrue;
-        this._data.stopImmediatePropagation();
+        this.isImmediatePropagationStopped = true;
+        this._origin.stopImmediatePropagation();
         this.stopPropagation();
     }
 }
@@ -217,7 +209,7 @@ function dispatch(elem: HTMLElement, args: Event): void {
     const handlerQueue = tohandlers(elem, event, elemhandlers);
     handlerQueue.every((handleObj: HandlerQueueObj) => {
         // 如果事件停止捕获，那么跳出
-        if (event.isPropagationStopped()) {
+        if (event.isPropagationStopped) {
             return (false);
         }
 
@@ -251,11 +243,20 @@ function dispatch(elem: HTMLElement, args: Event): void {
  * @param {{ [x: string]: any }} data
  * @param {Callback} callback
  */
-function add(elem: HTMLElement, types: string, selector: string, data: { [x: string]: any }, callback: (e?: $Event) => boolean | void) {
+function add(elem: HTMLElement, types: string, selector: string, data: { [x: string]: any }, callback: (e: $Event) => boolean | void) {
     // 取出当前 DOM 的委托数据
-    const elemData = $Cache.get(elem) || { events: {}}, events = elemData.events;
-    // 若是初次绑定，那么定义事件回调函数
-    elemData.handle = elemData.handle || ((event: Event): void => dispatch(elem, event));
+    let elemData = $Cache.get(elem);
+    // 若是没有数据，那么定义事件数据
+    if (assert.isNull(elemData)) {
+        elemData = {
+            events: {},
+            handle: (event: Event): void => dispatch(elem, event),
+        };
+        $Cache.set(elem, elemData);
+    }
+
+    const events = elemData.events;
+
     // 分割事件并绑定
     (types.match(rnotwhite) || ['']).forEach((type) => {
         // 非法名称，跳过
@@ -276,18 +277,13 @@ function add(elem: HTMLElement, types: string, selector: string, data: { [x: str
         if (!events[type]) {
             events[type] = [];
             // 绑定监听事件（捕获阶段）
-            elem.addEventListener(type, (elemData.handle as () => void), true);
+            elem.addEventListener(type, (elemData as ElementData).handle, true);
         }
         // selector 有重复的，那么就覆盖，没有重复的那就添加到末尾
         if (!(events[type].some((n, i, arr) => (selector === n.selector) && (Boolean(arr[i] = handleObj))))) {
             events[type].push(handleObj);
         }
     });
-
-    // 如果缓存中没有数据，那么存入当前数据
-    if (!$Cache.has(elem)) {
-        $Cache.set(elem, elemData);
-    }
 }
 
 /**
@@ -297,7 +293,7 @@ function add(elem: HTMLElement, types: string, selector: string, data: { [x: str
  * @param {string} selector 被委托元素的选择器
  * @param {Callback} callback 事件回调
  */
-function remove(elem: HTMLElement, types?: string, selector?: string, callback?: (e?: $Event) => boolean | void) {
+function remove(elem: HTMLElement, types?: string, selector?: string, callback?: (e: $Event) => boolean | void) {
     const elemData = $Cache.get(elem),
         events = elemData && elemData.events;
 
