@@ -320,7 +320,7 @@ function remove(elem: HTMLElement, types?: string, selector?: string, callback?:
             return (false);
         }
         if ((assert.isString(selector) && assert.isNull(callback) && selector === handlerObj.selector) ||
-            (assert.isNull(selector) && assert.isFuncton(callback) && callback === handlerObj.callback) ||
+            (assert.isNull(selector) && assert.isFunction(callback) && callback === handlerObj.callback) ||
             (selector === handlerObj.selector && callback === handlerObj.callback)) {
             return (false);
         }
