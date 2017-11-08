@@ -19,8 +19,8 @@
         "typedef": true,
         // 一个单位为4个空格
         "indent": [true, "spaces", 4],
-        // 除 new 语句之外，不允许独立存在的表达式
-        "no-unused-expression": [true, "allow-new"],
+        // 允许独立存在的表达式
+        "no-unused-expression": false,
         // 允许 console.log
         "no-console": false,
         // 允许位运算
@@ -39,8 +39,6 @@
         "no-submodule-imports": false,
         // 禁止 switch-case 语句中的 fall-through 行为
         "no-switch-case-fall-through": true,
-        // 不允许对 this 的重新赋值
-        "no-this-assignment": true,
         // 允许 void 表达式
         "no-void-expression": false,
         // 推荐使用三元运算符
