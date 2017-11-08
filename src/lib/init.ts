@@ -69,7 +69,7 @@ Object.assign(Object.prototype, {
 
         return Object.entries(this).every(
             ([key, value]) =>
-                (assert.isObject(value) && assert.isFuncton(value.isEqual))
+                (assert.isObject(value) && assert.isFunction(value.isEqual))
                     ? value.isEqual(obj[key])
                     : value === obj[key],
         );
@@ -102,7 +102,7 @@ Object.assign(Array.prototype, {
 
         return this.every(
             (item, i) =>
-                (assert.isObject(item) && assert.isFuncton(item.isEqual))
+                (assert.isObject(item) && assert.isFunction(item.isEqual))
                     ? item.isEqual(to[i])
                     : item === to[i],
         );
