@@ -764,7 +764,22 @@ const operational_amplifier: Electronic = {
     ],
 };
 
-export default {
+const all: {
+    resistance: Electronic;
+    capacitor: Electronic;
+    inductance: Electronic;
+    dc_voltage_source: Electronic;
+    ac_voltage_source: Electronic;
+    dc_current_source: Electronic;
+    reference_ground: Electronic;
+    voltage_meter: Electronic;
+    current_meter: Electronic;
+    diode: Electronic;
+    transistor_npn: Electronic;
+    operational_amplifier: Electronic;
+
+    [type: string]: Electronic;
+} = {
     resistance,
     capacitor,
     inductance,
@@ -778,3 +793,5 @@ export default {
     transistor_npn,
     operational_amplifier,
 };
+
+export default all;
