@@ -7,8 +7,10 @@ type callback = (e?: Event) => void | boolean;
 /** 生成鼠标结束事件对外的数据接口 */
 export interface StopMouseEvent {
     el: HTMLElement;
-    type: 'click' | 'dblclick' | 'mousedown' | 'mouseup' | 'mouseenter' | 'mouseleave';
-    which: 'left' | 'middle' | 'right';
+    type: string;
+    which: string;
+    // type: 'click' | 'dblclick' | 'mousedown' | 'mouseup' | 'mouseenter' | 'mouseleave';
+    // which: 'left' | 'middle' | 'right';
 }
 
 /** 绘图代理事件的扩展属性 */
