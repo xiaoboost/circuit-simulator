@@ -47,6 +47,8 @@ import events, { DrawEventSetting, DrawEvent } from './events';
 import { PartData, PartComponent } from 'src/components/electronic-part/type';
 import { LineData, LineComponent } from 'src/components/electronic-line/type';
 
+type setDrawEvent = (option: DrawEventSetting) => void;
+
 export default Vue.extend({
     name: 'DrawingMain',
     mixins: [events],
@@ -164,12 +166,12 @@ export default Vue.extend({
         /** 移动图纸 */
         moveMap() {
             const stopEvent = { el: this.$el, type: 'mouseup', which: 'right' },
-                handlers = (event: DrawEvent) => this.$store.commit(
+                handlers = (event: Event & DrawEvent): void => this.$store.commit(
                     'SET_POSITION',
                     this.position.add(event.$movement.mul(this.zoom))
                 );
 
-            this.setDrawEvent({ handlers, stopEvent, cursor: 'move_map' });
+            (<setDrawEvent>this.setDrawEvent)({ handlers, stopEvent, cursor: 'move_map' });
         },
         // selectMore(e) {
         //     const el = this.$el,
