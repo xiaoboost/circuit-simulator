@@ -2,7 +2,7 @@ import Vue from 'vue';
 import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 
-type callback = (e?: Event) => void | boolean;
+type callback = (event: Event & DrawEvent) => void | boolean;
 
 /** 生成鼠标结束事件对外的数据接口 */
 export interface StopMouseEvent {
