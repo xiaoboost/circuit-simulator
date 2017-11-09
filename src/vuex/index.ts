@@ -71,11 +71,11 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
     /** 关闭侧边栏 */
     CLOSE_SLIDER: (context) => context.page = '',
     /** 打开添加器件侧边栏 */
-    OPEN_ADD_PARTS: (context, page: string) => context.page = 'add-parts',
+    OPEN_ADD_PARTS: (context) => context.page = 'add-parts',
     /** 打开总设置侧边栏 */
-    OPEN_MAIN_CONFIG: (context, page: string) => context.page = 'main-config',
+    OPEN_MAIN_CONFIG: (context) => context.page = 'main-config',
     /** 打开波形界面 */
-    OPEN_GRAPH_VIEW: (context, page: string) => context.page = 'graph-view',
+    OPEN_GRAPH_VIEW: (context) => context.page = 'graph-view',
 
     /** 设置终止时间 */
     SET_END_TIME: (context, time: string) => context.END_TIME = time,
