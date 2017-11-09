@@ -293,14 +293,14 @@ class Matrix {
     /**
      * 基于LU分解的矩阵求逆
      *
-     * @returns {(false | Matrix)}
+     * @returns {Matrix}
      */
-    inverse(): Matrix | false {
+    inverse(): Matrix {
         const [L, U, P] = this.luDecompose(), n = this.row;
 
         for (let i = 0; i < U.row; i++) {
             if (U.get(i, i) === 0) {
-                return (false);
+                throw new Error('This matrix has no inverse');
             }
         }
 
