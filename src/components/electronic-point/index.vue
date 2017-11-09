@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import assert from 'src/lib/assertion';
+import * as assert from 'src/lib/assertion';
 
 const radius = {
     normal: {
