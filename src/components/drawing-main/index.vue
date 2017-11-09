@@ -3,15 +3,15 @@
     :style="background"
     :class="['drawing-main', { 'no-event': !exclusion }]">
     <svg
-        version="2" :xmlns="NS"
-        height="100%" width="100%"
+        version="2" height="100%" width="100%"
+        xmlns="http://www.w3.org/2000/svg"
         @wheel="mousewheel($event)"
-        @mousedown.self.stop.right="moveMap($event)"
-        @mousedown.self.stop.left="selectMore($event)">
+        @mousedown.self.stop.right="moveMap">
+        <!-- @mousedown.self.stop.left="selectMore($event)" -->
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
-            <elec-line
+            <!-- <elec-line
                 ref="lines"
-                v-for="i in lines.length"
+                v-for="line in lines"
                 :key="lines[i - 1].id"
                 :value.sync="lines[i - 1]"
                 :focus="linesNow.includes(lines[i - 1].id)"
@@ -30,31 +30,33 @@
             <selections-box
                 v-if="Boolean(selections)"
                 :location="selections">
-            </selections-box>
+            </selections-box> -->
         </g>
     </svg>
 </section>
 </template>
 
-<script>
-import Part from 'src/components/electronic-part';
-import Line from 'src/components/electronic-line';
-import SelectionsBox from 'src/components/selections-box';
+<script lang="ts">
+import Vue from 'vue';
+import { $P, Point } from 'src/lib/point';
+import * as assert from 'src/lib/assertion';
+// import Part from 'src/components/electronic-part';
+// import Line from 'src/components/electronic-line';
+// import SelectionsBox from 'src/components/selections-box';
+import events, { DrawEventSetting, DrawEvent } from './events';
+import { PartData, PartComponent } from 'src/components/electronic-part/type';
+import { LineData, LineComponent } from 'src/components/electronic-line/type';
 
-import Event from './event-controler';
-import { $P } from 'src/lib/point';
-
-export default {
+export default Vue.extend({
     name: 'DrawingMain',
-    mixins: [Event],
+    mixins: [events],
     components: {
-        'elec-part': Part,
-        'elec-line': Line,
-        'selections-box': SelectionsBox,
+        // 'elec-part': Part,
+        // 'elec-line': Line,
+        // 'selections-box': SelectionsBox,
     },
     data() {
         return {
-            NS: this.$store.state.$SVG_NS,
             selections: false,
 
             partsNow: [],
@@ -62,70 +64,75 @@ export default {
         };
     },
     computed: {
-        background() {
-            const size = this.zoom * 20,
-                biasX = this.position[0] % size,
-                biasY = this.position[1] % size;
+        zoom(): number {
+            return this.$store.state.zoom;
+        },
+        position(): Point {
+            return this.$store.state.position;
+        },
+        parts(): PartData[] {
+            return this.$store.state.Parts;
+        },
+        lines(): LineData[] {
+            return this.$store.state.Lines;
+        },
+        background(): { 'background-size': string; 'background-position': string; } {
+            const size: number = this.zoom * 20,
+                biasX: number = this.position[0] % size,
+                biasY: number = this.position[1] % size;
 
             return {
                 'background-size': `${size}px`,
                 'background-position': `${biasX}px ${biasY}px`,
             };
         },
-        zoom() {
-            return this.$store.state.drawing.zoom;
+    },
+    provide: {
+        findPart(id: string | { id: string } | HTMLElement): PartComponent | undefined {
+            const prop = (assert.isElement(id)) ? '$el' : 'id',
+                value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+            
+            return (this.$refs.parts as PartComponent[]).find((part) => part[prop] === value);
         },
-        position() {
-            return this.$store.state.drawing.position;
-        },
-        parts() {
-            return this.$store.state.collection.Parts;
-        },
-        lines() {
-            return this.$store.state.collection.Lines;
+        findLine(id: string | { id: string } | HTMLElement): LineComponent | undefined {
+            const prop = (assert.isElement(id)) ? '$el' : 'id',
+                value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+            
+            return (this.$refs.parts as LineComponent[]).find((line) => line[prop] === value);
         },
     },
     methods: {
-        find(id) {
-            const prop = (typeof id === 'string') ? 'id' : '$el',
-                item = (prop === 'id') ? id.split('-')[0] : id,
-                parts = this.$refs.parts || [],
-                lines = this.$refs.lines || [],
-                components = parts.concat(lines);
+        // // 清空当前操作器件堆栈
+        // clearFocus(args = []) {
+        //     this.partsNow.splice(0, this.partsNow.length);
+        //     this.linesNow.splice(0, this.linesNow.length);
 
-            return components.find((n) => item === n[prop]);
-        },
-        // 清空当前操作器件堆栈
-        clearFocus(args = []) {
-            this.partsNow.splice(0, this.partsNow.length);
-            this.linesNow.splice(0, this.linesNow.length);
-
-            args = (args instanceof Array) ? args : [args];
-            for (let i = 0; i < args.length; i++) {
-                const id = args[i].id || args[i];
-                if (/^line_\d+$/.test(id)) {
-                    this.linesNow.push(id);
-                } else {
-                    this.partsNow.push(id.split('-')[0]);
-                }
-            }
-        },
-        // 选中器件
-        selectPart(id, button) {
-            if (!this.partsNow.includes(id)) {
-                this.clearFocus(id);
-            }
-            if (button === 'left') {
-                // 左键移动
-                this.moveParts();
-            } else if (button === 'right') {
-                // 右键展开菜单
-                this.contextmenu();
-            }
-        },
-        // 放大缩小图纸
-        mousewheel(e) {
-            const mousePosition = [e.pageX, e.pageY];
+        //     args = (args instanceof Array) ? args : [args];
+        //     for (let i = 0; i < args.length; i++) {
+        //         const id = args[i].id || args[i];
+        //         if (/^line_\d+$/.test(id)) {
+        //             this.linesNow.push(id);
+        //         } else {
+        //             this.partsNow.push(id.split('-')[0]);
+        //         }
+        //     }
+        // },
+        // // 选中器件
+        // selectPart(id, button) {
+        //     if (!this.partsNow.includes(id)) {
+        //         this.clearFocus(id);
+        //     }
+        //     if (button === 'left') {
+        //         // 左键移动
+        //         this.moveParts();
+        //     } else if (button === 'right') {
+        //         // 右键展开菜单
+        //         this.contextmenu();
+        //     }
+        // },
+        /** 放大缩小图纸 */
+        mousewheel(e: WheelEvent): void {
+            const mousePosition = $P(e.pageX, e.pageY);
             let size = this.zoom * 20;
 
             if (e.deltaY > 0) {
@@ -136,11 +143,11 @@ export default {
 
             if (size < 20) {
                 size = 20;
-                return (false);
+                return;
             }
             if (size > 80) {
                 size = 80;
-                return (false);
+                return ;
             }
 
             this.$store.commit(
@@ -154,45 +161,43 @@ export default {
 
             this.$store.commit('SET_ZOOM', size / 20);
         },
-        // 移动图纸
+        /** 移动图纸 */
         moveMap() {
-            const el = this.$el,
-                stopEvent = { el, type: 'mouseup', which: 'right' },
-                handlers = (e) => this.$store.commit(
+            const stopEvent = { el: this.$el, type: 'mouseup', which: 'right' },
+                handlers = (event: DrawEvent) => this.$store.commit(
                     'SET_POSITION',
-                    this.position
-                        .add(e.$bias.mul(this.zoom))
+                    this.position.add(event.$movement.mul(this.zoom))
                 );
 
-            this.EventControler({ handlers, stopEvent, cursor: 'move_map' });
+            this.setDrawEvent({ handlers, stopEvent, cursor: 'move_map' });
         },
-        selectMore(e) {
-            const el = this.$el,
-                stopEvent = { el, type: 'mouseup', which: 'left' },
-                mouseStart = $P(e.pageX, e.pageY),
-                start = mouseStart.add(this.position, -1).mul(1 / this.zoom),
-                handlers = (e) => this.selections.splice(1, 1, e.$mouse),
-                cursor = (e) => (mouseStart.distance([e.pageX, e.pageY]) > 15) && 'select_box',
-                afterEvent = () => {
-                    // TODO: 导线多选
-                    const axisX = this.selections.map((point) => point[0]),
-                        axisY = this.selections.map((point) => point[1]),
-                        range = [Math.min(...axisX), Math.max(...axisX), Math.min(...axisY), Math.max(...axisY)],
-                        parts = (this.$refs.parts || [])
-                            .filter(
-                                (part) =>
-                                    (part.position[0] > range[0]) && (part.position[0] < range[1]) &&
-                                    (part.position[1] > range[2]) && (part.position[1] < range[3])
-                            );
+        // selectMore(e) {
+        //     const el = this.$el,
+        //         stopEvent = { el, type: 'mouseup', which: 'left' },
+        //         mouseStart = $P(e.pageX, e.pageY),
+        //         start = mouseStart.add(this.position, -1).mul(1 / this.zoom),
+        //         handlers = (e) => this.selections.splice(1, 1, e.$mouse),
+        //         cursor = (e) => (mouseStart.distance([e.pageX, e.pageY]) > 15) && 'select_box',
+        //         afterEvent = () => {
+        //             // TODO: 导线多选
+        //             const axisX = this.selections.map((point) => point[0]),
+        //                 axisY = this.selections.map((point) => point[1]),
+        //                 range = [Math.min(...axisX), Math.max(...axisX), Math.min(...axisY), Math.max(...axisY)],
+        //                 parts = (this.$refs.parts || [])
+        //                     .filter(
+        //                         (part) =>
+        //                             (part.position[0] > range[0]) && (part.position[0] < range[1]) &&
+        //                             (part.position[1] > range[2]) && (part.position[1] < range[3])
+        //                     );
 
-                    this.selections = false;
-                    this.clearFocus(parts);
-                };
+        //             this.selections = false;
+        //             this.clearFocus(parts);
+        //         };
 
-            this.clearFocus();
-            this.selections = [start, start];
-            this.EventControler({ handlers, stopEvent, afterEvent, cursor });
-        },
+        //     this.clearFocus();
+        //     this.selections = [start, start];
+        //     this.EventControler({ handlers, stopEvent, afterEvent, cursor });
+        // },
         // TODO: 移动选中所有器件
         moveParts() {
             // TODO: 根据器件扩展该选择的导线
@@ -202,5 +207,5 @@ export default {
 
         },
     },
-};
+});
 </script>

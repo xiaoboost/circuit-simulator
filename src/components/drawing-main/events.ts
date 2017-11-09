@@ -90,9 +90,14 @@ export default Vue.extend({
          * @returns {function} callback
          */
         wrapHandler(fn: callback, type: string): (event: MouseEvent & DrawEvent) => void {
+            let last: false | Point = false;
             const callbackOutter = (event: MouseEvent & DrawEvent) => {
-                event.$movement = $P(event.movementX, event.movementY).mul(1 / this.zoom);
-                event.$position = $P(event.pageX, event.pageY).add(this.position, -1).mul(1 / this.zoom);
+                const mouse = $P(event.pageX, event.pageY);
+
+                event.$movement = last ? mouse.add(last, -1).mul(1 / this.zoom) : $P();
+                event.$position = mouse.add(this.position, -1).mul(1 / this.zoom);
+
+                last = mouse;
                 fn(event);
             };
 
