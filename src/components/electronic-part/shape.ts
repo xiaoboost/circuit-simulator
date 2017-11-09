@@ -1,3 +1,5 @@
+/* tslint:disable:variable-name  */
+
 /** 器件每项参数的说明 */
 export interface ParmasDescription {
     /**
@@ -111,42 +113,42 @@ export const categories = [
         key: 'virtual_device',
         name: '虚拟器件',
         parts: [
-            'ReferenceGround',
-            'VoltageMeter',
-            'CurrentMeter',
+            'reference_ground',
+            'voltage_meter',
+            'current_meter',
         ],
     },
     {
         key: 'power',
         name: '电源',
         parts: [
-            'DCVoltageSource',
-            'ACVoltageSource',
-            'DCCurrentSource',
+            'dc_voltage_source',
+            'ac_voltage_source',
+            'dc_current_source',
         ],
     },
     {
         key: 'passive_device',
         name: '无源器件',
         parts: [
-            'Resistance',
-            'Capacitor',
-            'Inductance',
+            'resistance',
+            'capacitor',
+            'inductance',
         ],
     },
     {
         key: 'semiconductor_device',
         name: '半导体器件',
         parts: [
-            'Diode',
-            'TransistorNPN',
-            'OperationalAmplifier',
+            'diode',
+            'transistor_npn',
+            'operational_amplifier',
         ],
     },
 ];
 
 /** 电阻 */
-const Resistance: Electronic = {
+const resistance: Electronic = {
     pre: 'R',
     type: 'resistance',
     introduction: '电阻器',
@@ -188,7 +190,7 @@ const Resistance: Electronic = {
 };
 
 /** 电容 */
-const Capacitor: Electronic = {
+const capacitor: Electronic = {
     pre: 'C',
     type: 'capacitor',
     introduction: '电容器',
@@ -230,7 +232,7 @@ const Capacitor: Electronic = {
 };
 
 /** 电感 */
-const Inductance: Electronic = {
+const inductance: Electronic = {
     pre: 'L',
     type: 'inductance',
     introduction: '电感器',
@@ -272,7 +274,7 @@ const Inductance: Electronic = {
 };
 
 /** 直流电压源 */
-const DCVoltageSource: Electronic = {
+const dc_voltage_source: Electronic = {
     pre: 'V',
     type: 'dc_voltage_source',
     introduction: '直流电压源',
@@ -314,7 +316,7 @@ const DCVoltageSource: Electronic = {
 };
 
 /** 交流电压源 */
-const ACVoltageSource: Electronic = {
+const ac_voltage_source: Electronic = {
     pre: 'V',
     type: 'ac_voltage_source',
     introduction: '交流电压源',
@@ -380,7 +382,7 @@ const ACVoltageSource: Electronic = {
 };
 
 /** 直流电流源 */
-const DCCurrentSource: Electronic = {
+const dc_current_source: Electronic = {
     pre: 'I',
     type: 'dc_current_source',
     introduction: '直流电流源',
@@ -434,7 +436,7 @@ const DCCurrentSource: Electronic = {
 };
 
 /** 参考地 */
-const ReferenceGround: Electronic = {
+const reference_ground: Electronic = {
     pre: 'GND',
     type: 'reference_ground',
     introduction: '参考地',
@@ -465,7 +467,7 @@ const ReferenceGround: Electronic = {
 };
 
 /** 电压表 */
-const VoltageMeter: Electronic = {
+const voltage_meter: Electronic = {
     pre: 'VM',
     type: 'voltage_meter',
     introduction: '电压表',
@@ -513,7 +515,7 @@ const VoltageMeter: Electronic = {
 };
 
 /** 电流表 */
-const CurrentMeter: Electronic = {
+const current_meter: Electronic = {
     pre: 'IM',
     type: 'current_meter',
     introduction: '电流表',
@@ -554,7 +556,7 @@ const CurrentMeter: Electronic = {
 };
 
 /** 二极管 */
-const Diode: Electronic = {
+const diode: Electronic = {
     pre: 'VD',
     type: 'diode',
     introduction: '二极管',
@@ -614,7 +616,7 @@ const Diode: Electronic = {
 };
 
 /** NPN型三极管 */
-const TransistorNPN: Electronic = {
+const transistor_npn: Electronic = {
     pre: 'Q',
     type: 'transistor_npn',
     introduction: 'NPN型三极管',
@@ -686,7 +688,7 @@ const TransistorNPN: Electronic = {
 };
 
 /** 运算放大器 */
-const OperationalAmplifier: Electronic = {
+const operational_amplifier: Electronic = {
     pre: 'OP',
     type: 'operational_amplifier',
     introduction: '运算放大器',
@@ -763,16 +765,16 @@ const OperationalAmplifier: Electronic = {
 };
 
 export default {
-    Resistance,
-    Capacitor,
-    Inductance,
-    DCVoltageSource,
-    ACVoltageSource,
-    DCCurrentSource,
-    ReferenceGround,
-    VoltageMeter,
-    CurrentMeter,
-    Diode,
-    TransistorNPN,
-    OperationalAmplifier,
+    resistance,
+    capacitor,
+    inductance,
+    dc_voltage_source,
+    ac_voltage_source,
+    dc_current_source,
+    reference_ground,
+    voltage_meter,
+    current_meter,
+    diode,
+    transistor_npn,
+    operational_amplifier,
 };
