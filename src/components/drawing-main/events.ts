@@ -140,7 +140,7 @@ export default Vue.extend({
 
             return { queue, bind, unbind };
         },
-        setEventControler({
+        setDrawEvent({
             handlers,
             stopEvent,
             exclusion = true,
