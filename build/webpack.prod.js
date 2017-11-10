@@ -9,6 +9,10 @@ const chalk = require('chalk'),
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 baseConfig.plugins.push(
+    new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"production"',
+        '$ENV.NODE_ENV': '"production"',
+    }),
     new OptimizeCSSPlugin({
         cssProcessorOptions: {
             safe: true,
