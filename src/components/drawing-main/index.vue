@@ -17,17 +17,16 @@
                 :focus="linesNow.includes(lines[i - 1].id)"
                 @focus="clearFocus"
                 @event="EventControler">
-            </elec-line>
+            </elec-line> -->
             <elec-part
                 ref="parts"
-                v-for="i in parts.length"
-                :key="parts[i - 1].id"
-                :value.sync="parts[i - 1]"
-                :focus="partsNow.includes(parts[i - 1].id)"
+                v-for="part in parts"
+                :key="part.id"
+                :value.sync="part"
                 @focus="clearFocus"
                 @event="EventControler">
             </elec-part>
-            <selections-box
+            <!-- <selections-box
                 v-if="Boolean(selections)"
                 :location="selections">
             </selections-box> -->
@@ -40,7 +39,7 @@
 import Vue from 'vue';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
-// import Part from 'src/components/electronic-part';
+import Part from 'src/components/electronic-part';
 // import Line from 'src/components/electronic-line';
 // import SelectionsBox from 'src/components/selections-box';
 import events, { DrawEventSetting, DrawEvent } from './events';
@@ -53,7 +52,7 @@ export default Vue.extend({
     name: 'DrawingMain',
     mixins: [events],
     components: {
-        // 'elec-part': Part,
+        'elec-part': Part,
         // 'elec-line': Line,
         // 'selections-box': SelectionsBox,
     },
