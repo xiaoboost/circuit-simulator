@@ -6,9 +6,14 @@ const chalk = require('chalk'),
     config = require('./config'),
     baseConfig = require('./webpack.base'),
     UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
+    ProgressBarPlugin = require('progress-bar-webpack-plugin'),
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 baseConfig.plugins.push(
+    new ProgressBarPlugin({
+        width: 40,
+        format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
+    }),
     new webpack.DefinePlugin({
         'process.env.NODE_ENV': '"production"',
         '$ENV.NODE_ENV': '"production"',
@@ -32,7 +37,8 @@ if (config.bundleAnalyzer) {
     baseConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
-console.log(chalk.yellow('> Start Compile:...'));
+console.log('\x1Bc');
+console.log(chalk.yellow('> Start Compile:\n'));
 shell.rm('-rf', config.output);
 
 webpack(baseConfig, (err, stats) => {
