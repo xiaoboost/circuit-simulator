@@ -35,8 +35,8 @@ import Electronics, { categories, Electronic } from 'src/components/electronic-p
 function fixElementShape(type: string): { [x: string]: string } {
     const transform = {
         'current_meter': 'scale(1.2, 1.2)',
-        'reference_ground': 'scale(1.2, 1.2)',
-        'transistor_npn': 'translate(-5,0)',
+        'reference_ground': 'scale(1.2, 1.2) translate(0, 5)',
+        'transistor_npn': 'translate(-5, 0)',
     };
 
     return {
