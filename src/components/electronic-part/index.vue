@@ -38,19 +38,19 @@ import Electronics from './shape';
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
 
+import { $P, Point } from 'src/lib/point';
 import { $M, Matrix } from 'src/lib/matrix';
-import { $P, Point, PointLike } from 'src/lib/point';
-import { PointClass, PartMargin } from './type';
+import { PartData, PointClass, PartMargin } from './type';
 
 import ElectronicPoint from 'src/components/electronic-point';
 
 /**
  * 点乘以旋转矩阵
- * @param {PointLike} point
+ * @param {Point} point
  * @param {Matrix} matrix
  * @returns {Point}
  */
-function product(point: PointLike, matrix: Matrix): Point {
+function product(point: Point, matrix: Matrix): Point {
     return $P(
         point[0] * matrix.get(0, 0) + point[1] * matrix.get(1, 0),
         point[0] * matrix.get(0, 1) + point[1] * matrix.get(1, 1)
@@ -67,14 +67,16 @@ export default Vue.extend({
             },
         }),
     },
+    inject: {
+        zoom: {
+            from: 'mapZoom',
+            default: 1
+        },
+    },
     props: {
         value: {
             type: Object,
-            default: () => ({}),
-        },
-        focus: {
-            type: Boolean,
-            default: false,
+            default: () => (<PartData>{}),
         },
     },
     data() {
