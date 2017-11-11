@@ -7,8 +7,8 @@ import store from 'src/vuex';
 import delegate from 'src/plugin/delegate';
 
 import ActionMenu from 'src/components/action-menu';
-import SliderMenu from 'src/components/slider-menu';
-import DrawingMain from 'src/components/drawing-main';
+// import SliderMenu from 'src/components/slider-menu';
+// import DrawingMain from 'src/components/drawing-main';
 
 Vue.use(delegate);
 Vue.config.productionTip = ($ENV.NODE_ENV === 'development');
@@ -31,10 +31,12 @@ new Vue({
     store,
     el: '#app',
     name: 'App',
-    components: { ActionMenu, SliderMenu, DrawingMain },
+    // components: { ActionMenu, SliderMenu, DrawingMain },
+    components: { ActionMenu },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
-        [h('drawing-main'), h('slider-menu'), h('action-menu')],
+        // [h('drawing-main'), h('slider-menu'), h('action-menu')],
+        [h('action-menu')],
     ),
 });
 

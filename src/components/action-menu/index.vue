@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { action, Icon } from 'src/lib/icon';
-import { Component, Vue } from 'src/lib/vue-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 
 const zoom = 0.6;
 const icons = [
