@@ -24,12 +24,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { $P } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import * as assert from 'src/lib/assertion';
 import { PartData } from 'src/components/electronic-part/type';
-import Electronics, { categories, Electronic } from 'src/components/electronic-part/shape';
+
+import { CreateElement, VNode } from 'vue';
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import Electronics, { categories, Electronic, ShapeDescription } from 'src/components/electronic-part/shape';
 
 // 部分器件作为图标时需要修正其位置和大小
 function fixElementShape(type: string): { [x: string]: string } {
@@ -46,80 +48,82 @@ function fixElementShape(type: string): { [x: string]: string } {
     };
 }
 
-export default Vue.extend({
-    name: 'AddParts',
+@Component
+class PartShape extends Vue {
+    @Prop({ type: String, default: '' })
+    type: string;
+
+    @Prop({ type: Array, default: () => [] })
+    info: ShapeDescription[];
+
+    render(createElement: CreateElement): VNode {
+        const shape = this.info
+            .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-part'))
+            .map((dom) => createElement(dom.name, { attrs: dom.attribute }));
+
+        return createElement('g', { attrs: fixElementShape(this.type) }, shape);
+    }
+}
+
+interface TipStyle {
+    display: string;
+    left?: string;
+    top?: string;
+}
+
+@Component({
     components: {
-        'part-shape': Vue.extend({
-            props: {
-                info: {
-                    type: Array,
-                    default: () => [],
-                },
-                type: {
-                    type: String,
-                    default: '',
-                },
-            },
-            render(createElement) {
-                const shape = this.info
-                    .filter((n) => !Object.values(n.attribute).some((n) => n === 'focus-part'))
-                    .map((dom) => createElement(dom.name, { attrs: dom.attribute }));
-
-                return createElement('g', { attrs: fixElementShape(this.type) }, shape);
-            },
-        }),
+        PartShape,
     },
-    data() {
-        return {
-            tipText: '',
-            tipStyle: {},
+})
+export default class AddParts extends Vue {
+    /** 提示文本 */
+    tipText = '';
+    tipStyle: TipStyle = { display: 'none' };
 
-            categories,
-            parts: Electronics,
+    parts = Electronics;
+    categories = categories;
+
+    setTip(event: MouseEvent & EventExtend): void {
+        const name = event.currentTarget.getAttribute('data-name');
+
+        if (assert.isNull(name)) {
+            throw new Error('Type cannot be empty.');
+        }
+
+        this.tipText = Electronics[name].introduction;
+        this.tipStyle = {
+            display: 'inline',
+            left: `${event.pageX - 10}px`,
+            top: `${event.pageY - 10}px`,
         };
-    },
-    methods: {
-        setTip(event: MouseEvent & EventExtend): void {
-            const name = event.currentTarget.getAttribute('data-name');
+    }
+    disabledTip(): void {
+        this.tipStyle = {
+            display: 'none',
+        };
+    }
+    addPart(event: MouseEvent & EventExtend): void {
+        const name = event.currentTarget.getAttribute('data-name');
 
-            if (assert.isNull(name)) {
-                throw new Error('Type cannot be empty.');
-            }
+        if (assert.isNull(name)) {
+            throw new Error('Type cannot be empty.');
+        }
 
-            this.tipText = Electronics[name].introduction;
-            this.tipStyle = {
-                display: 'inline',
-                left: `${event.pageX - 10}px`,
-                top: `${event.pageY - 10}px`,
-            };
-        },
-        disabledTip(): void {
-            this.tipStyle = {
-                display: 'none',
-            };
-        },
-        addPart(event: MouseEvent & EventExtend): void {
-            const name = event.currentTarget.getAttribute('data-name');
+        const partData: Electronic = Electronics[name];
+        const partsAll = this.$store.state.Parts;
 
-            if (assert.isNull(name)) {
-                throw new Error('Type cannot be empty.');
-            }
-
-            const partData: Electronic = Electronics[name];
-            const partsAll = this.$store.state.Parts;
-
-            this.$store.commit('PUSH_PART', {
-                id: partsAll.createPartId(partData.pre),
-                type: partData.type,
-                rotate: $M(2, 'E'),
-                // 初始状态：0, 0 表示是新建器件
-                position: $P(0, 0),
-                params: partData.params.map((params) => params.default),
-                connect: [],
-            });
-        },
-    },
-});
+        this.$store.commit('PUSH_PART', {
+            id: partsAll.createPartId(partData.pre),
+            type: partData.type,
+            rotate: $M(2, 'E'),
+            // 初始状态：0, 0 表示是新建器件
+            position: $P(0, 0),
+            params: partData.params.map((params) => params.default),
+            connect: [],
+        });
+    }
+}
 </script>
 
 <style lang="stylus">

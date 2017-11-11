@@ -34,21 +34,19 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import Input from 'src/components/input-verifiable';
+import { Component, Vue } from 'vue-property-decorator';
 
-export default Vue.extend({
-    name: 'Config',
+@Component({
     components: {
         'v-input': Input,
     },
-    data() {
-        return {
-            pattern: Number.SCIMatch,
-            end: this.$store.state.END_TIME,
-            step: this.$store.state.STEP_TIME,
-        };
-    },
+})
+export default class Config extends Vue {
+    pattern = Number.SCIMatch;
+    end: string = this.$store.state.END_TIME;
+    step: string = this.$store.state.STEP_TIME;
+
     // beforeRouteLeave(to, from, next) {
     //     if (this.$refs['end'].check() && this.$refs['step'].check()) {
     //         this.$store.commit('SET_END_TIME', this.end);
@@ -56,7 +54,7 @@ export default Vue.extend({
     //         next();
     //     }
     // },
-});
+}
 </script>
 
 <style lang="stylus">

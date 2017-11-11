@@ -7,7 +7,7 @@ import store from 'src/vuex';
 import delegate from 'src/plugin/delegate';
 
 import ActionMenu from 'src/components/action-menu';
-// import SliderMenu from 'src/components/slider-menu';
+import SliderMenu from 'src/components/slider-menu';
 // import DrawingMain from 'src/components/drawing-main';
 
 Vue.use(delegate);
@@ -32,11 +32,11 @@ new Vue({
     el: '#app',
     name: 'App',
     // components: { ActionMenu, SliderMenu, DrawingMain },
-    components: { ActionMenu },
+    components: { ActionMenu, SliderMenu },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
         // [h('drawing-main'), h('slider-menu'), h('action-menu')],
-        [h('action-menu')],
+        [h('slider-menu'), h('action-menu')],
     ),
 });
 

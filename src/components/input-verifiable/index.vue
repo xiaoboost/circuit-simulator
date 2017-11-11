@@ -10,75 +10,61 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 
-export default Vue.extend({
-    name: 'InputVerifiable',
-    props: {
-        value: {
-            type: String,
-            default: '',
-        },
-        placeholder: {
-            type: String,
-            default: '请输入内容',
-        },
-        maxlength: {
-            type: Number,
-            default: Infinity,
-        },
-        required: {
-            type: Boolean,
-            default: false,
-        },
-        pattern: {
-            type: RegExp,
-            default: () => /[\d\D]*/,
-        },
-        func: {
-            type: Function,
-            default: () => true,
-        },
-        message: {
-            type: String,
-            default: '',
-        },
-    },
-    data() {
-        return {
-            isError: false,
-        };
-    },
-    methods: {
-        update(value: string): void {
-            this.check(value);
+@Component
+export default class InputVerifiable extends Vue {
+    @Prop({ type: String, default: '' })
+    value: string;
 
-            if (value.length <= this.maxlength) {
-                this.$emit('input', value);
-            }
-        },
-        check(value: string): boolean {
-            value = value || this.value;
-            this.isError = false;
-            if (this.required && !value) {
-                this.$emit('error', 'required');
-                this.isError = true;
-                return (false);
-            }
-            if (!this.pattern.test(value)) {
-                this.$emit('error', 'pattern');
-                this.isError = true;
-                return (false);
-            }
-            if (!this.func(value)) {
-                this.$emit('error', 'function');
-                this.isError = true;
-                return (false);
-            }
-            return (true);
-        },
-    },
-});
+    @Prop({ type: String, default: '请输入内容' })
+    placeholder: string;
+
+    @Prop({ type: Number, default: Infinity })
+    maxlength: number;
+
+    @Prop({ type: Boolean, default: false })
+    required: boolean;
+
+    @Prop({ type: RegExp, default: /[\d\D]*/ })
+    pattern: RegExp;
+
+    @Prop({ type: Function, default: () => true })
+    func: (value: string) => boolean;
+
+    @Prop({ type: String, default: '' })
+    message: string;
+
+    isError = false;
+
+    update(value: string): void {
+        this.check(value);
+
+        if (value.length <= this.maxlength) {
+            this.$emit('input', value);
+        }
+    };
+    check(value: string): boolean {
+        value = value || this.value;
+        this.isError = false;
+        if (this.required && !value) {
+            this.$emit('error', 'required');
+            this.isError = true;
+            return (false);
+        }
+        if (!this.pattern.test(value)) {
+            this.$emit('error', 'pattern');
+            this.isError = true;
+            return (false);
+        }
+        if (!this.func(value)) {
+            this.$emit('error', 'function');
+            this.isError = true;
+            return (false);
+        }
+        return (true);
+    };
+}
 </script>
 
 <style lang="stylus">

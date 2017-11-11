@@ -13,47 +13,42 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import AddParts from './add-parts.vue';
 import MainConfig from './main-config.vue';
+import { Component, Vue } from 'vue-property-decorator';
 
-export default Vue.extend({
-    name: 'Slider',
+@Component({
     components: {
         AddParts,
         MainConfig,
     },
-    data() {
-        return {
-            showAddParts: false,
-            showMainConfig: false,
-        };
-    },
-    computed: {
-        isAddParts(): boolean {
-            return this.$store.getters.isAddParts;
-        },
-        isMainConfig(): boolean {
-            return this.$store.getters.isMainConfig;
-        },
-        vision(): boolean {
-            return (this.isAddParts || this.isMainConfig);
-        },
-    },
-    methods: {
-        close(): void {
-            this.$store.commit('CLOSE_SLIDER');
-        },
-        beforeEnter(): void {
-            this.showAddParts = this.isAddParts;
-            this.showMainConfig = this.isMainConfig;
-        },
-        afterLeave(): void {
-            this.showAddParts = false;
-            this.showMainConfig = false;
-        },
-    },
-});
+})
+export default class Slider extends Vue {
+    showAddParts = false;
+    showMainConfig = false;
+
+    get isAddParts(): boolean {
+        return this.$store.getters.isAddParts;
+    }
+    get isMainConfig(): boolean {
+        return this.$store.getters.isMainConfig;
+    }
+    get vision(): boolean {
+        return (this.isAddParts || this.isMainConfig);
+    }
+
+    close(): void {
+        this.$store.commit('CLOSE_SLIDER');
+    }
+    beforeEnter(): void {
+        this.showAddParts = this.isAddParts;
+        this.showMainConfig = this.isMainConfig;
+    }
+    afterLeave(): void {
+        this.showAddParts = false;
+        this.showMainConfig = false;
+    }
+}
 </script>
 
 <style lang="stylus">
