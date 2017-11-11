@@ -29,8 +29,8 @@
         "no-debugger": false,
         // 禁止非法的模板字符串
         "no-invalid-template-strings": true,
-        // 不允许使用 null 关键字
-        "no-null-keyword": true,
+        // 允许使用 null 关键字
+        "no-null-keyword": false,
         // 禁止对象字面量的类型断言
         "no-object-literal-type-assertion": true,
         // 禁止稀疏数组
