@@ -40,14 +40,14 @@ const special: { [x: string]: (e: Event) => boolean } = {
 };
 
 /** 对 $Event 类的修饰 */
-function decorate<T extends { prototype: object }>(target: T): T {
+const decorate: ClassDecorator = <T extends { prototype: object }>(target: T) => {
     Reflect.setPrototypeOf(target.prototype, new Proxy({}, {
         get(_, property, receiver: { _origin: { [x: string]: any }}) {
             return receiver._origin[property];
         },
     }));
     return target;
-}
+};
 
 @decorate
 class $Event extends Event {
