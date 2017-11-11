@@ -29,16 +29,6 @@ interface StateType {
      */
     STEP_TIME: string;
     /**
-     * 图纸设置：图纸放大倍率
-     * @type {number}
-     */
-    zoom: number;
-    /**
-     * 图纸设置：图纸的总偏移量
-     * @type {Point}
-     */
-    position: Point;
-    /**
      * 全局器件堆栈
      * @type {PartData[]}
      */
@@ -54,8 +44,6 @@ const state: StateType = {
     page: '',
     END_TIME: '10m',
     STEP_TIME: '10u',
-    zoom: 1,
-    position: $P(),
     Parts: [],
     Lines: [],
 };
@@ -81,11 +69,6 @@ const mutations: { [x: string]: (context: StateType, params: any) => void } = {
     SET_END_TIME: (context, time: string) => context.END_TIME = time,
     /** 设置步进时间 */
     SET_STEP_TIME: (context, time: string) => context.STEP_TIME = time,
-
-    /** 设置图纸缩放比例 */
-    SET_ZOOM: (context, zoom: number) => context.zoom = zoom,
-    /** 设置图纸偏移量 */
-    SET_POSITION: (context, position: Point) => context.position = position,
 
     /** 新器件压栈 */
     PUSH_PART: (context, part: PartData) => context.Parts.push(part),
@@ -126,7 +109,7 @@ Object.defineProperties(state.Parts, {
                 }
             }
 
-            return '';
+            throw new Error(`The maximum number of Devices is ${maxNumber}`);
         },
     },
 });

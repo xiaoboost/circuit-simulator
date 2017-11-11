@@ -18,6 +18,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { $P } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
 
 const radius = {
@@ -48,6 +49,12 @@ export default Vue.extend({
             default: '',
         },
     },
+    inject: {
+        zoom: {
+            from: 'mapZoom',
+            default: 1
+        },
+    },
     data() {
         return {
             radius: 5,
@@ -61,9 +68,6 @@ export default Vue.extend({
     computed: {
         actual(): number {
             return (this.r >= 0) ? this.r : this.inner;
-        },
-        zoom(): number {
-            return this.$store.state.zoom;
         },
         className(): string {
             return (

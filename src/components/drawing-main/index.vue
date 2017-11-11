@@ -58,19 +58,14 @@ export default Vue.extend({
     },
     data() {
         return {
-            selections: false,
+            zoom: 1,
+            position: $P(),
 
             partsNow: [],
             linesNow: [],
         };
     },
     computed: {
-        zoom(): number {
-            return this.$store.state.zoom;
-        },
-        position(): Point {
-            return this.$store.state.position;
-        },
         parts(): PartData[] {
             return this.$store.state.Parts;
         },
@@ -88,19 +83,42 @@ export default Vue.extend({
             };
         },
     },
-    provide: {
-        findPart(id: string | { id: string } | HTMLElement): PartComponent | undefined {
+    provide() {
+        const findPart = (id: string | { id: string } | HTMLElement): PartComponent | undefined => {
             const prop = (assert.isElement(id)) ? '$el' : 'id',
                 value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
             
             return (this.$refs.parts as PartComponent[]).find((part) => part[prop] === value);
-        },
-        findLine(id: string | { id: string } | HTMLElement): LineComponent | undefined {
+        };
+        const findLine = (id: string | { id: string } | HTMLElement): LineComponent | undefined => {
             const prop = (assert.isElement(id)) ? '$el' : 'id',
                 value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
             
             return (this.$refs.parts as LineComponent[]).find((line) => line[prop] === value);
-        },
+        };
+
+        const proxy = { findPart, findLine };
+
+        Object.defineProperties(proxy, {
+           parts: {
+                enumerable: true,
+                get: () => (<PartComponent[]>this.$refs.parts).slice(),
+            },
+            lines: {
+                enumerable: true,
+                get: () => (<LineComponent[]>this.$refs.lines).slice(),
+            },
+            mapZoom: {
+                enumerable: true,
+                get: () => this.zoom,
+            },
+            mapPosition: {
+                enumerable: true,
+                get: () => $P(this.position),
+            },
+        });
+
+        return proxy;
     },
     methods: {
         // // 清空当前操作器件堆栈
@@ -148,11 +166,10 @@ export default Vue.extend({
             }
             if (size > 80) {
                 size = 80;
-                return ;
+                return;
             }
 
-            this.$store.commit(
-                'SET_POSITION',
+            this.position = (
                 this.position
                     .add(mousePosition, -1)
                     .mul(size / this.zoom / 20)
@@ -160,15 +177,14 @@ export default Vue.extend({
                     .round(1)
             );
 
-            this.$store.commit('SET_ZOOM', size / 20);
+            this.zoom = size / 20;
         },
         /** 移动图纸 */
         moveMap() {
             const stopEvent = { el: this.$el, type: 'mouseup', which: 'right' },
-                handlers = (event: Event & DrawEvent): void => this.$store.commit(
-                    'SET_POSITION',
-                    this.position.add(event.$movement.mul(this.zoom))
-                );
+                handlers = (event: Event & DrawEvent): void => {
+                    this.position = this.position.add(event.$movement.mul(this.zoom));
+                };
 
             (<setDrawEvent>this.setDrawEvent)({ handlers, stopEvent, cursor: 'move_map' });
         },
