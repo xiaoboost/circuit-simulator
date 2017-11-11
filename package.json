@@ -11,7 +11,6 @@
     "test": "npm run unit && npm run e2e"
   },
   "dependencies": {
-    "reflect-metadata": "^0.1.10",
     "vue": "^2.5.3",
     "vue-class-component": "^6.1.0",
     "vue-property-decorator": "^6.0.0",
