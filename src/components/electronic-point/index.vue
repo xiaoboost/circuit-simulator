@@ -17,9 +17,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { $P } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
+import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
 const radius = {
     normal: {
@@ -38,82 +38,71 @@ const radius = {
     },
 };
 
-export default Vue.extend({
-    props: {
-        r: {
-            type: Number,
-            default: -1,
-        },
-        classList: {
-            type: [Array, String],
-            default: '',
-        },
-    },
-    inject: {
-        zoom: {
-            from: 'mapZoom',
-            default: 1
-        },
-    },
-    data() {
-        return {
-            radius: 5,
-            inner: 0,
+@Component
+export default class ElectronicPoint extends Vue {
+    @Prop({ type: Number, default: -1 })
+    r: number;
 
-            animateTime: 200,
-            animateFrom: 0,
-            animateTo: 0,
-        };
-    },
-    computed: {
-        actual(): number {
-            return (this.r >= 0) ? this.r : this.inner;
-        },
-        className(): string {
-            return (
-                assert.isString(this.classList)
-                    // 输入是字符串，返回本身
-                    ? this.classList
-                    // 输入是数组，解析其 class
-                    : this.classList.map(
-                        (item) =>
-                            (assert.isString(item)) ? item : Object.keys(item).filter((key) => item[key]).join(' ')
-                    ).join(' ')
-            );
-        },
-    },
-    watch: {
-        actual: 'setAnimate',
-        className: 'mouseleave',
-    },
-    methods: {
-        mouseenter(): void {
-            const status = this.className.split(' ')
-                .find((item) => radius.hover.hasOwnProperty(item));
+    @Prop({ type: [Array, String], default: '' })
+    classList: string | string[];
 
-            this.inner = status ? radius.hover[status] : 5;
-        },
-        mouseleave(): void {
-            const status = this.className.split(' ')
-                .find((item) => radius.normal.hasOwnProperty(item));
+    @Inject('mapZoom')
+    zoom: number = 1;
 
-            this.inner = status ? radius.normal[status] : 0;
-        },
-        setAnimate(value: number): void {
-            const circle = this.$refs.circle as HTMLElement;
-            const animate = this.$refs.animate as SVGAnimationElement;
+    radius = 5;
+    inner = 0;
 
-            // 确定新的终点值
-            this.animateTo = value;
-            // 计算当前值
-            this.animateFrom = circle.getClientRects()[0].width / this.zoom / 2;
-            // 动画启动
-            animate.beginElement();
-        },
-    },
+    animateTime = 200;
+    animateFrom = 0;
+    animateTo = 0;
+
+    get actual(): number {
+        return (this.r >= 0) ? this.r : this.inner;
+    }
+    get className(): string {
+        return (
+            assert.isString(this.classList)
+                // 输入是字符串，返回本身
+                ? this.classList
+                // 输入是数组，解析其 class
+                : this.classList.map(
+                    (item) =>
+                        (assert.isString(item)) ? item : Object.keys(item).filter((key) => item[key]).join(' ')
+                ).join(' ')
+        );
+    }
+
     mounted() {
         this.mouseleave();
         this.setAnimate(this.actual);
-    },
-});
+    }
+
+    mouseenter(): void {
+        const status = this.className.split(' ')
+            .find((item) => radius.hover.hasOwnProperty(item));
+
+        this.inner = status ? radius.hover[status] : 5;
+    }
+
+    @Watch('className')
+    mouseleave(): void {
+        const status = this.className.split(' ')
+            .find((item) => radius.normal.hasOwnProperty(item));
+
+        this.inner = status ? radius.normal[status] : 0;
+    }
+
+    @Watch('actual')
+    setAnimate(value: number): void {
+        const circle = this.$refs.circle as HTMLElement;
+        const animate = this.$refs.animate as SVGAnimationElement;
+
+        // 确定新的终点值
+        this.animateTo = value;
+        // 计算当前值
+        this.animateFrom = circle.getClientRects()[0].width / this.zoom / 2;
+        // 动画启动
+        animate.beginElement();
+    }
+}
 </script>
