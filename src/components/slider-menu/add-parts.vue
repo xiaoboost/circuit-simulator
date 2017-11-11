@@ -49,7 +49,7 @@ function fixElementShape(type: string): { [x: string]: string } {
 }
 
 @Component
-class PartShape extends Vue {
+class PartIcon extends Vue {
     @Prop({ type: String, default: '' })
     type: string;
 
@@ -73,7 +73,7 @@ interface TipStyle {
 
 @Component({
     components: {
-        PartShape,
+        PartIcon,
     },
 })
 export default class AddParts extends Vue {
