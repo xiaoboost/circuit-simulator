@@ -51,10 +51,10 @@ function fixElementShape(type: string): { [x: string]: string } {
 @Component
 class PartIcon extends Vue {
     @Prop({ type: String, default: '' })
-    type: string;
+    readonly type: string;
 
     @Prop({ type: Array, default: () => [] })
-    info: ShapeDescription[];
+    readonly info: ShapeDescription[];
 
     render(createElement: CreateElement): VNode {
         const shape = this.info

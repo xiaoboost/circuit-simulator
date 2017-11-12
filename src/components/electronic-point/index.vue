@@ -41,10 +41,10 @@ const radius = {
 @Component
 export default class ElectronicPoint extends Vue {
     @Prop({ type: Number, default: -1 })
-    r: number;
+    readonly r: number;
 
     @Prop({ type: [Array, String], default: '' })
-    classList: string | string[];
+    readonly classList: string | Array<string | { [key: string]: boolean }>;
 
     @Inject('mapZoom')
     zoom: number = 1;

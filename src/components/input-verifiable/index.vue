@@ -15,25 +15,25 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 @Component
 export default class InputVerifiable extends Vue {
     @Prop({ type: String, default: '' })
-    value: string;
+    readonly value: string;
 
     @Prop({ type: String, default: '请输入内容' })
-    placeholder: string;
+    readonly placeholder: string;
 
     @Prop({ type: Number, default: Infinity })
-    maxlength: number;
+    readonly maxlength: number;
 
     @Prop({ type: Boolean, default: false })
-    required: boolean;
+    readonly required: boolean;
 
     @Prop({ type: RegExp, default: /[\d\D]*/ })
-    pattern: RegExp;
+    readonly pattern: RegExp;
 
     @Prop({ type: Function, default: () => true })
-    func: (value: string) => boolean;
+    readonly func: (value: string) => boolean;
 
     @Prop({ type: String, default: '' })
-    message: string;
+    readonly message: string;
 
     isError = false;
 
