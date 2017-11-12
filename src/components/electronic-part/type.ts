@@ -16,7 +16,7 @@ export interface PartData {
 export interface PointClass {
     position: Point;
     direction: Point;
-    class: 'part-point-close' | 'part-point-open';
+    class: string;
 }
 
 /** 器件内外边距 */
@@ -26,22 +26,18 @@ export interface PartMargin {
 }
 
 /** 器件组件对外接口 */
-export interface PartComponent extends Vue {
+export interface PartComponent {
     /** 器件 ID 编号 */
     readonly id: string;
     /** 器件类型 */
     readonly type: string;
     /** 器件参数 */
     readonly params: string[];
-    /** 器件引脚描述 */
-    readonly points: PointClass[];
     /** 器件内外边距 */
     readonly margin: PartMargin;
 
     /** 器件引脚连接 */
-    connect: Array<false | string>;
-    /** 器件旋转矩阵 */
-    rotate: Matrix;
+    connect: string[];
     /** 器件几何中心相对图纸原点的坐标 */
     position: Point;
 

@@ -16,7 +16,7 @@ export interface ParmasDescription {
      * 该参数是否对外显示
      * @type {boolean}
      */
-    readonly hidden: boolean;
+    readonly vision: boolean;
     /**
      * 该参数的初始默认值
      * @type {string}
@@ -160,7 +160,7 @@ const resistance: Electronic = {
             label: '阻值',
             unit: 'Ω',
             default: '10k',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -202,7 +202,7 @@ const capacitor: Electronic = {
             label: '电容量',
             unit: 'F',
             default: '100u',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -244,7 +244,7 @@ const inductance: Electronic = {
             label: '电感量',
             unit: 'H',
             default: '10u',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -286,7 +286,7 @@ const dc_voltage_source: Electronic = {
             label: '电压值',
             unit: 'V',
             default: '12',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -328,25 +328,25 @@ const ac_voltage_source: Electronic = {
             label: '峰值电压',
             unit: 'V',
             default: '220',
-            hidden: false,
+            vision: true,
         },
         {
             label: '频率',
             unit: 'Hz',
             default: '50',
-            hidden: false,
+            vision: true,
         },
         {
             label: '偏置电压',
             unit: 'V',
             default: '0',
-            hidden: true,
+            vision: false,
         },
         {
             label: '初始相角',
             unit: '°',
             default: '0',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -394,7 +394,7 @@ const dc_current_source: Electronic = {
             label: '电流值',
             unit: 'A',
             default: '10',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -568,19 +568,19 @@ const diode: Electronic = {
             label: '导通电压',
             unit: 'V',
             default: '1',
-            hidden: true,
+            vision: false,
         },
         {
             label: '导通电阻',
             unit: 'Ω',
             default: '0.5',
-            hidden: true,
+            vision: false,
         },
         {
             label: '关断电阻',
             unit: 'Ω',
             default: '5M',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -628,25 +628,25 @@ const transistor_npn: Electronic = {
             label: '电流放大倍数',
             unit: '',
             default: '40',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'B极电阻',
             unit: 'Ω',
             default: '26',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'BE饱和压降',
             unit: 'V',
             default: '0.6',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'CE饱和压降',
             unit: 'V',
             default: '1',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -701,25 +701,25 @@ const operational_amplifier: Electronic = {
             label: '开环增益',
             unit: 'dB',
             default: '120',
-            hidden: true,
+            vision: false,
         },
         {
             label: '输入电阻',
             unit: 'Ω',
             default: '80M',
-            hidden: true,
+            vision: false,
         },
         {
             label: '输出电阻',
             unit: 'Ω',
             default: '60',
-            hidden: true,
+            vision: false,
         },
         // {
         //     label: '截至频率',
         //     unit: 'Hz',
         //     default: '1M',
-        //     hidden: true,
+        //     vision: false,
         // },
     ],
     points: [
