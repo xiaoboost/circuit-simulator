@@ -4,12 +4,12 @@ import { Matrix } from 'src/lib/matrix';
 
 /** 器件数据接口 */
 export interface PartData {
-    id: string;
-    type: string;
-    rotate: Matrix;
-    position: Point;
-    params: string[];
-    connect: string[];
+    readonly id: string;
+    readonly type: string;
+    readonly rotate: Matrix;
+    readonly position: Point;
+    readonly params: string[];
+    readonly connect: string[];
 }
 
 /** 器件引脚描述接口 */
