@@ -37,8 +37,8 @@ class Matrix {
      * @param {number} [value=0]
      */
     constructor(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
+        // 从数组创建矩阵
         if (assert.isArray(row)) {
-            // 从数组创建矩阵
             const data: number[] = [], size = allowMatrix(row);
 
             if (!size) {
@@ -52,13 +52,15 @@ class Matrix {
             const buffer = new ArrayBuffer(this.row * this.column * 8);
             this._view = new Float64Array(buffer);
             this._view.set(data);
-        } else if (isMatrix(row)) {
-            // 复制矩阵
+        }
+        // 复制矩阵
+        else if (isMatrix(row)) {
             this.row = row.row;
             this.column = row.column;
             this._view = Float64Array.from(row._view);
-        } else if (column === 'E') {
-            // 单位矩阵
+        }
+        // 单位矩阵
+        else if (column === 'E') {
             this.row = row;
             this.column = row;
             const buffer = new ArrayBuffer(this.row * this.column * 8);
@@ -67,11 +69,18 @@ class Matrix {
             for (let i = 0; i < row; i++) {
                 this._view[i * (row + 1)] = 1;
             }
-        } else if (assert.isNumber(column)) {
-            // 填充矩阵
+        }
+        // 填充行列式
+        else if (assert.isNumber(column)) {
             this.row = row;
             this.column = column;
             this._view = Float64Array.from(Array(row * column).fill(value));
+        }
+        // 填充矩阵
+        else if (assert.isNull(column)) {
+            this.row = row;
+            this.column = row;
+            this._view = Float64Array.from(Array(row * row).fill(0));
         }
     }
 
