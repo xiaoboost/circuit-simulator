@@ -14,7 +14,7 @@
                 v-for="key in category.parts"
                 :data-name="key" :key="key" class="parts-list">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
-                    <part-shape :info="parts[key].shape" :type="parts[key].type"></part-shape>
+                    <part-icon :info="parts[key].shape" :type="parts[key].type"></part-icon>
                 </svg>
             </button>
         </div>
@@ -31,7 +31,7 @@ import { PartData } from 'src/components/electronic-part/type';
 
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import Electronics, { categories, Electronic, ShapeDescription } from 'src/components/electronic-part/shape';
+import Electronics, { categories, ShapeDescription } from 'src/components/electronic-part/shape';
 
 // 部分器件作为图标时需要修正其位置和大小
 function fixElementShape(type: string): { [x: string]: string } {
@@ -110,18 +110,20 @@ export default class AddParts extends Vue {
             throw new Error('Type cannot be empty.');
         }
 
-        const partData: Electronic = Electronics[name];
+        const origin = Electronics[name];
         const partsAll = this.$store.state.Parts;
 
-        this.$store.commit('PUSH_PART', {
-            id: partsAll.createPartId(partData.pre),
-            type: partData.type,
+        const data: PartData = {
+            id: partsAll.createPartId(origin.pre),
+            type: origin.type,
             rotate: $M(2, 'E'),
             // 初始状态：0, 0 表示是新建器件
             position: $P(0, 0),
-            params: partData.params.map((params) => params.default),
+            params: origin.params.map((params) => params.default),
             connect: [],
-        });
+        };
+
+        this.$store.commit('PUSH_PART', data);
     }
 }
 </script>
