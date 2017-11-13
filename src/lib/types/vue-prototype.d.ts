@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import { Store } from 'vuex';
+import { StateType } from 'src/vuex';
 
 type Callback = (e?: Event) => void | boolean;
 interface AnyObject { [x: string]: any; }
@@ -9,6 +11,9 @@ declare module 'vue/types/vue' {
     }
 
     interface Vue {
+        /** vuex 属性 */
+        $store: Store<StateType>;
+
         /**
          * 给`el`元素绑定事件
          * @param {el} HTMLElement

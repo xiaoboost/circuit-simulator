@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { GetterTree, MutationTree } from 'vuex';
 
 import * as assert from 'src/lib/assertion';
 
@@ -11,7 +11,7 @@ Vue.use(Vuex);
 /** 每类器件的最大数量 */
 const maxNumber = 100;
 
-interface StateType {
+export interface StateType {
     /**
      * 页面状态
      * @type {string}
@@ -47,14 +47,14 @@ const state: StateType = {
     Lines: [],
 };
 
-const getters: { [x: string]: (context: StateType) => void } = {
+const getters: GetterTree<StateType, StateType> = {
     isEmpty: (context) => !context.page,
     isAddParts: (context) => context.page === 'add-parts',
     isMainConfig: (context) => context.page === 'main-config',
     isGraphView: (context) => context.page === 'graph-view',
 };
 
-const mutations: { [x: string]: (context: StateType, params: any) => void } = {
+const mutations: MutationTree<StateType> = {
     /** 关闭侧边栏 */
     CLOSE_SLIDER: (context) => context.page = '',
     /** 打开添加器件侧边栏 */
@@ -113,7 +113,7 @@ Object.defineProperties(state.Parts, {
     },
 });
 
-export default new Vuex.Store({
+export default new Vuex.Store<StateType>({
     state,
     getters,
     mutations,
