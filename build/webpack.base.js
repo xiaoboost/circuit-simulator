@@ -33,7 +33,9 @@ module.exports = {
         // 默认路径别名
         alias: {
             'src': resolve('src'),
-            'vue$': isDevelopment ? 'vue/dist/vue.js' : 'vue/dist/vue.esm.js',
+            'vue$': isDevelopment
+                ? 'vue/dist/vue.esm.js'
+                : 'vue/dist/vue.runtime.esm.js',
         },
     },
     module: {
@@ -71,6 +73,7 @@ module.exports = {
                 loader: 'ts-loader',
                 exclude: /node_modules/,
                 options: {
+                    transpileOnly: true,
                     appendTsSuffixTo: [/\.vue$/],
                 },
             },
