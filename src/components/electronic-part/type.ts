@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import { Point } from 'src/lib/point';
 import { Matrix } from 'src/lib/matrix';
 
