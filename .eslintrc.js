@@ -41,7 +41,7 @@ module.exports = {
         // 函数名或function关键字之后与括号之间不需要空格
         'space-before-function-paren': [2, 'never'],
         // 代码块允许单独一行；多行代码时，起始大括号不换行，终止大括号独立成行
-        'brace-style': [2, '1tbs', { 'allowSingleLine': true }],
+        'brace-style': [2, 'stroustrup', { 'allowSingleLine': true }],
         // 允许在if,for,while,do...while的条件语句中赋值
         'no-cond-assign': 0,
         // 允许等号前后有多个空格
