@@ -19,8 +19,8 @@
         "typedef": true,
         // 一个单位为4个空格
         "indent": [true, "spaces", 4],
-        // 除 new 语句之外，不允许独立存在的表达式
-        "no-unused-expression": [true, "allow-new"],
+        // 允许独立存在的表达式
+        "no-unused-expression": false,
         // 允许 console.log
         "no-console": false,
         // 允许位运算
@@ -29,8 +29,8 @@
         "no-debugger": false,
         // 禁止非法的模板字符串
         "no-invalid-template-strings": true,
-        // 不允许使用 null 关键字
-        "no-null-keyword": true,
+        // 允许使用 null 关键字
+        "no-null-keyword": false,
         // 禁止对象字面量的类型断言
         "no-object-literal-type-assertion": true,
         // 禁止稀疏数组
@@ -39,8 +39,6 @@
         "no-submodule-imports": false,
         // 禁止 switch-case 语句中的 fall-through 行为
         "no-switch-case-fall-through": true,
-        // 不允许对 this 的重新赋值
-        "no-this-assignment": true,
         // 允许 void 表达式
         "no-void-expression": false,
         // 推荐使用三元运算符
@@ -114,8 +112,8 @@
         "no-use-before-declare": true,
         // 禁止不必要的类型断言
         "no-unnecessary-type-assertion": true,
-        // promise 函数全部用 async 封装
-        "promise-function-async": true,
+        // promise 函数不强制用 async 封装
+        "promise-function-async": false,
         // await 的值必须是 Promise
         "await-promise": [true, "Thenable"],
         // 所有的 Promise 实例都必须有后续的处理

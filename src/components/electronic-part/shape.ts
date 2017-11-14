@@ -1,5 +1,7 @@
+/* tslint:disable:variable-name  */
+
 /** 器件每项参数的说明 */
-interface ParmasDescription {
+export interface ParmasDescription {
     /**
      * 该参数的文字描述
      * @type {string}
@@ -14,7 +16,7 @@ interface ParmasDescription {
      * 该参数是否对外显示
      * @type {boolean}
      */
-    readonly hidden: boolean;
+    readonly vision: boolean;
     /**
      * 该参数的初始默认值
      * @type {string}
@@ -23,7 +25,7 @@ interface ParmasDescription {
 }
 
 /** 器件每个节点的描述 */
-interface PointDescription {
+export interface PointDescription {
     /**
      * 该节点距离器件中心点的相对位置
      * @type {[number, number]}
@@ -37,7 +39,7 @@ interface PointDescription {
 }
 
 /** 外形元素描述 */
-interface ShapeDescription {
+export interface ShapeDescription {
     /**
      * DOM 元素名称
      * @type {string}
@@ -56,7 +58,7 @@ interface ShapeDescription {
 }
 
 /** 器件原型数据类型 */
-interface Electronic {
+export interface Electronic {
     /**
      * 器件编号的前置标记
      * @type {string}
@@ -106,8 +108,47 @@ interface Electronic {
     readonly shape: ShapeDescription[];
 }
 
+export const categories = [
+    {
+        key: 'virtual_device',
+        name: '虚拟器件',
+        parts: [
+            'reference_ground',
+            'voltage_meter',
+            'current_meter',
+        ],
+    },
+    {
+        key: 'power',
+        name: '电源',
+        parts: [
+            'dc_voltage_source',
+            'ac_voltage_source',
+            'dc_current_source',
+        ],
+    },
+    {
+        key: 'passive_device',
+        name: '无源器件',
+        parts: [
+            'resistance',
+            'capacitor',
+            'inductance',
+        ],
+    },
+    {
+        key: 'semiconductor_device',
+        name: '半导体器件',
+        parts: [
+            'diode',
+            'transistor_npn',
+            'operational_amplifier',
+        ],
+    },
+];
+
 /** 电阻 */
-export const Resistance: Electronic = {
+const resistance: Electronic = {
     pre: 'R',
     type: 'resistance',
     introduction: '电阻器',
@@ -119,7 +160,7 @@ export const Resistance: Electronic = {
             label: '阻值',
             unit: 'Ω',
             default: '10k',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -149,7 +190,7 @@ export const Resistance: Electronic = {
 };
 
 /** 电容 */
-export const Capacitor: Electronic = {
+const capacitor: Electronic = {
     pre: 'C',
     type: 'capacitor',
     introduction: '电容器',
@@ -161,7 +202,7 @@ export const Capacitor: Electronic = {
             label: '电容量',
             unit: 'F',
             default: '100u',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -191,7 +232,7 @@ export const Capacitor: Electronic = {
 };
 
 /** 电感 */
-export const Inductance: Electronic = {
+const inductance: Electronic = {
     pre: 'L',
     type: 'inductance',
     introduction: '电感器',
@@ -203,7 +244,7 @@ export const Inductance: Electronic = {
             label: '电感量',
             unit: 'H',
             default: '10u',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -233,7 +274,7 @@ export const Inductance: Electronic = {
 };
 
 /** 直流电压源 */
-export const DCVoltageSource: Electronic = {
+const dc_voltage_source: Electronic = {
     pre: 'V',
     type: 'dc_voltage_source',
     introduction: '直流电压源',
@@ -245,7 +286,7 @@ export const DCVoltageSource: Electronic = {
             label: '电压值',
             unit: 'V',
             default: '12',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -275,7 +316,7 @@ export const DCVoltageSource: Electronic = {
 };
 
 /** 交流电压源 */
-export const ACVoltageSource: Electronic = {
+const ac_voltage_source: Electronic = {
     pre: 'V',
     type: 'ac_voltage_source',
     introduction: '交流电压源',
@@ -287,25 +328,25 @@ export const ACVoltageSource: Electronic = {
             label: '峰值电压',
             unit: 'V',
             default: '220',
-            hidden: false,
+            vision: true,
         },
         {
             label: '频率',
             unit: 'Hz',
             default: '50',
-            hidden: false,
+            vision: true,
         },
         {
             label: '偏置电压',
             unit: 'V',
             default: '0',
-            hidden: true,
+            vision: false,
         },
         {
             label: '初始相角',
             unit: '°',
             default: '0',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -341,7 +382,7 @@ export const ACVoltageSource: Electronic = {
 };
 
 /** 直流电流源 */
-export const DCCurrentSource: Electronic = {
+const dc_current_source: Electronic = {
     pre: 'I',
     type: 'dc_current_source',
     introduction: '直流电流源',
@@ -353,7 +394,7 @@ export const DCCurrentSource: Electronic = {
             label: '电流值',
             unit: 'A',
             default: '10',
-            hidden: false,
+            vision: true,
         },
     ],
     points: [
@@ -395,7 +436,7 @@ export const DCCurrentSource: Electronic = {
 };
 
 /** 参考地 */
-export const ReferenceGround: Electronic = {
+const reference_ground: Electronic = {
     pre: 'GND',
     type: 'reference_ground',
     introduction: '参考地',
@@ -426,7 +467,7 @@ export const ReferenceGround: Electronic = {
 };
 
 /** 电压表 */
-export const VoltageMeter: Electronic = {
+const voltage_meter: Electronic = {
     pre: 'VM',
     type: 'voltage_meter',
     introduction: '电压表',
@@ -474,7 +515,7 @@ export const VoltageMeter: Electronic = {
 };
 
 /** 电流表 */
-export const CurrentMeter: Electronic = {
+const current_meter: Electronic = {
     pre: 'IM',
     type: 'current_meter',
     introduction: '电流表',
@@ -515,7 +556,7 @@ export const CurrentMeter: Electronic = {
 };
 
 /** 二极管 */
-export const Diode: Electronic = {
+const diode: Electronic = {
     pre: 'VD',
     type: 'diode',
     introduction: '二极管',
@@ -527,19 +568,19 @@ export const Diode: Electronic = {
             label: '导通电压',
             unit: 'V',
             default: '1',
-            hidden: true,
+            vision: false,
         },
         {
             label: '导通电阻',
             unit: 'Ω',
             default: '0.5',
-            hidden: true,
+            vision: false,
         },
         {
             label: '关断电阻',
             unit: 'Ω',
             default: '5M',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -575,7 +616,7 @@ export const Diode: Electronic = {
 };
 
 /** NPN型三极管 */
-export const TransistorNPN: Electronic = {
+const transistor_npn: Electronic = {
     pre: 'Q',
     type: 'transistor_npn',
     introduction: 'NPN型三极管',
@@ -587,25 +628,25 @@ export const TransistorNPN: Electronic = {
             label: '电流放大倍数',
             unit: '',
             default: '40',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'B极电阻',
             unit: 'Ω',
             default: '26',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'BE饱和压降',
             unit: 'V',
             default: '0.6',
-            hidden: true,
+            vision: false,
         },
         {
             label: 'CE饱和压降',
             unit: 'V',
             default: '1',
-            hidden: true,
+            vision: false,
         },
     ],
     points: [
@@ -647,7 +688,7 @@ export const TransistorNPN: Electronic = {
 };
 
 /** 运算放大器 */
-export const OperationalAmplifier: Electronic = {
+const operational_amplifier: Electronic = {
     pre: 'OP',
     type: 'operational_amplifier',
     introduction: '运算放大器',
@@ -660,25 +701,25 @@ export const OperationalAmplifier: Electronic = {
             label: '开环增益',
             unit: 'dB',
             default: '120',
-            hidden: true,
+            vision: false,
         },
         {
             label: '输入电阻',
             unit: 'Ω',
             default: '80M',
-            hidden: true,
+            vision: false,
         },
         {
             label: '输出电阻',
             unit: 'Ω',
             default: '60',
-            hidden: true,
+            vision: false,
         },
         // {
         //     label: '截至频率',
         //     unit: 'Hz',
         //     default: '1M',
-        //     hidden: true,
+        //     vision: false,
         // },
     ],
     points: [
@@ -722,3 +763,35 @@ export const OperationalAmplifier: Electronic = {
         },
     ],
 };
+
+const all: {
+    resistance: Electronic;
+    capacitor: Electronic;
+    inductance: Electronic;
+    dc_voltage_source: Electronic;
+    ac_voltage_source: Electronic;
+    dc_current_source: Electronic;
+    reference_ground: Electronic;
+    voltage_meter: Electronic;
+    current_meter: Electronic;
+    diode: Electronic;
+    transistor_npn: Electronic;
+    operational_amplifier: Electronic;
+
+    [type: string]: Electronic;
+} = {
+    resistance,
+    capacitor,
+    inductance,
+    dc_voltage_source,
+    ac_voltage_source,
+    dc_current_source,
+    reference_ground,
+    voltage_meter,
+    current_meter,
+    diode,
+    transistor_npn,
+    operational_amplifier,
+};
+
+export default all;

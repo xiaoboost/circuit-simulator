@@ -9,7 +9,13 @@ const chalk = require('chalk'),
     baseConfig = require('./webpack.base'),
     FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
-baseConfig.plugins.push(new FriendlyErrorsPlugin());
+baseConfig.plugins.push(
+    new FriendlyErrorsPlugin(),
+    new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"development"',
+        '$ENV.NODE_ENV': '"development"',
+    })
+);
 
 // start info
 console.log(chalk.yellow('> Start Compile:...'));

@@ -2,7 +2,7 @@ const path = require('path'),
     webpack = require('webpack'),
     utils = require('./utils'),
     config = require('./config'),
-    version = utils.createVersionTag(),
+    buildTag = utils.createBuildTag(),
     isDevelopment = process.env.NODE_ENV === 'development',
     CopyWebpackPlugin = require('copy-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
@@ -85,7 +85,7 @@ module.exports = {
     },
     plugins: [
         new webpack.BannerPlugin({
-            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${version}\nfilename: [name], chunkhash: [chunkhash]\nReleased under the MIT License.`,
+            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${buildTag}\nfilename: [name], chunkhash: [chunkhash]\n\nNice to meet you ~ o(*￣▽￣*)ブ\nReleased under the MIT License.`,
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
@@ -107,10 +107,6 @@ module.exports = {
                 );
             },
         }),
-        new webpack.DefinePlugin({
-            'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-            '$ENV.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
-        }),
         new ExtractTextPlugin({
             disable: false,
             allChunks: true,
@@ -125,12 +121,13 @@ module.exports = {
         }]),
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            data: { version },
+            data: { build: buildTag },
             template: './src/index.html',
             inject: true,
             minify: {
                 removeComments: !isDevelopment,
                 collapseWhitespace: !isDevelopment,
+                ignoreCustomComments: [/^-/],
                 // 更多选项请参考下面的链接:
                 // https://github.com/kangax/html-minifier#options-quick-reference
             },

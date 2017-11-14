@@ -32,55 +32,61 @@
 </g>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue';
 import Electronics from './shape';
-import { $P } from 'src/lib/point';
-import { $M } from 'src/lib/matrix';
 import * as schMap from 'src/lib/map';
+import * as assert from 'src/lib/assertion';
 
-import ElectronPoint from 'src/components/electron-point';
+import { $P, Point } from 'src/lib/point';
+import { $M, Matrix } from 'src/lib/matrix';
+import { PartData, PointClass, PartMargin } from './type';
+
+import ElectronicPoint from 'src/components/electronic-point';
 
 /**
  * 点乘以旋转矩阵
- * 
- * @param {[number, number] | Point} point
+ * @param {Point} point
  * @param {Matrix} matrix
  * @returns {Point}
  */
-function product(point, matrix) {
+function product(point: Point, matrix: Matrix): Point {
     return $P(
         point[0] * matrix.get(0, 0) + point[1] * matrix.get(1, 0),
         point[0] * matrix.get(0, 1) + point[1] * matrix.get(1, 1)
     );
 }
 
-export default {
+export default Vue.extend({
     components: {
-        'electron-point': ElectronPoint,
-        'aspect': {
+        'electronic-point': ElectronicPoint,
+        'aspect': Vue.extend({
             props: ['value'],
-            render(ce) {
-                return ce(this.value.name, { attrs: this.value.attribute });
+            render(h) {
+                return h(this.value.name, { attrs: this.value.attribute });
             },
+        }),
+    },
+    inject: {
+        zoom: {
+            from: 'mapZoom',
+            default: 1
         },
     },
     props: {
         value: {
             type: Object,
-            default: () => ({}),
-        },
-        focus: {
-            type: Boolean,
-            default: false,
+            default: () => (<PartData>{}),
         },
     },
     data() {
         return {
             id: '',
+            type: '',
             params: [],
             connect: [],
-            rotate: [[1, 0], [0, 1]],
-            position: [500000, 500000],
+            rotate: $M(2, 'E'),
+            position: $P(0, 0),
 
             textPosition: $P(0, 0),
             textPlacement: 'bottom',
@@ -89,23 +95,23 @@ export default {
         };
     },
     computed: {
-        points() {
-            return this.shape.points.map((point, i) => ({
+        points(): PointClass[] {
+            return ElectronicPoint[this.type].points.map((point, i) => ({
                 position: product(point.position, this.rotate),
                 direction: product(point.direction, this.rotate),
                 class: this.connect[i] ? 'part-point-close' : 'part-point-open',
             }));
         },
-        invRotate() {
+        invRotate(): Matrix {
             return this.rotate.inverse();
         },
-        texts() {
+        texts(): string[] {
             return this.params
                 .map((v, i) => Object.assign({ value: v }, this.shape.text[i]))
                 .filter((n) => !n.hidden)
                 .map((n) => (n.value + n.unit).replace(/u/g, 'μ'));
         },
-        margin() {
+        margin(): PartMargin {
             const box = {}, outter = [], types = ['margin', 'padding'];
 
             for (let i = 0; i < 2; i++) {
@@ -139,7 +145,7 @@ export default {
         },
     },
     methods: {
-        update() {
+        update(): void {
             const keys = ['id', 'params', 'rotate', 'connect', 'position'];
             this.$emit(
                 'update:value',
@@ -147,7 +153,7 @@ export default {
             );
         },
         // 新建器件
-        newPart() {
+        newPart(): void {
             const el = this.$el,
                 parentEl = this.$parent.$el,
                 handlers = (e) => (this.position = e.$mouse),
@@ -174,7 +180,7 @@ export default {
                 cursor: 'move_part',
             });
         },
-        moveText() {
+        moveText(): void {
             const parentEl = this.$parent.$el,
                 afterEvent = () => this.setText(),
                 stopEvent = { el: parentEl, type: 'mouseup', which: 'left' },
@@ -345,6 +351,7 @@ export default {
         },
     },
     created() {
+        debugger;
         // 展开数据
         Object.assign(this, this.value);
         // 外观属性
@@ -368,5 +375,5 @@ export default {
             this.newPart();
         }
     },
-};
+});
 </script>

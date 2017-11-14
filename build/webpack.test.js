@@ -1,22 +1,16 @@
-// 这里是单元测试的 webpack 配置
-const utils = require('./utils'),
-    webpack = require('webpack'),
-    merge = require('webpack-merge'),
-    baseConfig = require('./webpack.base.conf'),
-    webpackConfig = merge(baseConfig, {
-        // use inline sourcemap for karma-sourcemap-loader
-        module: {
-            rules: utils.styleLoaders(),
-        },
-        devtool: '#inline-source-map',
-        plugins: [
-            new webpack.DefinePlugin({
-                'process.env': require('../config/test.env'),
-            }),
-        ],
-    });
+const webpack = require('webpack'),
+    baseConfig = require('./webpack.base');
 
-// 测试环境中不需要入口文件
-delete webpackConfig.entry;
+// 测试状态不需要入口文件
+Reflect.deleteProperty(baseConfig, 'entry');
+// SourceMap 文件使用 DataUrl 形式
+baseConfig.devtool = '#inline-source-map';
+// 环境配置为生产环境
+baseConfig.plugins.push(
+    new webpack.DefinePlugin({
+        'process.env.NODE_ENV': '"development"',
+        '$ENV.NODE_ENV': '"development"',
+    })
+);
 
-module.exports = webpackConfig;
+module.exports = baseConfig;

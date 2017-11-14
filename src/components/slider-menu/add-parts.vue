@@ -9,12 +9,12 @@
         v-delegate:click="['.parts-list', addPart]"
         v-delegate:mousemove="['.parts-list', setTip]"
         v-delegate:mouseleave="['.parts-list', disabledTip]">
-        <div v-for="(list, i) in lists" class="parts-menu" :key="i">
+        <div v-for="category in categories" class="parts-menu" :key="category.key">
             <button
-                v-for="part in list.parts"
-                :data="part" :key="part" class="parts-list">
+                v-for="key in category.parts"
+                :data-name="key" :key="key" class="parts-list">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
-                    <part-shape :info="shapes[part]" :type="part"></part-shape>
+                    <part-icon :info="parts[key].shape" :type="parts[key].type"></part-icon>
                 </svg>
             </button>
         </div>
@@ -23,109 +23,109 @@
 </section>
 </template>
 
-<script>
-import Electronics from 'src/components/electronic-part/shape';
+<script lang="ts">
+import { $P } from 'src/lib/point';
+import { $M } from 'src/lib/matrix';
+import * as assert from 'src/lib/assertion';
+import { PartData } from 'src/components/electronic-part/type';
 
-export default {
-    name: 'AddParts',
-    data() {
-        return {
-            tipStyle: {},
-            tipText: '',
-            shapes: Electronics.map((value) => value.readOnly.aspect),
-            texts: Electronics.map((value) => value.readOnly.introduction),
-            lists: [
-                {
-                    header: '虚拟器件',
-                    parts: [
-                        'reference_ground',
-                        'voltage_meter',
-                        'current_meter',
-                    ],
-                },
-                {
-                    header: '电源',
-                    parts: [
-                        'dc_voltage_source',
-                        'ac_voltage_source',
-                        'dc_current_source',
-                    ],
-                },
-                {
-                    header: '无源器件',
-                    parts: [
-                        'resistance',
-                        'capacitor',
-                        'inductance',
-                    ],
-                },
-                {
-                    header: '半导体器件',
-                    parts: [
-                        'diode',
-                        'transistor_npn',
-                        'operational_amplifier',
-                    ],
-                },
-            ],
-        };
-    },
-    methods: {
-        setTip(event) {
-            const type = event.currentTarget.getAttribute('data');
+import { CreateElement, VNode } from 'vue';
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import Electronics, { categories, ShapeDescription } from 'src/components/electronic-part/shape';
 
-            this.tipText = this.texts[type];
-            this.tipStyle = {
-                display: 'inline',
-                left: `${event.pageX - 10}px`,
-                top: `${event.pageY - 10}px`,
-            };
-        },
-        disabledTip() {
-            this.tipStyle = {
-                display: 'none',
-            };
-        },
-        addPart(event) {
-            const type = event.currentTarget.getAttribute('data'),
-                part = Object.clone(Electronics[type].readWrite),
-                partsAll = this.$store.state.collection.Parts;
+// 部分器件作为图标时需要修正其位置和大小
+function fixElementShape(type: string): { [x: string]: string } {
+    const transform = {
+        'current_meter': 'scale(1.2, 1.2)',
+        'reference_ground': 'scale(1.2, 1.2) translate(0, 5)',
+        'transistor_npn': 'translate(-5, 0)',
+    };
 
-            part.type = type;
-            part.id = partsAll.newId(part.id);
-            this.$store.commit('PUSH_PART', part);
-        },
-    },
+    return {
+        transform: transform.hasOwnProperty(type)
+            ? 'translate(40,40) ' + transform[type]
+            : 'translate(40,40)',
+    };
+}
+
+@Component
+class PartIcon extends Vue {
+    @Prop({ type: String, default: '' })
+    readonly type: string;
+
+    @Prop({ type: Array, default: () => [] })
+    readonly info: ShapeDescription[];
+
+    render(createElement: CreateElement): VNode {
+        const shape = this.info
+            .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-part'))
+            .map((dom) => createElement(dom.name, { attrs: dom.attribute }));
+
+        return createElement('g', { attrs: fixElementShape(this.type) }, shape);
+    }
+}
+
+interface TipStyle {
+    display: string;
+    left?: string;
+    top?: string;
+}
+
+@Component({
     components: {
-        'part-shape': {
-            render(createElement) {
-                const shape = this.info
-                        .filter((n) => !Object.values(n.attribute).some((n) => n === 'focus-part'))
-                        .map((dom) => createElement(dom.name, { attrs: dom.attribute })),
-                    special = {
-                        'current_meter': 'scale(1.2, 1.2)',
-                        'reference_ground': 'scale(1.2, 1.2)',
-                        'transistor_npn': 'translate(-5,0)',
-                    },
-                    attrs = special.hasOwnProperty(this.type)
-                        ? {  transform: 'translate(40,40) ' + special[this.type] }
-                        : {  transform: 'translate(40,40)' };
-
-                return createElement('g', { attrs }, shape);
-            },
-            props: {
-                info: {
-                    type: Array,
-                    default: () => [],
-                },
-                type: {
-                    type: String,
-                    default: '',
-                },
-            },
-        },
+        PartIcon,
     },
-};
+})
+export default class AddParts extends Vue {
+    /** 提示文本 */
+    tipText = '';
+    tipStyle: TipStyle = { display: 'none' };
+
+    parts = Electronics;
+    categories = categories;
+
+    setTip(event: MouseEvent & EventExtend): void {
+        const name = event.currentTarget.getAttribute('data-name');
+
+        if (assert.isNull(name)) {
+            throw new Error('Type cannot be empty.');
+        }
+
+        this.tipText = Electronics[name].introduction;
+        this.tipStyle = {
+            display: 'inline',
+            left: `${event.pageX - 10}px`,
+            top: `${event.pageY - 10}px`,
+        };
+    }
+    disabledTip(): void {
+        this.tipStyle = {
+            display: 'none',
+        };
+    }
+    addPart(event: MouseEvent & EventExtend): void {
+        const name = event.currentTarget.getAttribute('data-name');
+
+        if (assert.isNull(name)) {
+            throw new Error('Type cannot be empty.');
+        }
+
+        const origin = Electronics[name];
+        const partsAll = this.$store.state.Parts;
+
+        const data: PartData = {
+            id: partsAll.createPartId(origin.pre),
+            type: origin.type,
+            rotate: $M(2, 'E'),
+            // 初始状态：0, 0 表示是新建器件
+            position: $P(0, 0),
+            params: origin.params.map((params) => params.default),
+            connect: [],
+        };
+
+        this.$store.commit('PUSH_PART', data);
+    }
+}
 </script>
 
 <style lang="stylus">

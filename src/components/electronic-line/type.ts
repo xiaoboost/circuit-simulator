@@ -7,3 +7,7 @@ export interface LineData {
     way: Point[];
     connect: string[];
 }
+
+export interface LineComponent {
+    id: string;
+}

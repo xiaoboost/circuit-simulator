@@ -1,4 +1,4 @@
-import assert from './assertion';
+import * as assert from './assertion';
 
 type PointLike = [number, number] | Point;
 type PointInput = PointLike | number;

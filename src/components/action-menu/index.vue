@@ -1,15 +1,17 @@
 <template>
 <transition name="fade">
-    <footer class="action-menu" v-show="vision">
+    <footer
+        class="action-menu" v-show="vision"
+        v-delegate:click="['div.fab-container', clicled]">
         <div v-if="isRun" class="fab-container">
             <div class="fab" id="fab-text"></div>
         </div>
         <div
             v-show="!isRun"
             v-for="(icon, i) in icons"
-            :tip="icon.tip" :key="i"
-            class="fab-container">
-            <div class="fab" @click="icon.func">
+            class="fab-container"
+            :tip="icon.tip" :key="i" :data-type="icon.name">
+            <div v-once class="fab">
                 <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
                     <g :transform="`translate(${icon.translate}) scale(${zoom}, ${zoom})`">
                         <path :d="icon.d"></path>
@@ -22,62 +24,50 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { action, Icon } from 'src/lib/icon';
+import { Component, Vue } from 'vue-property-decorator';
 
-export default Vue.extend({
-    name: 'ActionMenu',
-    data() {
-        const zoom = 0.6;
-        const icons = [
-            {
-                name: 'run',
-                tip: '时域模拟',
-                func: () => this.run(),
-            },
-            {
-                name: 'add',
-                tip: '添加器件',
-                func: () => this.add(),
-            },
-            {
-                name: 'config',
-                tip: '运行设置',
-                func: () => this.config(),
-            },
-        ].map((data) => {
-            const icon = action[data.name] as Icon;
+const zoom = 0.6;
+const icons = [
+    { name: 'run', tip: '时域模拟' },
+    { name: 'add', tip: '添加器件' },
+    { name: 'config', tip: '运行设置' },
+].map((data) => {
+    const icon = action[data.name] as Icon;
 
-            return {
-                ...data,
-                ...icon,
-                translate: icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(','),
-            };
-        });
-
-        return {
-            zoom,
-            icons,
-            isRun: false,
-        };
-    },
-    computed: {
-        vision(): boolean {
-            return !this.$store.state.page;
-        },
-    },
-    methods: {
-        run() {
-            this.isRun = true;
-        },
-        add() {
-            this.$store.commit('OPEN_ADD_PARTS');
-        },
-        config() {
-            this.$store.commit('OPEN_MAIN_CONFIG');
-        },
-    },
+    return {
+        ...data,
+        ...icon,
+        translate: icon.transform.map((n) => n + (1 - zoom) / 2 * icon.long).join(','),
+    };
 });
+
+@Component
+export default class ActionMenu extends Vue {
+    /** 图标缩放比例 */
+    zoom = zoom;
+    /** 当前是否正在运行 */
+    isRun = false;
+    /** 图标数据 */
+    icons = icons;
+
+    /** 是否显示菜单 */
+    get vision(): boolean {
+        return this.$store.getters.isEmpty;
+    }
+
+    /** 按钮被点击 */
+    clicled(event: Event & EventExtend): void {
+        const button = event.currentTarget.getAttribute('data-type') as string;
+        const funcs = {
+            run: () => this.isRun = true,
+            add: () => this.$store.commit('OPEN_ADD_PARTS'),
+            config: () => this.$store.commit('OPEN_MAIN_CONFIG'),
+        };
+
+        funcs[button]();
+    }
+}
 </script>
 
 <style lang="stylus">
