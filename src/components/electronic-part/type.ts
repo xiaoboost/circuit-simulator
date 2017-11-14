@@ -6,6 +6,7 @@ import { Matrix } from 'src/lib/matrix';
 export interface PartData {
     readonly id: string;
     readonly type: string;
+    readonly hash: string;
     readonly rotate: Matrix;
     readonly position: Point;
     readonly params: string[];

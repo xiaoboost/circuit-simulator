@@ -1,6 +1,10 @@
 import Vue from 'vue';
 import Vuex, { GetterTree, MutationTree } from 'vuex';
+import Electronics from 'src/components/electronic-part/shape';
 
+import { clone } from 'src/lib/utils';
+import { $P } from 'src/lib/point';
+import { $M } from 'src/lib/matrix';
 import * as assert from 'src/lib/assertion';
 
 import { PartData } from 'src/components/electronic-part/type';
@@ -69,49 +73,110 @@ const mutations: MutationTree<StateType> = {
     /** 设置步进时间 */
     SET_STEP_TIME: (context, time: string) => context.STEP_TIME = time,
 
-    /** 新器件压栈 */
-    PUSH_PART: (context, part: PartData) => context.Parts.push(part),
+    /** 生成新器件 */
+    NEW_PART: (context, type: string) => context.Parts.push(...copyPart(type)),
+    /** 更新器件数据 */
+    UPDATE_PART: (context, data: PartData) => {
+        Object.assign(context.Parts.find((n) => n.hash === data.hash), clone(data));
+    },
     /** 新导线压栈 */
-    PUSH_LINE: (context, line: LineData) => context.Lines.push(line),
+    // PUSH_LINE: (context, line: LineData) => context.Lines.push(line),
     /** 删除器件 */
-    DELETE_PART: (context, part: PartData | string) =>
+    DELETE_PART: (context, part: PartData | string) => {
         assert.isString(part)
             ? context.Parts.delete((item) => item.id === part)
-            : context.Parts.delete((item) => item.id === part.id),
+            : context.Parts.delete((item) => item.id === part.id);
+    },
     /** 删除导线 */
-    DELETE_LINE: (context, line: LineData | string) =>
+    DELETE_LINE: (context, line: LineData | string) => {
         assert.isString(line)
             ? context.Lines.delete((item) => item.id === line)
-            : context.Lines.delete((item) => item.id === line.id),
+            : context.Lines.delete((item) => item.id === line.id);
+    },
 
     /** 导线放置到底层 */
 };
 
-// Parts 堆栈获取新 器件ID
-Object.defineProperties(state.Parts, {
-    createPartId: {
-        writable: false,
-        enumerable: false,
-        configurable: false,
-        value(this: PartData[], id: string): string {
-            const pre = id.match(/^([^_]+)(_[^_]+)?$/);
+/**
+ * 生成器件或者导线的新 ID
+ * @param {string} id
+ * @returns {string}
+ */
+function createId(id: string): string {
+    const electrons = [...state.Parts, ...state.Lines];
+    const pre = id.match(/^([^_]+)(_[^_]+)?$/);
 
-            if (!pre || !pre[1]) {
-                throw new Error('Device ID format is wrong');
-            }
+    if (!pre || !pre[1]) {
+        throw new Error('Device ID format is wrong');
+    }
 
-            let ans = '';
-            for (let i = 1; i <= maxNumber; i++) {
-                ans = `${pre[1]}_${i}`;
-                if (this.findIndex((part) => part.id === ans) === -1) {
-                    return (ans);
-                }
-            }
+    let ans = '';
+    const max = (pre[1] === 'line') ? Infinity : maxNumber;
 
-            throw new Error(`The maximum number of Devices is ${maxNumber}`);
-        },
-    },
-});
+    for (let i = 1; i <= max; i++) {
+        ans = `${pre[1]}_${i}`;
+        if (electrons.findIndex((elec) => elec.id === ans) === -1) {
+            return (ans);
+        }
+    }
+
+    throw new Error(`The maximum number of Devices is ${maxNumber}`);
+}
+
+/**
+ * 生成随机 15 位 hash 编码
+ * @returns {string}
+ */
+function createHash() {
+    const start = 48, end = 126;
+    const exclude = '\\/[]?{};,<>:|`';
+
+    let codes = '';
+    while (codes.length < 15) {
+        const code = String.fromCharCode(Math.random() * (end - start) + start);
+
+        if (!exclude.includes(code)) {
+            codes += code;
+        }
+    }
+
+    return codes;
+}
+
+/**
+ * 创建新器件或复制器件
+ * @param {(string | PartData | PartData[])} type
+ * @return {PartData[]}
+ */
+function copyPart(data: string | PartData | PartData[]): PartData[] {
+    if (assert.isArray(data)) {
+        return data.map((n) => copyPart(n)[0]);
+    }
+
+    const type = (assert.isString(data)) ? data : data.type;
+    const origin = Electronics[type];
+    const id = createId(origin.pre);
+    const hash = createHash();
+
+    let part: PartData;
+    if (assert.isString(data)) {
+        part = {
+            id, type, hash,
+            rotate: $M(2, 'E'),
+            position: $P(),
+            params: origin.params.map((n) => n.default),
+            connect: Array(origin.points.length).fill(''),
+        };
+    }
+    else {
+        part = {
+            ...clone(data),
+            id, hash,
+        };
+    }
+
+    return [part];
+}
 
 export default new Vuex.Store<StateType>({
     state,

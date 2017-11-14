@@ -12,7 +12,7 @@
         <div v-for="category in categories" class="parts-menu" :key="category.key">
             <button
                 v-for="key in category.parts"
-                :data-name="key" :key="key" class="parts-list">
+                :data-type="key" :key="key" class="parts-list">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <part-icon :info="parts[key].shape" :type="parts[key].type"></part-icon>
                 </svg>
@@ -85,7 +85,7 @@ export default class AddParts extends Vue {
     categories = categories;
 
     setTip(event: MouseEvent & EventExtend): void {
-        const name = event.currentTarget.getAttribute('data-name');
+        const name = event.currentTarget.getAttribute('data-type');
 
         if (assert.isNull(name)) {
             throw new Error('Type cannot be empty.');
@@ -104,26 +104,13 @@ export default class AddParts extends Vue {
         };
     }
     addPart(event: MouseEvent & EventExtend): void {
-        const name = event.currentTarget.getAttribute('data-name');
+        const type = event.currentTarget.getAttribute('data-type');
 
         if (assert.isNull(name)) {
             throw new Error('Type cannot be empty.');
         }
 
-        const origin = Electronics[name];
-        const partsAll = this.$store.state.Parts;
-
-        const data: PartData = {
-            id: partsAll.createPartId(origin.pre),
-            type: origin.type,
-            rotate: $M(2, 'E'),
-            // 初始状态：0, 0 表示是新建器件
-            position: $P(0, 0),
-            params: origin.params.map((params) => params.default),
-            connect: [],
-        };
-
-        this.$store.commit('PUSH_PART', data);
+        this.$store.commit('NEW_PART', type);
     }
 }
 </script>
