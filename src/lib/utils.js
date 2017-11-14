@@ -3,7 +3,7 @@ import { $P, Point } from 'src/lib/point';
 import { $M, Matrix } from 'src/lib/matrix';
 
 /**
- * 检查输入数据书否含有循环结构
+ * 检查输入数据是否含有循环结构
  * @param {*} data
  * @returns {boolean}
  */
@@ -17,12 +17,13 @@ function checkCircularStructure(data, parents = []) {
     if (parents.some((parent) => parent === data)) {
         return true;
     }
+
+    // 队列添加当前节点
+    parents.push(data);
+
     // 检查每个子节点
     return Object.values(data).some((value) => {
-        const copyParents = parents.slice();
-        copyParents.push(data);
-
-        return checkCircularStructure(value, copyParents);
+        return checkCircularStructure(value, parents.slice());
     });
 }
 
