@@ -340,11 +340,11 @@ class Point {
     /**
      * 以 this 为中心点，过滤距离中心点距离为 factor 的所有点，返回使 predicate 输出 true 的点的集合
      *
-     * @param {(point: PointLike) => boolean} predicate
+     * @param {(point: Point) => boolean} predicate
      * @param {number} [factor=1]
      * @returns {Point[]}
      */
-    aroundInf(predicate: (point: PointLike) => boolean, factor: number = 1): Point[] {
+    aroundInf(predicate: (point: Point) => boolean, factor: number = 1): Point[] {
         const ans: Point[] = predicate(this) ? [new Point(this)] : [];
 
         for (let m = 1; ans.length < 1; m++) {
