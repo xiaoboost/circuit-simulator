@@ -47,7 +47,7 @@ export default class ElectronicPoint extends Vue {
     readonly classList: string | Array<string | { [key: string]: boolean }>;
 
     @Inject('mapZoom')
-    zoom: number = 1;
+    zoom: number;
 
     radius = 5;
     inner = 0;
