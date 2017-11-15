@@ -1,48 +1,55 @@
 <template>
+    <!-- :class="['part', { 'focus': focus }]" -->
 <g
-    :class="['part', { 'focus': focus }]"
-    :transform="`matrix(${rotate.join()},${position.join()})`"
-    v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
-    v-delegate:mousedown-b.left.stop="['.text-params', moveText]">
+    class="part"
+    :transform="`matrix(${rotate.join()},${position.join()})`">
+    <!-- v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
+    v-delegate:mousedown-b.left.stop="['.text-params', moveText]" -->
     <g class="focus-part">
-        <aspect
-            v-for="(info, i) in this.shape.aspect"
+        <part-aspect
+            v-for="(info, i) in this.origin.shape"
             v-once :value="info" :key="i">
-        </aspect>
-        <electron-point
+        </part-aspect>
+        <electronic-point
             v-for="(point, i) in points"
             :index="i" :key="i" :r="pointSize[i]"
             :class-list="['part-point', point.class]"
             :transform="`translate(${point.position.join()})`">
-        </electron-point>
+        </electronic-point>
     </g>
     <g
         v-if="this.type !== 'reference_ground'"
         :class="['text-params', `text-placement-${textPlacement}`]"
         :transform="`matrix(${invRotate.join()},${textPosition.join()})`">
         <text>
-            <tspan>{{ id.split('_')[0] }}</tspan>
-            <tspan dx="-3">{{ id.split('_')[1] }}</tspan>
+            <tspan v-text="id.split('_')[0]"></tspan>
+            <tspan dx="-3" v-text="id.split('_')[1]"></tspan>
         </text>
         <text
             v-for="(txt, i) in texts"
-            :dy="16 * (i + 1)" :key="i">{{txt}}
+            :dy="16 * (i + 1)" :key="i" v-text="txt">
         </text>
     </g>
 </g>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Electronics from './shape';
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
 
-import { $P, Point } from 'src/lib/point';
+import { clone } from 'src/lib/utils';
 import { $M, Matrix } from 'src/lib/matrix';
-import { PartData, PointClass, PartMargin } from './type';
+import { $P, Point, PointLike } from 'src/lib/point';
+import { DrawEventSetting, DrawEvent } from 'src/components/drawing-main/events';
+import { PartComponent, PartData, PointClass, PartMargin } from './type';
 
+import { CreateElement, VNode } from 'vue';
+import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
+
+import Electronics, { Electronic, ShapeDescription } from './shape';
 import ElectronicPoint from 'src/components/electronic-point';
+
+type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 
 /**
  * 点乘以旋转矩阵
@@ -50,13 +57,193 @@ import ElectronicPoint from 'src/components/electronic-point';
  * @param {Matrix} matrix
  * @returns {Point}
  */
-function product(point: Point, matrix: Matrix): Point {
+function product(point: PointLike, matrix: Matrix): Point {
     return $P(
         point[0] * matrix.get(0, 0) + point[1] * matrix.get(1, 0),
         point[0] * matrix.get(0, 1) + point[1] * matrix.get(1, 1)
     );
 }
 
+@Component
+class PartAspect extends Vue {
+    @Prop({ type: Object, default: () => ({}) })
+    readonly value: ShapeDescription;
+
+    render(createElement: CreateElement): VNode {
+        return createElement(this.value.name, { attrs: this.value.attribute });
+    }
+}
+
+@Component({
+    components: {
+        PartAspect,
+        ElectronicPoint,
+    }
+})
+export default class ElectronicPart extends Vue implements PartComponent, PartData {
+    /** 器件原始数据 */
+    @Prop({ type: Object, default: () => ({}) })
+    readonly value: PartData;
+
+    @Inject()
+    readonly setDrawEvent: (handlers: DrawEventSetting) => void;
+    @Inject()
+    readonly findPart: (id: string | HTMLElement | { id: string }) => PartComponent | undefined;
+
+    /** 器件标识符 */
+    readonly hash: string;
+
+    /** 器件描述原始数据 */
+    readonly origin: Electronic;
+
+    id: string;
+    type: string;
+    position: Point;
+    params: string[];
+    connect: string[];
+
+    rotate: Matrix;
+    pointSize: number[];
+    textPosition: Point;
+    textPlacement: TextPlacement;
+
+    // 编译前的初始化
+    constructor() {
+        super();
+
+        // 初始化展开数据
+        const data = this.value;
+        const origin = this.origin = clone(Electronics[this.value.type]);
+        const len = origin.points.length;
+
+        this.id = data.id;
+        this.type = data.type;
+        this.hash = data.hash;
+        this.position = $P(data.position);
+        this.params = data.params.slice();
+        this.connect = data.connect.slice();
+        this.pointSize = Array(len).fill(-1);
+
+        this.textPlacement = 'bottom';
+        this.rotate = $M(data.rotate);
+        this.textPosition = $P(origin.txtLBias);
+    }
+    mounted() {
+        // 初始化说明文本
+        // this.setText();
+
+        this.setNewPart();
+
+        // 如果坐标为初始值，说明是新建器件
+        // if (this.position[0] === 500000) {
+        //     this.newPart();
+        // }
+    }
+
+    get points(): PointClass[] {
+        return this.origin.points.map((point, i) => ({
+            position: product(point.position, this.rotate),
+            direction: product(point.direction, this.rotate),
+            class: this.connect[i] ? 'part-point-close' : 'part-point-open',
+        }));
+    }
+    get invRotate(): Matrix {
+        return this.rotate.inverse();
+    }
+    get texts(): string[] {
+        return this.params
+            .map((v, i) => ({ value: v, ...this.origin.params[i] }))
+            .filter((txt) => txt.vision)
+            .map((txt) => (txt.value + txt.unit).replace(/u/g, 'μ'));
+    }
+    get margin(): PartMargin {
+        type EndPoint = PartMargin['inner'];
+
+        const types = ['margin', 'padding'],
+            box: { margin: EndPoint, padding: EndPoint } = {
+                margin: [[0, 0], [0, 0]],
+                padding: [[0, 0], [0, 0]],
+            },
+            outter: EndPoint = [[0, 0], [0, 0]];
+
+        for (let i = 0; i < 2; i++) {
+            const type = types[i],
+                boxSize = this.origin[type] as [number, number, number, number],
+                endpoint = [[boxSize[3], boxSize[0]], [boxSize[1], boxSize[2]]] as EndPoint,
+                data = endpoint.map((point) => product(point, this.rotate));
+
+            box[type] = [
+                [
+                    Math.min(data[0][0], data[1][0]),
+                    Math.min(data[0][1], data[1][1]),
+                ],
+                [
+                    Math.max(data[0][0], data[1][0]),
+                    Math.max(data[0][1], data[1][1]),
+                ],
+            ];
+        }
+
+        for (let i = 0; i < 2; i++) {
+            for (let j = 0; j < 2; j++) {
+                outter[i][j] = box.margin[i][j] + box.padding[i][j];
+            }
+        }
+
+        return {
+            outter,
+            inner: box.padding,
+        };
+    }
+
+    /** 将当前组件数据更新数据至 vuex */
+    update(): void {
+        const keys = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
+        this.$store.commit(
+            'UPDATE_PART',
+            keys.reduce((v, k) => ((v[k] = this[k]), v), {})
+        );
+    }
+    setText(): void {
+
+    }
+    markSign(): void {
+
+    }
+    deleteSign(): void {
+
+    }
+    isCover(position?: Point): boolean {
+
+        return false;
+    }
+
+    setNewPart() {
+        const el = this.$parent.$el;
+        el.setAttribute('opacity', '0.4');
+
+        this.setDrawEvent({
+            handlers: (e: DrawEvent) => { this.position = e.$position; },
+            stopEvent: { el, type: 'mousedown', which: 'left' },
+            afterEvent: () => {
+                const node = this.position;
+
+                this.position = $P(node.round(20)
+                    .aroundInf((node) => !this.isCover(node), 20)
+                    .reduce((pre, next) =>
+                        node.distance(pre) < node.distance(next)
+                            ? pre : next
+                    ));
+
+                this.update();
+                this.markSign();
+                el.removeAttribute('opacity');
+            },
+        });
+    }
+}
+
+/*
 export default Vue.extend({
     components: {
         'electronic-point': ElectronicPoint,
@@ -107,7 +294,7 @@ export default Vue.extend({
         },
         texts(): string[] {
             return this.params
-                .map((v, i) => Object.assign({ value: v }, this.shape.text[i]))
+                .map((v, i) => Object.assign({ value: v }, this.origin.text[i]))
                 .filter((n) => !n.hidden)
                 .map((n) => (n.value + n.unit).replace(/u/g, 'μ'));
         },
@@ -116,7 +303,7 @@ export default Vue.extend({
 
             for (let i = 0; i < 2; i++) {
                 const type = types[i],
-                    data = this.shape[type]
+                    data = this.origin[type]
                         .map((n) => product(n, this.rotate));
 
                 box[type] = [
@@ -216,7 +403,7 @@ export default Vue.extend({
             const textHeight = 11,
                 spaceHeight = 5,
                 len = this.texts.length,
-                local = this.shape.txtLocate,
+                local = this.origin.txtLocate,
                 pend = this.textPosition,
                 points = this.points.map((p) => p.direction),
                 direction = [$P(0, 1), $P(0, -1), $P(1, 0), $P(-1, 0)]
@@ -355,10 +542,10 @@ export default Vue.extend({
         // 展开数据
         Object.assign(this, this.value);
         // 外观属性
-        this.shape = Electronics[this.type].readOnly;
-        this.textPosition = $P(this.shape.txtLocate);
+        this.origin = Electronics[this.type].readOnly;
+        this.textPosition = $P(this.origin.txtLocate);
         // point 相关属性初始化
-        const pointNum = this.shape.points.length;
+        const pointNum = this.origin.points.length;
         this.connect.push(...Array(pointNum).fill(''));
         this.pointSize.push(...Array(pointNum).fill(-1));
         // 将旋转矩阵以及坐标实例化
@@ -376,4 +563,5 @@ export default Vue.extend({
         }
     },
 });
+*/
 </script>

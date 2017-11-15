@@ -18,14 +18,12 @@
                 @focus="clearFocus"
                 @event="EventControler">
             </elec-line> -->
-            <!-- <elec-part
+            <elec-part
                 ref="parts"
                 v-for="part in parts"
                 :key="part.id"
-                :value.sync="part"
-                @focus="clearFocus"
-                @event="EventControler">
-            </elec-part> -->
+                :value="part">
+            </elec-part>
             <!-- <selections-box
                 v-if="Boolean(selections)"
                 :location="selections">
@@ -38,7 +36,7 @@
 <script lang="ts">
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
-// import Part from 'src/components/electronic-part';
+import Part from 'src/components/electronic-part';
 // import Line from 'src/components/electronic-line';
 // import SelectionsBox from 'src/components/selections-box';
 import Events from './events';
@@ -50,6 +48,7 @@ import { LineData, LineComponent } from 'src/components/electronic-line/type';
 interface ProvideExtend {
     zoom: number;
     position: Point;
+    setDrawEvent(args: any): void;
     $refs: {
         parts: PartComponent[];
         lines: LineComponent[];
@@ -58,28 +57,29 @@ interface ProvideExtend {
 
 @Component({
     components: {
-        // 'elec-part': Part,
+        'elec-part': Part,
         // 'elec-line': Line,
         // 'selections-box': SelectionsBox,
     },
     provide(this: Vue & ProvideExtend) {
-        const findPart = (id: string | { id: string } | HTMLElement): PartComponent | undefined => {
+        const findPart = (id: string | HTMLElement | { id: string }): PartComponent | undefined => {
             const prop = (assert.isElement(id)) ? '$el' : 'id',
                 value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
             
             return this.$refs.parts.find((part) => part[prop] === value);
         };
-        const findLine = (id: string | { id: string } | HTMLElement): LineComponent | undefined => {
+        const findLine = (id: string | HTMLElement | { id: string }): LineComponent | undefined => {
             const prop = (assert.isElement(id)) ? '$el' : 'id',
                 value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
             
             return this.$refs.parts.find((line) => line[prop] === value);
         };
+        const setDrawEvent = (args: any) => this.setDrawEvent(args);
 
-        const proxy = { findPart, findLine };
+        const proxy = { findPart, findLine, setDrawEvent };
 
         Object.defineProperties(proxy, {
-           parts: {
+            parts: {
                 enumerable: true,
                 get: () => this.$refs.parts.slice(),
             },
