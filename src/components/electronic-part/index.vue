@@ -34,20 +34,20 @@
 </template>
 
 <script lang="ts">
-import * as schMap from 'src/lib/map';
-import * as assert from 'src/lib/assertion';
-
-import { clone } from 'src/lib/utils';
-import { $M, Matrix } from 'src/lib/matrix';
-import { $P, Point, PointLike } from 'src/lib/point';
-import { DrawEventSetting, DrawEvent } from 'src/components/drawing-main/events';
-import { PartComponent, PartData, PointClass, PartMargin } from './type';
-
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 
-import Electronics, { Electronic, ShapeDescription } from './shape';
 import ElectronicPoint from 'src/components/electronic-point';
+
+import * as schMap from 'src/lib/map';
+import * as assert from 'src/lib/assertion';
+import { clone } from 'src/lib/utils';
+import { $M, Matrix } from 'src/lib/matrix';
+import { $P, Point, PointLike } from 'src/lib/point';
+import Electronics, { Electronic, ShapeDescription } from './shape';
+
+import { DrawEventSetting, DrawEvent } from 'src/components/drawing-main/events';
+import { PartComponent, PartData, PointClass, PartMargin } from './index';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 
@@ -87,6 +87,7 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
 
     @Inject()
     readonly setDrawEvent: (handlers: DrawEventSetting) => void;
+
     @Inject()
     readonly findPart: (id: string | HTMLElement | { id: string }) => PartComponent | undefined;
 
@@ -129,9 +130,7 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         this.textPosition = $P(origin.txtLBias);
     }
     mounted() {
-        // 初始化说明文本
-        // this.setText();
-
+        this.setText();
         this.setNewPart();
 
         // 如果坐标为初始值，说明是新建器件
@@ -205,7 +204,44 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         );
     }
     setText(): void {
+        // TODO: 缺正中央
+        const textHeight = 11,
+            spaceHeight = 5,
+            len = this.texts.length,
+            local = this.origin.txtLBias,
+            pend = this.textPosition,
+            points = this.points.map((p) => p.direction),
+            direction = [$P(0, 1), $P(0, -1), $P(1, 0), $P(-1, 0)]
+                .filter((di) => points.every((point) => !point.isEqual(di)))
+                .map((di) => di.mul(local))
+                .reduce(
+                    (pre, next) =>
+                        pre.distance(pend) < next.distance(pend) ? pre : next
+                );
 
+        if (direction[0]) {
+            pend[1] = ((1 - len) * textHeight - len * spaceHeight) / 2;
+            if (direction[0] > 0) {
+                // 右
+                pend[0] = local;
+                this.textPlacement = 'right';
+            } else {
+                // 左
+                pend[0] = -local;
+                this.textPlacement = 'left';
+            }
+        } else {
+            pend[0] = 0;
+            if (direction[1] > 0) {
+                // 下
+                this.textPlacement = 'bottom';
+                pend[1] = textHeight + local;
+            } else {
+                // 上
+                this.textPlacement = 'top';
+                pend[1] = -((textHeight + spaceHeight) * len + local);
+            }
+        }
     }
     markSign(): void {
 

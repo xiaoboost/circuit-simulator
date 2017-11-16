@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex, { GetterTree, MutationTree } from 'vuex';
-import Electronics from 'src/components/electronic-part/shape';
 
-import { clone } from 'src/lib/utils';
 import { $P } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
+import { clone } from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
+import Electronics from 'src/components/electronic-part/shape';
 
-import { PartData } from 'src/components/electronic-part/type';
-import { LineData } from 'src/components/electronic-line/type';
+import { PartData } from 'src/components/electronic-part';
+import { LineData } from 'src/components/electronic-line';
 
 Vue.use(Vuex);
 
@@ -163,7 +163,7 @@ function copyPart(data: string | PartData | PartData[]): PartData[] {
         part = {
             id, type, hash,
             rotate: $M(2, 'E'),
-            position: $P(),
+            position: $P(1e6, 1e6),
             params: origin.params.map((n) => n.default),
             connect: Array(origin.points.length).fill(''),
         };
