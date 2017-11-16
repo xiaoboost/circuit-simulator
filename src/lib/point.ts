@@ -322,10 +322,10 @@ class Point {
      * 以 this 中心点，margin 为四角顶点，如果范围内有坐标能使 predicate 返回 true，那么该方法返回 true
      *
      * @param {number[][]} margin
-     * @param {(x: number, y: number, stop: () => void) => boolean} predicate
+     * @param {(x: number, y: number, stop: () => void) => void} predicate
      * @returns {boolean}
      */
-    around(margin: number[][], predicate: (x: number, y: number, stop: () => void) => boolean): boolean {
+    around(margin: number[][], predicate: (x: number, y: number, stop: () => void) => void): boolean {
         let label = false;
         const stop = () => (label = true);
 

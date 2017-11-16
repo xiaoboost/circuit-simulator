@@ -1,3 +1,4 @@
+import * as utils from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
 import { $P, Point, PointLike } from 'src/lib/point';
 
@@ -49,24 +50,17 @@ function point2key(node: PointLike): string {
 
 /**
  * 返回地图标记数据的副本
- *
  * @param {MapData} data
  * @returns {MapData}
  */
 function dataClone(data: MapData): MapData {
     const mustKeys = ['id', 'point', 'type', 'connect'];
-    const ans = { ...data };
+    const ans = utils.clone(data);
 
     Object
         .keys(ans)
         .filter((key) => !mustKeys.includes(key))
         .forEach((key) => Reflect.deleteProperty(ans, key));
-
-    ans.point = $P(ans.point);
-
-    if (assert.isArray(data.connect)) {
-        ans.connect = data.connect.map((node, i) => $P(node));
-    }
 
     return (ans);
 }
@@ -95,7 +89,7 @@ export function forceUpdateMap(map = '{}') {
 
     Object
         .values(data)
-        .forEach((value) => setData(dataClone(value)));
+        .forEach((value: MapData) => setData(dataClone(value)));
 }
 
 /**
@@ -108,7 +102,7 @@ export function forceUpdateMap(map = '{}') {
  * @param {boolean} [large=false]
  */
 export function setData(data: MapData, large = false): void {
-    data.point = (large ? Point.prototype.mul.call(data.point, 0.05) : $P(data.point));
+    data.point = (large ? data.point.mul(0.05) : $P(data.point));
     $map[point2key(data.point)] = dataClone(data);
 }
 
@@ -126,7 +120,7 @@ export function setData(data: MapData, large = false): void {
  * @param {boolean} [large=false]
  */
 export function mergeData(data: MapData, large = false): void {
-    data.point = (large ? Point.prototype.mul.call(data.point, 0.05) : $P(data.point));
+    data.point = (large ? data.point.mul(0.05) : $P(data.point));
 
     const key = point2key(data.point);
     const newData = dataClone(data);
