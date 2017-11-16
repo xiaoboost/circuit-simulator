@@ -46,7 +46,7 @@ export default class ElectronicPoint extends Vue {
     @Prop({ type: [Array, String], default: '' })
     readonly classList: string | Array<string | { [key: string]: boolean }>;
 
-    @Inject('status')
+    @Inject()
     mapStatus: {
         zoom: number;
     };
