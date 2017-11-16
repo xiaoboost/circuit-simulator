@@ -46,8 +46,10 @@ export default class ElectronicPoint extends Vue {
     @Prop({ type: [Array, String], default: '' })
     readonly classList: string | Array<string | { [key: string]: boolean }>;
 
-    @Inject('mapZoom')
-    zoom: number;
+    @Inject('status')
+    mapStatus: {
+        zoom: number;
+    };
 
     radius = 5;
     inner = 0;
@@ -100,7 +102,7 @@ export default class ElectronicPoint extends Vue {
         // 确定新的终点值
         this.animateTo = value;
         // 计算当前值
-        this.animateFrom = circle.getClientRects()[0].width / this.zoom / 2;
+        this.animateFrom = circle.getClientRects()[0].width / this.mapStatus.zoom / 2;
         // 动画启动
         animate.beginElement();
     }

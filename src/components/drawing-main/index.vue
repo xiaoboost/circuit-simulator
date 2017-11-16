@@ -34,25 +34,27 @@
 </template>
 
 <script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+import Events from './events';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
-import Part from 'src/components/electronic-part';
-// import Line from 'src/components/electronic-line';
+import Part, { PartData, PartComponent } from 'src/components/electronic-part';
+// import Line, { LineComponent } from 'src/components/electronic-line';
 // import SelectionsBox from 'src/components/selections-box';
-import Events from './events';
 
-import { Component, Vue } from 'vue-property-decorator';
-import { PartData, PartComponent } from 'src/components/electronic-part/type';
-import { LineData, LineComponent } from 'src/components/electronic-line/type';
 
 interface ProvideExtend {
     zoom: number;
     position: Point;
+    findPart(args: any): void;
+    findLine(args: any): void;
     setDrawEvent(args: any): void;
-    $refs: {
-        parts: PartComponent[];
-        lines: LineComponent[];
-    }
+
+    // $refs: {
+    //     parts: PartComponent[];
+    //     lines: LineComponent[];
+    // }
 }
 
 @Component({
@@ -62,42 +64,35 @@ interface ProvideExtend {
         // 'selections-box': SelectionsBox,
     },
     provide(this: Vue & ProvideExtend) {
-        const findPart = (id: string | HTMLElement | { id: string }): PartComponent | undefined => {
-            const prop = (assert.isElement(id)) ? '$el' : 'id',
-                value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
-            
-            return this.$refs.parts.find((part) => part[prop] === value);
-        };
-        const findLine = (id: string | HTMLElement | { id: string }): LineComponent | undefined => {
-            const prop = (assert.isElement(id)) ? '$el' : 'id',
-                value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
-            
-            return this.$refs.parts.find((line) => line[prop] === value);
-        };
-        const setDrawEvent = (args: any) => this.setDrawEvent(args);
+        const mapStatus = {};
 
-        const proxy = { findPart, findLine, setDrawEvent };
-
-        Object.defineProperties(proxy, {
-            parts: {
-                enumerable: true,
-                get: () => this.$refs.parts.slice(),
-            },
-            lines: {
-                enumerable: true,
-                get: () => this.$refs.lines.slice(),
-            },
-            mapZoom: {
+        Object.defineProperties(mapStatus, {
+            // parts: {
+            //     enumerable: true,
+            //     get: () => this.$refs.parts.slice(),
+            // },
+            // lines: {
+            //     enumerable: true,
+            //     get: () => this.$refs.lines.slice(),
+            // },
+            zoom: {
                 enumerable: true,
                 get: () => this.zoom,
             },
-            mapPosition: {
+            position: {
                 enumerable: true,
                 get: () => $P(this.position),
             },
         });
 
-        return proxy;
+        return {
+            // 图纸状态是响应式的对象
+            mapStatus,
+            // 函数则是直接取值
+            findPart: (arg: any) => this.findPart(arg),
+            findLine: (arg: any) => this.findLine(arg),
+            setDrawEvent: (arg: any) => this.setDrawEvent(arg),
+        };
     },
 })
 export default class DrawingMain extends Events {
@@ -106,12 +101,18 @@ export default class DrawingMain extends Events {
     partsNow: string[] = [];
     linesNow: string[] = [];
 
+    /** 子组件定义 */
+    $refs: {
+        parts: PartComponent[];
+        // lines: LineComponent[];
+    }
+
     get parts(): PartData[] {
         return this.$store.state.Parts;
     }
-    get lines(): LineData[] {
-        return this.$store.state.Lines;
-    }
+    // get lines(): LineData[] {
+    //     return this.$store.state.Lines;
+    // }
     get background(): { 'background-size': string; 'background-position': string; } {
         const size: number = this.zoom * 20,
             biasX: number = this.position[0] % size,
@@ -123,6 +124,20 @@ export default class DrawingMain extends Events {
         };
     }
 
+    /** 搜索器件 */
+    findPart(id: string | HTMLElement | { id: string }): PartComponent | undefined {
+        const prop = (assert.isElement(id)) ? '$el' : 'id';
+        const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+
+        return this.$refs.parts.find((part) => part[prop] === value);
+    }
+    /** 搜索导线 */
+    // findLine(id: string | HTMLElement | { id: string }): LineComponent | undefined {
+    //     const prop = (assert.isElement(id)) ? '$el' : 'id';
+    //     const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+
+    //     return this.$refs.lines.find((line) => line[prop] === value);
+    // }
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent): void {
         const mousePosition = $P(e.pageX, e.pageY);
