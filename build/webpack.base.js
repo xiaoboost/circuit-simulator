@@ -29,7 +29,7 @@ module.exports = {
         // 自动补全的扩展名
         extensions: ['.js', '.ts', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
-        mainFiles: ['index.vue', 'index.js', 'index.ts'],
+        mainFiles: ['index.ts', 'index.js'],
         // 默认路径别名
         alias: {
             'src': resolve('src'),
@@ -73,7 +73,7 @@ module.exports = {
                 loader: 'ts-loader',
                 exclude: /node_modules/,
                 options: {
-                    transpileOnly: true,
+                    transpileOnly: false,
                     appendTsSuffixTo: [/\.vue$/],
                 },
             },
