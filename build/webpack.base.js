@@ -24,6 +24,10 @@ module.exports = {
         filename: isDevelopment
             ? 'js/[name].js'
             : 'js/[name].[chunkhash].js',
+        // chunk 资源的命名
+        chunkFilename: isDevelopment
+            ? 'js/[name].js'
+            : 'js/[name].[chunkhash].js',
     },
     resolve: {
         // 自动补全的扩展名
@@ -86,6 +90,10 @@ module.exports = {
     plugins: [
         new webpack.BannerPlugin({
             banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${buildTag}\nfilename: [name], chunkhash: [chunkhash]\n\nNice to meet you ~ o(*￣▽￣*)ブ\nReleased under the MIT License.`,
+        }),
+        new webpack.DefinePlugin({
+            'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
+            '$env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',

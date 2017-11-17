@@ -14,10 +14,6 @@ baseConfig.plugins.push(
         width: 40,
         format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
     }),
-    new webpack.DefinePlugin({
-        'process.env.NODE_ENV': '"production"',
-        '$ENV.NODE_ENV': '"production"',
-    }),
     new OptimizeCSSPlugin({
         cssProcessorOptions: {
             safe: true,

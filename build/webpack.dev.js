@@ -10,11 +10,7 @@ const chalk = require('chalk'),
     FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin');
 
 baseConfig.plugins.push(
-    new FriendlyErrorsPlugin(),
-    new webpack.DefinePlugin({
-        'process.env.NODE_ENV': '"development"',
-        '$ENV.NODE_ENV': '"development"',
-    })
+    new FriendlyErrorsPlugin()
 );
 
 // start info
