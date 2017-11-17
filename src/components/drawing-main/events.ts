@@ -103,7 +103,7 @@ export default class DrawEvents extends Vue {
             fn(event);
         };
 
-        return ($ENV.NODE_ENV === 'development' && type === 'mousemove')
+        return ($env.NODE_ENV === 'development' && type === 'mousemove')
             /**
              *     chrome 浏览器（v59 ~ *）的 mousemove 事件似乎有个 bug，表现为 debug 时浏览器的 UI 进程被阻
              * 塞了，无法进行实时的 UI 更新。目测是因为有某个进程阻塞的 UI 进程，所以这里用异步来运行回调，

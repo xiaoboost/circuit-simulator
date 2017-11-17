@@ -50,7 +50,7 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    path(way: PointLike[], color: string = 'black') {
+    path(way: PointLike[], color: string = 'black'): void {
         if (!Switch.point) {
             return;
         }
@@ -64,7 +64,7 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    text([x, y]: PointLike, text: string, mul: number = 1) {
+    text([x, y]: PointLike, text: string, mul: number = 1): void {
         const el = doc.createElementNS(NS, 'text');
 
         el.textContent = text;
@@ -77,12 +77,12 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    clearPoint() {
+    clearPoint(): void {
         Array
             .from(this.$el.querySelectorAll('.debug-point'))
             .forEach((el) => el.remove());
     }
-    clearAll() {
+    clearAll(): void {
         this.$el.innerHTML = '';
     }
     // whole() {
