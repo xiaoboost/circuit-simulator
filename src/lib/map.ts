@@ -89,7 +89,7 @@ export function forceUpdateMap(map = '{}') {
 
     Object
         .values(data)
-        .forEach((value: MapData) => setData(dataClone(value)));
+        .forEach((value: MapData) => setPoint(dataClone(value)));
 }
 
 /**
@@ -101,7 +101,7 @@ export function forceUpdateMap(map = '{}') {
  * @param {MapData} data
  * @param {boolean} [large=false]
  */
-export function setData(data: MapData, large = false): void {
+export function setPoint(data: MapData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : $P(data.point));
     $map[point2key(data.point)] = dataClone(data);
 }
@@ -119,7 +119,7 @@ export function setData(data: MapData, large = false): void {
  * @param {MapData} data
  * @param {boolean} [large=false]
  */
-export function mergeData(data: MapData, large = false): void {
+export function mergePoint(data: MapData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : $P(data.point));
 
     const key = point2key(data.point);
@@ -163,7 +163,7 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @param {boolean} [large=false]
  * @returns {(MapData | false)}
  */
-export function getData(point: PointLike, large = false): MapData | false {
+export function getPoint(point: PointLike, large = false): MapData | false {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
     const data = $map[point2key(node)];
 
@@ -175,7 +175,7 @@ export function getData(point: PointLike, large = false): MapData | false {
  *
  * @returns {boolean}
  */
-export function deleteDate(point: PointLike, large = false) {
+export function deletePoint(point: PointLike, large = false) {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
     return Reflect.deleteProperty($map, point2key(node));
 }

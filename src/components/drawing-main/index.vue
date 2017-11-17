@@ -125,18 +125,28 @@ export default class DrawingMain extends Events {
     }
 
     /** 搜索器件 */
-    findPart(id: string | HTMLElement | { id: string }): PartComponent | undefined {
+    findPart(id: string | HTMLElement | { id: string }): PartComponent {
         const prop = (assert.isElement(id)) ? '$el' : 'id';
         const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+        const part = this.$refs.parts.find((part) => part[prop] === value);
 
-        return this.$refs.parts.find((part) => part[prop] === value);
+        if (!part) {
+            throw new Error('Can not find this part');
+        }
+
+        return part;
     }
     /** 搜索导线 */
-    // findLine(id: string | HTMLElement | { id: string }): LineComponent | undefined {
+    // findLine(id: string | HTMLElement | { id: string }): LineComponent {
     //     const prop = (assert.isElement(id)) ? '$el' : 'id';
     //     const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+        // const line = this.$refs.parts.find((part) => part[prop] === value);
 
-    //     return this.$refs.lines.find((line) => line[prop] === value);
+        // if (!line) {
+        //     throw new Error('Can not find this line');
+        // }
+
+        // return line;
     // }
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent): void {

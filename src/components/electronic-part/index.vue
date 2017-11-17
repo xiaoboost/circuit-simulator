@@ -20,7 +20,8 @@
     <g
         v-if="this.type !== 'reference_ground'"
         :class="['text-params', `text-placement-${textPlacement}`]"
-        :transform="`matrix(${invRotate.join()},${textPosition.join()})`">
+        :transform="`matrix(${invRotate.join()},${textPosition.join()})`"
+        @click.stop="moveText">
         <text>
             <tspan v-text="id.split('_')[0]"></tspan>
             <tspan dx="-3" v-text="id.split('_')[1]"></tspan>
@@ -46,7 +47,7 @@ import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point, PointLike } from 'src/lib/point';
 import Electronics, { Electronic, ShapeDescription } from './shape';
 
-import { DrawEventSetting, DrawEvent } from 'src/components/drawing-main/events';
+import { FindPart, SetDrawEvent, DrawEvent } from 'src/components/drawing-main';
 import { PartComponent, PartData, PointClass, PartMargin } from './index';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -84,16 +85,14 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     /** 器件原始数据 */
     @Prop({ type: Object, default: () => ({}) })
     readonly value: PartData;
-
+    /** 设置图纸事件 */
     @Inject()
-    readonly setDrawEvent: (handlers: DrawEventSetting) => void;
-
+    readonly setDrawEvent: SetDrawEvent;
+    /** 搜索器件 */
     @Inject()
-    readonly findPart: (id: string | HTMLElement | { id: string }) => PartComponent | undefined;
-
+    readonly findPart: FindPart;
     /** 器件标识符 */
     readonly hash: string;
-
     /** 器件描述原始数据 */
     readonly origin: Electronic;
 
@@ -131,12 +130,11 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     }
     mounted() {
         this.setText();
-        this.setNewPart();
 
-        // 如果坐标为初始值，说明是新建器件
-        // if (this.position[0] === 500000) {
-        //     this.newPart();
-        // }
+        // 根据不同的标志初始化
+        if (this.position.isEqual([1e6, 1e6])) {
+            this.setNewPart();
+        }
     }
 
     get points(): PointClass[] {
@@ -200,9 +198,10 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         const keys = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
         this.$store.commit(
             'UPDATE_PART',
-            keys.reduce((v, k) => ((v[k] = this[k]), v), {})
+            clone(keys.reduce((v, k) => ((v[k] = this[k]), v), {}))
         );
     }
+    /** 渲染说明文档 */
     setText(): void {
         // TODO: 缺正中央
         const textHeight = 11,
@@ -221,39 +220,131 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
 
         if (direction[0]) {
             pend[1] = ((1 - len) * textHeight - len * spaceHeight) / 2;
+
             if (direction[0] > 0) {
-                // 右
                 pend[0] = local;
                 this.textPlacement = 'right';
-            } else {
-                // 左
+            }
+            else {
                 pend[0] = -local;
                 this.textPlacement = 'left';
             }
-        } else {
+        }
+        else {
             pend[0] = 0;
+
             if (direction[1] > 0) {
-                // 下
                 this.textPlacement = 'bottom';
                 pend[1] = textHeight + local;
-            } else {
-                // 上
+            }
+            else {
                 this.textPlacement = 'top';
                 pend[1] = -((textHeight + spaceHeight) * len + local);
             }
         }
     }
+    /** 在图纸中标记器件 */
     markSign(): void {
+        const inner = this.margin.inner;
+        const position = this.position.floorToSmall();
 
+        // 器件内边距占位
+        position.around(inner, (x, y) => schMap.setPoint({
+            point: $P(x, y),
+            id: this.id,
+            type: 'part',
+        }));
+        // 器件管脚距占位
+        this.points.forEach((point, i) => schMap.setPoint({
+            point: point.position.floorToSmall().add(position),
+            connect: [],
+            type: 'part-point',
+            id: `${this.id}-${i}`,
+        }));
     }
+    /** 删除图纸中器件的标记 */
     deleteSign(): void {
+        const inner = this.margin.inner;
+        const position = this.position.floorToSmall();
 
+        // 删除器件内边距占位
+        position.around(inner, (x, y) => schMap.deletePoint([x, y]));
+        // 删除器件引脚占位
+        this.points.forEach((point) => schMap.deletePoint(point.position.floorToSmall().add(position)));
     }
-    isCover(position?: Point): boolean {
-
-        return false;
+    /** 移动说明文本 */
+    moveText(): void {
+        // TODO: 高亮如何设置？
+        this.setDrawEvent({
+            handlers: (e: DrawEvent) => { this.textPosition = this.textPosition.add(e.$movement); },
+            stopEvent: { el: this.$parent.$el, type: 'mouseup', which: 'left' },
+            afterEvent: () => this.setText(),
+            cursor: 'move_part',
+        });
     }
+    isCover(position: Point = this.position) {
+        const coverHash = {}, margin = this.margin;
 
+        let label = false;
+        position = $P(position).floorToSmall();
+
+        // 检查器件管脚，管脚点不允许存在任何元素
+        for (let i = 0; i < this.points.length; i++) {
+            const node = position.add(this.points[i].position.floorToSmall());
+            if (schMap.hasPoint(node)) {
+                return (true);
+            }
+            coverHash[node.join(',')] = true;
+        }
+
+        // 扫描内边距，内边距中不允许存在任何元素
+        position.around(margin.inner, (x, y, stop) => {
+            schMap.hasPoint([x, y])
+                ? (label = true, stop())
+                : coverHash[`${x},${y}`] = true;
+        });
+        if (label) {
+            return (true);
+        }
+
+        // 扫描外边距
+        position.around(margin.outter, (x, y, stop) => {
+            // 跳过内边距
+            if (coverHash[`${x},${y}`]) {
+                return;
+            }
+            // 外边框为空
+            if (!schMap.hasPoint([x, y])) {
+                return;
+            }
+            // 外边框不是由器件占据
+            const status = schMap.getPoint([x, y]);
+            if (!status || status.type !== 'part') {
+                return;
+            }
+
+            // 校验相互距离
+            const part = this.findPart(status.id);
+            const another = part.margin.outter;
+            const distance = position.add(part.position.floorToSmall(), -1);
+
+            // 分别校验 x、y 轴
+            for (let i = 0; i < 2; i++) {
+                if (distance[i] !== 0) {
+                    const sub = distance[i] > 0 ? 0 : 1,
+                        diff_x = Math.abs(distance[i]),
+                        limit_x = Math.abs(margin.outter[sub][i]) + Math.abs(another[1 - sub][i]);
+
+                    if (diff_x < limit_x) {
+                        label = true;
+                        stop();
+                    }
+                }
+            }
+        });
+
+        return (label);
+    }
     setNewPart() {
         const el = this.$parent.$el;
         el.setAttribute('opacity', '0.4');
@@ -264,12 +355,14 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
             afterEvent: () => {
                 const node = this.position;
 
-                this.position = $P(node.round(20)
-                    .aroundInf((node) => !this.isCover(node), 20)
-                    .reduce((pre, next) =>
-                        node.distance(pre) < node.distance(next)
-                            ? pre : next
-                    ));
+                this.position = $P(
+                    node.round(20)
+                        .aroundInf((node) => !this.isCover(node), 20)
+                        .reduce(
+                            (pre, next) =>
+                                node.distance(pre) < node.distance(next) ? pre : next
+                        )
+                );
 
                 this.update();
                 this.markSign();
