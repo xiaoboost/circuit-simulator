@@ -4,7 +4,7 @@
     <span class="input-bar correct-bar"></span>
     <span :class="['input-bar error-bar', { 'error': isError }]"></span>
     <template v-if="message">
-        <span v-show="isError" class="input-error-message">{{message}}</span>
+        <span v-show="isError" class="input-error-message" v-text="message"></span>
     </template>
 </span>
 </template>
@@ -67,44 +67,44 @@ export default class InputVerifiable extends Vue {
 }
 </script>
 
-<style lang="stylus">
-@import '../../css/Variable'
+<style lang="stylus" scoped>
+@import '../../css/variable'
 
 .input-verifiable
     position relative
 
-    input
-        width 100%
-        font-size 1.1em
+input
+    width 100%
+    font-size 1.1em
+    outline 0
+    border-bottom 1px solid Gray
+    background-color White
+    color Dark-Blue
+    padding 0 5px
+    box-sizing border-box
+    &:focus
         outline 0
-        border-bottom 1px solid Gray
-        background-color White
-        color Dark-Blue
-        padding 0 5px
-        box-sizing border-box
-        &:focus
-            outline 0
 
-    .input-bar:before
-        content ''
-        height 2px
-        width 0
-        bottom 2px
-        left 0
-        position absolute
-        background Dark-Blue
-        transition width 300ms
+.input-bar:before
+    content ''
+    height 2px
+    width 0
+    bottom 2px
+    left 0
+    position absolute
+    background Dark-Blue
+    transition width 300ms
 
-    input:focus ~ .correct-bar:before
+input:focus ~ .correct-bar:before
+    width 100%
+
+.error-bar
+    &:before
+        background Red
+    &.error:before
         width 100%
 
-    .error-bar
-        &:before
-            background Red
-        &.error:before
-            width 100%
-
-    .input-error-message
-        position absolute
-        padding 0 5px
+.input-error-message
+    position absolute
+    padding 0 5px
 </style>

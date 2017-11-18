@@ -70,8 +70,8 @@ export default class ActionMenu extends Vue {
 }
 </script>
 
-<style lang="stylus">
-@import '../../css/Variable'
+<style lang="stylus" scoped>
+@import '../../css/variable'
 
 .action-menu
     position fixed

@@ -51,8 +51,8 @@ export default class Slider extends Vue {
 }
 </script>
 
-<style lang="stylus">
-@import '../../css/Variable'
+<style lang="stylus" scoped>
+@import '../../css/variable'
 
 time = .4s
 width = 380px
@@ -99,7 +99,7 @@ size = 50px
             transform translate(10px, 22.5px) rotate(45deg)
         span::after
             transform translate(10px, 22.5px) rotate(135deg)
-    header
+    /deep/ header
         color White
         text-align  center
         background-color Blue
@@ -113,7 +113,7 @@ size = 50px
             font-size 40px
         h2
             font-size 25px
-    article
+    /deep/ article
         margin 10px 20px
         color Black
 

@@ -1,5 +1,5 @@
 <template>
-<section class="slider-config">
+<section>
     <header>
         <h1>模拟设置</h1>
         <h2>Simulation Settings</h2>
@@ -57,32 +57,31 @@ export default class Config extends Vue {
 }
 </script>
 
-<style lang="stylus">
-@import '../../css/Variable'
+<style lang="stylus" scoped>
+@import '../../css/variable'
 
 left = 35px
 
-.slider-config article
-    h1
-        font-size 25px
-        line-height 1.5
-        font-weight normal
+h1
+    font-size 25px
+    line-height 1.5
+    font-weight normal
 
-        label
-            font-family font-serif
-            position absolute
-            color Silver
-        span
-            margin-left left
-            color Black
+    label
+        font-family font-serif
+        position absolute
+        color Silver
+    span
+        margin-left left
+        color Black
 
-    .form-line
-        display flex
-        margin 15px 10px 15px left
+.form-line
+    display flex
+    margin 15px 10px 15px left
 
-        label
-            white-space nowrap
-        .input-grow
-            flex-grow 1
-            margin-right 10px
+    label
+        white-space nowrap
+    .input-grow
+        flex-grow 1
+        margin-right 10px
 </style>
