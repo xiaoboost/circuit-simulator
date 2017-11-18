@@ -166,7 +166,7 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         for (let i = 0; i < 2; i++) {
             const type = types[i],
                 boxSize = this.origin[type] as [number, number, number, number],
-                endpoint = [[boxSize[3], boxSize[0]], [boxSize[1], boxSize[2]]] as EndPoint,
+                endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]] as EndPoint,
                 data = endpoint.map((point) => product(point, this.rotate));
 
             box[type] = [

@@ -2,7 +2,7 @@ import * as utils from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
 import { $P, Point, PointLike } from 'src/lib/point';
 
-interface MapData {
+export interface MapData {
     /**
      * 当前点属于哪个器件
      *
