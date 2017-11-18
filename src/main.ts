@@ -33,7 +33,7 @@ new Vue({
         [h('drawing-main'), h('slider-menu'), h('action-menu')],
     ),
     async mounted() {
-        // FIXME: 调试时会生成 debugger.js，但构建时却不会生成，我希望构建时依旧生成此文件，只是下面这段消失
+        // 调试时加载
         if ($env.NODE_ENV === 'development') {
             const Compo = await import(/* webpackChunkName: "debugger" */ 'src/lib/debugger');
             const area = document.querySelector('.drawing-main svg g') as HTMLElement;
