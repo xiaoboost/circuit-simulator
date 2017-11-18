@@ -28,9 +28,9 @@ import { Params } from './index';
 type Location = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 @Component
-export class ParamsDialog extends Vue {
+export default class ParamsDialog extends Vue {
     /** 参数列表 */
-    params: Params[];
+    params: Params[] = [];
     /** 是否显示 */
     vision = false;
     /** 指向的器件坐标 */
@@ -47,12 +47,12 @@ export class ParamsDialog extends Vue {
             ...this.params.map((param) => param.unit.length)
         );
     }
-    get location(): Location {
-        const height = document.body.scrollHeight;
-        const width = document.body.scrollWidth;
+    // get location(): Location {
+    //     const height = document.body.scrollHeight;
+    //     const width = document.body.scrollWidth;
 
 
-    }
+    // }
 
     cancel: () => void;
     comfirm: () => void;

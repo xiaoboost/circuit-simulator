@@ -1,8 +1,12 @@
-import { $P, Point } from 'src/lib/point';
-import Comp, { ParamsDialog, Params } from 'src/components/params-dialog';
+import Vue from 'vue';
+import { Point } from 'src/lib/point';
+import Dialog, { ParamsDialog, Params } from 'src/components/params-dialog';
+
+const Comp = Vue.extend(Dialog);
+const DOM = document.createElement('div');
 
 // 生成全局参数设置组件
-const dialog = new Comp<ParamsDialog>().$mount(document.createElement('div'));
+const dialog = new Comp<ParamsDialog>().$mount(DOM);
 // 将组件插入 body 末尾
 document.body.appendChild(dialog.$el);
 
