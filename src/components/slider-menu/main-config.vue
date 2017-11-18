@@ -47,6 +47,7 @@ export default class Config extends Vue {
     end: string = this.$store.state.END_TIME;
     step: string = this.$store.state.STEP_TIME;
 
+    // TODO: 关闭设置侧边栏时应当先做格式检查
     // beforeRouteLeave(to, from, next) {
     //     if (this.$refs['end'].check() && this.$refs['step'].check()) {
     //         this.$store.commit('SET_END_TIME', this.end);
