@@ -55,3 +55,18 @@ export function clone(data, check = true) {
         return Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {});
     }
 }
+
+/**
+ * 获取该元素的 css 作用域标签
+ * @export
+ * @param {HTMLElement} el
+ * @returns {string}
+ */
+export function getScopedName(el) {
+    const name = Array
+        .prototype.slice.call(el.attributes)
+        .map((attr) => attr.name)
+        .find((attr) => /^data-v-[a-z0-9]+$/i.test(attr));
+
+    return name ? name : '';
+}
