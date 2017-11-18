@@ -285,8 +285,6 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     }
     /** 设置属性 */
     async setParams() {
-        const originParams = this.params.slice();
-
         const status = await this.setPartParams({
             id: this.id,
             type: this.type,
@@ -294,7 +292,20 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
             position: $P(this.position),
         });
 
-        debugger;
+        // 并未改变参数
+        if (!status) {
+            return;
+        }
+
+        // 参数更新
+        if (
+            this.id !== status.id ||
+            !this.params.isEqual(status.params)
+        ) {
+            this.params = status.params;
+            this.id = status.id;
+            this.update();
+        }
     }
     // TODO: 新建导线
     // newLine(event) {
