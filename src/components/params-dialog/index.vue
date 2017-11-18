@@ -106,7 +106,7 @@ export default class ParamsDialog extends Vue {
 
         dom.setAttribute(getScopedName(this.$el), '');
 
-        return Math.max(...this.getSectionWidth(dom, labels));
+        return Math.max(...this.getDomWidth(dom, labels));
     }
     /** 最长参数单位的长度 */
     get maxUnitLength(): number {
@@ -120,7 +120,7 @@ export default class ParamsDialog extends Vue {
         dom.setAttribute('class', 'unit');
         dom.setAttribute(getScopedName(this.$el), '');
 
-        return Math.max(...this.getSectionWidth(dom, labels));
+        return Math.max(...this.getDomWidth(dom, labels));
     }
     // get location(): Location {
     //     const height = document.body.scrollHeight;
@@ -150,7 +150,7 @@ export default class ParamsDialog extends Vue {
         return { width, height };
     }
 
-    getSectionWidth(dom: HTMLElement, labels: string[]): number[] {
+    getDomWidth(dom: HTMLElement, labels: string[]): number[] {
         const section = this.$el.querySelector('article section');
 
         if (!section) {
