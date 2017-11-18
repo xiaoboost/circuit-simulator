@@ -197,6 +197,8 @@ export default class ParamsDialog extends Vue {
 <style lang="stylus" scoped>
 @import '../../css/variable'
 
+radius = 4px;
+
 .wrapper
     position fixed
     top 0
@@ -210,7 +212,7 @@ export default class ParamsDialog extends Vue {
 .params-dialog
     position relative
     background White
-    border-radius 4px
+    border-radius radius
     box-shadow 0 1px 3px rgba(0, 0, 0, .4)
     user-select none
     display inline-block
@@ -223,6 +225,8 @@ header
     line-height 36px
     background-color Blue
     font-family font-serif
+    border-top-left-radius: radius
+    border-top-right-radius: radius
 
 article
     padding 0 10px
