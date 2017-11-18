@@ -1,11 +1,17 @@
 <template>
-<transition name="fade">
+<transition
+    name="fade"
+    @before-enter="beforeEnter"
+    @enter="enter">
     <section class="wrapper" v-show="vision">
         <div class="params-dialog">
             <header>参数设置</header>
             <article>
                 <section>
-                    <label>编号：</label>
+                    <label
+                        v-text="idLabel"
+                        :style="`width: ${maxLabelLength}px`">
+                    </label>
                     <v-input
                         ref="id"
                         v-model="id"
@@ -16,16 +22,22 @@
                     </v-input>
                 </section>
                 <section v-for="(param, i) in params" :key="i">
-                    <label v-text="`${param.label}：`"></label>
+                    <label
+                        v-text="`${param.label}：`"
+                        :style="`width: ${maxLabelLength}px`">
+                    </label>
                     <v-input
-                        ref="id"
+                        ref="params"
                         v-model="param.value"
                         :pattern="paramsCheck"
                         :required="true"
                         class="params-input"
                         placeholder="请输入参数">
                     </v-input>
-                    <span class="unit" v-text="param.unit"></span>
+                    <span
+                        class="unit" v-text="param.unit"
+                        :style="`width: ${maxUnitLength}px`">
+                    </span>
                 </section>
             </article>
             <footer>
@@ -40,10 +52,11 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Input from 'src/components/input-verifiable';
+import Input, { InputVerifiable } from 'src/components/input-verifiable';
 
 import { $P } from 'src/lib/point';
 import { Params } from './index';
+import { getScopedName } from 'src/lib/utils';
 
 type Location = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -61,23 +74,53 @@ export default class ParamsDialog extends Vue {
     vision = false;
     /** 指向的器件坐标 */
     position = $P();
+    /** ID 的说明文本 */
+    idLabel = '编号：';
+    /** 是否初始化完成标志 */
+    isMounted = false;
 
     /** 编号的验证正则 */
     readonly idCheck = /[a-zA-Z]+_[a-zA-Z0-9]+/;
     /** 参数的验证正则 */
     readonly paramsCheck = Number.SCIMatch;
 
+    /** 子组件定义 */
+    $refs: {
+        id: InputVerifiable;
+        params: InputVerifiable[];
+    };
+
+    mounted() {
+        // 初始化完成标记置高
+        this.isMounted = true;
+    }
+
     /** 最长参数名称的长度 */
     get maxLabelLength(): number {
-        return Math.max(
-            ...this.params.map((param) => param.label.length)
-        );
+        if (!this.isMounted) {
+            return 0;
+        }
+
+        const labels = this.params.map((param) => param.label + '：').concat([this.idLabel]);
+        const dom = document.createElement('label');
+
+        dom.setAttribute(getScopedName(this.$el), '');
+
+        return Math.max(...this.getSectionWidth(dom, labels));
     }
     /** 最长参数单位的长度 */
     get maxUnitLength(): number {
-        return Math.max(
-            ...this.params.map((param) => param.unit.length)
-        );
+        if (!this.isMounted) {
+            return 0;
+        }
+
+        const labels = this.params.map((param) => param.unit);
+        const dom = document.createElement('span');
+
+        dom.setAttribute('class', 'unit');
+        dom.setAttribute(getScopedName(this.$el), '');
+
+        return Math.max(...this.getSectionWidth(dom, labels));
     }
     // get location(): Location {
     //     const height = document.body.scrollHeight;
@@ -86,15 +129,67 @@ export default class ParamsDialog extends Vue {
 
     // }
 
+    get boxSize(): { height: number; width: number; } {
+        const sections = this.params.length;
+
+        const height = (
+            36 +    // header height
+            5 +     // body top margin
+            (sections + 1) * 24 + sections * 5 +  // body height
+            24 +    // footer height
+            13      // fotter margin
+        );
+        const width = (
+            100 +   // width of input
+            20 +    // padding of body
+            6 +     // unit's left margin
+            this.maxLabelLength +
+            this.maxUnitLength
+        );
+
+        return { width, height };
+    }
+
+    getSectionWidth(dom: HTMLElement, labels: string[]): number[] {
+        const section = this.$el.querySelector('article section');
+
+        if (!section) {
+            return [0];
+        }
+
+        this.$el.style.display = 'block';
+        section.appendChild(dom);
+
+        const widths = labels.map((label) => {
+            dom.textContent = label;
+            return dom.getBoundingClientRect().width;
+        });
+
+        dom.remove();
+        this.$el.style.display = 'none';
+
+        return widths;
+    }
+
+    beforeEnter() {
+        console.log(this.boxSize);
+    }
+    enter() {
+
+    }
+
     cancel: () => void;
     comfirm: () => void;
-
     beforeCancel() {
         this.cancel();
     }
     beforeComfirm() {
-        // TODO: 格式检查
-        this.comfirm();
+        if (
+            this.$refs.id.check() &&
+            this.$refs.params.every((comp) => comp.check())
+        ) {
+            this.comfirm();
+        }
     }
 }
 </script>
@@ -122,10 +217,10 @@ export default class ParamsDialog extends Vue {
 
 header
     font-size 20px
-    height auto
+    height 36px
     color White
     text-align center
-    line-height 35px
+    line-height 36px
     background-color Blue
     font-family font-serif
 
@@ -134,20 +229,28 @@ article
 
     section
         font-family: font-default
+        font-size: 16px;
         position: relative
         margin: 5px 0
+        display flex
+
+    label
+        display inline-block;
+        font-size: 16px;
+        height: 24px;
+        line-height: 24px;
 
     .params-input
         width: 100px
-        font-size: 16px;
+        font-size: 1rem;
         display: inline-block
-
-        /deep/ .input-bar:before
-            bottom 0;
+        position relative
+        top: 4px
     
     .unit
-        font-size: 18px
+        font-size: 18px;
         margin-left: 6px
+        display: inline-block
         font-family: font-text
         position relative
         top: 2px
@@ -163,6 +266,8 @@ footer
         padding: 0 5px
         outline: none
         border none
+        height: 24px;
+        line-height: 24px;
 
         &:focus
             border: none
