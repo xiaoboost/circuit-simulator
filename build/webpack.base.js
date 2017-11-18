@@ -107,7 +107,6 @@ module.exports = {
                     'node_modules',
                     'src/plugin',
                     'src/lib',
-                    'src/vuex',
                 ];
                 return (
                     source && /\.(js|tsx?)$/.test(source) &&
