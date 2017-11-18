@@ -2,6 +2,7 @@
     <!-- :class="['part', { 'focus': focus }]" -->
 <g
     class="part"
+    @dblclick="setParams"
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <!-- v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
     v-delegate:mousedown-b.left.stop="['.text-params', moveText]" -->
@@ -282,6 +283,19 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
             cursor: 'move_part',
         });
     }
+    /** 设置属性 */
+    async setParams() {
+        const originParams = this.params.slice();
+
+        const status = await this.setPartParams({
+            id: this.id,
+            type: this.type,
+            params: this.params.slice(),
+            position: $P(this.position),
+        });
+
+        debugger;
+    }
     // TODO: 新建导线
     // newLine(event) {
     //     const mark = event.currentTarget.getAttribute('index'),
@@ -364,10 +378,11 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         return (label);
     }
     setNewPart() {
-        const el = this.$parent.$el;
+        const el = this.$el;
         el.setAttribute('opacity', '0.4');
 
         this.setDrawEvent({
+            cursor: 'move_part',
             handlers: (e: DrawEvent) => { this.position = e.$position; },
             stopEvent: { el, type: 'mousedown', which: 'left' },
             afterEvent: () => {

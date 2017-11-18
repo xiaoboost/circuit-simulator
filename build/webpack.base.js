@@ -106,6 +106,7 @@ module.exports = {
                 const files = [
                     'node_modules',
                     'src/plugin',
+                    'src/mixins',
                     'src/lib',
                 ];
                 return (

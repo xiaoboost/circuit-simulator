@@ -4,7 +4,7 @@
         <div class="params-dialog">
             <header>参数设置</header>
             <article>
-                <section v-for="(parms, i) in params" :key="i">
+                <section v-for="(param, i) in params" :key="i">
                     <label v-text="param.label"></label>
                     <span v-text="param.value"></span>
                     <span class="unit" v-text="param.unit"></span>
@@ -29,6 +29,8 @@ type Location = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' |
 
 @Component
 export default class ParamsDialog extends Vue {
+    /** 指向的器件编号 */
+    id: string = '';
     /** 参数列表 */
     params: Params[] = [];
     /** 是否显示 */
