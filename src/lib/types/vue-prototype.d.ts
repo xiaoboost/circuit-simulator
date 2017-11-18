@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import { Store } from 'vuex';
 import { StateType } from 'src/vuex';
+import { Point } from 'src/lib/point';
+import { Params } from 'src/components/params-dialog';
 
 type Callback = (e?: Event) => void | boolean;
 interface AnyObject { [x: string]: any; }
@@ -13,6 +15,18 @@ declare module 'vue/types/vue' {
     interface Vue {
         /** vuex 属性 */
         $store: Store<StateType>;
+
+        /**
+         * 打开器件的参数设置对话框
+         *  - 返回`Promise<void>`表示点击了取消按钮
+         *  - 返回`Promise<{ id: string; params: Params[] }>`表示点击了确定按钮，其中数据即为最后对话框中输入的数据
+         *
+         * @param {string} id
+         * @param {Params[]} params
+         * @param {Point} position
+         * @returns {(Promise<{ id: string; params: Params[] } | void>)}
+         */
+        setPartParams(id: string, params: Params[], position: Point): Promise<{ id: string; params: string[] } | void>
 
         /**
          * 给`el`元素绑定事件
