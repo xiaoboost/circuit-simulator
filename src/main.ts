@@ -28,7 +28,7 @@ function loaded() {
 new Vue({
     store,
     el: '#app',
-    name: 'App',
+    name: 'Main',
     components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
