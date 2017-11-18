@@ -63,9 +63,11 @@ exports.dataForDefinePlugin = function expand(obj) {
                 ((typeof value === 'string') && !/^"[\d\D]+"$/.test(value))
             ) {
                 ans[key] = JSON.stringify(value);
-            } else if (!(ans instanceof Object)) {
+            }
+            else if (!(ans instanceof Object)) {
                 ans[key] = value;
-            } else {
+            }
+            else {
                 const subObject = expand(value);
                 Object
                     .entries(subObject)
