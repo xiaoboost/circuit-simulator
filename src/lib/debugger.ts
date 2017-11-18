@@ -96,12 +96,12 @@ class MapDebug {
         });
         count++;
 
-        const data: { [x: string]: MapData } = JSON.parse(outputMap());
+        const data = JSON.parse(outputMap()) as { [x: string]: MapData };
 
         Object.values(data).forEach((status) => {
             const point = $P(status.point);
             // 点本身
-            this.point(point, nodeColor[status.type], 20);
+            this.point(point, nodeColor[status.type] as string, 20);
             // 点的 ID
             if (status.type === 'line') {
                 this.text(point, status.id.split('_')[1], 20);
