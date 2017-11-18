@@ -92,6 +92,12 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     /** 搜索器件 */
     @Inject()
     readonly findPart: FindPart;
+    /** 图纸相关状态 */
+    @Inject()
+    readonly mapStatus: {
+        readonly zoom: number;
+        readonly position: Point;
+    };
     /** 器件标识符 */
     readonly hash: string;
     /** 器件描述原始数据 */
@@ -285,11 +291,12 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     }
     /** 设置属性 */
     async setParams() {
+        const map = this.mapStatus;
         const status = await this.setPartParams({
             id: this.id,
             type: this.type,
-            params: this.params.slice(),
-            position: $P(this.position),
+            params: this.params,
+            position: this.position.mul(map.zoom).add(map.position),
         });
 
         // 并未改变参数
