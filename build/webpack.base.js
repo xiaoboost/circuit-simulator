@@ -1,4 +1,5 @@
 const path = require('path'),
+    chalk = require('chalk'),
     webpack = require('webpack'),
     utils = require('./utils'),
     config = require('./config'),
@@ -6,6 +7,7 @@ const path = require('path'),
     isDevelopment = process.env.NODE_ENV === 'development',
     CopyWebpackPlugin = require('copy-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
+    ProgressBarPlugin = require('progress-bar-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 function resolve(dir) {
@@ -20,6 +22,8 @@ module.exports = {
     output: {
         // 编译输出的静态资源根路径
         path: config.output,
+        // 公共资源路径
+        publicPath: config.publicPath,
         // 编译输出的文件名
         filename: isDevelopment
             ? 'js/[name].js'
@@ -97,13 +101,13 @@ module.exports = {
             'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
             '$env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
-        // 保持打包文件的 hash id 不变
+        // 保持模块的 hash id 不变
         new webpack.HashedModuleIdsPlugin({
             hashFunction: 'sha256',
             hashDigest: 'hex',
             hashDigestLength: 6,
         }),
-        // 启用打包的作用域提升
+        // 启用模块的作用域提升
         new webpack.optimize.ModuleConcatenationPlugin(),
         // 指定 common 包的内容
         new webpack.optimize.CommonsChunkPlugin({
@@ -132,9 +136,11 @@ module.exports = {
         }),
         // 复制文件
         new CopyWebpackPlugin([{
-            from: resolve('src/assets'),
-            to: config.output,
             ignore: ['.*'],
+            from: config.assert,
+            to: isDevelopment
+                ? config.publicPath
+                : config.output,
         }]),
         // 打包后的文件插入 html 模板
         new HtmlWebpackPlugin({
@@ -151,6 +157,11 @@ module.exports = {
             },
             chunksSortMode: 'dependency',
             excludeChunks: [],
+        }),
+        // 进度条插件
+        new ProgressBarPlugin({
+            width: 40,
+            format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
         }),
     ],
 };

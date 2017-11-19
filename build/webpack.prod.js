@@ -6,14 +6,9 @@ const chalk = require('chalk'),
     config = require('./config'),
     baseConfig = require('./webpack.base'),
     UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
-    ProgressBarPlugin = require('progress-bar-webpack-plugin'),
     OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 baseConfig.plugins.push(
-    new ProgressBarPlugin({
-        width: 40,
-        format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
-    }),
     new OptimizeCSSPlugin({
         cssProcessorOptions: {
             safe: true,
