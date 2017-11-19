@@ -15,6 +15,7 @@ Vue.use(delegate);
 Object.assign(Vue.prototype, modal);
 Vue.config.productionTip = ($env.NODE_ENV === 'development');
 
+// 移除 loading 界面
 function loaded() {
     const loading = document.getElementById('start-loading') as HTMLElement;
 
@@ -35,17 +36,16 @@ new Vue({
         [h('drawing-main'), h('slider-menu'), h('action-menu')],
     ),
     async mounted() {
-        // 调试时加载
+        // 调试时加载，组件挂在全局变量上
         if ($env.NODE_ENV === 'development') {
             const Compo = await import(/* webpackChunkName: "debugger" */ 'src/lib/debugger');
             const area = document.querySelector('.drawing-main svg g') as HTMLElement;
 
-            // 调试组件独立于 app，挂在全局变量上
             (window as Window & { $debugger: any }).$debugger = new Compo.default();
             area.appendChild($debugger.$el);
         }
 
-        // 初始化完成，移除 loading 界面
+        // 初始化完成
         loaded();
     },
 });
