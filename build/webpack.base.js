@@ -88,13 +88,24 @@ module.exports = {
         ],
     },
     plugins: [
+        // 添加文件抬头信息
         new webpack.BannerPlugin({
             banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${buildTag}\nfilename: [name], chunkhash: [chunkhash]\n\nNice to meet you ~ o(*￣▽￣*)ブ\nReleased under the MIT License.`,
         }),
+        // 定义全局注入变量
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
             '$env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
+        // 保持打包文件的 hash id 不变
+        new webpack.HashedModuleIdsPlugin({
+            hashFunction: 'sha256',
+            hashDigest: 'hex',
+            hashDigestLength: 6,
+        }),
+        // 启用打包的作用域提升
+        new webpack.optimize.ModuleConcatenationPlugin(),
+        // 指定 common 包的内容
         new webpack.optimize.CommonsChunkPlugin({
             name: 'common',
             filename: isDevelopment
@@ -103,18 +114,15 @@ module.exports = {
 
             minChunks(module) {
                 const source = module.resource;
-                const files = [
-                    'node_modules',
-                    'src/plugin',
-                    'src/mixins',
-                    'src/lib',
-                ];
+                const files = ['node_modules'].map((file) => resolve(file));
+
                 return (
                     source && /\.(js|tsx?)$/.test(source) &&
-                    files.some((file) => source.indexOf(resolve(file)) === 0)
+                    files.some((file) => source.indexOf(file) === 0)
                 );
             },
         }),
+        // 提取出来的所有 css 文件整合
         new ExtractTextPlugin({
             disable: false,
             allChunks: true,
@@ -122,11 +130,13 @@ module.exports = {
                 ? 'css/main.css'
                 : 'css/main.[contenthash:20].css',
         }),
+        // 复制文件
         new CopyWebpackPlugin([{
             from: resolve('src/assets'),
             to: config.output,
             ignore: ['.*'],
         }]),
+        // 打包后的文件插入 html 模板
         new HtmlWebpackPlugin({
             filename: 'index.html',
             data: { build: buildTag },
