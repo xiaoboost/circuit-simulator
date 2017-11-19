@@ -70,3 +70,13 @@ export function getScopedName(el) {
 
     return name ? name : '';
 }
+
+/**
+ * 生成异步延迟函数
+ * @export
+ * @param {number} time
+ * @returns {Promise<void>}
+ */
+export function delay(time) {
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
