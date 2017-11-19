@@ -2,7 +2,7 @@
     // @link: https://go.microsoft.com/fwlink/?LinkId=759670
     "compilerOptions": {
         // 是否包含可以用于 debug 的 sourceMap
-        "sourceMap": false,
+        "sourceMap": true,
         // 以严格模式解析
         "strict": true,
         // 采用的模块系统
