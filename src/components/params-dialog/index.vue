@@ -1,10 +1,7 @@
 <template>
-<transition
-    name="fade"
-    @before-enter="beforeEnter"
-    @enter="enter">
+<transition name="fade" @enter="enter" @leave="leave">
     <section class="wrapper" v-show="vision">
-        <div class="params-dialog">
+        <div ref="dialog" class="params-dialog">
             <header>参数设置</header>
             <article>
                 <section>
@@ -44,7 +41,7 @@
                 <button class="cancel" @click="beforeCancel">取消</button>
                 <button class="comfirm" @click="beforeComfirm">确定</button>
             </footer>
-            <i class="triangle-down"></i>
+            <i :class="`triangle-down ${location}`"></i>
         </div>
     </section>
 </transition>
@@ -56,9 +53,8 @@ import Input, { InputVerifiable } from 'src/components/input-verifiable';
 
 import { $P } from 'src/lib/point';
 import { Params } from './index';
+import * as util from 'src/lib/utils';
 import { getScopedName } from 'src/lib/utils';
-
-type Location = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 @Component({
     components: {
@@ -86,6 +82,7 @@ export default class ParamsDialog extends Vue {
 
     /** 子组件定义 */
     $refs: {
+        dialog: HTMLElement;
         id: InputVerifiable;
         params: InputVerifiable[];
     };
@@ -122,13 +119,27 @@ export default class ParamsDialog extends Vue {
 
         return Math.max(...this.getDomWidth(dom, labels));
     }
-    // get location(): Location {
-    //     const height = document.body.scrollHeight;
-    //     const width = document.body.scrollWidth;
+    /** 对话框方位 */
+    get location(): string {
+        const direction: string[] = [];
+        // 对话框当前大小
+        const { height, width } = this.boxSize;
+        // 屏幕当前大小
+        const { scrollHeight: SHeight, scrollWidth: SWidth } = document.body;
 
+        // Y 轴默认是上方
+        direction.push((this.position[1] < (height + 10) ? 'bottom' : 'top'));
+        // X 轴只有左右距离不足时才会确定方位
+        if (this.position[0] < (width / 2 + 10)) {
+            direction.push('right');
+        }
+        else if ((SWidth - this.position[0]) < (width / 2 + 10)) {
+            direction.push('left');
+        }
 
-    // }
-
+        return direction.join('-');
+    }
+    /** 对话框宽高 */
     get boxSize(): { height: number; width: number; } {
         const sections = this.params.length;
 
@@ -150,6 +161,7 @@ export default class ParamsDialog extends Vue {
         return { width, height };
     }
 
+    /** 以输入的 dom 为容器，计算所有 labels 的长度 */
     getDomWidth(dom: HTMLElement, labels: string[]): number[] {
         const section = this.$el.querySelector('article section');
 
@@ -157,7 +169,14 @@ export default class ParamsDialog extends Vue {
             return [0];
         }
 
+        // 保存当前 style
+        const elStyle = { ...this.$el.style };
+        const dislogStyle = { ...this.$refs.dialog.style };
+
         this.$el.style.display = 'block';
+        this.$refs.dialog.style.transition = '';
+        this.$refs.dialog.style.transform = 'scale(1)';
+
         section.appendChild(dom);
 
         const widths = labels.map((label) => {
@@ -166,16 +185,42 @@ export default class ParamsDialog extends Vue {
         });
 
         dom.remove();
-        this.$el.style.display = 'none';
+        Object.assign(this.$el.style, elStyle);
+        Object.assign(this.$refs.dialog.style, dislogStyle);
 
         return widths;
     }
+    /** 根据对话框的缩放比例，设置对话框偏移量 */
+    setBoxBias(scale: number): void {
+        const min = 10, { height, width } = this.boxSize;
 
-    beforeEnter() {
-        console.log(this.boxSize);
+        // TODO: 这里只是 top 时候的计算规则
+        const left = - width / 2;
+        const top = - (height + min) / 2 * (1 + scale);
+
+        this.$refs.dialog.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
     }
-    enter() {
 
+    async enter(el: HTMLElement, done: () => void) {
+        this.$refs.dialog.style.left = `${this.position[0]}px`;
+        this.$refs.dialog.style.top = `${this.position[1]}px`;
+
+        this.setBoxBias(0.2);
+        await util.delay(0);
+
+        this.setBoxBias(1);
+        await util.delay(300);
+
+        done();
+    }
+    async leave(el: HTMLElement, done: () => void) {
+        this.setBoxBias(1);
+        await util.delay(0);
+
+        this.setBoxBias(0.2);
+        await util.delay(300);
+
+        done();
     }
 
     cancel: () => void;
@@ -216,6 +261,7 @@ radius = 4px;
     box-shadow 0 1px 3px rgba(0, 0, 0, .4)
     user-select none
     display inline-block
+    transition transform .3s cubic-bezier(.3,.3,.1,1)
 
 header
     font-size 20px
