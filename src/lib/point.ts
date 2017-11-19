@@ -401,6 +401,16 @@ class Point {
     join(str: string = ',') {
         return `${this[0]}${str}${this[1]}`;
     }
+    /**
+     * map 迭代，同`Array.prototype.map`
+     *
+     * @template T
+     * @param {(value: number, index: number) => T} callback
+     * @returns {[T, T]}
+     */
+    map<T>(callback: (value: number, index: number) => T): [T, T] {
+        return [callback(this[0], 0), callback(this[1], 1)];
+    }
 }
 
 /**
