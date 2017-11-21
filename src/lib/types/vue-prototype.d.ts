@@ -4,7 +4,7 @@ import { StateType } from 'src/vuex';
 import { Point } from 'src/lib/point';
 import { ParamsInput } from 'src/mixins/params';
 
-type Callback = (e?: Event) => void | boolean;
+type Callback = (e: Event) => void | boolean;
 interface AnyObject { [x: string]: any; }
 
 declare module 'vue/types/vue' {
