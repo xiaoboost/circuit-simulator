@@ -83,16 +83,32 @@ function fixOffParameters(type?: string, selector: string | AnyObject | outterCa
  */
 function packageCallback(callback: outterCallback, modifiers: Modifiers): innerCallback {
     function packFn(event: DelegateEvent) {
-        // 等于自身
-        const self = !modifiers.self || (event.currentTarget === event.target);
-        // 左键
-        const left = !modifiers.left || (assert.isMouseEvent(event) && (event.button === 0));
-        // 右键
-        const right = !modifiers.right || (assert.isMouseEvent(event) && (event.button === 2));
+        let self = true, left = true, right = true, esc = true, enter = true;
+
+        // 是否等于自身
+        if (modifiers.self) {
+            self = event.currentTarget === event.target;
+        }
+        // mouse 事件的情况下，是否按下左键
+        if (assert.isMouseEvent(event) && modifiers.left) {
+            left = event.button === 0;
+        }
+        // mouse 事件的情况下，是否按下右键
+        if (assert.isMouseEvent(event) && modifiers.right) {
+            right = event.button === 2;
+        }
+        // keyboard 事件的情况下，是否按下 Esc 按钮
+        if (assert.isKeyboardEvent(event) && modifiers.esc) {
+            esc = event.key === 'Escape';
+        }
+        // keyboard 事件的情况下，是否按下 Enter 按钮
+        if (assert.isKeyboardEvent(event) && modifiers.enter) {
+            enter = event.key === 'Enter';
+        }
 
         // TODO: 一次性事件 once
 
-        if (self && left && right) {
+        if (self && left && right && esc && enter) {
             const ans = callback(event);
 
             if (modifiers.stop) {
