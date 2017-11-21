@@ -109,6 +109,27 @@ export default class ParamsDialog extends Vue {
         this.isMounted = true;
     }
 
+    @Watch('vision')
+    visionHandler(status: boolean) {
+        // TODO: 是否可以改成全局事件监听？
+        if (status) {
+            this.$$on(this.$el, 'keyup', 'section input', (event: Event) => {
+                if (!assert.isKeyboardEvent(event)) {
+                    return;
+                }
+                if (event.key === 'Escape') {
+                    this.beforeCancel();
+                }
+                else if (event.key === 'Enter') {
+                    this.beforeComfirm();
+                }
+            });
+        }
+        else {
+            this.$$off(this.$el);
+        }
+    }
+
     /** 最长参数名称的长度 */
     get maxLabelLength(): number {
         if (!this.isMounted) {
