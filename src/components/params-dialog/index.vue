@@ -1,7 +1,14 @@
 <template>
 <transition name="fade" @enter="enter" @leave="leave">
     <section class="wrapper" v-show="vision">
-        <div ref="dialog" class="params-dialog">
+        <div
+            ref="dialog"
+            class="params-dialog"
+            :style="{
+                left: `${position[0]}px`,
+                top: `${position[1]}px`,
+                transform: `translate(${bias[0]}px, ${bias[1]}px) scale(${scale})`,
+            }">
             <header>参数设置</header>
             <article>
                 <section>
@@ -41,19 +48,21 @@
                 <button class="cancel" @click="beforeCancel">取消</button>
                 <button class="comfirm" @click="beforeComfirm">确定</button>
             </footer>
-            <i :class="`triangle-down ${location}`"></i>
+            <i class="triangle-icon" :style="triangleStyle"></i>
         </div>
     </section>
 </transition>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import Input, { InputVerifiable } from 'src/components/input-verifiable';
 
+import vuex from 'src/vuex';
 import { $P } from 'src/lib/point';
 import { Params } from './index';
 import * as util from 'src/lib/utils';
+import * as assert from 'src/lib/assertion';
 import { getScopedName } from 'src/lib/utils';
 
 @Component({
@@ -68,12 +77,20 @@ export default class ParamsDialog extends Vue {
     params: Params[] = [];
     /** 是否显示 */
     vision = false;
-    /** 指向的器件坐标 */
-    position = $P();
     /** ID 的说明文本 */
     idLabel = '编号：';
     /** 是否初始化完成标志 */
     isMounted = false;
+
+    /** 指向的器件坐标 */
+    position = $P();
+    /** 对话框偏移量 */
+    bias = $P();
+    /** 对话框缩放比例 */
+    scale = 1;
+
+    /** 中心最小限制 */
+    min = 10;
 
     /** 编号的验证正则 */
     readonly idCheck = /[a-zA-Z]+_[a-zA-Z0-9]+/;
@@ -120,24 +137,38 @@ export default class ParamsDialog extends Vue {
         return Math.max(...this.getDomWidth(dom, labels));
     }
     /** 对话框方位 */
-    get location(): string {
+    get location(): string[] {
         const direction: string[] = [];
+        const min = this.min;
         // 对话框当前大小
         const { height, width } = this.boxSize;
         // 屏幕当前大小
         const { scrollHeight: SHeight, scrollWidth: SWidth } = document.body;
+        // 侧边栏宽度
+        const aside = vuex.getters.isEmpty ? 0 : 380
 
-        // Y 轴默认是上方
-        direction.push((this.position[1] < (height + 10) ? 'bottom' : 'top'));
-        // X 轴只有左右距离不足时才会确定方位
-        if (this.position[0] < (width / 2 + 10)) {
+        // Y 轴方位
+        if (this.position[1] < (height + min)) {
+            direction.push('bottom');
+        }
+        else if ((SHeight - this.position[1]) < (height + min)) {
+            direction.push('top');
+        }
+
+        // X 轴方位
+        if (this.position[0] < (width / 2 + min)) {
             direction.push('right');
         }
-        else if ((SWidth - this.position[0]) < (width / 2 + 10)) {
+        else if ((SWidth - this.position[0] - aside) < (width / 2 + min)) {
             direction.push('left');
         }
 
-        return direction.join('-');
+        // 默认在上方
+        if (direction.length === 0) {
+            direction.push('top');
+        }
+
+        return direction;
     }
     /** 对话框宽高 */
     get boxSize(): { height: number; width: number; } {
@@ -160,6 +191,44 @@ export default class ParamsDialog extends Vue {
 
         return { width, height };
     }
+    /** 计算倒三角形状 */
+    get triangleStyle(): { [x: string]: string } {
+        const len = this.location.length;
+        const deg = { bottom: 0, left: 90, top: 180, right: 270 };
+
+        const base = {
+            'border-bottom': `${10 * len}px solid ${this.location.includes('bottom') ? '#20A0FF' : '#FFFFFF'}`,
+            'border-left': `${6 * len}px solid transparent`,
+            'border-right': `${6 * len}px solid transparent`,
+            'transform': '',
+            'left': '',
+            'top': '',
+        };
+
+        // 旋转角度
+        const avg = this.location.reduce((add, di) => add + deg[di], 0) / len;
+        base.transform = this.location.isEqual(['bottom', 'right'])
+            ? 'rotate(315deg)'
+            : `rotate(${avg}deg)`;
+
+        // 坐标
+        if (len === 1) {
+            if (/(top|bottom)/.test(this.location[0])) {
+                base.left = 'calc(50% - 6px)';
+                base.top = (this.location[0] === 'top') ? 'calc(100% - 1px)' : '-10px';
+            }
+            else {
+                base.left = (this.location[0] === 'left') ? 'calc(100% - 1px)' : '-10px';
+                base.top = 'calc(50% - 6px)';
+            }
+        }
+        else {
+            base.top = (this.location[0] === 'top') ? 'calc(100% - 11px)' : '-9px';
+            base.left = (this.location[1] === 'toleftp') ? 'calc(100% - 13px)' : '-10px';
+        }
+
+        return base;
+    }
 
     /** 以输入的 dom 为容器，计算所有 labels 的长度 */
     getDomWidth(dom: HTMLElement, labels: string[]): number[] {
@@ -174,6 +243,7 @@ export default class ParamsDialog extends Vue {
         const dislogStyle = { ...this.$refs.dialog.style };
 
         this.$el.style.display = 'block';
+        this.$refs.dialog.style.opacity = '0';
         this.$refs.dialog.style.transition = '';
         this.$refs.dialog.style.transform = 'scale(1)';
 
@@ -191,33 +261,49 @@ export default class ParamsDialog extends Vue {
         return widths;
     }
     /** 根据对话框的缩放比例，设置对话框偏移量 */
-    setBoxBias(scale: number): void {
-        const min = 10, { height, width } = this.boxSize;
+    setBoxStyle(scale: number): void {
+        const min = 20, { height, width } = this.boxSize;
 
-        // TODO: 这里只是 top 时候的计算规则
-        const left = - width / 2;
-        const top = - (height + min) / 2 * (1 + scale);
+        // 设置缩放比例
+        this.scale = scale;
 
-        this.$refs.dialog.style.transform = `translate(${left}px, ${top}px) scale(${scale})`;
+        // X 轴计算
+        if (this.location.includes('left')) {
+            this.bias[0] = - width * (1 + scale) / 2 - min;
+        }
+        else if (this.location.includes('right')) {
+            this.bias[0] = - width * (1 - scale) / 2 + min;
+        }
+        else {
+            this.bias[0] = - width / 2;
+        }
+
+        // Y 轴计算
+        if (this.location.includes('top')) {
+            this.bias[1] = - height * (1 + scale) / 2 - min;
+        }
+        else if (this.location.includes('bottom')) {
+            this.bias[1] = - height * (1 - scale) / 2 + min;
+        }
+        else {
+            this.bias[1] = - height / 2;
+        }
     }
 
     async enter(el: HTMLElement, done: () => void) {
-        this.$refs.dialog.style.left = `${this.position[0]}px`;
-        this.$refs.dialog.style.top = `${this.position[1]}px`;
-
-        this.setBoxBias(0.2);
+        this.setBoxStyle(0.2);
         await util.delay(0);
 
-        this.setBoxBias(1);
+        this.setBoxStyle(1);
         await util.delay(300);
 
         done();
     }
     async leave(el: HTMLElement, done: () => void) {
-        this.setBoxBias(1);
+        this.setBoxStyle(1);
         await util.delay(0);
 
-        this.setBoxBias(0.2);
+        this.setBoxStyle(0.2);
         await util.delay(300);
 
         done();
@@ -326,4 +412,11 @@ footer
             color: Blue
         &.cancel
             color: Yellow
+
+// TODO: 三角阴影
+.triangle-icon
+    display: inline;
+    position: absolute;
+    width: 0;
+    height: 0;
 </style>
