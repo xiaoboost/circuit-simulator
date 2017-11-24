@@ -162,7 +162,6 @@ Object.assign(Array.prototype, {
             .map((value, index) => ({ value, key: label(value, index) }))
             .filter(({ key }) => (labelMap[key] ? false : (labelMap[key] = true)))
             .map(({ value }) => value);
-
     },
     // 用于 vue 数组的元素赋值
     $set(this: any[], i: number, item: any): void {
