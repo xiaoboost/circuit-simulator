@@ -111,9 +111,8 @@ export default class ParamsDialog extends Vue {
 
     @Watch('vision')
     visionHandler(status: boolean) {
-        // TODO: 是否可以改成全局事件监听？
         if (status) {
-            this.$$on(this.$el, 'keyup', 'section input', (event: Event) => {
+            this.$$on(document.body, 'keyup', (event: Event) => {
                 if (!assert.isKeyboardEvent(event)) {
                     return;
                 }
@@ -126,7 +125,7 @@ export default class ParamsDialog extends Vue {
             });
         }
         else {
-            this.$$off(this.$el);
+            this.$$off(document.body);
         }
     }
 
