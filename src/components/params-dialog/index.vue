@@ -333,6 +333,10 @@ export default class ParamsDialog extends Vue {
     cancel: () => void;
     comfirm: () => void;
     beforeCancel() {
+        // 清除所有错误提示
+        this.$refs.id.clearError();
+        this.$refs.params.forEach((input) => input.clearError());
+        // 运行取消
         this.cancel();
     }
     beforeComfirm() {

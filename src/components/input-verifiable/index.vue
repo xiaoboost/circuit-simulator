@@ -3,7 +3,7 @@
     <input
         ref="input"
         type="text"
-        :value="value"
+        v-model="txt"
         :placeholder="placeholder"
         @input="update($event.target.value)">
     <span class="input-bar correct-bar"></span>
@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import * as assert from 'src/lib/assertion';
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 @Component
 export default class InputVerifiable extends Vue {
@@ -46,6 +46,12 @@ export default class InputVerifiable extends Vue {
     }
 
     isError = false;
+    txt = this.value;
+
+    @Watch('value')
+    changeValue(nv: string) {
+        this.txt = nv;
+    }
 
     update(value: string): void {
         this.check(value);
@@ -78,6 +84,13 @@ export default class InputVerifiable extends Vue {
     }
     focus() {
         this.$refs.input.focus();
+    }
+    clear() {
+        this.txt = '';
+        this.clearError();
+    }
+    clearError() {
+        this.isError = false;
     }
 }
 </script>
