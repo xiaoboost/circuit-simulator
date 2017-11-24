@@ -134,8 +134,4 @@ input::-ms-input-placeholder
 input::-moz-placeholder
     color: Shadow
     font-size: 85%
-
-input::-moz-placeholder
-    color: Shadow
-    font-size: 85%
 </style>
