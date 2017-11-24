@@ -1,6 +1,11 @@
 <template>
 <span class="input-verifiable">
-    <input type="text" :placeholder="placeholder" :value="value" @input="update($event.target.value)">
+    <input
+        ref="input"
+        type="text"
+        :value="value"
+        :placeholder="placeholder"
+        @input="update($event.target.value)">
     <span class="input-bar correct-bar"></span>
     <span :class="['input-bar error-bar', { 'error': isError }]"></span>
     <template v-if="message">
@@ -36,6 +41,10 @@ export default class InputVerifiable extends Vue {
     @Prop({ type: String, default: '' })
     readonly message: string;
 
+    $refs: {
+        input: HTMLElement;
+    }
+
     isError = false;
 
     update(value: string): void {
@@ -66,6 +75,9 @@ export default class InputVerifiable extends Vue {
             return (false);
         }
         return (true);
+    }
+    focus() {
+        this.$refs.input.focus();
     }
 }
 </script>

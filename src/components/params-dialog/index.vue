@@ -112,6 +112,7 @@ export default class ParamsDialog extends Vue {
     @Watch('vision')
     visionHandler(status: boolean) {
         if (status) {
+            this.$nextTick(() => this.$refs.id.focus());
             this.$$on(document.body, 'keyup', (event: Event) => {
                 if (!assert.isKeyboardEvent(event)) {
                     return;

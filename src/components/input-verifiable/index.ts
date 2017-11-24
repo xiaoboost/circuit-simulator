@@ -9,4 +9,6 @@ export interface InputVerifiable extends Vue {
     isError: boolean;
     /** 主动验证 */
     check(): boolean;
+    /** 手动 focus 元素 */
+    focus(): void;
 }
