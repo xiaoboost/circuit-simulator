@@ -1,7 +1,6 @@
 <template>
-    <!-- :class="['part', { 'focus': focus }]" -->
 <g
-    class="part"
+    :class="['part', { 'focus': focus }]"
     @dblclick="setParams"
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <!-- v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
@@ -97,6 +96,8 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     readonly mapStatus: {
         readonly zoom: number;
         readonly position: Point;
+        partsNow: string[];
+        linesNow: string[];
     };
     /** 器件标识符 */
     readonly hash: string;
@@ -144,6 +145,9 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
         }
     }
 
+    get focus(): boolean {
+        return this.mapStatus.partsNow.includes(this.id);
+    }
     get points(): PointClass[] {
         return this.origin.points.map((point, i) => ({
             position: product(point.position, this.rotate),
@@ -281,7 +285,7 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     }
     /** 移动说明文本 */
     moveText(): void {
-        // TODO: 高亮如何设置？
+        this.mapStatus.partsNow = [this.id];
         this.setDrawEvent({
             handlers: (e: DrawEvent) => { this.textPosition = this.textPosition.add(e.$movement); },
             stopEvent: { el: this.$parent.$el, type: 'mouseup', which: 'left' },
@@ -292,11 +296,15 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     /** 设置属性 */
     async setParams() {
         const map = this.mapStatus;
+
+        map.partsNow = [this.id];
         const status = await this.setPartParams({
             id: this.id,
             type: this.type,
             params: this.params,
-            position: this.position.mul(map.zoom).add(map.position),
+            position: this.position
+                .mul(map.zoom)
+                .add(map.position),
         });
 
         // 并未改变参数
@@ -398,6 +406,7 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     setNewPart() {
         const el = this.$el;
         el.setAttribute('opacity', '0.4');
+        this.mapStatus.partsNow = [this.id];
 
         this.setDrawEvent({
             cursor: 'move_part',

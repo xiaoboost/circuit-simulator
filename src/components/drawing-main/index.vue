@@ -47,14 +47,11 @@ import Part, { PartData, PartComponent } from 'src/components/electronic-part';
 interface ProvideExtend {
     zoom: number;
     position: Point;
+    partsNow: string[];
+    linesNow: string[];
     findPart(args: any): void;
     findLine(args: any): void;
     setDrawEvent(args: any): void;
-
-    // $refs: {
-    //     parts: PartComponent[];
-    //     lines: LineComponent[];
-    // }
 }
 
 @Component({
@@ -67,14 +64,16 @@ interface ProvideExtend {
         const mapStatus = {};
 
         Object.defineProperties(mapStatus, {
-            // parts: {
-            //     enumerable: true,
-            //     get: () => this.$refs.parts.slice(),
-            // },
-            // lines: {
-            //     enumerable: true,
-            //     get: () => this.$refs.lines.slice(),
-            // },
+            partsNow: {
+                enumerable: true,
+                get: () => this.partsNow,
+                set: (value: string[]) => this.partsNow = value,
+            },
+            linesNow: {
+                enumerable: true,
+                get: () => this.linesNow,
+                set: (value: string[]) => this.linesNow = value,
+            },
             zoom: {
                 enumerable: true,
                 get: () => this.zoom,
