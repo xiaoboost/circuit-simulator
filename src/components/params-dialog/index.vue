@@ -107,26 +107,25 @@ export default class ParamsDialog extends Vue {
     mounted() {
         // 初始化完成标记置高
         this.isMounted = true;
+        // 绑定事件
+        this.$$on(document.body, 'keyup', (event: Event) => {
+            if (!this.vision || !assert.isKeyboardEvent(event)) {
+                return;
+            }
+
+            if (event.key === 'Escape') {
+                this.beforeCancel();
+            }
+            else if (event.key === 'Enter') {
+                this.beforeComfirm();
+            }
+        });
     }
 
     @Watch('vision')
     visionHandler(status: boolean) {
         if (status) {
             this.$nextTick(() => this.$refs.id.focus());
-            this.$$on(document.body, 'keyup', (event: Event) => {
-                if (!assert.isKeyboardEvent(event)) {
-                    return;
-                }
-                if (event.key === 'Escape') {
-                    this.beforeCancel();
-                }
-                else if (event.key === 'Enter') {
-                    this.beforeComfirm();
-                }
-            });
-        }
-        else {
-            this.$$off(document.body);
         }
     }
 

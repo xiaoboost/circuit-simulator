@@ -69,17 +69,19 @@ declare module 'vue/types/vue' {
 
         /**
          * 移除当前组件`$el`元素上所有类型为`type`，回调函数为`fn`的委托事件
+         * @param {el} HTMLElement
          * @param {string} type
          * @param {Callback} fn
          */
-        $$off(type: string, fn: Callback): void;
+        $$off(el: HTMLElement, type: string, fn: Callback): void;
         
         /**
          * 移除当前组件`$el`元素上的所有类型为`type`，选择器为`selector`的委托事件
+         * @param {el} HTMLElement
          * @param {string} type
          * @param {string} selector
          */
-        $$off(type: string, selector: string): void;
+        $$off(el: HTMLElement, type: string, selector: string): void;
 
         /**
          * 移除`el`元素上的所有类型为`type`，选择器为`selector`，回调函数为`fn`的委托事件
