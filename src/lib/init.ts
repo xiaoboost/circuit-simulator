@@ -74,15 +74,6 @@ Object.assign(Object.prototype, {
                     : value === obj[key],
         );
     },
-    // map<T, U, K extends keyof T>(this: T, callback: (value: T[K], key: string) => U): { K: U } {
-    //     const ans = Object.assign({}, this) as T;
-
-    //     Object.entries(this).forEach(([key, value]) => {
-    //         ans[key] = callback(value, key);
-    //     });
-
-    //     return (ans);
-    // },
 });
 
 Object.assign(Array.prototype, {
@@ -164,7 +155,7 @@ Object.assign(Array.prototype, {
             .map(({ value }) => value);
     },
     // 用于 vue 数组的元素赋值
-    $set(this: any[], i: number, item: any): void {
+    $set<T>(this: T[], i: number, item: T): void {
         if (this[i] !== item) {
             this.splice(i, 1, item);
         }

@@ -46,27 +46,7 @@ interface Object {
      * @returns {boolean}
      */
     isEqual(obj: any): boolean;
-      /**
-       * 原对象的 key 不变，生成新的对象
-       *
-       * @template T
-       * @template U
-       * @param {T} this
-       * @param {(value: any, key: string) => U} callback
-       * @returns {{ [P in keyof T]: U }}
-       */
-    // map<T, U>(this: T, callback: (value: any, key: string) => U): { [P in keyof T]: U };
 }
-
-// interface ArrayConstructor {
-//     /**
-//      * 深复制数组
-//      *
-//      * @param {any[]} from
-//      * @returns {any[]}
-//      */
-//     clone<U>(from: U[]): U[];
-// }
 
 interface Array<T> {
     /**
@@ -106,9 +86,9 @@ interface Array<T> {
      * 用于 vue 的数组更新
      *
      * @param {number} index
-     * @param {*} value
+     * @param {T} value
      */
-    $set(index: number, value: any): void;
+    $set(index: number, value: T): void;
 }
 
 interface NumberConstructor {
