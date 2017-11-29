@@ -179,6 +179,7 @@ function copyPart(data: string | PartData | PartData[]): PartData[] {
 }
 
 export default new Vuex.Store<StateType>({
+    strict: $env.NODE_ENV === 'development',
     state,
     getters,
     mutations,
