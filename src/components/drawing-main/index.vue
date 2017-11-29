@@ -40,7 +40,7 @@ import Events from './events';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
 import Part, { PartData, PartComponent } from 'src/components/electronic-part';
-// import Line, { LineComponent } from 'src/components/electronic-line';
+import Line, { LineData, LineComponent } from 'src/components/electronic-line';
 // import SelectionsBox from 'src/components/selections-box';
 
 
@@ -103,15 +103,15 @@ export default class DrawingMain extends Events {
     /** 子组件定义 */
     $refs: {
         parts: PartComponent[];
-        // lines: LineComponent[];
+        lines: LineComponent[];
     }
 
     get parts(): PartData[] {
         return this.$store.state.Parts;
     }
-    // get lines(): LineData[] {
-    //     return this.$store.state.Lines;
-    // }
+    get lines(): LineData[] {
+        return this.$store.state.Lines;
+    }
     get background(): { 'background-size': string; 'background-position': string; } {
         const size: number = this.zoom * 20,
             biasX: number = this.position[0] % size,
@@ -136,17 +136,17 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    // findLine(id: string | HTMLElement | { id: string }): LineComponent {
-    //     const prop = (assert.isElement(id)) ? '$el' : 'id';
-    //     const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
-        // const line = this.$refs.parts.find((part) => part[prop] === value);
+    findLine(id: string | HTMLElement | { id: string }): LineComponent {
+        const prop = (assert.isElement(id)) ? '$el' : 'id';
+        const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+        const line = this.$refs.parts.find((part) => part[prop] === value);
 
-        // if (!line) {
-        //     throw new Error('Can not find this line');
-        // }
+        if (!line) {
+            throw new Error('Can not find this line');
+        }
 
-        // return line;
-    // }
+        return line;
+    }
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent): void {
         const mousePosition = $P(e.pageX, e.pageY);
