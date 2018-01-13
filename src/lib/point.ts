@@ -1,4 +1,5 @@
 import * as assert from './assertion';
+import { Matrix } from './matrix';
 
 type PointLike = [number, number] | Point;
 type PointInput = PointLike | number;
@@ -142,6 +143,17 @@ class Point {
      */
     product(vector: PointLike): number {
         return (this[0] * vector[0] + this[1] * vector[1]);
+    }
+    /**
+     * 点旋转（乘以矩阵）
+     * @param {Matrix} ma
+     * @returns {Point}
+     */
+    rotate(ma: Matrix) {
+        return $P(
+            this[0] * ma.get(0, 0) + this[1] * ma.get(1, 0),
+            this[0] * ma.get(0, 1) + this[1] * ma.get(1, 1),
+        );
     }
     /**
      * 返回对 x, y 坐标分别求绝对值后组成的新 Point 实例
