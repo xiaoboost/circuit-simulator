@@ -50,6 +50,7 @@ declare const SVGAnimationElement: {
     new(): SVGAnimationElement;
 };
 
+declare const supportsPassive: boolean;
 declare const $env: Environment;
 declare const $debugger: MapDebug;
 declare type EventExtend = Extend;

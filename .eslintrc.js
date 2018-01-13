@@ -13,6 +13,7 @@ module.exports = {
     globals: {
         'window': true,
         'global': true,
+        '$env': true,
     },
     // 自定义规则
     rules: {

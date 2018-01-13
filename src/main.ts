@@ -1,5 +1,6 @@
 import 'src/css/main';
 import 'src/lib/init';
+import 'src/lib/native';
 
 import Vue from 'vue';
 import store from 'src/vuex';

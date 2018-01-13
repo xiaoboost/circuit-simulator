@@ -252,6 +252,3 @@ Object.hideAll(Object.prototype);
 Object.hideAll(Array.prototype);
 Object.hideAll(Number.prototype);
 Object.hideAll(String.prototype);
-
-// 网页禁止右键
-window.document.oncontextmenu = () => false;
