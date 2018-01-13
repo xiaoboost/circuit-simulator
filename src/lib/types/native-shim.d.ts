@@ -95,14 +95,14 @@ interface NumberConstructor {
     /**
      * 用于匹配科学记数法表示的字符串
      */
-    readonly SCIMatch: RegExp;
+    readonly SCIENTIFIC_COUNT_MATCH: RegExp;
     /**
      * 将用科学记数法的字符串转换为对应的数字
      *
      * @param {string} notation
      * @returns {number}
      */
-    SCIParser(notation: string): number;
+    scientificCountParser(notation: string): number;
 }
 
 interface Number {

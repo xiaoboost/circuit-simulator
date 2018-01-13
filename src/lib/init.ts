@@ -166,15 +166,15 @@ Object.assign(Number, {
     /**
      * 用于匹配科学记数法表示的字符串
      */
-    SCIMatch: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
+    SCIENTIFIC_COUNT_MATCH: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
     /**
      * 将用科学记数法的字符串转换为对应的数字
      *
      * @param {string} notation
      * @returns {number}
      */
-    SCIParser(notation: string): number {
-        if (Number.SCIMatch.test(notation)) {
+    scientificCountParser(notation: string): number {
+        if (Number.SCIENTIFIC_COUNT_MATCH.test(notation)) {
             return NaN;
         }
         else if (/[eE]/.test(notation)) {
