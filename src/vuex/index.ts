@@ -15,6 +15,12 @@ Vue.use(Vuex);
 /** 每类器件的最大数量 */
 const maxNumber = 100;
 
+/** 时间配置接口 */
+export interface TimeConfig {
+    end: string;
+    step: string;
+}
+
 export interface StateType {
     /**
      * 页面状态
@@ -22,15 +28,10 @@ export interface StateType {
      */
     page: string;
     /**
-     * 全局设置：仿真终止时间
-     * @type {string}
+     * 全局时间设置
+     * @type {TimeConfig}
      */
-    END_TIME: string;
-    /**
-     * 全局设置：仿真步进时间
-     * @type {string}
-     */
-    STEP_TIME: string;
+    time: TimeConfig;
     /**
      * 全局器件堆栈
      * @type {PartData[]}
@@ -44,18 +45,20 @@ export interface StateType {
 }
 
 const state: StateType = {
+    time: {
+        end: '10m',
+        step: '10u',
+    },
     page: '',
-    END_TIME: '10m',
-    STEP_TIME: '10u',
     Parts: [],
     Lines: [],
 };
 
 const getters: GetterTree<StateType, StateType> = {
     isEmpty: (context) => !context.page,
-    isAddParts: (context) => context.page === 'add-parts',
-    isMainConfig: (context) => context.page === 'main-config',
-    isGraphView: (context) => context.page === 'graph-view',
+    showAddParts: (context) => context.page === 'add-parts',
+    showMainConfig: (context) => context.page === 'main-config',
+    showGraphView: (context) => context.page === 'graph-view',
 };
 
 const mutations: MutationTree<StateType> = {
@@ -68,10 +71,8 @@ const mutations: MutationTree<StateType> = {
     /** 打开波形界面 */
     OPEN_GRAPH_VIEW: (context) => context.page = 'graph-view',
 
-    /** 设置终止时间 */
-    SET_END_TIME: (context, time: string) => context.END_TIME = time,
-    /** 设置步进时间 */
-    SET_STEP_TIME: (context, time: string) => context.STEP_TIME = time,
+    /** 设置时间 */
+    SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
     /** 生成新器件 */
     NEW_PART: (context, type: string) => context.Parts.push(...copyPart(type)),
