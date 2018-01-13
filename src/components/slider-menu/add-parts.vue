@@ -4,15 +4,14 @@
         <h1>添加器件</h1>
         <h2>Add Parts</h2>
     </header>
-    <article
-        v-once
-        v-delegate:click="['.parts-list', addPart]"
-        v-delegate:mousemove="['.parts-list', setTip]"
-        v-delegate:mouseleave="['.parts-list', disabledTip]">
+    <article v-once>
         <div v-for="category in categories" class="parts-menu" :key="category.key">
             <button
                 v-for="key in category.parts"
-                :data-type="key" :key="key" class="parts-list">
+                :key="key" class="parts-list"
+                @click.passive.stop.left="addPart(key)"
+                @mousemove.capture.passive="setTip(key, $event)"
+                @mouseleave.capture.passive.self.stop="disabledTip()">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <part-icon :info="parts[key].shape" :type="parts[key].type"></part-icon>
                 </svg>
@@ -84,13 +83,7 @@ export default class AddParts extends Vue {
     parts = Electronics;
     categories = categories;
 
-    setTip(event: MouseEvent & EventExtend): void {
-        const name = event.currentTarget.getAttribute('data-type');
-
-        if (assert.isNull(name)) {
-            throw new Error('Type cannot be empty.');
-        }
-
+    setTip(name: string, event: MouseEvent): void {
         this.tipText = Electronics[name].introduction;
         this.tipStyle = {
             display: 'inline',
@@ -103,13 +96,7 @@ export default class AddParts extends Vue {
             display: 'none',
         };
     }
-    addPart(event: MouseEvent & EventExtend): void {
-        const type = event.currentTarget.getAttribute('data-type');
-
-        if (assert.isNull(name)) {
-            throw new Error('Type cannot be empty.');
-        }
-
+    addPart(type: string): void {
         this.$store.commit('NEW_PART', type);
     }
 }

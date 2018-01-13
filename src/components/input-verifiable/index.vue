@@ -4,8 +4,9 @@
         ref="input"
         type="text"
         v-model="txt"
+        :maxlength="maxlength"
         :placeholder="placeholder"
-        @input="update($event.target.value)">
+        @input.passive="update($event.target.value)">
     <span class="input-bar correct-bar"></span>
     <span :class="['input-bar error-bar', { 'error': isError }]"></span>
     <template v-if="message">
@@ -27,56 +28,48 @@ export default class InputVerifiable extends Vue {
     readonly placeholder: string;
 
     @Prop({ type: Number, default: Infinity })
-    readonly maxlength: number;
+    private readonly maxlength: number;
 
     @Prop({ type: Boolean, default: false })
-    readonly required: boolean;
+    private readonly required: boolean;
 
     @Prop({ type: RegExp, default: /[\d\D]*/ })
-    readonly pattern: RegExp;
+    private readonly pattern: RegExp;
 
     @Prop({ type: Function, default: () => true })
-    readonly func: (value: string) => boolean;
+    private readonly func: (value: string) => boolean;
 
     @Prop({ type: String, default: '' })
-    readonly message: string;
+    private readonly message: string;
 
     $refs: {
         input: HTMLElement;
     }
 
-    isError = false;
-    txt = this.value;
+    private isError = false;
+    private txt = this.value;
 
     @Watch('value')
-    changeValue(nv: string) {
+    private changeValue(nv: string) {
         this.txt = nv;
     }
 
-    update(value: string): void {
+    private update(value: string): void {
         this.check(value);
-
-        if (value.length <= this.maxlength) {
-            this.$emit('input', value);
-        }
+        this.$emit('input', value);
     }
-    check(value?: string): boolean {
-        const input = assert.isString(value) ? value : this.value;
-
+    check(value: string = this.txt): boolean {
         this.isError = false;
 
-        if (this.required && !input) {
-            this.$emit('error', 'required');
+        if (this.required && !value) {
             this.isError = true;
             return (false);
         }
-        if (!this.pattern.test(input)) {
-            this.$emit('error', 'pattern');
+        if (!this.pattern.test(value)) {
             this.isError = true;
             return (false);
         }
-        if (!this.func(input)) {
-            this.$emit('error', 'function');
+        if (!this.func(value)) {
             this.isError = true;
             return (false);
         }

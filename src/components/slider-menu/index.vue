@@ -4,10 +4,10 @@
     @before-enter="beforeEnter"
     @after-leave="afterLeave">
     <aside class="slider" v-show="vision">
-        <add-parts v-show="showAddParts"></add-parts>
-        <main-config v-show="showMainConfig"></main-config>
-        <div v-show="showAddParts" @click="close" class="close-button"><span></span></div>
-        <div v-show="showMainConfig" @click="close" class="gray-cover"></div>
+        <add-parts ref="parts" v-show="showAddPartsTemp"></add-parts>
+        <main-config ref="config" v-show="showMainConfigTemp"></main-config>
+        <div v-show="showAddPartsTemp" @click.passive="close" class="close-button"><span></span></div>
+        <div v-show="showMainConfigTemp" @click.passive="close" class="gray-cover"></div>
     </aside>
 </transition>
 </template>
@@ -24,29 +24,39 @@ import { Component, Vue } from 'vue-property-decorator';
     },
 })
 export default class Slider extends Vue {
-    showAddParts = false;
-    showMainConfig = false;
+    showAddPartsTemp = false;
+    showMainConfigTemp = false;
 
-    get isAddParts(): boolean {
-        return this.$store.getters.isAddParts;
+    $refs: {
+        'parts': AddParts;
+        'config': MainConfig;
+    };
+
+    get showAddParts(): boolean {
+        return this.$store.getters.showAddParts;
     }
-    get isMainConfig(): boolean {
-        return this.$store.getters.isMainConfig;
+    get showMainConfig(): boolean {
+        return this.$store.getters.showMainConfig;
     }
     get vision(): boolean {
-        return (this.isAddParts || this.isMainConfig);
+        return (this.showAddParts || this.showMainConfig);
     }
 
     close(): void {
-        this.$store.commit('CLOSE_SLIDER');
+        if (
+            this.showAddParts ||
+            (this.showMainConfig && this.$refs.config.check())
+         ) {
+            this.$store.commit('CLOSE_SLIDER');
+        }
     }
     beforeEnter(): void {
-        this.showAddParts = this.isAddParts;
-        this.showMainConfig = this.isMainConfig;
+        this.showAddPartsTemp = this.showAddParts;
+        this.showMainConfigTemp = this.showMainConfig;
     }
     afterLeave(): void {
-        this.showAddParts = false;
-        this.showMainConfig = false;
+        this.showAddPartsTemp = false;
+        this.showMainConfigTemp = false;
     }
 }
 </script>

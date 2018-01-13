@@ -34,27 +34,57 @@
 </template>
 
 <script lang="ts">
-import Input from 'src/components/input-verifiable';
-import { Component, Vue } from 'vue-property-decorator';
+import { TimeConfig } from 'src/vuex';
+import InputComp from 'src/components/input-verifiable';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component({
     components: {
-        'v-input': Input,
+        'v-input': InputComp,
     },
 })
-export default class Config extends Vue {
-    pattern = Number.SCIMatch;
-    end: string = this.$store.state.END_TIME;
-    step: string = this.$store.state.STEP_TIME;
+export default class Config extends Vue implements TimeConfig {
+    pattern = Number.SCIENTIFIC_COUNT_MATCH;
 
-    // TODO: 关闭设置侧边栏时应当先做格式检查
-    // beforeRouteLeave(to, from, next) {
-    //     if (this.$refs['end'].check() && this.$refs['step'].check()) {
-    //         this.$store.commit('SET_END_TIME', this.end);
-    //         this.$store.commit('SET_STEP_TIME', this.step);
-    //         next();
-    //     }
-    // },
+    end: string;
+    step: string;
+
+    $refs: {
+        step: InputComp,
+        end: InputComp,
+    };
+
+    get storeTime(): TimeConfig {
+        return this.$store.state.time;
+    }
+
+    check() {
+        if (!this.$refs.end.check() || !this.$refs.step.check()) {
+            return false;
+        }
+
+        if (
+            this.end !== this.storeTime.end ||
+            this.step !== this.storeTime.step
+        ) {
+            this.$store.commit('SET_TIME_CONFIG', {
+                step: this.step,
+                end: this.end,
+            });
+        }
+
+        return true;
+    }
+
+    @Watch('storeTime')
+    init() {
+        this.end = this.storeTime.end;
+        this.step = this.storeTime.step;
+    }
+
+    created() {
+        this.init();
+    }
 }
 </script>
 

@@ -1,16 +1,15 @@
 <template>
 <transition name="fade">
-    <footer
-        class="action-menu" v-show="vision"
-        v-delegate:click="['div.fab-container', clicled]">
+    <footer class="action-menu" v-show="vision">
         <div v-if="isRun" class="fab-container">
             <div class="fab" id="fab-text"></div>
         </div>
         <div
-            v-show="!isRun"
             v-for="(icon, i) in icons"
+            v-show="!isRun"
             class="fab-container"
-            :tip="icon.tip" :key="i" :data-type="icon.name">
+            :tip="icon.tip" :key="i"
+            @click="action(icon.name)">
             <div v-once class="fab">
                 <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
                     <g :transform="`translate(${icon.translate}) scale(${zoom}, ${zoom})`">
@@ -28,6 +27,7 @@ import { action, Icon } from 'src/lib/icon';
 import { Component, Vue } from 'vue-property-decorator';
 
 const zoom = 0.6;
+
 const icons = [
     { name: 'run', tip: '时域模拟' },
     { name: 'add', tip: '添加器件' },
@@ -57,15 +57,14 @@ export default class ActionMenu extends Vue {
     }
 
     /** 按钮被点击 */
-    clicled(event: Event & EventExtend): void {
-        const button = event.currentTarget.getAttribute('data-type') as string;
+    action(name: string): void {
         const funcs = {
             run: () => this.isRun = true,
             add: () => this.$store.commit('OPEN_ADD_PARTS'),
             config: () => this.$store.commit('OPEN_MAIN_CONFIG'),
         };
 
-        funcs[button]();
+        funcs[name]();
     }
 }
 </script>
