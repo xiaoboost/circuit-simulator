@@ -17,7 +17,7 @@ Vue.config.productionTip = ($env.NODE_ENV === 'development');
 
 // 移除 loading 界面
 function loaded() {
-    const loading = document.getElementById('start-loading') as HTMLElement;
+    const loading = document.getElementById('start-loading')!;
 
     loading.style.opacity = '0';
     loading.style.transition = 'opacity .5s';
@@ -39,9 +39,14 @@ new Vue({
         // 调试时加载，组件挂在全局变量上
         if ($env.NODE_ENV === 'development') {
             const Compo = await import(/* webpackChunkName: "debugger" */ 'src/lib/debugger');
-            const area = document.querySelector('.drawing-main svg g') as HTMLElement;
+            const area = document.querySelector('.drawing-main svg g')!;
 
-            (window as Window & { $debugger: any }).$debugger = new Compo.default();
+            Object.defineProperty(window, '$debugger', {
+                enumerable: false,
+                writable: false,
+                value: new Compo.default(),
+            });
+
             area.appendChild($debugger.$el);
         }
 

@@ -15,7 +15,7 @@ catch (e) {
 }
 
 Object.defineProperty(window, 'supportsPassive', {
-    enumerable: true,
+    enumerable: false,
     writable: false,
     value: passive,
 });
