@@ -5,8 +5,8 @@
     <svg
         version="2" height="100%" width="100%"
         xmlns="http://www.w3.org/2000/svg"
-        @wheel="mousewheel($event)"
-        @mousedown.self.stop.right="moveMap">
+        @wheel.passive="mousewheel($event)"
+        @mousedown.self.stop.right.passive="moveMap">
         <!-- @mousedown.self.stop.left="selectMore($event)" -->
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <!-- <elec-line
@@ -18,12 +18,12 @@
                 @focus="clearFocus"
                 @event="EventControler">
             </elec-line> -->
-            <elec-part
+            <electronic-part
                 ref="parts"
                 v-for="part in parts"
                 :key="part.id"
                 :value="part">
-            </elec-part>
+            </electronic-part>
             <!-- <selections-box
                 v-if="Boolean(selections)"
                 :location="selections">
@@ -39,28 +39,18 @@ import { Component, Vue } from 'vue-property-decorator';
 import Events from './events';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
-import Part, { PartData, PartComponent } from 'src/components/electronic-part';
-import Line, { LineData, LineComponent } from 'src/components/electronic-line';
+import ElectronicPart, { PartData } from 'src/components/electronic-part';
+import ElectronicLine, { LineData } from 'src/components/electronic-line';
+
 // import SelectionsBox from 'src/components/selections-box';
-
-
-interface ProvideExtend {
-    zoom: number;
-    position: Point;
-    partsNow: string[];
-    linesNow: string[];
-    findPart(args: any): void;
-    findLine(args: any): void;
-    setDrawEvent(args: any): void;
-}
 
 @Component({
     components: {
-        'elec-part': Part,
+        ElectronicPart,
         // 'elec-line': Line,
         // 'selections-box': SelectionsBox,
     },
-    provide(this: Vue & ProvideExtend) {
+    provide(this: DrawingMain) {
         const mapStatus = {};
 
         Object.defineProperties(mapStatus, {
@@ -85,12 +75,10 @@ interface ProvideExtend {
         });
 
         return {
-            // 图纸状态是响应式的对象
             mapStatus,
-            // 函数则是直接取值
-            findPart: (arg: any) => this.findPart(arg),
-            findLine: (arg: any) => this.findLine(arg),
-            setDrawEvent: (arg: any) => this.setDrawEvent(arg),
+            findPart: this.findPart,
+            findLine: this.findLine,
+            setDrawEvent: this.setDrawEvent,
         };
     },
 })
@@ -102,9 +90,9 @@ export default class DrawingMain extends Events {
 
     /** 子组件定义 */
     $refs: {
-        parts: PartComponent[];
-        lines: LineComponent[];
-    }
+        parts: ElectronicPart[];
+        lines: ElectronicPart[];
+    };
 
     get parts(): PartData[] {
         return this.$store.state.Parts;
@@ -124,7 +112,7 @@ export default class DrawingMain extends Events {
     }
 
     /** 搜索器件 */
-    findPart(id: string | HTMLElement | { id: string }): PartComponent {
+    findPart(id: string | HTMLElement | { id: string }): ElectronicPart {
         const prop = (assert.isElement(id)) ? '$el' : 'id';
         const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
         const part = this.$refs.parts.find((part) => part[prop] === value);
@@ -136,7 +124,7 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    findLine(id: string | HTMLElement | { id: string }): LineComponent {
+    findLine(id: string | HTMLElement | { id: string }): ElectronicPart {
         const prop = (assert.isElement(id)) ? '$el' : 'id';
         const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
         const line = this.$refs.parts.find((part) => part[prop] === value);

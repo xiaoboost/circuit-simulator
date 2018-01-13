@@ -19,6 +19,7 @@
 <script lang="ts">
 import { $P } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
+import { MapStatus } from 'src/components/drawing-main';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
 const radius = {
@@ -47,8 +48,11 @@ export default class ElectronicPoint extends Vue {
     readonly classList: string | Array<string | { [key: string]: boolean }>;
 
     @Inject()
-    mapStatus: {
-        zoom: number;
+    mapStatus: MapStatus;
+
+    $refs: {
+        circle: HTMLElement;
+        animate: SVGAnimationElement;
     };
 
     radius = 5;
@@ -96,15 +100,12 @@ export default class ElectronicPoint extends Vue {
 
     @Watch('actual')
     setAnimate(value: number): void {
-        const circle = this.$refs.circle as HTMLElement;
-        const animate = this.$refs.animate as SVGAnimationElement;
-
         // 确定新的终点值
         this.animateTo = value;
         // 计算当前值
-        this.animateFrom = circle.getClientRects()[0].width / this.mapStatus.zoom / 2;
+        this.animateFrom = this.$refs.circle.getClientRects()[0].width / this.mapStatus.zoom / 2;
         // 动画启动
-        animate.beginElement();
+        this.$refs.animate.beginElement();
     }
 }
 </script>

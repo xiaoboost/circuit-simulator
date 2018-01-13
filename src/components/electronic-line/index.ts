@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import main from './index.vue';
 import { Point } from 'src/lib/point';
 
@@ -10,8 +9,4 @@ export interface LineData {
     type: 'line';
     way: Point[];
     connect: string[];
-}
-
-export interface LineComponent extends Vue {
-    id: string;
 }

@@ -21,7 +21,7 @@
         v-if="this.type !== 'reference_ground'"
         :class="['text-params', `text-placement-${textPlacement}`]"
         :transform="`matrix(${invRotate.join()},${textPosition.join()})`"
-        @mousedown.stop="moveText">
+        @mousedown.stop.passive="moveText">
         <text>
             <tspan v-text="id.split('_')[0]"></tspan>
             <tspan dx="-3" v-text="id.split('_')[1]"></tspan>
@@ -38,8 +38,6 @@
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
 
-import ElectronicPoint from 'src/components/electronic-point';
-
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
 import { clone } from 'src/lib/utils';
@@ -47,22 +45,15 @@ import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point, PointLike } from 'src/lib/point';
 import Electronics, { Electronic, ShapeDescription } from './shape';
 
-import { FindPart, SetDrawEvent, DrawEvent } from 'src/components/drawing-main';
-import { PartComponent, PartData, PointClass, PartMargin } from './index';
+import ElectronicPoint from 'src/components/electronic-point';
+import { PartData, PointClass, PartMargin } from './index';
+import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 
-/**
- * 点乘以旋转矩阵
- * @param {Point} point
- * @param {Matrix} matrix
- * @returns {Point}
- */
-function product(point: PointLike, matrix: Matrix): Point {
-    return $P(
-        point[0] * matrix.get(0, 0) + point[1] * matrix.get(1, 0),
-        point[0] * matrix.get(0, 1) + point[1] * matrix.get(1, 1)
-    );
+/** 兼容 PointLike 类型的点乘矩阵 */
+const product = (point: PointLike, ma: Matrix): Point => {
+    return Point.prototype.rotate.call(point, ma);
 }
 
 @Component
@@ -81,24 +72,20 @@ class PartAspect extends Vue {
         ElectronicPoint,
     }
 })
-export default class ElectronicPart extends Vue implements PartComponent, PartData {
+export default class ElectronicPart extends Vue implements PartData {
     /** 器件原始数据 */
     @Prop({ type: Object, default: () => ({}) })
-    readonly value: PartData;
+    private readonly value: PartData;
     /** 设置图纸事件 */
     @Inject()
-    readonly setDrawEvent: SetDrawEvent;
+    private readonly setDrawEvent: SetDrawEvent;
     /** 搜索器件 */
     @Inject()
-    readonly findPart: FindPart;
+    private readonly findPart: FindPart;
     /** 图纸相关状态 */
     @Inject()
-    readonly mapStatus: {
-        readonly zoom: number;
-        readonly position: Point;
-        partsNow: string[];
-        linesNow: string[];
-    };
+    private readonly mapStatus: MapStatus;
+
     /** 器件标识符 */
     readonly hash: string;
     /** 器件描述原始数据 */
@@ -109,11 +96,11 @@ export default class ElectronicPart extends Vue implements PartComponent, PartDa
     position: Point;
     params: string[];
     connect: string[];
-
     rotate: Matrix;
-    pointSize: number[];
-    textPosition: Point;
-    textPlacement: TextPlacement;
+
+    private pointSize: number[];
+    private textPosition: Point;
+    private textPlacement: TextPlacement;
 
     // 编译前的初始化
     constructor() {
