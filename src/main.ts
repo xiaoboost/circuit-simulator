@@ -5,13 +5,11 @@ import Vue from 'vue';
 import store from 'src/vuex';
 
 import modal from 'src/mixins/params';
-import delegate from 'src/plugin/delegate';
 
 import ActionMenu from 'src/components/action-menu';
 import SliderMenu from 'src/components/slider-menu';
 import DrawingMain from 'src/components/drawing-main';
 
-Vue.use(delegate);
 Vue.use(modal);
 
 Vue.config.productionTip = ($env.NODE_ENV === 'development');
