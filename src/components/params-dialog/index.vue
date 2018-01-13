@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import Input, { InputVerifiable } from 'src/components/input-verifiable';
+import InputVerifiable from 'src/components/input-verifiable';
 
 import vuex from 'src/vuex';
 import { $P } from 'src/lib/point';
@@ -67,7 +67,7 @@ import { getScopedName } from 'src/lib/utils';
 
 @Component({
     components: {
-        'v-input': Input,
+        'v-input': InputVerifiable,
     },
 })
 export default class ParamsDialog extends Vue {
@@ -95,37 +95,28 @@ export default class ParamsDialog extends Vue {
     /** 编号的验证正则 */
     readonly idCheck = /[a-zA-Z]+_[a-zA-Z0-9]+/;
     /** 参数的验证正则 */
-    readonly paramsCheck = Number.SCIMatch;
+    readonly paramsCheck = Number.SCIENTIFIC_COUNT_MATCH;
 
     /** 子组件定义 */
     $refs: {
-        dialog: HTMLElement;
         id: InputVerifiable;
+        dialog: HTMLElement;
         params: InputVerifiable[];
     };
 
     mounted() {
         // 初始化完成标记置高
         this.isMounted = true;
-        // 绑定事件
-        this.$$on(document.body, 'keyup', (event: Event) => {
-            if (!this.vision || !assert.isKeyboardEvent(event)) {
-                return;
-            }
-
-            if (event.key === 'Escape') {
-                this.beforeCancel();
-            }
-            else if (event.key === 'Enter') {
-                this.beforeComfirm();
-            }
-        });
     }
 
     @Watch('vision')
     visionHandler(status: boolean) {
         if (status) {
+            document.body.addEventListener('keyup', this.keyboardHandler);
             this.$nextTick(() => this.$refs.id.focus());
+        }
+        else {
+            document.body.removeEventListener('keyup', this.keyboardHandler);
         }
     }
 
@@ -248,6 +239,19 @@ export default class ParamsDialog extends Vue {
         }
 
         return base;
+    }
+
+    keyboardHandler(event: KeyboardEvent) {
+        if (!this.vision) {
+            return;
+        }
+
+        if (event.key === 'Escape') {
+            this.beforeCancel();
+        }
+        else if (event.key === 'Enter') {
+            this.beforeComfirm();
+        }
     }
 
     /** 以输入的 dom 为容器，计算所有 labels 的长度 */
