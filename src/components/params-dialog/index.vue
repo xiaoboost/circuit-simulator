@@ -65,6 +65,8 @@ import * as util from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
 import { getScopedName } from 'src/lib/utils';
 
+const passive = supportsPassive ? { passive: true } : false;
+
 @Component({
     components: {
         'v-input': InputVerifiable,
@@ -112,7 +114,7 @@ export default class ParamsDialog extends Vue {
     @Watch('vision')
     visionHandler(status: boolean) {
         if (status) {
-            document.body.addEventListener('keyup', this.keyboardHandler);
+            document.body.addEventListener('keyup', this.keyboardHandler, passive);
             this.$nextTick(() => this.$refs.id.focus());
         }
         else {
