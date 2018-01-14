@@ -2,19 +2,17 @@ import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 
-type callback = (event: Event & DrawEvent) => void | boolean;
+type callback = (event: DrawEvent) => any;
 
 /** 生成鼠标结束事件对外的数据接口 */
 export interface StopMouseEvent {
     el: HTMLElement;
-    type: string;
-    which: string;
-    // type: 'click' | 'dblclick' | 'mousedown' | 'mouseup' | 'mouseenter' | 'mouseleave';
-    // which: 'left' | 'middle' | 'right';
+    type: 'click' | 'dblclick' | 'mousedown' | 'mouseup' | 'mouseenter' | 'mouseleave';
+    which: 'left' | 'middle' | 'right';
 }
 
 /** 绘图代理事件的扩展属性 */
-export interface DrawEvent {
+export interface DrawEvent extends EventExtend {
     $movement: Point;
     $position: Point;
 }
@@ -22,18 +20,17 @@ export interface DrawEvent {
 /** 绘图代理事件数据接口 */
 export interface DrawEventHandler {
     type: string;
-    selector?: string;
     capture?: boolean;
-    delegate?: boolean;
+    passive?: boolean;
     callback(e?: Event): void | boolean;
 }
 
 /** 事件控制器设置接口 */
 export interface DrawEventSetting {
+    exclusion?: boolean;
     stopEvent: (StopMouseEvent | (() => Promise<void>));
     handlers: Array<DrawEventHandler | callback> | DrawEventHandler | callback;
-    exclusion?: boolean;
-    cursor?: (string | ((e?: Event) => string));
+    cursor?: (string | ((e?: DrawEvent) => string));
     beforeEvent?(): Promise<void>;
     afterEvent?(): void;
 }
@@ -53,18 +50,22 @@ interface Handlers {
  * @param {StopMouseEvent} data
  * @returns {() => Promise<void>}
  */
-function mouseEvent(data: StopMouseEvent): () => Promise<void> {
+function createStopMouseEvent(data: StopMouseEvent): () => Promise<void> {
     const code = { left: 0, middle: 1, right: 2 };
+    const opts = supportsPassive
+        ? { passive: true, capture: true }
+        : true;
+
     return () => new Promise((resolve): void => {
         data.el.addEventListener(
             data.type,
-            function stop(event: Event): void {
-                if ((event instanceof MouseEvent) && (event.button === code[data.which])) {
-                    data.el.removeEventListener(data.type, stop);
+            function stop(event: MouseEvent): void {
+                if (event.button === code[data.which]) {
+                    data.el.removeEventListener(data.type, stop, true);
                     resolve();
                 }
             },
-            true,
+            opts,
         );
     });
 }
@@ -91,9 +92,9 @@ export default class DrawEvents extends Vue {
      * @param {function} fn
      * @returns {function} callback
      */
-    wrapHandler(fn: callback, type: string): (event: MouseEvent & DrawEvent) => void {
+    wrapHandler(fn: callback, type: string): (event: EventExtend & DrawEvent) => void {
         let last: false | Point = false;
-        const callbackOutter = (event: MouseEvent & DrawEvent) => {
+        const callbackOutter = (event: EventExtend & DrawEvent) => {
             const mouse = $P(event.pageX, event.pageY);
 
             event.$movement = last ? mouse.add(last, -1).mul(1 / this.zoom) : $P();
@@ -103,32 +104,40 @@ export default class DrawEvents extends Vue {
             fn(event);
         };
 
-        return ($env.NODE_ENV === 'development' && type === 'mousemove')
+        return ($ENV.NODE_ENV === 'development' && type === 'mousemove')
             /**
              *     chrome 浏览器（v59 ~ *）的 mousemove 事件似乎有个 bug，表现为 debug 时浏览器的 UI 进程被阻
              * 塞了，无法进行实时的 UI 更新。目测是因为有某个进程阻塞的 UI 进程，所以这里用异步来运行回调，
              * 等那某个进程运行完毕就行了。但是又因为回调是异步的，所以经常会造成 afterEvent 运行之后又
              * 运行了一次回调的情况发生，所以这里必须再进行一次判断，以确保事件被取消之后回调不会被运行。
              */
-            ? (event: MouseEvent & DrawEvent) => setTimeout(() => this.exclusion && callbackOutter(event))
+            ? (event: EventExtend & DrawEvent) => setTimeout(() => this.exclusion && callbackOutter(event))
             : callbackOutter;
     }
     createHandlers(handlers: Array<DrawEventHandler | callback>): Handlers {
         const component = this;
 
         function bind(this: Handlers): void {
-            this.queue.forEach((func) => {
-                func.delegate
-                    ? component.$$on(component.$el, func.type, func.selector, func.callback)
-                    : component.$el.addEventListener(func.type, func.callback, func.capture);
-            });
+            this.queue.forEach(
+                (handler) =>
+                    component.$el.addEventListener(
+                        handler.type,
+                        handler.callback,
+                        supportsPassive
+                            ? { passive: handler.passive, capture: handler.capture }
+                            : handler.capture,
+                    ),
+            );
         }
         function unbind(this: Handlers): void {
-            this.queue.forEach((func) => {
-                func.delegate
-                    ? component.$$off(component.$el, func.type, func.selector, func.callback)
-                    : component.$el.removeEventListener(func.type, func.callback, func.capture);
-            });
+            this.queue.forEach(
+                (handler) =>
+                    component.$el.removeEventListener(
+                        handler.type,
+                        handler.callback,
+                        handler.capture,
+                    ),
+            );
         }
         const queue = handlers.map((handler) => {
             if (assert.isFunction(handler)) {
@@ -139,7 +148,8 @@ export default class DrawEvents extends Vue {
                 };
             } else {
                 const obj = { ...handler };
-                obj.capture = !!handler.capture;
+                obj.capture = handler.capture || false;
+                obj.passive = handler.passive || true;
                 obj.callback = this.wrapHandler(obj.callback, obj.type);
                 return obj;
             }
@@ -166,7 +176,7 @@ export default class DrawEvents extends Vue {
         // 设定鼠标指针
         const createCursor = assert.isString(cursor)
             ? toCursor(cursor)
-            : (e?: Event) => { this.$el.style.cursor = toCursor(cursor(e)); };
+            : (e?: DrawEvent) => { this.$el.style.cursor = toCursor(cursor(e)); };
 
         // 回调事件队列
         const events = assert.isArray(handlers) ? handlers : [handlers];
@@ -176,7 +186,7 @@ export default class DrawEvents extends Vue {
         // 生成队列
         const Queue = this.createHandlers(events);
         // 生成终止事件
-        const stopCommander = assert.isFunction(stopEvent) ? stopEvent : mouseEvent(stopEvent);
+        const stopCommander = assert.isFunction(stopEvent) ? stopEvent : createStopMouseEvent(stopEvent);
 
         // 事件回调生命周期
         beforeEvent()
