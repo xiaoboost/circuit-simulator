@@ -5,6 +5,7 @@ import 'src/lib/native';
 import Vue from 'vue';
 import store from 'src/vuex';
 
+import debug from 'src/lib/debugger';
 import modal from 'src/mixins/params';
 
 import ActionMenu from 'src/components/action-menu';
@@ -13,7 +14,7 @@ import DrawingMain from 'src/components/drawing-main';
 
 Vue.use(modal);
 
-Vue.config.productionTip = ($env.NODE_ENV === 'development');
+Vue.config.productionTip = ($ENV.NODE_ENV === 'development');
 
 // 移除 loading 界面
 function loaded() {
@@ -35,20 +36,16 @@ new Vue({
         'main', { attrs: { id: 'app' }},
         [h('drawing-main'), h('slider-menu'), h('action-menu')],
     ),
-    async mounted() {
-        // 调试时加载，组件挂在全局变量上
-        if ($env.NODE_ENV === 'development') {
-            const Compo = await import(/* webpackChunkName: "debugger" */ 'src/lib/debugger');
-            const area = document.querySelector('.drawing-main svg g')!;
+    mounted() {
+        const area = document.querySelector('.drawing-main svg g')!;
 
-            Object.defineProperty(window, '$debugger', {
-                enumerable: false,
-                writable: false,
-                value: new Compo.default(),
-            });
+        Object.defineProperty(window, '$debugger', {
+            enumerable: false,
+            writable: false,
+            value: new debug(),
+        });
 
-            area.appendChild($debugger.$el);
-        }
+        area.appendChild($debugger.$el);
 
         // 初始化完成
         loaded();

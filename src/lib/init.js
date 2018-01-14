@@ -9,7 +9,7 @@ try {
     document.body.addEventListener('test', null, opts);
 }
 catch (e) {
-    if ($env.NODE_ENV === 'development') {
+    if ($ENV.NODE_ENV === 'development') {
         console.log('your computed doesn\'t support passive event.');
     }
 }

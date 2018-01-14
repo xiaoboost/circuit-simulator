@@ -37,6 +37,7 @@ if (config.devMode === 'webpackServer') {
         clientLogLevel: 'warning',
         historyApiFallback: true,
         hot: true,
+        inline: true,
         compress: true,
         host, port,
         open: false,

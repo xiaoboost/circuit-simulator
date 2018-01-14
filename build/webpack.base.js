@@ -99,7 +99,7 @@ module.exports = {
         // 定义全局注入变量
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
-            '$env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
+            '$ENV.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
         // 保持模块的 hash id 不变
         new webpack.HashedModuleIdsPlugin({
