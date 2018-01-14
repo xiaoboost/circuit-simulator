@@ -10,6 +10,16 @@ const path = require('path'),
     ProgressBarPlugin = require('progress-bar-webpack-plugin'),
     ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const banner =
+`Project: Circuit Simulator
+Author: 2015 - ${new Date().getFullYear()} © XiaoBoost
+
+Build: ${buildTag}
+filename: [name], chunkhash: [chunkhash]
+
+Nice to meet you ~ o(*￣▽￣*)ブ
+Released under the MIT License.`;
+
 function resolve(dir) {
     return path.join(__dirname, '..', dir);
 }
@@ -35,7 +45,7 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.js', '.ts', '.vue', '.json', '.styl'],
+        extensions: ['.ts', '.js', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
         mainFiles: ['index.ts', 'index.js'],
         // 默认路径别名
@@ -94,7 +104,7 @@ module.exports = {
     plugins: [
         // 添加文件抬头信息
         new webpack.BannerPlugin({
-            banner: `Project: Circuit Simulator\nAuthor: 2015 - 2017 XiaoBoost\n\nBuild: ${buildTag}\nfilename: [name], chunkhash: [chunkhash]\n\nNice to meet you ~ o(*￣▽￣*)ブ\nReleased under the MIT License.`,
+            banner,
         }),
         // 定义全局注入变量
         new webpack.DefinePlugin({
