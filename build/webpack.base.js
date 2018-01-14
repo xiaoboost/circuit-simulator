@@ -145,7 +145,10 @@ module.exports = {
         // 打包后的文件插入 html 模板
         new HtmlWebpackPlugin({
             filename: 'index.html',
-            data: { build: buildTag },
+            data: {
+                build: buildTag,
+                year: new Date().getFullYear(),
+            },
             template: './src/index.html',
             inject: true,
             minify: {
