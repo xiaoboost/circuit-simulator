@@ -1,5 +1,4 @@
 import * as assert from './assertion';
-import { assertion } from 'test/e2e/custom-assertions/elementCount';
 
 Object.assign(Object, {
     /**
