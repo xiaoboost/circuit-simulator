@@ -1,7 +1,7 @@
 import { $P, Point } from 'src/lib/point';
 
 /** 导线路径类 */
-export class LineWay extends Array<Point> {
+export default class LineWay extends Array<Point> {
     constructor(args: Point[] = []) {
         super();
         args.forEach((n) => this.push($P(n)));

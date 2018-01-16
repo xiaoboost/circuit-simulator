@@ -80,3 +80,25 @@ export function getScopedName(el) {
 export function delay(time) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+/**
+ * 生成一个一次性的事件
+ * @export
+ * @param {(HTMLElement | Worker)} el
+ * @param {string} type
+ * @returns {Promise<Event>}
+ */
+export function onceEvent(el, type) {
+    return new Promise((resolve) => {
+        el.addEventListener(
+            type,
+            function once(event) {
+                resolve(event);
+                el.removeEventListener(type, once);
+            },
+            supportsPassive
+                ? { passive: true }
+                : false
+        );
+    });
+}
