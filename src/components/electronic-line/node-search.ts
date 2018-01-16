@@ -1,7 +1,7 @@
-import Rules from './rules';
+import { Rules, Status } from './rules';
 import { $P, Point } from 'src/lib/point';
 
-interface NodeData {
+export interface NodeData {
     position: Point;
     direction: Point;
     value: number;
@@ -14,6 +14,24 @@ interface NodeData {
 interface MapData {
     [key: string]: NodeData;
 }
+
+// 全局四方向定义
+const rotates = [
+    [[1, 0], [0, 1]],       // 同向
+    [[0, 1], [-1, 0]],      // 顺时针
+    [[0, -1], [1, 0]],      // 逆时针
+    [[-1, 0], [0, -1]],     // 反向
+];
+
+// 全局 worker 变量
+const ctx: Worker = self as any;
+
+// 外部对内通信的接口
+ctx.addEventListener('message', ({ data }: MessageEvent) => {
+    debugger;
+    console.log(data);
+    ctx.postMessage('测试返回');
+});
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
@@ -95,7 +113,94 @@ class SearchStack {
     }
 }
 
-export default function AStartSearch(start: Point, end: Point, rules: Rules) {
-    const map = new SearchMap();
-    const stack = new SearchStack(map);
+/** 生成新节点 */
+function newNode(node: NodeData, index: number): NodeData {
+    const rotate = rotates[index];
+    const direction = $P([
+        node.direction[0] * rotate[0][0] + node.direction[1] * rotate[1][0],
+        node.direction[0] * rotate[0][1] + node.direction[1] * rotate[1][1],
+    ]);
+
+    return {
+        direction,
+        value: 0,
+        parent: node,
+        straight: true,
+        cornerParent: (index > 0 ? node : node.cornerParent),
+        junction: node.junction + (index > 0 ? 1 : 0),
+        position: node.position.add(direction),
+    };
+}
+
+function AStartSearch(start: Point, end: Point, status: Status) {
+    return [start];
+
+    // const map = new SearchMap();
+    // const stack = new SearchStack(map);
+    // const rules = new Rules(start, end, status);
+
+    // // 生成初始节点
+    // const first: NodeData = {
+    //     position: start.mul(0.05),
+    //     direction: status.direction,
+    //     junction: 0,
+    //     value: 0,
+    //     straight: true,
+    // };
+    // // 起点的 cornerParent 等于其自身
+    // first.cornerParent = first;
+    // first.value = rules.calValue(first);
+    // stack.push(first);
+
+    // // 终点状态
+    // let endStatus: NodeData | undefined = void 0;
+
+    // // 检查起点
+    // if (rules.isEnd(first)) {
+    //     endStatus = first;
+    // }
+
+    // // A*搜索，搜索极限为 300
+    // while (!endStatus && (stack.closeSize < 300)) {
+    //     // 栈顶元素弹出为当前结点
+    //     const nodenow = stack.shift();
+
+    //     // 未处理的节点为空，终点无法达到
+    //     if (!nodenow) {
+    //         break;
+    //     }
+
+    //     // 调试用
+    //     // if ($ENV.NODE_ENV === 'development') {
+    //     //     rules.insertDebugNode(nodenow.position, 'blue', 20);
+    //     // }
+
+    //     // 按方向扩展
+    //     for (let i = 0; i < 3; i++) {
+    //         // 生成扩展节点
+    //         const nodeExpand = newNode(nodenow, i);
+    //         nodeExpand.value = rules.calValue(nodeExpand);
+
+    //         // rules.insertDebugNode(nodeExpand.point, 'black', 20);
+
+    //         // 判断是否是终点
+    //         if (rules.isEnd(nodeExpand)) {
+    //             // rules.clearDebug();
+    //             endStatus = nodeExpand;
+    //             break;
+    //         }
+
+    //         // 当前节点是否满足扩展要求
+    //         if (rules.checkPoint(nodeExpand)) {
+    //             stack.push(nodeExpand);
+    //         } else {
+    //             nodenow.straight = !i;
+    //         }
+    //     }
+
+    //     // 没有可能路径，直接返回
+    //     if (!stack.openSize && !endStatus) {
+    //         return ([start]);
+    //     }
+    // }
 }
