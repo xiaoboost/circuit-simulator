@@ -62,18 +62,19 @@ export function isFunction(x: any): x is Function {
 
 /**
  * 断言：输入是否是严格意义上的对象
- *  - 不包括 Array、export function、Promise 等内建类的实例以及它们继承类的实例
+ *  - 不包括 Array、Function、Promise 等内建类的实例以及它们继承类的实例
  *
  * @param {*} x
  * @returns {x is object}
  */
 export function isStrictObject(x: any): x is { [key: string]: any } {
-    return (Object.prototype.toString.call(x) === '[object object]');
+    return (Object.prototype.toString.call(x) === '[object Object]');
 }
 
 /**
  * 断言：输入是否是广义上的对象
  *  - 包括所有 Object 类的实例，以及 Object 继承类的实例
+ *  - 不包括 null
  *
  * @param {*} x
  * @returns {x is object}
@@ -81,8 +82,9 @@ export function isStrictObject(x: any): x is { [key: string]: any } {
 export function isObject(x: any): x is { [key: string]: any } {
     const type = typeof x;
     return (
-        (type === 'object') ||
-        (type === 'function')
+        !isNull(x) &&
+        type === 'object' ||
+        type === 'function'
     );
 }
 
