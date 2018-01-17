@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { CreateElement, VNode } from 'vue';
-import { Component, Vue, Prop, Inject } from 'vue-property-decorator';
+import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
@@ -88,11 +88,12 @@ export default class ElectronicPart extends Vue implements PartData {
 
     /** 器件标识符 */
     readonly hash: string;
+    /** 器件类型 */
+    readonly type: string;
     /** 器件描述原始数据 */
     readonly origin: Electronic;
 
     id: string;
-    type: string;
     position: Point;
     params: string[];
     connect: string[];
@@ -106,22 +107,18 @@ export default class ElectronicPart extends Vue implements PartData {
     constructor() {
         super();
 
-        // 初始化展开数据
-        const data = this.value;
-        const origin = this.origin = clone(Electronics[this.value.type]);
-        const len = origin.points.length;
+        // 初始化只读数据
+        this.hash = this.value.hash;
+        this.type = this.value.type;
+        this.origin = clone(Electronics[this.value.type]);
 
-        this.id = data.id;
-        this.type = data.type;
-        this.hash = data.hash;
-        this.position = $P(data.position);
-        this.params = data.params.slice();
-        this.connect = data.connect.slice();
-        this.pointSize = Array(len).fill(-1);
-
+        // 内部变量初始化
         this.textPlacement = 'bottom';
-        this.rotate = $M(data.rotate);
-        this.textPosition = $P(origin.txtLBias);
+        this.textPosition = $P(this.origin.txtLBias);
+        this.pointSize = Array(this.origin.points.length).fill(-1);
+    }
+    created() {
+        this.init();
     }
     mounted() {
         this.setText();
@@ -191,6 +188,17 @@ export default class ElectronicPart extends Vue implements PartData {
         };
     }
 
+    /** 器件属性同步 */
+    @Watch('value')
+    init() {
+        const data = this.value;
+
+        this.id = data.id;
+        this.rotate = $M(this.value.rotate);
+        this.position = $P(data.position);
+        this.params = data.params.slice();
+        this.connect = data.connect.slice();
+    }
     /** 将当前组件数据更新数据至 vuex */
     update(): void {
         const keys = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
@@ -199,7 +207,8 @@ export default class ElectronicPart extends Vue implements PartData {
             clone(keys.reduce((v, k) => ((v[k] = this[k]), v), {}))
         );
     }
-    /** 渲染说明文档 */
+
+    /** 渲染说明文本 */
     setText(): void {
         // TODO: 缺正中央
         const textHeight = 11,
