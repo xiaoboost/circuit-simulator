@@ -93,15 +93,15 @@ export default class ElectronicPart extends Vue implements PartData {
     /** 器件描述原始数据 */
     readonly origin: Electronic;
 
-    id: string;
-    position: Point;
-    params: string[];
-    connect: string[];
-    rotate: Matrix;
+    id: string = '';
+    position: Point = $P();
+    params: string[] = [];
+    connect: string[] = [];
+    rotate: Matrix = $M(2);
 
     private pointSize: number[];
     private textPosition: Point;
-    private textPlacement: TextPlacement;
+    private textPlacement: TextPlacement = 'bottom';
 
     // 编译前的初始化
     constructor() {
@@ -112,8 +112,7 @@ export default class ElectronicPart extends Vue implements PartData {
         this.type = this.value.type;
         this.origin = clone(Electronics[this.value.type]);
 
-        // 内部变量初始化
-        this.textPlacement = 'bottom';
+        // 内部属性初始化
         this.textPosition = $P(this.origin.txtLBias);
         this.pointSize = Array(this.origin.points.length).fill(-1);
     }
