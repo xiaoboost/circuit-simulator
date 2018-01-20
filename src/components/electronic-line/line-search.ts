@@ -3,7 +3,7 @@ import Search from 'worker-loader!./node-search';
 import LineWay from './line-way';
 import ProcessManager from 'src/lib/process';
 
-import { ExchangeData } from './index';
+import { ExchangeData } from './types';
 
 // 格式化返回的数据
 // TODO:

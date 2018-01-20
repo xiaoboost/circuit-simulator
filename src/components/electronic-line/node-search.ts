@@ -1,5 +1,6 @@
 import { Rules, Status } from './rules';
 import { $P, Point } from 'src/lib/point';
+import { ExchangeData } from './types';
 
 export interface NodeData {
     position: Point;

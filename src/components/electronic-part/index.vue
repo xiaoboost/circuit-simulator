@@ -3,8 +3,6 @@
     :class="['part', { 'focus': focus }]"
     @dblclick="setParams"
     :transform="`matrix(${rotate.join()},${position.join()})`">
-    <!-- v-delegate:mousedown-a.left.stop="['.part-point', newLine]"
-    v-delegate:mousedown-b.left.stop="['.text-params', moveText]" -->
     <g class="focus-part">
         <part-aspect
             v-for="(info, i) in this.origin.shape"
@@ -14,7 +12,8 @@
             v-for="(point, i) in points"
             :index="i" :key="i" :r="pointSize[i]"
             :class-list="['part-point', point.class]"
-            :transform="`translate(${point.position.join()})`">
+            :transform="`translate(${point.position.join()})`"
+            @mousedown.native.left.stop.passive="setLine(i)">
         </electronic-point>
     </g>
     <g
@@ -46,7 +45,7 @@ import { $P, Point, PointLike } from 'src/lib/point';
 import Electronics, { Electronic, ShapeDescription } from './shape';
 
 import ElectronicPoint from 'src/components/electronic-point';
-import { PartData, PointClass, PartMargin } from './index';
+import { PartData, PointClass, PartMargin } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -120,7 +119,7 @@ export default class ElectronicPart extends Vue implements PartData {
         this.init();
     }
     mounted() {
-        this.setText();
+        this.renderText();
 
         // 根据不同的标志初始化
         if (this.position.isEqual([1e6, 1e6])) {
@@ -128,26 +127,26 @@ export default class ElectronicPart extends Vue implements PartData {
         }
     }
 
-    get focus(): boolean {
+    private get focus(): boolean {
         return this.mapStatus.partsNow.includes(this.id);
     }
-    get points(): PointClass[] {
+    private get points(): PointClass[] {
         return this.origin.points.map((point, i) => ({
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
         }));
     }
-    get invRotate(): Matrix {
+    private get invRotate(): Matrix {
         return this.rotate.inverse();
     }
-    get texts(): string[] {
+    private get texts(): string[] {
         return this.params
             .map((v, i) => ({ value: v, ...this.origin.params[i] }))
             .filter((txt) => txt.vision)
             .map((txt) => (txt.value + txt.unit).replace(/u/g, 'μ'));
     }
-    get margin(): PartMargin {
+    private get margin(): PartMargin {
         type EndPoint = PartMargin['inner'];
 
         const types = ['margin', 'padding'],
@@ -189,7 +188,7 @@ export default class ElectronicPart extends Vue implements PartData {
 
     /** 器件属性同步 */
     @Watch('value')
-    init() {
+    private init() {
         const data = this.value;
 
         this.id = data.id;
@@ -207,8 +206,38 @@ export default class ElectronicPart extends Vue implements PartData {
         );
     }
 
+    /** 设置属性 */
+    private async setParams() {
+        const map = this.mapStatus;
+
+        map.partsNow = [this.id];
+        const status = await this.setPartParams({
+            id: this.id,
+            type: this.type,
+            params: this.params,
+            position: this.position
+                .mul(map.zoom)
+                .add(map.position),
+        });
+
+        // 并未改变参数
+        if (!status) {
+            return;
+        }
+
+        // 参数更新
+        if (
+            this.id !== status.id ||
+            !this.params.isEqual(status.params)
+        ) {
+            this.params = status.params;
+            this.id = status.id;
+            this.update();
+        }
+    }
+
     /** 渲染说明文本 */
-    setText(): void {
+    renderText(): void {
         // TODO: 缺正中央
         const textHeight = 11,
             spaceHeight = 5,
@@ -249,6 +278,17 @@ export default class ElectronicPart extends Vue implements PartData {
             }
         }
     }
+    /** 移动说明文本 */
+    moveText(): void {
+        this.mapStatus.partsNow = [this.id];
+        this.setDrawEvent({
+            handlers: (e: DrawEvent) => { this.textPosition = this.textPosition.add(e.$movement); },
+            stopEvent: { el: this.$parent.$el, type: 'mouseup', which: 'left' },
+            afterEvent: () => this.renderText(),
+            cursor: 'move_part',
+        });
+    }
+
     /** 在图纸中标记器件 */
     markSign(): void {
         const inner = this.margin.inner;
@@ -278,63 +318,7 @@ export default class ElectronicPart extends Vue implements PartData {
         // 删除器件引脚占位
         this.points.forEach((point) => schMap.deletePoint(point.position.floorToSmall().add(position)));
     }
-    /** 移动说明文本 */
-    moveText(): void {
-        this.mapStatus.partsNow = [this.id];
-        this.setDrawEvent({
-            handlers: (e: DrawEvent) => { this.textPosition = this.textPosition.add(e.$movement); },
-            stopEvent: { el: this.$parent.$el, type: 'mouseup', which: 'left' },
-            afterEvent: () => this.setText(),
-            cursor: 'move_part',
-        });
-    }
-    /** 设置属性 */
-    async setParams() {
-        const map = this.mapStatus;
-
-        map.partsNow = [this.id];
-        const status = await this.setPartParams({
-            id: this.id,
-            type: this.type,
-            params: this.params,
-            position: this.position
-                .mul(map.zoom)
-                .add(map.position),
-        });
-
-        // 并未改变参数
-        if (!status) {
-            return;
-        }
-
-        // 参数更新
-        if (
-            this.id !== status.id ||
-            !this.params.isEqual(status.params)
-        ) {
-            this.params = status.params;
-            this.id = status.id;
-            this.update();
-        }
-    }
-    // TODO: 新建导线
-    // newLine(event) {
-    //     const mark = event.currentTarget.getAttribute('index'),
-    //         lines = this.$store.state.collection.Lines,
-    //         id = lines.newId('line_'),
-    //         point = this.points[mark];
-
-    //     this.connect.$set(mark, id);
-    //     this.$store.commit('PUSH_LINE', {
-    //         id,
-    //         type: 'line',
-    //         connect: [`${this.id}-${mark}`],
-    //         current: {
-    //             start: point.position.add(this.position),
-    //             direction: point.direction,
-    //         },
-    //     });
-    // }
+    /** 当前位置是否被占用 */
     isCover(position: Point = this.position) {
         const coverHash = {}, margin = this.margin;
 
@@ -398,7 +382,9 @@ export default class ElectronicPart extends Vue implements PartData {
 
         return (label);
     }
-    setNewPart() {
+
+    /** 当前是新器件 */
+    private setNewPart() {
         const el = this.$el;
         el.setAttribute('opacity', '0.4');
         this.mapStatus.partsNow = [this.id];
@@ -424,6 +410,22 @@ export default class ElectronicPart extends Vue implements PartData {
                 el.removeAttribute('opacity');
             },
         });
+    }
+    /** 创建新导线 */
+    setLine(index: number) {
+        // 排斥事件，直接退出
+        if (this.mapStatus.exclusion) {
+            return;
+        }
+
+        // 当前节点未连接导线，则创建新导线
+        if (!this.connect[index]) {
+            this.$store.commit('NEW_LINE', this.points[index].position.add(this.position));
+        }
+        // 已连接导线，将此导线改为绘制状态
+        else {
+
+        }
     }
 }
 </script>

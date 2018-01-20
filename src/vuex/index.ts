@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex, { GetterTree, MutationTree } from 'vuex';
 
-import { $P } from 'src/lib/point';
+import { $P, Point } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import { clone } from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
 import Electronics from 'src/components/electronic-part/shape';
 
-import { PartData } from 'src/components/electronic-part';
-import { LineData } from 'src/components/electronic-line';
+import { PartData } from 'src/components/electronic-part/types';
+import { LineData } from 'src/components/electronic-line/types';
 
 Vue.use(Vuex);
 
@@ -75,24 +75,42 @@ const mutations: MutationTree<StateType> = {
     SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
     /** 生成新器件 */
-    NEW_PART: (context, type: string) => context.Parts.push(...copyPart(type)),
+    NEW_PART: ({ Parts }, type: string) => Parts.push(...copyPart(type)),
     /** 更新器件数据 */
-    UPDATE_PART: (context, data: PartData) => {
-        Object.assign(context.Parts.find((n) => n.hash === data.hash), clone(data));
+    UPDATE_PART: ({ Parts }, data: PartData) => {
+        const part = Parts.findIndex((n) => n.hash === data.hash);
+
+        if (part < 0) {
+            throw new Error('(vuex) Part not found.');
+        }
+
+        Parts.splice(part, 1, clone(data));
     },
+
     /** 新导线压栈 */
-    // PUSH_LINE: (context, line: LineData) => context.Lines.push(line),
+    NEW_LINE: ({ Lines }, start: Point) => Lines.push(...copyLine(start)),
+    /** 更新器件数据 */
+    UPDATE_LINE: ({ Lines }, data: LineData) => {
+        const line = Lines.findIndex((n) => n.hash === data.hash);
+
+        if (line < 0) {
+            throw new Error('(vuex) Part not found.');
+        }
+
+        Lines.splice(line, 1, clone(data));
+    },
+
     /** 删除器件 */
-    DELETE_PART: (context, part: PartData | string) => {
+    DELETE_PART: ({ Parts }, part: PartData | string) => {
         assert.isString(part)
-            ? context.Parts.delete((item) => item.id === part)
-            : context.Parts.delete((item) => item.id === part.id);
+            ? Parts.delete((item) => item.id === part)
+            : Parts.delete((item) => item.id === part.id);
     },
     /** 删除导线 */
-    DELETE_LINE: (context, line: LineData | string) => {
+    DELETE_LINE: ({ Lines }, line: LineData | string) => {
         assert.isString(line)
-            ? context.Lines.delete((item) => item.id === line)
-            : context.Lines.delete((item) => item.id === line.id);
+            ? Lines.delete((item) => item.id === line)
+            : Lines.delete((item) => item.id === line.id);
     },
 
     /** 导线放置到底层 */
@@ -146,7 +164,7 @@ function createHash() {
 
 /**
  * 创建新器件或复制器件
- * @param {(string | PartData | PartData[])} type
+ * @param {(string | PartData | PartData[])} data
  * @return {PartData[]}
  */
 function copyPart(data: string | PartData | PartData[]): PartData[] {
@@ -177,6 +195,39 @@ function copyPart(data: string | PartData | PartData[]): PartData[] {
     }
 
     return [part];
+}
+
+/**
+ * 创建新导线或复制导线
+ * @param {(string | LineData | LineData[])} data
+ * @return {LineData[]}
+ */
+function copyLine(data: Point | LineData | LineData[]): LineData[] {
+    if (assert.isArray(data)) {
+        return data.map((n) => copyLine(n)[0]);
+    }
+
+    const id = createId('line');
+    const hash = createHash();
+
+    let line: LineData;
+    if (Point.isPoint(data)) {
+        line = {
+            type: 'line',
+            id, hash,
+            connect: ['', ''],
+            way: [data],
+        };
+    }
+    else {
+        line = {
+            ...clone(data),
+            type: 'line',
+            id, hash,
+        };
+    }
+
+    return [line];
 }
 
 export default new Vuex.Store<StateType>({

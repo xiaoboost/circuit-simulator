@@ -39,8 +39,11 @@ import { Component, Vue } from 'vue-property-decorator';
 import Events from './events';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
-import ElectronicPart, { PartData } from 'src/components/electronic-part';
-import ElectronicLine, { LineData } from 'src/components/electronic-line';
+import ElectronicPart from 'src/components/electronic-part';
+import ElectronicLine from 'src/components/electronic-line';
+
+import { PartData } from 'src/components/electronic-part/types';
+import { LineData } from 'src/components/electronic-line/types';
 
 // import SelectionsBox from 'src/components/selections-box';
 
@@ -71,6 +74,10 @@ import ElectronicLine, { LineData } from 'src/components/electronic-line';
             position: {
                 enumerable: true,
                 get: () => $P(this.position),
+            },
+            exclusion: {
+                enumerable: true,
+                get: () => this.exclusion,
             },
         });
 

@@ -26,7 +26,7 @@
 import { $P } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import * as assert from 'src/lib/assertion';
-import { PartData } from 'src/components/electronic-part';
+import { PartData } from 'src/components/electronic-part/types';
 
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';

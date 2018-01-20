@@ -13,6 +13,7 @@ export interface MapStatus {
     readonly position: Point;
     partsNow: string[];
     linesNow: string[];
+    exclusion: boolean;
 }
 
 export type FindPart = (id: string | HTMLElement | { id: string }) => ElectronicPart;
