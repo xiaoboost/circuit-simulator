@@ -98,7 +98,8 @@ export default class ElectronicPart extends Vue implements PartData {
     connect: string[] = [];
     rotate: Matrix = $M(2);
 
-    private pointSize: number[];
+    pointSize: number[];
+
     private textPosition: Point;
     private textPlacement: TextPlacement = 'bottom';
 
@@ -117,10 +118,9 @@ export default class ElectronicPart extends Vue implements PartData {
     }
     created() {
         this.init();
+        this.renderText();
     }
     mounted() {
-        this.renderText();
-
         // 根据不同的标志初始化
         if (this.position.isEqual([1e6, 1e6])) {
             this.setNewPart();
@@ -385,14 +385,13 @@ export default class ElectronicPart extends Vue implements PartData {
 
     /** 当前是新器件 */
     private setNewPart() {
-        const el = this.$el;
-        el.setAttribute('opacity', '0.4');
+        this.$el.setAttribute('opacity', '0.4');
         this.mapStatus.partsNow = [this.id];
 
         this.setDrawEvent({
             cursor: 'move_part',
             handlers: (e: DrawEvent) => { this.position = e.$position; },
-            stopEvent: { el, type: 'mousedown', which: 'left' },
+            stopEvent: { type: 'mousedown', which: 'left' },
             afterEvent: () => {
                 const node = this.position;
 
@@ -407,7 +406,7 @@ export default class ElectronicPart extends Vue implements PartData {
 
                 this.update();
                 this.markSign();
-                el.removeAttribute('opacity');
+                this.$el.removeAttribute('opacity');
             },
         });
     }
