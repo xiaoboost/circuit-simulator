@@ -216,7 +216,7 @@ function copyLine(data: Point | LineData | LineData[]): LineData[] {
             type: 'line',
             id, hash,
             connect: ['', ''],
-            way: [data],
+            way: [$P(data)],
         };
     }
     else {
