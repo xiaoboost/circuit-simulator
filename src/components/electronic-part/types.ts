@@ -12,13 +12,6 @@ export interface PartData {
     readonly connect: string[];
 }
 
-/** 器件引脚描述接口 */
-export interface PointClass {
-    position: Point;
-    direction: Point;
-    class: string;
-}
-
 /** 器件内外边距 */
 export interface PartMargin {
     inner: [[number, number], [number, number]];

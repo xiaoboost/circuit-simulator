@@ -1,7 +1,7 @@
 <template>
 <g
-    :class="['part', { 'focus': focus }]"
     @dblclick="setParams"
+    :class="['part', { 'focus': focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <g class="focus-part">
         <part-aspect
@@ -45,7 +45,7 @@ import { $P, Point, PointLike } from 'src/lib/point';
 import Electronics, { Electronic, ShapeDescription } from './shape';
 
 import ElectronicPoint from 'src/components/electronic-point';
-import { PartData, PointClass, PartMargin } from './types';
+import { PartData, PartMargin } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -127,20 +127,20 @@ export default class ElectronicPart extends Vue implements PartData {
         }
     }
 
-    private get focus(): boolean {
+    private get focus() {
         return this.mapStatus.partsNow.includes(this.id);
     }
-    private get points(): PointClass[] {
+    private get points() {
         return this.origin.points.map((point, i) => ({
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
         }));
     }
-    private get invRotate(): Matrix {
+    private get invRotate() {
         return this.rotate.inverse();
     }
-    private get texts(): string[] {
+    private get texts() {
         return this.params
             .map((v, i) => ({ value: v, ...this.origin.params[i] }))
             .filter((txt) => txt.vision)
