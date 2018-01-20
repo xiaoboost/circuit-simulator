@@ -88,7 +88,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 新导线压栈 */
-    NEW_LINE: ({ Lines }, start: Point) => Lines.push(...copyLine(start)),
+    NEW_LINE: ({ Lines }, start: Point) => Lines.unshift(...copyLine(start)),
     /** 更新器件数据 */
     UPDATE_LINE: ({ Lines }, data: LineData) => {
         const line = Lines.findIndex((n) => n.hash === data.hash);
