@@ -37,15 +37,17 @@ new Vue({
         [h('drawing-main'), h('slider-menu'), h('action-menu')],
     ),
     mounted() {
-        const area = document.querySelector('.drawing-main svg g')!;
+        if ($ENV.NODE_ENV === 'development') {
+            const area = document.querySelector('.drawing-main svg g')!;
 
-        Object.defineProperty(window, '$debugger', {
-            enumerable: false,
-            writable: false,
-            value: new debug(),
-        });
+            Object.defineProperty(window, '$debugger', {
+                enumerable: false,
+                writable: false,
+                value: new debug(),
+            });
 
-        area.appendChild($debugger.$el);
+            area.appendChild($debugger.$el);
+        }
 
         // 初始化完成
         loaded();
