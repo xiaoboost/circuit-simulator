@@ -1,10 +1,11 @@
 import * as assert from 'src/lib/assertion';
+import { delay } from 'src/lib/utils';
 import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 
 import { Required } from 'type-zoo';
 
-type callback = (event: DrawEvent) => any;
+type callback = (event: DrawEvent) => void | Promise<void>;
 
 /** 生成鼠标结束事件对外的数据接口 */
 export interface StopMouseEvent {
@@ -24,7 +25,7 @@ export interface DrawEventHandler {
     type: string;
     capture?: boolean;
     passive?: boolean;
-    callback(e?: Event): void | boolean;
+    callback(e?: Event): void | Promise<void>;
 }
 
 /** 事件控制器设置接口 */
@@ -96,16 +97,16 @@ export default class DrawEvents extends Vue {
      * @param {function} fn
      * @returns {function} callback
      */
-    wrapHandler(fn: callback, type: string): (event: EventExtend & DrawEvent) => void {
+    wrapHandler(fn: callback, type: string): (event: DrawEvent) => void | Promise<void> {
         let last: false | Point = false;
-        const callbackOutter = (event: EventExtend & DrawEvent) => {
+        const callbackOutter = (event: DrawEvent) => {
             const mouse = $P(event.pageX, event.pageY);
 
             event.$movement = last ? mouse.add(last, -1).mul(1 / this.zoom) : $P();
             event.$position = mouse.add(this.position, -1).mul(1 / this.zoom);
 
             last = mouse;
-            fn(event);
+            return fn(event);
         };
 
         return ($ENV.NODE_ENV === 'development' && type === 'mousemove')
@@ -115,7 +116,14 @@ export default class DrawEvents extends Vue {
              * 等那某个进程运行完毕就行了。但是又因为回调是异步的，所以经常会造成 afterEvent 运行之后又
              * 运行了一次回调的情况发生，所以这里必须再进行一次判断，以确保事件被取消之后回调不会被运行。
              */
-            ? (event: EventExtend & DrawEvent) => setTimeout(() => this.exclusion && callbackOutter(event))
+            ? async (event: DrawEvent) => {
+                if (!this.exclusion) {
+                    return;
+                }
+
+                await delay();
+                await callbackOutter(event);
+            }
             : callbackOutter;
     }
     createHandlers(handlers: Array<DrawEventHandler | callback>): Handlers {
