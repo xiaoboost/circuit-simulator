@@ -9,19 +9,16 @@
         @mousedown.self.stop.right.passive="moveMap">
         <!-- @mousedown.self.stop.left="selectMore($event)" -->
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
-            <!-- <elec-line
+            <electronic-line
                 ref="lines"
                 v-for="line in lines"
-                :key="lines[i - 1].id"
-                :value.sync="lines[i - 1]"
-                :focus="linesNow.includes(lines[i - 1].id)"
-                @focus="clearFocus"
-                @event="EventControler">
-            </elec-line> -->
+                :key="line.hash"
+                :value="line">
+            </electronic-line>
             <electronic-part
                 ref="parts"
                 v-for="part in parts"
-                :key="part.id"
+                :key="part.hash"
                 :value="part">
             </electronic-part>
             <!-- <selections-box
@@ -50,7 +47,7 @@ import { LineData } from 'src/components/electronic-line/types';
 @Component({
     components: {
         ElectronicPart,
-        // 'elec-line': Line,
+        ElectronicLine,
         // 'selections-box': SelectionsBox,
     },
     provide(this: DrawingMain) {
