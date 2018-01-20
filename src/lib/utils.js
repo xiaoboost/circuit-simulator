@@ -102,3 +102,21 @@ export function onceEvent(el, type) {
         );
     });
 }
+
+/**
+ * 将多个类混合成一个
+ * @export
+ * @param {Function} derivedCtor
+ * @param {Function[]} baseCtors
+ */
+export function mixClasses(derivedCtor, baseCtors) {
+    baseCtors.forEach((baseCtor) =>
+        Object
+            .getOwnPropertyNames(baseCtor.prototype)
+            .filter((name) => name !== 'constructor')
+            .forEach((name) => Object.defineProperty(
+                derivedCtor.prototype, name,
+                Object.getOwnPropertyDescriptor(baseCtor.prototype, name)
+            ))
+    );
+}

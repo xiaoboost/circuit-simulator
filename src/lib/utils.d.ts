@@ -32,3 +32,11 @@ export function delay(time: number): Promise<void>;
  */
 export function onceEvent(el: Worker, type: 'message'): Promise<MessageEvent>
 export function onceEvent(el: HTMLElement, type: string): Promise<Event>;
+
+/**
+ * 将多个类混合成一个
+ * @export
+ * @param {Function} derivedCtor 
+ * @param {Function[]} baseCtors 
+ */
+export function mixClasses(derivedCtor: Function, baseCtors: Function[]): void;
