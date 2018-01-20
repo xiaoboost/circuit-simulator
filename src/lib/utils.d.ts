@@ -18,10 +18,10 @@ export function getScopedName(el: HTMLElement): string;
 /**
  * 生成异步延迟函数
  * @export
- * @param {number} time 
+ * @param {number} [time]
  * @returns {Promise<void>} 
  */
-export function delay(time: number): Promise<void>;
+export function delay(time?: number): Promise<void>;
 
 /**
  * 生成一个一次性的事件

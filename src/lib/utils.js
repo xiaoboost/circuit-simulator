@@ -74,10 +74,10 @@ export function getScopedName(el) {
 /**
  * 生成异步延迟函数
  * @export
- * @param {number} time
+ * @param {number} [time=0]
  * @returns {Promise<void>}
  */
-export function delay(time) {
+export function delay(time = 0) {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
 
