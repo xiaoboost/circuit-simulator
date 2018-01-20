@@ -2,11 +2,13 @@ import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 
+import { Required } from 'type-zoo';
+
 type callback = (event: DrawEvent) => any;
 
 /** 生成鼠标结束事件对外的数据接口 */
 export interface StopMouseEvent {
-    el: HTMLElement;
+    el?: HTMLElement;
     type: 'click' | 'dblclick' | 'mousedown' | 'mouseup' | 'mouseenter' | 'mouseleave';
     which: 'left' | 'middle' | 'right';
 }
@@ -45,23 +47,25 @@ interface Handlers {
     unbind(): void;
 }
 
+type RequiredStopMouseEvent = Required<StopMouseEvent>;
+
 /**
  * 生成鼠标的一次性结束事件
  * @param {StopMouseEvent} data
  * @returns {() => Promise<void>}
  */
-function createStopMouseEvent(data: StopMouseEvent): () => Promise<void> {
+function createStopMouseEvent({ el, type, which }: RequiredStopMouseEvent): () => Promise<void> {
     const code = { left: 0, middle: 1, right: 2 };
     const opts = supportsPassive
         ? { passive: true, capture: true }
         : true;
 
     return () => new Promise((resolve): void => {
-        data.el.addEventListener(
-            data.type,
+        el.addEventListener(
+            type,
             function stop(event: MouseEvent): void {
-                if (event.button === code[data.which]) {
-                    data.el.removeEventListener(data.type, stop, true);
+                if (event.button === code[which]) {
+                    el.removeEventListener(type, stop, true);
                     resolve();
                 }
             },
@@ -186,7 +190,12 @@ export default class DrawEvents extends Vue {
         // 生成队列
         const Queue = this.createHandlers(events);
         // 生成终止事件
-        const stopCommander = assert.isFunction(stopEvent) ? stopEvent : createStopMouseEvent(stopEvent);
+        const stopCommander = assert.isFunction(stopEvent)
+            ? stopEvent
+            : createStopMouseEvent({
+                el: this.$el,
+                ...stopEvent,
+            });
 
         // 事件回调生命周期
         beforeEvent()
