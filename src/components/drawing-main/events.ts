@@ -1,5 +1,4 @@
 import * as assert from 'src/lib/assertion';
-import { delay } from 'src/lib/utils';
 import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 
@@ -31,31 +30,19 @@ export interface DrawEventHandler {
 /** 事件控制器设置接口 */
 export interface DrawEventSetting {
     exclusion?: boolean;
-    stopEvent: (StopMouseEvent | (() => Promise<void>));
+    stopEvent: StopMouseEvent | (() => Promise<void>);
     handlers: Array<DrawEventHandler | callback> | DrawEventHandler | callback;
-    cursor?: (string | ((e?: DrawEvent) => string));
+    cursor?: string | ((e?: DrawEvent) => string);
     beforeEvent?(): Promise<void>;
     afterEvent?(): void;
 }
-
-/** 事件队列 */
-interface Handlers {
-    /** 队列数据 */
-    queue: DrawEventHandler[];
-    /** 绑定所有事件 */
-    bind(): void;
-    /** 解除所有事件绑定 */
-    unbind(): void;
-}
-
-type RequiredStopMouseEvent = Required<StopMouseEvent>;
 
 /**
  * 生成鼠标的一次性结束事件
  * @param {StopMouseEvent} data
  * @returns {() => Promise<void>}
  */
-function createStopMouseEvent({ el, type, which }: RequiredStopMouseEvent): () => Promise<void> {
+function createStopMouseEvent({ el, type, which }: Required<StopMouseEvent>): () => Promise<void> {
     const code = { left: 0, middle: 1, right: 2 };
     const opts = supportsPassive
         ? { passive: true, capture: true }
@@ -84,21 +71,49 @@ function toCursor(cursor: string = 'default'): string {
     return (assert.isNull(cursor) || cursor === 'default') ? 'default' : `url(/cur/${cursor}.cur), crosshair`;
 }
 
-@Component
-export default class DrawEvents extends Vue {
-    zoom: number;
-    position: Point;
+/** 事件控制器 */
+class Handlers {
+    /** 事件控制器操作的组件 */
+    private Comp: DrawEvents;
+    /** 事件回调数据 */
+    private eventsData: DrawEventHandler[];
+    /** 事件队列，用于异步事件的同步控制 */
+    private eventsQueue = Promise.resolve();
 
-    exclusion = false;
+    get $el() {
+        return this.Comp.$el;
+    }
+    get zoom() {
+        return this.Comp.zoom;
+    }
+    get position() {
+        return $P(this.Comp.position);
+    }
+    get exclusion() {
+        return this.Comp.exclusion;
+    }
 
-    /**
-     * 对事件回调函数进行封装
-     * 在运行回调之前插入一段矫正鼠标坐标的操作，并将结果传入实际的回调中
-     * @param {function} fn
-     * @returns {function} callback
-     */
-    wrapHandler(fn: callback, type: string): (event: DrawEvent) => void | Promise<void> {
+    constructor(comp: DrawEvents, handlers: Array<DrawEventHandler | callback>) {
+        this.Comp = comp;
+        this.eventsData = handlers.map(
+            (handler) => assert.isFunction(handler)
+                ? {
+                    capture: false,
+                    type: 'mousemove',
+                    callback: this.wrapHandler(handler),
+                }
+                : {
+                    type: handler.type,
+                    capture: handler.capture || false,
+                    passive: handler.passive || true,
+                    callback: this.wrapHandler(handler.callback),
+                },
+        );
+    }
+
+    wrapHandler(fn: callback) {
         let last: false | Point = false;
+
         const callbackOutter = (event: DrawEvent) => {
             const mouse = $P(event.pageX, event.pageY);
 
@@ -106,77 +121,56 @@ export default class DrawEvents extends Vue {
             event.$position = mouse.add(this.position, -1).mul(1 / this.zoom);
 
             last = mouse;
-            return fn(event);
-        };
 
-        return ($ENV.NODE_ENV === 'development' && type === 'mousemove')
-            /**
-             *     chrome 浏览器（v59 ~ *）的 mousemove 事件似乎有个 bug，表现为 debug 时浏览器的 UI 进程被阻
-             * 塞了，无法进行实时的 UI 更新。目测是因为有某个进程阻塞的 UI 进程，所以这里用异步来运行回调，
-             * 等那某个进程运行完毕就行了。但是又因为回调是异步的，所以经常会造成 afterEvent 运行之后又
-             * 运行了一次回调的情况发生，所以这里必须再进行一次判断，以确保事件被取消之后回调不会被运行。
-             */
-            ? async (event: DrawEvent) => {
+            // 将回调绑定至异步链条上
+            this.eventsQueue = this.eventsQueue.then(() => {
                 if (!this.exclusion) {
-                    return;
+                    return Promise.resolve();
                 }
 
-                await delay();
-                await callbackOutter(event);
-            }
-            : callbackOutter;
-    }
-    createHandlers(handlers: Array<DrawEventHandler | callback>): Handlers {
-        const component = this;
+                return fn(event) || Promise.resolve();
+            });
+        };
 
-        function bind(this: Handlers): void {
-            this.queue.forEach(
-                (handler) =>
-                    component.$el.addEventListener(
-                        handler.type,
-                        handler.callback,
-                        supportsPassive
-                            ? { passive: handler.passive, capture: handler.capture }
-                            : handler.capture,
-                    ),
-            );
-        }
-        function unbind(this: Handlers): void {
-            this.queue.forEach(
-                (handler) =>
-                    component.$el.removeEventListener(
-                        handler.type,
-                        handler.callback,
-                        handler.capture,
-                    ),
-            );
-        }
-        const queue = handlers.map((handler) => {
-            if (assert.isFunction(handler)) {
-                return {
-                    capture: false,
-                    type: 'mousemove',
-                    callback: this.wrapHandler(handler, 'mousemove'),
-                };
-            } else {
-                const obj = { ...handler };
-                obj.capture = handler.capture || false;
-                obj.passive = handler.passive || true;
-                obj.callback = this.wrapHandler(obj.callback, obj.type);
-                return obj;
-            }
-        });
-
-        return { queue, bind, unbind };
+        return callbackOutter;
     }
-    setDrawEvent({
+    bind() {
+        this.eventsData.forEach(
+            (handler) => this.$el.addEventListener(
+                handler.type,
+                handler.callback,
+                supportsPassive
+                    ? { passive: handler.passive, capture: handler.capture }
+                    : handler.capture,
+            ),
+        );
+    }
+    unbind() {
+        this.eventsData.forEach(
+            (handler) => this.$el.removeEventListener(
+                handler.type,
+                handler.callback,
+                handler.capture,
+            ),
+        );
+    }
+}
+
+@Component
+export default class DrawEvents extends Vue {
+    zoom: number;
+    position: Point;
+
+    exclusion = false;
+
+    async setDrawEvent({
         handlers,
         stopEvent,
         exclusion = true,
         cursor = 'default',
         beforeEvent = () => Promise.resolve(),
         afterEvent = () => { return; },
-    }: DrawEventSetting): void {
+    }: DrawEventSetting) {
         // 如果有互斥事件在运行，且当前事件也是互斥的，那么忽略当前事件
         if (this.exclusion && exclusion) {
             return;
@@ -196,7 +190,7 @@ export default class DrawEvents extends Vue {
         assert.isFunction(createCursor) && events.push(createCursor);
 
         // 生成队列
-        const Queue = this.createHandlers(events);
+        const Queue = new Handlers(this, events);
         // 生成终止事件
         const stopCommander = assert.isFunction(stopEvent)
             ? stopEvent
@@ -205,25 +199,18 @@ export default class DrawEvents extends Vue {
                 ...stopEvent,
             });
 
-        // 事件回调生命周期
-        beforeEvent()
-            // 绑定事件本身和结束条件
-            .then(() => {
-                if (assert.isString(createCursor)) {
-                    this.$el.style.cursor = createCursor;
-                }
+        await beforeEvent();
 
-                Queue.bind();
-                return stopCommander();
-            })
-            // 事件结束，解除事件绑定
-            .then(() => {
-                Queue.unbind();
-                afterEvent();
-                this.exclusion = false;
-                this.$el.style.cursor = 'default';
-            })
-            // 捕获流程中的错误
-            .catch((err) => console.error(err));
+        if (assert.isString(createCursor)) {
+            this.$el.style.cursor = createCursor;
+        }
+
+        Queue.bind();
+        await stopCommander();
+
+        Queue.unbind();
+        afterEvent();
+        this.exclusion = false;
+        this.$el.style.cursor = 'default';
     }
 }

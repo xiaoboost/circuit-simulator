@@ -1,7 +1,7 @@
 import main from './index.vue';
 import { Point } from 'src/lib/point';
 
-import { DrawEventSetting } from './events';
+import Events from './events';
 import ElectronicPart from 'src/components/electronic-part';
 import ElectronicLine from 'src/components/electronic-line';
 
@@ -18,4 +18,4 @@ export interface MapStatus {
 
 export type FindPart = (id: string | HTMLElement | { id: string }) => ElectronicPart;
 export type FindLine = (id: string | HTMLElement | { id: string }) => ElectronicLine;
-export type SetDrawEvent = (handlers: DrawEventSetting) => void;
+export type SetDrawEvent = Events['setDrawEvent'];
