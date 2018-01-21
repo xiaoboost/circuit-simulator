@@ -179,15 +179,18 @@ export default class DrawEvents extends Vue {
             this.exclusion = !!exclusion;
         }
 
-        // 设定鼠标指针
-        const createCursor = assert.isString(cursor)
-            ? toCursor(cursor)
-            : (e?: DrawEvent) => { this.$el.style.cursor = toCursor(cursor(e)); };
-
         // 回调事件队列
         const events = assert.isArray(handlers) ? handlers : [handlers];
-        // cursor 是函数，则加入回调队列
-        assert.isFunction(createCursor) && events.push(createCursor);
+
+        let cursorStyle = '';
+        // 直接指定指针样式
+        if (assert.isString(cursor)) {
+            cursorStyle = toCursor(cursor);
+        }
+        // 指定指针回调
+        else {
+            events.push((e?: DrawEvent) => { this.$el.style.cursor = toCursor(cursor(e)); });
+        }
 
         // 生成队列
         const Queue = new Handlers(this, events);
@@ -200,10 +203,7 @@ export default class DrawEvents extends Vue {
             });
 
         await beforeEvent();
-
-        if (assert.isString(createCursor)) {
-            this.$el.style.cursor = createCursor;
-        }
+        this.$el.style.cursor = cursorStyle;
 
         Queue.bind();
         await stopCommander();
