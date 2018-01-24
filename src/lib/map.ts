@@ -163,11 +163,11 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @param {boolean} [large=false]
  * @returns {(MapData | false)}
  */
-export function getPoint(point: PointLike, large = false): MapData | false {
+export function getPoint(point: PointLike, large = false): MapData | undefined {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
     const data = $map[point2key(node)];
 
-    return data ? dataClone(data) : false;
+    return data ? dataClone(data) : undefined;
 }
 
 /**
