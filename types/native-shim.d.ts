@@ -7,15 +7,6 @@ interface ObjectConstructor {
      */
     isEmpty(from: object): boolean;
     /**
-     * 深复制输入对象
-     *  - 输入对象不得含有循环调用，复制出的对象全部是内建对象格式
-     *
-     * @template T
-     * @param {T} from
-     * @returns {T}
-     */
-    // clone<T>(from: T): T;
-    /**
      * 将输入对象的所有可枚举属性全部隐藏
      *
      * @param {object} from

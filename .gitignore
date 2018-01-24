@@ -11,3 +11,4 @@ test/unit/coverage
 test/e2e/reports
 .vscode/launch.json
 selenium-debug.log
+src/*/*/*-old.*
