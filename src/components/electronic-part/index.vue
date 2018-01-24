@@ -127,26 +127,26 @@ export default class ElectronicPart extends Vue implements PartData {
         }
     }
 
-    private get focus() {
+    get focus() {
         return this.mapStatus.partsNow.includes(this.id);
     }
-    private get points() {
+    get points() {
         return this.origin.points.map((point, i) => ({
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
         }));
     }
-    private get invRotate() {
+    get invRotate() {
         return this.rotate.inverse();
     }
-    private get texts() {
+    get texts() {
         return this.params
             .map((v, i) => ({ value: v, ...this.origin.params[i] }))
             .filter((txt) => txt.vision)
             .map((txt) => (txt.value + txt.unit).replace(/u/g, 'μ'));
     }
-    private get margin(): PartMargin {
+    get margin(): PartMargin {
         type EndPoint = PartMargin['inner'];
 
         const types = ['margin', 'padding'],
@@ -421,9 +421,9 @@ export default class ElectronicPart extends Vue implements PartData {
         if (!this.connect[index]) {
             this.$store.commit('NEW_LINE', this.points[index].position.add(this.position));
         }
-        // 已连接导线，将此导线改为绘制状态
+        // TODO: 已连接导线，将此导线改为绘制状态
         else {
-
+            // ..
         }
     }
 }
