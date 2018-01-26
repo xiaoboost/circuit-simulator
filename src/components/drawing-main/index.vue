@@ -118,7 +118,12 @@ export default class DrawingMain extends Events {
     /** 搜索器件 */
     findPart(id: string | HTMLElement | { id: string }): ElectronicPart {
         const prop = (assert.isElement(id)) ? '$el' : 'id';
-        const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+
+        let value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+        if (assert.isString(value)) {
+            value = (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
+        }
+
         const part = this.$refs.parts.find((part) => part[prop] === value);
 
         if (!part) {

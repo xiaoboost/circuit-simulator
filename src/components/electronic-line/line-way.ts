@@ -1,7 +1,7 @@
 import { $P, Point } from 'src/lib/point';
 
 /** 导线路径类 */
-export default class LineWay extends Array<Point> {
+export class LineWay extends Array<Point> {
     constructor(args: Point[] = []) {
         super();
         args.forEach((n) => this.push($P(n)));
@@ -133,4 +133,23 @@ export default class LineWay extends Array<Point> {
     //         this[this.length - 2][0] = point[0];
     //     }
     // }
+}
+
+/** 导线搜索图 类 */
+export class WayMap {
+    /** 路径数据 */
+    private _data: { [key: string]: LineWay };
+
+    has(node: Point) {
+        return !!this._data[node.join(',')];
+    }
+    set(node: Point, way: LineWay) {
+        this._data[node.join(',')] = way;
+    }
+    get(node: Point): LineWay | undefined {
+        return this._data[node.join(',')];
+    }
+    delete(node: Point): boolean {
+        return Reflect.deleteProperty(this._data, node.join(','));
+    }
 }

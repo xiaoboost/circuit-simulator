@@ -36,7 +36,7 @@ class WorkerProcess {
         const result = await onceEvent(this.worker, 'message');
 
         this.isBusy = false;
-        return result.data;
+        return result.data as T;
     }
     /** 销毁当前子进程 */
     destroy() {

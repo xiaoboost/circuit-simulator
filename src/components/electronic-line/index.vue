@@ -140,11 +140,14 @@ export default class ElectronicLine extends Vue implements LineData {
             this.reverse();
         }
 
-        const mapData = schMap.getPoint(this.way[0])!;
+        const mapData = schMap.getPoint(this.way[0], true)!;
         const part = this.findPart(mapData.id);
         const mark = mapData.id.split('-')[1];
         const direction = part.points[mark].direction;
-        const mapString = schMap.outputMap();
+        const map = schMap.outputMap();
+
+        this.mapStatus.linesNow.length = 0;
+        this.mapStatus.linesNow.push(this.id);
 
         // 临时变量
         const temp: DrawingOption['temp'] = {
@@ -197,10 +200,9 @@ export default class ElectronicLine extends Vue implements LineData {
                     type: 'mousemove',
                     capture: false,
                     callback: (e: DrawEvent) => drawSearch({
-                        direction, temp,
                         start: this.way[0],
                         end: e.$position,
-                        map: mapString,
+                        direction, map, temp,
                     }),
                 },
             ],
