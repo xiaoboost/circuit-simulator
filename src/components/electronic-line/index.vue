@@ -24,6 +24,7 @@ import { $P, Point } from 'src/lib/point';
 // import { $M, Matrix } from 'src/lib/matrix';
 import * as schMap from 'src/lib/map';
 import { clone } from 'src/lib/utils';
+import { WayMap } from './line-way';
 import { drawSearch } from './line-search';
 import ElectronPoint from 'src/components/electronic-point';
 
@@ -152,6 +153,8 @@ export default class ElectronicLine extends Vue implements LineData {
         // 临时变量
         const temp: DrawingOption['temp'] = {
             onPart: '',
+            wayMap: new WayMap(),
+            lastVertex: $P(Infinity, Infinity),
         };
 
         this.setDrawEvent({

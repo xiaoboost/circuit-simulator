@@ -1,5 +1,9 @@
-import { Rules, Status } from './rules';
+import * as schMap from 'src/lib/map';
+
+import { Rules } from './rules';
 import { $P, Point } from 'src/lib/point';
+
+import { Omit } from 'type-zoo';
 import { ExchangeData } from './types';
 
 export interface NodeData {
@@ -29,9 +33,17 @@ const ctx: Worker = self as any;
 
 // 外部对内通信的接口
 ctx.addEventListener('message', ({ data }: MessageEvent) => {
-    debugger;
-    console.log(data);
-    ctx.postMessage('测试返回');
+    const exchange: ExchangeData = JSON.parse(data)[0];
+
+    exchange.start = $P(exchange.start);
+    exchange.end = $P(exchange.end);
+    exchange.direction = $P(exchange.direction);
+
+    schMap.forceUpdateMap(exchange.map, true);
+
+    const result = AStartSearch(exchange);
+
+    ctx.postMessage(JSON.stringify(result));
 });
 
 /** 搜索用的临时图纸模块 */
@@ -133,75 +145,73 @@ function newNode(node: NodeData, index: number): NodeData {
     };
 }
 
-function AStartSearch(start: Point, end: Point, status: Status) {
-    return [start];
+function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map'>) {
+    const map = new SearchMap();
+    const stack = new SearchStack(map);
+    const rules = new Rules(start, end, status);
 
-    // const map = new SearchMap();
-    // const stack = new SearchStack(map);
-    // const rules = new Rules(start, end, status);
+    // 生成初始节点
+    const first: NodeData = {
+        position: start.mul(0.05),
+        direction,
+        junction: 0,
+        value: 0,
+        straight: true,
+    };
+    // 起点的 cornerParent 等于其自身
+    first.cornerParent = first;
+    first.value = rules.calValue(first);
+    stack.push(first);
 
-    // // 生成初始节点
-    // const first: NodeData = {
-    //     position: start.mul(0.05),
-    //     direction: status.direction,
-    //     junction: 0,
-    //     value: 0,
-    //     straight: true,
-    // };
-    // // 起点的 cornerParent 等于其自身
-    // first.cornerParent = first;
-    // first.value = rules.calValue(first);
-    // stack.push(first);
+    // 终点状态
+    let endStatus: NodeData | undefined = void 0;
 
-    // // 终点状态
-    // let endStatus: NodeData | undefined = void 0;
+    // 检查起点
+    if (rules.isEnd(first)) {
+        endStatus = first;
+    }
 
-    // // 检查起点
-    // if (rules.isEnd(first)) {
-    //     endStatus = first;
-    // }
+    // A*搜索，搜索极限为 300
+    while (!endStatus && (stack.closeSize < 300)) {
+        // 栈顶元素弹出为当前结点
+        const nodenow = stack.shift();
 
-    // // A*搜索，搜索极限为 300
-    // while (!endStatus && (stack.closeSize < 300)) {
-    //     // 栈顶元素弹出为当前结点
-    //     const nodenow = stack.shift();
+        // 未处理的节点为空，终点无法达到
+        if (!nodenow) {
+            break;
+        }
 
-    //     // 未处理的节点为空，终点无法达到
-    //     if (!nodenow) {
-    //         break;
-    //     }
+        // 调试用
+        // if ($ENV.NODE_ENV === 'development') {
+        //     rules.insertDebugNode(nodenow.position, 'blue', 20);
+        // }
 
-    //     // 调试用
-    //     // if ($ENV.NODE_ENV === 'development') {
-    //     //     rules.insertDebugNode(nodenow.position, 'blue', 20);
-    //     // }
+        // 按方向扩展
+        for (let i = 0; i < 3; i++) {
+            // 生成扩展节点
+            const nodeExpand = newNode(nodenow, i);
+            nodeExpand.value = rules.calValue(nodeExpand);
 
-    //     // 按方向扩展
-    //     for (let i = 0; i < 3; i++) {
-    //         // 生成扩展节点
-    //         const nodeExpand = newNode(nodenow, i);
-    //         nodeExpand.value = rules.calValue(nodeExpand);
+            // rules.insertDebugNode(nodeExpand.point, 'black', 20);
 
-    //         // rules.insertDebugNode(nodeExpand.point, 'black', 20);
+            // 判断是否是终点
+            if (rules.isEnd(nodeExpand)) {
+                // rules.clearDebug();
+                endStatus = nodeExpand;
+                break;
+            }
 
-    //         // 判断是否是终点
-    //         if (rules.isEnd(nodeExpand)) {
-    //             // rules.clearDebug();
-    //             endStatus = nodeExpand;
-    //             break;
-    //         }
+            // 当前节点是否满足扩展要求
+            if (rules.checkPoint(nodeExpand)) {
+                stack.push(nodeExpand);
+            } else {
+                nodenow.straight = !i;
+            }
+        }
 
-    //         // 当前节点是否满足扩展要求
-    //         if (rules.checkPoint(nodeExpand)) {
-    //             stack.push(nodeExpand);
-    //         } else {
-    //             nodenow.straight = !i;
-    //         }
-    //     }
-
-    //     // 没有可能路径，直接返回
-    //     if (!stack.openSize && !endStatus) {
-    //         return ([start]);
-    //     }
-    // }
+        // 没有可能路径，直接返回
+        if (!stack.openSize && !endStatus) {
+            return ([start]);
+        }
+    }
 }

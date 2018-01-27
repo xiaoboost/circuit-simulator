@@ -38,6 +38,9 @@ export interface MapData {
  */
 const $map: { [key: string]: MapData } = {};
 
+/** 用于缓存强制更新的 string 数据 */
+let $mapString = '';
+
 /**
  * 将坐标转化为标记数据中的键值
  *
@@ -78,18 +81,26 @@ export function outputMap() {
  * 强制更新所有图纸标记
  *
  * @param {string} [map='{}']
+ * @param {boolean} [checkCache=false]
  * @return {void}
  */
-export function forceUpdateMap(map = '{}') {
+export function forceUpdateMap(map = '{}', checkCache = false) {
+    // 校验缓存
+    if (checkCache && map === $mapString) {
+        return;
+    }
+
     const data = JSON.parse(map);
 
     Object
-        .keys(map)
+        .keys($map)
         .forEach((key) => Reflect.deleteProperty($map, key));
 
     Object
         .values(data)
         .forEach((value: MapData) => setPoint(dataClone(value)));
+
+    $mapString = map;
 }
 
 /**

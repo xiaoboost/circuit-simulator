@@ -1,6 +1,7 @@
 import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
+import { delay } from 'src/lib/utils';
 
 import { Required } from 'type-zoo';
 
@@ -123,12 +124,16 @@ class Handlers {
             last = mouse;
 
             // 将回调绑定至异步链条上
-            this.eventsQueue = this.eventsQueue.then(() => {
-                if (!this.exclusion) {
-                    return Promise.resolve();
+            this.eventsQueue = this.eventsQueue.then(async () => {
+                if ($ENV.NODE_ENV === 'development') {
+                    await delay();
                 }
 
-                return fn(event) || Promise.resolve();
+                if (!this.exclusion) {
+                    return;
+                }
+
+                await fn(event);
             });
         };
 

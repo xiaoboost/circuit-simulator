@@ -1,18 +1,14 @@
 import { Point } from 'src/lib/point';
 import { NodeData } from './node-search';
 
-export interface Status {
-    direction: Point;
-}
-
 /**
  * 根据状态生成具体的规则集合
  * @class Rules
  */
 export class Rules {
-    status: Status;
+    status: string;
 
-    constructor(start: Point, end: Point, status: Status) {
+    constructor(start: Point, end: Point, status: string) {
         this.status = status;
     }
 
