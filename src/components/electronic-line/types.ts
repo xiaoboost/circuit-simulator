@@ -1,5 +1,7 @@
+import { WayMap } from './line-way';
 import { Point } from 'src/lib/point';
 import ElectronPart from 'src/components/electronic-part';
+
 import { Omit } from 'type-zoo';
 
 /** 导线数据接口 */
@@ -15,7 +17,6 @@ export interface LineData {
 export interface ExchangeData {
     start: Point;
     end: Point;
-    bias: Point;
     map: string;
     status: string;
     direction: Point;
@@ -23,9 +24,11 @@ export interface ExchangeData {
 
 interface SearchTempData {
     onPart: string | ElectronPart;
+    lastVertex: Point;
+    wayMap: WayMap;
 }
 
 /** 单点搜索参数 */
 export type DrawingOption =
-    Omit<ExchangeData, 'bias' | 'status'> &
+    Omit<ExchangeData, 'status'> &
     { temp: SearchTempData };

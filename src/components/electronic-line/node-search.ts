@@ -1,4 +1,5 @@
 import * as schMap from 'src/lib/map';
+import * as assert from 'src/lib/assertion';
 
 import { Rules } from './rules';
 import { $P, Point } from 'src/lib/point';
@@ -13,7 +14,7 @@ export interface NodeData {
     junction: number;
     straight: boolean;
     parent?: NodeData;
-    cornerParent?: NodeData;
+    cornerParent: NodeData;
 }
 
 interface MapData {
@@ -42,7 +43,6 @@ ctx.addEventListener('message', ({ data }: MessageEvent) => {
     schMap.forceUpdateMap(exchange.map, true);
 
     const result = AStartSearch(exchange);
-
     ctx.postMessage(JSON.stringify(result));
 });
 
@@ -157,7 +157,8 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
         junction: 0,
         value: 0,
         straight: true,
-    };
+    } as any;
+
     // 起点的 cornerParent 等于其自身
     first.cornerParent = first;
     first.value = rules.calValue(first);
@@ -181,22 +182,14 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
             break;
         }
 
-        // 调试用
-        // if ($ENV.NODE_ENV === 'development') {
-        //     rules.insertDebugNode(nodenow.position, 'blue', 20);
-        // }
-
         // 按方向扩展
         for (let i = 0; i < 3; i++) {
             // 生成扩展节点
             const nodeExpand = newNode(nodenow, i);
             nodeExpand.value = rules.calValue(nodeExpand);
 
-            // rules.insertDebugNode(nodeExpand.point, 'black', 20);
-
             // 判断是否是终点
             if (rules.isEnd(nodeExpand)) {
-                // rules.clearDebug();
                 endStatus = nodeExpand;
                 break;
             }
@@ -214,4 +207,19 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
             return ([start]);
         }
     }
+
+    if (!endStatus) {
+        throw new Error('(node search) not found end.');
+    }
+
+    // 终点回溯，生成路径
+    const way = [];
+    while (endStatus.parent && endStatus !== endStatus.cornerParent) {
+        way.push($P(endStatus.position).mul(20));
+        endStatus = endStatus.cornerParent;
+    }
+
+    way.push(start);
+    way.reverse();
+    return (way);
 }

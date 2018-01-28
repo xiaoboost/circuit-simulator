@@ -166,7 +166,6 @@ export function hasPoint(point: PointLike, large = false): boolean {
 
 /**
  * 拿到 Map 中的标记数据
- *  - 如果指定的点没有数据，则会返回 false
  *  - 这里拿到的数据只是副本，直接对这个对象进行操作并不会影响原数据
  *
  * @export
@@ -289,14 +288,14 @@ export function alongTheLine(
     end: PointLike = [Infinity, Infinity],
     vector: PointLike = $P(end, start),
     large: boolean = false,
-) {
+): Point {
     const uVector = $P(vector).sign(),
         sNode = large ? $P(start).mul(0.05) : $P(start),
         eNode = large ? $P(end).mul(0.05) : $P(end);
 
     // 起点并不是导线或者起点等于终点，直接返回
     if (!isLine(sNode) || sNode.isEqual(eNode)) {
-        return (start);
+        return (new Point(start));
     }
 
     let node = sNode, next = node.add(uVector);
