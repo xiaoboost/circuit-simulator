@@ -1,5 +1,5 @@
-import { WayMap } from './line-way';
 import { Point } from 'src/lib/point';
+import { LineWay, WayMap } from './line-way';
 import ElectronPart from 'src/components/electronic-part';
 
 import { Omit } from 'type-zoo';
