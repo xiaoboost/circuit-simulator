@@ -14,6 +14,7 @@ module.exports = {
         'window': true,
         'global': true,
         '$ENV': true,
+        'supportsOnce': true,
         'supportsPassive': true,
     },
     // 自定义规则

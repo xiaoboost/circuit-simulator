@@ -14,10 +14,33 @@ catch (e) {
     }
 }
 
-Object.defineProperty(window, 'supportsPassive', {
-    enumerable: false,
-    writable: false,
-    value: passive,
+// 检测浏览器是否支持 once 监听器
+let once = false;
+try {
+    const opts = Object.defineProperty({}, 'once', {
+        get() {
+            once = true;
+        },
+    });
+    document.body.addEventListener('test', null, opts);
+}
+catch (e) {
+    if ($ENV.NODE_ENV === 'development') {
+        console.log('your computed doesn\'t support once event.');
+    }
+}
+
+Object.defineProperties(window, {
+    supportsPassive: {
+        enumerable: false,
+        writable: false,
+        value: passive,
+    },
+    supportsOnce: {
+        enumerable: false,
+        writable: false,
+        value: once,
+    },
 });
 
 // 网页禁止右键

@@ -52,6 +52,7 @@ declare type WorkerConstructor = {
     new(): Worker;
 }
 
+declare const supportsOnce: boolean;
 declare const supportsPassive: boolean;
 declare const $ENV: Environment;
 declare const $debugger: MapDebug;

@@ -89,16 +89,32 @@ export function delay(time = 0) {
  * @returns {Promise<Event>}
  */
 export function onceEvent(el, type) {
+    let option;
+
+    if (!supportsPassive && !supportsOnce) {
+        option = false;
+    }
+    else {
+        option = {};
+
+        if (supportsPassive) {
+            option.passive = true;
+        }
+        if (supportsOnce) {
+            option.once = true;
+        }
+    }
+
     return new Promise((resolve) => {
         el.addEventListener(
             type,
             function once(event) {
                 resolve(event);
-                el.removeEventListener(type, once);
+                if (!supportsOnce) {
+                    el.removeEventListener(type, once);
+                }
             },
-            supportsPassive
-                ? { passive: true }
-                : false
+            option
         );
     });
 }
