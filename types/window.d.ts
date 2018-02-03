@@ -40,18 +40,6 @@ declare const SVGAnimationElement: {
     new(): SVGAnimationElement;
 };
 
-interface WebpackWorker extends Worker {}
-
-declare const WebpackWorker: {
-    prototype: WebpackWorker;
-    new(): WebpackWorker;
-};
-
-declare type WorkerConstructor = {
-    prototype: Worker;
-    new(): Worker;
-}
-
 declare const supportsOnce: boolean;
 declare const supportsPassive: boolean;
 declare const $ENV: Environment;
