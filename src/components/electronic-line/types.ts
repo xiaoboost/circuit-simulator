@@ -13,6 +13,12 @@ export interface LineData {
     readonly connect: string[];
 }
 
+/** 调试返回的数据格式 */
+export interface DebugData {
+    method: string;
+    args: any[];
+}
+
 /** 导线搜索数据接口 */
 export interface ExchangeData {
     start: Point;
@@ -20,6 +26,7 @@ export interface ExchangeData {
     map: string;
     status: string;
     direction: Point;
+    endBias?: Point;
 }
 
 interface SearchTempData {

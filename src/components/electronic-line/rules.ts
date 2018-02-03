@@ -197,8 +197,8 @@ export class Rules {
             const endData = schMap.getPoint(this.end);
 
             // 终点在导线上
-            if (schMap.isLine(end)) {
-                this.endLines.push(...getSegment(end));
+            if (schMap.isLine(this.end)) {
+                this.endLines.push(...getSegment(this.end));
                 this.isEnd = checkNodeInLineWhenDraw;
                 this.checkPoint = isLegalPointAlign;
             }
@@ -209,7 +209,7 @@ export class Rules {
             }
             // 终点在器件上
             else if (endData && endData.type === 'part') {
-                this.excludeParts.push(getPart(end));
+                this.excludeParts.push(getPart(this.end));
                 this.isEnd = isEndPoint;
                 this.checkPoint = isLegalPointGeneral;
             }

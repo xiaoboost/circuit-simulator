@@ -12,8 +12,6 @@ interface ManagerOption {
 
 /** 进程类 */
 class WorkerProcess {
-    /** 静默定时器 ID */
-    timer: number;
     /** 是否繁忙 */
     isBusy = false;
     /** 进程原始数据 */
@@ -22,6 +20,10 @@ class WorkerProcess {
     manager: ProcessManager;
     /** 每个进程的独立标识符 */
     id = Math.random().toString(36).substring(2);
+    /** 静默定时器 ID */
+    // private timer: number;
+    /** 调试用的回调集合 */
+    private debuggers: Array<(e: MessageEvent) => any> = [];
 
     constructor(manager: ProcessManager, workerConstructor: WorkerConstructor) {
         this.manager = manager;
@@ -30,18 +32,68 @@ class WorkerProcess {
 
     /** 对子进程发起请求 */
     async post<T>(...args: any[]): Promise<T> {
-        this.isBusy = true;
-        this.worker.postMessage(JSON.stringify(args));
+        const _this = this;
+        type response = workerApi.Response<T>;
 
-        const result = await onceEvent(this.worker, 'message');
+        _this.worker.postMessage(args);
+        _this.isBusy = true;
+
+        let result: response;
+        if ($ENV.NODE_ENV === 'development') {
+            result = await (new Promise<response>((resolve) => {
+                _this.worker.addEventListener(
+                    'message',
+                    function messageEvent(event: MessageEvent) {
+                        const data = event.data as response;
+
+                        if (data.code === 'finish') {
+                            _this.worker.removeEventListener('message', messageEvent);
+                            resolve(data);
+                        }
+                    },
+                    supportsPassive
+                        ? { passive: true }
+                        : false,
+                );
+            }));
+        }
+        else {
+            result = (await onceEvent(this.worker, 'message')).data as response;
+        }
 
         this.isBusy = false;
-        return result.data as T;
+        return result.result;
     }
     /** 销毁当前子进程 */
     destroy() {
+        this.debuggers.forEach(
+            (callback) =>
+                this.worker.removeEventListener('message', callback),
+        );
+
         this.worker.terminate();
         this.manager.deleteProcess(this.id);
+    }
+    /** 调试用的对外接口 */
+    onDebug<T>(callback: (e: T) => any) {
+        // 内部函数封装
+        function inner(event: MessageEvent) {
+            const data = event.data as workerApi.Response<T>;
+            if (data.code === 'debug') {
+                callback(data.result);
+            }
+        }
+
+        // 绑定调试事件
+        this.worker.addEventListener(
+            'message',
+            inner,
+            supportsPassive
+                ? { passive: true }
+                : false,
+        );
+
+        this.debuggers.push(inner);
     }
 }
 

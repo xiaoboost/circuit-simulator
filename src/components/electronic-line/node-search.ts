@@ -34,17 +34,23 @@ const ctx: Worker = self as any;
 
 // 外部对内通信的接口
 ctx.addEventListener('message', ({ data }: MessageEvent) => {
-    const exchange: ExchangeData = JSON.parse(data)[0];
+    const exchange: ExchangeData = data[0];
 
     exchange.start = $P(exchange.start);
     exchange.end = $P(exchange.end);
     exchange.direction = $P(exchange.direction);
+    exchange.endBias = exchange.endBias ? $P(exchange.endBias) : $P();
 
     schMap.forceUpdateMap(exchange.map, true);
 
     const result = AStartSearch(exchange);
-    ctx.postMessage(JSON.stringify(result));
+    ctx.postMessage(result);
 });
+
+/** 调试时对外通信 */
+function debug(args: { method: string; args?: any }) {
+    true && ctx.postMessage({ code: 'debug', result: args });
+}
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
@@ -145,10 +151,14 @@ function newNode(node: NodeData, index: number): NodeData {
     };
 }
 
-function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map'>) {
+function AStartSearch({ start, end, status, direction: originDirection, endBias = $P() }: Omit<ExchangeData, 'map'>) {
     const map = new SearchMap();
     const stack = new SearchStack(map);
     const rules = new Rules(start, end, status);
+
+    // 方向偏移
+    const sumDirection = endBias.add(start, -1).toUnit().add(originDirection);
+    const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1]) ? $P(1, 0) : $P(0, 1);
 
     // 生成初始节点
     const first: NodeData = {
@@ -172,6 +182,7 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
         endStatus = first;
     }
 
+    debugger;
     // A*搜索，搜索极限为 300
     while (!endStatus && (stack.closeSize < 300)) {
         // 栈顶元素弹出为当前结点
@@ -180,6 +191,12 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
         // 未处理的节点为空，终点无法达到
         if (!nodenow) {
             break;
+        }
+        debugger;
+
+        // 调试用，插入当前节点，黑色
+        if ($ENV.NODE_ENV === 'development') {
+            debug({ method: 'point', args: [nodenow.position.mul(20), 'black'] });
         }
 
         // 按方向扩展
@@ -210,6 +227,11 @@ function AStartSearch({ start, end, status, direction }: Omit<ExchangeData, 'map
 
     if (!endStatus) {
         throw new Error('(node search) not found end.');
+    }
+
+    // 调试用，清除所有节点
+    if ($ENV.NODE_ENV === 'development') {
+        debug({ method: 'clearAll' });
     }
 
     // 终点回溯，生成路径
