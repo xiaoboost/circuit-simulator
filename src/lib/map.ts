@@ -2,7 +2,7 @@ import * as utils from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
 import { $P, Point, PointLike } from 'src/lib/point';
 
-export interface MapData {
+export interface MapPointData {
     /**
      * 当前点属于哪个器件
      *
@@ -31,12 +31,16 @@ export interface MapData {
     connect?: Point[];
 }
 
+export interface MapData {
+    [key: string]: MapPointData;
+}
+
 /**
  * 图纸标记缓存
  *  - key 是使用小坐标转换而来的，而内部数据中的 point 则是实际坐标，这点区别必须要注意
  *  - 之所以这么设计，是考虑到
  */
-const $map: { [key: string]: MapData } = {};
+const $map: MapData = {};
 
 /** 用于缓存强制更新的 string 数据 */
 let $mapString = '';
@@ -53,10 +57,10 @@ function point2key(node: PointLike): string {
 
 /**
  * 返回地图标记数据的副本
- * @param {MapData} data
- * @returns {MapData}
+ * @param {MapPointData} data
+ * @returns {MapPointData}
  */
-function dataClone(data: MapData): MapData {
+function dataClone(data: MapPointData): MapPointData {
     const mustKeys = ['id', 'point', 'type', 'connect'];
     const ans = utils.clone(data);
 
@@ -90,7 +94,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
         return;
     }
 
-    const data = JSON.parse(map);
+    const data = JSON.parse(map) as MapData;
 
     Object
         .keys($map)
@@ -98,7 +102,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
 
     Object
         .values(data)
-        .forEach((value: MapData) => setPoint(dataClone(value)));
+        .forEach((value: MapPointData) => setPoint(dataClone(value)));
 
     $mapString = map;
 }
@@ -109,10 +113,10 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
  *  - 如果指定点已经有数据，那么当前数据会直接覆盖它
  *
  * @export
- * @param {MapData} data
+ * @param {MapPointData} data
  * @param {boolean} [large=false]
  */
-export function setPoint(data: MapData, large = false): void {
+export function setPoint(data: MapPointData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : $P(data.point));
     $map[point2key(data.point)] = dataClone(data);
 }
@@ -127,10 +131,10 @@ export function setPoint(data: MapData, large = false): void {
  *    - connect 将会取两者的并集
  *
  * @export
- * @param {MapData} data
+ * @param {MapPointData} data
  * @param {boolean} [large=false]
  */
-export function mergePoint(data: MapData, large = false): void {
+export function mergePoint(data: MapPointData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : $P(data.point));
 
     const key = point2key(data.point);
@@ -171,9 +175,9 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @export
  * @param {PointLike} point
  * @param {boolean} [large=false]
- * @returns {(MapData | false)}
+ * @returns {(MapPointData | false)}
  */
-export function getPoint(point: PointLike, large = false): MapData | undefined {
+export function getPoint(point: PointLike, large = false): MapPointData | undefined {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
     const data = $map[point2key(node)];
 
@@ -270,7 +274,9 @@ export function deleteConnect(point: PointLike, connect: PointLike, large = fals
  */
 export function isLine(point: PointLike, large = false) {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : point) as Point;
-    return /^(line|cross-point|cover-point)$/.test($map[point2key(node)].type);
+
+    const data = $map[point2key(node)];
+    return (data && /^(line|cross-point|cover-point)$/.test(data.type));
 }
 
 /**

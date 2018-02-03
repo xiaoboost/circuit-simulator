@@ -96,7 +96,7 @@ class MapDebug {
         });
         count++;
 
-        const data = JSON.parse(outputMap()) as { [x: string]: MapData };
+        const data = JSON.parse(outputMap()) as MapData;
 
         Object.values(data).forEach((status) => {
             const point = $P(status.point);
