@@ -122,7 +122,7 @@ export default class ElectronicLine extends DrawLine implements LineData {
 
     /** 将当前组件数据更新数据至 vuex */
     update() {
-        const keys = ['id', 'way', 'connect'];
+        const keys = ['id', 'way', 'hash', 'connect'];
 
         this.$store.commit(
             'UPDATE_LINE',
