@@ -51,8 +51,14 @@ export default class ElectronicLine extends DrawLine implements LineData {
     readonly hash: string;
 
     id: string;
-    connect: string[];
 
+    // 编译前的初始化
+    constructor() {
+        super();
+
+        this.id = this.value.id;
+        this.hash = this.value.hash;
+    }
     created() {
         this.init();
 
@@ -65,9 +71,11 @@ export default class ElectronicLine extends DrawLine implements LineData {
         }
     }
 
+    /** 当前导线是否高亮 */
     private get focus(): boolean {
         return this.mapStatus.linesNow.includes(this.id);
     }
+    /** 导线的两个节点属性 */
     private get points() {
         return Array(2).fill(false).map((u, i) => ({
             position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
@@ -78,15 +86,38 @@ export default class ElectronicLine extends DrawLine implements LineData {
             },
         }));
     }
+    /** 路径转为 path 字符串 */
+    private get way2path() {
+        return !this.way.length ? ''　: 'M' + this.way.map((n) => n.join(',')).join('L');
+    }
+    /** 路径转为 rect 坐标 */
+    private get pathRects() {
+        const ans = [], wide = 14;
+
+        for (let i = 0; i < this.way.length - 1; i++) {
+            const start = this.way[i], end = this.way[i + 1];
+            const left = Math.min(start[0], end[0]);
+            const top = Math.min(start[1], end[1]);
+            const right = Math.max(start[0], end[0]);
+            const bottom = Math.max(start[1], end[1]);
+
+            ans.push({
+                x: left - wide / 2,
+                y: top - wide / 2,
+                height: (left === right) ? bottom - top + wide　: wide,
+                width: (left === right) ? wide : right - left + wide,
+            });
+        }
+
+        return ans;
+    }
 
     /** 器件属性同步 */
     @Watch('value')
     private init() {
         const data = this.value;
-
-        this.id = data.id;
-        this.connect = data.connect.slice();
         this.way = new LineWay(data.way);
+        this.connect = data.connect.slice();
     }
 
     /** 将当前组件数据更新数据至 vuex */

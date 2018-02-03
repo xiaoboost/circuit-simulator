@@ -7,37 +7,39 @@ import ProcessManager from 'src/lib/process';
 import { Component, Vue, Inject } from 'vue-property-decorator';
 
 import {
-    LineData,
     ExchangeData,
     DrawingOption,
+    DebugData,
 } from './types';
 
 import {
     FindPart,
     FindLine,
     SetDrawEvent,
-    DrawEvent,
     MapStatus,
 } from 'src/components/drawing-main';
-
-// 格式化返回的数据
-function process2Data(data: string): LineWay {
-    const points = JSON.parse(data) as Point[];
-    return new LineWay(points);
-}
 
 // 导线搜索进程管理器
 const Manager = new ProcessManager(Search);
 
 async function nodeSearch(option: ExchangeData): Promise<LineWay> {
     const search = await Manager.getIdleProcess();
-    const result = await search.post<string>(option);
-    return process2Data(result);
+
+    if ($ENV.NODE_ENV === 'development') {
+        search.onDebug(({ method, args = [] }: DebugData) => {
+            const call = $debugger[method] as () => void;
+            call.call($debugger, ...args);
+        });
+    }
+
+    const result = await search.post<Point[]>(option);
+    return (new LineWay(result));
 }
 
 @Component
 export default class DrawLine extends Vue {
     way: LineWay = new LineWay();
+    connect: string[] = [];
     pointSize: number[] = [-1, -1];
 
     /** 设置图纸事件 */
@@ -53,30 +55,10 @@ export default class DrawLine extends Vue {
     @Inject()
     protected readonly mapStatus: MapStatus;
 
-    /** 路径转为 path 字符串 */
-    private get way2path() {
-        return !this.way.length ? ''　: 'M' + this.way.map((n) => n.join(',')).join('L');
-    }
-    /** 路径转为 rect 坐标 */
-    private get pathRects() {
-        const ans = [], wide = 14;
-
-        for (let i = 0; i < this.way.length - 1; i++) {
-            const start = this.way[i], end = this.way[i + 1];
-            const left = Math.min(start[0], end[0]);
-            const top = Math.min(start[1], end[1]);
-            const right = Math.max(start[0], end[0]);
-            const bottom = Math.max(start[1], end[1]);
-
-            ans.push({
-                x: left - wide / 2,
-                y: top - wide / 2,
-                height: (left === right) ? bottom - top + wide　: wide,
-                width: (left === right) ? wide : right - left + wide,
-            });
-        }
-
-        return ans;
+    // 导线反转
+    reverse() {
+        this.way.reverse();
+        this.connect.reverse();
     }
 
     // 绘制导线
@@ -101,7 +83,9 @@ export default class DrawLine extends Vue {
                 endGrid
                     .filter((node) => !wayMap.has(node))
                     .map(async (node) => wayMap.set(node, await nodeSearch({
-                        start, end, direction, map,
+                        start, direction, map,
+                        end: node,
+                        endBias: endGrid[0].add(10),
                         status: 'drawing',
                     }))),
             );
@@ -116,10 +100,5 @@ export default class DrawLine extends Vue {
 
         this.way = new LineWay(wayMap.get(key)!);
         this.way.endToPoint(end);
-    }
-    // 导线反转
-    reverse() {
-        this.way.reverse();
-        this.connect.reverse();
     }
 }
