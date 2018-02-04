@@ -9,7 +9,6 @@ import { Component, Vue, Inject } from 'vue-property-decorator';
 import {
     ExchangeData,
     DrawingOption,
-    DebugData,
 } from './types';
 
 import {
@@ -24,14 +23,6 @@ const Manager = new ProcessManager(Search);
 
 async function nodeSearch(option: ExchangeData): Promise<LineWay> {
     const search = await Manager.getIdleProcess();
-
-    if ($ENV.NODE_ENV === 'development') {
-        search.onDebug(({ method, args = [] }: DebugData) => {
-            const call = $debugger[method] as () => void;
-            call.call($debugger, ...args);
-        });
-    }
-
     const result = await search.post<Point[]>(option);
     return (new LineWay(result));
 }
@@ -78,6 +69,7 @@ export default class DrawLine extends Vue {
             temp.lastVertex = vertex;
             // 由缓存中扩展四顶点路径
             wayMap.expend(endGrid);
+            debugger;
             // 搜索四顶点路径
             await Promise.all(
                 endGrid
@@ -99,6 +91,6 @@ export default class DrawLine extends Vue {
         );
 
         this.way = new LineWay(wayMap.get(key)!);
-        this.way.endToPoint(end);
+        // this.way.endToPoint(end);
     }
 }

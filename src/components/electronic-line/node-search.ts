@@ -44,13 +44,8 @@ ctx.addEventListener('message', ({ data }: MessageEvent) => {
     schMap.forceUpdateMap(exchange.map, true);
 
     const result = AStartSearch(exchange);
-    ctx.postMessage(result);
+    ctx.postMessage({ code: 'finish', result });
 });
-
-/** 调试时对外通信 */
-function debug(args: { method: string; args?: any }) {
-    true && ctx.postMessage({ code: 'debug', result: args });
-}
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
@@ -182,7 +177,6 @@ function AStartSearch({ start, end, status, direction: originDirection, endBias 
         endStatus = first;
     }
 
-    debugger;
     // A*搜索，搜索极限为 300
     while (!endStatus && (stack.closeSize < 300)) {
         // 栈顶元素弹出为当前结点
@@ -191,12 +185,6 @@ function AStartSearch({ start, end, status, direction: originDirection, endBias 
         // 未处理的节点为空，终点无法达到
         if (!nodenow) {
             break;
-        }
-        debugger;
-
-        // 调试用，插入当前节点，黑色
-        if ($ENV.NODE_ENV === 'development') {
-            debug({ method: 'point', args: [nodenow.position.mul(20), 'black'] });
         }
 
         // 按方向扩展
@@ -227,11 +215,6 @@ function AStartSearch({ start, end, status, direction: originDirection, endBias 
 
     if (!endStatus) {
         throw new Error('(node search) not found end.');
-    }
-
-    // 调试用，清除所有节点
-    if ($ENV.NODE_ENV === 'development') {
-        debug({ method: 'clearAll' });
     }
 
     // 终点回溯，生成路径

@@ -23,7 +23,7 @@ class WorkerProcess {
     /** 静默定时器 ID */
     // private timer: number;
     /** 调试用的回调集合 */
-    private debuggers: Array<(e: MessageEvent) => any> = [];
+    // private debuggers: Array<(e: MessageEvent) => any> = [];
 
     constructor(manager: ProcessManager, workerConstructor: WorkerConstructor) {
         this.manager = manager;
@@ -32,69 +32,28 @@ class WorkerProcess {
 
     /** 对子进程发起请求 */
     async post<T>(...args: any[]): Promise<T> {
-        const _this = this;
-        type response = workerApi.Response<T>;
+        this.isBusy = true;
+        this.worker.postMessage(args);
 
-        _this.worker.postMessage(args);
-        _this.isBusy = true;
-
-        let result: response;
-        if ($ENV.NODE_ENV === 'development') {
-            result = await (new Promise<response>((resolve) => {
-                _this.worker.addEventListener(
-                    'message',
-                    function messageEvent(event: MessageEvent) {
-                        const data = event.data as response;
-
-                        if (data.code === 'finish') {
-                            _this.worker.removeEventListener('message', messageEvent);
-                            resolve(data);
-                        }
-                    },
-                    supportsPassive
-                        ? { passive: true }
-                        : false,
-                );
-            }));
-        }
-        else {
-            result = (await onceEvent(this.worker, 'message')).data as response;
-        }
+        const data = await onceEvent(this.worker, 'message');
+        const response = data.data as workerApi.Response<T>;
 
         this.isBusy = false;
-        return result.result;
+        return response.result;
     }
     /** 销毁当前子进程 */
     destroy() {
-        this.debuggers.forEach(
-            (callback) =>
-                this.worker.removeEventListener('message', callback),
-        );
+        // this.debuggers.forEach(
+        //     (callback) =>
+        //         this.worker.removeEventListener('message', callback),
+        // );
 
         this.worker.terminate();
         this.manager.deleteProcess(this.id);
     }
     /** 调试用的对外接口 */
-    onDebug<T>(callback: (e: T) => any) {
-        // 内部函数封装
-        function inner(event: MessageEvent) {
-            const data = event.data as workerApi.Response<T>;
-            if (data.code === 'debug') {
-                callback(data.result);
-            }
-        }
-
-        // 绑定调试事件
-        this.worker.addEventListener(
-            'message',
-            inner,
-            supportsPassive
-                ? { passive: true }
-                : false,
-        );
-
-        this.debuggers.push(inner);
-    }
+    // onDebug<T>(callback: (e: T) => any) {
+    // }
 }
 
 /** 进程管理器 */
@@ -138,7 +97,7 @@ export default class ProcessManager {
         }
 
         // 进程池已满
-        // 给所有进程挂上一次性的钩子
+        // 等待进程空闲
         const wait = async () => {
             const event = await Promise.race(
                 this.pool.map(
