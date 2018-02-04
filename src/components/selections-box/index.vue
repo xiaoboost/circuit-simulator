@@ -6,7 +6,7 @@
 </transition>
 </template>
 
-<script>
+<script lang="ts">
 import { $P } from 'src/lib/point';
 
 export default {
