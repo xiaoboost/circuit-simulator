@@ -62,6 +62,7 @@ export function isFunction(x: any): x is Function {
 
 /**
  * 断言：输入是否是严格意义上的对象
+ *  - 自定义类也包含在这其中
  *  - 不包括 Array、Function、Promise 等内建类的实例以及它们继承类的实例
  *
  * @param {*} x
@@ -138,24 +139,4 @@ export function isBaseTypeExNull(x: any): x is number | string | boolean | symbo
     return (
         isBaseType(x) && !isNull(x)
     );
-}
-
-/**
- * 断言：输入事件是否是鼠标事件
- *
- * @param {Event} e
- * @returns {x is MouseEvent}
- */
-export function isMouseEvent(e: Event): e is MouseEvent {
-    return (/(mouse|click)/i.test(e.type));
-}
-
-/**
- * 断言：输入事件是否是键盘事件
- *
- * @param {Event} e
- * @returns {x is MouseEvent}
- */
-export function isKeyboardEvent(e: Event): e is KeyboardEvent {
-    return (/^key/i.test(e.type));
 }
