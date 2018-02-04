@@ -9,6 +9,6 @@ yarn-debug.log*
 yarn-error.log*
 .vscode/launch.json
 selenium-debug.log
-src/*/*/*-old.*
+src/**/*-old.*
 test/*-old
 test/coverage
