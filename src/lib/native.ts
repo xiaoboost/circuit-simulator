@@ -4,16 +4,14 @@ import * as assert from './assertion';
 
 /** 原生属性扩展 */
 function nativeExpand(native: Function | Object, props: { [key: string]: any }) {
-    for (const key in props) {
-        if (props.hasOwnProperty(key)) {
-            const method = props[key];
-            props[key] = {
-                enumerable: false,
-                writable: false,
-                value: method,
-            };
-        }
-    }
+    Object.keys(props).forEach((key) => {
+        const method = props[key];
+        props[key] = {
+            enumerable: false,
+            writable: false,
+            value: method,
+        };
+    });
 
     Object.defineProperties(native, props);
 }
@@ -84,30 +82,37 @@ nativeExpand(Array.prototype, {
     },
 
     /**
-     * 删除满足条件的第一个元素
-     *  - predicate 为函数时，删除 predicate 返回 true 的第一个元素
-     *  - predicate 为非函数时，删除与 predicate 严格相等的第一个元素
+     * 删除满足条件的元素
+     *  - predicate 为函数时，删除 predicate 返回 true 的元素
+     *  - predicate 为非函数时，删除与 predicate 严格相等的元素
+     *  - 当 whole 为 false 时，只删除匹配到的第一个元素；为 true 时，删除所有匹配到的元素
      *
      * @template T
      * @param {T[]} this
      * @param {(T | ((value: T, index: number) => boolean))} predicate
+     * @param {boolean} [whole=true]
      * @returns {boolean}
      */
-    delete<T>(this: T[], predicate: T | ((value: T, index: number) => boolean)): boolean {
+    delete<T>(this: T[], predicate: T | ((value: T, index: number) => boolean), whole = true): boolean {
         const fn = (
             assert.isFunction(predicate)
                 ? predicate
                 : (item: T) => item === predicate
         );
 
-        const index = this.findIndex(fn);
-
-        if (index !== -1) {
-            this.splice(index, 1);
-            return (true);
-        } else {
-            return (false);
+        let index = 0, flag = false;
+        while (index >= 0) {
+            index = this.findIndex(fn);
+            if (index !== -1) {
+                this.splice(index, 1);
+                flag = true;
+            }
+            if (!whole) {
+                break;
+            }
         }
+
+        return flag;
     },
 
     /**
@@ -153,7 +158,7 @@ nativeExpand(Number, {
      * @returns {number}
      */
     scientificCountParser(notation: string): number {
-        if (Number.SCIENTIFIC_COUNT_MATCH.test(notation)) {
+        if (!Number.SCIENTIFIC_COUNT_MATCH.test(notation)) {
             return NaN;
         }
         else if (/[eE]/.test(notation)) {
@@ -185,7 +190,7 @@ nativeExpand(Number.prototype, {
         const origin = this.valueOf();
 
         if (Number.isNaN(origin)) {
-            throw new Error('Illegal Number');
+            throw new Error('(number) cannot run .toRound() on NaN');
         }
 
         const value = Math.abs(origin),
@@ -218,7 +223,7 @@ nativeExpand(Number.prototype, {
         const value = Math.abs(this.valueOf());
 
         if (Number.isNaN(value)) {
-            throw new Error('Illegal Number');
+            throw new Error('(number) cannot run .rank() on NaN');
         }
 
         return Math.floor(Math.log10(value));

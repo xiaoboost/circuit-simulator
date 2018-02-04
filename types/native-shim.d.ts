@@ -35,12 +35,12 @@ interface Array<T> {
      *  - predicate 为函数时，删除 predicate 返回 true 的第一个元素
      *  - predicate 为非函数时，删除与 predicate 严格相等的第一个元素
      *
-     * @template T
-     * @param {T[]} this
-     * @param {(T | ((value: T, index: number) => boolean))} predicate
-     * @returns {boolean}
+     * @param {(T | ((value: T, index: number) => boolean))} predicate 
+     * @param {boolean} [whole] 
+     * @returns {boolean} 
+     * @memberof Array
      */
-    delete<T>(this: T[], predicate: T | ((value: T, index: number) => boolean)): boolean;
+    delete(predicate: T | ((value: T, index: number) => boolean), whole?: boolean): boolean;
     /**
      * 数组去重
      *  - 如果没有输入 label 函数，则对数组元素直接去重
