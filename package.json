@@ -6,9 +6,7 @@
   "scripts": {
     "dev": "node build/webpack.dev.js",
     "build": "node build/webpack.prod.js",
-    "unit": "cross-env karma start test/unit/karma.conf.js --single-run",
-    "e2e": "node test/e2e/runner.js",
-    "test": "npm run unit && npm run e2e"
+    "test": "jest --config test/jest.conf.js --coverage"
   },
   "dependencies": {
     "vue": "^2.5.13",
@@ -21,6 +19,7 @@
     "@types/copy-webpack-plugin": "^4.0.1",
     "@types/extract-text-webpack-plugin": "^3.0.0",
     "@types/html-webpack-plugin": "^2.30.1",
+    "@types/jest": "^22.1.1",
     "@types/koa": "^2.0.43",
     "@types/koa-static": "^4.0.0",
     "@types/node": "^9.4.0",
@@ -39,6 +38,8 @@
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
     "inject-loader": "^3.0.1",
+    "jest": "^22.1.4",
+    "jest-serializer-vue": "^0.3.0",
     "koa": "^2.4.1",
     "koa-static": "^4.0.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
@@ -46,6 +47,7 @@
     "shelljs": "^0.8.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "ts-jest": "^22.0.3",
     "ts-loader": "^3.4.0",
     "tslint": "^5.9.1",
     "tslint-loader": "^3.5.3",
@@ -54,6 +56,7 @@
     "uglify-es": "^3.3.9",
     "uglifyjs-webpack-plugin": "^1.1.8",
     "url-loader": "^0.6.2",
+    "vue-jest": "^2.0.0",
     "vue-loader": "^14.1.1",
     "vue-style-loader": "^3.1.2",
     "vue-template-compiler": "^2.5.13",
