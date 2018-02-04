@@ -1,35 +1,10 @@
-interface ObjectConstructor {
-    /**
-     * 输入对象是否含有可枚举元素
-     *
-     * @param {object} from
-     * @returns {boolean}
-     */
-    isEmpty(from: object): boolean;
-    /**
-     * 将输入对象的所有可枚举属性全部隐藏
-     *
-     * @param {object} from
-     * @returns {boolean}
-     */
-    hideAll(from: object): void;
-    /**
-     * 将输入对象以及下属所有对象全部冻结
-     *
-     * @param {*} from
-     * @returns {boolean}
-     */
-    freezeAll(from: any): boolean;
-    /**
-     * 将输入对象以及下属所有对象全部封闭
-     *
-     * @param {*} from
-     * @returns {boolean}
-     */
-    sealAll(from: any): boolean;
-}
-
 interface Object {
+    /**
+     * 当前对象是否含有可枚举元素
+     *
+     * @returns {boolean}
+     */
+    isEmpty(): boolean;
     /**
      * 当前对象实例与输入对象是否相等
      *

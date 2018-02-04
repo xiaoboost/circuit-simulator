@@ -1,65 +1,31 @@
+/* tslint:disable:ban-types  */
+
 import * as assert from './assertion';
 
-Object.assign(Object, {
-    /**
-     * 输入对象是否含有可枚举元素
-     *
-     * @param {object} from
-     * @returns {boolean}
-     */
-    isEmpty: (from: {}) => Object.keys(from).length === 0,
-    /**
-     * 将输入对象的所有可枚举属性全部隐藏
-     *
-     * @param {object} from
-     * @returns {boolean}
-     */
-    hideAll: (obj: {}): void => Object.keys(obj).forEach((key) => {
-        Object.defineProperty(obj, key, {
-            configurable: false,
-            enumerable: false,
-        });
-    }),
-    /**
-     * 将输入对象以及下属所有对象全部冻结
-     *
-     * @param {*} from
-     * @returns {boolean}
-     */
-    freezeAll(obj: any): boolean {
-        if (!assert.isObject(obj)) {
-            return (false);
+/** 原生属性扩展 */
+function nativeExpand(native: Function | Object, props: { [key: string]: any }) {
+    for (const key in props) {
+        if (props.hasOwnProperty(key)) {
+            const method = props[key];
+            props[key] = {
+                enumerable: false,
+                writable: false,
+                value: method,
+            };
         }
+    }
 
-        Object.keys(obj).forEach((key) => Object.freezeAll(obj[key]));
-        Object.freeze(obj);
-        return (true);
+    Object.defineProperties(native, props);
+}
+
+nativeExpand(Object.prototype, {
+    /** 当前对象是否为空 */
+    isEmpty(this: Object): boolean {
+        return Object.keys(this).length === 0;
     },
-    /**
-     * 将输入对象以及下属所有对象全部封闭
-     *
-     * @param {*} from
-     * @returns {boolean}
-     */
-    sealAll(obj: any): boolean {
-        if (!assert.isObject(obj)) {
-            return (false);
-        }
 
-        Object.keys(obj).forEach((key) => Object.sealAll(obj[key]));
-        Object.seal(obj);
-        return (true);
-    },
-});
-
-Object.assign(Object.prototype, {
-    /**
-     * 当前对象实例与输入对象是否相等
-     *
-     * @param {*} obj
-     * @returns {boolean}
-     */
-    isEqual(this: {}, obj: {}) {
+    /** 比较对象是否相等 */
+    isEqual(this: Object, obj: Object): boolean {
         if (!assert.isObject(obj)) {
             return (false);
         }
@@ -76,7 +42,7 @@ Object.assign(Object.prototype, {
     },
 });
 
-Object.assign(Array.prototype, {
+nativeExpand(Array.prototype, {
     /**
      * 当前数组与输入是否相等
      *
@@ -98,6 +64,7 @@ Object.assign(Array.prototype, {
                     : item === to[i],
         );
     },
+
     /**
      * 根据下标取出当前数组元素
      *
@@ -115,6 +82,7 @@ Object.assign(Array.prototype, {
 
         return this[sub];
     },
+
     /**
      * 删除满足条件的第一个元素
      *  - predicate 为函数时，删除 predicate 返回 true 的第一个元素
@@ -141,6 +109,7 @@ Object.assign(Array.prototype, {
             return (false);
         }
     },
+
     /**
      * 数组去重
      *  - 如果没有输入 label 函数，则对数组元素直接去重
@@ -162,7 +131,8 @@ Object.assign(Array.prototype, {
             .filter(({ key }) => (labelMap[key] ? false : (labelMap[key] = true)))
             .map(({ value }) => value);
     },
-    // 用于 vue 数组的元素赋值
+
+    /** 用于 vue 数组的元素赋值 */
     $set<T>(this: T[], i: number, item: T): void {
         if (this[i] !== item) {
             this.splice(i, 1, item);
@@ -170,11 +140,12 @@ Object.assign(Array.prototype, {
     },
 });
 
-Object.assign(Number, {
+nativeExpand(Number, {
     /**
      * 用于匹配科学记数法表示的字符串
      */
     SCIENTIFIC_COUNT_MATCH: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
+
     /**
      * 将用科学记数法的字符串转换为对应的数字
      *
@@ -202,7 +173,7 @@ Object.assign(Number, {
     },
 });
 
-Object.assign(Number.prototype, {
+nativeExpand(Number.prototype, {
     /**
      * 按照有效数字的位数进行四舍五入。
      *  - 默认 6 位有效数字 [bits=6]
@@ -237,6 +208,7 @@ Object.assign(Number.prototype, {
 
         return Number.parseFloat(sign + str);
     },
+
     /**
      * 求数字的数量级
      *
@@ -252,11 +224,3 @@ Object.assign(Number.prototype, {
         return Math.floor(Math.log10(value));
     },
 });
-
-// 隐藏所有扩展的原生属性
-Object.hideAll(Array);
-Object.hideAll(Object);
-Object.hideAll(Object.prototype);
-Object.hideAll(Array.prototype);
-Object.hideAll(Number.prototype);
-Object.hideAll(String.prototype);
