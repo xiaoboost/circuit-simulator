@@ -1,3 +1,4 @@
+import '../extend';
 import 'src/lib/native';
 
 const example = '{"status":0,"data":[{"user":{"name":"name1","url":"url1","avatarUrl":"avatarUrl1"},"url":"url1","title":"title1","startWord":"startWord1","joinedUsers":"1"},{"user":{"name":"name2","url":"url2","avatarUrl":"avatarUrl2"},"url":"url2","title":"title2","startWord":"startWord2","joinedUsers":"2"},{"user":{"name":"name3","url":"url3","avatarUrl":"avatarUrl3"},"url":"ur3","title":"title3","startWord":"startWord3","joinedUsers":"3"},{"user":{"name":"name4","url":"url4","avatarUrl":"avatarUrl4"},"url":"url4","title":"title4","startWord":"startWord4","joinedUsers":"4"}]}';
@@ -75,31 +76,29 @@ describe('native.ts: extend native data types', () => {
             result = arr.delete((item) => Math.floor(item / 2) === item / 2);
 
             expect(result).toEqual(true);
-            expect(arr.isEqual([1, 3, 5, 7, 9])).toEqual(true);
+            expect(arr).toEqualArray([1, 3, 5, 7, 9]);
 
             result = arr.delete(3);
 
             expect(result).toEqual(true);
-            expect(arr.isEqual([1, 5, 7, 9])).toEqual(true);
+            expect(arr).toEqualArray([1, 5, 7, 9]);
 
             result = arr.delete((item) => Math.floor(item / 2) !== item / 2, false);
 
             expect(result).toEqual(true);
-            expect(arr.isEqual([5, 7, 9])).toEqual(true);
+            expect(arr).toEqualArray([5, 7, 9]);
 
             result = arr.delete(1);
 
             expect(result).toEqual(false);
-            expect(arr.isEqual([5, 7, 9])).toEqual(true);
+            expect(arr).toEqualArray([5, 7, 9]);
         });
         it('Array.prototype.unique()', () => {
             const arr1 = [0, 0, 2, 1, 4, 2, 6, 8, 8, 4].unique();
-            const result1 = [0, 1, 2, 4, 8, 6];
-            expect(arr1.every((num) => result1.includes(num))).toEqual(true);
+            expect(arr1).toEqualArray([0, 2, 1, 4, 6, 8]);
 
             const arr2 = [0, 1, 2, 3, 4, 5, 6].unique((value) => value < 4 ? 4 : value);
-            const result2 = [0, 5, 6];
-            expect(arr2.every((num) => result2.includes(num))).toEqual(true);
+            expect(arr2).toEqualArray([0, 5, 6]);
         });
         it('Array.prototype.$set()', () => {
             const arr = [0, 1, 2, 3, 4];
@@ -107,7 +106,7 @@ describe('native.ts: extend native data types', () => {
             arr.$set(1, 1);
             arr.$set(3, 10);
 
-            expect(arr.isEqual([0, 1, 2, 10, 4])).toEqual(true);
+            expect(arr).toEqualArray([0, 1, 2, 10, 4]);
         });
     });
     describe('Number', () => {

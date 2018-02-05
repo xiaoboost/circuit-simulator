@@ -1,5 +1,7 @@
 /* tslint:disable:prefer-for-of  */
 
+import chalk from 'chalk';
+
 function arrayJoin(arr: any[] | ArrayLike<any>) {
     let ans = '';
 
@@ -7,7 +9,7 @@ function arrayJoin(arr: any[] | ArrayLike<any>) {
         ans += arr[i] + ', ';
     }
 
-    return ans.slice(0, ans.length - 2);
+    return `[${ans.slice(0, ans.length - 2)}]`;
 }
 
 function predicate(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike<any>) {
@@ -27,13 +29,13 @@ function predicate(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike
 export default function toEqualArray(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike<any>) {
     if (predicate(received, argument)) {
         return {
-            message: () => `expected [${arrayJoin(received)}] is equal to [${arrayJoin(argument)}]`,
+            message: () => `${chalk.yellow(arrayJoin(received))}] is equal to ${chalk.green(arrayJoin(argument))}`,
             pass: true,
         };
     }
     else {
         return {
-            message: () => `expected [${arrayJoin(received)}] is not equal to [${arrayJoin(argument)}]`,
+            message: () => `Expected value to equal:\n ${chalk.green(arrayJoin(argument))}\nReceived:\n ${chalk.red(arrayJoin(received))}\n`,
             pass: false,
         };
     }
