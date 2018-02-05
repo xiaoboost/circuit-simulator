@@ -20,7 +20,7 @@ interface Example {
 
 describe('native.ts: extend native data types', () => {
     describe('Object', () => {
-        it('Object.prototype.isEmpty()', () => {
+        test('Object.prototype.isEmpty()', () => {
             const empty = {}, unempty = { key: 1 };
 
             expect(empty.isEmpty()).toEqual(true);
@@ -32,7 +32,7 @@ describe('native.ts: extend native data types', () => {
 
             expect(unempty.isEmpty()).toEqual(true);
         });
-        it('Object.prototype.isEqual()', () => {
+        test('Object.prototype.isEqual()', () => {
             const example1 = JSON.parse(example) as Example;
             const example2 = JSON.parse(example) as Example;
 
@@ -46,7 +46,7 @@ describe('native.ts: extend native data types', () => {
         });
     });
     describe('Array', () => {
-        it('Array.prototype.get()', () => {
+        test('Array.prototype.get()', () => {
             const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
             expect(arr.get(0)).toEqual(0);
@@ -58,7 +58,7 @@ describe('native.ts: extend native data types', () => {
             expect(() => arr.get(10)).toThrowError('(array) index out of bounds.');
             expect(() => arr.get(-11)).toThrowError('(array) index out of bounds.');
         });
-        it('Array.prototype.isEqual()', () => {
+        test('Array.prototype.isEqual()', () => {
             const arr1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
             const arr2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -69,7 +69,7 @@ describe('native.ts: extend native data types', () => {
             arr2.push(10);
             expect(arr1.isEqual(arr2)).toEqual(false);
         });
-        it('Array.prototype.delete()', () => {
+        test('Array.prototype.delete()', () => {
             let result: boolean;
             const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -93,14 +93,14 @@ describe('native.ts: extend native data types', () => {
             expect(result).toEqual(false);
             expect(arr).toEqualArray([5, 7, 9]);
         });
-        it('Array.prototype.unique()', () => {
+        test('Array.prototype.unique()', () => {
             const arr1 = [0, 0, 2, 1, 4, 2, 6, 8, 8, 4].unique();
             expect(arr1).toEqualArray([0, 2, 1, 4, 6, 8]);
 
             const arr2 = [0, 1, 2, 3, 4, 5, 6].unique((value) => value < 4 ? 4 : value);
             expect(arr2).toEqualArray([0, 5, 6]);
         });
-        it('Array.prototype.$set()', () => {
+        test('Array.prototype.$set()', () => {
             const arr = [0, 1, 2, 3, 4];
 
             arr.$set(1, 1);
@@ -110,7 +110,7 @@ describe('native.ts: extend native data types', () => {
         });
     });
     describe('Number', () => {
-        it('Number.scientificCountParser()', () => {
+        test('Number.scientificCountParser()', () => {
             expect(Number.scientificCountParser('mmm')).toEqual(NaN);
             expect(Number.scientificCountParser('100')).toEqual(100);
             expect(Number.scientificCountParser('1m')).toEqual(0.001);
@@ -119,7 +119,7 @@ describe('native.ts: extend native data types', () => {
             expect(Number.scientificCountParser('1e3')).toEqual(1000);
             expect(Number.scientificCountParser('1e-2')).toEqual(0.01);
         });
-        it('Number.prototype.rank()', () => {
+        test('Number.prototype.rank()', () => {
             expect((100).rank()).toEqual(2);
             expect((0.001).rank()).toEqual(-3);
             expect((12.34).rank()).toEqual(1);
@@ -127,7 +127,7 @@ describe('native.ts: extend native data types', () => {
 
             expect(() => (NaN).rank()).toThrowError('(number) cannot run .rank() on NaN');
         });
-        it('Number.prototype.toRound()', () => {
+        test('Number.prototype.toRound()', () => {
             expect((123456789).toRound()).toEqual(123457000);
             expect((123.456789).toRound()).toEqual(123.457);
             expect((-123.456789).toRound()).toEqual(-123.457);

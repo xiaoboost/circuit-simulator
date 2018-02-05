@@ -18,7 +18,7 @@ const arrEx = new ExtendArr();
 const elem = document.createElement('span');
 
 describe('assertion.ts: assert the type of data', () => {
-    it('number', () => {
+    test('number', () => {
         expect(assert.isNumber(num)).toEqual(true);
         expect(assert.isNumber(str)).toEqual(false);
         expect(assert.isNumber(bool)).toEqual(false);
@@ -33,7 +33,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isNumber(arrEx)).toEqual(false);
         expect(assert.isNumber(elem)).toEqual(false);
     });
-    it('string', () => {
+    test('string', () => {
         expect(assert.isString(num)).toEqual(false);
         expect(assert.isString(str)).toEqual(true);
         expect(assert.isString(bool)).toEqual(false);
@@ -48,7 +48,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isString(arrEx)).toEqual(false);
         expect(assert.isString(elem)).toEqual(false);
     });
-    it('boolean', () => {
+    test('boolean', () => {
         expect(assert.isBoolean(num)).toEqual(false);
         expect(assert.isBoolean(str)).toEqual(false);
         expect(assert.isBoolean(bool)).toEqual(true);
@@ -63,7 +63,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isBoolean(arrEx)).toEqual(false);
         expect(assert.isBoolean(elem)).toEqual(false);
     });
-    it('symbol', () => {
+    test('symbol', () => {
         expect(assert.isSymbol(num)).toEqual(false);
         expect(assert.isSymbol(str)).toEqual(false);
         expect(assert.isSymbol(bool)).toEqual(false);
@@ -78,7 +78,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isSymbol(arrEx)).toEqual(false);
         expect(assert.isSymbol(elem)).toEqual(false);
     });
-    it('null', () => {
+    test('null', () => {
         expect(assert.isNull(num)).toEqual(false);
         expect(assert.isNull(str)).toEqual(false);
         expect(assert.isNull(bool)).toEqual(false);
@@ -93,7 +93,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isNull(arrEx)).toEqual(false);
         expect(assert.isNull(elem)).toEqual(false);
     });
-    it('function', () => {
+    test('function', () => {
         expect(assert.isFunction(num)).toEqual(false);
         expect(assert.isFunction(str)).toEqual(false);
         expect(assert.isFunction(bool)).toEqual(false);
@@ -108,7 +108,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isFunction(arrEx)).toEqual(false);
         expect(assert.isFunction(elem)).toEqual(false);
     });
-    it('strict object', () => {
+    test('strict object', () => {
         expect(assert.isStrictObject(num)).toEqual(false);
         expect(assert.isStrictObject(str)).toEqual(false);
         expect(assert.isStrictObject(bool)).toEqual(false);
@@ -123,7 +123,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isStrictObject(arrEx)).toEqual(false);
         expect(assert.isStrictObject(elem)).toEqual(false);
     });
-    it('object', () => {
+    test('object', () => {
         expect(assert.isObject(num)).toEqual(false);
         expect(assert.isObject(str)).toEqual(false);
         expect(assert.isObject(bool)).toEqual(false);
@@ -138,7 +138,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isObject(arrEx)).toEqual(true);
         expect(assert.isObject(elem)).toEqual(true);
     });
-    it('array', () => {
+    test('array', () => {
         expect(assert.isArray(num)).toEqual(false);
         expect(assert.isArray(str)).toEqual(false);
         expect(assert.isArray(bool)).toEqual(false);
@@ -153,7 +153,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isArray(arrEx)).toEqual(true);
         expect(assert.isArray(elem)).toEqual(false);
     });
-    it('regExp', () => {
+    test('regExp', () => {
         expect(assert.isRegExp(num)).toEqual(false);
         expect(assert.isRegExp(str)).toEqual(false);
         expect(assert.isRegExp(bool)).toEqual(false);
@@ -168,7 +168,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isRegExp(arrEx)).toEqual(false);
         expect(assert.isRegExp(elem)).toEqual(false);
     });
-    it('element', () => {
+    test('element', () => {
         expect(assert.isElement(num)).toEqual(false);
         expect(assert.isElement(str)).toEqual(false);
         expect(assert.isElement(bool)).toEqual(false);
@@ -183,7 +183,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isElement(arrEx)).toEqual(false);
         expect(assert.isElement(elem)).toEqual(true);
     });
-    it('base type', () => {
+    test('base type', () => {
         expect(assert.isBaseType(num)).toEqual(true);
         expect(assert.isBaseType(str)).toEqual(true);
         expect(assert.isBaseType(bool)).toEqual(true);
@@ -198,7 +198,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isBaseType(arrEx)).toEqual(false);
         expect(assert.isBaseType(elem)).toEqual(false);
     });
-    it('base type exclude null', () => {
+    test('base type exclude null', () => {
         expect(assert.isBaseTypeExNull(num)).toEqual(true);
         expect(assert.isBaseTypeExNull(str)).toEqual(true);
         expect(assert.isBaseTypeExNull(bool)).toEqual(true);
