@@ -2,7 +2,7 @@ declare namespace jest {
     interface Matchers<R> {
         // custom-extended
         /** 数组相等 */
-        toEqualBeArray(expected: any[] | ArrayLike<any>): R;
+        toEqualArray(expected: any[] | ArrayLike<any>): R;
 
         // jest-extended
         /** Passing assertion. */

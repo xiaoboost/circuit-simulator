@@ -1,3 +1,4 @@
+/* tslint:disable:prefer-for-of  */
 
 function arrayJoin(arr: any[] | ArrayLike<any>) {
     let ans = '';
@@ -6,24 +7,25 @@ function arrayJoin(arr: any[] | ArrayLike<any>) {
         ans += arr[i] + ', ';
     }
 
-    return ans.trimRight();
+    return ans.slice(0, ans.length - 2);
 }
 
-export default function toEqualArray(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike<any>) {
-    let pass = true;
-
+function predicate(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike<any>) {
     if (received.length !== argument.length) {
-        pass = false;
+        return (false);
     }
 
     for (let i = 0; i < received.length; i++) {
         if (received[i] !== argument[i]) {
-            pass = false;
-            break;
+            return (false);
         }
     }
 
-    if (pass) {
+    return (true);
+}
+
+export default function toEqualArray(received: any[] | ArrayLike<any>, argument: any[] | ArrayLike<any>) {
+    if (predicate(received, argument)) {
         return {
             message: () => `expected [${arrayJoin(received)}] is equal to [${arrayJoin(argument)}]`,
             pass: true,
