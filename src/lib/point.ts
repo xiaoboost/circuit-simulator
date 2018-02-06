@@ -1,7 +1,7 @@
 import * as assert from './assertion';
 import { Matrix } from './matrix';
 
-type PointLike = [number, number] | Point;
+type PointLike = number[] | [number, number] | Point;
 type PointInput = PointLike | number;
 
 /**
@@ -47,19 +47,24 @@ class Point {
      * @param {PointInput} start
      * @param {PointInput} [end]
      */
+    constructor(start?: PointInput)
+    constructor(start: number, end: number)
+    constructor(start: PointLike, end: PointLike)
     constructor(start: PointInput, end?: PointInput) {
+        // 输入一（或二）个数
         if (assert.isNumber(start)) {
-            // 输入一（或二）个数
             this[0] = start;
             this[1] = assert.isNumber(end) ? end : start;
-        } else if (Point.isPointLike(start) && !Point.isPointLike(end)) {
-            // 输入一个点
-            this[0] = start[0];
-            this[1] = start[1];
-        } else if (Point.isPointLike(start) && Point.isPointLike(end)) {
-            // 输入是两个点，当作向量处理
+        }
+        // 输入是两个点，当作向量处理
+        else if (Point.isPointLike(end)) {
             this[0] = end[0] - start[0];
             this[1] = end[1] - start[1];
+        }
+        // 输入一个点
+        else {
+            this[0] = start[0];
+            this[1] = start[1];
         }
 
         Object.defineProperty(this, 'length', {
@@ -90,11 +95,12 @@ class Point {
      */
     isEqual(point: PointLike): boolean {
         return (
-            this.length === point.length &&
+            2 === point.length &&
             this[0] === point[0] &&
             this[1] === point[1]
         );
     }
+
     /**
      * 加法
      *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
@@ -109,7 +115,8 @@ class Point {
         if (assert.isNumber(added)) {
             sum[0] = this[0] + added * label;
             sum[1] = this[1] + added * label;
-        } else if (Point.isPointLike(added)) {
+        }
+        else {
             sum[0] = this[0] + added[0] * label;
             sum[1] = this[1] + added[1] * label;
         }
@@ -127,11 +134,12 @@ class Point {
     mul(multiplier: PointInput, label: number = 1): Point {
         const sum = new Point(0);
         if (assert.isNumber(multiplier)) {
-            sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
-            sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier)) : multiplier);
-        } else if (Point.isPointLike(multiplier)) {
-            sum[0] = this[0] * ((label < 0) ? (1 / (- multiplier[0])) : multiplier[0]);
-            sum[1] = this[1] * ((label < 0) ? (1 / (- multiplier[1])) : multiplier[1]);
+            sum[0] = this[0] * ((label < 0) ? (1 / multiplier) : multiplier);
+            sum[1] = this[1] * ((label < 0) ? (1 / multiplier) : multiplier);
+        }
+        else {
+            sum[0] = this[0] * ((label < 0) ? (1 / multiplier[0]) : multiplier[0]);
+            sum[1] = this[1] * ((label < 0) ? (1 / multiplier[1]) : multiplier[1]);
         }
         return (sum);
     }
@@ -150,7 +158,7 @@ class Point {
      * @returns {Point}
      */
     rotate(ma: Matrix) {
-        return $P(
+        return new Point(
             this[0] * ma.get(0, 0) + this[1] * ma.get(1, 0),
             this[0] * ma.get(0, 1) + this[1] * ma.get(1, 1),
         );
@@ -274,9 +282,7 @@ class Point {
      * @returns {boolean}
      */
     isParallel(vector: PointLike): boolean {
-        return (Boolean(vector[0]) && Boolean(vector[1]))
-            ? false
-            : (this[0] * vector[1] === this[1] * vector[0]);
+        return (this[0] * vector[1] === this[1] * vector[0]);
     }
     /**
      * 是否和输入向量垂直
@@ -285,32 +291,40 @@ class Point {
      * @returns {boolean}
      */
     isVertical(vector: PointLike): boolean {
-        return (Boolean(this[0] * vector[0] + this[1] * vector[1]));
+        return ((this[0] * vector[0] + this[1] * vector[1]) === 0);
     }
     /**
      * 是否和输入向量方向相同
-     *  - 如果输入向量是 0 向量，则输出 false
      *
      * @param {PointLike} vector
      * @returns {boolean}
      */
-    isSameDire(vector: PointLike): boolean {
+    isSameDirection(vector: PointLike): boolean {
         return (
-            this.isParallel(vector) &&
-            (vector[0] * this[0]) > 0
+            // 0 向量与任意向量的方向都相同
+            this.isZero() || (this.isZero.call(vector) as boolean) ||
+            // 非零向量
+            (
+                this.isParallel(vector) &&
+                (vector[0] * this[0] > 0 || vector[1] * this[1] > 0)
+            )
         );
     }
     /**
      * 是否和输入向量方向相反
-     *  - 如果输入向量是 0 向量，则输出 false
      *
      * @param {PointLike} vector
      * @returns {boolean}
      */
-    isOppoDire(vector: PointLike): boolean {
+    isOppoDirection(vector: PointLike): boolean {
         return (
-            this.isParallel(vector) &&
-            (vector[0] * this[0]) < 0
+            // 0 向量与任意向量的方向都相反
+            this.isZero() || (this.isZero.call(vector) as boolean) ||
+            // 非零向量
+            (
+                this.isParallel(vector) &&
+                (vector[0] * this[0] < 0 || vector[1] * this[1] < 0)
+            )
         );
     }
     /**
@@ -321,13 +335,13 @@ class Point {
      */
     isInLine(segment: PointLike[]): boolean {
         // 点到线段两端的向量方向相反，即表示其在线段内
-        const toStart = new Point(this, segment[0]),
-            toEnd = new Point(this, segment[1]);
+        const toStart = new Point(this, segment[0]);
+        const toEnd = new Point(this, segment[1]);
 
         return (
             toEnd.isZero() ||
             toStart.isZero() ||
-            toStart.isOppoDire(toEnd)
+            toStart.isOppoDirection(toEnd)
         );
     }
     /**
@@ -377,14 +391,14 @@ class Point {
         return ans;
     }
     /**
-     * 以 this 为左上角定点，生成边长为 len 的正方形四点
+     * 求 points 中与 this 距离最近的点
      *
      * @param {PointLike[]} points
-     * @returns {(boolean | Point)}
+     * @returns {(undefined | Point)}
      */
-    closest(points: PointLike[]): boolean | Point {
+    closest(points: PointLike[]) {
         return points.length === 0
-            ? false
+            ? undefined
             : new Point(points.reduce(
                 (pre, next) =>
                     this.distance(pre) < this.distance(next) ? pre : next,
@@ -432,8 +446,11 @@ class Point {
  * @param {PointInput} [end]
  * @returns {Point}
  */
+function $P(start?: PointInput): Point;
+function $P(start: number, end?: number): Point;
+function $P(start: PointLike, end?: PointLike): Point;
 function $P(start: PointInput = [0, 0], end?: PointInput): Point {
-    return (new Point(start, end));
+    return (new Point(start as PointLike, end as PointLike));
 }
 
 export { $P, Point, PointLike };
