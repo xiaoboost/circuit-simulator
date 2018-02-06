@@ -53,7 +53,7 @@ export default class ActionMenu extends Vue {
 
     /** 是否显示菜单 */
     get vision(): boolean {
-        return this.$store.getters.isEmpty;
+        return this.$store.getters.isSpace;
     }
 
     /** 按钮被点击 */

@@ -158,7 +158,7 @@ export default class ParamsDialog extends Vue {
         // 屏幕当前大小
         const { scrollHeight: SHeight, scrollWidth: SWidth } = document.body;
         // 侧边栏宽度
-        const aside = vuex.getters.isEmpty ? 0 : 380
+        const aside = vuex.getters.isSpace ? 0 : 380
 
         // Y 轴方位
         if (this.position[1] < (height + min)) {

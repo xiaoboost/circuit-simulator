@@ -55,7 +55,7 @@ const state: StateType = {
 };
 
 const getters: GetterTree<StateType, StateType> = {
-    isEmpty: (context) => !context.page,
+    isSpace: (context) => !context.page,
     showAddParts: (context) => context.page === 'add-parts',
     showMainConfig: (context) => context.page === 'main-config',
     showGraphView: (context) => context.page === 'graph-view',
