@@ -193,36 +193,47 @@ describe('point.ts: class of point and vector', () => {
         expect($P().closest([])).toBeUndefined();
         expect($P().closest([[1, 2], [0.5, 0.4], [10, 50], [0.3, 0.8]])).toEqualArray([0.5, 0.4]);
     });
+    test('Point.prototype.everyRect()', () => {
+        const count: string[] = [];
+
+        const point = $P(0, 0);
+        const margin = [[-1, -1], [2, 1]];
+
+        const all = point.everyRect(margin, (node) => Boolean(count.push(node.join())));
+
+        expect(all).toBeTrue();
+        expect(count).toEqualArray(['-1,-1', '-1,0', '-1,1', '0,-1', '0,0', '0,1', '1,-1', '1,0', '1,1', '2,-1', '2,0', '2,1']);
+
+        count.length = 0;
+
+        const part = point.everyRect(margin, (node) => {
+            count.push(node.join());
+            return  (node[0] < 0 || node[1] < 0);
+        });
+
+        expect(part).toBeFalse();
+        expect(count).toEqualArray(['-1,-1', '-1,0', '-1,1', '0,-1', '0,0']);
+    });
     test('Point.prototype.around()', () => {
-        function initSet(inside: number[][], x = Infinity, y = Infinity) {
-            inside.length = 0;
-            for (let i = -1; i <= 4; i++) {
-                for (let j = -2; j <= 3; j++) {
-                    if ((i === x && j < y) || i < x) {
-                        inside.push([i, j]);
-                    }
-                }
-            }
-        }
+        let ans: string[];
 
-        const point = $P(1, 1);
-        const map: number[][] = [];
-        const mapDefault: number[][] = [];
-        const margin = [[-2, -3], [3, 2]];
+        const point = $P(5, -4);
+        const distanceLimit = (
+            (limit: number) =>
+                (node: Point) =>
+                    (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
+        );
 
-        initSet(mapDefault);
-        point.around(margin, (x, y) => (map.push([x, y])));
-        // expect(map).to.be.equalWithoutOrder(mapDefault);
+        ans = point.around(distanceLimit(-1), 5).map((node) => node.join());
+        expect(ans).toEqualArray(['5,-4']);
 
-        // map.length = 0;
-        // initSet(mapDefault, 0, 0);
-        // point.around(margin, (x, y, stop) => {
-        //     if (x === 0 && y === 0) {
-        //         stop();
-        //         return (false);
-        //     }
-        //     map.push([x, y]);
-        // });
-        // expect(map).to.be.equalWithoutOrder(mapDefault);
+        ans = point.around(distanceLimit(0), 5).map((node) => node.join());
+        expect(ans).toEqualArray(['5,1', '5,-9', '10,-4', '0,-4']);
+
+        ans = point.around(distanceLimit(10), 5).map((node) => node.join());
+        expect(ans).toEqualArray(['5,11', '5,-19', '20,-4', '-10,-4']);
+
+        ans = point.around(distanceLimit(10)).map((node) => node.join());
+        expect(ans).toEqualArray(['5,7', '5,-15', '16,-4', '-6,-4']);
     });
 });

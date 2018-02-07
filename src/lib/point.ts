@@ -1,7 +1,7 @@
 import * as assert from './assertion';
 import { Matrix } from './matrix';
 
-type PointLike = number[] | [number, number] | Point;
+type PointLike = number[] | Point;
 type PointInput = PointLike | number;
 
 /**
@@ -345,20 +345,18 @@ class Point {
         );
     }
     /**
-     * 以 this 中心点，margin 为四角顶点，如果范围内有坐标能使 predicate 返回 true，那么该方法返回 true
+     * 以 this 为中心、rect 为四角顶点，遍历其中所有整数节点
      *
      * @param {number[][]} margin
-     * @param {(x: number, y: number, stop: () => void) => void} predicate
+     * @param {(node: Point) => boolean} predicate
      * @returns {boolean}
      */
-    around(margin: number[][], predicate: (x: number, y: number, stop: () => void) => void): boolean {
-        let label = false;
-        const stop = () => (label = true);
-
-        for (let i = this[0] + margin[0][0]; i <= this[0] + margin[1][0]; i++) {
-            for (let j = this[1] + margin[0][1]; j <= this[1] + margin[1][1]; j++) {
-                predicate(i, j, stop);
-                if (label) { return (false); }
+    everyRect(rect: number[][], predicate: (node: Point) => boolean): boolean {
+        for (let i = this[0] + rect[0][0]; i <= this[0] + rect[1][0]; i++) {
+            for (let j = this[1] + rect[0][1]; j <= this[1] + rect[1][1]; j++) {
+                if (!predicate($P(i, j))) {
+                    return (false);
+                }
             }
         }
         return (true);
@@ -370,16 +368,17 @@ class Point {
      * @param {number} [factor=1]
      * @returns {Point[]}
      */
-    aroundInf(predicate: (point: Point) => boolean, factor: number = 1): Point[] {
+    around(predicate: (point: Point) => boolean, factor: number = 1): Point[] {
         const ans: Point[] = predicate(this) ? [new Point(this)] : [];
 
         for (let m = 1; ans.length < 1; m++) {
             for (let i = 0; i < m; i++) {
-                const x = i * factor, y = (m - i) * factor,
-                    around: Array<[number, number]> = (x === 0)
-                        ? [[0, y], [0, -y], [y, 0], [-y, 0]]
-                        : [[x, y], [x, -y], [-x, y], [-x, -y]],
-                    points = around.map((n) => this.add(n));
+                const x = i * factor, y = (m - i) * factor;
+                const around = (x === 0)
+                    ? [[0, y], [0, -y], [y, 0], [-y, 0]]
+                    : [[x, y], [x, -y], [-x, y], [-x, -y]];
+
+                const points = around.map((n) => this.add(n));
 
                 ans.push(...points.filter(predicate));
 
