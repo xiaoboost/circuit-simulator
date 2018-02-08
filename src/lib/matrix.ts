@@ -36,14 +36,13 @@ class Matrix {
      * @param {(number | 'E')} [column]
      * @param {number} [value=0]
      */
+    constructor(matrix: number[][] | Matrix);
+    constructor(order: number, value?: number | 'E');
+    constructor(row: number, column: number, value?: number);
     constructor(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
         // 从数组创建矩阵
         if (assert.isArray(row)) {
-            const data: number[] = [], size = allowMatrix(row);
-
-            if (!size) {
-                return;
-            }
+            const data: number[] = [], size = calMatrixSize(row);
 
             this.row = size.row;
             this.column = size.column;
@@ -70,17 +69,17 @@ class Matrix {
                 this._view[i * (row + 1)] = 1;
             }
         }
-        // 填充行列式
-        else if (assert.isNumber(column)) {
-            this.row = row;
-            this.column = column;
-            this._view = Float64Array.from(Array(row * column).fill(value));
-        }
-        // 填充矩阵
+        // 零矩阵
         else if (assert.isNull(column)) {
             this.row = row;
             this.column = row;
             this._view = Float64Array.from(Array(row * row).fill(0));
+        }
+        // 行列式
+        else {
+            this.row = row;
+            this.column = column;
+            this._view = Float64Array.from(Array(row * column).fill(value));
         }
     }
 
@@ -141,28 +140,6 @@ class Matrix {
             ans[i] = this._view[column + i * this.column];
         }
         return ans;
-    }
-    /**
-     * 输出字符串
-     *
-     * @returns {string}
-     */
-    toString(): string {
-        const maxColumnLen: number[] = [];
-        for (let i = 0; i < this.column; i++) {
-            maxColumnLen.push(
-                this.getColumn(i).map(String)
-                    .reduce((len, item) =>  item.length > len ? item.length : len, 0),
-            );
-        }
-
-        let str = '';
-        for (let i = 0; i < this.row; i++) {
-            str += this.getRow(i)
-                .map((n) => String(n).padStart(maxColumnLen[i], ' '))
-                .join(',  ') + ';\n';
-        }
-        return (str);
     }
     /**
      * 字符串连接
@@ -391,15 +368,15 @@ function isMatrix(ma: any): ma is Matrix {
  * 输入的二维数组能否转化为矩阵
  *
  * @param {number[][]} ma
- * @returns {(false | { row: number; column: number })}
+ * @returns {{ row: number; column: number })}
  */
-function allowMatrix(ma: number[][]): false | { row: number; column: number } {
+function calMatrixSize(ma: number[][]): { row: number; column: number } {
     // 记录行列数
     const row = ma.length, column = ma[0].length;
 
     // 行连续
     if (!Object.keys(ma).every((n, i) => +n === i)) {
-        return (false);
+        throw new Error('(matrix) this is not a matrix.');
     }
 
     // 列连续且列长均相等
@@ -408,7 +385,7 @@ function allowMatrix(ma: number[][]): false | { row: number; column: number } {
             Object.keys(col).every((n, i) => +n === i) &&
             Object.values(col).every((n) => typeof n === 'number');
     })) {
-        return (false);
+        throw new Error('(matrix) this is not a matrix.');
     }
 
     return ({ row, column });
@@ -426,8 +403,11 @@ function allowMatrix(ma: number[][]): false | { row: number; column: number } {
  * @param {number} [value=0]
  * @returns {Matrix}
  */
+function $M(matrix: number[][] | Matrix): Matrix;
+function $M(order: number, value?: number | 'E'): Matrix;
+function $M(row: number, column: number, value?: number): Matrix;
 function $M(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
-    return new Matrix(row, column, value);
+    return new Matrix(row as number, column as number, value);
 }
 
 // 旋转矩阵

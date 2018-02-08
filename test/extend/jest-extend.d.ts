@@ -3,6 +3,8 @@ declare namespace jest {
         // custom-extended
         /** 数组相等 */
         toEqualArray(expected: any[] | ArrayLike<any>): R;
+        /** 行列式相等 */
+        toEqualMatrix(expected: any): R;
 
         // jest-extended
         /** Passing assertion. */
