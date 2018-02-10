@@ -19,7 +19,7 @@ function toString(ma: Matrix) {
             ma
                 .getRow(i)
                 .map((n) => String(n).padStart(maxColumnLen[i], ' '))
-                .join(', ') + ' |\n'
+                .join(', ') + ' |\n '
         );
     }
     return (str);

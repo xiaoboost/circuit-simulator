@@ -271,8 +271,8 @@ class Point {
     isInteger(): boolean {
         return (
             this.length === 2 &&
-            this[0] === Math.floor(this[0]) &&
-            this[1] === Math.floor(this[1])
+            Number.isInteger(this[0]) &&
+            Number.isInteger(this[1])
         );
     }
     /**

@@ -202,7 +202,7 @@ class Matrix {
         const a = isMatrix(ma) ? ma : (new Matrix(ma));
 
         if (this.column !== a.row) {
-            throw new Error('this can not be multiplied with ma.');
+            throw new Error('(matrix) this can not be multiplied with ma.');
         }
 
         // 乘法结果的行与列
@@ -234,7 +234,7 @@ class Matrix {
         const a = isMatrix(ma) ? ma : (new Matrix(ma));
 
         if (this.column !== a.row) {
-            throw new Error('ma can not be multiplied with this.');
+            throw new Error('(matrix) ma can not be multiplied with this.');
         }
 
         return a.mul(this);
@@ -246,7 +246,7 @@ class Matrix {
      */
     luDecompose(): [Matrix, Matrix, Matrix] {
         if (this.row !== this.column) {
-            throw new Error('Only the matrix can be decomposed.');
+            throw new Error('(matrix) only the matrix can be decomposed.');
         }
 
         const n = this.row,             // 行列式的行数
@@ -297,7 +297,7 @@ class Matrix {
 
         for (let i = 0; i < U.row; i++) {
             if (U.get(i, i) === 0) {
-                throw new Error('This matrix has no inverse');
+                throw new Error('(matrix) this matrix has no inverse.');
             }
         }
 
@@ -331,34 +331,18 @@ class Matrix {
         return (ans);
     }
     /**
-     * forEach 迭代
+     * map 迭代
      *  - 从第一行开始，从左至右
      *
-     * @param {(value: number, position: [number, number]) => void} callback
+     * @param {(value: number, position: [number, number]) => number} callback
      * @returns {this}
      */
-    forEach(callback: (value: number, position: [number, number]) => void): this {
+    map(callback: (value: number, position: [number, number]) => number): this {
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            callback(this._view[i], [x, y]);
+            this.set(x, y, callback(this._view[i], [x, y]));
         }
         return (this);
-    }
-    /**
-     * every 迭代
-     *  - 从第一行开始，从左至右
-     *
-     * @param {(value: number, position: [number, number]) => boolean} callback
-     * @returns {boolean}
-     */
-    every(callback: (value: number, position: [number, number]) => boolean): boolean {
-        for (let i = 0; i < this._view.length; i++) {
-            const x = ~~(i / this.column), y = i % this.column;
-            if (!callback(this._view[i], [x, y])) {
-                return (false);
-            }
-        }
-        return (true);
     }
 }
 
