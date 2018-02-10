@@ -116,7 +116,7 @@ class Matrix {
             throw new Error('(matrix) index of row out of bounds.');
         }
 
-        const ans: number[] = [], start = row * this.column;
+        const ans: number[] = [], start = index * this.column;
         for (let i = 0; i < this.column; i++) {
             ans[i] = this._view[start + i];
         }
@@ -131,13 +131,13 @@ class Matrix {
     getColumn(column: number): number[] {
         const index = column < 0 ? this.column + column : column;
 
-        if (index > this.column || column < 0) {
+        if (index > this.column || index < 0) {
             throw new Error('(matrix) index of column out of bounds.');
         }
 
         const ans: number[] = [];
         for (let i = 0; i < this.row; i++) {
-            ans[i] = this._view[column + i * this.column];
+            ans[i] = this._view[index + i * this.column];
         }
         return ans;
     }
@@ -151,34 +151,45 @@ class Matrix {
         return this._view.join(str);
     }
     /**
-     * 交换坐标元素 a、b 所在行、列
+     * 交换 from、to 所在的行
      *
-     * @param {[number, number]} a
-     * @param {[number, number]} b
+     * @param {number} from
+     * @param {number} to
      * @returns {this}
      */
-    exchange(a: [number, number], b: [number, number]): this {
-        // 交换行
-        if (a[0] !== b[0]) {
-            const start = a[0] * this.column,
-                end = b[0] * this.column;
+    exchangeRow(from: number, to: number): this {
+        if (from !== to) {
+            const start = from * this.column;
+            const end = to * this.column;
+
             for (let i = 0; i < this.column; i++) {
                 const temp = this._view[start + i];
                 this._view[start + i] = this._view[end + i];
                 this._view[end + i] = temp;
             }
         }
-        // 交换列
-        if (a[1] !== b[1]) {
-            const start = a[1], end = b[1];
+
+        return this;
+    }
+    /**
+     * 交换 from、to 所在的列
+     *
+     * @param {number} from
+     * @param {number} to
+     * @returns {this}
+     */
+    exchangeColumn(from: number, to: number): this {
+        if (from !== to) {
             for (let i = 0; i < this.row; i++) {
-                const nowRow = i * this.column,
-                    temp = this._view[nowRow + start];
-                this._view[nowRow + start] = this._view[nowRow + end];
-                this._view[nowRow + end] = temp;
+                const nowRow = i * this.column;
+                const temp = this._view[nowRow + from];
+
+                this._view[nowRow + from] = this._view[nowRow + to];
+                this._view[nowRow + to] = temp;
             }
         }
-        return (this);
+
+        return this;
     }
     /**
      * 矩阵乘法
@@ -195,8 +206,8 @@ class Matrix {
         }
 
         // 乘法结果的行与列
-        const row = this.row,
-            column = a.column;
+        const row = this.row;
+        const column = a.column;
 
         // 乘法计算
         const ans = new Matrix(row, column);
@@ -265,9 +276,9 @@ class Matrix {
                     }
                 }
                 // 交换主元
-                L.exchange([k, 0], [tempsub, 0]);
-                U.exchange([k, 0], [tempsub, 0]);
-                P.exchange([k, 0], [tempsub, 0]);
+                L.exchangeRow(k, tempsub);
+                U.exchangeRow(k, tempsub);
+                P.exchangeRow(k, tempsub);
             }
         }
         // 下三角对角线为1
@@ -341,12 +352,9 @@ class Matrix {
      * @returns {boolean}
      */
     every(callback: (value: number, position: [number, number]) => boolean): boolean {
-        let ans;
         for (let i = 0; i < this._view.length; i++) {
             const x = ~~(i / this.column), y = i % this.column;
-            ans = callback(this._view[i], [x, y]);
-
-            if (!ans) {
+            if (!callback(this._view[i], [x, y])) {
                 return (false);
             }
         }
@@ -380,11 +388,11 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
     }
 
     // 列连续且列长均相等
-    if (!ma.every((col) => {
-        return assert.isArray(col) && col.length === column &&
+    if (!ma.every((col) =>
+            assert.isArray(col) && col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
-            Object.values(col).every((n) => typeof n === 'number');
-    })) {
+            Object.values(col).every((n) => assert.isNumber(n) && !Number.isNaN(n)),
+    )) {
         throw new Error('(matrix) this is not a matrix.');
     }
 
@@ -406,7 +414,7 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 function $M(matrix: number[][] | Matrix): Matrix;
 function $M(order: number, value?: number | 'E'): Matrix;
 function $M(row: number, column: number, value?: number): Matrix;
-function $M(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
+function $M(row: number | number[][] | Matrix, column?: number | 'E', value?: number) {
     return new Matrix(row as number, column as number, value);
 }
 

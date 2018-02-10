@@ -1,10 +1,15 @@
+interface Matrix {
+    row: number;
+    column: number;
+}
+
 declare namespace jest {
     interface Matchers<R> {
         // custom-extended
         /** 数组相等 */
         toEqualArray(expected: any[] | ArrayLike<any>): R;
         /** 行列式相等 */
-        toEqualMatrix(expected: any): R;
+        toEqualMatrix(expected: Matrix): R;
 
         // jest-extended
         /** Passing assertion. */
