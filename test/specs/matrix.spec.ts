@@ -1,5 +1,4 @@
 import '../extend';
-import 'src/lib/native';
 
 import { $M, Matrix } from 'src/lib/matrix';
 
@@ -116,13 +115,13 @@ describe('matrix.ts: class of Matrix', () => {
             [173, 206, 239, 272],
         ]));
 
-        expect(matrixA.mul(matrixC).map((n) => n.toRound(8))).toEqualMatrix($M([
+        expect(matrixA.mul(matrixC).map((n) => Number(n.toFixed(4)))).toEqualMatrix($M([
             [ 4.8965,  8.4678,  7.0112],
             [14.4357, 20.8246,   16.91],
             [23.9749, 33.1814, 26.8088],
         ]));
 
-        expect(matrixA.multo(matrixC).map((n) => n.toRound(8))).toEqualMatrix($M([
+        expect(matrixA.multo(matrixC).map((n) => Number(n.toFixed(4)))).toEqualMatrix($M([
             [ 8.9675, 11.0022, 13.0369, 15.0716],
             [ 5.3852,   6.822,  8.2588,  9.6956],
             [12.4032, 14.8448, 17.2864,  19.728],
