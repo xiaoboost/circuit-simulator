@@ -11,7 +11,7 @@ module.exports = {
         '^src/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
-        '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest',
+        '^.+\\.(j|t)sx?$': '<rootDir>/node_modules/ts-jest',
         '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
     },
     testRegex: '(\\.|/)(test|spec)\\.tsx?$',
