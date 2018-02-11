@@ -22,7 +22,7 @@ export default function toEqualArray(received: any[] | ArrayLike<any>, argument:
     }
     else {
         return {
-            message: () => `Expected value to equal:\n ${chalk.green(toString(argument))}\nReceived:\n ${chalk.red(toString(received))}\n`,
+            message: () => `Expected Array to equal:\n ${chalk.green(toString(argument))}\nReceived:\n ${chalk.red(toString(received))}\n`,
             pass: false,
         };
     }

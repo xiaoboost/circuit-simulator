@@ -1,7 +1,4 @@
-'use strict';
-
-exports.__esModule = true;
-function predicate(received, argument) {
+export default function predicate(received, argument) {
     if (
         received.row !== argument.row ||
         received.column !== argument.column
@@ -17,4 +14,4 @@ function predicate(received, argument) {
 
     return true;
 }
-exports['default'] = predicate;
+

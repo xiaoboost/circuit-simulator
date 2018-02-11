@@ -34,7 +34,7 @@ export default function toEqualMatrix(received: Matrix, argument: Matrix) {
     }
     else {
         return {
-            message: () => `Expected value to equal:\n ${chalk.green(toString(argument))}\nReceived:\n ${chalk.red(toString(received))}\n`,
+            message: () => `Expected matrix to equal:\n ${chalk.green(toString(argument))}\nReceived:\n ${chalk.red(toString(received))}\n`,
             pass: false,
         };
     }
