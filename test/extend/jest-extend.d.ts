@@ -3,6 +3,10 @@ interface Matrix {
     column: number;
 }
 
+interface AnyObject {
+    [key: string]: any | AnyObject;
+}
+
 declare namespace jest {
     interface Matchers<R> {
         // custom-extended
@@ -10,6 +14,8 @@ declare namespace jest {
         toEqualArray(expected: any[] | ArrayLike<any>): R;
         /** 行列式相等 */
         toEqualMatrix(expected: Matrix): R;
+        /** 对象相等 */
+        toEqualObject(expected: AnyObject): R;
 
         // jest-extended
         /** Passing assertion. */

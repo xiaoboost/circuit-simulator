@@ -52,7 +52,7 @@ let $mapString = '';
  * @returns {string}
  */
 function point2key(node: PointLike): string {
-    return node.join();
+    return node.join(',');
 }
 
 /**
