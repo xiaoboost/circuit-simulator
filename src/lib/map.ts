@@ -141,16 +141,17 @@ export function mergePoint(data: MapPointData, large = false): void {
     const newData = dataClone(data);
     const oriData = $map[key];
 
+    // debugger;
     if (!oriData) {
         $map[key] = newData;
     }
 
     if (
         assert.isArray(newData.connect) &&
-        assert.isArray(oriData.connect)
+        oriData && assert.isArray(oriData.connect)
     ) {
         newData.connect = newData.connect.concat(oriData.connect);
-        newData.connect.unique(point2key);
+        newData.connect = newData.connect.unique(point2key);
     }
 
     $map[key] = newData;
