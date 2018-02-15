@@ -36,7 +36,7 @@ interface Array<T> {
      *  - predicate 为非函数时，删除与 predicate 严格相等的第一个元素
      *
      * @param {(T | ((value: T, index: number) => boolean))} predicate 
-     * @param {boolean} [whole] 
+     * @param {boolean} [whole=true] 
      * @returns {boolean} 
      * @memberof Array
      */

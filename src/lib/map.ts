@@ -211,9 +211,12 @@ export function hasConnect(point: PointLike, connect: PointLike, large = false):
     const check = (large ? Point.prototype.mul.call(connect, 0.05) : connect) as Point;
     const data = $map[point2key(origin)];
 
-    if (assert.isNull(data.connect)) {
-        console.warn('This point do not have connect.');
-        return false;
+    if (!data) {
+        throw new Error('(map) space point.');
+    }
+
+    if (!data.connect) {
+        throw new Error('(map) this point do not have connect.');
     }
 
     return data.connect.some((item) => item.isEqual(check));
@@ -235,13 +238,16 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
     const check = (large ? Point.prototype.mul.call(connect, 0.05) : $P(connect)) as Point;
     const data = $map[point2key(origin)];
 
-    if (assert.isNull(data.connect)) {
-        console.warn('This point do not have connect.');
-        return;
+    if (!data) {
+        throw new Error('(map) space point.');
+    }
+
+    if (!data.connect) {
+        throw new Error('(map) this point do not have connect.');
     }
 
     if (!hasConnect(origin, check)) {
-        data.connect.push(check);
+        data.connect.push($P(check));
     }
 }
 
@@ -260,9 +266,12 @@ export function deleteConnect(point: PointLike, connect: PointLike, large = fals
     const check = (large ? Point.prototype.mul.call(connect, 0.05) : $P(connect)) as Point;
     const data = $map[point2key(origin)];
 
-    if (assert.isNull(data.connect)) {
-        console.warn('This point do not have connect.');
-        return false;
+    if (!data) {
+        throw new Error('(map) space point.');
+    }
+
+    if (!data.connect) {
+        throw new Error('(map) this point do not have connect.');
     }
 
     return data.connect.delete((node) => node.isEqual(check));

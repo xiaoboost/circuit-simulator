@@ -1,7 +1,7 @@
 import '../extend';
 import 'src/lib/native';
 
-import { $P } from 'src/lib/point';
+import { $P, Point } from 'src/lib/point';
 import * as map from 'src/lib/map';
 
 describe('map.ts: Data marked by drawings', () => {
@@ -86,5 +86,65 @@ describe('map.ts: Data marked by drawings', () => {
         map.setPoint(data);
         map.deletePoint([40, 60], true);
         expect(map.hasPoint([2, 3])).toBeFalse();
+    });
+    test('hasConnect/addConnect/deleteConnect()', () => {
+        const data = {
+            id: 'R_1',
+            type: 'line',
+            point: $P(1, 3),
+            connect: undefined as (undefined | Point[]),
+        };
+
+        expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
+        expect(() => map.addConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
+        expect(() => map.deleteConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
+
+        map.setPoint(data);
+
+        expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
+        expect(() => map.addConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
+        expect(() => map.deleteConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
+
+        data.connect = [];
+        map.mergePoint(data);
+        expect(map.hasConnect([1, 3], [2, 3])).toBeFalse();
+
+        map.addConnect([1, 3], [2, 3]);
+        map.addConnect([1, 3], [2, 3]);
+        expect(map.hasConnect([1, 3], [2, 3])).toBeTrue();
+
+        map.deleteConnect([1, 3], [2, 3]);
+        expect(map.hasConnect([1, 3], [2, 3])).toBeFalse();
+
+        map.addConnect([20, 60], [40, 60], true);
+        expect(map.hasConnect([20, 60], [40, 60], true)).toBeTrue();
+
+        map.deleteConnect([20, 60], [40, 60], true);
+        expect(map.hasConnect([20, 60], [40, 60], true)).toBeFalse();
+    });
+    test('isLine()', () => {
+        map.setPoint({
+            id: 't',
+            type: 'part',
+            point: $P(1, 3),
+        });
+
+        expect(map.isLine([1, 3])).toBeFalse();
+
+        map.setPoint({
+            id: 't',
+            type: 'line',
+            point: $P(1, 3),
+        });
+
+        expect(map.isLine([1, 3])).toBeTrue();
+
+        map.setPoint({
+            id: 't',
+            type: 'cross-point',
+            point: $P(1, 3),
+        });
+
+        expect(map.isLine([20, 60], true)).toBeTrue();
     });
 });
