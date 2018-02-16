@@ -286,7 +286,10 @@ export function isLine(point: PointLike, large = false) {
     const node = (large ? Point.prototype.mul.call(point, 0.05) : point) as Point;
 
     const data = $map[point2key(node)];
-    return (data && /^(line|cross-point|cover-point)$/.test(data.type));
+    return (
+        Boolean(data) &&
+        /^(line|cross-point|cover-point)/.test(data.type)
+    );
 }
 
 /**
@@ -302,7 +305,7 @@ export function isLine(point: PointLike, large = false) {
 export function alongTheLine(
     start: PointLike,
     end: PointLike = [Infinity, Infinity],
-    vector: PointLike = $P(end, start),
+    vector: PointLike = $P(start, end),
     large: boolean = false,
 ): Point {
     const uVector = $P(vector).sign(),

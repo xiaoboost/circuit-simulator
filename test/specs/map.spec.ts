@@ -141,10 +141,76 @@ describe('map.ts: Data marked by drawings', () => {
 
         map.setPoint({
             id: 't',
+            type: 'line-point',
+            point: $P(1, 3),
+        });
+
+        expect(map.isLine([1, 3])).toBeTrue();
+
+        map.setPoint({
+            id: 't',
             type: 'cross-point',
             point: $P(1, 3),
         });
 
         expect(map.isLine([20, 60], true)).toBeTrue();
+    });
+    test('alongTheLine()', () => {
+        // [4, 2] -> [8, 2]
+        for (let i = 4; i < 9; i++) {
+            const data: map.MapPointData = {
+                type: 'line',
+                point: $P(i, 2),
+                id: 'line_1',
+            };
+
+            if (i === 4) {
+                data.connect = [$P(5, 2)];
+            }
+            else if (i === 8) {
+                data.connect = [$P(7, 2)];
+            }
+            else {
+                data.connect = [$P(i - 1, 2), $P(i + 1, 2)];
+            }
+
+            map.setPoint(data);
+        }
+        // [9, 2] -> [12, 2]
+        for (let i = 9; i < 13; i++) {
+            const data: map.MapPointData = {
+                type: 'line',
+                point: $P(i, 2),
+                id: 'line_1',
+            };
+
+            if (i === 9) {
+                data.connect = [$P(10, 2)];
+            }
+            else if (i === 12) {
+                data.connect = [$P(11, 2)];
+            }
+            else {
+                data.connect = [$P(i - 1, 2), $P(i + 1, 2)];
+            }
+
+            map.setPoint(data);
+        }
+
+        // 起点不是导线，输出起点
+        expect(map.alongTheLine([4, 4])).toEqualArray([4, 4]);
+        // 起点和终点相等，输出起点
+        expect(map.alongTheLine([4, 2], [4, 2])).toEqualArray([4, 2]);
+
+        // 起点和终点在线段内
+        expect(map.alongTheLine([4, 2], [7, 2])).toEqualArray([7, 2]);
+        // 终点在线段外
+        expect(map.alongTheLine([4, 2], [14, 2])).toEqualArray([8, 2]);
+
+        // 指定特定方向
+        expect(map.alongTheLine([6, 2], [14, 2], [-1, 0])).toEqualArray([4, 2]);
+
+        // 大图标
+        expect(map.alongTheLine([80, 40], [280, 40], undefined, true)).toEqualArray([160, 40]);
     });
 });
