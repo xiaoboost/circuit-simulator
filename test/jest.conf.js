@@ -8,11 +8,13 @@ module.exports = {
         'vue',
     ],
     moduleNameMapper: {
+        '^worker-loader!(.*)$': '$1',
         '^src/(.*)$': '<rootDir>/src/$1',
     },
     transform: {
+        '^.+\\.vue$': '<rootDir>/node_modules/vue-jest',
+        '^.+\\.worker\\.(j|t)sx?$': '<rootDir>/test/transform/worker-loader',
         '^.+\\.(j|t)sx?$': '<rootDir>/node_modules/ts-jest',
-        '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
     },
     testRegex: '(\\.|/)(test|spec)\\.tsx?$',
     snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
