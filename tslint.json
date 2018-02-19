@@ -122,8 +122,8 @@
         "no-for-in-array": true,
         // 在函数和构造函数调用站点中禁止 {}（空对象类型）的类型推断
         "no-inferred-empty-object-type": true,
-        // 禁止不安全的 any
-        "no-unsafe-any": true,
+        // 允许不安全的 any
+        "no-unsafe-any": false,
         // 禁止存在未使用的变量和库
         "no-unused-variable": true,
         // + 运算必须同时是数字或者字符串
