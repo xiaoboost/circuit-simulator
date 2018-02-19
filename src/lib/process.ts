@@ -13,11 +13,12 @@ interface ManagerOption {
 /** 进程类 */
 class WorkerProcess {
     /** 进程原始数据 */
-    worker: Worker;
+    readonly worker: Worker;
     /** 当前进程所在管理器 */
-    manager: ProcessManager;
+    readonly manager: ProcessManager;
     /** 每个进程的独立标识符 */
-    id = Math.random().toString(36).substring(2);
+    readonly id = Math.random().toString(36).substring(2);
+
     /** 进程释放事件 */
     freeEvent: () => void;
 
@@ -28,8 +29,8 @@ class WorkerProcess {
 
     constructor(manager: ProcessManager, workerCreator: workerCreator) {
         this.manager = manager;
-        this.freeEvent = () => void 0;
         this.worker = workerCreator();
+        this.freeEvent = () => void 0;
     }
 
     get isBusy() {
@@ -49,6 +50,14 @@ class WorkerProcess {
         }
         // 繁忙标志位置低，设定自销毁定时器
         else {
+            const limit = this.manager.options.min;
+            const count = this.manager.pool.length;
+
+            // 进程数量少于最小数量，不用销毁
+            if (count <= limit) {
+                return;
+            }
+
             this.timer = window.setTimeout(
                 () => this.destroy(),
                 this.manager.options.timeout * 1000,
@@ -82,10 +91,11 @@ export default class ProcessManager {
     /** 管理器参数 */
     options: ManagerOption;
 
+    /** 进程池 */
+    readonly pool: WorkerProcess[] = [];
+
     /** 等待进程 */
     private waitQueue: Promise<WorkerProcess>;
-    /** 进程池 */
-    private readonly pool: WorkerProcess[] = [];
     /** 进程构造函数 */
     private readonly workerCreator: workerCreator;
 
