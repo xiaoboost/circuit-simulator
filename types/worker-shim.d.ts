@@ -1,18 +1,10 @@
-/** worker 类封装 */
-interface WebpackWorker extends Worker {}
+/** worker 包装器 */
+declare type workerCreator = () => Worker;
 
-declare const WebpackWorker: {
-    prototype: WebpackWorker;
-    new(): WebpackWorker;
-};
-
-declare type WorkerConstructor = {
-    prototype: Worker;
-    new(): Worker;
-}
-
+/** worker 引用定义 */
 declare module 'worker-loader!*' {
-    export default WebpackWorker;
+    const workerCreator: workerCreator;
+    export default workerCreator;
 }
 
 declare namespace workerApi {
