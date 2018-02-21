@@ -29,7 +29,7 @@ async function nodeSearch(option: ExchangeData): Promise<LineWay> {
 
 @Component
 export default class DrawLine extends Vue {
-    way: LineWay = new LineWay();
+    way: Point[] = [];
     connect: string[] = [];
     pointSize: number[] = [-1, -1];
 
