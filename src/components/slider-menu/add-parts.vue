@@ -26,11 +26,12 @@
 import { $P } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import * as assert from 'src/lib/assertion';
-import { PartData } from 'src/components/electronic-part/types';
+
+import Electronics from 'src/components/electronic-part/parts';
+import { PartData, ShapeDescription } from 'src/components/electronic-part/types';
 
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';
-import Electronics, { categories, ShapeDescription } from 'src/components/electronic-part/shape';
 
 // 部分器件作为图标时需要修正其位置和大小
 function fixElementShape(type: string): { [x: string]: string } {
@@ -81,7 +82,44 @@ export default class AddParts extends Vue {
     tipStyle: TipStyle = { display: 'none' };
 
     parts = Electronics;
-    categories = categories;
+    categories = [
+        {
+            key: 'virtual_device',
+            name: '虚拟器件',
+            parts: [
+                'reference_ground',
+                'voltage_meter',
+                'current_meter',
+            ],
+        },
+        {
+            key: 'power',
+            name: '电源',
+            parts: [
+                'dc_voltage_source',
+                'ac_voltage_source',
+                'dc_current_source',
+            ],
+        },
+        {
+            key: 'passive_device',
+            name: '无源器件',
+            parts: [
+                'resistance',
+                'capacitor',
+                'inductance',
+            ],
+        },
+        {
+            key: 'semiconductor_device',
+            name: '半导体器件',
+            parts: [
+                'diode',
+                'transistor_npn',
+                'operational_amplifier',
+            ],
+        },
+    ];
 
     setTip(name: string, event: MouseEvent): void {
         this.tipText = Electronics[name].introduction;

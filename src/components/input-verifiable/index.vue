@@ -33,7 +33,7 @@ export default class InputVerifiable extends Vue {
     @Prop({ type: Boolean, default: false })
     private readonly required: boolean;
 
-    @Prop({ type: RegExp, default: /[\d\D]*/ })
+    @Prop({ type: RegExp, default: () => /[\d\D]*/ })
     private readonly pattern: RegExp;
 
     @Prop({ type: Function, default: () => true })
@@ -43,7 +43,7 @@ export default class InputVerifiable extends Vue {
     private readonly message: string;
 
     $refs: {
-        input: HTMLElement;
+        input: HTMLInputElement;
     }
 
     private isError = false;
