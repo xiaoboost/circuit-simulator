@@ -41,7 +41,7 @@ function getSegment(node: Point) {
     return ans;
 }
 // node 是否在某线段内
-function isNodeInLine(node: Point, line: Point[] | [Point, Point]) {
+function isNodeInLine(node: Point, line: Point[]) {
     return node.isInLine(line);
 }
 // 距离表征（非真实距离）
@@ -108,7 +108,7 @@ function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
         const junction = node.cornerParent.direction;
         const node2End = this.end.add(node.position, -1);
 
-        return (node2End.isOppoDire(junction));
+        return (node2End.isOppoDirection(junction));
     }
 }
 
