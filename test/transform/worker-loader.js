@@ -25,8 +25,6 @@ module.exports = {
                 .replace(/'/g, '\\\'')
         );
 
-        console.error(`\n${createContext(compiled)}\n`);
-
         return createContext(compiled);
     },
 };

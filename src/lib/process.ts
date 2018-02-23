@@ -19,36 +19,38 @@ class WorkerProcess {
     /** 每个进程的独立标识符 */
     readonly id = Math.random().toString(36).substring(2);
 
-    /** 进程释放事件 */
-    freeEvent: () => void;
-
-    /** 静默定时器 ID */
-    private timer: number;
+    /** 自毁定时器 ID */
+    private _timer = -1;
     /** 是否繁忙标志 */
-    private busy = false;
+    private _busy = false;
+    /** 进程释放事件队列 */
+    private readonly _freeEvents: Array<(process: WorkerProcess) => void> = [];
 
     constructor(manager: ProcessManager, workerCreator: workerCreator) {
         this.manager = manager;
         this.worker = workerCreator();
-        this.freeEvent = () => void 0;
     }
 
     get isBusy() {
-        return this.busy;
+        return this._busy;
     }
     set isBusy(value: boolean) {
-        if (value === this.busy) {
+        if (value === this._busy) {
             return;
         }
 
-        this.busy = value;
+        this._busy = value;
 
-        // 繁忙标志位置高，清除自销毁定时器
+        // 繁忙标志位置高，清除自毁定时器
         if (value) {
-            window.clearTimeout(this.timer);
-            this.timer = -1;
+            if (this._timer === -1) {
+                return;
+            }
+
+            window.clearTimeout(this._timer);
+            this._timer = -1;
         }
-        // 繁忙标志位置低，设定自销毁定时器
+        // 繁忙标志位置低，设定自毁定时器
         else {
             const limit = this.manager.options.min;
             const count = this.manager.pool.length;
@@ -58,14 +60,14 @@ class WorkerProcess {
                 return;
             }
 
-            this.timer = window.setTimeout(
+            this._timer = window.setTimeout(
                 () => this.destroy(),
                 this.manager.options.timeout * 1000,
             );
 
             window.setTimeout(() => {
-                this.freeEvent();
-                this.freeEvent = () => void 0;
+                const event = this._freeEvents.pop();
+                event && event.call(this);
             });
         }
     }
@@ -79,9 +81,13 @@ class WorkerProcess {
 
         return response.result;
     }
+    /** 绑定空闲事件 */
+    onFree(callback: (process: WorkerProcess) => void) {
+        this._freeEvents.push(callback);
+    }
     /** 销毁当前子进程 */
     destroy() {
-        this.worker.terminate();
+        // this.worker.terminate();
         this.manager.deleteProcess(this.id);
     }
 }
@@ -136,15 +142,11 @@ export default class ProcessManager {
                     (process) =>
                         new Promise(
                             (resolve) =>
-                                process.freeEvent = function freeEvent() {
-                                    debugger;
-                                    resolve(this);
-                                },
+                                process.onFree(resolve),
                         ),
                 ),
             );
 
-            debugger;
             result.isBusy = true;
             return result;
         };
