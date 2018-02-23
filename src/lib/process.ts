@@ -67,7 +67,7 @@ class WorkerProcess {
 
             window.setTimeout(() => {
                 const event = this._freeEvents.pop();
-                event && event.call(this);
+                event && event(this);
             });
         }
     }
