@@ -19,8 +19,8 @@ module.exports = {
     testRegex: '(\\.|/)(test|spec)\\.tsx?$',
     snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
     setupFiles: [
-        'jsdom-worker',
-        '<rootDir>/test/setup.ts',
+        '<rootDir>/test/setups/vue.ts',
+        '<rootDir>/test/setups/worker.ts',
     ],
     coverageDirectory: '<rootDir>/test/coverage',
     collectCoverageFrom: [
