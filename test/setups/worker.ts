@@ -1,15 +1,30 @@
-import mitt from 'mitt';
-import fetch, { Response } from 'node-fetch';
+import http from 'http';
+import https from 'https';
 
-// 全局变量
-const self: Window = global as any;
+/** Message 事件回调 */
+type MessageCallback = (event: MessageEvent) => any;
+/** 作用域接口 */
+interface Scope {
+    onmessage: null | MessageCallback;
 
-if (!self.URL) {
-    Object.defineProperty(self, 'URL', {});
+    terminate(): void;
+    postMessage(data: any): void;
+    dispatchEvent(type: 'message'): void;
+    addEventListener(type: 'message', callback: MessageCallback): void;
+    removeEventListener(type: 'message', callback: MessageCallback): void;
 }
 
-if (!self.document) {
-    Object.defineProperty(self, 'document', document);
+/** 全局变量 */
+const win: Window = global as any;
+// 全局缓存
+const $cache: { [key: string]: Blob } = {};
+
+if (!win.URL) {
+    Object.defineProperty(win, 'URL', {
+        writable: false,
+        configurable: false,
+        value: {},
+    });
 }
 
 /**
@@ -42,107 +57,203 @@ function createUUID() {
     return uuid;
 }
 
-// 全局缓存
-const $cache: { [key: string]: Blob } = {};
+/**
+ * 获取输入链接中的代码
+ * @param {string} url 请求链接
+ * @returns {Promise<string>} 返回代码的字符串
+ */
+function fetchCode(url: string): Promise<string> {
+    if (url.match(/^blob:/)) {
+        return new Promise((resolve) => {
+            const file = new FileReader();
+            const id = url.match(/[^/]+$/)![0];
+            file.readAsText($cache[id]);
 
-self.URL.createObjectURL = (blob: Blob) => {
+            file.addEventListener('loadend', () => resolve(file.result));
+        });
+    }
+    else if (url.match(/^http:/)) {
+        return new Promise((resolve) => http.request(url, (res) => {
+            let code = '';
+            res.on('finish', () => resolve(code));
+            res.on('data', (chunk) => code += chunk.toString());
+        }));
+    }
+    else if (url.match(/^https:/)) {
+        return new Promise((resolve) => https.request(url, (res) => {
+            let code = '';
+            res.on('finish', () => resolve(code));
+            res.on('data', (chunk) => code += chunk.toString());
+        }));
+    }
+    else {
+        throw new Error('(worker) wrong url.');
+    }
+}
+
+/** 创建 Message 事件对象 */
+function createCustomMessage(data: any): MessageEvent {
+    const event: MessageEvent = {
+        type: 'message',
+        timeStamp: new Date().getTime(),
+        data: JSON.parse(JSON.stringify(data)),
+    } as any;
+
+    return event;
+}
+
+win.URL.createObjectURL = (blob: Blob) => {
     const id = createUUID();
 
     $cache[id] = blob;
     return `blob:http://localhost/${id}`;
 };
 
-const oldFetch = self.fetch || fetch;
+/** 内部自定义 MessageEvent 类 */
+class CustomEventTarget {
+    /** 默认事件接口 */
+    onmessage?: (event: MessageEvent) => any;
 
-self.fetch = function(url: string, opts: RequestInit) {
-    if (url.match(/^blob:/)) {
-        return new Promise((resolve, reject) => {
-            const file = new FileReader();
+    /** 停止标记 */
+    private _isStop = false;
+    /** 事件列表 */
+    private _events: MessageCallback[] = [];
 
-            file.onload = () => {
-                resolve(new Response(file.result, { status: 200, statusText: 'OK' }));
-            };
-            file.onerror = () => {
-                reject(file.error);
-            };
-
-            const id = url.match(/[^/]+$/)![0];
-            file.readAsText($cache[id]);
-        });
-    }
-    else {
-        return oldFetch.call(this, url, opts);
-    }
-};
-
-function Event(type: string) {
-    this.type = type;
-}
-Event.prototype.initEvent = Object;
-
-if (!self.document.createEvent) {
-    self.document.createEvent = function(type) {
-        let Ctor = global[type] || Event;
-        return new Ctor(type);
-    };
-}
-
-self.Worker = function Worker(url) {
-    let messageQueue = [],
-        inside = mitt(),
-        outside = mitt(),
-        scope = {
-            onmessage: null,
-            dispatchEvent: inside.emit,
-            addEventListener: inside.on,
-            removeEventListener: inside.off,
-            postMessage(data) {
-                outside.emit('message', { data });
-            },
-            fetch: self.fetch,
-            importScripts(...urls) {}
-        },
-        getScopeVar;
-
-    inside.on('message', (e) => {
-        let f = getScopeVar('onmessage');
-
-        if (f) {
-            f.call(scope, e);
+    addEventListener(type: 'message', callback: MessageCallback): void {
+        if (type !== 'message') {
+            return;
         }
-    });
 
-    this.addEventListener = outside.on;
-    this.removeEventListener = outside.off;
-    this.dispatchEvent = outside.emit;
+        this._events.push(callback);
+    }
+    removeEventListener(type: 'message', callback: MessageCallback) {
+        if (type !== 'message') {
+            return;
+        }
 
-    outside.on('message', (e) => {
-        this.onmessage && this.onmessage(e);
-    });
+        this._events = this._events.filter((func) => func !== callback);
+    }
+    dispatchEvent(event: MessageEvent) {
+        if (this._isStop) {
+            return;
+        }
 
-    this.postMessage = (data) => {
-        if (messageQueue!=null) messageQueue.push(data);
-        else inside.emit('message', { data });
+        if (this.onmessage) {
+            this.onmessage(event);
+        }
+
+        this._events.forEach((func) => func(event));
+    }
+
+    stopImmediatePropagation() {
+        this._isStop = true;
+    }
+}
+
+/** 自定义 Worker 类 */
+class CustomWorker extends CustomEventTarget {
+    /** 代码是否获取完成 */
+    private _isFetch: Promise<void>;
+    /** woker 内部事件 */
+    private _inside = new CustomEventTarget();
+    /** 获取闭包中的 inside 属性 */
+    private _insideOnmessage: {
+        get(): MessageCallback;
+        set(value: MessageCallback): void;
     };
 
-    this.terminate = () => {
-        throw Error('Not Supported');
-    };
+    constructor(url: string) {
+        super();
 
-    self.fetch(url)
-        .then((r) => r.text())
-        .then((code) => {
-            let vars = 'var self = this, global = self';
+        this._isFetch = this._init(url);
+    }
 
-            for (const k in scope) {
-                vars += `, ${k} = self.${k}`;
-            }
+    /** 由外向内地触发事件 */
+    async postMessage(data: any) {
+        await this._isFetch;
+        await (new Promise((r) => setTimeout(r, 0)));
 
-            getScopeVar = eval('(function() {'+vars+'\n'+code+'\nreturn function(__){return eval(__)}})').call(scope);
+        this._inside.onmessage = this._insideOnmessage.get();
+        this._inside.dispatchEvent(createCustomMessage(data));
+    }
+    terminate() {
+        this.stopImmediatePropagation();
+        this._inside.stopImmediatePropagation();
+    }
 
-            let q = messageQueue;
-            messageQueue = null;
-            q.forEach(this.postMessage);
-        })
-        .catch((e) => { outside.emit('error', e); console.error(e); });
-};
+    /** 初始化 */
+    private async _init(url: string) {
+        // worker 代码
+        const code = await fetchCode(url);
+        // 生成 worker 作用域中的全局变量
+        const scope: Scope = {
+            onmessage: null,
+
+            // 由内向外触发事件
+            postMessage: (e: any) => {
+                setTimeout(() => {
+                    this.dispatchEvent(createCustomMessage(e));
+                });
+            },
+
+            terminate: this.stopImmediatePropagation.bind(this._inside),
+            dispatchEvent: this.dispatchEvent.bind(this._inside),
+            addEventListener: this.addEventListener.bind(this._inside),
+            removeEventListener: this.removeEventListener.bind(this._inside),
+        };
+
+        Object.defineProperty(scope, 'log', {
+            value(str: string) {
+                console.log(str);
+            },
+        });
+
+        Object.defineProperty(scope, 'onmessage', {
+            configurable: false,
+            enumerable: true,
+
+            get: () => {
+                return this._inside.onmessage || null;
+            },
+            set: (value) => {
+                this._inside.onmessage = value;
+                this._insideOnmessage.set(value);
+            },
+        });
+
+        // 作用域内变量声明语句
+        let statement = 'let self = this\n';
+        Object.keys(scope).forEach((key) => statement += `, ${key} = self.${key}`);
+        statement += ';\n';
+
+        /* tslint:disable-next-line:no-eval  */
+        const func = eval(`
+            (function() {
+                ${statement}
+
+                setTimeout(() => {
+                    ${code}
+                });
+
+                return {
+                    get() {
+                        return onmessage;
+                    },
+                    set(value) {
+                        onmessage = value;
+                    },
+                };
+            })`) as () => void;
+
+        // worker 首次运行
+        this._insideOnmessage = func.call(scope, scope);
+    }
+}
+
+if (!win.hasOwnProperty('Worker')) {
+    Object.defineProperty(win, 'Worker', {
+        writable: false,
+        configurable: false,
+        value: CustomWorker,
+    });
+}
