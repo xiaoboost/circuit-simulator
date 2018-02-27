@@ -5,7 +5,7 @@ import { $P, Point } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import { clone } from 'src/lib/utils';
 import * as assert from 'src/lib/assertion';
-import Electronics from 'src/components/electronic-part/shape';
+import Electronics from 'src/components/electronic-part/parts';
 
 import { PartData } from 'src/components/electronic-part/types';
 import { LineData } from 'src/components/electronic-line/types';
