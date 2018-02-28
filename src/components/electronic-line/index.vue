@@ -143,7 +143,6 @@ export default class ElectronicLine extends DrawLine implements LineData {
         const part = this.findPart(mapData.id);
         const mark = mapData.id.split('-')[1];
         const direction = part.points[mark].direction;
-        const map = schMap.outputMap();
 
         this.mapStatus.linesNow.length = 0;
         this.mapStatus.linesNow.push(this.id);
@@ -203,7 +202,7 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     callback: (e: DrawEvent) => this.drawing({
                         start: this.way[0],
                         end: e.$position,
-                        direction, map, temp,
+                        direction, temp,
                     }),
                 },
             ],

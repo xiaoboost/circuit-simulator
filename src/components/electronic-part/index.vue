@@ -37,15 +37,15 @@
 import { CreateElement, VNode } from 'vue';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
+import Electronics from './parts';
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
 import { clone } from 'src/lib/utils';
 import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point, PointLike } from 'src/lib/point';
-import Electronics, { Electronic, ShapeDescription } from './shape';
 
 import ElectronicPoint from 'src/components/electronic-point';
-import { PartData, PartMargin } from './types';
+import { PartData, PartMargin, Electronic, ShapeDescription } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';

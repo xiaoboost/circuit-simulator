@@ -23,7 +23,6 @@ export interface DebugData {
 export interface ExchangeData {
     start: Point;
     end: Point;
-    map: string;
     status: string;
     direction: Point;
     endBias?: Point;

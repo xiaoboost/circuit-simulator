@@ -1,10 +1,7 @@
-import * as schMap from 'src/lib/map';
-import * as assert from 'src/lib/assertion';
-
 import { Rules } from './rules';
+import { LineWay } from './line-way';
 import { $P, Point } from 'src/lib/point';
 
-import { Omit } from 'type-zoo';
 import { ExchangeData } from './types';
 
 export interface NodeData {
@@ -12,7 +9,6 @@ export interface NodeData {
     direction: Point;
     value: number;
     junction: number;
-    straight: boolean;
     parent?: NodeData;
     cornerParent: NodeData;
 }
@@ -28,24 +24,6 @@ const rotates = [
     [[0, -1], [1, 0]],      // 逆时针
     [[-1, 0], [0, -1]],     // 反向
 ];
-
-// 全局 worker 变量
-const ctx: Worker = self as any;
-
-// 外部对内通信的接口
-ctx.addEventListener('message', ({ data }: MessageEvent) => {
-    const exchange: ExchangeData = data[0];
-
-    exchange.start = $P(exchange.start);
-    exchange.end = $P(exchange.end);
-    exchange.direction = $P(exchange.direction);
-    exchange.endBias = exchange.endBias ? $P(exchange.endBias) : $P();
-
-    schMap.forceUpdateMap(exchange.map, true);
-
-    const result = AStartSearch(exchange);
-    ctx.postMessage({ code: 'finish', result });
-});
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
@@ -139,14 +117,13 @@ function newNode(node: NodeData, index: number): NodeData {
         direction,
         value: 0,
         parent: node,
-        straight: true,
         cornerParent: (index > 0 ? node : node.cornerParent),
         junction: node.junction + (index > 0 ? 1 : 0),
         position: node.position.add(direction),
     };
 }
 
-function AStartSearch({ start, end, status, direction: originDirection, endBias = $P() }: Omit<ExchangeData, 'map'>) {
+export function nodeSearch({ start, end, status, direction: originDirection, endBias = $P() }: ExchangeData): LineWay {
     const map = new SearchMap();
     const stack = new SearchStack(map);
     const rules = new Rules(start, end, status);
@@ -202,14 +179,12 @@ function AStartSearch({ start, end, status, direction: originDirection, endBias 
             // 当前节点是否满足扩展要求
             if (rules.checkPoint(nodeExpand)) {
                 stack.push(nodeExpand);
-            } else {
-                nodenow.straight = !i;
             }
         }
 
         // 没有可能路径，直接返回
         if (!stack.openSize && !endStatus) {
-            return ([start]);
+            return (new LineWay([start]));
         }
     }
 
@@ -218,7 +193,7 @@ function AStartSearch({ start, end, status, direction: originDirection, endBias 
     }
 
     // 终点回溯，生成路径
-    const way = [];
+    const way = new LineWay();
     while (endStatus.parent && endStatus !== endStatus.cornerParent) {
         way.push($P(endStatus.position).mul(20));
         endStatus = endStatus.cornerParent;

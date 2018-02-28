@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { $P, Point } from 'src/lib/point';
-import Electronics from 'src/components/electronic-part/shape';
+import Electronics from 'src/components/electronic-part/parts';
 import Dialog, { ParamsDialog } from 'src/components/params-dialog';
 
 import { VueConstructor } from 'vue/types/vue';

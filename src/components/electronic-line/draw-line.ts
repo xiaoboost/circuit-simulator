@@ -1,31 +1,10 @@
-import Search from 'worker-loader!./node-search';
-
 import { Point } from 'src/lib/point';
-import { LineWay } from './line-way'; // WayMap
-import ProcessManager from 'src/lib/process';
+import { LineWay } from './line-way';
+import { nodeSearch } from './node-search';
 
+import { DrawingOption } from './types';
 import { Component, Vue, Inject } from 'vue-property-decorator';
-
-import {
-    ExchangeData,
-    DrawingOption,
-} from './types';
-
-import {
-    FindPart,
-    FindLine,
-    SetDrawEvent,
-    MapStatus,
-} from 'src/components/drawing-main';
-
-// 导线搜索进程管理器
-const Manager = new ProcessManager(Search);
-
-async function nodeSearch(option: ExchangeData): Promise<LineWay> {
-    const search = await Manager.getIdleProcess();
-    const result = await search.post<Point[]>(option);
-    return (new LineWay(result));
-}
+import { FindPart, FindLine, SetDrawEvent, MapStatus } from 'src/components/drawing-main';
 
 @Component
 export default class DrawLine extends Vue {
@@ -53,7 +32,7 @@ export default class DrawLine extends Vue {
     }
 
     // 绘制导线
-    async drawing({ start, end, direction, map, temp }: DrawingOption) {
+    async drawing({ start, end, direction, temp }: DrawingOption) {
         // 当前终点四方格左上角顶点
         const vertex = end.floor();
         // 当前终点四舍五入坐标
@@ -69,18 +48,23 @@ export default class DrawLine extends Vue {
             temp.lastVertex = vertex;
             // 由缓存中扩展四顶点路径
             wayMap.expend(endGrid);
+
             debugger;
+
             // 搜索四顶点路径
-            await Promise.all(
-                endGrid
-                    .filter((node) => !wayMap.has(node))
-                    .map(async (node) => wayMap.set(node, await nodeSearch({
-                        start, direction, map,
+            endGrid
+                .filter((node) => !wayMap.has(node))
+                .forEach((node) => {
+                    const tempWay = nodeSearch({
+                        start, direction,
                         end: node,
                         endBias: endGrid[0].add(10),
                         status: 'drawing',
-                    }))),
-            );
+                    });
+
+                    tempWay.checkWayExcess();
+                    wayMap.set(node, tempWay);
+                });
         }
 
         // 选取四顶点中节点最多的路径
@@ -90,7 +74,9 @@ export default class DrawLine extends Vue {
                     ? pre : next,
         );
 
-        this.way = new LineWay(wayMap.get(key)!);
-        // this.way.endToPoint(end);
+        const way = new LineWay(wayMap.get(key)!);
+        way.endToPoint(end);
+
+        this.way = way;
     }
 }

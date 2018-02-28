@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import main from './index.vue';
 import { Point } from 'src/lib/point';
-import { ParmasDescription } from 'src/components/electronic-part/shape';
+import { ParmasDescription } from 'src/components/electronic-part/types';
 
 export default main;
 
