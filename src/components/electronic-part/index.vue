@@ -149,12 +149,12 @@ export default class ElectronicPart extends Vue implements PartData {
     get margin(): PartMargin {
         type EndPoint = PartMargin['inner'];
 
-        const types = ['margin', 'padding'],
-            box: { margin: EndPoint, padding: EndPoint } = {
-                margin: [[0, 0], [0, 0]],
-                padding: [[0, 0], [0, 0]],
-            },
-            outter: EndPoint = [[0, 0], [0, 0]];
+        const types = ['margin', 'padding'];
+        const outter: EndPoint = [[0, 0], [0, 0]];
+        const box: { margin: EndPoint, padding: EndPoint } = {
+            margin: [[0, 0], [0, 0]],
+            padding: [[0, 0], [0, 0]],
+        };
 
         for (let i = 0; i < 2; i++) {
             const type = types[i],
@@ -295,11 +295,12 @@ export default class ElectronicPart extends Vue implements PartData {
         const position = this.position.floorToSmall();
 
         // 器件内边距占位
-        position.around(inner, (x, y) => schMap.setPoint({
-            point: $P(x, y),
+        position.everyRect(inner, (node) => schMap.setPoint({
+            point: $P(node),
             id: this.id,
             type: 'part',
-        }));
+        }) || true);
+
         // 器件管脚距占位
         this.points.forEach((point, i) => schMap.setPoint({
             point: point.position.floorToSmall().add(position),
@@ -314,7 +315,7 @@ export default class ElectronicPart extends Vue implements PartData {
         const position = this.position.floorToSmall();
 
         // 删除器件内边距占位
-        position.around(inner, (x, y) => schMap.deletePoint([x, y]));
+        position.everyRect(inner, (node) => schMap.deletePoint(node));
         // 删除器件引脚占位
         this.points.forEach((point) => schMap.deletePoint(point.position.floorToSmall().add(position)));
     }
@@ -335,29 +336,35 @@ export default class ElectronicPart extends Vue implements PartData {
         }
 
         // 扫描内边距，内边距中不允许存在任何元素
-        position.around(margin.inner, (x, y, stop) => {
-            schMap.hasPoint([x, y])
-                ? (label = true, stop())
-                : coverHash[`${x},${y}`] = true;
+        position.everyRect(margin.inner, (node) => {
+            if (schMap.hasPoint(node)) {
+                label = true;
+                return false;
+            }
+            else {
+                coverHash[node.join(',')] = true;
+                return true;
+            }
         });
+
         if (label) {
             return (true);
         }
 
         // 扫描外边距
-        position.around(margin.outter, (x, y, stop) => {
+        position.everyRect(margin.outter, (node) => {
             // 跳过内边距
-            if (coverHash[`${x},${y}`]) {
-                return;
+            if (coverHash[node.join(',')]) {
+                return true;
             }
             // 外边框为空
-            if (!schMap.hasPoint([x, y])) {
-                return;
+            if (!schMap.hasPoint(node)) {
+                return true;
             }
             // 外边框不是由器件占据
-            const status = schMap.getPoint([x, y]);
+            const status = schMap.getPoint(node);
             if (!status || status.type !== 'part') {
-                return;
+                return true;
             }
 
             // 校验相互距离
@@ -368,16 +375,18 @@ export default class ElectronicPart extends Vue implements PartData {
             // 分别校验 x、y 轴
             for (let i = 0; i < 2; i++) {
                 if (distance[i] !== 0) {
-                    const sub = distance[i] > 0 ? 0 : 1,
-                        diff_x = Math.abs(distance[i]),
-                        limit_x = Math.abs(margin.outter[sub][i]) + Math.abs(another[1 - sub][i]);
+                    const sub = distance[i] > 0 ? 0 : 1;
+                    const diff_x = Math.abs(distance[i]);
+                    const limit_x = Math.abs(margin.outter[sub][i]) + Math.abs(another[1 - sub][i]);
 
                     if (diff_x < limit_x) {
                         label = true;
-                        stop();
+                        return false;
                     }
                 }
             }
+
+            return true;
         });
 
         return (label);
@@ -397,7 +406,7 @@ export default class ElectronicPart extends Vue implements PartData {
 
                 this.position = $P(
                     node.round(20)
-                        .aroundInf((node) => !this.isCover(node), 20)
+                        .around((point) => !this.isCover(point), 20)
                         .reduce(
                             (pre, next) =>
                                 node.distance(pre) < node.distance(next) ? pre : next

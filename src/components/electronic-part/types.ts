@@ -14,8 +14,8 @@ export interface PartData {
 
 /** 器件内外边距 */
 export interface PartMargin {
-    inner: [[number, number], [number, number]];
-    outter: [[number, number], [number, number]];
+    inner: number[][];
+    outter: number[][];
 }
 
 /** 器件每项参数的说明 */
