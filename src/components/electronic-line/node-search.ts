@@ -130,7 +130,9 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
 
     // 方向偏移
     const sumDirection = endBias.add(start, -1).toUnit().add(originDirection);
-    const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1]) ? $P(1, 0) : $P(0, 1);
+    const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
+        ? $P(sumDirection[0], 0).sign()
+        : $P(0, sumDirection[1]).sign();
 
     // 生成初始节点
     const first: NodeData = {
@@ -145,6 +147,11 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
     first.cornerParent = first;
     first.value = rules.calValue(first);
     stack.push(first);
+
+    // 调试用时，指示终点
+    if ($ENV.NODE_ENV === 'development') {
+        $debugger.point(first.position, 'red', 20);
+    }
 
     // 终点状态
     let endStatus: NodeData | undefined = void 0;
@@ -164,11 +171,19 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
             break;
         }
 
+        if ($ENV.NODE_ENV === 'development') {
+            $debugger.point(nodenow.position, 'blue', 20);
+        }
+
         // 按方向扩展
         for (let i = 0; i < 3; i++) {
             // 生成扩展节点
             const nodeExpand = newNode(nodenow, i);
             nodeExpand.value = rules.calValue(nodeExpand);
+
+            if ($ENV.NODE_ENV === 'development') {
+                $debugger.point(nodeExpand.position, 'black', 20);
+            }
 
             // 判断是否是终点
             if (rules.isEnd(nodeExpand)) {
@@ -186,6 +201,10 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
         if (!stack.openSize && !endStatus) {
             return (new LineWay([start]));
         }
+    }
+
+    if ($ENV.NODE_ENV === 'development') {
+        $debugger.clearAll();
     }
 
     if (!endStatus) {

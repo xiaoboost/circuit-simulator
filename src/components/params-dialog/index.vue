@@ -206,8 +206,6 @@ export default class ParamsDialog extends Vue {
         Object.assign(this.$el.style, elStyle);
         Object.assign(this.$refs.dialog.style, dislogStyle);
 
-        console.log({ width, height });
-
         return { width, height };
     }
     /** 计算倒三角形状 */

@@ -5,7 +5,7 @@
     <rect
         class="line-rect"
         v-for="(item, i) in pathRects"
-        :key="i" :x="item.x" :y="item.y"
+        :key="i + 2" :x="item.x" :y="item.y"
         :height="item.height" :width="item.width">
     </rect>
     <electron-point
@@ -143,6 +143,9 @@ export default class ElectronicLine extends DrawLine implements LineData {
         const part = this.findPart(mapData.id);
         const mark = mapData.id.split('-')[1];
         const direction = part.points[mark].direction;
+
+        part.connect.$set(+mark, this.id);
+        this.connect.$set(0, mapData.id);
 
         this.mapStatus.linesNow.length = 0;
         this.mapStatus.linesNow.push(this.id);
