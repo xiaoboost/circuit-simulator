@@ -34,7 +34,7 @@ class MapDebug {
         this.$el = doc.createElementNS(NS, 'g');
         this.$el.setAttribute('class', 'map-debugger');
     }
-    point([x, y]: PointLike, color: string = 'black', mul: number = 1): void {
+    point([x, y]: PointLike, color = 'black', mul = 1): void {
         if (!Switch.point) {
             return;
         }
@@ -50,7 +50,7 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    path(way: PointLike[], color: string = 'black'): void {
+    path(way: PointLike[], color = 'black'): void {
         if (!Switch.point) {
             return;
         }
@@ -64,7 +64,7 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    text([x, y]: PointLike, text: string, mul: number = 1): void {
+    text([x, y]: PointLike, text: string, mul = 1): void {
         const el = doc.createElementNS(NS, 'text');
 
         el.textContent = text;

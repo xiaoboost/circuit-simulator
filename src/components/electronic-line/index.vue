@@ -116,7 +116,7 @@ export default class ElectronicLine extends DrawLine implements LineData {
     @Watch('value')
     private init() {
         const data = this.value;
-        this.way = new LineWay(data.way);
+        this.way = LineWay.from(data.way);
         this.connect = data.connect.slice();
     }
 

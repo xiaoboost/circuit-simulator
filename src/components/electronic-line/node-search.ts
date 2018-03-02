@@ -199,7 +199,7 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
 
         // 没有可能路径，直接返回
         if (!stack.openSize && !endStatus) {
-            return (new LineWay([start]));
+            return (LineWay.from([start]));
         }
     }
 

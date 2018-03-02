@@ -1,12 +1,21 @@
 import * as schMap from 'src/lib/map';
 import * as assert from 'src/lib/assertion';
-import { $P, Point } from 'src/lib/point';
+import { $P, Point, PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
 export class LineWay extends Array<Point> {
-    constructor(args: Point[] = []) {
-        super();
-        args.forEach((n) => this.push($P(n)));
+    static from(points: Point[] | PointLike[]) {
+        const way = new LineWay(points.length);
+
+        for (let i = 0; i < points.length; i++) {
+            way[i] = $P(points[i]);
+        }
+
+        return way;
+    }
+
+    constructor(len = 0) {
+        super(len);
     }
 
     /**
@@ -55,8 +64,7 @@ export class LineWay extends Array<Point> {
     }
     /** 去除路径冗余 */
     checkWayExcess(): this {
-        // TODO:
-        return this;
+        return this.checkWayRepeat();
     }
     /**
      * 路径是否相似
@@ -164,41 +172,57 @@ export class WayMap {
             return;
         }
 
-        const mapStatus = schMap.getPoint(node);
-        const directions: Array<[number, number]> = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+        const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+
+        /** 检查两个点的状态是否相同 */
+        function sameMapStatus(node1: PointLike, node2: PointLike): boolean {
+            const status1 = schMap.getPoint(node1, true);
+            const status2 = schMap.getPoint(node2, true);
+
+            return (
+                (!status1 && !status2) ||
+                (!!status1 && !!status2 && status1.type === status2.type)
+            );
+        }
 
         directions.forEach((direction) => {
-            const checkEnd = node.add(direction);
-            const lineway = this.get(checkEnd);
+            const checkNode = node.add(direction, 20);
+            const lineway = this.get(checkNode);
 
-            // 此方向不存在导线
-            if (!lineway) {
+            // 此方向不存在导线或者当前点和检查点状态不同都不允许扩展
+            if (!lineway || !sameMapStatus(node, checkNode)) {
                 return;
             }
 
-            debugger;
             // 此向量为：被检查的导线终点 -> 被检查的导线倒数第二点
-            const checkDirection = $P(lineway.get(-1), lineway.get(-2));
-
-            // 被检查的向量与当前向量不同
-            if (!checkDirection.isEqual(direction)) {
-                return;
+            const checkDirection = $P(lineway.get(-1), lineway.get(-2)).sign();
+            // 被检查的向量与当前向量平行
+            if (checkDirection.isParallel(direction)) {
+                const way = LineWay.from(lineway);
+                way[way.length - 1] = $P(node);
+                this.set(node, way);
             }
+            // 被检查的向量与当前向量垂直
+            else if (checkDirection.isVertical(direction)) {
+                // 垂直时导线必须超过 3 个节点才可扩展
+                if (lineway.length < 3) {
+                    return;
+                }
+                // 倒数第二个点
+                const nodeLast = lineway.get(-2);
+                // 扩展的倒数第二个节点
+                const newNodeLast = $P(direction).mul(-20).add(nodeLast);
 
-            const checkStatus = schMap.getPoint(checkEnd);
+                if (sameMapStatus(nodeLast, newNodeLast)) {
+                    const way = LineWay.from(lineway);
+                    way[way.length - 1] = $P(node);
+                    way[way.length - 2] = newNodeLast;
 
-            // 被检查导线终点状态和当前点状态不同
-            if (
-                (mapStatus && !checkStatus) || (!mapStatus && checkStatus) ||
-                (mapStatus && checkStatus && mapStatus.type !== checkStatus.type)
-            ) {
-                return;
+                    way.checkWayRepeat();
+
+                    this.set(node, way);
+                }
             }
-
-            const way = new LineWay(lineway);
-            way[way.length - 1] = node;
-
-            this.set(node, way);
         });
     }
 }
