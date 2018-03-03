@@ -105,6 +105,7 @@ module.exports = {
         // 添加文件抬头信息
         new webpack.BannerPlugin({
             banner,
+            entryOnly: false,
         }),
         // 定义全局注入变量
         new webpack.DefinePlugin({

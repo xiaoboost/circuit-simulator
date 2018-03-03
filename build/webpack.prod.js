@@ -18,7 +18,12 @@ baseConfig.plugins.push(
         test: /\.js$/i,
         cache: false,
         uglifyOptions: {
-            ecma: 7,  // 2016
+            ecma: 8,  // 2017
+            ie8: false,
+            safari10: false,
+            output: {
+                comments: /^!/,
+            },
         },
     })
 );
