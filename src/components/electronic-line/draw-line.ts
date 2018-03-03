@@ -46,9 +46,9 @@ export default class DrawLine extends Vue {
         if (!temp.lastVertex.isEqual(vertex)) {
             // 记录当前顶点坐标
             temp.lastVertex = vertex;
-            // FIXME: 并不是全程都能扩展的
+
             // 由缓存中扩展四顶点路径
-            wayMap.expend(endGrid);
+            wayMap.expendInLine(endGrid);
 
             // 搜索四顶点路径
             endGrid

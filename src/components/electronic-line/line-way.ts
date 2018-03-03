@@ -162,17 +162,20 @@ export class WayMap {
     delete(node: Point): boolean {
         return Reflect.deleteProperty(this._data, node.join(','));
     }
-    expend(node: Point | Point[]) {
+
+    /**
+     * 导线扩展
+     * @param node 尝试将导线扩展至此点
+     */
+    expendInLine(node: Point | Point[]) {
         if (assert.isArray(node)) {
-            node.forEach((n) => this.expend(n));
+            node.forEach((n) => this.expendInLine(n));
             return;
         }
 
         if (this.has(node)) {
             return;
         }
-
-        const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 
         /** 检查两个点的状态是否相同 */
         function sameMapStatus(node1: PointLike, node2: PointLike): boolean {
@@ -185,6 +188,8 @@ export class WayMap {
             );
         }
 
+        const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+
         directions.forEach((direction) => {
             const checkNode = node.add(direction, 20);
             const lineway = this.get(checkNode);
@@ -194,34 +199,11 @@ export class WayMap {
                 return;
             }
 
-            // 此向量为：被检查的导线终点 -> 被检查的导线倒数第二点
-            const checkDirection = $P(lineway.get(-1), lineway.get(-2)).sign();
-            // 被检查的向量与当前向量平行
-            if (checkDirection.isParallel(direction)) {
+            // 当前点在导线最后一段线段中
+            if (node.isInLine([lineway.get(-1), lineway.get(-2)])) {
                 const way = LineWay.from(lineway);
                 way[way.length - 1] = $P(node);
                 this.set(node, way);
-            }
-            // 被检查的向量与当前向量垂直
-            else if (checkDirection.isVertical(direction)) {
-                // 垂直时导线必须超过 3 个节点才可扩展
-                if (lineway.length < 3) {
-                    return;
-                }
-                // 倒数第二个点
-                const nodeLast = lineway.get(-2);
-                // 扩展的倒数第二个节点
-                const newNodeLast = $P(direction).mul(-20).add(nodeLast);
-
-                if (sameMapStatus(nodeLast, newNodeLast)) {
-                    const way = LineWay.from(lineway);
-                    way[way.length - 1] = $P(node);
-                    way[way.length - 2] = newNodeLast;
-
-                    way.checkWayRepeat();
-
-                    this.set(node, way);
-                }
             }
         });
     }
