@@ -12,7 +12,7 @@ const path = require('path'),
 
 const banner =
 `Project: Circuit Simulator
-Author: 2015 - ${new Date().getFullYear()} © XiaoBoost
+Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
 Build: ${buildTag}
 filename: [name], chunkhash: [chunkhash]
