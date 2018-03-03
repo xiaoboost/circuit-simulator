@@ -72,11 +72,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/xiaoboost/Circuit-Simulator.git"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 8"
-  ]
+    "url": "https://github.com/xiaoboost/circuit-simulator.git"
+  }
 }
