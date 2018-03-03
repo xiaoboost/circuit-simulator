@@ -203,7 +203,7 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     type: 'mousemove',
                     capture: false,
                     callback: (e: DrawEvent) => this.drawing({
-                        start: this.way[0],
+                        start: $P(this.way[0]),
                         end: e.$position,
                         direction, temp,
                     }),

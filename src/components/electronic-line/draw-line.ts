@@ -46,24 +46,29 @@ export default class DrawLine extends Vue {
         if (!temp.lastVertex.isEqual(vertex)) {
             // 记录当前顶点坐标
             temp.lastVertex = vertex;
+            // 按照距离起点由远到近的顺序排序
+            const sort = endGrid.sort(
+                (pre, next) =>
+                    pre.distance(next) > next.distance(start) ? -1 : 1,
+            );
 
-            // 由缓存中扩展四顶点路径
-            wayMap.expendInLine(endGrid);
+            for (const point of sort) {
+                // 是否为空
+                if (wayMap.has(point)) {
+                    continue;
+                }
 
-            // 搜索四顶点路径
-            endGrid
-                .filter((node) => !wayMap.has(node))
-                .forEach((node) => {
-                    const tempWay = nodeSearch({
-                        start, direction,
-                        end: node,
-                        endBias: endGrid[0].add(10),
-                        status: 'drawing',
-                    });
-
-                    tempWay.checkWayExcess();
-                    wayMap.set(node, tempWay);
+                // 搜索导线
+                const tempWay = nodeSearch({
+                    start, direction,
+                    end: point,
+                    endBias: endGrid[0].add(10),
+                    status: 'drawing',
                 });
+
+                tempWay.checkWayExcess();
+                tempWay.forEachSubway((subway) => wayMap.set(subway.get(-1), subway));
+            }
         }
 
         // 选取四顶点中节点最多的路径

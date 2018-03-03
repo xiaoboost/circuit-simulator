@@ -1,5 +1,4 @@
 import * as schMap from 'src/lib/map';
-import * as assert from 'src/lib/assertion';
 import { $P, Point, PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
@@ -89,6 +88,62 @@ export class LineWay extends Array<Point> {
         );
     }
     /**
+     * 枚举导线中的所有节点
+     *  - 回调的参数
+     *     - point 当前节点坐标
+     *     - index 当前节点的编号
+     *     - segmentIndex 当前节点在导线的第几个线段
+     * @param {(point: Point, index: number, segmentIndex: number) => void} callback
+     */
+    forEachPoint(callback: (point: Point, index: number, segmentIndex: number) => void) {
+        let index = 0;
+
+        for (let i = 0; i < this.length - 1; i++) {
+            const vector = $P(this[i], this[i + 1]).sign().mul(20);
+
+            for (
+                let node = $P(this[i]);
+                !node.isEqual(this[i + 1]);
+                node = node.add(vector)
+            ) {
+                callback($P(node), i, index++);
+            }
+        }
+
+        callback($P(this.get(-1)), this.length - 2, index);
+    }
+    /**
+     * 枚举导线中的所有子路径
+     *  - 回调的参数
+     *     - way 当前子路径
+     *     - index 当前子路径的编号
+     * @param {(point: Point, index: number) => void} callback
+     */
+    forEachSubway(callback: (way: LineWay, index: number) => void) {
+        let index = 0;
+
+        for (let i = 0; i < this.length - 1; i++) {
+            const vector = $P(this[i], this[i + 1]).sign().mul(20);
+            const tempway = this.slice(0, i + 1);
+
+            for (
+                let node = $P(this[i]);
+                !node.isEqual(this[i + 1]);
+                node = node.add(vector)
+            ) {
+                const way = LineWay.from(tempway);
+
+                if (!node.isEqual(way.get(-1))) {
+                    way.push($P(node));
+                }
+
+                callback(way, index++);
+            }
+        }
+
+        callback(LineWay.from(this), index);
+    }
+    /**
      * 终点（起点）指向某点
      *  - 导线节点数量少于`1`则忽略
      * @param {Point} node
@@ -167,12 +222,7 @@ export class WayMap {
      * 导线扩展
      * @param node 尝试将导线扩展至此点
      */
-    expendInLine(node: Point | Point[]) {
-        if (assert.isArray(node)) {
-            node.forEach((n) => this.expendInLine(n));
-            return;
-        }
-
+    expendInLine(node: Point) {
         if (this.has(node)) {
             return;
         }
