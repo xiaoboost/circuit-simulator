@@ -1,5 +1,8 @@
 import * as schMap from 'src/lib/map';
+import { nodeSearch } from './node-search';
 import { $P, Point, PointLike } from 'src/lib/point';
+
+import { ExchangeData } from './types';
 
 /** 导线路径类 */
 export class LineWay extends Array<Point> {
@@ -62,8 +65,74 @@ export class LineWay extends Array<Point> {
         return (this);
     }
     /** 去除路径冗余 */
-    checkWayExcess(): this {
-        return this.checkWayRepeat();
+    checkWayExcess(option: ExchangeData): this {
+        this.checkWayRepeat();
+
+        // 当前导线节点小于 3，不需要去除冗余
+        if (this.length <= 3) {
+            return (this);
+        }
+
+        // 设置修正时的参数
+        const opt = {
+            ...option,
+            status: `${option.status}-modified`,
+        };
+
+        // 不需要终点偏移
+        delete opt.endBias;
+
+        // 如果优先出线方向和第二个线段方向相同，说明此处需要修正
+        if (opt.direction.isSameDirection($P(this[1], this[2]))) {
+            this.splice(0, 3, ...nodeSearch({
+                ...opt,
+                start: this[0],
+                end: this[2],
+            }));
+            this.checkWayRepeat();
+        }
+
+        for (let i = 0; i < this.length - 3; i++) {
+            const vector = $P(this[i], this[i + 1]).sign();
+            const vectorNextNext = $P(this[i + 2], this[i + 3]).sign();
+
+            // 同向修饰
+            if (vector.isEqual(vectorNextNext)) {
+                const tempWay = nodeSearch({
+                    ...opt,
+                    direction: vector,
+                    start: this[i + 1],
+                    end: this[i + 3],
+                });
+
+                if (
+                    (tempWay.length < 4) &&
+                    $P(tempWay[0], tempWay[1]).isSameDirection(vector)
+                ) {
+                    this.splice(i + 1, 3, ...tempWay);
+                    this.checkWayRepeat();
+                    i--;
+                }
+            }
+            // 反向修饰，导线必须大于 4
+            else if (this.length > 4) {
+                const tempWay = nodeSearch({
+                    ...opt,
+                    direction: vector,
+                    start: this[i],
+                    end: this[i + 3],
+                });
+
+                if (tempWay.length < 4) {
+                    this.splice(i, 4, ...tempWay);
+                    this.checkWayRepeat();
+                    i--;
+                }
+            }
+        }
+
+        this.checkWayRepeat();
+        return (this);
     }
     /**
      * 路径是否相似

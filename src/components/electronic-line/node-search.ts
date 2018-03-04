@@ -13,10 +13,6 @@ export interface NodeData {
     cornerParent: NodeData;
 }
 
-interface MapData {
-    [key: string]: NodeData;
-}
-
 // 全局四方向定义
 const rotates = [
     [[1, 0], [0, 1]],       // 同向
@@ -27,7 +23,7 @@ const rotates = [
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
-    map: MapData;
+    map: { [key: string]: NodeData };
 
     constructor() {
         this.map = {};
@@ -123,13 +119,13 @@ function newNode(node: NodeData, index: number): NodeData {
     };
 }
 
-export function nodeSearch({ start, end, status, direction: originDirection, endBias = $P() }: ExchangeData): LineWay {
+export function nodeSearch({ start, end, status, direction: originDirection, endBias = start }: ExchangeData): LineWay {
     const map = new SearchMap();
     const stack = new SearchStack(map);
     const rules = new Rules(start, end, status);
 
     // 方向偏移
-    const sumDirection = endBias.add(start, -1).toUnit().add(originDirection);
+    const sumDirection = endBias.add(start, -1).sign().add(originDirection);
     const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
         ? $P(sumDirection[0], 0).sign()
         : $P(0, sumDirection[1]).sign();
@@ -140,7 +136,6 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
         direction,
         junction: 0,
         value: 0,
-        straight: true,
     } as any;
 
     // 起点的 cornerParent 等于其自身

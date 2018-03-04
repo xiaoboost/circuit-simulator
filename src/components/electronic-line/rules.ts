@@ -16,7 +16,8 @@ function getPart(node: Point): string {
     }
     else if (status && status.type === 'part-point') {
         return status.id.split('-')[0];
-    } else {
+    }
+    else {
         return '';
     }
 }
@@ -28,8 +29,8 @@ function getSegment(node: Point) {
 
     const ans = [];
     for (let i = 0; i < 2; i++) {
-        const directors: Array<[number, number]> = [[1, 0], [-1, 0], [0, -1], [0, 1]];
-        const limit: [Point, Point] = [
+        const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
+        const limit = [
             schMap.alongTheLine(node, undefined, directors[i * 2]),
             schMap.alongTheLine(node, undefined, directors[i * 2 + 1]),
         ];
@@ -168,9 +169,9 @@ export class Rules {
     /** 排除器件 */
     excludeParts: string[] = [];
     /** 排除线段 */
-    excludeLines: Array<[Point, Point]> = [];
+    excludeLines: Point[][] = [];
     /** 终点等效线段 */
-    endLines: Array<[Point, Point]> = [];
+    endLines: Point[][] = [];
 
     calValue: (node: NodeData) => number;
     checkPoint: (node: NodeData) => boolean;
@@ -189,7 +190,15 @@ export class Rules {
         this.status = status;
 
         // 指定规则
-        if (/drawing/.test(status)) {
+        if (status.includes('modified')) {
+            this.excludeParts.push(getPart(this.end));
+            this.excludeLines.push(...getSegment(this.end));
+
+            this.checkPoint = isLegalPointAlign;
+            this.isEnd = isEndPoint;
+            this.calValue = calToPoint;
+        }
+        else if (status.includes('drawing')) {
             // 节点估值
             this.calValue = calToPoint;
 

@@ -1,8 +1,8 @@
-import { Point } from 'src/lib/point';
+import { $P, Point } from 'src/lib/point';
 import { LineWay } from './line-way';
 import { nodeSearch } from './node-search';
 
-import { DrawingOption } from './types';
+import { DrawingOption, ExchangeData } from './types';
 import { Component, Vue, Inject } from 'vue-property-decorator';
 import { FindPart, FindLine, SetDrawEvent, MapStatus } from 'src/components/drawing-main';
 
@@ -52,21 +52,26 @@ export default class DrawLine extends Vue {
                     pre.distance(next) > next.distance(start) ? -1 : 1,
             );
 
+            const options: ExchangeData = {
+                start, direction, end: $P(),
+                endBias: endGrid[0].add(10),
+                status: 'drawing',
+            };
+
             for (const point of sort) {
                 // 是否为空
                 if (wayMap.has(point)) {
                     continue;
                 }
 
-                // 搜索导线
-                const tempWay = nodeSearch({
-                    start, direction,
-                    end: point,
-                    endBias: endGrid[0].add(10),
-                    status: 'drawing',
-                });
+                // 设置当前搜索终点
+                options.end = point;
 
-                tempWay.checkWayExcess();
+                // 搜索导线
+                const tempWay = nodeSearch(options);
+                tempWay.checkWayExcess(options);
+
+                // 搜索图中设置所有节点
                 tempWay.forEachSubway((subway) => wayMap.set(subway.get(-1), subway));
             }
         }
