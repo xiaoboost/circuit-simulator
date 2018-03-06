@@ -12,6 +12,25 @@ export interface PartData {
     readonly connect: string[];
 }
 
+/** 器件引脚 */
+export interface PartPoint {
+    position: Point;
+    direction: Point;
+    class: string;
+}
+
+/** 组件对外接口 */
+export interface ComponentInterface extends PartData {
+    focus: boolean;
+    points: PartPoint[];
+    margin: PartMargin;
+
+    renderText(): void;
+    markSign(): void;
+    deleteSign(): void;
+    isCover(position?: Point): boolean;
+}
+
 /** 器件内外边距 */
 export interface PartMargin {
     inner: number[][];

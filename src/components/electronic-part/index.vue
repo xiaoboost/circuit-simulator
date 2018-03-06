@@ -45,7 +45,7 @@ import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point, PointLike } from 'src/lib/point';
 
 import ElectronicPoint from 'src/components/electronic-point';
-import { PartData, PartMargin, Electronic, ShapeDescription } from './types';
+import { PartData, ComponentInterface, Electronic, ShapeDescription } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -71,7 +71,7 @@ class PartAspect extends Vue {
         ElectronicPoint,
     }
 })
-export default class ElectronicPart extends Vue implements PartData {
+export default class ElectronicPart extends Vue implements ComponentInterface {
     /** 器件原始数据 */
     @Prop({ type: Object, default: () => ({}) })
     private readonly value: PartData;
@@ -146,12 +146,10 @@ export default class ElectronicPart extends Vue implements PartData {
             .filter((txt) => txt.vision)
             .map((txt) => (txt.value + txt.unit).replace(/u/g, 'μ'));
     }
-    get margin(): PartMargin {
-        type EndPoint = PartMargin['inner'];
-
+    get margin() {
         const types = ['margin', 'padding'];
-        const outter: EndPoint = [[0, 0], [0, 0]];
-        const box: { margin: EndPoint, padding: EndPoint } = {
+        const outter = [[0, 0], [0, 0]];
+        const box = {
             margin: [[0, 0], [0, 0]],
             padding: [[0, 0], [0, 0]],
         };
@@ -159,7 +157,7 @@ export default class ElectronicPart extends Vue implements PartData {
         for (let i = 0; i < 2; i++) {
             const type = types[i],
                 boxSize = this.origin[type] as [number, number, number, number],
-                endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]] as EndPoint,
+                endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]],
                 data = endpoint.map((point) => product(point, this.rotate));
 
             box[type] = [
