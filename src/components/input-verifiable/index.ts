@@ -1,2 +1,2 @@
-import main from './index.vue';
+import main from '../input-verifiable/index.vue';
 export default main;
