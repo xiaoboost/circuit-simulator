@@ -1,14 +1,9 @@
 declare module '*/electronic-part/index.vue' {
-    import Vue from 'vue';
-    import { Omit } from 'type-zoo';
+    import { VueConstructor } from 'vue';
     import { ComponentInterface } from 'src/components/electronic-part/types';
 
-    interface ElectronicPart extends Omit<Vue, '$refs'>, ComponentInterface {}
-
-    const ElectronicPart: {
-        prototype: ElectronicPart;
-        new(): ElectronicPart;
-    };
+    type ElectronicPart = ComponentInterface;
+    const ElectronicPart: VueConstructor<ElectronicPart>;
 
     export default ElectronicPart;
 }

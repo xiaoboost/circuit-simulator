@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { Point } from 'src/lib/point';
 import { Matrix } from 'src/lib/matrix';
 
@@ -20,7 +21,7 @@ export interface PartPoint {
 }
 
 /** 组件对外接口 */
-export interface ComponentInterface extends PartData {
+export interface ComponentInterface extends PartData, Vue {
     focus: boolean;
     points: PartPoint[];
     margin: PartMargin;

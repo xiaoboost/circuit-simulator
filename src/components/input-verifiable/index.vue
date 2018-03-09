@@ -17,10 +17,12 @@
 
 <script lang="ts">
 import * as assert from 'src/lib/assertion';
+
+import { ComponentInterface } from './types';
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 @Component
-export default class InputVerifiable extends Vue {
+export default class InputVerifiable extends Vue implements ComponentInterface {
     @Prop({ type: String, default: '' })
     readonly value: string;
 

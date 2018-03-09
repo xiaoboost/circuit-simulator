@@ -23,7 +23,7 @@ module.exports = {
     collectCoverageFrom: [
         'src/**/*.{ts,vue}',
         '!src/main.ts',
-        '!src/*/*.d.ts',
+        '!src/**/*.d.ts',
         '!src/**/{types,icon,debugger}.ts',
         '!src/components/electronic-part/parts/*',
         '!src/components/*/index.ts',

@@ -1,5 +1,7 @@
+import Vue from 'vue';
+
 /** 组件对外接口 */
-export interface ComponentInterface {
+export interface ComponentInterface extends Vue {
     value: string;
 
     $refs: {
