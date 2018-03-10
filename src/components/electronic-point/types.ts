@@ -8,7 +8,7 @@ export interface ComponentInterface extends Vue {
     mapStatus: MapStatus;
 
     $refs: {
-        circle: HTMLElement;
+        circle: SVGCircleElement;
         animate: SVGAnimationElement;
     };
 }

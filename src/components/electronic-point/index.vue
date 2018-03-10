@@ -53,7 +53,7 @@ export default class ElectronicPoint extends Vue implements ComponentInterface {
     mapStatus: MapStatus;
 
     $refs: {
-        circle: HTMLElement;
+        circle: SVGCircleElement;
         animate: SVGAnimationElement;
     };
 
