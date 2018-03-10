@@ -116,7 +116,7 @@ export function isRegExp(x: any): x is RegExp {
  * @returns {x is HTMLElement}
  */
 export function isElement(x: any): x is HTMLElement {
-    return (/^\[object HTML([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x) as string));
+    return (/^\[object (HTML|SVG)([a-zA-Z]+)?Element\]$/.test(Object.prototype.toString.call(x) as string));
 }
 
 /**

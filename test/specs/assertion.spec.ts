@@ -15,7 +15,8 @@ const strictObj = {};
 const customClass = new Obj();
 const arr = [1, 2];
 const arrEx = new ExtendArr();
-const elem = document.createElement('span');
+const span = document.createElement('span');
+const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
 
 describe('assertion.ts: assert the type of data', () => {
     test('number', () => {
@@ -31,7 +32,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isNumber(customClass)).toEqual(false);
         expect(assert.isNumber(arr)).toEqual(false);
         expect(assert.isNumber(arrEx)).toEqual(false);
-        expect(assert.isNumber(elem)).toEqual(false);
+        expect(assert.isNumber(span)).toEqual(false);
     });
     test('string', () => {
         expect(assert.isString(num)).toEqual(false);
@@ -46,7 +47,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isString(customClass)).toEqual(false);
         expect(assert.isString(arr)).toEqual(false);
         expect(assert.isString(arrEx)).toEqual(false);
-        expect(assert.isString(elem)).toEqual(false);
+        expect(assert.isString(span)).toEqual(false);
     });
     test('boolean', () => {
         expect(assert.isBoolean(num)).toEqual(false);
@@ -61,7 +62,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isBoolean(customClass)).toEqual(false);
         expect(assert.isBoolean(arr)).toEqual(false);
         expect(assert.isBoolean(arrEx)).toEqual(false);
-        expect(assert.isBoolean(elem)).toEqual(false);
+        expect(assert.isBoolean(span)).toEqual(false);
     });
     test('symbol', () => {
         expect(assert.isSymbol(num)).toEqual(false);
@@ -76,7 +77,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isSymbol(customClass)).toEqual(false);
         expect(assert.isSymbol(arr)).toEqual(false);
         expect(assert.isSymbol(arrEx)).toEqual(false);
-        expect(assert.isSymbol(elem)).toEqual(false);
+        expect(assert.isSymbol(span)).toEqual(false);
     });
     test('null', () => {
         expect(assert.isNull(num)).toEqual(false);
@@ -91,7 +92,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isNull(customClass)).toEqual(false);
         expect(assert.isNull(arr)).toEqual(false);
         expect(assert.isNull(arrEx)).toEqual(false);
-        expect(assert.isNull(elem)).toEqual(false);
+        expect(assert.isNull(span)).toEqual(false);
     });
     test('function', () => {
         expect(assert.isFunction(num)).toEqual(false);
@@ -106,7 +107,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isFunction(customClass)).toEqual(false);
         expect(assert.isFunction(arr)).toEqual(false);
         expect(assert.isFunction(arrEx)).toEqual(false);
-        expect(assert.isFunction(elem)).toEqual(false);
+        expect(assert.isFunction(span)).toEqual(false);
     });
     test('strict object', () => {
         expect(assert.isStrictObject(num)).toEqual(false);
@@ -121,7 +122,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isStrictObject(customClass)).toEqual(true);
         expect(assert.isStrictObject(arr)).toEqual(false);
         expect(assert.isStrictObject(arrEx)).toEqual(false);
-        expect(assert.isStrictObject(elem)).toEqual(false);
+        expect(assert.isStrictObject(span)).toEqual(false);
     });
     test('object', () => {
         expect(assert.isObject(num)).toEqual(false);
@@ -136,7 +137,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isObject(customClass)).toEqual(true);
         expect(assert.isObject(arr)).toEqual(true);
         expect(assert.isObject(arrEx)).toEqual(true);
-        expect(assert.isObject(elem)).toEqual(true);
+        expect(assert.isObject(span)).toEqual(true);
     });
     test('array', () => {
         expect(assert.isArray(num)).toEqual(false);
@@ -151,7 +152,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isArray(customClass)).toEqual(false);
         expect(assert.isArray(arr)).toEqual(true);
         expect(assert.isArray(arrEx)).toEqual(true);
-        expect(assert.isArray(elem)).toEqual(false);
+        expect(assert.isArray(span)).toEqual(false);
     });
     test('regExp', () => {
         expect(assert.isRegExp(num)).toEqual(false);
@@ -166,7 +167,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isRegExp(customClass)).toEqual(false);
         expect(assert.isRegExp(arr)).toEqual(false);
         expect(assert.isRegExp(arrEx)).toEqual(false);
-        expect(assert.isRegExp(elem)).toEqual(false);
+        expect(assert.isRegExp(span)).toEqual(false);
     });
     test('element', () => {
         expect(assert.isElement(num)).toEqual(false);
@@ -181,7 +182,8 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isElement(customClass)).toEqual(false);
         expect(assert.isElement(arr)).toEqual(false);
         expect(assert.isElement(arrEx)).toEqual(false);
-        expect(assert.isElement(elem)).toEqual(true);
+        expect(assert.isElement(span)).toEqual(true);
+        expect(assert.isElement(circle)).toEqual(true);
     });
     test('base type', () => {
         expect(assert.isBaseType(num)).toEqual(true);
@@ -196,7 +198,7 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isBaseType(customClass)).toEqual(false);
         expect(assert.isBaseType(arr)).toEqual(false);
         expect(assert.isBaseType(arrEx)).toEqual(false);
-        expect(assert.isBaseType(elem)).toEqual(false);
+        expect(assert.isBaseType(span)).toEqual(false);
     });
     test('base type exclude null', () => {
         expect(assert.isBaseTypeExNull(num)).toEqual(true);
@@ -211,6 +213,6 @@ describe('assertion.ts: assert the type of data', () => {
         expect(assert.isBaseTypeExNull(customClass)).toEqual(false);
         expect(assert.isBaseTypeExNull(arr)).toEqual(false);
         expect(assert.isBaseTypeExNull(arrEx)).toEqual(false);
-        expect(assert.isBaseTypeExNull(elem)).toEqual(false);
+        expect(assert.isBaseTypeExNull(span)).toEqual(false);
     });
 });
