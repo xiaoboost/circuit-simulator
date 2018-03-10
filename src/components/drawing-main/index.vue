@@ -95,7 +95,7 @@ export default class DrawingMain extends Events {
     /** 子组件定义 */
     $refs: {
         parts: ElectronicPart[];
-        lines: ElectronicPart[];
+        lines: ElectronicLine[];
     };
 
     get parts(): PartData[] {
@@ -104,7 +104,7 @@ export default class DrawingMain extends Events {
     get lines(): LineData[] {
         return this.$store.state.Lines;
     }
-    get background(): { 'background-size': string; 'background-position': string; } {
+    get background() {
         const size: number = this.zoom * 20,
             biasX: number = this.position[0] % size,
             biasY: number = this.position[1] % size;
@@ -133,10 +133,10 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    findLine(id: string | HTMLElement | { id: string }): ElectronicPart {
+    findLine(id: string | HTMLElement | { id: string }): ElectronicLine {
         const prop = (assert.isElement(id)) ? '$el' : 'id';
         const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
-        const line = this.$refs.parts.find((part) => part[prop] === value);
+        const line = this.$refs.lines.find((part) => part[prop] === value);
 
         if (!line) {
             throw new Error('Can not find this line');

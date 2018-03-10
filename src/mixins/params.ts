@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import { $P, Point } from 'src/lib/point';
+
+import ParamsDialog from 'src/components/params-dialog';
 import Electronics from 'src/components/electronic-part/parts';
-import Dialog, { ParamsDialog } from 'src/components/params-dialog';
 
 import { VueConstructor } from 'vue/types/vue';
 
@@ -14,12 +15,11 @@ export interface ParamsInput {
 
 // 组件安装函数
 function install(App: VueConstructor) {
-    // 生成对话框组件实例
-    const Comp = Vue.extend(Dialog);
+    // 生成全局参数设置对话框组件
+    const Comp = Vue.extend(ParamsDialog);
     const DOM = document.createElement('div');
-
-    // 生成全局参数设置组件
     const dialog = new Comp<ParamsDialog>().$mount(DOM);
+
     // 将组件插入 body 末尾
     document.body.appendChild(dialog.$el);
 

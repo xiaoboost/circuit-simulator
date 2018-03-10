@@ -60,8 +60,8 @@ import InputVerifiable from 'src/components/input-verifiable';
 
 import vuex from 'src/vuex';
 import { $P } from 'src/lib/point';
-import { Params } from './index';
 import { delay } from 'src/lib/utils';
+import { Params, ComponentInterface } from './types';
 import * as assert from 'src/lib/assertion';
 
 const passive = supportsPassive ? { passive: true } : false;
@@ -71,7 +71,7 @@ const passive = supportsPassive ? { passive: true } : false;
         'v-input': InputVerifiable,
     },
 })
-export default class ParamsDialog extends Vue {
+export default class ParamsDialog extends Vue implements ComponentInterface {
     /** 指向的器件编号 */
     id: string = '';
     /** 参数列表 */

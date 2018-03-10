@@ -3,9 +3,6 @@ import { Store } from 'vuex';
 import { StateType } from 'src/vuex';
 import { ParamsInput } from 'src/mixins/params';
 
-type Callback = (e: Event) => void | boolean;
-interface AnyObject { [x: string]: any; }
-
 declare module 'vue/types/vue' {
     interface VueConstructor {
         prototype: { [x: string]: any };
