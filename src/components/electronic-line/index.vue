@@ -171,15 +171,16 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     type: 'mouseenter',
                     capture: true,
                     callback: (e: DrawEvent) => {
-                        if (
-                            e.target !== e.currentTarget ||
-                            !e.target.className.includes('focus-part')
-                        ) {
+                        const className = e.target.getAttribute('class') || '';
+
+                        if (!className.includes('focus-part')) {
                             return;
                         }
 
-                        debugger;
-                        temp.onPart = this.findPart(e.currentTarget);
+                        const el = e.target.parentElement!;
+                        const part = this.findPart(el);
+
+                        temp.onPart = part;
                     },
                 },
                 // part mouseleave
@@ -187,14 +188,12 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     type: 'mouseleave',
                     capture: true,
                     callback: (e: DrawEvent) => {
-                        if (
-                            e.target !== e.currentTarget ||
-                            !e.target.className.includes('focus-part')
-                        ) {
+                        const className = e.target.getAttribute('class') || '';
+
+                        if (!className.includes('focus-part')) {
                             return;
                         }
 
-                        debugger;
                         temp.onPart = 'leave';
                     },
                 },

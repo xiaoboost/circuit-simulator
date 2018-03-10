@@ -29,7 +29,7 @@ export interface ExchangeData {
 }
 
 interface SearchTempData {
-    onPart: string | ElectronPart;
+    onPart?: string | ElectronPart;
     lastVertex: Point;
     wayMap: WayMap;
 }
