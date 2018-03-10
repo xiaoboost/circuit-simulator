@@ -3,6 +3,7 @@ import Vue from 'vue';
 /** 组件对外接口 */
 export interface ComponentInterface extends Vue {
     value: string;
+    isError: boolean;
 
     $refs: {
         input: HTMLInputElement;

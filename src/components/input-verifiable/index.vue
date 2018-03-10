@@ -48,8 +48,11 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
         input: HTMLInputElement;
     }
 
-    private isError = false;
+    /** 组件内部值字符串 */
     private txt = this.value;
+
+    /** 当前是否报错 */
+    isError = false;
 
     @Watch('value')
     private changeValue(nv: string) {
@@ -67,11 +70,11 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
             this.isError = true;
             return (false);
         }
-        if (!this.pattern.test(value)) {
+        if (this.pattern && !this.pattern.test(value)) {
             this.isError = true;
             return (false);
         }
-        if (!this.func(value)) {
+        if (this.func && !this.func(value)) {
             this.isError = true;
             return (false);
         }
@@ -83,6 +86,7 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
     clear() {
         this.txt = '';
         this.clearError();
+        this.update('');
     }
     clearError() {
         this.isError = false;
