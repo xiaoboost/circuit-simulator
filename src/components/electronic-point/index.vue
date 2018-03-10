@@ -17,8 +17,10 @@
 </template>
 
 <script lang="ts">
-import { $P } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
+
+import { $P } from 'src/lib/point';
+import { ComponentInterface } from './types';
 import { MapStatus } from 'src/components/drawing-main';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
@@ -40,7 +42,7 @@ const radius = {
 };
 
 @Component
-export default class ElectronicPoint extends Vue {
+export default class ElectronicPoint extends Vue implements ComponentInterface {
     @Prop({ type: Number, default: -1 })
     readonly r: number;
 
@@ -55,12 +57,10 @@ export default class ElectronicPoint extends Vue {
         animate: SVGAnimationElement;
     };
 
-    radius = 5;
-    inner = 0;
-
-    animateTime = 200;
-    animateFrom = 0;
-    animateTo = 0;
+    private inner = 0;
+    private animateTime = 200;
+    private animateFrom = 0;
+    private animateTo = 0;
 
     get actual(): number {
         return (this.r >= 0) ? this.r : this.inner;
