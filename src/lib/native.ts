@@ -139,7 +139,7 @@ nativeExpand(Array.prototype, {
 
     /** 用于 vue 数组的元素赋值 */
     $set<T>(this: T[], i: number, item: T): void {
-        if (this[i] !== item) {
+        if (i > -1 && this[i] !== item) {
             this.splice(i, 1, item);
         }
     },

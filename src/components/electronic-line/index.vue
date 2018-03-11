@@ -152,9 +152,9 @@ export default class ElectronicLine extends DrawLine implements LineData {
 
         // 临时变量
         const temp: DrawingOption['temp'] = {
-            onPart: '',
+            onPart: undefined,
+            mouseBais: $P(),
             wayMap: new WayMap(),
-            lastVertex: $P(Infinity, Infinity),
         };
 
         this.setDrawEvent({
@@ -180,7 +180,11 @@ export default class ElectronicLine extends DrawLine implements LineData {
                         const el = e.target.parentElement!;
                         const part = this.findPart(el);
 
-                        temp.onPart = part;
+                        temp.onPart = {
+                            part,
+                            status: 'over',
+                            pointIndex: -1,
+                        };
                     },
                 },
                 // part mouseleave
@@ -194,7 +198,9 @@ export default class ElectronicLine extends DrawLine implements LineData {
                             return;
                         }
 
-                        temp.onPart = 'leave';
+                        if (temp.onPart) {
+                            temp.onPart.status = 'leave';
+                        }
                     },
                 },
                 // map mousemove
@@ -202,9 +208,13 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     type: 'mousemove',
                     capture: false,
                     callback: (e: DrawEvent) => this.drawing({
+                        direction,
                         start: $P(this.way[0]),
                         end: e.$position,
-                        direction, temp,
+                        temp: {
+                            ...temp,
+                            mouseBais: e.$movement,
+                        },
                     }),
                 },
             ],

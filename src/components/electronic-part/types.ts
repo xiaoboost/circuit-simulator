@@ -25,6 +25,7 @@ export interface ComponentInterface extends PartData, Vue {
     focus: boolean;
     points: PartPoint[];
     margin: PartMargin;
+    pointSize: number[];
 
     renderText(): void;
     markSign(): void;

@@ -29,9 +29,16 @@ export interface ExchangeData {
 }
 
 interface SearchTempData {
-    onPart?: string | ElectronPart;
-    lastVertex: Point;
+    /** 当前鼠标偏移量 */
+    mouseBais: Point;
+    /** 当前绘图数据缓存 */
     wayMap: WayMap;
+    /** 鼠标覆盖器件状态 */
+    onPart?: {
+        status: 'over' | 'leave';
+        part: ElectronPart;
+        pointIndex: number;
+    };
 }
 
 /** 单点搜索参数 */

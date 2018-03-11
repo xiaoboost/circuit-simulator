@@ -190,8 +190,12 @@ describe('point.ts: class of point and vector', () => {
         expect(grid2[3]).toEqualArray([21, 22]);
     });
     test('Point.prototype.closest()', () => {
-        expect($P().closest([])).toBeUndefined();
-        expect($P().closest([[1, 2], [0.5, 0.4], [10, 50], [0.3, 0.8]])).toEqualArray([0.5, 0.4]);
+        expect(() => $P().closest([])).toThrowError('(point) points can not be a empty array.');
+        expect($P().closest([[1, 2], [0.5, 0.4], [-10, 50], [0.3, -0.8], [-1, -0.1]])).toEqualArray([0.5, 0.4]);
+    });
+    test('Point.prototype.minAngle()', () => {
+        expect(() => $P().minAngle([])).toThrowError('(point) vectors can not be a empty array.');
+        expect($P(1, 1).minAngle([[1, 2], [0.5, 0.4], [-10, 50], [0.3, -0.8], [-1, -0.1]])).toEqualArray([0.5, 0.4]);
     });
     test('Point.prototype.everyRect()', () => {
         const count: string[] = [];

@@ -396,12 +396,38 @@ class Point {
      * @returns {(undefined | Point)}
      */
     closest(points: PointLike[]) {
-        return points.length === 0
-            ? undefined
-            : new Point(points.reduce(
-                (pre, next) =>
-                    this.distance(pre) < this.distance(next) ? pre : next,
-            ));
+        if (points.length === 0) {
+            throw new Error('(point) points can not be a empty array.');
+        }
+
+        return new Point(points.reduce(
+            (pre, next) =>
+                this.distance(pre) < this.distance(next) ? pre : next,
+        ));
+    }
+    /**
+     * 求 vectors 中与 this 夹角最小的向量
+     *
+     * @param {PointLike[]} vectors
+     * @returns {Point}
+     */
+    minAngle(vectors: PointLike[]) {
+        if (vectors.length === 0) {
+            throw new Error('(point) vectors can not be a empty array.');
+        }
+
+        function cosAB(a: PointLike, b: PointLike): number {
+            return (
+                Point.prototype.product.call(a, b) /
+                Point.prototype.distance.call(a, [0, 0]) /
+                Point.prototype.distance.call(b, [0, 0])
+            );
+        }
+
+        return new Point(vectors.reduce(
+            (pre, next) =>
+                cosAB(this, pre) > cosAB(this, next) ? pre : next,
+        ));
     }
     /**
      * 以当前点为左上角，生成四方格坐标
