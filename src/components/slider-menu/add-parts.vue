@@ -58,7 +58,7 @@ class PartIcon extends Vue {
 
     render(createElement: CreateElement): VNode {
         const shape = this.info
-            .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-part'))
+            .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-partial'))
             .map((dom) => createElement(dom.name, { attrs: dom.attribute }));
 
         return createElement('g', { attrs: fixElementShape(this.type) }, shape);

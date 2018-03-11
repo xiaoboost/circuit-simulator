@@ -53,7 +53,7 @@ const part: Electronic = {
         {
             name: 'rect',
             attribute: {
-                x: '-13', y: '-30', width: '26', height: '60',
+                x: '-13', y: '-30', width: '26', height: '60', class: 'focus-transparent',
             },
         },
     ],

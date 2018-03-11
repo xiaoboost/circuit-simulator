@@ -140,12 +140,13 @@ export default class ElectronicLine extends DrawLine implements LineData {
         }
 
         const mapData = schMap.getPoint(this.way[0], true)!;
-        const part = this.findPart(mapData.id);
-        const mark = mapData.id.split('-')[1];
-        const direction = part.points[mark].direction;
 
-        part.connect.$set(+mark, this.id);
+        const mark = mapData.id.split('-')[1];
+        const connectPart = this.findPart(mapData.id);
+        const direction = connectPart.points[mark].direction;
+
         this.connect.$set(0, mapData.id);
+        connectPart.connect.$set(+mark, this.id);
 
         this.mapStatus.linesNow.length = 0;
         this.mapStatus.linesNow.push(this.id);
@@ -172,13 +173,20 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     capture: true,
                     callback: (e: DrawEvent) => {
                         const className = e.target.getAttribute('class') || '';
+                        let part: typeof connectPart;
 
-                        if (!className.includes('focus-part')) {
+                        if (className.includes('focus-partial')) {
+                            part = this.findPart(e.target.parentElement!);
+                        }
+                        else if (
+                            className.includes('focus-transparent') &&
+                            connectPart.$el.contains(e.target)
+                        ) {
+                            part = connectPart;
+                        }
+                        else {
                             return;
                         }
-
-                        const el = e.target.parentElement!;
-                        const part = this.findPart(el);
 
                         temp.onPart = {
                             part,
@@ -194,7 +202,7 @@ export default class ElectronicLine extends DrawLine implements LineData {
                     callback: (e: DrawEvent) => {
                         const className = e.target.getAttribute('class') || '';
 
-                        if (!className.includes('focus-part')) {
+                        if (!className.includes('focus-partial')) {
                             return;
                         }
 

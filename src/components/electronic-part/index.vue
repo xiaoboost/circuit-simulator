@@ -3,7 +3,7 @@
     @dblclick="setParams"
     :class="['part', { 'focus': focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
-    <g class="focus-part">
+    <g class="focus-partial">
         <part-aspect
             v-for="(info, i) in this.origin.shape"
             v-once :value="info" :key="i">
