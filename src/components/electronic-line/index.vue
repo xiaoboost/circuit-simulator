@@ -30,27 +30,21 @@ import { LineWay, WayMap } from './line-way';
 import DrawLine from './draw-line';
 import ElectronPoint from 'src/components/electronic-point';
 
-import { LineData, DrawingOption } from './types';
+import { LineData, ComponentInterface, DrawingOption } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
-
-// 器件与导线的 ID 匹配
-const rePart = /[a-zA-Z]+_\d+-\d+/;
-const reLine = /(line_\d+ ?)+/;
 
 @Component({
     components: {
         ElectronPoint,
     },
 })
-export default class ElectronicLine extends DrawLine implements LineData {
+export default class ElectronicLine extends DrawLine implements ComponentInterface {
     /** 器件原始数据 */
     @Prop({ type: Object, default: () => ({}) })
     private readonly value: LineData;
 
     readonly type = 'line';
     readonly hash: string;
-
-    id: string;
 
     // 编译前的初始化
     constructor() {
@@ -81,8 +75,8 @@ export default class ElectronicLine extends DrawLine implements LineData {
             position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
             class: {
                 'line-point-open': !this.connect[i],
-                'line-point-part': rePart.test(this.connect[i]),
-                'line-point-cross': reLine.test(this.connect[i]),
+                'line-point-part': this.matchPart.test(this.connect[i]),
+                'line-point-cross': this.matchLine.test(this.connect[i]),
             },
         }));
     }
@@ -162,7 +156,25 @@ export default class ElectronicLine extends DrawLine implements LineData {
             cursor: 'draw_line',
             stopEvent: { type: 'mouseup', which: 'left' },
             afterEvent: () => {
-                // this.drawEnd(current);
+                const endRound = this.way.get(-1).round();
+                const status = schMap.getPoint(endRound, true);
+            
+                // 起点和终点相等或者只有一个点，则删除当前导线
+                if (this.way.length < 2 || endRound.isEqual(this.way[0])) {
+                    this.$store.commit('DELETE_LINE', this.id);
+                    return;
+                }
+
+                // 确定终点未被占用
+                const end = (
+                    endRound
+                        .around()
+                        .reduce(
+                            (pre, next) =>
+                                end.distance(pre) < end.distance(next) ? pre : next
+                        )
+                );
+
                 this.update();
                 // this.markSign();
             },

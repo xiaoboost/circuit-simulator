@@ -10,7 +10,7 @@
         </part-aspect>
         <electronic-point
             v-for="(point, i) in points"
-            :index="i" :key="i" :r="pointSize[i]"
+            :key="i" :r="pointSize[i]"
             :class-list="['part-point', point.class]"
             :transform="`translate(${point.position.join()})`"
             @mousedown.native.left.stop.passive="setLine(i)">

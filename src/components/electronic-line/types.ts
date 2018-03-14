@@ -1,8 +1,61 @@
+import Vue from 'vue';
 import { Point } from 'src/lib/point';
 import { LineWay, WayMap } from './line-way';
 import ElectronPart from 'src/components/electronic-part';
 
 import { Omit } from 'type-zoo';
+
+/** 导线端点 */
+export interface LinePoint {
+    position: Point;
+    class: {
+        'line-point-open': boolean;
+        'line-point-part': boolean;
+        'line-point-cross': boolean;
+    };
+}
+
+/** 导线组件对外接口 */
+export interface ComponentInterface extends LineData, Vue {
+    focus: boolean;
+    points: LinePoint[];
+    pointSize: number[];
+
+    markSign(): void;
+    deleteSign(): void;
+
+    /**
+     * 导线反转
+     */
+    reverse(): void;
+    /**
+     * 是否存在连接
+     * @param {string} id 待检验的连接
+     * @returns {boolean}
+     */
+    hasConnect(id: string): boolean;
+    /**
+     * 释放导线连接
+     * @param {(0 | 1)} [index]
+     */
+    freeConnect(index?: 0 | 1): void;
+    /**
+     * 删除连接
+     * @param {string} id 待删除的连接
+     */
+    deleteConnect(id: string): void;
+    /**
+     * 判断输入坐标是当前导线的起点还是终点
+     * @param {Point} node
+     * @returns {number}
+     */
+    findConnectIndex(node: Point): number;
+    /**
+     * 由路径信息设置导线端点连接
+     * @param {(0 | 1)} [index]
+     */
+    setConnectByWay(index?: 0 | 1): void;
+}
 
 /** 导线数据接口 */
 export interface LineData {
