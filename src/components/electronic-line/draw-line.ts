@@ -92,7 +92,7 @@ export default class DrawLine extends Vue {
     /**
      * 判断输入坐标是当前导线的起点还是终点
      * @param {Point} node
-     * @returns {number}
+     * @returns {(-1 | 0 | 1)}
      */
     findConnectIndex(node: Point) {
         if (node.isEqual(this.way[0])) {
@@ -171,10 +171,10 @@ export default class DrawLine extends Vue {
     }
     /**
      * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
-     * @param {number} index 连接标号
+     * @param {(0 | 1)} index 连接标号
      * @param {string} newId 替换的 id
      */
-    replaceConnect(index: number, newId: string) {
+    replaceConnect(index: 0 | 1, newId: string) {
         const connect = this.connect[index];
 
         if (this.matchPart.test(connect)) {
