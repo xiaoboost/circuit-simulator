@@ -55,6 +55,17 @@ export interface ComponentInterface extends LineData, Vue {
      * @param {(0 | 1)} [index]
      */
     setConnectByWay(index?: 0 | 1): void;
+    /**
+     * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
+     * @param {number} index 连接标号
+     * @param {string} newId 替换的 id
+     */
+    replaceConnect(index: number, newId: string): void;
+    /**
+     * 合并导线
+     * @param {string} id 待连接导线的 id
+     */
+    connectLine(id: string): void;
 }
 
 /** 导线数据接口 */

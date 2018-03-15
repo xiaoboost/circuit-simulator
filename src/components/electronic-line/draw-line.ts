@@ -169,6 +169,61 @@ export default class DrawLine extends Vue {
             });
         }
     }
+    /**
+     * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
+     * @param {number} index 连接标号
+     * @param {string} newId 替换的 id
+     */
+    replaceConnect(index: number, newId: string) {
+        const connect = this.connect[index];
+
+        if (this.matchPart.test(connect)) {
+            const part = this.findPart(connect);
+            const mark = +connect.split('-')[1];
+
+            part.connect.$set(mark, newId);
+        }
+        else if (this.matchLine.test(connect)) {
+            connect
+                .split(' ')
+                .map((id) => this.findLine(id))
+                .forEach((line) => {
+                    line.connect.$set(0, line.connect[0].replace(this.id, newId));
+                    line.connect.$set(1, line.connect[1].replace(this.id, newId));
+                });
+
+            const crossMapData = schMap.getPoint(this.way.get(-1 * index), true)!;
+
+            crossMapData.id = crossMapData.id.replace(this.id, newId);
+            schMap.setPoint(crossMapData, true);
+        }
+    }
+    /**
+     * 合并导线
+     * @param {string} id 待连接导线的 id
+     */
+    connectLine(id: string) {
+        const line = this.findLine(id);
+
+        // 连接导线的路径
+        if (this.way[0].isEqual(line.way[0])) {
+            this.reverse();
+        }
+        else if (this.way[0].isEqual(line.way.get(-1))) {
+            this.reverse();
+            line.reverse();
+        }
+        else if (this.way.get(-1).isEqual(line.way.get(-1))) {
+            line.reverse();
+        }
+
+        this.connect.$set(1, line.connect[1]);
+        line.replaceConnect(1, this.id);
+
+        // TODO: 删除导线 line
+
+        this.way = LineWay.from(this.way.concat(line.way)).checkWayRepeat();
+    }
 
     // 导线标记
     markSign() {

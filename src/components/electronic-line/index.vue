@@ -66,11 +66,11 @@ export default class ElectronicLine extends DrawLine implements ComponentInterfa
     }
 
     /** 当前导线是否高亮 */
-    private get focus(): boolean {
+    get focus(): boolean {
         return this.mapStatus.linesNow.includes(this.id);
     }
     /** 导线的两个节点属性 */
-    private get points() {
+    get points() {
         return Array(2).fill(false).map((u, i) => ({
             position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
             class: {
@@ -81,11 +81,11 @@ export default class ElectronicLine extends DrawLine implements ComponentInterfa
         }));
     }
     /** 路径转为 path 字符串 */
-    private get way2path() {
+    get way2path() {
         return !this.way.length ? ''　: 'M' + this.way.map((n) => n.join(',')).join('L');
     }
     /** 路径转为 rect 坐标 */
-    private get pathRects() {
+    get pathRects() {
         const ans = [], wide = 14;
 
         for (let i = 0; i < this.way.length - 1; i++) {
