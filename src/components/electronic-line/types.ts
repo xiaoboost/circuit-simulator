@@ -65,15 +65,21 @@ export interface ComponentInterface extends LineData, Vue {
      * 合并导线
      * @param {string} id 待连接导线的 id
      */
-    connectLine(id: string): void;
+    concat(id: string): void;
+    /**
+     * 拆分导线
+     * @param {string} id 被拆分导线的 id
+     * @param {(0 | 1)} index 当前导线的起点/终点作为分割点
+     */
+    split(id: string, index: 0 | 1): void;
 }
 
 /** 导线数据接口 */
 export interface LineData {
+    way: Point[];
     readonly id: string;
     readonly type: 'line';
     readonly hash: string;
-    readonly way: Point[];
     readonly connect: string[];
 }
 

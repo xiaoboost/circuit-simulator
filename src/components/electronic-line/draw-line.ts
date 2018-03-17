@@ -5,7 +5,7 @@ import { LineWay } from './line-way';
 import { nodeSearch } from './node-search';
 
 import { Component, Vue, Inject } from 'vue-property-decorator';
-import { DrawingOption, ExchangeData } from './types';
+import { DrawingOption, ExchangeData, LineData } from './types';
 import { FindPart, FindLine, SetDrawEvent, MapStatus } from 'src/components/drawing-main';
 
 @Component
@@ -70,9 +70,8 @@ export default class DrawLine extends Vue {
             const lines = connect.split(' ').map((id) => this.findLine(id));
 
             if (lines.length === 2) {
-                // TODO: 合并导线
-                // lines[0].mergeLine(lines[1]);
-                // lines[0].markSign();
+                lines[0].concat(lines[1].id);
+                lines[0].markSign();
             }
             else if (lines.length === 3) {
                 lines.forEach((line) => line.deleteConnect(this.id));
@@ -138,14 +137,18 @@ export default class DrawLine extends Vue {
         }
         // 端点为导线空引脚
         else if (status.type === 'line-point') {
-            // TODO: 合并导线
+            this.concat(status.id);
         }
         // 端点在导线上
         else if (status.type === 'line') {
-            // TODO: 切割导线
-            // this.hasConnect(status.id)
-            //     ? this.deleteSelf()
-            //     : this.split(status.id);
+            if (this.hasConnect(status.id)) {
+                this.freeConnect();
+                this.deleteSign();
+                this.$store.commit('DELETE_LINE', this.id);
+            }
+            else {
+                this.split(status.id, index);
+            }
         }
         // 端点在交错节点
         else if (status.type === 'cross-point') {
@@ -202,7 +205,7 @@ export default class DrawLine extends Vue {
      * 合并导线
      * @param {string} id 待连接导线的 id
      */
-    connectLine(id: string) {
+    concat(id: string) {
         const line = this.findLine(id);
 
         // 连接导线的路径
@@ -220,9 +223,68 @@ export default class DrawLine extends Vue {
         this.connect.$set(1, line.connect[1]);
         line.replaceConnect(1, this.id);
 
-        // TODO: 删除导线 line
+        // 删除导线
+        this.$store.commit('DELETE_LINE', line.id);
 
-        this.way = LineWay.from(this.way.concat(line.way)).checkWayRepeat();
+        this.way = LineWay.prototype.checkWayRepeat.call(this.way.concat(line.way));
+    }
+    /**
+     * 拆分导线
+     * @param {string} id 被拆分导线的 id
+     * @param {(0 | 1)} index 当前导线的起点/终点作为分割点
+     */
+    split(id: string, index: 0 | 1) {
+        const splited = this.findLine(id);
+        const crossPoint = $P(this.way.get(-1 * index));
+
+        // 验证拆分点是否在拆分路径上
+        let crossSub = -1, way: LineWay;
+        for (let i = 0; i < splited.way.length - 1; i++) {
+            if (crossPoint.isInLine([splited.way[i], splited.way[i + 1]])) {
+                crossSub = i;
+                break;
+            }
+        }
+
+        if (crossSub < -1) {
+            throw new Error('(line) split line failed.');
+        }
+
+        // 生成新导线
+        this.$store.commit('NEW_LINE', crossPoint);
+        // 新导线数据
+        const devices = { ...this.$store.state.Lines[0] as LineData};
+
+        // 变更导线连接表
+        splited.replaceConnect(1, devices.id);                      // 替换连接器件的 ID
+        devices.connect.$set(1, splited.connect[1]);                // 原导线起点不变，新导线的终点等于原导线的终点
+        devices.connect.$set(0, `${splited.id} ${this.id}`);        // 新导线起点由旧导线 ID 和分割旧导线的导线 ID 组成
+        this.connect.$set(index, `${splited.id} ${devices.id}`);    // 分割旧导线的导线终点由新旧导线 ID 组成
+        splited.connect.$set(1, `${devices.id} ${this.id}`);        // 旧导线终点由新导线 ID 和分割旧导线的导线 ID 组成
+
+        // 拆分路径
+        // FIXME: 需要再检查
+        way = LineWay.from(splited.way.slice(crossSub + 1));
+        way.unshift(crossPoint);
+        way.checkWayRepeat();
+        devices.way = way;
+
+        way = LineWay.from(splited.way.slice(crossSub + 1, splited.way.length - crossSub - 1));
+        way.push(crossPoint);
+        way.checkWayRepeat();
+        splited.way = way;
+
+        // 交错节点设定
+        schMap.setPoint({
+            type: 'cross-point',
+            point: crossPoint,
+            id: `${this.id} ${splited.id} ${devices.id}`,
+            connect: [],
+        });
+
+        // 图纸标记
+        splited.markSign();
+        splited.markSign.call(devices);
     }
 
     // 导线标记
