@@ -34,6 +34,14 @@ export function onceEvent(el: Worker, type: 'message'): Promise<MessageEvent>
 export function onceEvent(el: HTMLElement, type: string): Promise<Event>;
 
 /**
+ * 生成随机字符串
+ * @export
+ * @param {number} [len=16] 字符串长度
+ * @returns {string}
+ */
+export function randomString(len?: number): string;
+
+/**
  * 将多个类混合成一个
  * @export
  * @param {Function} derivedCtor 
