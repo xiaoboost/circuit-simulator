@@ -116,14 +116,8 @@ export default class DrawingMain extends Events {
     }
 
     /** 搜索器件 */
-    findPart(id: string | HTMLElement | { id: string }): ElectronicPart {
-        const prop = (assert.isElement(id)) ? '$el' : 'id';
-
-        let value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
-        if (assert.isString(value)) {
-            value = (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
-        }
-
+    findPart(value: string | HTMLElement): ElectronicPart {
+        const prop = (assert.isString(value)) ? 'id' : '$el';
         const part = this.$refs.parts.find((part) => part[prop] === value);
 
         if (!part) {
@@ -133,9 +127,8 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    findLine(id: string | HTMLElement | { id: string }): ElectronicLine {
-        const prop = (assert.isElement(id)) ? '$el' : 'id';
-        const value = (assert.isElement(id) || assert.isString(id)) ? id : id.id;
+    findLine(value: string | HTMLElement): ElectronicLine {
+        const prop = (assert.isString(value)) ? 'id' : '$el';
         const line = this.$refs.lines.find((part) => part[prop] === value);
 
         if (!line) {

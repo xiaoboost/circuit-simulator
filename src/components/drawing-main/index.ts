@@ -16,6 +16,6 @@ export interface MapStatus {
     exclusion: boolean;
 }
 
-export type FindPart = (id: string | HTMLElement | { id: string }) => ElectronicPart;
-export type FindLine = (id: string | HTMLElement | { id: string }) => ElectronicLine;
+export type FindPart = (value: string | HTMLElement) => ElectronicPart;
+export type FindLine = (value: string | HTMLElement) => ElectronicLine;
 export type SetDrawEvent = Events['setDrawEvent'];
