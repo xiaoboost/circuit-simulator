@@ -11,14 +11,14 @@ describe('matrix.ts: class of Matrix', () => {
         ma = $M(5);
         for (let i = 0; i < 5; i++) {
             for (let j = 0; j <= 0; j++) {
-                expect(ma.get(i, j)).toEqual(0);
+                expect(ma.get(i, j)).toBe(0);
             }
         }
         // 单位矩阵
         ma = $M(5, 'E');
         for (let i = 0; i < 5; i++) {
             for (let j = 0; j <= 0; j++) {
-                expect(ma.get(i, j)).toEqual(Number(i === j));
+                expect(ma.get(i, j)).toBe(Number(i === j));
             }
         }
         // 复制矩阵
@@ -38,26 +38,26 @@ describe('matrix.ts: class of Matrix', () => {
     });
     test('Matrix.prototype.join()', () => {
         const ma = $M([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]);
-        expect(ma.join('; ')).toEqual('1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16');
+        expect(ma.join('; ')).toBe('1; 2; 3; 4; 5; 6; 7; 8; 9; 10; 11; 12; 13; 14; 15; 16');
     });
     test('Matrix.prototype.get/set()', () => {
         const ma = $M([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]);
-        expect(ma.get(1, 2)).toEqual(7);
+        expect(ma.get(1, 2)).toBe(7);
 
         ma.set(2, 1, 100);
-        expect(ma.get(2, 1)).toEqual(100);
+        expect(ma.get(2, 1)).toBe(100);
 
         expect(ma.get(5, 5)).toBeUndefined();
     });
     test('Matrix.prototype.getRow/getColumn()', () => {
         const ma = $M([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]]);
 
-        expect(ma.getRow(0)).toEqualArray([1, 2, 3, 4]);
-        expect(ma.getRow(-1)).toEqualArray([13, 14, 15, 16]);
+        expect(ma.getRow(0)).toEqual([1, 2, 3, 4]);
+        expect(ma.getRow(-1)).toEqual([13, 14, 15, 16]);
         expect(() => ma.getRow(9)).toThrowError('(matrix) index of row out of bounds.');
 
-        expect(ma.getColumn(0)).toEqualArray([1, 5, 9, 13]);
-        expect(ma.getColumn(-1)).toEqualArray([4, 8, 12, 16]);
+        expect(ma.getColumn(0)).toEqual([1, 5, 9, 13]);
+        expect(ma.getColumn(-1)).toEqual([4, 8, 12, 16]);
         expect(() => ma.getColumn(9)).toThrowError('(matrix) index of column out of bounds.');
     });
     test('Matrix.prototype.exchangeRow/exchangeColumn()', () => {

@@ -10,12 +10,8 @@ interface AnyObject {
 declare namespace jest {
     interface Matchers<R> {
         // custom-extended
-        /** 数组相等 */
-        toEqualArray(expected: any[] | ArrayLike<any>): R;
         /** 行列式相等 */
         toEqualMatrix(expected: Matrix): R;
-        /** 对象相等 */
-        toEqualObject(expected: AnyObject): R;
 
         // jest-extended
         /** Passing assertion. */

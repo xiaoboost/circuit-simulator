@@ -23,37 +23,37 @@ describe('native.ts: extend native data types', () => {
         test('Object.prototype.isEmpty()', () => {
             const empty = {}, unempty = { key: 1 };
 
-            expect(empty.isEmpty()).toEqual(true);
-            expect(unempty.isEmpty()).toEqual(false);
+            expect(empty.isEmpty()).toBe(true);
+            expect(unempty.isEmpty()).toBe(false);
 
             Object.defineProperty(unempty, 'key', {
                 enumerable: false,
             });
 
-            expect(unempty.isEmpty()).toEqual(true);
+            expect(unempty.isEmpty()).toBe(true);
         });
         test('Object.prototype.isEqual()', () => {
             const example1 = JSON.parse(example) as Example;
             const example2 = JSON.parse(example) as Example;
 
-            expect(example1.isEqual(1)).toEqual(false);
+            expect(example1.isEqual(1)).toBe(false);
 
-            expect(example1 === example2).toEqual(false);
-            expect(example1.isEqual(example2)).toEqual(true);
+            expect(example1 === example2).toBe(false);
+            expect(example1.isEqual(example2)).toBe(true);
 
             delete example1.status;
-            expect(example1.isEqual(example2)).toEqual(false);
+            expect(example1.isEqual(example2)).toBe(false);
         });
     });
     describe('Array', () => {
         test('Array.prototype.get()', () => {
             const arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-            expect(arr.get(0)).toEqual(0);
-            expect(arr.get(2)).toEqual(2);
-            expect(arr.get(-1)).toEqual(9);
-            expect(arr.get(-2)).toEqual(8);
-            expect(arr.get(-10)).toEqual(0);
+            expect(arr.get(0)).toBe(0);
+            expect(arr.get(2)).toBe(2);
+            expect(arr.get(-1)).toBe(9);
+            expect(arr.get(-2)).toBe(8);
+            expect(arr.get(-10)).toBe(0);
 
             expect(() => arr.get(10)).toThrowError('(array) index out of bounds.');
             expect(() => arr.get(-11)).toThrowError('(array) index out of bounds.');
@@ -62,12 +62,12 @@ describe('native.ts: extend native data types', () => {
             const arr1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
             const arr2 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-            expect(arr1 === arr2).toEqual(false);
-            expect(arr1.isEqual(1)).toEqual(false);
-            expect(arr1.isEqual(arr2)).toEqual(true);
+            expect(arr1 === arr2).toBe(false);
+            expect(arr1.isEqual(1)).toBe(false);
+            expect(arr1.isEqual(arr2)).toBe(true);
 
             arr2.push(10);
-            expect(arr1.isEqual(arr2)).toEqual(false);
+            expect(arr1.isEqual(arr2)).toBe(false);
         });
         test('Array.prototype.delete()', () => {
             let result: boolean;
@@ -75,30 +75,30 @@ describe('native.ts: extend native data types', () => {
 
             result = arr.delete((item) => Math.floor(item / 2) === item / 2);
 
-            expect(result).toEqual(true);
-            expect(arr).toEqualArray([1, 3, 5, 7, 9]);
+            expect(result).toBe(true);
+            expect(arr).toEqual([1, 3, 5, 7, 9]);
 
             result = arr.delete(3);
 
-            expect(result).toEqual(true);
-            expect(arr).toEqualArray([1, 5, 7, 9]);
+            expect(result).toBe(true);
+            expect(arr).toEqual([1, 5, 7, 9]);
 
             result = arr.delete((item) => Math.floor(item / 2) !== item / 2, false);
 
-            expect(result).toEqual(true);
-            expect(arr).toEqualArray([5, 7, 9]);
+            expect(result).toBe(true);
+            expect(arr).toEqual([5, 7, 9]);
 
             result = arr.delete(1);
 
-            expect(result).toEqual(false);
-            expect(arr).toEqualArray([5, 7, 9]);
+            expect(result).toBe(false);
+            expect(arr).toEqual([5, 7, 9]);
         });
         test('Array.prototype.unique()', () => {
             const arr1 = [0, 0, 2, 1, 4, 2, 6, 8, 8, 4].unique();
-            expect(arr1).toEqualArray([0, 2, 1, 4, 6, 8]);
+            expect(arr1).toEqual([0, 2, 1, 4, 6, 8]);
 
             const arr2 = [0, 1, 2, 3, 4, 5, 6].unique((value) => value < 4 ? 4 : value);
-            expect(arr2).toEqualArray([0, 5, 6]);
+            expect(arr2).toEqual([0, 5, 6]);
         });
         test('Array.prototype.$set()', () => {
             const arr = [0, 1, 2, 3, 4];
@@ -106,36 +106,36 @@ describe('native.ts: extend native data types', () => {
             arr.$set(1, 1);
             arr.$set(3, 10);
 
-            expect(arr).toEqualArray([0, 1, 2, 10, 4]);
+            expect(arr).toEqual([0, 1, 2, 10, 4]);
         });
     });
     describe('Number', () => {
         test('Number.scientificCountParser()', () => {
-            expect(Number.scientificCountParser('mmm')).toEqual(NaN);
-            expect(Number.scientificCountParser('100')).toEqual(100);
-            expect(Number.scientificCountParser('1m')).toEqual(0.001);
-            expect(Number.scientificCountParser('1M')).toEqual(1e6);
-            expect(Number.scientificCountParser('1.5G')).toEqual(1.5e9);
-            expect(Number.scientificCountParser('1e3')).toEqual(1000);
-            expect(Number.scientificCountParser('1e-2')).toEqual(0.01);
+            expect(Number.scientificCountParser('mmm')).toBe(NaN);
+            expect(Number.scientificCountParser('100')).toBe(100);
+            expect(Number.scientificCountParser('1m')).toBe(0.001);
+            expect(Number.scientificCountParser('1M')).toBe(1e6);
+            expect(Number.scientificCountParser('1.5G')).toBe(1.5e9);
+            expect(Number.scientificCountParser('1e3')).toBe(1000);
+            expect(Number.scientificCountParser('1e-2')).toBe(0.01);
         });
         test('Number.prototype.rank()', () => {
-            expect((100).rank()).toEqual(2);
-            expect((0.001).rank()).toEqual(-3);
-            expect((12.34).rank()).toEqual(1);
-            expect((0.1234).rank()).toEqual(-1);
+            expect((100).rank()).toBe(2);
+            expect((0.001).rank()).toBe(-3);
+            expect((12.34).rank()).toBe(1);
+            expect((0.1234).rank()).toBe(-1);
 
             expect(() => (NaN).rank()).toThrowError('(number) cannot run .rank() on NaN');
         });
         test('Number.prototype.toRound()', () => {
-            expect((123456789).toRound()).toEqual(123457000);
-            expect((123.456789).toRound()).toEqual(123.457);
-            expect((-123.456789).toRound()).toEqual(-123.457);
-            expect((0.123456789).toRound()).toEqual(0.123457);
-            expect((0.00123456789).toRound()).toEqual(0.00123457);
-            expect((0.00123456789).toRound(2)).toEqual(0.0012);
-            expect((-0.00123456789).toRound(2)).toEqual(-0.0012);
-            expect((0.00123456789).toRound(8)).toEqual(0.0012345679);
+            expect((123456789).toRound()).toBe(123457000);
+            expect((123.456789).toRound()).toBe(123.457);
+            expect((-123.456789).toRound()).toBe(-123.457);
+            expect((0.123456789).toRound()).toBe(0.123457);
+            expect((0.00123456789).toRound()).toBe(0.00123457);
+            expect((0.00123456789).toRound(2)).toBe(0.0012);
+            expect((-0.00123456789).toRound(2)).toBe(-0.0012);
+            expect((0.00123456789).toRound(8)).toBe(0.0012345679);
 
             expect(() => (NaN).toRound()).toThrowError('(number) cannot run .toRound() on NaN');
         });

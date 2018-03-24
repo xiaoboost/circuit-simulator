@@ -9,13 +9,13 @@ describe('input-verifiable.vue', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);
         const props = wrapper.props()!;
 
-        expect(props.value).toEqual('');
-        expect(props.placeholder).toEqual('请输入内容');
-        expect(props.maxlength).toEqual(Infinity);
-        expect(props.required).toEqual(false);
+        expect(props.value).toBe('');
+        expect(props.placeholder).toBe('请输入内容');
+        expect(props.maxlength).toBe(Infinity);
+        expect(props.required).toBe(false);
+        expect(props.message).toBe('');
+        expect(props.func()).toBe(true);
         expect(props.pattern).toEqual(/[\d\D]*/);
-        expect(props.message).toEqual('');
-        expect(props.func()).toEqual(true);
     });
     test('update and clear the value', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);
@@ -23,7 +23,7 @@ describe('input-verifiable.vue', () => {
 
         // change props
         wrapper.setProps({ value: 'props' });
-        expect(input.element.value).toEqual('props');
+        expect(input.element.value).toBe('props');
 
         // change input
         input.element.value = 'input';
@@ -33,15 +33,15 @@ describe('input-verifiable.vue', () => {
         wrapper.vm.clear();
 
         const events = wrapper.emitted().input;
-        expect(events[0][0]).toEqual('input');
-        expect(events[1][0]).toEqual('');
+        expect(events[0][0]).toBe('input');
+        expect(events[1][0]).toBe('');
     });
     test('call focus(), element of input should get focus', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);
 
         wrapper.vm.focus();
 
-        expect(document.activeElement).toEqual(wrapper.vm.$refs.input);
+        expect(document.activeElement).toBe(wrapper.vm.$refs.input);
     });
     test('check(), validate the value', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);

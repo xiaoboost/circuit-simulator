@@ -18,11 +18,11 @@ describe('map.ts: Data marked by drawings', () => {
         };
 
         map.setPoint(data);
-        expect(map.getPoint([1, 3])).toEqualObject(data);
+        expect(map.getPoint([1, 3])).toEqual(data);
 
         data.point = $P(40, 60);
         map.setPoint(data, true);
-        expect(map.getPoint([40, 60], true)).toEqualObject(data);
+        expect(map.getPoint([40, 60], true)).toEqual(data);
     });
     test('outputMap/forceUpdateMap()', () => {
         expect(map.outputMap()).toEqual('{}');
@@ -43,7 +43,7 @@ describe('map.ts: Data marked by drawings', () => {
         dataString = `{"1,3":${dataString}}`;
 
         map.forceUpdateMap(dataString);
-        expect(map.getPoint([1, 3])).toEqualObject(data);
+        expect(map.getPoint([1, 3])).toEqual(data);
 
         map.forceUpdateMap(dataString, true);
     });
@@ -58,17 +58,17 @@ describe('map.ts: Data marked by drawings', () => {
         map.mergePoint(originData);
 
         const mapData = map.getPoint([1, 3])!;
-        expect(mapData).toEqualObject(originData);
+        expect(mapData).toEqual(originData);
 
         originData.id = 'r_1';
         originData.type = 'line';
         originData.point = $P(20, 60);
         originData.connect.push($P(1, 4), $P(5, 5));
-        expect(map.getPoint([1, 3])).toEqualObject(mapData);
+        expect(map.getPoint([1, 3])).toEqual(mapData);
 
         map.mergePoint(originData, true);
         originData.connect = [$P(1, 4), $P(2, 3), $P(5, 5)];
-        expect(map.getPoint([20, 60], true)).toEqualObject(originData);
+        expect(map.getPoint([20, 60], true)).toEqual(originData);
     });
     test('hasPoint/deletePoint()', () => {
         const data = { id: '1', type: '2', point: $P(2, 3) };
@@ -198,19 +198,19 @@ describe('map.ts: Data marked by drawings', () => {
         }
 
         // 起点不是导线，输出起点
-        expect(map.alongTheLine([4, 4])).toEqualArray([4, 4]);
+        expect(map.alongTheLine([4, 4])).toEqual($P(4, 4));
         // 起点和终点相等，输出起点
-        expect(map.alongTheLine([4, 2], [4, 2])).toEqualArray([4, 2]);
+        expect(map.alongTheLine([4, 2], [4, 2])).toEqual($P(4, 2));
 
         // 起点和终点在线段内
-        expect(map.alongTheLine([4, 2], [7, 2])).toEqualArray([7, 2]);
+        expect(map.alongTheLine([4, 2], [7, 2])).toEqual($P(7, 2));
         // 终点在线段外
-        expect(map.alongTheLine([4, 2], [14, 2])).toEqualArray([8, 2]);
+        expect(map.alongTheLine([4, 2], [14, 2])).toEqual($P(8, 2));
 
         // 指定特定方向
-        expect(map.alongTheLine([6, 2], [14, 2], [-1, 0])).toEqualArray([4, 2]);
+        expect(map.alongTheLine([6, 2], [14, 2], [-1, 0])).toEqual($P(4, 2));
 
         // 大图标
-        expect(map.alongTheLine([80, 40], [280, 40], undefined, true)).toEqualArray([160, 40]);
+        expect(map.alongTheLine([80, 40], [280, 40], undefined, true)).toEqual($P(160, 40));
     });
 });
