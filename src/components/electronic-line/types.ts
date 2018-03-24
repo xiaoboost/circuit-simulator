@@ -3,8 +3,6 @@ import { Point } from 'src/lib/point';
 import { LineWay, WayMap } from './line-way';
 import ElectronPart from 'src/components/electronic-part';
 
-import { Omit } from 'type-zoo';
-
 /** 导线端点 */
 export interface LinePoint {
     position: Point;
@@ -100,9 +98,9 @@ export interface ExchangeData {
 
 interface SearchTempData {
     /** 当前鼠标偏移量 */
-    mouseBais: Point;
+    readonly mouseBais: Point;
     /** 当前绘图数据缓存 */
-    wayMap: WayMap;
+    readonly wayMap: WayMap;
     /** 鼠标覆盖器件状态 */
     onPart?: {
         status: 'over' | 'leave';

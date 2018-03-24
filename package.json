@@ -54,7 +54,6 @@
     "ts-loader": "^3.5.0",
     "tslint": "^5.9.1",
     "tslint-loader": "^3.6.0",
-    "type-zoo": "^1.2.1",
     "typescript": "^2.7.2",
     "uglify-es": "^3.3.10",
     "uglifyjs-webpack-plugin": "^1.2.4",

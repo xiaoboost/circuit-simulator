@@ -3,8 +3,6 @@ import { $P, Point } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 import { delay } from 'src/lib/utils';
 
-import { Required } from 'type-zoo';
-
 type callback = (event: DrawEvent) => void | Promise<void>;
 
 /** 生成鼠标结束事件对外的数据接口 */
