@@ -30,7 +30,7 @@ import * as assert from 'src/lib/assertion';
 import Electronics from 'src/components/electronic-part/parts';
 import { PartData, ShapeDescription } from 'src/components/electronic-part/types';
 
-import { CreateElement, VNode } from 'vue';
+import { CreateElement, VNodeChildrenArrayContents } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 
 // 部分器件作为图标时需要修正其位置和大小
@@ -56,12 +56,14 @@ class PartIcon extends Vue {
     @Prop({ type: Array, default: () => [] })
     readonly info: ShapeDescription[];
 
-    render(createElement: CreateElement): VNode {
-        const shape = this.info
-            .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-partial'))
-            .map((dom) => createElement(dom.name, { attrs: dom.attribute }));
+    render(h: CreateElement) {
+        const shape = (
+            this.info
+                .filter((dom) => !Object.values(dom.attribute).some((attr) => attr === 'focus-partial'))
+                .map((dom) => h(dom.name, { attrs: dom.attribute }))
+        ) as VNodeChildrenArrayContents;
 
-        return createElement('g', { attrs: fixElementShape(this.type) }, shape);
+        return h('g', { attrs: fixElementShape(this.type) }, shape);
     }
 }
 

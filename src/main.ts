@@ -2,7 +2,7 @@ import 'src/css/main';
 import 'src/lib/init';
 import 'src/lib/native';
 
-import Vue from 'vue';
+import Vue, { VNodeChildrenArrayContents } from 'vue';
 import store from 'src/vuex';
 
 import debug from 'src/lib/debugger';
@@ -34,7 +34,7 @@ new Vue({
     components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
-        [h('drawing-main'), h('slider-menu'), h('action-menu')],
+        [h('drawing-main'), h('slider-menu'), h('action-menu')] as VNodeChildrenArrayContents,
     ),
     mounted() {
         if ($ENV.NODE_ENV === 'development') {
