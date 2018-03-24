@@ -12,7 +12,7 @@ import { LineData } from 'src/components/electronic-line/types';
 Vue.use(Vuex);
 
 /** 每类器件的最大数量 */
-const maxNumber = 100;
+const maxNumber = 50;
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -89,13 +89,19 @@ const mutations: MutationTree<StateType> = {
     },
     /** 更新器件数据 */
     UPDATE_PART: ({ Parts }, data: PartData) => {
-        const part = Parts.findIndex((n) => n.hash === data.hash);
+        const index = Parts.findIndex((part) => part.hash === data.hash);
 
-        if (part < 0) {
+        if (index < 0) {
             throw new Error(`(vuex) Part not found. id: ${data.id}`);
         }
 
-        Parts.splice(part, 1, clone(data));
+        const isIdRepeat = Parts.some((part) => part.id === data.id);
+
+        if (isIdRepeat) {
+            throw new Error(`(vuex) Part ID is duplicated. id: ${data.id}`);
+        }
+
+        Parts.splice(index, 1, clone(data));
     },
     /** 复制器件 */
     COPY_PART({ Parts }, IDs: string[]) {
@@ -128,13 +134,19 @@ const mutations: MutationTree<StateType> = {
     },
     /** 更新器件数据 */
     UPDATE_LINE: ({ Lines }, data: LineData) => {
-        const line = Lines.findIndex((n) => n.hash === data.hash);
+        const index = Lines.findIndex((line) => line.hash === data.hash);
 
-        if (line < 0) {
-            throw new Error('(vuex) Line not found.');
+        if (index < 0) {
+            throw new Error(`(vuex) Line not found. id: ${data.id}`);
         }
 
-        Lines.splice(line, 1, clone(data));
+        const isIdRepeat = Lines.some((line) => line.id === data.id);
+
+        if (isIdRepeat) {
+            throw new Error(`(vuex) Line ID is duplicated. id: ${data.id}`);
+        }
+
+        Lines.splice(index, 1, clone(data));
     },
     /** 复制器件 */
     COPY_LINE({ Lines }, IDs: string[]) {
@@ -168,23 +180,18 @@ const mutations: MutationTree<StateType> = {
  */
 function createId(id: string): string {
     const electrons = [...state.Parts, ...state.Lines];
-    const pre = id.match(/^([^_]+)(_[^_]+)?$/);
+    const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
 
-    if (!pre || !pre[1]) {
-        throw new Error('Device ID format is wrong');
-    }
-
-    let ans = '';
     const max = (pre[1] === 'line') ? Infinity : maxNumber;
 
     for (let i = 1; i <= max; i++) {
-        ans = `${pre[1]}_${i}`;
+        const ans = `${pre[1]}_${i}`;
         if (electrons.findIndex((elec) => elec.id === ans) === -1) {
             return (ans);
         }
     }
 
-    throw new Error(`The maximum number of Devices is ${maxNumber}`);
+    throw new Error(`(vuex) The maximum number of Devices is ${maxNumber}.`);
 }
 
 export default new Vuex.Store<StateType>({
