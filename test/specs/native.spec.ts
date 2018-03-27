@@ -20,18 +20,6 @@ interface Example {
 
 describe('native.ts: extend native data types', () => {
     describe('Object', () => {
-        test('Object.prototype.isEmpty()', () => {
-            const empty = {}, unempty = { key: 1 };
-
-            expect(empty.isEmpty()).toBe(true);
-            expect(unempty.isEmpty()).toBe(false);
-
-            Object.defineProperty(unempty, 'key', {
-                enumerable: false,
-            });
-
-            expect(unempty.isEmpty()).toBe(true);
-        });
         test('Object.prototype.isEqual()', () => {
             const example1 = JSON.parse(example) as Example;
             const example2 = JSON.parse(example) as Example;

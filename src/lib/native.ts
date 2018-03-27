@@ -8,7 +8,6 @@ function nativeExpand(native: Function | Object, props: { [key: string]: any }) 
         const method = props[key];
         props[key] = {
             enumerable: false,
-            writable: false,
             value: method,
         };
     });
@@ -17,11 +16,6 @@ function nativeExpand(native: Function | Object, props: { [key: string]: any }) 
 }
 
 nativeExpand(Object.prototype, {
-    /** 当前对象是否为空 */
-    isEmpty(this: Object): boolean {
-        return Object.keys(this).length === 0;
-    },
-
     /** 比较对象是否相等 */
     isEqual(this: Object, obj: Object): boolean {
         if (!assert.isObject(obj)) {
