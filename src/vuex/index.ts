@@ -74,7 +74,7 @@ const mutations: MutationTree<StateType> = {
     SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
     /** 生成新器件 */
-    NEW_PART: ({ Parts }, type: string) => {
+    NEW_PART: ({ Parts }, type: keyof Electronics) => {
         const origin = Electronics[type];
         const id = createId(origin.pre);
         const hash = randomString();

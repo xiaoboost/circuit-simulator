@@ -8,9 +8,9 @@ import { VueConstructor } from 'vue/types/vue';
 
 export interface ParamsInput {
     id: string;
-    type: string;
     params: string[];
     position: Point;
+    type: keyof Electronics;
 }
 
 // 组件安装函数

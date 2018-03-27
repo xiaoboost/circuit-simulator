@@ -22,7 +22,7 @@ import diode from './semi-diode';
 import transistor_npn from './semi-transistor-npn';
 import operational_amplifier from './semi-amplifier';
 
-const all: { [type: string]: Electronic } = {
+const Electronics = {
     resistance,
     capacitor,
     inductance,
@@ -37,4 +37,6 @@ const all: { [type: string]: Electronic } = {
     operational_amplifier,
 };
 
-export default all;
+type Electronics = typeof Electronics;
+
+export default Electronics;
