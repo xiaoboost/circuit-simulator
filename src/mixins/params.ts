@@ -45,7 +45,7 @@ function install(App: VueConstructor) {
                 dialog.vision = false;
                 resolve();
             };
-            dialog.comfirm = () => {
+            dialog.confirm = () => {
                 dialog.vision = false;
                 resolve({
                     id: dialog.id,

@@ -46,7 +46,7 @@
             </article>
             <footer>
                 <button class="cancel" @click="beforeCancel">取消</button>
-                <button class="comfirm" @click="beforeComfirm">确定</button>
+                <button class="confirm" @click="beforeConfirm">确定</button>
             </footer>
             <i class="triangle-icon" :style="triangleStyle"></i>
         </div>
@@ -256,7 +256,7 @@ export default class ParamsDialog extends Vue implements ComponentInterface {
             this.beforeCancel();
         }
         else if (event.key === 'Enter') {
-            this.beforeComfirm();
+            this.beforeConfirm();
         }
     }
 
@@ -322,20 +322,21 @@ export default class ParamsDialog extends Vue implements ComponentInterface {
     }
 
     cancel: () => void;
-    comfirm: () => void;
+    confirm: () => void;
     beforeCancel() {
         // 清除所有错误提示
         this.$refs.id.clearError();
-        this.$refs.params.forEach((input) => input.clearError());
+        this.$refs.params && this.$refs.params.forEach((input) => input.clearError());
+
         // 运行取消
         this.cancel();
     }
-    beforeComfirm() {
+    beforeConfirm() {
         if (
             this.$refs.id.check() &&
             this.$refs.params.every((comp) => comp.check())
         ) {
-            this.comfirm();
+            this.confirm();
         }
     }
 }
@@ -428,7 +429,7 @@ footer
         &:focus
             border: none
             outline: none
-        &.comfirm
+        &.confirm
             color: Blue
         &.cancel
             color: Yellow
