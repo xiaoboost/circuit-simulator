@@ -3,8 +3,6 @@ import '../extend';
 import 'src/lib/init';
 import 'src/lib/native';
 
-import Vue from 'vue';
-
 import {
     mount,
     delay,
