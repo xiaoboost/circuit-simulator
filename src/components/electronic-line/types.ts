@@ -110,6 +110,7 @@ interface SearchTempData {
 }
 
 /** 单点搜索参数 */
-export type DrawingOption =
+export type DrawingOption = Combine<
     Omit<ExchangeData, 'status'> &
-    { temp: SearchTempData };
+    { temp: SearchTempData }
+>;
