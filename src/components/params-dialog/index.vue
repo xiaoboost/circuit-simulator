@@ -22,17 +22,14 @@
                     <v-input
                         ref="id"
                         v-model="id"
-                        :pattern="idCheck"
-                        :required="true"
+                        :rules="idRules"
                         placeholder="请输入编号">
                     </v-input>
                     <v-input
                         ref="params"
                         v-for="(param, i) in params"
                         v-model="param.value"
-                        :key="i"
-                        :required="true"
-                        :pattern="paramsCheck"
+                        :key="i" :rules="paramsRules"
                         placeholder="请输入参数">
                     </v-input>
                 </section>
@@ -56,7 +53,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import InputVerifiable from 'src/components/input-verifiable';
+import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable';
 
 import vuex from 'src/vuex';
 import { $P } from 'src/lib/point';
@@ -93,10 +90,29 @@ export default class ParamsDialog extends Vue implements ComponentInterface {
     /** 中心最小限制 */
     min = 10;
 
-    /** 编号的验证正则 */
-    readonly idCheck = /[a-zA-Z]+_[a-zA-Z0-9]+/;
-    /** 参数的验证正则 */
-    readonly paramsCheck = Number.SCIENTIFIC_COUNT_MATCH;
+    /** ID 编号验证规则 */
+    idRules: ValidateRule[] = [
+        {
+            required: true,
+            message: 'ID 标签不能为空',
+        },
+        {
+            pattern: /[a-zA-Z]+_[a-zA-Z0-9]+/,
+            message: 'ID 标签格式错误',
+        },
+    ];
+
+    /** 参数验证规则 */
+    paramsRules: ValidateRule[] = [
+        {
+            required: true,
+            message: '该项不能为空',
+        },
+        {
+            pattern: Number.SCIENTIFIC_COUNT_MATCH,
+            message: '参数值格式错误',
+        },
+    ];
 
     /** 子组件定义 */
     $refs: {
@@ -333,8 +349,8 @@ export default class ParamsDialog extends Vue implements ComponentInterface {
     }
     beforeConfirm() {
         if (
-            this.$refs.id.check() &&
-            this.$refs.params.every((comp) => comp.check())
+            this.$refs.id.validate() &&
+            this.$refs.params.every((comp) => comp.validate())
         ) {
             this.confirm();
         }
