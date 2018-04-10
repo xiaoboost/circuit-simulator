@@ -8,17 +8,15 @@
         :placeholder="placeholder"
         @input.passive="update($event.target.value)">
     <span class="input-bar correct-bar"></span>
-    <span :class="['input-bar error-bar', { 'error': isError }]"></span>
-    <template v-if="message">
-        <span v-show="isError" class="input-error-message" v-text="message"></span>
-    </template>
+    <span :class="['input-bar error-bar', { 'error': !!errorMessage }]"></span>
+    <span v-if="!!errorMessage" class="input-error-message" v-text="errorMessage"></span>
 </span>
 </template>
 
 <script lang="ts">
 import * as assert from 'src/lib/assertion';
 
-import { ComponentInterface } from './types';
+import { ComponentInterface, ValidateRule } from './types';
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 @Component
@@ -32,17 +30,8 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
     @Prop({ type: Number, default: Infinity })
     private readonly maxlength: number;
 
-    @Prop({ type: Boolean, default: false })
-    private readonly required: boolean;
-
-    @Prop({ type: RegExp, default: () => /[\d\D]*/ })
-    private readonly pattern: RegExp;
-
-    @Prop({ type: Function, default: () => true })
-    private readonly func: (value: string) => boolean;
-
-    @Prop({ type: String, default: '' })
-    private readonly message: string;
+    @Prop({ type: [Object, Array], default: () => [] })
+    readonly rules: ValidateRule | Array<ValidateRule>;
 
     $refs: {
         input: HTMLInputElement;
@@ -50,9 +39,8 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
 
     /** 组件内部值字符串 */
     private txt = this.value;
-
-    /** 当前是否报错 */
-    isError = false;
+    /** 当前错误文本 */
+    private errorMessage = '';
 
     @Watch('value')
     private changeValue(nv: string) {
@@ -60,24 +48,32 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
     }
 
     private update(value: string): void {
-        this.check(value);
+        this.validate(value);
         this.$emit('input', value);
     }
-    check(value: string = this.txt): boolean {
-        this.isError = false;
 
-        if (this.required && !value) {
-            this.isError = true;
-            return (false);
+    validate(value: string = this.txt): boolean {
+        this.errorMessage = '';
+
+        const rules = this.rules instanceof Array ? this.rules : [this.rules];
+
+        for (const rule of rules) {
+            if (rule.required && !value) {
+                this.errorMessage = rule.message;
+                return (false);
+            }
+
+            if (rule.pattern && !rule.pattern.test(value)) {
+                this.errorMessage = rule.message;
+                return (false);
+            }
+
+            if (rule.validator && !rule.validator(value)) {
+                this.errorMessage = rule.message;
+                return (false);
+            }
         }
-        if (this.pattern && !this.pattern.test(value)) {
-            this.isError = true;
-            return (false);
-        }
-        if (this.func && !this.func(value)) {
-            this.isError = true;
-            return (false);
-        }
+
         return (true);
     }
     focus() {
@@ -89,7 +85,7 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
         this.update('');
     }
     clearError() {
-        this.isError = false;
+        this.errorMessage = '';
     }
 }
 </script>

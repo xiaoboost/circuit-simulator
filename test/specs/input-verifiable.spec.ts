@@ -10,12 +10,9 @@ describe('input-verifiable.vue', () => {
         const props = wrapper.props()!;
 
         expect(props.value).toBe('');
-        expect(props.placeholder).toBe('请输入内容');
         expect(props.maxlength).toBe(Infinity);
-        expect(props.required).toBe(false);
-        expect(props.message).toBe('');
-        expect(props.func()).toBe(true);
-        expect(props.pattern).toEqual(/[\d\D]*/);
+        expect(props.placeholder).toBe('请输入内容');
+        expect(props.rules).toEqual([]);
     });
     test('update and clear the value', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);
@@ -46,28 +43,45 @@ describe('input-verifiable.vue', () => {
     test('check(), validate the value', () => {
         const wrapper = shallow<InputVerifiable>(InputVerifiable);
 
-        // isError is false
-        expect(wrapper.vm.isError).toBeFalse();
+        expect(wrapper.vm.validate()).toBeTrue();
 
-        // required
-        wrapper.setProps({ required: true });
-        expect(wrapper.vm.check()).toBeFalse();
-        expect(wrapper.vm.isError).toBeTrue();
-
-        wrapper.vm.clearError();
-
-        // pattern
-        wrapper.setProps({ required: false, pattern: /test/, value: 'input' });
-        expect(wrapper.vm.check()).toBeFalse();
-        expect(wrapper.vm.isError).toBeTrue();
+        // set single Rule
+        wrapper.setProps({ rules: { required: true }});
+        // required false
+        expect(wrapper.vm.validate()).toBeFalse();
 
         wrapper.vm.clearError();
 
-        // function
-        wrapper.setProps({ pattern: undefined, func: () => false });
-        expect(wrapper.vm.check()).toBeFalse();
-        expect(wrapper.vm.isError).toBeTrue();
+        // set array Rules
+        wrapper.setProps({ rules: [
+            {
+                required: true,
+                message: '这是必填项',
+            },
+            {
+                pattern: /^https?:\/\//,
+                message: '必须以 http 开头',
+            },
+            {
+                validator: (value: string) => ['https://www.baidu.com', 'https://www.google.com'].includes(value),
+                message: '方法验证未通过',
+            },
+        ]});
 
-        wrapper.vm.clearError();
+        // value is space string
+        wrapper.vm.value = '';
+        expect(wrapper.vm.validate()).toBeFalse();
+
+        // value not match pattern
+        wrapper.vm.value = 'www';
+        expect(wrapper.vm.validate()).toBeFalse();
+
+        // value not pass validator
+        wrapper.vm.value = 'https://www';
+        expect(wrapper.vm.validate()).toBeFalse();
+
+        // value pass rules
+        wrapper.vm.value = 'https://www.baidu.com';
+        expect(wrapper.vm.validate()).toBeTrue();
     });
 });

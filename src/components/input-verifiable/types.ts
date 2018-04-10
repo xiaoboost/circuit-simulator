@@ -1,9 +1,16 @@
 import Vue from 'vue';
 
+/** 验证规则类 */
+export interface ValidateRule {
+    required?: boolean;
+    pattern?: RegExp;
+    message: string;
+    validator?(value: string): boolean;
+}
+
 /** 组件对外接口 */
 export interface ComponentInterface extends Vue {
     value: string;
-    isError: boolean;
 
     $refs: {
         input: HTMLInputElement;
@@ -12,5 +19,5 @@ export interface ComponentInterface extends Vue {
     focus(): void;
     clear(): void;
     clearError(): void;
-    check(value?: string): boolean;
+    validate(value?: string): boolean;
 }
