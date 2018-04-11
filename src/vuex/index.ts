@@ -95,9 +95,9 @@ const mutations: MutationTree<StateType> = {
             throw new Error(`(vuex) Part not found. id: ${data.id}`);
         }
 
-        const isIdRepeat = Parts.some((part) => part.id === data.id);
+        const idNumber = Parts.reduce((ans, part) => (part.id === data.id) ? (ans + 1) : ans, 0);
 
-        if (isIdRepeat) {
+        if (idNumber >= 2) {
             throw new Error(`(vuex) Part ID is duplicated. id: ${data.id}`);
         }
 
@@ -140,9 +140,9 @@ const mutations: MutationTree<StateType> = {
             throw new Error(`(vuex) Line not found. id: ${data.id}`);
         }
 
-        const isIdRepeat = Lines.some((line) => line.id === data.id);
+        const idNumber = Lines.reduce((ans, line) => (line.id === data.id) ? (ans + 1) : ans, 0);
 
-        if (isIdRepeat) {
+        if (idNumber >= 2) {
             throw new Error(`(vuex) Line ID is duplicated. id: ${data.id}`);
         }
 

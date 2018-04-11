@@ -38,9 +38,9 @@ export default class InputVerifiable extends Vue implements ComponentInterface {
     }
 
     /** 组件内部值字符串 */
-    private txt = this.value;
+    txt = this.value;
     /** 当前错误文本 */
-    private errorMessage = '';
+    errorMessage = '';
 
     @Watch('value')
     private changeValue(nv: string) {

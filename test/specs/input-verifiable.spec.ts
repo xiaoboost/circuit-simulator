@@ -69,19 +69,19 @@ describe('input-verifiable.vue', () => {
         ]});
 
         // value is space string
-        wrapper.vm.value = '';
+        wrapper.vm.txt = '';
         expect(wrapper.vm.validate()).toBeFalse();
 
         // value not match pattern
-        wrapper.vm.value = 'www';
+        wrapper.vm.txt = 'www';
         expect(wrapper.vm.validate()).toBeFalse();
 
         // value not pass validator
-        wrapper.vm.value = 'https://www';
+        wrapper.vm.txt = 'https://www';
         expect(wrapper.vm.validate()).toBeFalse();
 
         // value pass rules
-        wrapper.vm.value = 'https://www.baidu.com';
+        wrapper.vm.txt = 'https://www.baidu.com';
         expect(wrapper.vm.validate()).toBeTrue();
     });
 });

@@ -10,7 +10,7 @@ export interface ValidateRule {
 
 /** 组件对外接口 */
 export interface ComponentInterface extends Vue {
-    value: string;
+    txt: string;
 
     $refs: {
         input: HTMLInputElement;

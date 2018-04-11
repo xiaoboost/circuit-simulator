@@ -1,5 +1,3 @@
-import { Electronic } from '../types';
-
 // 虚拟器件
 import reference_ground from './virtual-ref-ground';
 

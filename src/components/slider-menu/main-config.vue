@@ -59,7 +59,7 @@ export default class Config extends Vue implements TimeConfig {
     }
 
     check() {
-        if (!this.$refs.end.check() || !this.$refs.step.check()) {
+        if (!this.$refs.end.validate() || !this.$refs.step.validate()) {
             return false;
         }
 

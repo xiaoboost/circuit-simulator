@@ -72,6 +72,7 @@ describe('vuex: store of vue.', () => {
 
         // update: id duplicate error
         part.id = 'R_2';
+        expect(() => vuex.commit('UPDATE_PART', part)).not.toThrowError();
         expect(() => vuex.commit('UPDATE_PART', part)).toThrowError(`(vuex) Part ID is duplicated. id: ${part.id}`);
 
         // update: not found hash error
@@ -137,10 +138,11 @@ describe('vuex: store of vue.', () => {
         expect(vuex.state.Lines[0].id).toBe('line_2');
 
         // update line
-        const line = clone<WriteableLine>(vuex.state.Lines[0]);
+        const line = clone<WriteableLine>(vuex.state.Lines[1]);
 
         // update: id duplicate error
         line.id = 'line_2';
+        expect(() => vuex.commit('UPDATE_LINE', line)).not.toThrowError();
         expect(() => vuex.commit('UPDATE_LINE', line)).toThrowError(`(vuex) Line ID is duplicated. id: ${line.id}`);
 
         // update: not found hash error
