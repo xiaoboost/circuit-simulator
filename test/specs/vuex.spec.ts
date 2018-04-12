@@ -1,4 +1,3 @@
-import '../extend';
 import 'src/lib/native';
 
 import vuex from 'src/vuex';

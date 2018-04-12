@@ -1,5 +1,3 @@
-import '../extend';
-
 import 'src/lib/init';
 import 'src/lib/native';
 

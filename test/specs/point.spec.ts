@@ -1,4 +1,3 @@
-import '../extend';
 import 'src/lib/native';
 
 import { $M } from 'src/lib/matrix';

@@ -1,4 +1,3 @@
-import '../extend';
 import 'src/lib/native';
 
 import { $P, Point } from 'src/lib/point';

@@ -1,5 +1,4 @@
 import '../extend';
-
 import { $M, Matrix } from 'src/lib/matrix';
 
 describe('matrix.ts: class of Matrix', () => {

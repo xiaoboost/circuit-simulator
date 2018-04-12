@@ -3,14 +3,8 @@ import '../extend';
 import 'src/lib/init';
 import 'src/lib/native';
 
-import {
-    mount,
-    delay,
-    destroyVM,
-    createVM,
-    Wrapper,
-    WrapperArray,
-} from '../utils';
+import { delay } from 'src/lib/utils';
+import { mount, Wrapper } from '@vue/test-utils';
 
 import ParamsDialog from 'src/components/params-dialog';
 import InputVerifiable from 'src/components/input-verifiable';
@@ -70,10 +64,16 @@ function inputDialog(params: string[]) {
 describe('params-dialog.vue', () => {
     let wrapper: Wrapper<ParamsDialog>;
 
-    afterEach(() => destroyVM(wrapper));
+    afterEach(() => {
+        wrapper.vm.$el.parentNode &&
+        wrapper.vm.$el.parentNode.removeChild(wrapper.vm.$el);
+
+        wrapper.vm.$destroy();
+    });
 
     test('create a params dialog', async () => {
-        wrapper = createVM<ParamsDialog>(ParamsDialog);
+        wrapper = mount(ParamsDialog);
+        document.body.appendChild(wrapper.vm.$el);
 
         // visible is false, at first.
         expect(wrapper.isVisible()).toBeFalse();
@@ -88,7 +88,8 @@ describe('params-dialog.vue', () => {
         expect(wrapper.isVisible()).toBeFalse();
     });
     test('trigger cancel event', async () => {
-        wrapper = createVM<ParamsDialog>(ParamsDialog);
+        wrapper = mount(ParamsDialog);
+        document.body.appendChild(wrapper.vm.$el);
 
         wrapper.vm.params.push({
             label: '阻值',
@@ -124,7 +125,8 @@ describe('params-dialog.vue', () => {
         expect(wrapper.vm.cancel).not.toBeCalled();
     });
     test('trigger confirm event', async () => {
-        wrapper = createVM<ParamsDialog>(ParamsDialog);
+        wrapper = mount(ParamsDialog);
+        document.body.appendChild(wrapper.vm.$el);
 
         wrapper.vm.params.push({
             label: '阻值',

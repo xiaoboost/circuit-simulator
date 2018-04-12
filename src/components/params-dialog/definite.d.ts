@@ -7,3 +7,4 @@ declare module '*/params-dialog/index.vue' {
 
     export default ParamsDialog;
 }
+ 

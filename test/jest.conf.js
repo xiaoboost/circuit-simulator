@@ -15,6 +15,7 @@ module.exports = {
         '^.+\\.(j|t)sx?$': '<rootDir>/node_modules/ts-jest',
     },
     testRegex: '(\\.|/)(test|spec)\\.tsx?$',
+    setupTestFrameworkScriptFile: 'jest-extended',
     snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
     setupFiles: [
         '<rootDir>/test/setups/vue.ts',

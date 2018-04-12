@@ -1,4 +1,3 @@
-import '../extend';
 import 'src/lib/native';
 
 const example = '{"status":0,"data":[{"user":{"name":"name1","url":"url1","avatarUrl":"avatarUrl1"},"url":"url1","title":"title1","startWord":"startWord1","joinedUsers":"1"},{"user":{"name":"name2","url":"url2","avatarUrl":"avatarUrl2"},"url":"url2","title":"title2","startWord":"startWord2","joinedUsers":"2"},{"user":{"name":"name3","url":"url3","avatarUrl":"avatarUrl3"},"url":"ur3","title":"title3","startWord":"startWord3","joinedUsers":"3"},{"user":{"name":"name4","url":"url4","avatarUrl":"avatarUrl4"},"url":"url4","title":"title4","startWord":"startWord4","joinedUsers":"4"}]}';
