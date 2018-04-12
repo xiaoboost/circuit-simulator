@@ -1,6 +1,6 @@
-import { Electronic } from '../types';
+import { ElectronicPrototype } from '../types';
 
-const part: Electronic = {
+const part: ElectronicPrototype = {
     pre: 'R',
     type: 'resistance',
     introduction: '电阻器',

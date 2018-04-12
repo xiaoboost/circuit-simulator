@@ -45,7 +45,7 @@ import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point, PointLike } from 'src/lib/point';
 
 import ElectronicPoint from 'src/components/electronic-point';
-import { PartData, ComponentInterface, Electronic, ShapeDescription } from './types';
+import { PartData, ComponentInterface, ElectronicPrototype, ShapeDescription } from './types';
 import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -88,9 +88,9 @@ export default class ElectronicPart extends Vue implements ComponentInterface {
     /** 器件标识符 */
     readonly hash: string;
     /** 器件类型 */
-    readonly type: string;
+    readonly type: keyof Electronics;
     /** 器件描述原始数据 */
-    readonly origin: Electronic;
+    readonly origin: ElectronicPrototype;
 
     id: string = '';
     position: Point = $P();

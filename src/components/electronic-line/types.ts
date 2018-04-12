@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { Point } from 'src/lib/point';
-import { LineWay, WayMap } from './line-way';
+import { WayMap } from './line-way';
 import ElectronPart from 'src/components/electronic-part';
 
 /** 导线端点 */
@@ -11,6 +11,15 @@ export interface LinePoint {
         'line-point-part': boolean;
         'line-point-cross': boolean;
     };
+}
+
+/** 导线数据接口 */
+export interface LineData {
+    way: Point[];
+    readonly id: string;
+    readonly type: 'line';
+    readonly hash: string;
+    readonly connect: string[];
 }
 
 /** 导线组件对外接口 */
@@ -70,15 +79,6 @@ export interface ComponentInterface extends LineData, Vue {
      * @param {(0 | 1)} index 当前导线的起点/终点作为分割点
      */
     split(id: string, index: 0 | 1): void;
-}
-
-/** 导线数据接口 */
-export interface LineData {
-    way: Point[];
-    readonly id: string;
-    readonly type: 'line';
-    readonly hash: string;
-    readonly connect: string[];
 }
 
 /** 调试返回的数据格式 */

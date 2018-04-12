@@ -146,99 +146,99 @@ export default class ElectronicLine extends DrawLine implements ComponentInterfa
         this.mapStatus.linesNow.push(this.id);
 
         // 临时变量
-        const temp: DrawingOption['temp'] = {
-            onPart: undefined,
-            mouseBais: $P(),
-            wayMap: new WayMap(),
-        };
+        // const temp: DrawingOption['temp'] = {
+        //     onPart: undefined,
+        //     mouseBais: $P(),
+        //     wayMap: new WayMap(),
+        // };
 
-        this.setDrawEvent({
-            cursor: 'draw_line',
-            stopEvent: { type: 'mouseup', which: 'left' },
-            afterEvent: () => {
-                const endRound = this.way.get(-1).round();
-                const status = schMap.getPoint(endRound, true);
+        // this.setDrawEvent({
+        //     cursor: 'draw_line',
+        //     stopEvent: { type: 'mouseup', which: 'left' },
+        //     afterEvent: () => {
+        //         const endRound = this.way.get(-1).round();
+        //         const status = schMap.getPoint(endRound, true);
             
-                // 起点和终点相等或者只有一个点，则删除当前导线
-                if (this.way.length < 2 || endRound.isEqual(this.way[0])) {
-                    this.$store.commit('DELETE_LINE', this.id);
-                    return;
-                }
+        //         // 起点和终点相等或者只有一个点，则删除当前导线
+        //         if (this.way.length < 2 || endRound.isEqual(this.way[0])) {
+        //             this.$store.commit('DELETE_LINE', this.id);
+        //             return;
+        //         }
 
-                // 确定终点未被占用
-                const end = (
-                    endRound
-                        .around()
-                        .reduce(
-                            (pre, next) =>
-                                end.distance(pre) < end.distance(next) ? pre : next
-                        )
-                );
+        //         // 确定终点未被占用
+        //         const end = (
+        //             endRound
+        //                 .around()
+        //                 .reduce(
+        //                     (pre, next) =>
+        //                         end.distance(pre) < end.distance(next) ? pre : next
+        //                 )
+        //         );
 
-                this.update();
-                // this.markSign();
-            },
-            handlers: [
-                // part mouseenter
-                {
-                    type: 'mouseenter',
-                    capture: true,
-                    callback: (e: DrawEvent) => {
-                        const className = e.target.getAttribute('class') || '';
-                        let part: typeof connectPart;
+        //         this.update();
+        //         // this.markSign();
+        //     },
+        //     handlers: [
+        //         // part mouseenter
+        //         {
+        //             type: 'mouseenter',
+        //             capture: true,
+        //             callback: (e: DrawEvent) => {
+        //                 const className = e.target.getAttribute('class') || '';
+        //                 let part: typeof connectPart;
 
-                        if (className.includes('focus-partial')) {
-                            part = this.findPart(e.target.parentElement!);
-                        }
-                        else if (
-                            className.includes('focus-transparent') &&
-                            connectPart.$el.contains(e.target)
-                        ) {
-                            part = connectPart;
-                        }
-                        else {
-                            return;
-                        }
+        //                 if (className.includes('focus-partial')) {
+        //                     part = this.findPart(e.target.parentElement!);
+        //                 }
+        //                 else if (
+        //                     className.includes('focus-transparent') &&
+        //                     connectPart.$el.contains(e.target)
+        //                 ) {
+        //                     part = connectPart;
+        //                 }
+        //                 else {
+        //                     return;
+        //                 }
 
-                        temp.onPart = {
-                            part,
-                            status: 'over',
-                            pointIndex: -1,
-                        };
-                    },
-                },
-                // part mouseleave
-                {
-                    type: 'mouseleave',
-                    capture: true,
-                    callback: (e: DrawEvent) => {
-                        const className = e.target.getAttribute('class') || '';
+        //                 temp.onPart = {
+        //                     part,
+        //                     status: 'over',
+        //                     pointIndex: -1,
+        //                 };
+        //             },
+        //         },
+        //         // part mouseleave
+        //         {
+        //             type: 'mouseleave',
+        //             capture: true,
+        //             callback: (e: DrawEvent) => {
+        //                 const className = e.target.getAttribute('class') || '';
 
-                        if (!className.includes('focus-partial')) {
-                            return;
-                        }
+        //                 if (!className.includes('focus-partial')) {
+        //                     return;
+        //                 }
 
-                        if (temp.onPart) {
-                            temp.onPart.status = 'leave';
-                        }
-                    },
-                },
-                // map mousemove
-                {
-                    type: 'mousemove',
-                    capture: false,
-                    callback: (e: DrawEvent) => this.drawing({
-                        direction,
-                        start: $P(this.way[0]),
-                        end: e.$position,
-                        temp: {
-                            ...temp,
-                            mouseBais: e.$movement,
-                        },
-                    }),
-                },
-            ],
-        });
+        //                 if (temp.onPart) {
+        //                     temp.onPart.status = 'leave';
+        //                 }
+        //             },
+        //         },
+        //         // map mousemove
+        //         {
+        //             type: 'mousemove',
+        //             capture: false,
+        //             callback: (e: DrawEvent) => this.drawing({
+        //                 direction,
+        //                 start: $P(this.way[0]),
+        //                 end: e.$position,
+        //                 temp: {
+        //                     ...temp,
+        //                     mouseBais: e.$movement,
+        //                 },
+        //             }),
+        //         },
+        //     ],
+        // });
     }
 };
 </script>

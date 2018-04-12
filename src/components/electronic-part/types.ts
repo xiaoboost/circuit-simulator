@@ -1,11 +1,12 @@
 import Vue from 'vue';
+import Electronics from './parts';
 import { Point } from 'src/lib/point';
 import { Matrix } from 'src/lib/matrix';
 
 /** 器件数据接口 */
 export interface PartData {
     readonly id: string;
-    readonly type: string;
+    readonly type: keyof Electronics;
     readonly hash: string;
     readonly rotate: Matrix;
     readonly position: Point;
@@ -97,7 +98,7 @@ export interface ShapeDescription {
 }
 
 /** 器件原型数据类型 */
-export interface Electronic {
+export interface ElectronicPrototype {
     /**
      * 器件编号的前置标记
      * @type {string}
