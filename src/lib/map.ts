@@ -141,7 +141,6 @@ export function mergePoint(data: MapPointData, large = false): void {
     const newData = dataClone(data);
     const oriData = $map[key];
 
-    // debugger;
     if (!oriData) {
         $map[key] = newData;
     }

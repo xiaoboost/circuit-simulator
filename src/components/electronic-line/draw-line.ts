@@ -156,8 +156,7 @@ export default class DrawLine extends Vue {
             const lines = status.id.split(' ').filter((n) => n !== this.id);
 
             if (lines.length === 1) {
-                debugger;
-                // this.merge(lines[0]);
+                this.concat(lines[0]);
                 return;
             }
 
