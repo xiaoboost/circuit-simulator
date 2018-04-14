@@ -8,14 +8,6 @@
 export function clone<T>(data: T, check?: boolean): T;
 
 /**
- * 获取该元素的 css 作用域标签
- * @export
- * @param {HTMLElement} el
- * @returns {string}
- */
-export function getScopedName(el: HTMLElement): string;
-
-/**
  * 生成异步延迟函数
  * @export
  * @param {number} [time]
@@ -42,9 +34,8 @@ export function onceEvent(el: HTMLElement, type: string): Promise<Event>;
 export function randomString(len?: number): string;
 
 /**
- * 将多个类混合成一个
- * @export
- * @param {Function} derivedCtor 
- * @param {Function[]} baseCtors 
+ * 从链接中获取参数值
+ * @param {string} name 参数名称
+ * @return {string}
  */
-export function mixClasses(derivedCtor: Function, baseCtors: Function[]): void;
+export function getQueryByName(name: string): string;

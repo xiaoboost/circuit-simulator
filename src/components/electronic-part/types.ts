@@ -3,10 +3,13 @@ import Electronics from './parts';
 import { Point } from 'src/lib/point';
 import { Matrix } from 'src/lib/matrix';
 
+/** 器件类型字面量 */
+export type PartTypes = keyof Electronics;
+
 /** 器件数据接口 */
 export interface PartData {
     readonly id: string;
-    readonly type: keyof Electronics;
+    readonly type: PartTypes;
     readonly hash: string;
     readonly rotate: Matrix;
     readonly position: Point;
@@ -28,6 +31,7 @@ export interface ComponentInterface extends PartData, Vue {
     margin: PartMargin;
     pointSize: number[];
 
+    update(): void;
     renderText(): void;
     markSign(): void;
     deleteSign(): void;

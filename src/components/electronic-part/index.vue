@@ -12,7 +12,7 @@
             v-for="(point, i) in points"
             :key="i" :r="pointSize[i]"
             :class-list="['part-point', point.class]"
-            :transform="`translate(${point.position.join()})`"
+            :transform="`translate(${origin.points[i].position.join()})`"
             @mousedown.native.left.stop.passive="setLine(i)">
         </electronic-point>
     </g>
@@ -124,6 +124,9 @@ export default class ElectronicPart extends Vue implements ComponentInterface {
         // 根据不同的标志初始化
         if (this.position.isEqual([1e6, 1e6])) {
             this.setNewPart();
+        }
+        else {
+            this.markSign();
         }
     }
 
@@ -275,6 +278,8 @@ export default class ElectronicPart extends Vue implements ComponentInterface {
                 pend[1] = -((textHeight + spaceHeight) * len + local);
             }
         }
+
+        this.textPosition = this.textPosition.rotate(this.invRotate);
     }
     /** 移动说明文本 */
     moveText(): void {

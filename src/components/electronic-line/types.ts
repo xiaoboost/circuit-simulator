@@ -30,6 +30,7 @@ export interface ComponentInterface extends LineData, Vue {
 
     markSign(): void;
     deleteSign(): void;
+    update(): void;
 
     /**
      * 导线反转

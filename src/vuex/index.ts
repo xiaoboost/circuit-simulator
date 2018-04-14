@@ -1,18 +1,21 @@
 import Vue from 'vue';
-import Vuex, { GetterTree, MutationTree } from 'vuex';
+import Vuex, { GetterTree, MutationTree, ActionTree } from 'vuex';
 
 import { $M } from 'src/lib/matrix';
 import { $P, Point } from 'src/lib/point';
-import { clone, randomString } from 'src/lib/utils';
+import { clone, randomString, delay } from 'src/lib/utils';
 import Electronics from 'src/components/electronic-part/parts';
 
 import { PartData } from 'src/components/electronic-part/types';
 import { LineData } from 'src/components/electronic-line/types';
+import { CircuitStorageData, PartStorageData, LineStorageData } from 'src/examples/types';
 
 Vue.use(Vuex);
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
+/** 历史操作记录上限 */
+const historyLimit = 10;
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -23,24 +26,24 @@ export interface TimeConfig {
 export interface StateType {
     /**
      * 页面状态
-     * @type {string}
      */
     page: string;
     /**
      * 全局时间设置
-     * @type {TimeConfig}
      */
     time: TimeConfig;
     /**
      * 全局器件堆栈
-     * @type {PartData[]}
      */
     Parts: PartData[];
     /**
      * 全局导线堆栈
-     * @type {LineData[]}
      */
     Lines: LineData[];
+    /**
+     * 历史数据
+     */
+    historyData: Array<Array<PartData | LineData>>;
 }
 
 const state: StateType = {
@@ -48,9 +51,11 @@ const state: StateType = {
         end: '10m',
         step: '10u',
     },
+
     page: '',
     Parts: [],
     Lines: [],
+    historyData: [],
 };
 
 const getters: GetterTree<StateType, StateType> = {
@@ -171,6 +176,73 @@ const mutations: MutationTree<StateType> = {
     DELETE_LINE: ({ Lines }, line: string) => Lines.delete((item) => item.id === line),
 
     /** 导线放置到底层 */
+
+    /** 记录当前数据 */
+    RECORD_MAP({ historyData, Parts, Lines }) {
+        const stack: Array<PartData | LineData> = [];
+        historyData.push(stack.concat(Parts).concat(Lines));
+
+        while (historyData.length > historyLimit) {
+            historyData.splice(0, 1);
+        }
+    },
+    /** 图纸数据回滚 */
+    HISTORY_BACK({ historyData, Parts, Lines }) {
+        const current = historyData.pop();
+
+        if (!current) {
+            return;
+        }
+
+        Parts.splice(0, Parts.length, ...current.filter((part): part is PartData => part.type !== 'line'));
+        Lines.splice(0, Parts.length, ...current.filter((line): line is LineData => line.type === 'line'));
+    },
+    /** 追加数据 */
+    APPEND_DATA({ Parts, Lines }, data: PartData | LineData) {
+        if (data.type !== 'line') {
+            Parts.push(data);
+        }
+        else {
+            Lines.push(data);
+        }
+    },
+};
+
+const actions: ActionTree<StateType, StateType> = {
+    /** 外部数据导入 */
+    async IMPORT_DATA({ commit }, data: CircuitStorageData) {
+        // load parts
+        data
+            .filter((part): part is PartStorageData => part.type !== 'line')
+            .forEach((part) => commit('APPEND_DATA', {
+                id: part.id,
+                type: part.type,
+                hash: randomString(),
+                position: $P(part.position),
+                connect: Array(Electronics[part.type].points.length).fill(''),
+                rotate: part.rotate ? $M(part.rotate) : $M(2, 'E'),
+                params: part.params
+                    ? part.params.slice()
+                    : Electronics[part.type].params.map((n) => n.default),
+            })),
+
+        // wait parts loaded
+        await delay(10);
+
+        // loaded lines
+        data
+            .filter((line): line is LineStorageData => line.type === 'line')
+            .map((line) => commit('APPEND_DATA', {
+                id: createId('line'),
+                type: 'line' as 'line',
+                hash: randomString(),
+                connect: ['', ''],
+                way: line.way.map((point, i) => $P(point)),
+            }));
+
+        // wait lines loaded
+        await delay(10);
+    },
 };
 
 /**
@@ -199,4 +271,5 @@ export default new Vuex.Store<StateType>({
     state,
     getters,
     mutations,
+    actions,
 });

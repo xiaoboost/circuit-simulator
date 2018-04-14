@@ -107,15 +107,17 @@ class MapDebug {
                 this.text(point, status.id.split('_')[1], 20);
             }
             else if (status.type === 'part-point') {
-                this.text([point[0], point[1] - 0.5], status.id, 20);
+                this.text([point[0] + 0.4, point[1] - 0.4], status.id, 20);
             }
             else if (/(cross-point|cover-point)/.test(status.type)) {
                 this.path([[point[0] * 20, point[1] * 20], [1000, count * 25 + 50]], '#222222');
                 this.text([1000, count * 25 + 50], status.id);
                 count++;
             }
+
             // 点的连接关系
-            status.connect && status.connect.forEach(([tx, ty]) => {
+            const connect = (status.connect || []).map((node, i) => $P(node));
+            connect.forEach(([tx, ty]) => {
                 const [x, y] = point;
 
                 if (x - tx < 0) {

@@ -117,8 +117,12 @@ export default class DrawingMain extends Events {
 
     /** 搜索器件 */
     findPart(value: string | HTMLElement): ElectronicPart {
-        const prop = (assert.isString(value)) ? 'id' : '$el';
-        const part = this.$refs.parts.find((part) => part[prop] === value);
+        const prop = assert.isString(value) ? 'id' : '$el';
+        const valueMatch = assert.isString(value)
+            ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
+            : value;
+
+        const part = this.$refs.parts.find((part) => part[prop] === valueMatch);
 
         if (!part) {
             throw new Error('Can not find this part');

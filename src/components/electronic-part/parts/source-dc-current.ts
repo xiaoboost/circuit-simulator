@@ -5,8 +5,8 @@ const part: ElectronicPrototype = {
     type: 'dc_current_source',
     introduction: '直流电流源',
     txtLBias: 24,
-    padding: [1, 0, 1, 0],
-    margin: [1, 1, 1, 1],
+    padding: [1, 1, 1, 1],
+    margin: [1, 0, 1, 0],
     params: [
         {
             label: '电流值',

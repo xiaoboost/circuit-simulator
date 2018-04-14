@@ -57,21 +57,6 @@ export function clone(data, check = true) {
 }
 
 /**
- * 获取该元素的 css 作用域标签
- * @export
- * @param {HTMLElement} el
- * @returns {string}
- */
-export function getScopedName(el) {
-    const name = Array
-        .prototype.slice.call(el.attributes)
-        .map((attr) => attr.name)
-        .find((attr) => /^data-v-[a-z0-9]+$/i.test(attr));
-
-    return name ? name : '';
-}
-
-/**
  * 生成异步延迟函数
  * @export
  * @param {number} [time=0]
@@ -142,19 +127,19 @@ export function randomString(len = 16) {
 }
 
 /**
- * 将多个类混合成一个
- * @export
- * @param {Function} derivedCtor
- * @param {Function[]} baseCtors
+ * 从链接中获取参数值
+ * @param {string} name 参数名称
+ * @return {string}
  */
-export function mixClasses(derivedCtor, baseCtors) {
-    baseCtors.forEach((baseCtor) =>
-        Object
-            .getOwnPropertyNames(baseCtor.prototype)
-            .filter((name) => name !== 'constructor')
-            .forEach((name) => Object.defineProperty(
-                derivedCtor.prototype, name,
-                Object.getOwnPropertyDescriptor(baseCtor.prototype, name)
-            ))
-    );
+export function getQueryByName(name) {
+    name = name.replace(/[[\]]/g, '\\$&');
+
+    const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+    const results = regex.exec(window.location.href);
+
+    if (!results || !results[2]) {
+        return '';
+    }
+
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }

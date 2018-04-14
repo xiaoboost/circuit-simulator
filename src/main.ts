@@ -3,7 +3,9 @@ import 'src/lib/init';
 import 'src/lib/native';
 
 import Vue, { VNodeChildrenArrayContents } from 'vue';
+
 import store from 'src/vuex';
+import { getQueryByName } from 'src/lib/utils';
 
 import debug from 'src/lib/debugger';
 import modal from 'src/mixins/params';
@@ -36,7 +38,7 @@ new Vue({
         'main', { attrs: { id: 'app' }},
         [h('drawing-main'), h('slider-menu'), h('action-menu')] as VNodeChildrenArrayContents,
     ),
-    mounted() {
+    async mounted() {
         if ($ENV.NODE_ENV === 'development') {
             const area = document.querySelector('.drawing-main svg g')!;
 
@@ -48,6 +50,23 @@ new Vue({
 
             area.appendChild($debugger.$el);
         }
+
+        const map = getQueryByName('map');
+
+        let data = { default: [] };
+
+        if (map) {
+            try {
+                data = await import(`src/examples/${map}`);
+            }
+            catch (e) {
+                console.error(e);
+            }
+        }
+
+        // 加载数据
+        await this.$store.dispatch('IMPORT_DATA', data.default);
+        await this.$nextTick();
 
         // 初始化完成
         loaded();

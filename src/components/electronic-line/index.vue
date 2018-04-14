@@ -20,7 +20,6 @@
 <script lang="ts">
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
-import { mixClasses } from 'src/lib/utils';
 import { $P, Point } from 'src/lib/point';
 // import { $M, Matrix } from 'src/lib/matrix';
 import * as schMap from 'src/lib/map';
@@ -53,15 +52,19 @@ export default class ElectronicLine extends DrawLine implements ComponentInterfa
         this.id = this.value.id;
         this.hash = this.value.hash;
     }
+
     created() {
         this.init();
-
+    }
+    mounted() {
         // 小于 2 个节点，则为新绘制的导线
         if (this.way.length < 2) {
             this.drawEvent(0);
         }
         else {
+            this.setConnectByWay();
             this.update();
+            this.markSign();
         }
     }
 

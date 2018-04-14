@@ -11,7 +11,8 @@
     </circle>
     <rect
         x="-8.5" y="-8.5" height="17" width="17"
-        @mouseenter="mouseenter" @mouseleave="mouseleave">
+        @mouseenter.capture.self.passive="mouseenter"
+        @mouseleave.capture.self.passive="mouseleave">
     </rect>
 </g>
 </template>

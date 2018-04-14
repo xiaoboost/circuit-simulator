@@ -1,6 +1,7 @@
 // import * as assert from 'src/lib/assertion';
 import * as schMap from 'src/lib/map';
 import { $P, Point } from 'src/lib/point';
+import { clone } from 'src/lib/utils';
 import { LineWay } from './line-way';
 import { nodeSearch } from './node-search';
 
@@ -18,7 +19,7 @@ export default class DrawLine extends Vue {
     /** 匹配导线 ID */
     matchLine = /(line_\d+ ?)+/;
     /** 匹配器件端点 ID */
-    matchPart = /[a-zA-Z]+_\d+-\d+/;
+    matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;
 
     /** 设置图纸事件 */
     @Inject()
@@ -133,7 +134,7 @@ export default class DrawLine extends Vue {
             // 器件引脚的临时状态也要清除
             part.pointSize.$set(+mark, -1);
             part.connect.$set(+mark, this.id);
-            this.connect.$set(1, status.id);
+            this.connect.$set(index, status.id);
         }
         // 端点为导线空引脚
         else if (status.type === 'line-point') {
@@ -155,6 +156,7 @@ export default class DrawLine extends Vue {
             const lines = status.id.split(' ').filter((n) => n !== this.id);
 
             if (lines.length === 1) {
+                debugger;
                 // this.merge(lines[0]);
                 return;
             }
@@ -208,25 +210,35 @@ export default class DrawLine extends Vue {
     concat(id: string) {
         const line = this.findLine(id);
 
+        /** 交错节点 */
+        let crossIndex: 0 | 1;
+
         // 连接导线的路径
         if (this.way[0].isEqual(line.way[0])) {
-            this.reverse();
+            line.reverse();
+            crossIndex = 0;
         }
         else if (this.way[0].isEqual(line.way.get(-1))) {
-            this.reverse();
-            line.reverse();
+            crossIndex = 0;
         }
         else if (this.way.get(-1).isEqual(line.way.get(-1))) {
             line.reverse();
+            crossIndex = 1;
+        }
+        else {
+            crossIndex = 1;
         }
 
-        this.connect.$set(1, line.connect[1]);
-        line.replaceConnect(1, this.id);
+        line.replaceConnect(crossIndex, this.id);
+        this.connect.$set(crossIndex, line.connect[crossIndex]);
+        this.way = LineWay.prototype.checkWayRepeat.call(
+            crossIndex === 0
+                ? line.way.concat(this.way)
+                : this.way.concat(line.way),
+        );
 
         // 删除导线
         this.$store.commit('DELETE_LINE', line.id);
-
-        this.way = LineWay.prototype.checkWayRepeat.call(this.way.concat(line.way));
     }
     /**
      * 拆分导线
@@ -253,38 +265,44 @@ export default class DrawLine extends Vue {
         // 生成新导线
         this.$store.commit('NEW_LINE', crossPoint);
         // 新导线数据
-        const devices = { ...this.$store.state.Lines[0] as LineData};
+        const devices = clone(this.$store.state.Lines[0] as LineData);
 
-        // 变更导线连接表
-        splited.replaceConnect(1, devices.id);                      // 替换连接器件的 ID
+        // devices 连接关系设定
+        splited.replaceConnect(1, devices.id);                      // splited 原终点器件连接替换为 devices
         devices.connect.$set(1, splited.connect[1]);                // 原导线起点不变，新导线的终点等于原导线的终点
         devices.connect.$set(0, `${splited.id} ${this.id}`);        // 新导线起点由旧导线 ID 和分割旧导线的导线 ID 组成
-        this.connect.$set(index, `${splited.id} ${devices.id}`);    // 分割旧导线的导线终点由新旧导线 ID 组成
-        splited.connect.$set(1, `${devices.id} ${this.id}`);        // 旧导线终点由新导线 ID 和分割旧导线的导线 ID 组成
 
-        // 拆分路径
-        // FIXME: 需要再检查
+        // devices 路径为交错点至原 splited 终点
         way = LineWay.from(splited.way.slice(crossSub + 1));
         way.unshift(crossPoint);
         way.checkWayRepeat();
         devices.way = way;
 
-        way = LineWay.from(splited.way.slice(crossSub + 1, splited.way.length - crossSub - 1));
+        // splited 的终点连接变更
+        splited.connect.$set(1, `${devices.id} ${this.id}`);
+
+        // splited 路径变更为起点至交错点部分
+        way = LineWay.from(splited.way.slice(0, crossSub + 1));
         way.push(crossPoint);
         way.checkWayRepeat();
         splited.way = way;
 
+        // 当前导线终点为拆分两个导线
+        this.connect.$set(index, `${splited.id} ${devices.id}`);    // 分割旧导线的导线终点由新旧导线 ID 组成
+
         // 交错节点设定
         schMap.setPoint({
             type: 'cross-point',
-            point: crossPoint,
+            point: crossPoint.floorToSmall(),
             id: `${this.id} ${splited.id} ${devices.id}`,
             connect: [],
         });
 
-        // 图纸标记
+        // 更新数据
         splited.markSign();
-        splited.markSign.call(devices);
+        splited.update();
+
+        this.$store.commit('UPDATE_LINE', devices);
     }
 
     // 导线标记
@@ -296,7 +314,7 @@ export default class DrawLine extends Vue {
             // 当前点状态
             const status = schMap.getPoint(point, true);
             // 端点
-            if (point.isEqual(way.get(0) || point.isEqual(way.get(-1)))) {
+            if (point.isEqual(way.get(0)) || point.isEqual(way.get(-1))) {
                 // 空
                 if (!status) {
                     schMap.setPoint(
@@ -319,29 +337,17 @@ export default class DrawLine extends Vue {
             }
             // 非端点
             else {
-                // 空
-                if (!status) {
-                    schMap.setPoint(
-                        {
-                            point,
-                            type: 'line',
-                            id: this.id,
-                            connect: [],
-                        },
-                        true,
-                    );
-                }
-                // 路径其他导线
-                else if (status.type === 'line') {
-                    schMap.mergePoint(
-                        {
-                            point,
-                            type: 'line',
-                            id: `${this.id} ${status.id}`,
-                        },
-                        true,
-                    );
-                }
+                schMap.setPoint(
+                    {
+                        point,
+                        type: 'line',
+                        id: this.id,
+                        connect: [],
+                    },
+                    true,
+                );
+
+                // TODO: 还要导线相互交错的情况
             }
 
             if (last) {
