@@ -1,6 +1,6 @@
 import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
-import { Component, Vue } from 'vue-property-decorator';
+import { Vue } from 'vue-property-decorator';
 import { delay } from 'src/lib/utils';
 
 type callback = (event: DrawEvent) => void | Promise<void>;
@@ -159,11 +159,9 @@ class Handlers {
     }
 }
 
-@Component
 export default class DrawEvents extends Vue {
-    zoom: number;
-    position: Point;
-
+    zoom = 1;
+    position = $P();
     exclusion = false;
 
     async setDrawEvent({

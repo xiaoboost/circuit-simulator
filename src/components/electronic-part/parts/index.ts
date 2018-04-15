@@ -37,4 +37,7 @@ const Electronics = {
 
 type Electronics = typeof Electronics;
 
+export * from './types';
+export type PartTypes = keyof Electronics;
+
 export default Electronics;

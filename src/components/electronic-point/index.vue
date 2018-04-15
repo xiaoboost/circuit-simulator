@@ -101,6 +101,10 @@ export default class ElectronicPoint extends Vue implements ComponentInterface {
 
     @Watch('actual')
     setAnimate(value: number): void {
+        if (!this.$refs.circle) {
+            return;
+        }
+
         // 确定新的终点值
         this.animateTo = value;
         // 计算当前值

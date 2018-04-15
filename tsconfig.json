@@ -5,8 +5,8 @@
         "sourceMap": true,
         // 以严格模式解析
         "strict": true,
-        // 类属性允许不初始化
-        "strictPropertyInitialization": false,
+        // 类属性必须全部初始化
+        "strictPropertyInitialization": true,
         // 采用的模块系统
         "module": "esnext",
         // 如何处理模块

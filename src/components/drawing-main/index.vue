@@ -80,8 +80,8 @@ import { LineData } from 'src/components/electronic-line/types';
 
         return {
             mapStatus,
-            findPart: this.findPart,
-            findLine: this.findLine,
+            findPartComponent: this.findPartComponent,
+            findLineComponent: this.findLineComponent,
             setDrawEvent: this.setDrawEvent,
         };
     },
@@ -116,7 +116,7 @@ export default class DrawingMain extends Events {
     }
 
     /** 搜索器件 */
-    findPart(value: string | HTMLElement): ElectronicPart {
+    findPartComponent(value: string | HTMLElement): ElectronicPart {
         const prop = assert.isString(value) ? 'id' : '$el';
         const valueMatch = assert.isString(value)
             ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
@@ -131,7 +131,7 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    findLine(value: string | HTMLElement): ElectronicLine {
+    findLineComponent(value: string | HTMLElement): ElectronicLine {
         const prop = (assert.isString(value)) ? 'id' : '$el';
         const line = this.$refs.lines.find((part) => part[prop] === value);
 
