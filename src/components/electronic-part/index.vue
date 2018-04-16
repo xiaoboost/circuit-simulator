@@ -5,7 +5,7 @@
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <g class="focus-partial">
         <part-aspect
-            v-for="(info, i) in this.origin.shape"
+            v-for="(info, i) in origin.shape"
             v-once :value="info" :key="i">
         </part-aspect>
         <electronic-point
@@ -39,6 +39,7 @@ import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 
 import Electronics from './parts';
 import * as schMap from 'src/lib/map';
+import { clone } from 'src/lib/utils';
 import { $M, Matrix } from 'src/lib/matrix';
 import { $P, Point } from 'src/lib/point';
 
@@ -67,19 +68,27 @@ class PartAspect extends Vue {
     }
 })
 export default class ElectronicPart extends PartCore implements ComponentInterface {
-    /** 设置图纸事件 */
-    @Inject()
-    private readonly setDrawEvent: SetDrawEvent;
-    /** 图纸相关状态 */
-    @Inject()
-    private readonly mapStatus: MapStatus;
+    /** 器件原始数据 */
+    @Prop({ type: Object, default: () => ({}) })
+    readonly value: PartCore;
+    /** 当前器件数据原型 */
+    readonly origin: ElectronicPrototype;
 
     pointSize: number[] = [];
     textPosition = $P(this.origin.txtLBias);
     textPlacement: TextPlacement = 'bottom';
 
+    constructor() {
+        super();
+
+        debugger;
+        /** 器件属性修正格式 */
+        Object.assign(this, clone(this.value));
+        this.origin = clone(Electronics[this.type]);
+    }
+
     created() {
-        this.update();
+        this.dispatch();
         this.renderText();
     }
     mounted() {
@@ -112,13 +121,11 @@ export default class ElectronicPart extends PartCore implements ComponentInterfa
     /** 器件属性同步 */
     @Watch('value')
     update() {
-        const data: PartCore = this.value as any;
-
-        this.id = data.id;
-        this.rotate = $M(data.rotate);
-        this.position = $P(data.position);
-        this.params.splice(0, this.params.length, ...data.params);
-        this.connect.splice(0, this.connect.length, ...data.connect);
+        this.id = this.value.id;
+        this.rotate = $M(this.value.rotate);
+        this.position = $P(this.value.position);
+        this.params.$replace(this.value.params);
+        this.connect.$replace(this.value.connect);
     }
 
     /** 设置属性 */

@@ -11,7 +11,7 @@ const maxNumber = 50;
  * @returns {string}
  */
 export function createId(id: string): string {
-    const electrons = [...vuex.state.Parts, ...vuex.state.Lines];
+    const electrons = [...vuex.state.Parts];  // , ...vuex.state.Lines
     const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
 
     const max = (pre[1] === 'line') ? Infinity : maxNumber;
@@ -37,6 +37,6 @@ export function findPartCore(id: string): PartCore {
     return clone(result);
 }
 
-export function findLineCore() {
+// export function findLineCore() {
 
-}
+// }

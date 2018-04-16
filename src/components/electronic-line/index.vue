@@ -26,24 +26,21 @@ import * as schMap from 'src/lib/map';
 import { clone } from 'src/lib/utils';
 import { LineWay, WayMap } from './line-way';
 
-import DrawLine from './draw-line';
+import { LineSearch } from './line-search';
 import ElectronPoint from 'src/components/electronic-point';
 
+import { DrawEvent } from 'src/components/drawing-main';
 import { LineData, ComponentInterface, DrawingOption } from './types';
-import { FindPart, SetDrawEvent, DrawEvent, MapStatus } from 'src/components/drawing-main';
 
 @Component({
     components: {
         ElectronPoint,
     },
 })
-export default class ElectronicLine extends DrawLine implements ComponentInterface {
+export default class ElectronicLine extends LineSearch implements ComponentInterface {
     /** 器件原始数据 */
     @Prop({ type: Object, default: () => ({}) })
     private readonly value: LineData;
-
-    readonly type = 'line';
-    readonly hash: string;
 
     // 编译前的初始化
     constructor() {
@@ -55,17 +52,25 @@ export default class ElectronicLine extends DrawLine implements ComponentInterfa
 
     created() {
         this.init();
-    }
-    mounted() {
+
         // 小于 2 个节点，则为新绘制的导线
         if (this.way.length < 2) {
             this.drawEvent(0);
         }
         else {
+            // debugger;
+            if (this.way.isEqual([[260, 360], [340, 360]])) {
+                debugger;
+            }
+
             this.setConnectByWay();
             this.update();
             this.markSign();
         }
+    }
+    beforeDestroy() {
+        this.deleteSign();
+        this.$store.commit('DELETE_LINE', this.id);
     }
 
     /** 当前导线是否高亮 */

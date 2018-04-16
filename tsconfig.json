@@ -44,6 +44,6 @@
         // 编译的基础路径
         "baseUrl": "."
     },
-    "include": ["src", "test", "types"],
+    "include": ["src", "types"],
     "exclude": ["node_modules", "dist"]
 }

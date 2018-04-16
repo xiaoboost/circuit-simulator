@@ -58,6 +58,12 @@ interface Array<T> {
      * @param {T} value
      */
     $set(index: number, value: T): void;
+    /**
+     * 在数组本身引用不变的情况下，替换整个数组内容
+     *
+     * @param {T[]} replace 被替换的内容
+     */
+    $replace(replace: T[]): void;
 }
 
 interface NumberConstructor {

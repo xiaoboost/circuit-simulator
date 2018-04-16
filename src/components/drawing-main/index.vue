@@ -37,17 +37,17 @@ import Events from './events';
 import { $P, Point } from 'src/lib/point';
 import * as assert from 'src/lib/assertion';
 import ElectronicPart from 'src/components/electronic-part';
-import ElectronicLine from 'src/components/electronic-line';
+// import ElectronicLine from 'src/components/electronic-line';
 
-import { PartData } from 'src/components/electronic-part/types';
-import { LineData } from 'src/components/electronic-line/types';
+// import { PartData } from 'src/components/electronic-part/types';
+// import { LineData } from 'src/components/electronic-line/types';
 
 // import SelectionsBox from 'src/components/selections-box';
 
 @Component({
     components: {
         ElectronicPart,
-        ElectronicLine,
+        // ElectronicLine,
         // 'selections-box': SelectionsBox,
     },
     provide(this: DrawingMain) {
@@ -81,7 +81,7 @@ import { LineData } from 'src/components/electronic-line/types';
         return {
             mapStatus,
             findPartComponent: this.findPartComponent,
-            findLineComponent: this.findLineComponent,
+            // findLineComponent: this.findLineComponent,
             setDrawEvent: this.setDrawEvent,
         };
     },
@@ -95,15 +95,15 @@ export default class DrawingMain extends Events {
     /** 子组件定义 */
     $refs: {
         parts: ElectronicPart[];
-        lines: ElectronicLine[];
+        // lines: ElectronicLine[];
     };
 
-    get parts(): PartData[] {
-        return this.$store.state.Parts;
-    }
-    get lines(): LineData[] {
-        return this.$store.state.Lines;
-    }
+    // get parts(): PartData[] {
+    //     return this.$store.state.Parts;
+    // }
+    // get lines(): LineData[] {
+    //     return this.$store.state.Lines;
+    // }
     get background() {
         const size: number = this.zoom * 20,
             biasX: number = this.position[0] % size,
@@ -131,16 +131,16 @@ export default class DrawingMain extends Events {
         return part;
     }
     /** 搜索导线 */
-    findLineComponent(value: string | HTMLElement): ElectronicLine {
-        const prop = (assert.isString(value)) ? 'id' : '$el';
-        const line = this.$refs.lines.find((part) => part[prop] === value);
+    // findLineComponent(value: string | HTMLElement): ElectronicLine {
+    //     const prop = (assert.isString(value)) ? 'id' : '$el';
+    //     const line = this.$refs.lines.find((part) => part[prop] === value);
 
-        if (!line) {
-            throw new Error('Can not find this line');
-        }
+    //     if (!line) {
+    //         throw new Error('Can not find this line');
+    //     }
 
-        return line;
-    }
+    //     return line;
+    // }
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent): void {
         const mousePosition = $P(e.pageX, e.pageY);

@@ -28,7 +28,7 @@ import { $M } from 'src/lib/matrix';
 import * as assert from 'src/lib/assertion';
 
 import Electronics from 'src/components/electronic-part/parts';
-import { PartData, ShapeDescription } from 'src/components/electronic-part/types';
+import { PartCore, ShapeDescription, PartTypes } from 'src/components/electronic-part';
 
 import { CreateElement, VNodeChildrenArrayContents } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';
@@ -123,7 +123,7 @@ export default class AddParts extends Vue {
         },
     ];
 
-    setTip(name: string, event: MouseEvent): void {
+    setTip(name: string, event: MouseEvent) {
         this.tipText = Electronics[name].introduction;
         this.tipStyle = {
             display: 'inline',
@@ -131,13 +131,13 @@ export default class AddParts extends Vue {
             top: `${event.pageY - 10}px`,
         };
     }
-    disabledTip(): void {
+    disabledTip() {
         this.tipStyle = {
             display: 'none',
         };
     }
-    addPart(type: string): void {
-        this.$store.commit('NEW_PART', type);
+    addPart(type: PartTypes) {
+        this.$store.commit('NEW_PART', new PartCore(type));
     }
 }
 </script>

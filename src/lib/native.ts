@@ -137,6 +137,11 @@ nativeExpand(Array.prototype, {
             this.splice(i, 1, item);
         }
     },
+
+    /** 在数组本身引用不变的情况下，替换整个数组内容 */
+    $replace<T>(this: T[], replace: T[]): void {
+        this.splice(0, this.length, ...replace);
+    },
 });
 
 nativeExpand(Number, {

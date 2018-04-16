@@ -1,14 +1,12 @@
-import { Vue, Prop } from 'vue-property-decorator';
-import { $M, Matrix } from 'src/lib/matrix';
-import { clone, randomString } from 'src/lib/utils';
-import { $P, Point, PointLike } from 'src/lib/point';
-import { createId, findPartCore } from 'src/components/drawing-main';
+import Vue from 'vue';
 import * as schMap from 'src/lib/map';
 
-import Electronics, {
-    PartTypes,
-    ElectronicPrototype,
-} from './parts';
+import { clone } from 'src/lib/utils';
+import { $M, Matrix } from 'src/lib/matrix';
+import { $P, Point, PointLike } from 'src/lib/point';
+
+import Electronics, { PartTypes } from './parts';
+import { ElectronicCore } from '../drawing-main/abstract';
 
 /** 兼容 PointLike 类型的点乘矩阵 */
 const product = (point: PointLike, ma: Matrix): Point => {
@@ -16,47 +14,31 @@ const product = (point: PointLike, ma: Matrix): Point => {
 };
 
 /** 器件数据核心类 */
-export class PartCore extends Vue {
-    /** 器件 ID 编号 */
-    id: string;
+export class PartCore extends ElectronicCore {
     /** 器件当前旋转矩阵 */
     rotate: Matrix;
     /** 器件当前位置 */
     position: Point;
     /** 器件类型 */
-    readonly type: PartTypes;
-    /** 器件唯一切不变的 hash 编号 */
-    readonly hash: string;
-    /** 当前器件的内部参数 */
+    readonly type!: keyof Electronics;
+    /** 器件的内部参数 */
     readonly params: string[];
-    /** 当前器件的连接表 */
-    readonly connect: string[];
-    /** 当前器件数据原型 */
-    readonly origin: ElectronicPrototype;
 
-    /** 器件原始数据 */
-    @Prop({ type: Object, default: () => ({}) })
-    protected readonly value!: PartCore;
-
-    constructor() {
-        super();
+    constructor(type: PartTypes = 'resistance') {
+        super(type);
 
         debugger;
-        const origin = clone(Electronics[this.value.type]);
+        const origin = Electronics[type];
 
-        this.type = this.value.type;
-        this.origin = origin;
-        this.id = createId(origin.pre);
-        this.hash = randomString();
         this.rotate = $M(2, 'E');
         this.position = $P(1e6, 1e6);
         this.params = origin.params.map((n) => n.default);
-        this.connect = Array(origin.points.length).fill('');
+        this.connect.$replace(Array(origin.points.length).fill(''));
     }
 
     /** 当前引脚状态 */
     get points() {
-        return this.origin.points.map((point, i) => ({
+        return Electronics[this.type].points.map((point, i) => ({
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
@@ -72,10 +54,10 @@ export class PartCore extends Vue {
         };
 
         for (let i = 0; i < 2; i++) {
-            const type = types[i],
-                boxSize = this.origin[type] as [number, number, number, number],
-                endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]],
-                data = endpoint.map((point) => product(point, this.rotate));
+            const type = types[i] as 'margin' | 'padding';
+            const boxSize = Electronics[this.type][type];
+            const endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]];
+            const data = endpoint.map((point) => product(point, this.rotate));
 
             box[type] = [
                 [
@@ -190,7 +172,7 @@ export class PartCore extends Vue {
             }
 
             // 校验相互距离
-            const part = findPartCore(status.id);
+            const part = this.findPartCore(status.id);
             const another = part.margin.outter;
             const distance = position.add(part.position.floorToSmall(), -1);
 
