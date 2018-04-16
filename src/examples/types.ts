@@ -1,4 +1,4 @@
-import { PartTypes } from 'src/components/electronic-part/types';
+import { PartTypes } from 'src/components/electronic-part';
 
 /** 储存用的器件数据接口 */
 export interface PartStorageData {
@@ -16,4 +16,17 @@ export interface LineStorageData {
     way: number[][];
 }
 
-export type CircuitStorageData = Array<PartStorageData | LineStorageData>;
+/** 器件数据 */
+export type ElectronicsData = Array<PartStorageData | LineStorageData>;
+
+/** 当前时间配置项 */
+export interface TimeConfig {
+    endTime: string;
+    stepSize: string;
+    // TODO: 波形输出标志
+}
+
+export interface CircuitStorage {
+    config?: TimeConfig;
+    data: ElectronicsData;
+}
