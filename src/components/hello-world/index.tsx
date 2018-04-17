@@ -13,7 +13,7 @@ export default class Hello extends Vue {
 
     render(h: CreateElement) {
         return <div>
-            <h4>This is rendered via TSX</h4>
+            <h4 class='123'>This is rendered via TSX</h4>
             <child value={ this.text }></child>
         </div>;
     }

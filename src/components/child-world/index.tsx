@@ -1,8 +1,8 @@
+import './style';
+
 import { CreateElement } from 'vue';
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { ComponentInterface } from './types';
-
-import css from './style.styl';
 
 @Component
 export default class Child extends Vue implements ComponentInterface {
@@ -11,7 +11,7 @@ export default class Child extends Vue implements ComponentInterface {
 
     render(h: CreateElement) {
         return <div>
-            <p class={ css.title }>This is child component.</p>
+            <p class='title'>This is child component.</p>
             <p>This is prop value: { this.value }.</p>
         </div>;
     }
