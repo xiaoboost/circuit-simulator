@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'development';
 
 const host = 'localhost',
-    port = 8080,
+    port = 8000,
     chalk = require('chalk'),
     app = new (require('koa'))(),
     shell = require('shelljs'),

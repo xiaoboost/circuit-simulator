@@ -13,6 +13,10 @@
         "moduleResolution": "node",
         // 编译输出目标 ES 版本
         "target": "es2016",
+        // 输出为 jsx 文件
+        "jsx": "preserve",
+        // jsx 工厂函数名称
+        "jsxFactory": "h",
         // 允许从没有设置默认导出的模块中默认导入
         "allowSyntheticDefaultImports": true,
         // 将每个文件作为单独的模块

@@ -78,8 +78,8 @@
         "one-variable-per-declaration": false,
         // 不允许 import 的自动排序
         "ordered-imports": false,
-        // 如果类方法没有用 this，那么提出警告
-        "prefer-function-over-method": [true, "allow-protected"],
+        // 如果类方法并不强制使用 this
+        "prefer-function-over-method": false,
         // 方法标记应该使用 foo(): void 这种形式
         "prefer-method-signature": true,
         // 多字符串相连时应该使用字符串模板

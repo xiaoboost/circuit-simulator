@@ -45,9 +45,9 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.ts', '.js', '.vue', '.json', '.styl'],
+        extensions: ['.ts', 'tsx', '.js', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
-        mainFiles: ['index.ts', 'index.js'],
+        mainFiles: ['index.ts', 'index.tsx', 'index.js'],
         // 默认路径别名
         alias: {
             'src': resolve('src'),
@@ -72,32 +72,35 @@ module.exports = {
                 },
             },
             {
-                test: /\.vue$/,
-                loader: 'vue-loader',
-                options: {
-                    loaders: {
-                        stylus: utils.createLoader('stylus'),
-                        styl: utils.createLoader('stylus'),
-                    },
-                    postcss: [
-                        require('autoprefixer')({
-                            browsers: ['ie > 8', 'last 2 versions', 'Chrome > 24'],
-                        }),
-                    ],
-                },
-            },
-            {
-                test: /\.tsx?$/,
+                test: /\.ts$/,
                 loader: 'ts-loader',
                 exclude: /node_modules/,
-                options: {
-                    transpileOnly: false,
-                    appendTsSuffixTo: [/\.vue$/],
-                },
+            },
+            {
+                test: /\.tsx$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            'plugins': ['transform-vue-jsx'],
+                        },
+                    },
+                    'ts-loader',
+                ],
             },
             {
                 test: /\.styl(us)?$/,
-                use: utils.createLoader('stylus'),
+                use: [
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            localIdentName: '[local]--[hash:base64:5]',
+                        },
+                    },
+                    'stylus-loader',
+                ],
             },
         ],
     },
