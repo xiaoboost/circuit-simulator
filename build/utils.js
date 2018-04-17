@@ -1,38 +1,3 @@
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const isProduction = process.env.NODE_ENV === 'production';
-
-/**
- * create css-loader
- *
- * @param {string} loader
- * @param {object} loaderOptions
- * @returns {object}
- */
-exports.createLoader = function(loader, loaderOptions) {
-    const loaders = [{
-        loader: 'css-loader',
-        options: {
-            minimize: isProduction,
-            sourceMap: false,
-        },
-    }];
-
-    if (loader) {
-        loaders.push({
-            loader: loader + '-loader',
-            options: Object.assign(
-                { sourceMap: false },
-                loaderOptions
-            ),
-        });
-    }
-
-    return ExtractTextPlugin.extract({
-        use: loaders,
-        fallback: 'vue-style-loader',
-    });
-};
-
 /**
  * Generate tag of build
  *

@@ -91,16 +91,7 @@ module.exports = {
             },
             {
                 test: /\.styl(us)?$/,
-                use: [
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            modules: true,
-                            localIdentName: '[local]--[hash:base64:5]',
-                        },
-                    },
-                    'stylus-loader',
-                ],
+                use: ['style-loader', 'css-loader', 'stylus-loader'],
             },
         ],
     },
