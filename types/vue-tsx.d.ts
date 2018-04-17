@@ -10,7 +10,25 @@ declare namespace JSX {
                 Array<string | { [className: string]: boolean }>;
 
             ref?: string;
+            key?: string | number;
             refInFor?: boolean;
+        }
+
+        interface TransitionAttributes {
+            name: string;
+            appear?: boolean;
+            css?: boolean;
+            type?: string;
+            mode?: string;
+            'enter-class'?: string;
+            'leave-class'?: string;
+            'appear-class'?: string;
+            'enter-to-class'?: string;
+            'leave-to-class'?: string;
+            'appear-to-class'?: string;
+            'enter-active-class'?: string;
+            'leave-active-class'?: string;
+            'appear-active-class'?: string;
         }
 
         interface DOMAttributes extends VueAttributes {
@@ -811,6 +829,11 @@ declare namespace JSX {
     }
 
     interface IntrinsicElements {
+        'action-menu': {};
+
+        // Vue
+        transition: Vue.TransitionAttributes;
+
         // HTML
         a: Vue.AnchorHTMLAttributes;
         abbr: Vue.HTMLAttributes;

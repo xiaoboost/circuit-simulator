@@ -27,7 +27,7 @@ function resolve(dir) {
 module.exports = {
     entry: {
         // 主业务逻辑文件
-        main: resolve('./src/main.ts'),
+        main: resolve('./src/main.tsx'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -45,7 +45,7 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.ts', 'tsx', '.js', '.vue', '.json', '.styl'],
+        extensions: ['.ts', '.tsx', '.js', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
         mainFiles: ['index.ts', 'index.tsx', 'index.js'],
         // 默认路径别名
