@@ -59,12 +59,11 @@
     .fab-container:nth-child(5) .fab
         background #43A047
 
-    .fab-container:nth-child(n+2)::after
-        content attr(tip)
+    .fab-container:nth-child(n+2) .fab-tip
         position absolute
         top 50%
         left -0.7em
-        padding .65em 1.25em .45em 1.25em
+        padding .3em .5em
         border-radius 2px
         transform-origin right
         transform translate(-100%, -50%)
@@ -79,7 +78,7 @@
         opacity 0
         z-index 2
 
-    .fab-container:hover::after
+    .fab-container:hover .fab-tip
         opacity 1
 
     .fab-container:hover .fab
@@ -101,4 +100,3 @@
         text-align center
         fill #FFFFFF
         stroke-width 0
-

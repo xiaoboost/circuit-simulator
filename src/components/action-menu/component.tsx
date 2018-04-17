@@ -7,7 +7,7 @@ import { Component, Vue } from 'vue-property-decorator';
 const zoom = 0.6;
 
 const icons = [
-    { name: 'run', tip: '时域模拟' },
+    { name: 'run', tip: '' },
     { name: 'add', tip: '添加器件' },
     { name: 'config', tip: '运行设置' },
 ].map((data) => {
@@ -48,20 +48,21 @@ export default class ActionMenu extends Vue {
 
     render(h: CreateElement) {
         return <transition name='fade'>
-            <footer class='action-menu' v-show={ this.vision }>
-                { this.isRun ? <div class='fab-container'>
-                    <div class='fab' id='fab-text'></div>
-                </div> : '' }
+            <footer class='action-menu' v-show={this.vision}>
+                {this.isRun
+                    ? <div class='fab-container'>
+                        <div class='fab' id='fab-text'></div>
+                    </div> : ''}
                 {this.icons.map((icon, i) =>
                     <div
                         class='fab-container'
-                        v-show={ !this.isRun } key={ i }
-                        onClick={ () => this.action(icon.name) }>
+                        v-show={!this.isRun} key={i}
+                        onClick={() => this.action(icon.name)}>
+                        {icon.tip ? <span class='fab-tip'>{icon.tip}</span> : ''}
                         <div class='fab'>
-                            <span>{ icon.tip }</span>
-                            <svg viewBox={ `0 0 ${icon.long} ${icon.long}` }>
-                                <g transform={ `translate(${icon.translate}) scale(${zoom}, ${zoom})` }>
-                                    <path d={ icon.d }></path>
+                            <svg viewBox={`0 0 ${icon.long} ${icon.long}`}>
+                                <g transform={`translate(${icon.translate}) scale(${zoom}, ${zoom})`}>
+                                    <path d={icon.d}></path>
                                 </g>
                             </svg>
                         </div>
