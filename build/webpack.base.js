@@ -59,10 +59,10 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.ts$/,
                 loader: 'tslint-loader',
                 enforce: 'pre',
-                include: [resolve('src'), resolve('test')],
+                include: [resolve('src')],
                 options: {
                     typeCheck: true,
                     emitErrors: true,
@@ -72,12 +72,7 @@ module.exports = {
                 },
             },
             {
-                test: /\.ts$/,
-                loader: 'ts-loader',
-                exclude: /node_modules/,
-            },
-            {
-                test: /\.tsx$/,
+                test: /\.tsx?$/,
                 exclude: /node_modules/,
                 use: [
                     {
@@ -86,7 +81,12 @@ module.exports = {
                             'plugins': ['transform-vue-jsx'],
                         },
                     },
-                    'ts-loader',
+                    {
+                        loader: 'ts-loader',
+                        options: {
+                            transpileOnly: false,
+                        },
+                    },
                 ],
             },
             {

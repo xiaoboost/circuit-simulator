@@ -1,6 +1,5 @@
 import './component.styl';
 
-import * as assert from 'src/lib/assertion';
 import { CreateElement } from 'vue';
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
@@ -82,8 +81,6 @@ export default class InputVerifiable extends Vue {
     }
 
     private render(h: CreateElement) {
-        type InputEvent = Event & { target: HTMLInputElement };
-
         return <div class='input-verifiable'>
             <input
                 ref='input'
@@ -91,11 +88,10 @@ export default class InputVerifiable extends Vue {
                 value={this.txt}
                 maxLength={this.maxlength}
                 placeholder={this.placeholder}
-                on={{
-                    '&input': ($event: InputEvent) => {
-                        this.update($event.target.value);
-                    },
-                }} />
+                onInput={(e: Event) => {
+                    const target: HTMLInputElement = e.target as any;
+                    this.update(target.value);
+                }}/>
             <span class='input-bar correct-bar'></span>
             <span class={['input-bar error-bar', { error: !!this.errorMessage }]}></span>
             {this.errorMessage ? <span class='input-error-message' v-text='errorMessage'></span> : ''}

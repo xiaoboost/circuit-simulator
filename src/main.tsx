@@ -3,7 +3,7 @@ import 'src/lib/init';
 import 'src/lib/native';
 
 import Vue from 'vue';
-// import store from 'src/vuex';
+import store from 'src/vuex';
 
 // import { getQueryByName } from 'src/lib/utils';
 
@@ -11,7 +11,7 @@ import Vue from 'vue';
 // import modal from 'src/mixins/params';
 
 import ActionMenu from 'src/components/action-menu';
-// import SliderMenu from 'src/components/slider-menu';
+import SliderMenu from 'src/components/slider-menu';
 // import DrawingMain from 'src/components/drawing-main';
 
 // Vue.use(modal);
@@ -30,12 +30,14 @@ function loaded() {
 
 // init vue
 new Vue({
+    store,
     el: '#app',
     name: 'Main',
-    components: { ActionMenu },
+    components: { ActionMenu, SliderMenu },
     render: (h) => (
         <main id='app'>
             <action-menu></action-menu>
+            <slider-menu></slider-menu>
         </main>
     ),
     async mounted() {

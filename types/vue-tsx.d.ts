@@ -1,7 +1,21 @@
 declare namespace JSX {
     // Vue 公共组件
     namespace Vue {
-        type EventHandler<T extends Event> = (e?: T) => any;
+        type EventHandler<T extends Event> = (e: T) => any;
+
+        /**
+         * Vue 修饰符事件
+         *  - `&`: passive
+         *  - `!`: capture
+         *  - `~`: once
+         */
+        interface VueEventHandler {
+            '&input'?: EventHandler<UIEvent>;
+            '&!mousemove'?: EventHandler<MouseEvent>;
+            '&!mouseleave'?: EventHandler<MouseEvent>;
+            'mousemove'?: EventHandler<MouseEvent>;
+            'mouseleave'?: EventHandler<MouseEvent>;
+        }
 
         interface VueAttributes {
             'class'?:
@@ -13,127 +27,109 @@ declare namespace JSX {
             key?: string | number;
             refInFor?: boolean;
             staticClass?: string;
-
-            on?: {
-                '&input'?: any;
-                '~input'?: any;
-                '&~input'?: any;
-            };
         }
 
-        interface TransitionAttributes {
-            name: string;
-            appear?: boolean;
+        interface TransitionPropsBase {
+            name?: string;
+            appear?: string;
             css?: boolean;
             type?: string;
+            enterClass?: string;
+            leaveClass?: string;
+            enterActiveClass?: string;
+            leaveActiveClass?: string;
+            appearClass?: string;
+            appearActiveClass?: string;
+        
+            onBeforeEnter?: (el: Element) => void;
+            onEnter?: (el: Element, done: () => void) => void;
+            onAfterEnter?: (el: Element) => void;
+            onEnterCancelled?: (el: Element) => void;
+        
+            onBeforeLeave?: (el: Element) => void;
+            onLeave?: (el: Element, done: () => void) => void;
+            onAfterLeave?: (el: Element) => void;
+            onLeaveCancelled?: (el: Element) => void;
+        
+            onBeforeAppear?: (el: Element) => void;
+            onAppear?: (el: Element, done: () => void) => void;
+            onAfterAppear?: (el: Element) => void;
+            onAppearCancelled?: (el: Element) => void;
+        }
+        
+        interface TransitionProps extends TransitionPropsBase {
             mode?: string;
-            'enter-class'?: string;
-            'leave-class'?: string;
-            'appear-class'?: string;
-            'enter-to-class'?: string;
-            'leave-to-class'?: string;
-            'appear-to-class'?: string;
-            'enter-active-class'?: string;
-            'leave-active-class'?: string;
-            'appear-active-class'?: string;
+        }
+        
+        interface TransitionGroupProps extends TransitionPropsBase {
+            tag?: string;
+            moveClass?: string;
+        }
+        
+        interface KeepAliveProps {
+            include?: string | RegExp | (string | RegExp)[];
+            exclude?: string | RegExp | (string | RegExp)[];
         }
 
         interface DOMAttributes extends VueAttributes {
             // Clipboard Events
             onCopy?: EventHandler<ClipboardEvent>;
-            onCopyCapture?: EventHandler<ClipboardEvent>;
             onCut?: EventHandler<ClipboardEvent>;
-            onCutCapture?: EventHandler<ClipboardEvent>;
             onPaste?: EventHandler<ClipboardEvent>;
-            onPasteCapture?: EventHandler<ClipboardEvent>;
 
             // Composition Events
-            onCompositionEnd?: EventHandler<CompositionEvent>;
-            onCompositionEndCapture?: EventHandler<CompositionEvent>;
-            onCompositionStart?: EventHandler<CompositionEvent>;
-            onCompositionStartCapture?: EventHandler<CompositionEvent>;
-            onCompositionUpdate?: EventHandler<CompositionEvent>;
-            onCompositionUpdateCapture?: EventHandler<CompositionEvent>;
+            onCompositionend?: EventHandler<CompositionEvent>;
+            onCompositionstart?: EventHandler<CompositionEvent>;
+            onCompositionupdate?: EventHandler<CompositionEvent>;
 
             // Focus Events
             onFocus?: EventHandler<FocusEvent>;
-            onFocusCapture?: EventHandler<FocusEvent>;
             onBlur?: EventHandler<FocusEvent>;
-            onBlurCapture?: EventHandler<FocusEvent>;
 
             // Keyboard Events
-            onKeyDown?: EventHandler<KeyboardEvent>;
-            onKeyDownCapture?: EventHandler<KeyboardEvent>;
-            onKeyPress?: EventHandler<KeyboardEvent>;
-            onKeyPressCapture?: EventHandler<KeyboardEvent>;
-            onKeyUp?: EventHandler<KeyboardEvent>;
-            onKeyUpCapture?: EventHandler<KeyboardEvent>;
+            onKeydown?: EventHandler<KeyboardEvent>;
+            onKeypress?: EventHandler<KeyboardEvent>;
+            onKeyup?: EventHandler<KeyboardEvent>;
 
             // MouseEvents
             onClick?: EventHandler<MouseEvent>;
-            onClickCapture?: EventHandler<MouseEvent>;
-            onContextMenu?: EventHandler<MouseEvent>;
-            onContextMenuCapture?: EventHandler<MouseEvent>;
-            onDoubleClick?: EventHandler<MouseEvent>;
-            onDoubleClickCapture?: EventHandler<MouseEvent>;
+            onContextmenu?: EventHandler<MouseEvent>;
+            onDoubleclick?: EventHandler<MouseEvent>;
             onDrag?: EventHandler<DragEvent>;
-            onDragCapture?: EventHandler<DragEvent>;
-            onDragEnd?: EventHandler<DragEvent>;
-            onDragEndCapture?: EventHandler<DragEvent>;
-            onDragEnter?: EventHandler<DragEvent>;
-            onDragEnterCapture?: EventHandler<DragEvent>;
-            onDragExit?: EventHandler<DragEvent>;
-            onDragExitCapture?: EventHandler<DragEvent>;
-            onDragLeave?: EventHandler<DragEvent>;
-            onDragLeaveCapture?: EventHandler<DragEvent>;
-            onDragOver?: EventHandler<DragEvent>;
-            onDragOverCapture?: EventHandler<DragEvent>;
-            onDragStart?: EventHandler<DragEvent>;
-            onDragStartCapture?: EventHandler<DragEvent>;
+            onDragend?: EventHandler<DragEvent>;
+            onDragenter?: EventHandler<DragEvent>;
+            onDragexit?: EventHandler<DragEvent>;
+            onDragleave?: EventHandler<DragEvent>;
+            onDragover?: EventHandler<DragEvent>;
+            onDragstart?: EventHandler<DragEvent>;
             onDrop?: EventHandler<DragEvent>;
-            onDropCapture?: EventHandler<DragEvent>;
-            onMouseDown?: EventHandler<MouseEvent>;
-            onMouseDownCapture?: EventHandler<MouseEvent>;
-            onMouseEnter?: EventHandler<MouseEvent>;
-            onMouseLeave?: EventHandler<MouseEvent>;
-            onMouseMove?: EventHandler<MouseEvent>;
-            onMouseMoveCapture?: EventHandler<MouseEvent>;
-            onMouseOut?: EventHandler<MouseEvent>;
-            onMouseOutCapture?: EventHandler<MouseEvent>;
-            onMouseOver?: EventHandler<MouseEvent>;
-            onMouseOverCapture?: EventHandler<MouseEvent>;
-            onMouseUp?: EventHandler<MouseEvent>;
-            onMouseUpCapture?: EventHandler<MouseEvent>;
+            onMousedown?: EventHandler<MouseEvent>;
+            onMouseenter?: EventHandler<MouseEvent>;
+            onMouseleave?: EventHandler<MouseEvent>;
+            onMousemove?: EventHandler<MouseEvent>;
+            onMouseout?: EventHandler<MouseEvent>;
+            onMouseover?: EventHandler<MouseEvent>;
+            onMouseup?: EventHandler<MouseEvent>;
 
             // Touch Events
-            onTouchCancel?: EventHandler<TouchEvent>;
-            onTouchCancelCapture?: EventHandler<TouchEvent>;
-            onTouchEnd?: EventHandler<TouchEvent>;
-            onTouchEndCapture?: EventHandler<TouchEvent>;
-            onTouchMove?: EventHandler<TouchEvent>;
-            onTouchMoveCapture?: EventHandler<TouchEvent>;
-            onTouchStart?: EventHandler<TouchEvent>;
-            onTouchStartCapture?: EventHandler<TouchEvent>;
+            onTouchcancel?: EventHandler<TouchEvent>;
+            onTouchend?: EventHandler<TouchEvent>;
+            onTouchmove?: EventHandler<TouchEvent>;
+            onTouchstart?: EventHandler<TouchEvent>;
 
             // UI Events
             onScroll?: EventHandler<UIEvent>;
-            onScrollCapture?: EventHandler<UIEvent>;
 
             // Wheel Events
             onWheel?: EventHandler<WheelEvent>;
-            onWheelCapture?: EventHandler<WheelEvent>;
 
             // Animation Events
-            onAnimationStart?: EventHandler<AnimationEvent>;
-            onAnimationStartCapture?: EventHandler<AnimationEvent>;
-            onAnimationEnd?: EventHandler<AnimationEvent>;
-            onAnimationEndCapture?: EventHandler<AnimationEvent>;
-            onAnimationIteration?: EventHandler<AnimationEvent>;
-            onAnimationIterationCapture?: EventHandler<AnimationEvent>;
+            onAnimationstart?: EventHandler<AnimationEvent>;
+            onAnimationend?: EventHandler<AnimationEvent>;
+            onAnimationiteration?: EventHandler<AnimationEvent>;
 
             // Transition Events
-            onTransitionEnd?: EventHandler<TransitionEvent>;
-            onTransitionEndCapture?: EventHandler<TransitionEvent>;
+            onTransitionend?: EventHandler<TransitionEvent>;
         }
 
         interface HTMLAttributes extends DOMAttributes {
@@ -150,7 +146,7 @@ declare namespace JSX {
             placeholder?: string;
             slot?: string;
             spellCheck?: boolean;
-            style?: CSSStyleDeclaration;
+            style?: Partial<CSSStyleDeclaration>;
             tabIndex?: number;
             title?: string;
 
@@ -336,6 +332,8 @@ declare namespace JSX {
             type?: string;
             value?: string | string[] | number;
             width?: number | string;
+
+            onInput?: EventHandler<Event>;
         }
 
         interface KeygenHTMLAttributes extends HTMLAttributes {
@@ -517,6 +515,8 @@ declare namespace JSX {
             rows?: number;
             value?: string | string[] | number;
             wrap?: string;
+
+            onInput?: EventHandler<Event>;
         }
 
         interface TdHTMLAttributes extends HTMLAttributes {
@@ -855,10 +855,15 @@ declare namespace JSX {
     interface IntrinsicElements {
         // Custom Element
         'action-menu': Vue.HTMLAttributes;
+        'slider-menu': Vue.HTMLAttributes;
+        'parts-panel': Vue.HTMLAttributes;
+        'main-config': Vue.HTMLAttributes;
         'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
 
         // Vue Element
-        transition: Vue.TransitionAttributes;
+        transition: Vue.TransitionProps;
+        transitionGroup: Vue.TransitionGroupProps;
+        'keep-alive': Vue.KeepAliveProps;
 
         // HTML
         a: Vue.AnchorHTMLAttributes;
