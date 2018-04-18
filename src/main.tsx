@@ -12,7 +12,7 @@ import store from 'src/vuex';
 
 import ActionMenu from 'src/components/action-menu';
 import SliderMenu from 'src/components/slider-menu';
-// import DrawingMain from 'src/components/drawing-main';
+import DrawingMain from 'src/components/drawing-main';
 
 // Vue.use(modal);
 
@@ -33,11 +33,12 @@ new Vue({
     store,
     el: '#app',
     name: 'Main',
-    components: { ActionMenu, SliderMenu },
+    components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => (
         <main id='app'>
             <action-menu></action-menu>
             <slider-menu></slider-menu>
+            <drawing-main></drawing-main>
         </main>
     ),
     async mounted() {

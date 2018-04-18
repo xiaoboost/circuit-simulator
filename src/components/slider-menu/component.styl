@@ -140,19 +140,19 @@ size = 50px
                 stroke-width 0
 
 // 动画设定
-.move-slide-enter-active,
-.move-slide-leave-active
+#slider.move-slide-enter-active,
+#slider.move-slide-leave-active
     transition opacity time
     section
         transition transform time
     .close-button
         transition transform time, right time
 
-.move-slide-enter,
-.move-slide-leave-to
+#slider.move-slide-enter,
+#slider.move-slide-leave-to
     opacity 0
     section
         transform translateX(100%)
     .close-button
         transform scale(.5, .5)
-        right 0
+        right -(size / 2)

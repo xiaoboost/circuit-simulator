@@ -25,7 +25,7 @@ export default class SliderMenu extends Vue {
     get showMainConfig(): boolean {
         return this.$store.getters.showMainConfig;
     }
-    get vision(): boolean {
+    get vision() {
         return (this.showAddParts || this.showMainConfig);
     }
 
@@ -62,9 +62,9 @@ export default class SliderMenu extends Vue {
                         <span></span>
                     </div>
                     <div
+                        class='gray-cover'
                         v-show={this.showMainConfigTemp}
-                        onClick={this.close}
-                        class='gray-cover'>
+                        onClick={this.close}>
                     </div>
                 </aside>
             </transition>

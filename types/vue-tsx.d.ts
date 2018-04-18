@@ -858,6 +858,7 @@ declare namespace JSX {
         'slider-menu': Vue.HTMLAttributes;
         'parts-panel': Vue.HTMLAttributes;
         'main-config': Vue.HTMLAttributes;
+        'drawing-main': Vue.HTMLAttributes;
         'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
 
         // Vue Element
