@@ -1,5 +1,5 @@
 declare namespace JSX {
-    // Vue 作用域内
+    // Vue 公共组件
     namespace Vue {
         type EventHandler<T extends Event> = (e?: T) => any;
 
@@ -12,6 +12,13 @@ declare namespace JSX {
             ref?: string;
             key?: string | number;
             refInFor?: boolean;
+            staticClass?: string;
+
+            on?: {
+                '&input'?: any;
+                '~input'?: any;
+                '&~input'?: any;
+            };
         }
 
         interface TransitionAttributes {
@@ -828,10 +835,29 @@ declare namespace JSX {
         }
     }
 
-    interface IntrinsicElements {
-        'action-menu': {};
+    // Custom
+    namespace Custom {
+        interface InputValidateRule {
+            required?: boolean;
+            pattern?: RegExp;
+            message?: string;
+            validator?(value: string): boolean;
+        }
 
-        // Vue
+        interface InputVerifiable {
+            value?: string;
+            placeholder?: string;
+            maxlength?: number;
+            rules?: InputValidateRule | InputValidateRule[];
+        }
+    }
+
+    interface IntrinsicElements {
+        // Custom Element
+        'action-menu': Vue.HTMLAttributes;
+        'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
+
+        // Vue Element
         transition: Vue.TransitionAttributes;
 
         // HTML

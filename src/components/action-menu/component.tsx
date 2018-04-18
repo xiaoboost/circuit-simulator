@@ -23,11 +23,12 @@ const icons = [
 @Component
 export default class ActionMenu extends Vue {
     /** 图标缩放比例 */
-    zoom = zoom;
-    /** 当前是否正在运行 */
-    isRun = false;
+    readonly zoom = zoom;
     /** 图标数据 */
-    icons = icons;
+    readonly icons = icons;
+
+    /** 当前是否正在运行 */
+    private isRun = false;
 
     /** 是否显示菜单 */
     get vision(): boolean {
@@ -36,7 +37,7 @@ export default class ActionMenu extends Vue {
     }
 
     /** 按钮被点击 */
-    action(name: string): void {
+    private action(name: string): void {
         const funcs = {
             run: () => this.isRun = true,
             add: () => this.$store.commit('OPEN_ADD_PARTS'),
@@ -46,7 +47,7 @@ export default class ActionMenu extends Vue {
         funcs[name]();
     }
 
-    render(h: CreateElement) {
+    private render(h: CreateElement) {
         return <transition name='fade'>
             <footer class='action-menu' v-show={this.vision}>
                 {this.isRun
