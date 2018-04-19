@@ -13,8 +13,22 @@ const product = (point: PointLike, ma: Matrix): Point => {
     return Point.prototype.rotate.call(point, ma);
 };
 
+type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
+const disptchKeys: dispatchKey[] = [
+    'id', 'type', 'hash', 'params',
+    'rotate', 'connect', 'position',
+];
+
 /** 器件数据核心类 */
 export class PartCore extends ElectronicCore {
+    /** 以原型链的形式重造 PartCore 实例 */
+    static noVueComponentCore(part: PartCore): PartCore {
+        const data: PartCore = copyProperties(part, disptchKeys) as any;
+        Object.setPrototypeOf(data, PartCore.prototype);
+
+        return data;
+    }
+
     /** 器件当前旋转矩阵 */
     rotate: Matrix;
     /** 器件当前位置 */
@@ -27,7 +41,6 @@ export class PartCore extends ElectronicCore {
     constructor(type: PartTypes = 'resistance') {
         super(type);
 
-        debugger;
         const origin = Electronics[type];
 
         this.rotate = $M(2, 'E');
@@ -85,7 +98,7 @@ export class PartCore extends ElectronicCore {
 
     /** 将数据更新至 vuex */
     dispatch() {
-        this.$store.commit('UPDATE_PART', this);
+        this.$store.commit('UPDATE_PART', copyProperties(this, disptchKeys));
     }
 
     /** 在图纸标记当前器件 */

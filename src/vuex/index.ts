@@ -3,7 +3,7 @@ import Vuex, { GetterTree, MutationTree, ActionTree } from 'vuex';
 
 // import { $M } from 'src/lib/matrix';
 // import { $P, Point } from 'src/lib/point';
-import { clone, copyProperties } from 'src/lib/utils';  // , randomString, delay
+import { clone } from 'src/lib/utils';  // , randomString, delay
 // import Electronics from 'src/components/electronic-part/parts';
 
 import { PartCore } from 'src/components/electronic-part';
@@ -78,13 +78,7 @@ const mutations: MutationTree<StateType> = {
 
     /** 生成新器件 */
     NEW_PART: ({ Parts }, data: PartCore) => {
-        const props: PartCore = copyProperties(data, [
-            'id', 'type', 'hash', 'params',
-            'rotate', 'connect', 'position',
-        ]) as any;
-
-        debugger;
-        Parts.push(props);
+        Parts.push(PartCore.noVueComponentCore(data));
     },
     /** 更新器件数据 */
     UPDATE_PART: ({ Parts }, data: PartCore) => {

@@ -870,8 +870,8 @@ declare namespace JSX {
         'main-config': Vue.HTMLAttributes;
         'drawing-main': Vue.HTMLAttributes;
         'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
-        'electronic-point': Vue.HTMLAttributes & Custom.ElectronicPoint;
-        'part-component': Vue.HTMLAttributes & Custom.PartComponent;
+        'electronic-point': Vue.SVGAttributes & Custom.ElectronicPoint;
+        'part-component': Vue.SVGAttributes & Custom.PartComponent;
 
         // Vue Element
         transition: Vue.TransitionProps;

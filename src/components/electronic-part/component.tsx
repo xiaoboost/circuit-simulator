@@ -3,7 +3,7 @@
 import { CreateElement } from 'vue';
 import { PartCore } from './part-core';
 import { clone } from 'src/lib/utils';
-import { $P } from 'src/lib/point';
+import { $P, Point } from 'src/lib/point';
 import { $M } from 'src/lib/matrix';
 import { Component, Prop, Watch } from 'vue-property-decorator';
 import Electronics, { ElectronicPrototype, ShapeDescription } from './parts';
@@ -33,7 +33,6 @@ export default class PartComponent extends PartCore {
     constructor() {
         super();
 
-        debugger;
         /** 器件属性修正格式 */
         Object.assign(this, clone(this.value));
         this.origin = clone(Electronics[this.type]);
@@ -64,10 +63,38 @@ export default class PartComponent extends PartCore {
     }
 
     private render(h: CreateElement) {
+        const idSplit = this.id.split('_');
+
         return <g
             class={['part', { focus: this.focus }]}
             transform={`matrix(${this.rotate.join()},${this.position.join()})`}>
-            器件
+            <g class='focus-partial'>
+                {this.origin.shape.map(
+                    (shape) =>
+                        h(shape.name, { attrs: shape.attribute }),
+                )}
+                {this.points.map((point, i) =>
+                    <electronic-point
+                        key={i} r={this.pointSize[i]}
+                        classList={['part-point', point.class]}
+                        transform={`translate(${this.origin.points[i].position.join()})`}>
+                    </electronic-point>,
+                )}
+            </g>
+            {this.type !== 'reference_ground' ?
+                <g
+                    class={`text-params text-placement-${this.textPlacement}`}
+                    transform={`matrix(${this.invRotate.join()},${this.textPosition.join()})`}>
+                    <text>
+                        <tspan>{idSplit[0]}</tspan>
+                        <tspan dx='-3'>{idSplit[1]}</tspan>
+                    </text>
+                    {this.texts.map(
+                        (text, i) =>
+                            <text dy={16 * (i + 1)} key={i}>{text}</text>,
+                    )}
+                </g>
+            : ''}
         </g>;
     }
 }
