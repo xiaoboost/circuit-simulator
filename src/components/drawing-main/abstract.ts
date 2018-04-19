@@ -1,16 +1,12 @@
+import vuex from 'src/vuex';
+
 import { Vue, Inject } from 'vue-property-decorator';
 import { clone, randomString } from 'src/lib/utils';
 import Electronics from 'src/components/electronic-part/parts';
 
-// import { PartCore } from '../electronic-part';
+import { PartCore } from '../electronic-part';
+import DrawingMain, { MapStatus } from './component';
 // import { LineCore } from '../electronic-line';
-
-import {
-    // FindPartComponent,
-    // FindLineComponent,
-    SetDrawEvent,
-    MapStatus,
-} from './types';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
@@ -18,25 +14,25 @@ const maxNumber = 50;
 export abstract class ElectronicCore extends Vue {
     /** 元件 ID 编号 */
     id: string;
+    /** 元件的连接表 */
+    connect: string[];
     /** 元件类型 */
     readonly type: keyof Electronics | 'line';
     /** 元件唯一切不变的 hash 编号 */
     readonly hash: string;
-    /** 元件的连接表 */
-    readonly connect: string[];
 
-    /** 设置图纸事件 */
-    @Inject()
-    readonly setDrawEvent!: SetDrawEvent;
     /** 图纸相关状态 */
     @Inject()
     readonly mapStatus!: MapStatus;
-    // /** 搜索器件 */
-    // @Inject()
-    // readonly findPartComponent!: FindPartComponent;
+    /** 设置图纸事件 */
+    @Inject()
+    readonly setDrawEvent!: DrawingMain['setDrawEvent'];
+    /** 搜索器件 */
+    @Inject()
+    readonly findPartComponent!: DrawingMain['findPartComponent'];
     // /** 搜索导线 */
     // @Inject()
-    // readonly findLineComponent!: FindPartComponent;
+    // readonly findLineComponent!: FindLineComponent;
 
     constructor(type: keyof Electronics | 'line') {
         super();
@@ -57,16 +53,16 @@ export abstract class ElectronicCore extends Vue {
      * @param {id} string
      * @return {PartCore}
      */
-    // findPartCore(id: string): PartCore {
-    //     const idMatch = (id.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
-    //     const result = this.$store.state.Parts.find((part: PartCore) => part.id === idMatch);
+    findPartCore(id: string): PartCore {
+        const idMatch = (id.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
+        const result = this.$store.state.Parts.find((part: PartCore) => part.id === idMatch);
 
-    //     if (!result) {
-    //         throw new Error(`Can not find this part: ${id}`);
-    //     }
+        if (!result) {
+            throw new Error(`Can not find this part: ${id}`);
+        }
 
-    //     return clone(result);
-    // }
+        return clone(result);
+    }
 
     /**
      * 寻找导线数据
@@ -89,7 +85,7 @@ export abstract class ElectronicCore extends Vue {
      * @returns {string}
      */
     private createId(id: string): string {
-        const electrons = [...this.$store.state.Parts, ...this.$store.state.Lines];
+        const electrons = vuex.state.Parts;
 
         const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
         const max = (pre[1] === 'line') ? Infinity : maxNumber;

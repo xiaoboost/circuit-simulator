@@ -143,3 +143,7 @@ export function getQueryByName(name) {
 
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
+
+export function copyProperties(object, keys) {
+    return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
+}

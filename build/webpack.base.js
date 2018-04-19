@@ -59,7 +59,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.tsx?$/,
                 loader: 'tslint-loader',
                 enforce: 'pre',
                 include: [resolve('src')],

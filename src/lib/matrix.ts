@@ -147,7 +147,7 @@ class Matrix {
      * @param {string} str
      * @returns {string}
      */
-    join(str: string): string {
+    join(str: string = ','): string {
         return this._view.join(str);
     }
     /**

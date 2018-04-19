@@ -39,3 +39,10 @@ export function randomString(len?: number): string;
  * @return {string}
  */
 export function getQueryByName(name: string): string;
+
+/**
+ * 按照 keys 复制对象属性
+ * @param from 待复制的对象
+ * @param keys 属性集合
+ */
+export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Combine<Pick<T, U>>;

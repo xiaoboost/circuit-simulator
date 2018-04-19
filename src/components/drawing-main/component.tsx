@@ -1,28 +1,29 @@
 import './component.styl';
 
 import { CreateElement } from 'vue';
-import { Component, Vue } from 'vue-property-decorator';
+import { Component } from 'vue-property-decorator';
 
 import Events from './events';
 import * as assert from 'src/lib/assertion';
 
-import { $P, Point } from 'src/lib/point';
-// import ElectronicPart from 'src/components/electronic-part';
-// import ElectronicLine from 'src/components/electronic-line';
+import { $P } from 'src/lib/point';
+import PartComponent, { PartCore } from 'src/components/electronic-part';
+// import { LineCore } from 'src/components/electronic-line';
 
-// import { PartData } from 'src/components/electronic-part/types';
-// import { LineData } from 'src/components/electronic-line/types';
-
-// import SelectionsBox from 'src/components/selections-box';
+/** 图纸状态接口 */
+export type MapStatus = Combine<
+    Readonly<Pick<DrawingMain, 'zoom' | 'position' | 'exclusion'>> &
+    Pick<DrawingMain, 'partsNow' | 'linesNow'>
+>;
 
 @Component({
     components: {
-        // ElectronicPart,
+        PartComponent,
         // ElectronicLine,
         // 'selections-box': SelectionsBox,
     },
     provide(this: DrawingMain) {
-        const mapStatus = {};
+        const mapStatus: MapStatus = {} as any;
 
         Object.defineProperties(mapStatus, {
             partsNow: {
@@ -51,7 +52,7 @@ import { $P, Point } from 'src/lib/point';
 
         return {
             mapStatus,
-            // findPartComponent: this.findPartComponent,
+            findPartComponent: this.findPartComponent,
             // findLineComponent: this.findLineComponent,
             setDrawEvent: this.setDrawEvent,
         };
@@ -65,13 +66,13 @@ export default class DrawingMain extends Events {
 
     /** 子组件定义 */
     $refs!: {
-        // parts: ElectronicPart[];
+        parts: PartComponent[];
         // lines: ElectronicLine[];
     };
 
-    // get parts(): PartData[] {
-    //     return this.$store.state.Parts;
-    // }
+    get parts(): PartCore[] {
+        return this.$store.state.Parts;
+    }
     // get lines(): LineData[] {
     //     return this.$store.state.Lines;
     // }
@@ -87,20 +88,20 @@ export default class DrawingMain extends Events {
     }
 
     /** 搜索器件 */
-    // findPartComponent(value: string | HTMLElement): ElectronicPart {
-    //     const prop = assert.isString(value) ? 'id' : '$el';
-    //     const valueMatch = assert.isString(value)
-    //         ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
-    //         : value;
+    findPartComponent(value: string | HTMLElement) {
+        const prop = assert.isString(value) ? 'id' : '$el';
+        const valueMatch = assert.isString(value)
+            ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
+            : value;
 
-    //     const part = this.$refs.parts.find((part) => part[prop] === valueMatch);
+        const result = this.$refs.parts.find((part) => part[prop] === valueMatch);
 
-    //     if (!part) {
-    //         throw new Error('Can not find this part');
-    //     }
+        if (!result) {
+            throw new Error('Can not find this part');
+        }
 
-    //     return part;
-    // }
+        return result;
+    }
     /** 搜索导线 */
     // findLineComponent(value: string | HTMLElement): ElectronicLine {
     //     const prop = (assert.isString(value)) ? 'id' : '$el';
@@ -236,13 +237,15 @@ export default class DrawingMain extends Events {
                     //         :key="line.hash"
                     //         :value="line">
                     //     </electronic-line>
-                    //     <electronic-part
-                    //         ref="parts"
-                    //         v-for="part in parts"
-                    //         :key="part.hash"
-                    //         :value="part">
-                    //     </electronic-part>
                 }
+                    {this.parts.map((part) =>
+                        <part-component
+                            refInFor
+                            ref='parts'
+                            key={part.hash}
+                            value={part}>
+                        </part-component>,
+                    )}
                 </g>
             </svg>
         </section>;

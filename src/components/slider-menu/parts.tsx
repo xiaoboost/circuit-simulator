@@ -1,8 +1,8 @@
+import { Component, Vue } from 'vue-property-decorator';
 import { CreateElement, VNodeChildrenArrayContents } from 'vue';
-import { Component, Vue, Watch } from 'vue-property-decorator';
 
-import InputVerifiable from 'src/components/input-verifiable';
-import Electronics, { PartTypes, ElectronicPrototype } from 'src/components/electronic-part/parts';
+import Electronics from 'src/components/electronic-part/parts';
+import { PartCore, PartTypes, ElectronicPrototype } from 'src/components/electronic-part';
 
 type TipStyle = Partial<CSSStyleDeclaration>;
 type categories = Array<{
@@ -57,7 +57,7 @@ export default class PartsPanel extends Vue {
     ];
 
     addPart(type: PartTypes) {
-        // this.$store.commit('NEW_PART', new PartCore(type));
+        this.$store.commit('NEW_PART', new PartCore(type));
     }
 
     private setTip(name: PartTypes, event: MouseEvent) {
@@ -91,7 +91,7 @@ export default class PartsPanel extends Vue {
 
             return {
                 transform: transform.hasOwnProperty(type)
-                    ? 'translate(40,40) ' + transform[type]
+                    ? `translate(40,40) ${transform[type]}`
                     : 'translate(40,40)',
             };
         }
@@ -125,6 +125,7 @@ export default class PartsPanel extends Vue {
                         {category.parts.map((name, j) =>
                             <button
                                 class='part-item' key={j}
+                                onClick={() => this.addPart(name)}
                                 onMouseleave={this.disabledTip}
                                 onMousemove={(e: MouseEvent) => this.setTip(name, e)}>
                                 <svg x='0px' y='0px' viewBox='0 0 80 80'>

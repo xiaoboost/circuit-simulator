@@ -850,6 +850,16 @@ declare namespace JSX {
             maxlength?: number;
             rules?: InputValidateRule | InputValidateRule[];
         }
+
+        interface ElectronicPoint {
+            r?: number;
+            classList?: JSX.Vue.VueAttributes['class'];
+        }
+
+        interface PartComponent {
+            // TODO:
+            value?: any;
+        }
     }
 
     interface IntrinsicElements {
@@ -860,6 +870,8 @@ declare namespace JSX {
         'main-config': Vue.HTMLAttributes;
         'drawing-main': Vue.HTMLAttributes;
         'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
+        'electronic-point': Vue.HTMLAttributes & Custom.ElectronicPoint;
+        'part-component': Vue.HTMLAttributes & Custom.PartComponent;
 
         // Vue Element
         transition: Vue.TransitionProps;

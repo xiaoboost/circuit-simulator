@@ -116,16 +116,16 @@
         "promise-function-async": false,
         // await 的值必须是 Promise
         "await-promise": [true, "Thenable"],
-        // 所有的 Promise 实例都必须有后续的处理
-        "no-floating-promises": true,
+        // 所有的 Promise 实例都允许没有后续的处理
+        "no-floating-promises": false,
         // 不允许使用 for..in 来迭代数组
         "no-for-in-array": true,
         // 在函数和构造函数调用站点中禁止 {}（空对象类型）的类型推断
         "no-inferred-empty-object-type": true,
         // 允许不安全的 any
         "no-unsafe-any": false,
-        // 禁止存在未使用的变量和库
-        "no-unused-variable": true,
+        // 允许存在未使用的变量
+        "no-unused-variable": false,
         // + 运算必须同时是数字或者字符串
         "restrict-plus-operands": true,
         // 宽松的 boolean 表达式，允许 boolean 值的隐式类型转换
