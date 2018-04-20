@@ -3,7 +3,7 @@ import './component.styl';
 import { CreateElement } from 'vue';
 import { Component } from 'vue-property-decorator';
 
-import Events from './events';
+import Events, { DrawEventSetting } from './events';
 import * as assert from 'src/lib/assertion';
 
 import { $P } from 'src/lib/point';
@@ -52,9 +52,9 @@ export type MapStatus = Combine<
 
         return {
             mapStatus,
-            findPartComponent: this.findPartComponent,
-            // findLineComponent: this.findLineComponent,
-            setDrawEvent: this.setDrawEvent,
+            findPartComponent: (id: string) => this.findPartComponent(id),
+            // findLineComponent: (id: string) => this.findLineComponent(id),
+            setDrawEvent: (options: DrawEventSetting) => this.setDrawEvent(options),
         };
     },
 })

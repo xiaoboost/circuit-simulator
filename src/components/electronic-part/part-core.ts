@@ -14,10 +14,7 @@ const product = (point: PointLike, ma: Matrix): Point => {
 };
 
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
-const disptchKeys: dispatchKey[] = [
-    'id', 'type', 'hash', 'params',
-    'rotate', 'connect', 'position',
-];
+const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
 
 /** 器件数据核心类 */
 export class PartCore extends ElectronicCore {
@@ -33,10 +30,10 @@ export class PartCore extends ElectronicCore {
     rotate: Matrix;
     /** 器件当前位置 */
     position: Point;
+    /** 器件的内部参数 */
+    params: string[];
     /** 器件类型 */
     readonly type!: keyof Electronics;
-    /** 器件的内部参数 */
-    readonly params: string[];
 
     constructor(type: PartTypes = 'resistance') {
         super(type);
