@@ -105,7 +105,7 @@ export default class PartComponent extends PartCore {
     }
 
     /** 渲染说明文本 */
-    renderText(): void {
+    renderText() {
         // TODO: 缺正中央
         const textHeight = 11,
             spaceHeight = 5,
@@ -149,8 +149,13 @@ export default class PartComponent extends PartCore {
         this.textPosition = this.textPosition.rotate(this.invRotate);
     }
     /** 移动说明文本 */
-    moveText(): void {
+    moveText(event: MouseEvent) {
+        // stop event
+        event.stopPropagation();
+
+        // foucus current part
         this.mapStatus.partsNow = [this.id];
+        // move text
         this.setDrawEvent({
             handlers: (e: DrawEvent) => { this.textPosition = this.textPosition.add(e.$movement); },
             stopEvent: { el: this.$parent.$el, type: 'mouseup', which: 'left' },
@@ -226,7 +231,8 @@ export default class PartComponent extends PartCore {
             {this.type !== 'reference_ground' ?
                 <g
                     class={`text-params text-placement-${this.textPlacement}`}
-                    transform={`matrix(${this.invRotate.join()},${this.textPosition.join()})`}>
+                    transform={`matrix(${this.invRotate.join()},${this.textPosition.join()})`}
+                    onMousedown={this.moveText}>
                     <text>
                         <tspan>{idSplit[0]}</tspan>
                         <tspan>{idSplit[1]}</tspan>
