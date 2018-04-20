@@ -64,7 +64,7 @@ export default class MainConfig extends Vue {
                     <input-verifiable
                         ref='end'
                         value={this.end}
-                        on-input={(val: string) => this.end = val}
+                        onInput={(val: string) => this.end = val}
                         rules={{ pattern: this.pattern }}>
                     </input-verifiable>
                     <span class='unit'>秒</span>
@@ -74,7 +74,7 @@ export default class MainConfig extends Vue {
                     <input-verifiable
                         ref='step'
                         value={this.step}
-                        on-input={(val: string) => this.step = val}
+                        onInput={(val: string) => this.step = val}
                         rules={{ pattern: this.pattern }}>
                     </input-verifiable>
                     <span class='unit'>秒</span>

@@ -94,7 +94,7 @@ declare namespace JSX {
             // MouseEvents
             onClick?: EventHandler<MouseEvent>;
             onContextmenu?: EventHandler<MouseEvent>;
-            onDoubleclick?: EventHandler<MouseEvent>;
+            onDblclick?: EventHandler<MouseEvent>;
             onDrag?: EventHandler<DragEvent>;
             onDragend?: EventHandler<DragEvent>;
             onDragenter?: EventHandler<DragEvent>;
@@ -849,6 +849,7 @@ declare namespace JSX {
             placeholder?: string;
             maxlength?: number;
             rules?: InputValidateRule | InputValidateRule[];
+            onInput?: (val: string) => any;
         }
 
         interface ElectronicPoint {

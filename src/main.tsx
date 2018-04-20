@@ -8,13 +8,13 @@ import store from 'src/vuex';
 // import { getQueryByName } from 'src/lib/utils';
 
 // import debug from 'src/lib/debugger';
-// import modal from 'src/mixins/params';
+import modal from 'src/mixins/params';
 
 import ActionMenu from 'src/components/action-menu';
 import SliderMenu from 'src/components/slider-menu';
 import DrawingMain from 'src/components/drawing-main';
 
-// Vue.use(modal);
+Vue.use(modal);
 
 Vue.config.productionTip = ($ENV.NODE_ENV === 'development');
 

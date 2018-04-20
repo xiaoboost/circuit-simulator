@@ -94,7 +94,7 @@ export default class InputVerifiable extends Vue {
                 }}/>
             <span class='input-bar correct-bar'></span>
             <span class={['input-bar error-bar', { error: !!this.errorMessage }]}></span>
-            {this.errorMessage ? <span class='input-error-message' v-text='errorMessage'></span> : ''}
+            {this.errorMessage ? <span class='input-error-message'>{this.errorMessage}</span> : ''}
         </div>;
     }
 }

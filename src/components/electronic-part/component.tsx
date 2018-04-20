@@ -207,6 +207,7 @@ export default class PartComponent extends PartCore {
         const idSplit = this.id.split('_');
 
         return <g
+            onDblclick={this.setParams}
             class={['part', { focus: this.focus }]}
             transform={`matrix(${this.rotate.join()},${this.position.join()})`}>
             <g class='focus-partial'>
