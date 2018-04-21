@@ -27,7 +27,7 @@ function resolve(dir) {
 module.exports = {
     entry: {
         // 主业务逻辑文件
-        main: resolve('./src/main.tsx'),
+        main: resolve('./src/main.ts'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -72,7 +72,15 @@ module.exports = {
                 },
             },
             {
-                test: /\.tsx?$/,
+                test: /\.ts$/,
+                exclude: /node_modules/,
+                loader: 'ts-loader',
+                options: {
+                    transpileOnly: false,
+                },
+            },
+            {
+                test: /\.tsx$/,
                 exclude: /node_modules/,
                 use: [
                     {

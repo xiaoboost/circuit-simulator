@@ -1,14 +1,14 @@
 import Vue from 'vue';
 import Vuex, { GetterTree, MutationTree, ActionTree } from 'vuex';
 
-// import { $M } from 'src/lib/matrix';
-// import { $P, Point } from 'src/lib/point';
-import { clone } from 'src/lib/utils';  // , randomString, delay
-// import Electronics from 'src/components/electronic-part/parts';
+import { $M } from 'src/lib/matrix';
+import { $P } from 'src/lib/point';
+import { clone, delay } from 'src/lib/utils';
+import Electronics from 'src/components/electronic-part/parts';
 
-import { PartCore } from 'src/components/electronic-part';
-import { LineCore } from 'src/components/electronic-line';
-// import { CircuitStorageData, PartStorageData, LineStorageData } from 'src/examples/types';
+import PartComponent, { PartCore } from 'src/components/electronic-part';
+import LineComponent, { LineCore, LineWay } from 'src/components/electronic-line';
+import { CircuitStorage, PartStorageData, LineStorageData } from 'src/examples/types';
 
 Vue.use(Vuex);
 
@@ -41,7 +41,7 @@ export interface StateType {
     /**
      * 历史数据
      */
-    // historyData: Array<Array<PartCore | LineCore>>;
+    historyData: Array<Array<PartCore | LineCore>>;
 }
 
 const state: StateType = {
@@ -53,7 +53,7 @@ const state: StateType = {
     page: '',
     Parts: [],
     Lines: [],
-    // historyData: [],
+    historyData: [],
 };
 
 const getters: GetterTree<StateType, StateType> = {
@@ -77,9 +77,7 @@ const mutations: MutationTree<StateType> = {
     SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
     /** 生成新器件 */
-    NEW_PART: ({ Parts }, data: PartCore) => {
-        Parts.push(PartCore.noVueComponentCore(data));
-    },
+    NEW_PART: ({ Parts }, data: PartCore) => Parts.push(clone(data)),
     /** 更新器件数据 */
     UPDATE_PART: ({ Parts }, data: PartCore) => {
         const index = Parts.findIndex((part) => part.hash === data.hash);
@@ -114,7 +112,7 @@ const mutations: MutationTree<StateType> = {
     // },
 
     /** 新导线压栈 */
-    NEW_LINE: ({ Lines }, data: LineCore) => Lines.unshift(data),
+    NEW_LINE: ({ Lines }, data: LineCore) => Lines.unshift(clone(data)),
     /** 更新器件数据 */
     UPDATE_LINE: ({ Lines }, data: LineCore) => {
         const index = Lines.findIndex((line) => line.hash === data.hash);
@@ -151,84 +149,79 @@ const mutations: MutationTree<StateType> = {
     /** 删除器件 */
     DELETE_PART: ({ Parts }, part: string) => Parts.delete((item) => item.id === part),
     /** 删除导线 */
-    // DELETE_LINE: ({ Lines }, line: string) => Lines.delete((item) => item.id === line),
+    DELETE_LINE: ({ Lines }, line: string) => Lines.delete((item) => item.id === line),
 
     /** 导线放置到底层 */
 
     /** 记录当前数据 */
-    // RECORD_MAP({ historyData, Parts, Lines }) {
-    //     const stack: Array<PartCore | LineCore> = [];
-    //     historyData.push(stack.concat(Parts).concat(Lines));
+    RECORD_MAP({ historyData, Parts, Lines }) {
+        const stack: Array<PartCore | LineCore> = [];
+        historyData.push(stack.concat(Parts).concat(Lines));
 
-    //     while (historyData.length > historyLimit) {
-    //         historyData.splice(0, 1);
-    //     }
-    // },
-    // /** 图纸数据回滚 */
-    // HISTORY_BACK({ historyData, Parts, Lines }) {
-    //     const current = historyData.pop();
+        while (historyData.length > historyLimit) {
+            historyData.splice(0, 1);
+        }
+    },
+    /** 图纸数据回滚 */
+    HISTORY_BACK({ historyData, Parts, Lines }) {
+        const current = historyData.pop();
 
-    //     if (!current) {
-    //         return;
-    //     }
+        if (!current) {
+            return;
+        }
 
-    //     Parts.$replace(current.filter((part): part is PartCore => part.type !== 'line'));
-    //     Lines.$replace(current.filter((line): line is LineCore => line.type === 'line'));
-    // },
-    // /** 追加数据 */
-    // APPEND_DATA({ Parts, Lines }, data: PartCore | LineCore) {
-    //     if (data.type !== 'line') {
-    //         Parts.push(data);
-    //     }
-    //     else {
-    //         Lines.push(data);
-    //     }
-    // },
+        Parts.$replace(current.filter((part): part is PartCore => part.type !== 'line'));
+        Lines.$replace(current.filter((line): line is LineCore => line.type === 'line'));
+    },
 };
 
 const actions: ActionTree<StateType, StateType> = {
-    // /** 外部数据导入 */
-    // async IMPORT_DATA({ commit }, data: CircuitStorageData) {
-    //     // load parts
-    //     data
-    //         .filter((part): part is PartStorageData => part.type !== 'line')
-    //         .forEach((part) => commit('APPEND_DATA', {
-    //             id: part.id,
-    //             type: part.type,
-    //             hash: randomString(),
-    //             position: $P(part.position),
-    //             connect: Array(Electronics[part.type].points.length).fill(''),
-    //             rotate: part.rotate ? $M(part.rotate) : $M(2, 'E'),
-    //             params: part.params
-    //                 ? part.params.slice()
-    //                 : Electronics[part.type].params.map((n) => n.default),
-    //         })),
+    /** 外部数据导入 */
+    async IMPORT_DATA({ commit }, data: CircuitStorage) {
+        // load time config
+        if (data.config) {
+            commit('SET_TIME_CONFIG', {
+                end: data.config.endTime,
+                step: data.config.stepSize,
+            });
+        }
 
-    //     // wait parts loaded
-    //     await delay(10);
+        // load parts
+        const parts = data.data.filter((part): part is PartStorageData => part.type !== 'line');
+        parts.forEach((storage) => {
+            const part = PartCore.noVueInstance(storage.type);
 
-    //     // loaded lines
-    //     data
-    //         .filter((line): line is LineStorageData => line.type === 'line')
-    //         .forEach(async (line) => {
-    //             commit('APPEND_DATA', {
-    //                 id: createId('line'),
-    //                 type: 'line' as 'line',
-    //                 hash: randomString(),
-    //                 connect: ['', ''],
-    //                 way: line.way.map((point, i) => $P(point)),
-    //             });
+            commit('NEW_PART', part);
 
-    //             /**
-    //              * concat 或者 split 中含有对导线的增减
-    //              * 所以这里必须要用异步来等待器件堆栈的更新
-    //              */
-    //             await delay(50);
-    //         });
+            storage.params && (part.params = storage.params);
+            storage.rotate && (part.rotate = $M(storage.rotate));
+            storage.position && (part.position = $P(storage.position));
 
-    //     // wait lines loaded
-    //     await delay(10);
-    // },
+            part.status = 'import';
+            part.markSign();
+            part.dispatch();
+        });
+
+        // wait parts loaded
+        await delay(10);
+
+        // loaded lines
+        const lines = data.data.filter((line): line is LineStorageData => line.type === 'line');
+        lines.forEach((storage) => {
+            const line = LineCore.noVueInstance();
+
+            commit('NEW_LINE', line);
+
+            line.way = LineWay.from(storage.way);
+            line.status = 'import';
+            line.setConnectByWay();
+            line.markSign();
+            line.dispatch();
+        });
+
+        // wait lines loaded
+        await delay(10);
+    },
 };
 
 export default new Vuex.Store<StateType>({

@@ -861,6 +861,11 @@ declare namespace JSX {
             // TODO:
             value?: any;
         }
+
+        interface LineComponent {
+            // TODO:
+            value?: any;
+        }
     }
 
     interface IntrinsicElements {
@@ -873,6 +878,7 @@ declare namespace JSX {
         'input-verifiable': Vue.HTMLAttributes & Custom.InputVerifiable;
         'electronic-point': Vue.SVGAttributes & Custom.ElectronicPoint;
         'part-component': Vue.SVGAttributes & Custom.PartComponent;
+        'line-component': Vue.SVGAttributes & Custom.LineComponent;
 
         // Vue Element
         transition: Vue.TransitionProps;

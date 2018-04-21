@@ -57,7 +57,10 @@ export default class PartsPanel extends Vue {
     ];
 
     addPart(type: PartTypes) {
-        this.$store.commit('NEW_PART', new PartCore(type));
+        const part = PartCore.noVueInstance(type);
+        part.status = 'create';
+
+        this.$store.commit('NEW_PART', part);
     }
 
     private setTip(name: PartTypes, event: MouseEvent) {

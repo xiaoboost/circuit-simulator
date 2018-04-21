@@ -2,7 +2,7 @@ import vuex from 'src/vuex';
 
 import { Vue, Inject } from 'vue-property-decorator';
 import { clone, randomString } from 'src/lib/utils';
-import Electronics from 'src/components/electronic-part/parts';
+import Electronics, { PartTypes } from 'src/components/electronic-part/parts';
 
 import { PartCore } from '../electronic-part';
 import { LineCore } from '../electronic-line';
@@ -11,15 +11,28 @@ import DrawingMain, { MapStatus } from './component';
 /** 每类器件的最大数量 */
 const maxNumber = 50;
 
+/** 搜索组件核心数据约束 */
+export interface FindComponentCore {
+    findPartCore(id: string): PartCore;
+    findLineCore(id: string): LineCore;
+}
+
+/** 元件数据基类 */
 export abstract class ElectronicCore extends Vue {
     /** 元件 ID 编号 */
     id: string;
     /** 元件的连接表 */
     connect: string[];
+    /** 当前元件状态 */
+    status: string;
     /** 元件类型 */
-    readonly type: keyof Electronics | 'line';
+    readonly type: PartTypes | 'line';
     /** 元件唯一切不变的 hash 编号 */
     readonly hash: string;
+    /** 搜索器件数据 */
+    readonly findPartCore!: (id: string) => PartCore;
+    /** 搜索导线数据 */
+    readonly findLineCore!: (id: string) => LineCore;
 
     /** 图纸相关状态 */
     @Inject()
@@ -27,56 +40,26 @@ export abstract class ElectronicCore extends Vue {
     /** 设置图纸事件 */
     @Inject()
     readonly setDrawEvent!: DrawingMain['setDrawEvent'];
-    /** 搜索器件 */
+    /** 搜索器件组件 */
     @Inject()
     readonly findPartComponent!: DrawingMain['findPartComponent'];
-    // /** 搜索导线 */
+    /** 搜索导线组件 */
     @Inject()
     readonly findLineComponent!: DrawingMain['findLineComponent'];
 
-    constructor(type: keyof Electronics | 'line') {
+    constructor(type: PartTypes | 'line') {
         super();
 
         this.type = type;
-        this.hash = randomString();
         this.connect = [];
+        this.hash = randomString();
+        this.status = 'normal';
 
         this.id = this.createId(
             type === 'line'
                 ? 'line'
                 : Electronics[type].pre,
         );
-    }
-
-    /**
-     * 寻找器件数据
-     * @param {id} string
-     * @return {PartCore}
-     */
-    findPartCore(id: string): PartCore {
-        const idMatch = (id.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
-        const result = this.$store.state.Parts.find((part: PartCore) => part.id === idMatch);
-
-        if (!result) {
-            throw new Error(`Can not find this part: ${id}`);
-        }
-
-        return clone(result);
-    }
-
-    /**
-     * 寻找导线数据
-     * @param {id} string
-     * @return {LineCore}
-     */
-    findLineCore(id: string): LineCore {
-        const result = this.$store.state.Lines.find((line: LineCore) => line.id === id);
-
-        if (!result) {
-            throw new Error(`Can not find this line: ${id}`);
-        }
-
-        return clone(result);
     }
 
     /**

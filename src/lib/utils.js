@@ -1,6 +1,7 @@
 import * as assert from 'src/lib/assertion';
 import { $P, Point } from 'src/lib/point';
 import { $M, Matrix } from 'src/lib/matrix';
+import { LineWay } from 'src/components/electronic-line';
 
 /**
  * 检查输入数据是否含有循环结构
@@ -46,6 +47,9 @@ export function clone(data, check = true) {
     }
     else if (data instanceof Matrix) {
         return $M(data);
+    }
+    else if (data instanceof LineWay) {
+        return LineWay.from(data);
     }
     else if (assert.isArray(data)) {
         return data.map((n) => clone(n));
@@ -144,6 +148,28 @@ export function getQueryByName(name) {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+/**
+ * 按照 keys 复制对象属性
+ * @template T extends object
+ * @template U extends keyof T
+ * @param {T} from 待复制的对象
+ * @param {U[]} keys 属性集合
+ */
 export function copyProperties(object, keys) {
     return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
+}
+
+/** 将 props 的属性混入 */
+export function mixins(native, props) {
+    const attrs = {};
+
+    Object.keys(props).forEach((key) => {
+        attrs[key] = {
+            enumerable: false,
+            writable: true,
+            value: props[key],
+        };
+    });
+
+    Object.defineProperties(native, attrs);
 }

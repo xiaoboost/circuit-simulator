@@ -38,17 +38,16 @@ export default class PartComponent extends PartCore {
         this.textPosition = $P(this.origin.txtLBias);
     }
 
-    created() {
-        this.renderText();
-    }
     mounted() {
-        // 根据不同的标志初始化
-        if (this.position.isEqual([1e6, 1e6])) {
+        // 手动创建新的器件
+        if (this.status === 'create') {
             this.setNewPart();
         }
-        else {
-            this.markSign();
-        }
+
+        // 初始化
+        this.status = 'normal';
+        this.renderText();
+        this.dispatch();
     }
 
     get focus() {
@@ -66,12 +65,8 @@ export default class PartComponent extends PartCore {
 
     /** 器件属性同步 */
     @Watch('value')
-    update() {
-        this.id = this.value.id;
-        this.rotate = $M(this.value.rotate);
-        this.position = $P(this.value.position);
-        this.params = this.value.params.slice();
-        this.connect = this.value.connect.slice();
+    update(data: Partial<PartCore>) {
+        Object.assign(this, clone(data));
     }
 
     /** 设置属性 */
@@ -98,9 +93,7 @@ export default class PartComponent extends PartCore {
             this.id !== status.id ||
             !this.params.isEqual(status.params)
         ) {
-            this.params = status.params;
-            this.id = status.id;
-            this.update();
+            this.update(status);
         }
     }
 

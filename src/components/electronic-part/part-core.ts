@@ -1,26 +1,30 @@
-import Vue from 'vue';
+import vuex from 'src/vuex';
+
 import * as schMap from 'src/lib/map';
+import * as common from 'src/components/drawing-main/common';
 
 import { $M, Matrix } from 'src/lib/matrix';
-import { $P, Point, PointLike } from 'src/lib/point';
-import { clone, copyProperties } from 'src/lib/utils';
-
 import Electronics, { PartTypes } from './parts';
+import { $P, Point, PointLike } from 'src/lib/point';
+import { LineCore } from 'src/components/electronic-line';
 import { ElectronicCore } from '../drawing-main/abstract';
+import { clone, copyProperties, mixins } from 'src/lib/utils';
 
 /** 兼容 PointLike 类型的点乘矩阵 */
 const product = (point: PointLike, ma: Matrix): Point => {
     return Point.prototype.rotate.call(point, ma);
 };
 
-type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
+type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position' | 'status';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position', 'status'];
 
 /** 器件数据核心类 */
 export class PartCore extends ElectronicCore {
-    /** 以原型链的形式重造 PartCore 实例 */
-    static noVueComponentCore(part: PartCore): PartCore {
-        const data: PartCore = copyProperties(part, disptchKeys) as any;
+    /** 原型链形式的 PartCore 实例 */
+    static noVueInstance(type: PartTypes): PartCore {
+        const instance = new PartCore(type);
+
+        const data: PartCore = copyProperties(instance, disptchKeys) as any;
         Object.setPrototypeOf(data, PartCore.prototype);
 
         return data;
@@ -95,7 +99,7 @@ export class PartCore extends ElectronicCore {
 
     /** 将数据更新至 vuex */
     dispatch() {
-        this.$store.commit('UPDATE_PART', copyProperties(this, disptchKeys));
+        vuex.commit('UPDATE_PART', copyProperties(this, disptchKeys));
     }
 
     /** 在图纸标记当前器件 */
@@ -202,3 +206,5 @@ export class PartCore extends ElectronicCore {
         return (label);
     }
 }
+
+mixins(PartCore.prototype, common);

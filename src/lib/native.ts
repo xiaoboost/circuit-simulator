@@ -1,21 +1,9 @@
 /* tslint:disable:ban-types  */
 
+import { mixins } from 'src/lib/utils';
 import * as assert from './assertion';
 
-/** 原生属性扩展 */
-function nativeExpand(native: Function | Object, props: { [key: string]: any }) {
-    Object.keys(props).forEach((key) => {
-        const method = props[key];
-        props[key] = {
-            enumerable: false,
-            value: method,
-        };
-    });
-
-    Object.defineProperties(native, props);
-}
-
-nativeExpand(Object.prototype, {
+mixins(Object.prototype, {
     /** 比较对象是否相等 */
     isEqual(this: Object, obj: Object): boolean {
         if (!assert.isObject(obj)) {
@@ -34,7 +22,7 @@ nativeExpand(Object.prototype, {
     },
 });
 
-nativeExpand(Array.prototype, {
+mixins(Array.prototype, {
     /**
      * 当前数组与输入是否相等
      *
@@ -139,7 +127,7 @@ nativeExpand(Array.prototype, {
     },
 });
 
-nativeExpand(Number, {
+mixins(Number, {
     /**
      * 用于匹配科学记数法表示的字符串
      */
@@ -172,7 +160,7 @@ nativeExpand(Number, {
     },
 });
 
-nativeExpand(Number.prototype, {
+mixins(Number.prototype, {
     /**
      * 按照有效数字的位数进行四舍五入。
      *  - 默认 6 位有效数字 [bits=6]

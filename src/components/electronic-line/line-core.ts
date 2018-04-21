@@ -1,19 +1,24 @@
-import Vue from 'vue';
-import * as schMap from 'src/lib/map';
+import vuex from 'src/vuex';
 
-import { clone, copyProperties } from 'src/lib/utils';
+import * as schMap from 'src/lib/map';
+import * as assert from 'src/lib/assertion';
+import * as common from 'src/components/drawing-main/common';
+
 import { LineWay } from './line-way';
 import { $P, Point } from 'src/lib/point';
 import { $M, Matrix } from 'src/lib/matrix';
 import { ElectronicCore } from '../drawing-main/abstract';
+import { clone, copyProperties, mixins } from 'src/lib/utils';
 
-type dispatchKey = 'id' | 'way' | 'hash' | 'connect';
-const disptchKeys: dispatchKey[] = ['id', 'way', 'hash', 'connect'];
+type dispatchKey = 'id' | 'way' | 'hash' | 'connect' | 'status';
+const disptchKeys: dispatchKey[] = ['id', 'way', 'hash', 'connect', 'status'];
 
 export class LineCore extends ElectronicCore {
-    /** 以原型链的形式重造 LineCore 实例 */
-    static noVueComponentCore(line: LineCore): LineCore {
-        const data: LineCore = copyProperties(line, disptchKeys) as any;
+    /** 原型链形式的 LineCore 实例 */
+    static noVueInstance(): LineCore {
+        const instance = new LineCore();
+
+        const data: LineCore = copyProperties(instance, disptchKeys) as any;
         Object.setPrototypeOf(data, LineCore.prototype);
 
         return data;
@@ -35,15 +40,16 @@ export class LineCore extends ElectronicCore {
         super('line');
     }
 
-    /** 将数据更新至 vuex */
+    /**
+     * 将数据更新至 vuex
+     */
     dispatch() {
-        this.$store.commit(
-            'UPDATE_LINE',
-            copyProperties(this, disptchKeys),
-        );
+        vuex.commit('UPDATE_LINE', copyProperties(this, disptchKeys));
     }
 
-    /** 在图纸标记当前器件 */
+    /**
+     * 在图纸标记当前器件
+     */
     markSign() {
         const way = LineWay.from(this.way);
 
@@ -96,7 +102,9 @@ export class LineCore extends ElectronicCore {
             last = point;
         });
     }
-    /** 删除当前器件在图纸中的标记 */
+    /**
+     * 删除当前器件在图纸中的标记
+     */
     deleteSign() {
         const way = LineWay.from(this.way);
 
@@ -209,12 +217,25 @@ export class LineCore extends ElectronicCore {
             return (-1);
         }
     }
+
+    /**
+     * 由路径信息设置导线两端连接
+     * @param {boolean} [concat=false] 是否合并浮动导线
+     */
+    setConnectByWay(concat?: boolean): void;
     /**
      * 由路径信息设置导线端点连接
-     * @param {(0 | 1)} [index]
+     * @param {(0 | 1)} [index] 需要设定的端点号
+     * @param {boolean} [concat=false] 是否合并浮动导线
      */
-    setConnectByWay(index?: 0 | 1) {
-        if (index === undefined) {
+    setConnectByWay(index?: 0 | 1, concat?: boolean): void;
+    setConnectByWay(index?: 0 | 1 | boolean, concat = false) {
+        if (assert.isBoolean(index)) {
+            this.setConnectByWay(0, index);
+            this.setConnectByWay(1, index);
+            return;
+        }
+        else if (assert.isNull(index)) {
             this.setConnectByWay(0);
             this.setConnectByWay(1);
             return;
@@ -241,14 +262,30 @@ export class LineCore extends ElectronicCore {
         }
         // 端点为导线空引脚
         else if (status.type === 'line-point') {
-            this.concat(status.id);
+            // 允许合并
+            if (concat) {
+                this.concat(status.id);
+            }
+            // 不允许合并，则该点变更为交错节点
+            else {
+                const line = this.findLineCore(status.id);
+                const mark = line.findConnectIndex(node);
+
+                status.type = 'cross-point';
+                status.id = `${this.id} ${line.id}`;
+                schMap.mergePoint(status);
+
+                line.connect[mark] = this.id;
+                this.connect[index] = line.id;
+
+                line.dispatch();
+                this.dispatch();
+            }
         }
         // 端点在导线上
         else if (status.type === 'line') {
             if (this.hasConnect(status.id)) {
-                this.freeConnect();
-                this.deleteSign();
-                this.$store.commit('DELETE_LINE', this.id);
+                this.deleteSelf();
             }
             else {
                 this.split(status.id, index);
@@ -258,7 +295,8 @@ export class LineCore extends ElectronicCore {
         else if (status.type === 'cross-point') {
             const lines = status.id.split(' ').filter((n) => n !== this.id);
 
-            if (lines.length === 1) {
+            // 只有一个导线
+            if (lines.length === 1 && concat) {
                 this.concat(lines[0]);
             }
             else {
@@ -274,6 +312,9 @@ export class LineCore extends ElectronicCore {
                         line.dispatch();
                     }
                 });
+
+                status.id = `${status.id} ${this.id}`;
+                schMap.mergePoint(status);
             }
         }
     }
@@ -345,7 +386,7 @@ export class LineCore extends ElectronicCore {
 
         // 更新及删除
         this.dispatch();
-        this.$store.commit('DELETE_LINE', line.id);
+        vuex.commit('DELETE_LINE', line.id);
     }
     /**
      * 拆分导线
@@ -371,7 +412,7 @@ export class LineCore extends ElectronicCore {
 
         // 生成新导线
         const devices = new LineCore();
-        this.$store.commit('NEW_LINE', devices);
+        vuex.commit('NEW_LINE', devices);
 
         // devices 连接关系设定
         splited.replaceConnect(1, devices.id);                  // splited 原终点器件连接替换为 devices
@@ -412,4 +453,14 @@ export class LineCore extends ElectronicCore {
         splited.dispatch();
         devices.dispatch();
     }
+    /**
+     * 删除导线
+     */
+    deleteSelf() {
+        this.freeConnect();
+        this.deleteSign();
+        vuex.commit('DELETE_LINE', this.id);
+    }
 }
+
+mixins(LineCore.prototype, common);

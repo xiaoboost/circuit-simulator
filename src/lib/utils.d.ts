@@ -42,7 +42,16 @@ export function getQueryByName(name: string): string;
 
 /**
  * 按照 keys 复制对象属性
- * @param from 待复制的对象
- * @param keys 属性集合
+ * @template T extends object
+ * @template U extends keyof T
+ * @param {T} from 待复制的对象
+ * @param {U[]} keys 属性集合
  */
-export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Combine<Pick<T, U>>;
+export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Pick<T, U>;
+
+/**
+ * 将`props`中的属性混入`native`中
+ * @param {object} native 待混入的对象
+ * @param {{ [key: string]: any }} props 待混入的属性
+ */
+export function mixins(native: object, props: { [key: string]: any }): void;

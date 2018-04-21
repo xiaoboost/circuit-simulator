@@ -23,6 +23,19 @@ export default class ElectronicLine extends LineSearch {
     @Prop({ type: Object, default: () => ({}) })
     private readonly value!: LineCore;
 
+    constructor() {
+        super();
+
+        Object.assign(this, clone(this.value));
+    }
+
+    mounted() {
+        // 创建新导线
+        if (this.status === 'create') {
+            this.drawEvent(0);
+        }
+    }
+
     // created() {
     //     this.init();
 
@@ -89,10 +102,8 @@ export default class ElectronicLine extends LineSearch {
 
     /** 器件属性同步 */
     @Watch('value')
-    private init() {
-        const data = this.value;
-        this.way = LineWay.from(data.way);
-        this.connect = data.connect.slice();
+    private update(data: Partial<LineCore>) {
+        Object.assign(this, clone(data));
     }
 
     // 单点绘制模式

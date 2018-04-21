@@ -19,7 +19,7 @@ export type MapStatus = Combine<
 @Component({
     components: {
         PartComponent,
-        // ElectronicLine,
+        LineComponent,
         // 'selections-box': SelectionsBox,
     },
     provide(this: DrawingMain) {
@@ -29,12 +29,12 @@ export type MapStatus = Combine<
             partsNow: {
                 enumerable: true,
                 get: () => this.partsNow,
-                set: (value: string[]) => this.partsNow = value,
+                set: (value: string[]) => this.partsNow = value.slice(),
             },
             linesNow: {
                 enumerable: true,
                 get: () => this.linesNow,
-                set: (value: string[]) => this.linesNow = value,
+                set: (value: string[]) => this.linesNow = value.slice(),
             },
             zoom: {
                 enumerable: true,
@@ -87,7 +87,7 @@ export default class DrawingMain extends Events {
         };
     }
 
-    /** 搜索器件 */
+    /** 搜索器件组件 */
     findPartComponent(value: string | HTMLElement) {
         const prop = assert.isString(value) ? 'id' : '$el';
         const valueMatch = assert.isString(value)
@@ -102,7 +102,7 @@ export default class DrawingMain extends Events {
 
         return result;
     }
-    /** 搜索导线 */
+    /** 搜索导线组件 */
     findLineComponent(value: string | HTMLElement) {
         const prop = (assert.isString(value)) ? 'id' : '$el';
         const result = this.$refs.lines.find((line) => line[prop] === value);
@@ -113,6 +113,7 @@ export default class DrawingMain extends Events {
 
         return result;
     }
+
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent) {
         const mousePosition = $P(e.pageX, e.pageY);
@@ -230,14 +231,14 @@ export default class DrawingMain extends Events {
                 onWheel={this.mousewheel}
                 onMousedown={this.moveMap}>
                 <g transform={`translate(${this.position.join(',')}) scale(${this.zoom})`}>
-                {
-                    //     <electronic-line
-                    //         ref="lines"
-                    //         v-for="line in lines"
-                    //         :key="line.hash"
-                    //         :value="line">
-                    //     </electronic-line>
-                }
+                    {this.lines.map((line) =>
+                        <line-component
+                            refInFor
+                            ref='lines'
+                            key={line.hash}
+                            value={line}>
+                        </line-component>,
+                    )}
                     {this.parts.map((part) =>
                         <part-component
                             refInFor
