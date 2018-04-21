@@ -11,12 +11,6 @@ import DrawingMain, { MapStatus } from './component';
 /** 每类器件的最大数量 */
 const maxNumber = 50;
 
-/** 搜索组件核心数据约束 */
-export interface FindComponentCore {
-    findPartCore(id: string): PartCore;
-    findLineCore(id: string): LineCore;
-}
-
 /** 元件数据基类 */
 export abstract class ElectronicCore extends Vue {
     /** 元件 ID 编号 */

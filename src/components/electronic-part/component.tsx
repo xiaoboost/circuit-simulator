@@ -138,8 +138,6 @@ export default class PartComponent extends PartCore {
                 pend[1] = -((textHeight + spaceHeight) * len + local);
             }
         }
-
-        this.textPosition = this.textPosition.rotate(this.invRotate);
     }
     /** 移动说明文本 */
     moveText(event: MouseEvent) {
@@ -224,7 +222,7 @@ export default class PartComponent extends PartCore {
             {this.type !== 'reference_ground' ?
                 <g
                     class={`text-params text-placement-${this.textPlacement}`}
-                    transform={`matrix(${this.invRotate.join()},${this.textPosition.join()})`}
+                    transform={`matrix(${this.invRotate.join()},${this.textPosition.rotate(this.invRotate).join()})`}
                     onMousedown={this.moveText}>
                     <text>
                         <tspan>{idSplit[0]}</tspan>
