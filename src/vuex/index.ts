@@ -7,7 +7,7 @@ import { clone } from 'src/lib/utils';  // , randomString, delay
 // import Electronics from 'src/components/electronic-part/parts';
 
 import { PartCore } from 'src/components/electronic-part';
-// import { LineCore } from 'src/components/electronic-line';
+import { LineCore } from 'src/components/electronic-line';
 // import { CircuitStorageData, PartStorageData, LineStorageData } from 'src/examples/types';
 
 Vue.use(Vuex);
@@ -37,7 +37,7 @@ export interface StateType {
     /**
      * 全局导线堆栈
      */
-    // Lines: LineCore[];
+    Lines: LineCore[];
     /**
      * 历史数据
      */
@@ -52,7 +52,7 @@ const state: StateType = {
 
     page: '',
     Parts: [],
-    // Lines: [],
+    Lines: [],
     // historyData: [],
 };
 
@@ -114,23 +114,23 @@ const mutations: MutationTree<StateType> = {
     // },
 
     /** 新导线压栈 */
-    // NEW_LINE: ({ Lines }, data: LineCore) => Lines.unshift(data),
-    // /** 更新器件数据 */
-    // UPDATE_LINE: ({ Lines }, data: LineCore) => {
-    //     const index = Lines.findIndex((line) => line.hash === data.hash);
+    NEW_LINE: ({ Lines }, data: LineCore) => Lines.unshift(data),
+    /** 更新器件数据 */
+    UPDATE_LINE: ({ Lines }, data: LineCore) => {
+        const index = Lines.findIndex((line) => line.hash === data.hash);
 
-    //     if (index < 0) {
-    //         throw new Error(`(vuex) Line not found. id: ${data.id}`);
-    //     }
+        if (index < 0) {
+            throw new Error(`(vuex) Line not found. id: ${data.id}`);
+        }
 
-    //     const idNumber = Lines.reduce((ans, line) => (line.id === data.id) ? (ans + 1) : ans, 0);
+        const idNumber = Lines.reduce((ans, line) => (line.id === data.id) ? (ans + 1) : ans, 0);
 
-    //     if (idNumber >= 2) {
-    //         throw new Error(`(vuex) Line ID is duplicated. id: ${data.id}`);
-    //     }
+        if (idNumber >= 2) {
+            throw new Error(`(vuex) Line ID is duplicated. id: ${data.id}`);
+        }
 
-    //     Lines.splice(index, 1, clone(data));
-    // },
+        Lines.splice(index, 1, clone(data));
+    },
     /** 复制器件 */
     // COPY_LINE({ Lines }, IDs: string[]) {
     //     IDs.forEach((id) => {

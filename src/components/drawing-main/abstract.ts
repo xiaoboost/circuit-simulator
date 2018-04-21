@@ -5,8 +5,8 @@ import { clone, randomString } from 'src/lib/utils';
 import Electronics from 'src/components/electronic-part/parts';
 
 import { PartCore } from '../electronic-part';
+import { LineCore } from '../electronic-line';
 import DrawingMain, { MapStatus } from './component';
-// import { LineCore } from '../electronic-line';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
@@ -31,8 +31,8 @@ export abstract class ElectronicCore extends Vue {
     @Inject()
     readonly findPartComponent!: DrawingMain['findPartComponent'];
     // /** 搜索导线 */
-    // @Inject()
-    // readonly findLineComponent!: FindLineComponent;
+    @Inject()
+    readonly findLineComponent!: DrawingMain['findLineComponent'];
 
     constructor(type: keyof Electronics | 'line') {
         super();
@@ -69,15 +69,15 @@ export abstract class ElectronicCore extends Vue {
      * @param {id} string
      * @return {LineCore}
      */
-    // findLineCore(id: string): LineCore {
-    //     const result = this.$store.state.Lines.find((line: LineCore) => line.id === id);
+    findLineCore(id: string): LineCore {
+        const result = this.$store.state.Lines.find((line: LineCore) => line.id === id);
 
-    //     if (!result) {
-    //         throw new Error(`Can not find this line: ${id}`);
-    //     }
+        if (!result) {
+            throw new Error(`Can not find this line: ${id}`);
+        }
 
-    //     return clone(result);
-    // }
+        return clone(result);
+    }
 
     /**
      * 生成器件或者导线的新 ID
@@ -85,7 +85,7 @@ export abstract class ElectronicCore extends Vue {
      * @returns {string}
      */
     private createId(id: string): string {
-        const electrons = vuex.state.Parts;
+        const electrons = [...vuex.state.Parts, ...vuex.state.Lines];
 
         const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
         const max = (pre[1] === 'line') ? Infinity : maxNumber;

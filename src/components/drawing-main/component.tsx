@@ -8,7 +8,7 @@ import * as assert from 'src/lib/assertion';
 
 import { $P } from 'src/lib/point';
 import PartComponent, { PartCore } from 'src/components/electronic-part';
-// import { LineCore } from 'src/components/electronic-line';
+import LineComponent, { LineCore } from 'src/components/electronic-line';
 
 /** 图纸状态接口 */
 export type MapStatus = Combine<
@@ -53,7 +53,7 @@ export type MapStatus = Combine<
         return {
             mapStatus,
             findPartComponent: (id: string) => this.findPartComponent(id),
-            // findLineComponent: (id: string) => this.findLineComponent(id),
+            findLineComponent: (id: string) => this.findLineComponent(id),
             setDrawEvent: (options: DrawEventSetting) => this.setDrawEvent(options),
         };
     },
@@ -67,15 +67,15 @@ export default class DrawingMain extends Events {
     /** 子组件定义 */
     $refs!: {
         parts: PartComponent[];
-        // lines: ElectronicLine[];
+        lines: LineComponent[];
     };
 
     get parts(): PartCore[] {
         return this.$store.state.Parts;
     }
-    // get lines(): LineData[] {
-    //     return this.$store.state.Lines;
-    // }
+    get lines(): LineCore[] {
+        return this.$store.state.Lines;
+    }
     get background() {
         const size: number = this.zoom * 20,
             biasX: number = this.position[0] % size,
@@ -103,16 +103,16 @@ export default class DrawingMain extends Events {
         return result;
     }
     /** 搜索导线 */
-    // findLineComponent(value: string | HTMLElement): ElectronicLine {
-    //     const prop = (assert.isString(value)) ? 'id' : '$el';
-    //     const line = this.$refs.lines.find((part) => part[prop] === value);
+    findLineComponent(value: string | HTMLElement) {
+        const prop = (assert.isString(value)) ? 'id' : '$el';
+        const result = this.$refs.lines.find((line) => line[prop] === value);
 
-    //     if (!line) {
-    //         throw new Error('Can not find this line');
-    //     }
+        if (!result) {
+            throw new Error('Can not find this line');
+        }
 
-    //     return line;
-    // }
+        return result;
+    }
     /** 放大缩小图纸 */
     mousewheel(e: WheelEvent) {
         const mousePosition = $P(e.pageX, e.pageY);
