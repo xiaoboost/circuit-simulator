@@ -53,7 +53,7 @@ new Vue({
 
         const map = getQueryByName('map');
 
-        let data = { default: [] };
+        let data = { default: { data: [] }};
 
         if (map) {
             try {
