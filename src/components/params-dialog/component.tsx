@@ -24,25 +24,13 @@ export interface Params extends Omit<ParmasDescription, 'default' | 'vision'> {
 })
 export default class ParamsDialog extends Vue {
     /** 指向的器件编号 */
-    id: string = '';
+    id = '';
     /** 参数列表 */
     params: Params[] = [];
-    /** 是否显示 */
-    vision = false;
-    /** ID 的说明文本 */
-    idLabel = '编号：';
-    /** 是否初始化完成标志 */
-    isMounted = false;
-
     /** 指向的器件坐标 */
     position = $P();
-    /** 对话框偏移量 */
-    bias = $P();
-    /** 对话框缩放比例 */
-    scale = 1;
-
-    /** 中心最小限制 */
-    min = 10;
+    /** 是否显示 */
+    vision = false;
 
     /** ID 编号验证规则 */
     idRules: ValidateRule[] = [
@@ -80,20 +68,20 @@ export default class ParamsDialog extends Vue {
     /** 用于外部引用的`确定`接口 */
     confirm!: () => void;
 
+    /** ID 的说明文本 */
+    private idLabel = '编号：';
+    /** 对话框偏移量 */
+    private bias = $P();
+    /** 中心最小限制 */
+    private min = 10;
+    /** 对话框缩放比例 */
+    private scale = 1;
+    /** 是否初始化完成标志 */
+    private isMounted = false;
+
     mounted() {
         // 初始化完成标记置高
         this.isMounted = true;
-    }
-
-    @Watch('vision')
-    visionHandler(status: boolean) {
-        if (status) {
-            document.body.addEventListener('keyup', this.keyboardHandler, passive);
-            this.$nextTick(() => this.$refs.id.focus());
-        }
-        else {
-            document.body.removeEventListener('keyup', this.keyboardHandler);
-        }
     }
 
     /** 对话框方位 */
@@ -183,8 +171,19 @@ export default class ParamsDialog extends Vue {
 
         return { width, height };
     }
+
+    @Watch('vision')
+    private visionHandler(status: boolean) {
+        if (status) {
+            document.body.addEventListener('keyup', this.keyboardHandler, passive);
+            this.$nextTick(() => this.$refs.id.focus());
+        }
+        else {
+            document.body.removeEventListener('keyup', this.keyboardHandler);
+        }
+    }
     /** 计算倒三角形状 */
-    get triangleStyle(): { [x: string]: string } {
+    private get triangleStyle(): { [x: string]: string } {
         const len = this.location.length;
         const deg = { bottom: 0, left: 90, top: 180, right: 270 };
 
@@ -222,7 +221,7 @@ export default class ParamsDialog extends Vue {
         return base;
     }
 
-    keyboardHandler(event: KeyboardEvent) {
+    private keyboardHandler(event: KeyboardEvent) {
         if (!this.vision) {
             return;
         }
@@ -236,7 +235,7 @@ export default class ParamsDialog extends Vue {
     }
 
     /** 计算待选文字中最大的长度 */
-    getMaxWidth(dom: Element, texts: string[]): number {
+    private getMaxWidth(dom: Element, texts: string[]): number {
         const originText = dom.textContent;
         const widths = texts.map((text) => {
             dom.textContent = text;
@@ -248,7 +247,7 @@ export default class ParamsDialog extends Vue {
         return Math.max(...widths);
     }
     /** 根据对话框的缩放比例，设置对话框偏移量 */
-    setBoxStyle(scale: number): void {
+    private setBoxStyle(scale: number): void {
         const min = 20, { height, width } = this.boxSize;
 
         // 设置缩放比例
@@ -277,7 +276,7 @@ export default class ParamsDialog extends Vue {
         }
     }
 
-    async enter(el: Element, done: () => void) {
+    private async enter(el: Element, done: () => void) {
         this.setBoxStyle(0.2);
         await delay(0);
 
@@ -286,7 +285,7 @@ export default class ParamsDialog extends Vue {
 
         done();
     }
-    async leave(el: Element, done: () => void) {
+    private async leave(el: Element, done: () => void) {
         this.setBoxStyle(1);
         await delay(0);
 
@@ -296,7 +295,7 @@ export default class ParamsDialog extends Vue {
         done();
     }
 
-    beforeCancel() {
+    private beforeCancel() {
         // 清除所有错误提示
         this.$refs.id.clearError();
         this.$refs.params && this.$refs.params.forEach((input) => input.clearError());
@@ -304,7 +303,7 @@ export default class ParamsDialog extends Vue {
         // 运行取消
         this.cancel();
     }
-    beforeConfirm() {
+    private beforeConfirm() {
         if (
             this.$refs.id.validate() &&
             this.$refs.params.every((comp) => comp.validate())
@@ -343,6 +342,7 @@ export default class ParamsDialog extends Vue {
                             {this.params.map((param, i) =>
                                 <input-verifiable
                                     key={i}
+                                    ref='params' refInFor
                                     value={param.value}
                                     rules={this.paramsRules}
                                     placeholder='请输入参数'

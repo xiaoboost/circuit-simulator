@@ -57,7 +57,7 @@ new Vue({
 
         if (map) {
             try {
-                data = await import(`src/examples/${map}`);
+                data = await import(/* webpackChunkName: "examples/" */ `src/examples/${map}`);
             }
             catch (e) {
                 console.error(e);
