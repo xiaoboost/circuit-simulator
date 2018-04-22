@@ -4,8 +4,8 @@ module.exports = {
     rootDir: path.resolve(__dirname, '../'),
     moduleFileExtensions: [
         'ts',
+        'tsx',
         'js',
-        'vue',
     ],
     moduleNameMapper: {
         '^src/(.*)$': '<rootDir>/src/$1',

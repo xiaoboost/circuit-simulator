@@ -19,26 +19,6 @@ baseConfig.plugins.push(
     })
 );
 
-// 服务器配置
-// baseConfig.devServer = {
-//     noInfo: true,
-//     clientLogLevel: 'warning',
-//     historyApiFallback: true,
-//     host, port,
-//     open: false,
-//     overlay: {
-//         warnings: false,
-//         errors: true,
-//     },
-//     publicPath: '/',
-//     quiet: true,
-//     watchOptions: {
-//         poll: false,
-//     },
-// };
-
-// module.exports = baseConfig;
-
 const compiler = webpack(baseConfig);
 const server = new WebpackDevServer(compiler, {
     clientLogLevel: 'warning',
