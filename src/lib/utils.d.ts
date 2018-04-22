@@ -55,3 +55,11 @@ export function copyProperties<T extends object, U extends keyof T>(from: T, key
  * @param {{ [key: string]: any }} props 待混入的属性
  */
 export function mixins(native: object, props: { [key: string]: any }): void;
+
+/**
+ * 获取 http 资源
+ * @template {T}
+ * @param {string} url http 资源地址
+ * @return {Promise<T>}
+ */
+export function get<T>(url: string): Promise<T>;

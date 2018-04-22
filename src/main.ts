@@ -3,10 +3,9 @@ import 'src/lib/init';
 import 'src/lib/native';
 
 import Vue, { VNodeChildrenArrayContents } from 'vue';
-import store from 'src/vuex';
+import store, { CircuitStorage } from 'src/vuex';
 
-import { getQueryByName } from 'src/lib/utils';
-
+import * as utils from 'src/lib/utils';
 import debug from 'src/lib/debugger';
 import modal from 'src/mixins/params';
 
@@ -51,13 +50,12 @@ new Vue({
             area.appendChild($debugger.$el);
         }
 
-        const map = getQueryByName('map');
-
-        let data = { default: { data: [] }};
+        const map = utils.getQueryByName('map');
+        let data: CircuitStorage = { data: [] };
 
         if (map) {
             try {
-                data = await import(/* webpackChunkName: "examples/" */ `src/examples/${map}`);
+                data = await utils.get<CircuitStorage>(`/examples/${map}.json`);
             }
             catch (e) {
                 console.error(e);
@@ -65,7 +63,7 @@ new Vue({
         }
 
         // 加载数据
-        await this.$store.dispatch('IMPORT_DATA', data.default);
+        await this.$store.dispatch('IMPORT_DATA', data);
         await this.$nextTick();
 
         // 初始化完成

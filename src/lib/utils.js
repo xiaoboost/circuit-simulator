@@ -159,7 +159,11 @@ export function copyProperties(object, keys) {
     return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
 }
 
-/** 将 props 的属性混入 */
+/**
+ * 将`props`中的属性混入`native`中
+ * @param {object} native 待混入的对象
+ * @param {object} props 待混入的属性
+ */
 export function mixins(native, props) {
     const attrs = {};
 
@@ -172,4 +176,26 @@ export function mixins(native, props) {
     });
 
     Object.defineProperties(native, attrs);
+}
+
+/**
+ * ajax get 方法
+ * @param {string} url htto 资源路径
+ */
+export function get(url) {
+    return new Promise((resolve, reject) => {
+        const oAjax = new XMLHttpRequest();
+        oAjax.open('GET', url, true);
+        oAjax.send();
+        oAjax.onreadystatechange = function() {
+            if (oAjax.readyState === 4) {
+                if (oAjax.status === 200) {
+                    resolve(JSON.parse(oAjax.responseText));
+                }
+                else {
+                    reject(oAjax);
+                }
+            }
+        };
+    });
 }

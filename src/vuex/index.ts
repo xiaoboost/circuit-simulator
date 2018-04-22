@@ -1,48 +1,33 @@
 import Vue from 'vue';
-import Vuex, { GetterTree, MutationTree, ActionTree } from 'vuex';
+
+import Vuex, {
+    GetterTree,
+    MutationTree,
+    ActionTree,
+} from 'vuex';
 
 import { $M } from 'src/lib/matrix';
 import { $P } from 'src/lib/point';
 import { clone, delay } from 'src/lib/utils';
-import Electronics from 'src/components/electronic-part/parts';
 
-import PartComponent, { PartCore } from 'src/components/electronic-part';
-import LineComponent, { LineCore, LineWay } from 'src/components/electronic-line';
-import { CircuitStorage, PartStorageData, LineStorageData } from 'src/examples/types';
+import Electronics from 'src/components/electronic-part/parts';
+import { PartCore } from 'src/components/electronic-part';
+import { LineCore, LineWay } from 'src/components/electronic-line';
+
+import {
+    StateType,
+    TimeConfig,
+    CircuitStorage,
+    PartStorageData,
+    LineStorageData,
+} from './types';
+
+export * from './types';
 
 Vue.use(Vuex);
 
 /** 历史操作记录上限 */
 const historyLimit = 10;
-
-/** 时间配置接口 */
-export interface TimeConfig {
-    end: string;
-    step: string;
-}
-
-export interface StateType {
-    /**
-     * 页面状态
-     */
-    page: string;
-    /**
-     * 全局时间设置
-     */
-    time: TimeConfig;
-    /**
-     * 全局器件堆栈
-     */
-    Parts: PartCore[];
-    /**
-     * 全局导线堆栈
-     */
-    Lines: LineCore[];
-    /**
-     * 历史数据
-     */
-    historyData: Array<Array<PartCore | LineCore>>;
-}
 
 const state: StateType = {
     time: {
@@ -181,8 +166,8 @@ const actions: ActionTree<StateType, StateType> = {
         // load time config
         if (data.config) {
             commit('SET_TIME_CONFIG', {
-                end: data.config.endTime,
-                step: data.config.stepSize,
+                end: data.config.end,
+                step: data.config.step,
             });
         }
 

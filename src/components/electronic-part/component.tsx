@@ -141,6 +141,11 @@ export default class PartComponent extends PartCore {
     }
     /** 移动说明文本 */
     moveText(event: MouseEvent) {
+        // left
+        if (event.button !== 0) {
+            return;
+        }
+
         // stop event
         event.stopPropagation();
 

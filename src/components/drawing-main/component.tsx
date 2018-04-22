@@ -114,8 +114,33 @@ export default class DrawingMain extends Events {
         return result;
     }
 
+    /** 图纸的 mousedown 事件入口 */
+    mousedownMap(e: MouseEvent) {
+        // stop
+        e.stopPropagation();
+        // right && self - 移动图纸
+        if (e.button === 2 && e.target === e.currentTarget) {
+            this.moveMap(e);
+        }
+        // left && self - 多选开始
+        else if (e.button === 0 && e.target === e.currentTarget) {
+            this.partsNow = [];
+            this.linesNow = [];
+            // TODO: 多选框
+        }
+    }
+    /** 图纸的 click 事件入口 */
+    clickMap(e: MouseEvent) {
+        // stop
+        e.stopPropagation();
+        // right - 右键菜单
+        if (e.button === 2) {
+            // TODO: 打开右键菜单
+        }
+    }
+
     /** 放大缩小图纸 */
-    mousewheel(e: WheelEvent) {
+    resizeMap(e: WheelEvent) {
         const mousePosition = $P(e.pageX, e.pageY);
         let size = this.zoom * 20;
 
@@ -146,16 +171,6 @@ export default class DrawingMain extends Events {
     }
     /** 移动图纸 */
     moveMap(e: MouseEvent) {
-        // stop
-        e.stopPropagation();
-        // right && self
-        if (
-            e.button !== 2 ||
-            e.target !== e.currentTarget
-        ) {
-            return;
-        }
-
         this.setDrawEvent({
             handlers: (event) => {
                 this.position = this.position.add(event.$movement.mul(this.zoom));
@@ -164,6 +179,7 @@ export default class DrawingMain extends Events {
             cursor: 'move_map',
         });
     }
+
     // // 清空当前操作器件堆栈
     // clearFocus(args = []) {
     //     this.partsNow.splice(0, this.partsNow.length);
@@ -228,8 +244,9 @@ export default class DrawingMain extends Events {
             <svg
                 version='2' height='100%' width='100%'
                 xmlns='http://www.w3.org/2000/svg'
-                onWheel={this.mousewheel}
-                onMousedown={this.moveMap}>
+                onClick={this.clickMap}
+                onWheel={this.resizeMap}
+                onMousedown={this.mousedownMap}>
                 <g transform={`translate(${this.position.join(',')}) scale(${this.zoom})`}>
                     {this.lines.map((line) =>
                         <line-component
