@@ -1,3 +1,5 @@
+const path = require('path');
+
 /**
  * Generate tag of build
  *
@@ -41,4 +43,12 @@ exports.dataForDefinePlugin = function expand(obj) {
 
             return ans;
         }, {});
+};
+
+/**
+ * 定位到项目根目录
+ * @param {string} dir 路径
+ */
+exports.resolve = function(dir) {
+    return path.join(__dirname, '..', dir);
 };

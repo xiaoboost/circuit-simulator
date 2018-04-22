@@ -1,14 +1,14 @@
-const path = require('path'),
-    chalk = require('chalk'),
+const chalk = require('chalk'),
     webpack = require('webpack'),
     utils = require('./utils'),
     config = require('./config'),
     buildTag = utils.createBuildTag(),
     isDevelopment = process.env.NODE_ENV === 'development',
+    isWebpackServer = process.env.SERVER_TYPE === 'webpack',
     CopyWebpackPlugin = require('copy-webpack-plugin'),
     HtmlWebpackPlugin = require('html-webpack-plugin'),
     ProgressBarPlugin = require('progress-bar-webpack-plugin'),
-    ExtractTextPlugin = require('extract-text-webpack-plugin');
+    MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const banner =
 `Project: Circuit Simulator
@@ -20,14 +20,15 @@ filename: [name], chunkhash: [chunkhash]
 Nice to meet you ~ o(*￣▽￣*)ブ
 Released under the MIT License.`;
 
-function resolve(dir) {
-    return path.join(__dirname, '..', dir);
-}
+// 清空屏幕
+console.log('\x1Bc');
+console.log(chalk.yellow('> Start Compile:\n'));
 
 module.exports = {
+    mode: process.env.NODE_ENV,
     entry: {
         // 主业务逻辑文件
-        main: resolve('./src/main.ts'),
+        main: utils.resolve('./src/main.ts'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -50,7 +51,7 @@ module.exports = {
         mainFiles: ['index.ts', 'index.tsx', 'index.js'],
         // 默认路径别名
         alias: {
-            'src': resolve('src'),
+            'src': utils.resolve('src'),
             'vue$': isDevelopment
                 ? 'vue/dist/vue.esm.js'
                 : 'vue/dist/vue.runtime.esm.js',
@@ -62,7 +63,7 @@ module.exports = {
                 test: /\.tsx?$/,
                 loader: 'tslint-loader',
                 enforce: 'pre',
-                include: [resolve('src')],
+                include: [utils.resolve('src')],
                 options: {
                     typeCheck: true,
                     emitErrors: true,
@@ -99,9 +100,27 @@ module.exports = {
             },
             {
                 test: /\.styl(us)?$/,
-                use: ['style-loader', 'css-loader', 'stylus-loader'],
+                use: [
+                    (isDevelopment && isWebpackServer)
+                        ? 'style-loader'
+                        : MiniCssExtractPlugin.loader,
+                    'css-loader',
+                    'stylus-loader',
+                ],
             },
         ],
+    },
+    optimization: {
+        splitChunks: {
+            name: true,
+            cacheGroups: {
+                commons: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'common',
+                    chunks: 'initial',
+                },
+            },
+        },
     },
     plugins: [
         // 添加文件抬头信息
@@ -122,27 +141,8 @@ module.exports = {
         }),
         // 启用模块的作用域提升
         new webpack.optimize.ModuleConcatenationPlugin(),
-        // 指定 common 包的内容
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            filename: isDevelopment
-                ? 'js/common.js'
-                : 'js/common.[chunkhash].js',
-
-            minChunks(module) {
-                const source = module.resource;
-                const files = ['node_modules'].map((file) => resolve(file));
-
-                return (
-                    source && /\.(js|tsx?)$/.test(source) &&
-                    files.some((file) => source.indexOf(file) === 0)
-                );
-            },
-        }),
         // 提取出来的所有 css 文件整合
-        new ExtractTextPlugin({
-            disable: false,
-            allChunks: true,
+        new MiniCssExtractPlugin({
             filename: isDevelopment
                 ? 'css/main.css'
                 : 'css/main.[contenthash:20].css',
@@ -162,7 +162,7 @@ module.exports = {
                 build: buildTag,
                 year: new Date().getFullYear(),
             },
-            template: './src/index.html',
+            template: utils.resolve('src/index.html'),
             inject: true,
             minify: {
                 removeComments: !isDevelopment,
@@ -174,7 +174,6 @@ module.exports = {
             chunksSortMode: 'dependency',
             excludeChunks: [],
         }),
-        // 进度条插件
         new ProgressBarPlugin({
             width: 40,
             format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,

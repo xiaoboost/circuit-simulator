@@ -33,8 +33,6 @@ if (config.bundleAnalyzer) {
     baseConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
-console.log('\x1Bc');
-console.log(chalk.yellow('> Start Compile:\n'));
 shell.rm('-rf', config.output);
 
 webpack(baseConfig, (err, stats) => {
