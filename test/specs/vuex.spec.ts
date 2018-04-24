@@ -56,6 +56,7 @@ describe('vuex: store of vue.', () => {
         expect(vuex.state.time.end).toBe('500');
         expect(vuex.state.time.step).toBe('200u');
     });
+    /*
     test('part store', () => {
         // create part
         vuex.commit('NEW_PART', 'resistance');
@@ -188,4 +189,5 @@ describe('vuex: store of vue.', () => {
         expect(vuex.state.Lines.every((n) => n.id !== id)).toBeTrue();
         expect(vuex.state.Lines.every((n) => n.hash !== hash)).toBeTrue();
     });
+    */
 });

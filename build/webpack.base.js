@@ -76,27 +76,11 @@ module.exports = {
                 test: /\.ts$/,
                 exclude: /node_modules/,
                 loader: 'ts-loader',
-                options: {
-                    transpileOnly: false,
-                },
             },
             {
                 test: /\.tsx$/,
                 exclude: /node_modules/,
-                use: [
-                    {
-                        loader: 'babel-loader',
-                        options: {
-                            'plugins': ['transform-vue-jsx'],
-                        },
-                    },
-                    {
-                        loader: 'ts-loader',
-                        options: {
-                            transpileOnly: false,
-                        },
-                    },
-                ],
+                use: ['babel-loader', 'ts-loader'],
             },
             {
                 test: /\.styl(us)?$/,

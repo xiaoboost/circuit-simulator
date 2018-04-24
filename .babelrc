@@ -1,0 +1,4 @@
+{
+    "plugins": ["transform-vue-jsx"],
+    "sourceMaps": "inline"
+}

@@ -42,25 +42,14 @@ webpack(baseConfig, (err, stats) => {
 
     console.log('\x1Bc');
 
-    const log = stats.toString({
+    console.log(stats.toString({
         chunks: false,
         chunkModules: false,
         chunkOrigins: false,
         colors: true,
         modules: false,
         children: false,
-    }).split('\n');
+    }));
 
-    const suffixs = [
-        /cur\//,
-        /img\//,
-        /\.css/,
-        /\.js/,
-        /\.html/,
-    ];
-
-    const series = suffixs.map((match) => log.filter((msg) => match.test(msg)).join('\n')).join('\n\n');
-
-    console.log(`${log.slice(0, 4).join('\n')}\n${series}\n`);
-    console.log(chalk.cyan('  Build complete.\n'));
+    console.log(chalk.cyan('\n  Build complete.\n'));
 });
