@@ -10,13 +10,13 @@ import { LineCore } from 'src/components/electronic-line';
  */
 export function findPartCore(id: string): PartCore {
     const idMatch = (id.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0];
-    const result = vuex.state.Parts.find((part: PartCore) => part.id === idMatch);
+    const result = vuex.state.Parts.find((part) => part.id === idMatch);
 
     if (!result) {
         throw new Error(`Can not find this part: ${id}`);
     }
 
-    const instance = clone(result);
+    const instance = clone(result) as PartCore;
     Object.setPrototypeOf(instance, PartCore.prototype);
 
     return instance;
@@ -28,13 +28,13 @@ export function findPartCore(id: string): PartCore {
  * @return {LineCore}
  */
 export function findLineCore(id: string): LineCore {
-    const result =  vuex.state.Lines.find((line: LineCore) => line.id === id);
+    const result =  vuex.state.Lines.find((line) => line.id === id);
 
     if (!result) {
         throw new Error(`Can not find this line: ${id}`);
     }
 
-    const instance = clone(result);
+    const instance = clone(result) as LineCore;
     Object.setPrototypeOf(instance, LineCore.prototype);
 
     return instance;

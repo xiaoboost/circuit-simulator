@@ -38,9 +38,12 @@ export default class ActionMenu extends Vue {
     /** 按钮被点击 */
     private action(name: string): void {
         const funcs = {
-            run: () => this.isRun = true,
             add: () => this.$store.commit('OPEN_ADD_PARTS'),
             config: () => this.$store.commit('OPEN_MAIN_CONFIG'),
+            run: () => {
+                this.isRun = true;
+                this.$store.dispatch('SOLVE_CIRCUIT');
+            },
         };
 
         funcs[name]();

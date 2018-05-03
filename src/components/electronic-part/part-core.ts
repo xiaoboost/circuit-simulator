@@ -18,6 +18,9 @@ const product = (point: PointLike, ma: Matrix): Point => {
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position' | 'status';
 const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position', 'status'];
 
+/** 用于储存的器件数据类型 */
+export type PartCoreData = Pick<PartCore, dispatchKey>;
+
 /** 器件数据核心类 */
 export class PartCore extends ElectronicCore {
     /** 原型链形式的 PartCore 实例 */

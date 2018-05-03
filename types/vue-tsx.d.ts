@@ -71,7 +71,7 @@ declare namespace JSX {
             exclude?: string | RegExp | (string | RegExp)[];
         }
 
-        interface DOMAttributes extends VueAttributes {
+        interface DOMEvents extends VueAttributes {
             // Clipboard Events
             onCopy?: EventHandler<ClipboardEvent>;
             onCut?: EventHandler<ClipboardEvent>;
@@ -82,9 +82,23 @@ declare namespace JSX {
             onCompositionstart?: EventHandler<CompositionEvent>;
             onCompositionupdate?: EventHandler<CompositionEvent>;
 
+            // drag drop events
+            onDrag?: EventHandler<DragEvent>;
+            onDragend?: EventHandler<DragEvent>;
+            onDragenter?: EventHandler<DragEvent>;
+            onDragexit?: EventHandler<DragEvent>;
+            onDragleave?: EventHandler<DragEvent>;
+            onDragover?: EventHandler<DragEvent>;
+            onDragstart?: EventHandler<DragEvent>;
+            onDrop?: EventHandler<DragEvent>;
+
             // Focus Events
             onFocus?: EventHandler<FocusEvent>;
             onBlur?: EventHandler<FocusEvent>;
+
+            // Image events
+            onLoad?: EventHandler<Event>;
+            onError?: EventHandler<Event>;
 
             // Keyboard Events
             onKeydown?: EventHandler<KeyboardEvent>;
@@ -95,14 +109,6 @@ declare namespace JSX {
             onClick?: EventHandler<MouseEvent>;
             onContextmenu?: EventHandler<MouseEvent>;
             onDblclick?: EventHandler<MouseEvent>;
-            onDrag?: EventHandler<DragEvent>;
-            onDragend?: EventHandler<DragEvent>;
-            onDragenter?: EventHandler<DragEvent>;
-            onDragexit?: EventHandler<DragEvent>;
-            onDragleave?: EventHandler<DragEvent>;
-            onDragover?: EventHandler<DragEvent>;
-            onDragstart?: EventHandler<DragEvent>;
-            onDrop?: EventHandler<DragEvent>;
             onMousedown?: EventHandler<MouseEvent>;
             onMouseenter?: EventHandler<MouseEvent>;
             onMouseleave?: EventHandler<MouseEvent>;
@@ -117,6 +123,9 @@ declare namespace JSX {
             onTouchmove?: EventHandler<TouchEvent>;
             onTouchstart?: EventHandler<TouchEvent>;
 
+            // Selection events
+            onSelect?: EventHandler<Event>;
+
             // UI Events
             onScroll?: EventHandler<UIEvent>;
 
@@ -130,6 +139,78 @@ declare namespace JSX {
 
             // Transition Events
             onTransitionend?: EventHandler<TransitionEvent>;
+            onTransitionstart?: EventHandler<TransitionEvent>;
+        }
+
+        interface DOMAttributes extends DOMEvents {
+            // Clipboard Events
+            nativeOnCopy?: EventHandler<ClipboardEvent>;
+            nativeOnCut?: EventHandler<ClipboardEvent>;
+            nativeOnPaste?: EventHandler<ClipboardEvent>;
+
+            // Composition Events
+            nativeOnCompositionend?: EventHandler<CompositionEvent>;
+            nativeOnCompositionstart?: EventHandler<CompositionEvent>;
+            nativeOnCompositionupdate?: EventHandler<CompositionEvent>;
+
+            // drag drop events
+            nativeOnDrag?: EventHandler<DragEvent>;
+            nativeOnDragend?: EventHandler<DragEvent>;
+            nativeOnDragenter?: EventHandler<DragEvent>;
+            nativeOnDragexit?: EventHandler<DragEvent>;
+            nativeOnDragleave?: EventHandler<DragEvent>;
+            nativeOnDragover?: EventHandler<DragEvent>;
+            nativeOnDragstart?: EventHandler<DragEvent>;
+            nativeOnDrop?: EventHandler<DragEvent>;
+
+            // Focus Events
+            nativeOnFocus?: EventHandler<FocusEvent>;
+            nativeOnBlur?: EventHandler<FocusEvent>;
+
+            // Image events
+            nativeOnLoad?: EventHandler<Event>;
+            nativeOnError?: EventHandler<Event>;
+
+            // Keyboard Events
+            nativeOnKeydown?: EventHandler<KeyboardEvent>;
+            nativeOnKeypress?: EventHandler<KeyboardEvent>;
+            nativeOnKeyup?: EventHandler<KeyboardEvent>;
+
+            // MouseEvents
+            nativeOnClick?: EventHandler<MouseEvent>;
+            nativeOnContextmenu?: EventHandler<MouseEvent>;
+            nativeOnDblclick?: EventHandler<MouseEvent>;
+            nativeOnMousedown?: EventHandler<MouseEvent>;
+            nativeOnMouseenter?: EventHandler<MouseEvent>;
+            nativeOnMouseleave?: EventHandler<MouseEvent>;
+            nativeOnMousemove?: EventHandler<MouseEvent>;
+            nativeOnMouseout?: EventHandler<MouseEvent>;
+            nativeOnMouseover?: EventHandler<MouseEvent>;
+            nativeOnMouseup?: EventHandler<MouseEvent>;
+
+            // Touch Events
+            nativeOnTouchcancel?: EventHandler<TouchEvent>;
+            nativeOnTouchend?: EventHandler<TouchEvent>;
+            nativeOnTouchmove?: EventHandler<TouchEvent>;
+            nativeOnTouchstart?: EventHandler<TouchEvent>;
+
+            // Selection events
+            nativeOnSelect?: EventHandler<Event>;
+
+            // UI Events
+            nativeOnScroll?: EventHandler<UIEvent>;
+
+            // Wheel Events
+            nativeOnWheel?: EventHandler<WheelEvent>;
+
+            // Animation Events
+            nativeOnAnimationstart?: EventHandler<AnimationEvent>;
+            nativeOnAnimationend?: EventHandler<AnimationEvent>;
+            nativeOnAnimationiteration?: EventHandler<AnimationEvent>;
+
+            // Transition Events
+            nativeOnTransitionend?: EventHandler<TransitionEvent>;
+            nativeOnTransitionstart?: EventHandler<TransitionEvent>;
         }
 
         interface HTMLAttributes extends DOMAttributes {

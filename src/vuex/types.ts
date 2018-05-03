@@ -1,5 +1,5 @@
-import { LineCore } from 'src/components/electronic-line';
-import { PartCore, PartTypes } from 'src/components/electronic-part';
+import { LineCoreData } from 'src/components/electronic-line';
+import { PartCoreData, PartTypes } from 'src/components/electronic-part';
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -19,15 +19,15 @@ export interface StateType {
     /**
      * 全局器件堆栈
      */
-    Parts: PartCore[];
+    Parts: PartCoreData[];
     /**
      * 全局导线堆栈
      */
-    Lines: LineCore[];
+    Lines: LineCoreData[];
     /**
      * 历史数据
      */
-    historyData: Array<Array<PartCore | LineCore>>;
+    historyData: Array<Array<PartCoreData | LineCoreData>>;
 }
 
 /** 储存用的器件数据接口 */

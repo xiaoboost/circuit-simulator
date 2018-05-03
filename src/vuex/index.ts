@@ -9,10 +9,11 @@ import Vuex, {
 import { $M } from 'src/lib/matrix';
 import { $P } from 'src/lib/point';
 import { clone, delay } from 'src/lib/utils';
+import * as slover from './parser';
 
 import Electronics from 'src/components/electronic-part/parts';
-import { PartCore } from 'src/components/electronic-part';
-import { LineCore, LineWay } from 'src/components/electronic-line';
+import { PartCore, PartCoreData } from 'src/components/electronic-part';
+import { LineCore, LineCoreData, LineWay } from 'src/components/electronic-line';
 
 import {
     StateType,
@@ -29,7 +30,7 @@ Vue.use(Vuex);
 /** 历史操作记录上限 */
 const historyLimit = 10;
 
-const state: StateType = {
+const local: StateType = {
     time: {
         end: '10m',
         step: '10u',
@@ -62,9 +63,9 @@ const mutations: MutationTree<StateType> = {
     SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
     /** 生成新器件 */
-    NEW_PART: ({ Parts }, data: PartCore) => Parts.push(clone(data)),
+    NEW_PART: ({ Parts }, data: PartCoreData) => Parts.push(clone(data)),
     /** 更新器件数据 */
-    UPDATE_PART: ({ Parts }, data: PartCore) => {
+    UPDATE_PART: ({ Parts }, data: PartCoreData) => {
         const index = Parts.findIndex((part) => part.hash === data.hash);
 
         if (index < 0) {
@@ -97,9 +98,9 @@ const mutations: MutationTree<StateType> = {
     // },
 
     /** 新导线压栈 */
-    NEW_LINE: ({ Lines }, data: LineCore) => Lines.unshift(clone(data)),
+    NEW_LINE: ({ Lines }, data: LineCoreData) => Lines.unshift(clone(data)),
     /** 更新器件数据 */
-    UPDATE_LINE: ({ Lines }, data: LineCore) => {
+    UPDATE_LINE: ({ Lines }, data: LineCoreData) => {
         const index = Lines.findIndex((line) => line.hash === data.hash);
 
         if (index < 0) {
@@ -140,7 +141,7 @@ const mutations: MutationTree<StateType> = {
 
     /** 记录当前数据 */
     RECORD_MAP({ historyData, Parts, Lines }) {
-        const stack: Array<PartCore | LineCore> = [];
+        const stack: Array<PartCoreData | LineCoreData> = [];
         historyData.push(stack.concat(Parts).concat(Lines));
 
         while (historyData.length > historyLimit) {
@@ -207,11 +208,16 @@ const actions: ActionTree<StateType, StateType> = {
         // wait lines loaded
         await delay(10);
     },
+    /** 求解电路 */
+    async SOLVE_CIRCUIT({ state }) {
+        debugger;
+        slover.compilePartsNet(state.Lines);
+    },
 };
 
 export default new Vuex.Store<StateType>({
     strict: $ENV.NODE_ENV === 'development',
-    state,
+    state: local,
     getters,
     mutations,
     actions,

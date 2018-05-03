@@ -10,8 +10,11 @@ import { $M, Matrix } from 'src/lib/matrix';
 import { ElectronicCore } from '../drawing-main/abstract';
 import { clone, copyProperties, mixins } from 'src/lib/utils';
 
-type dispatchKey = 'id' | 'way' | 'hash' | 'connect' | 'status';
-const disptchKeys: dispatchKey[] = ['id', 'way', 'hash', 'connect', 'status'];
+type dispatchKey = 'id' | 'type' | 'way' | 'hash' | 'connect' | 'status';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'hash', 'connect', 'status'];
+
+/** 用于储存的器件导线类型 */
+export type LineCoreData = Pick<LineCore, dispatchKey>;
 
 export class LineCore extends ElectronicCore {
     /** 原型链形式的 LineCore 实例 */
