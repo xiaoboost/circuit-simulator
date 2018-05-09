@@ -12,3 +12,4 @@ selenium-debug.log
 src/**/*-old.*
 test/*-old
 test/coverage
+src/solver/ngspice/*

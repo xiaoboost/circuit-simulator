@@ -16,14 +16,13 @@ module.exports = {
     },
     testRegex: '(\\.|/)(test|spec)\\.ts$',
     setupTestFrameworkScriptFile: 'jest-extended',
-    snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
     setupFiles: [
         '<rootDir>/test/setups/vue.ts',
         '<rootDir>/test/setups/env.ts',
     ],
     coverageDirectory: '<rootDir>/test/coverage',
     collectCoverageFrom: [
-        'src/**/*.tsx?',
+        'src/**/*.{ts,tsx}',
         '!src/main.ts',
         '!src/**/*.d.ts',
         '!src/**/{types,icon,debugger}.ts',
