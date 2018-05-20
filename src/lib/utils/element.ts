@@ -1,4 +1,4 @@
-import { makeMap } from 'src/lib/utils';
+import { makeMap } from './shared';
 
 /** 命名空间数据 */
 export const namespaceMap = {

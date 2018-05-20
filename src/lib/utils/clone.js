@@ -1,3 +1,4 @@
+import { isBaseType } from './assertion';
 
 /**
  * 检查输入数据是否含有循环结构
@@ -16,7 +17,7 @@ export function checkCircularStructure(data, parents = []) {
     // 检查每个子节点
     return Object.values(data).some(
         (value) =>
-            assert.isBaseType(value) ? false : checkCircularStructure(value, parents.slice())
+            isBaseType(value) ? false : checkCircularStructure(value, parents.slice())
     );
 }
 
@@ -29,7 +30,7 @@ export function checkCircularStructure(data, parents = []) {
  */
 export function clone(data, check = true) {
     // 基础类型，直接返回其本身
-    if (assert.isBaseType(data)) {
+    if (isBaseType(data)) {
         return data;
     }
 
