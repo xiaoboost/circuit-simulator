@@ -1,3 +1,5 @@
+import VNode from '../vdom/vnode';
+
 export default class Vues {
     /** Vues 扩展安装 */
     static use(install: (vm: typeof Vues) => void) {
@@ -7,25 +9,26 @@ export default class Vues {
     /** 组件 DOM 元素 */
     $el!: Element;
     /** 当前组件的父元素 */
-    $parent!: Vues;
+    $parent?: Vues;
     /** 当前组件的子元素 */
     $children: Vues[] = [];
+    /** 组件对应的虚拟 DOM */
+    $vnode!: VNode;
+    /** 当前组件可用的子组件构造函数 */
+    $components!: { [componentName: string]: typeof Vues };
     /** 当前元素的引用元素 */
     $refs: { [componentName: string]: Element | Element[] | Vues | Vues[] } = {};
 
     /** 渲染函数声明 */
-    render!: () => Element;
+    render!: () => VNode;
 
-    /** 当前组件的事件列表 */
+    /** 事件数据 */
     private _events: { [eventName: string]: Array<(arg?: any) => any> } = {};
-
-    constructor() {
-        // ..
-    }
+    /** 绑定数据 */
+    private _state: { [stateName: string]: any } = {};
 
     /** 创建并挂载 DOM */
     $mount(el: string | Element) {
-        // TODO: 创建 $el
         return this;
     }
 

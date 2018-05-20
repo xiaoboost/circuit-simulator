@@ -10,8 +10,8 @@
         "no-inferrable-types": [true, "ignore-params", "ignore-properties"],
         // 允许使用 non-null 断言
         "no-non-null-assertion": false,
-        // 禁止对形参重新赋值
-        "no-parameter-reassignment": true,
+        // 允许对形参重新赋值
+        "no-parameter-reassignment": false,
         // 允许 magic-numbers 存在
         "no-magic-numbers": false,
         // 检查类型声明的存在

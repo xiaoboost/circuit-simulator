@@ -45,8 +45,7 @@ export function isSymbol(x: any): x is symbol {
  * @returns {(x is null | undefined)}
  */
 export function isNull(x: any): x is null | undefined {
-    const type = Object.prototype.toString.call(x) as string;
-    return (type === '[object Null]' || type === '[object Undefined]');
+    return x === undefined || x === null;
 }
 
 /**
@@ -96,7 +95,7 @@ export function isObject(x: any): x is { [key: string]: any } {
  * @returns {x is any[]}
  */
 export function isArray(x: any): x is any[] {
-    return (Object.prototype.toString.call(x) === '[object Array]');
+    return Array.isArray(x);
 }
 
 /**
@@ -135,8 +134,12 @@ export function isBaseType(x: any): x is number | string | boolean | symbol | nu
  * @param {*} x
  * @returns {(x is number | string | boolean | symbol)}
  */
-export function isBaseTypeExNull(x: any): x is number | string | boolean | symbol {
+export function isPrimitive(x: any): x is number | string | boolean | symbol {
+    const type = typeof x;
     return (
-        isBaseType(x) && !isNull(x)
+        type === 'string' ||
+        type === 'number' ||
+        type === 'symbol' ||
+        type === 'boolean'
     );
 }
