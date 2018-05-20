@@ -1,9 +1,33 @@
+/* tslint:disable member-ordering */
+
 import VNode from '../vdom/vnode';
 
+interface PropData {
+    type: object | object[];
+    default?: any | (() => object);
+    required?: boolean;
+    validator?(val: any): boolean;
+}
+
+interface ComponentOption {
+    components?: { [componentName: string]: typeof Vues };
+    props?: { [key: string]: PropData };
+    data?(): object;
+    computed?: { [key: string]: any };
+    methods?: { [key: string]: (...args: any[]) => any };
+}
+
+interface PluginObject {
+    install(Vue: typeof Vues): void;
+    [key: string]: any;
+}
+
 export default class Vues {
+    /** 组件选项 */
+    static options: ComponentOption;
     /** Vues 扩展安装 */
-    static use(install: (vm: typeof Vues) => void) {
-        install(Vues);
+    static use(plugin: PluginObject) {
+        plugin.install(Vues);
     }
 
     /** 组件 DOM 元素 */
@@ -14,18 +38,20 @@ export default class Vues {
     $children: Vues[] = [];
     /** 组件对应的虚拟 DOM */
     $vnode!: VNode;
-    /** 当前组件可用的子组件构造函数 */
-    $components!: { [componentName: string]: typeof Vues };
     /** 当前元素的引用元素 */
     $refs: { [componentName: string]: Element | Element[] | Vues | Vues[] } = {};
+    /** 组件选项 */
+    $options!: ComponentOption;
 
     /** 渲染函数声明 */
     render!: () => VNode;
 
     /** 事件数据 */
     private _events: { [eventName: string]: Array<(arg?: any) => any> } = {};
-    /** 绑定数据 */
+    /** 状态数据 */
     private _state: { [stateName: string]: any } = {};
+    /** 属性数据 */
+    private _props: { [propName: string]: any } = {};
 
     /** 创建并挂载 DOM */
     $mount(el: string | Element) {

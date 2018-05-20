@@ -16,6 +16,7 @@ export interface VNodeData {
     ref?: string;
     tag?: string;
     is?: string;
+    model?: { value: any; callback(val: any): void };
     staticClass?: string;
     class?: string | string[] | { [className: string]: boolean };
     staticStyle?: CSSStyleDeclaration;

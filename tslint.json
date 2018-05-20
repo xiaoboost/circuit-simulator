@@ -41,8 +41,8 @@
         "no-switch-case-fall-through": true,
         // 允许 void 表达式
         "no-void-expression": false,
-        // 推荐使用三元运算符
-        "prefer-conditional-expression": true,
+        // 不限制使用三元运算符
+        "prefer-conditional-expression": false,
         // 推荐使用对象展开运算符，而不是 Object.assign()，因为这样类型推断会更方便
         "prefer-object-spread": true,
         // switch 语言必须要要有 default 分支

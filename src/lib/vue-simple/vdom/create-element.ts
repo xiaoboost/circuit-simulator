@@ -70,10 +70,13 @@ export function createElement(
             undefined, undefined, context,
         );
     }
-    else if (Boolean(context.$components[tag])) {
+    else if (
+        context.$options.components &&
+        context.$options.components[tag]
+    ) {
         // component
         vnode = createComponent(
-            context.$components[tag],
+            context.$options.components[tag],
             data, context, ChildVNode, tag,
         );
     }

@@ -82,3 +82,20 @@ export function makeMap(map: string, expectsLowerCase = false) {
         ? (key: string) => Boolean(inside[key.toLowerCase()])
         : (key: string) => Boolean(inside[key]);
 }
+
+/**
+ * Hyphenate a camelCase string.
+ * @param {string} str
+ */
+export function hyphenate(str: string) {
+  return str.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+}
+
+/**
+ * 检查 key 是否存在于 obj 对象中
+ * @param obj 检查对象
+ * @param key 检查的属性名称
+ */
+export function hasOwn(obj: object, key: string): boolean {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+}
