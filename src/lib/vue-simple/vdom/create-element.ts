@@ -15,9 +15,6 @@ import {
     isArray,
     isPrimitive,
     isBaseType,
-} from 'src/lib/assertion';
-
-import {
     getTagNamespace,
     isReservedTag,
 } from 'src/lib/utils';

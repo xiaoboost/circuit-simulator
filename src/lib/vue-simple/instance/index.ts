@@ -1,6 +1,7 @@
 /* tslint:disable member-ordering */
 
-import VNode from '../vdom/vnode';
+import VNode, { VNodeData, VNodeChildData } from '../vdom/vnode';
+import { createElement } from '../vdom/create-element';
 
 interface PropData {
     type: object | object[];
@@ -44,7 +45,14 @@ export default class Vues {
     $options!: ComponentOption;
 
     /** 渲染函数声明 */
-    render!: () => VNode;
+    render!: (h: Vues['$createElement']) => VNode;
+
+    // 生命周期
+    beforeMount = () => {};
+    mounted = () => {};
+    beforeDestroy = () => {};
+    destroyed = () => {};
+    beforeUpdate = () => {};
 
     /** 事件数据 */
     private _events: { [eventName: string]: Array<(arg?: any) => any> } = {};
@@ -53,8 +61,41 @@ export default class Vues {
     /** 属性数据 */
     private _props: { [propName: string]: any } = {};
 
+    /**  */
+    private _update(vnode: VNode) {
+
+    }
+
+    /** 计算生成当前虚拟 DOM 树 */
+    private _render() {
+        // render self
+        let vnode;
+
+        try {
+            vnode = this.render(this.$createElement);
+        } catch (e) {
+            throw new Error(`(render) ${e.message}`);
+        }
+
+        // set parent
+        vnode.parent = this.$vnode.parent;
+        return vnode;
+    }
+
+    /** 以当前组件为上下文渲染虚拟节点 */
+    $createElement(tag: string, data: VNodeData | VNodeChildData, children?: VNodeChildData) {
+        return createElement(this, tag, data, children);
+    }
     /** 创建并挂载 DOM */
     $mount(el: string | Element) {
+        this.beforeMount();
+
+        // 组件更新回调
+        const updateComponent = () => {
+            this._update(this._render());
+        };
+
+        this.mounted();
         return this;
     }
 

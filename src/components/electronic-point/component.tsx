@@ -60,8 +60,6 @@ export default class ElectronicPoint extends Vue {
             return Object.keys(classObject).filter((key) => classObject[key]).join(' ');
         }
 
-        this.classList;
-
         // 输入是字符串，返回本身
         if (assert.isString(this.classList)) {
             return this.classList;

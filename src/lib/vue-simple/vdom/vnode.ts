@@ -3,6 +3,8 @@ import Component from '../instance';
 type NativeCallback = (e: Event) => any;
 type Callback = (e: any) => any;
 
+export type VNodeChildData = Array<string | VNode>;
+
 export interface VNodeComponentOptions {
     Ctor: typeof Component;
     propsData?: object;

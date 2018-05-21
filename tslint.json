@@ -23,6 +23,8 @@
         "no-unused-expression": false,
         // 允许 console.log
         "no-console": false,
+        // 允许空代码块
+        "no-empty": false,
         // 允许位运算
         "no-bitwise": false,
         // 允许 debugger
