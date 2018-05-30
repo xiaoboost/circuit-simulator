@@ -2,6 +2,7 @@
 
 import VNode, { VNodeData, VNodeChildData } from '../vdom/vnode';
 import { createElement } from '../vdom/create-element';
+import { isFunc } from '../utils';
 
 interface PropData {
     type: object | object[];
@@ -10,11 +11,12 @@ interface PropData {
     validator?(val: any): boolean;
 }
 
-interface ComponentOption {
+export interface ComponentOptions {
+    name?: string;
     components?: { [componentName: string]: typeof Vues };
     props?: { [key: string]: PropData };
-    data?(): object;
-    computed?: { [key: string]: any };
+    data?: object;
+    computed?: object;
     methods?: { [key: string]: (...args: any[]) => any };
 }
 
@@ -25,7 +27,7 @@ interface PluginObject {
 
 export default class Vues {
     /** 组件选项 */
-    static options: ComponentOption;
+    static options: ComponentOptions;
     /** Vues 扩展安装 */
     static use(plugin: PluginObject) {
         plugin.install(Vues);
@@ -42,17 +44,17 @@ export default class Vues {
     /** 当前元素的引用元素 */
     $refs: { [componentName: string]: Element | Element[] | Vues | Vues[] } = {};
     /** 组件选项 */
-    $options!: ComponentOption;
+    $options!: ComponentOptions;
 
     /** 渲染函数声明 */
     render!: (h: Vues['$createElement']) => VNode;
 
     // 生命周期
-    beforeMount = () => {};
-    mounted = () => {};
-    beforeDestroy = () => {};
-    destroyed = () => {};
-    beforeUpdate = () => {};
+    beforeMount!: () => void;
+    mounted!: () => void;
+    beforeDestroy!: () => void;
+    destroyed!: () => void;
+    beforeUpdate!: () => void;
 
     /** 事件数据 */
     private _events: { [eventName: string]: Array<(arg?: any) => any> } = {};
@@ -73,7 +75,8 @@ export default class Vues {
 
         try {
             vnode = this.render(this.$createElement);
-        } catch (e) {
+        }
+        catch (e) {
             throw new Error(`(render) ${e.message}`);
         }
 
@@ -88,14 +91,14 @@ export default class Vues {
     }
     /** 创建并挂载 DOM */
     $mount(el: string | Element) {
-        this.beforeMount();
+        isFunc(this.beforeMount) && this.beforeMount();
 
         // 组件更新回调
         const updateComponent = () => {
             this._update(this._render());
         };
 
-        this.mounted();
+        isFunc(this.mounted) && this.mounted();
         return this;
     }
 

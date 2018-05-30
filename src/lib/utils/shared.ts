@@ -99,3 +99,11 @@ export function hyphenate(str: string) {
 export function hasOwn(obj: object, key: string): boolean {
     return Object.prototype.hasOwnProperty.call(obj, key);
 }
+
+/**
+ * 对象是否为空
+ * @param obj 待检测对象
+ */
+export function isEmpty(obj: object): boolean {
+    return Object.keys(obj).length > 0;
+}

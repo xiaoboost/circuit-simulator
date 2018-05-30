@@ -7,7 +7,7 @@ import VNode, {
 } from './vnode';
 
 import {
-    isNull,
+    isUndef,
     isArray,
     isPrimitive,
     isBaseType,
@@ -23,11 +23,11 @@ function extractPropsFromVNodeData(data: VNodeData, Ctor: TyCtor, tag: string) {
     // component itself.
     const propOptions = Ctor.options.props;
 
-    if (isNull(propOptions)) {
+    if (isUndef(propOptions)) {
         return;
     }
 
-    if (isNull(data.attrs) && isNull(data.props)) {
+    if (isUndef(data.attrs) && isUndef(data.props)) {
         return {};
     }
 
@@ -45,12 +45,12 @@ function extractPropsFromVNodeData(data: VNodeData, Ctor: TyCtor, tag: string) {
 
 function checkProp(
     res: object,
-    hash = {},
+    hash: object = {},
     key: string,
     altKey: string,
     preserve: boolean,
 ) {
-    if (!isNull(hash)) {
+    if (!isUndef(hash)) {
         if (hasOwn(hash, key)) {
             res[key] = hash[key];
             if (!preserve) {

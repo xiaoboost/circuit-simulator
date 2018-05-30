@@ -44,8 +44,18 @@ export function isSymbol(x: any): x is symbol {
  * @param {*} x
  * @returns {(x is null | undefined)}
  */
-export function isNull(x: any): x is null | undefined {
+export function isUndef(x: any): x is null | undefined {
     return x === undefined || x === null;
+}
+
+/**
+ * 断言：输入是否是非 null 或 undefined 的值
+ *
+ * @param {*} x
+ * @returns {(x is null | undefined)}
+ */
+export function isDef(x: any): x is string | number | boolean | symbol | object {
+    return x !== undefined && x !== null;
 }
 
 /**
@@ -55,7 +65,7 @@ export function isNull(x: any): x is null | undefined {
  * @returns {x is () => any}
  */
 /* tslint:disable-next-line:ban-types  */
-export function isFunction(x: any): x is Function {
+export function isFunc(x: any): x is Function {
     return (typeof x === 'function');
 }
 
@@ -79,10 +89,10 @@ export function isStrictObject(x: any): x is { [key: string]: any } {
  * @param {*} x
  * @returns {x is object}
  */
-export function isObject(x: any): x is { [key: string]: any } {
+export function isObject(x: any): x is object {
     const type = typeof x;
     return (
-        !isNull(x) &&
+        isDef(x) &&
         type === 'object' ||
         type === 'function'
     );

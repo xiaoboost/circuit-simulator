@@ -5,6 +5,19 @@ type Callback = (e: any) => any;
 
 export type VNodeChildData = Array<string | VNode>;
 
+export interface VnodeHook {
+    prepatch?(oldVnode: VNode, vnode: VNode): void;
+    update?(oldVnode: VNode, vnode: VNode): void;
+    postpatch?(oldVnode: VNode, vnode: VNode): void;
+    insert?(vnode: VNode): void;
+    create?(oldVnode: VNode, vnode: VNode): void;
+    init?(vnode: VNode): void;
+    destroy?(vnode: VNode): void;
+}
+
+type SingleParameterHookKey = 'init' | 'insert' | 'destroy';
+type MultipleParameterHookKey = Exclude<keyof VnodeHook, SingleParameterHookKey>;
+
 export interface VNodeComponentOptions {
     Ctor: typeof Component;
     propsData?: object;
@@ -18,6 +31,7 @@ export interface VNodeData {
     ref?: string;
     tag?: string;
     is?: string;
+    refInFor?: boolean;
     model?: { value: any; callback(val: any): void };
     staticClass?: string;
     class?: string | string[] | { [className: string]: boolean };
@@ -26,7 +40,7 @@ export interface VNodeData {
     props?: { [key: string]: any };
     attrs?: { [key: string]: any };
     domProps?: { [key: string]: any };
-    hook?: { [key: string]: () => void };
+    hook?: VnodeHook;
     on?: { [key: string]: Callback | Callback[] };
     nativeOn?: { [key: string]: NativeCallback | NativeCallback[] };
     show?: boolean;
@@ -44,16 +58,16 @@ export interface VNodeDirective {
 
 export default class VNode {
     tag?: string;
-    data?: VNodeData;
+    data: VNodeData;
     children: VNode[];
     text?: string;
-    elm?: Node;
+    elm?: Element;
     context?: Component;
     key?: string | number;
     componentOptions?: VNodeComponentOptions;
-    componentInstance?: Component = undefined;
-    parent?: VNode = undefined;
-    ns = '';
+    componentInstance?: Component;
+    parent?: VNode;
+    ns?: string;
 
     raw = false;
     isStatic = false;
@@ -67,18 +81,31 @@ export default class VNode {
         data?: VNodeData,
         children?: VNode[],
         text?: string,
-        elm?: Node,
+        elm?: Element,
         context?: Component,
         componentOptions?: VNodeComponentOptions,
     ) {
         this.tag = tag;
-        this.data = data;
+        this.data = data || {};
         this.children = children || [];
         this.text = text;
         this.elm = elm;
         this.context = context;
         this.key = data && data.key;
         this.componentOptions = componentOptions;
+    }
+
+    invokeHook(hookName: SingleParameterHookKey, vnode: VNode): void;
+    invokeHook(hookName: MultipleParameterHookKey, oldVnode: VNode, vnode: VNode): void;
+    invokeHook(hookName: keyof VnodeHook, vnodeA: VNode, vnodeB?: VNode) {
+        if (
+            this.data &&
+            this.data.hook &&
+            this.data.hook[hookName]
+        ) {
+            type HookType = (a: VNode, b?: VNode) => void;
+            (this.data.hook[hookName] as HookType)(vnodeA, vnodeB);
+        }
     }
 }
 

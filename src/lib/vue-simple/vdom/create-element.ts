@@ -11,13 +11,13 @@ import VNode, {
 } from './vnode';
 
 import {
-    isNull,
+    isUndef,
     isArray,
     isPrimitive,
     isBaseType,
     getTagNamespace,
     isReservedTag,
-} from 'src/lib/utils';
+} from '../utils';
 
 function applyNS(vnode: VNode, ns: string, force = false) {
     vnode.ns = ns;
@@ -67,11 +67,11 @@ export function createElement(
             undefined, undefined, context,
         );
     }
+    // 自定义组件
     else if (
         context.$options.components &&
         context.$options.components[tag]
     ) {
-        // component
         vnode = createComponent(
             context.$options.components[tag],
             data, context, ChildVNode, tag,
@@ -81,7 +81,7 @@ export function createElement(
         throw new Error(`(render) unknown tag name: ${tag}`);
     }
 
-    if (!isNull(vnode)) {
+    if (!isUndef(vnode)) {
         ns && applyNS(vnode, ns);
         return vnode;
     }

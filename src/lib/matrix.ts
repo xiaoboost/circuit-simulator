@@ -70,7 +70,7 @@ class Matrix {
             }
         }
         // 零矩阵
-        else if (assert.isNull(column)) {
+        else if (assert.isUndef(column)) {
             this.row = row;
             this.column = row;
             this._view = Float64Array.from(Array(row * row).fill(0));

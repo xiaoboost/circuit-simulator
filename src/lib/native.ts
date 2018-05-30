@@ -108,7 +108,7 @@ mixins(Array.prototype, {
      * @returns {T[]}
      */
     unique<T>(this: T[], label?: (value: T, index: number) => number | string): T[] {
-        if (assert.isNull(label)) {
+        if (assert.isUndef(label)) {
             return [...new Set(this)];
         }
 
