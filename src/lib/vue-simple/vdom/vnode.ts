@@ -12,6 +12,7 @@ export interface VnodeHook {
     insert?(vnode: VNode): void;
     create?(oldVnode: VNode, vnode: VNode): void;
     init?(vnode: VNode): void;
+    remove?(vode: VNode, rm: () => void): void;
     destroy?(vnode: VNode): void;
 }
 
@@ -71,7 +72,6 @@ export default class VNode {
 
     raw = false;
     isStatic = false;
-    isRootInsert = true;
     isComment = false;
     isCloned = false;
     isOnce = false;
@@ -95,16 +95,20 @@ export default class VNode {
         this.componentOptions = componentOptions;
     }
 
-    invokeHook(hookName: SingleParameterHookKey, vnode: VNode): void;
-    invokeHook(hookName: MultipleParameterHookKey, oldVnode: VNode, vnode: VNode): void;
-    invokeHook(hookName: keyof VnodeHook, vnodeA: VNode, vnodeB?: VNode) {
+    invokeHook(hookName: 'remove', vnode: VNode, rm: () => void): boolean;
+    invokeHook(hookName: SingleParameterHookKey, vnode: VNode): boolean;
+    invokeHook(hookName: MultipleParameterHookKey, oldVnode: VNode, vnode: VNode): boolean;
+    invokeHook(hookName: keyof VnodeHook, ...vnodes: any[]) {
         if (
             this.data &&
             this.data.hook &&
             this.data.hook[hookName]
         ) {
-            type HookType = (a: VNode, b?: VNode) => void;
-            (this.data.hook[hookName] as HookType)(vnodeA, vnodeB);
+            (this.data.hook[hookName] as any)(...vnodes);
+            return true;
+        }
+        else {
+            return false;
         }
     }
 }

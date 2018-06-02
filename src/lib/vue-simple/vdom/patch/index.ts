@@ -2,6 +2,8 @@ import VNode from '../vnode';
 
 import { sameVnode } from './helpers';
 import { createElm } from './create-elm';
+import { patchVnode } from './patch-vnd';
+import { replaceElm } from './replace-elm';
 import { invokeDestroyHook, invokeInsertHook } from './hooks';
 
 export default function patch(oldVnode?: VNode, vnode?: VNode, removeOnly?: boolean) {

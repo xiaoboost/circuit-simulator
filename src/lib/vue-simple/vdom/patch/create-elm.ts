@@ -1,28 +1,30 @@
 import VNode, { cloneVNode } from '../vnode';
 
-import {
-    isNumber,
-    isEmpty,
-} from '../../utils';
+import { registerRef } from '../modules/ref';
+import { invokeCreateHooks } from './hooks';
+import { insert, checkDuplicateKeys } from './helpers';
+import { isNumber, isEmpty, isArray } from '../../utils';
 
-import {
-    insert,
-} from './helpers';
-
-import {
-    invokeCreateHooks,
-} from './hooks';
+/** 创建子元素 */
+function createChildren(vnode: VNode, children: VNode[], queue: VNode[]) {
+    if (children.length > 0) {
+        if (process.env.NODE_ENV !== 'production') {
+            checkDuplicateKeys(children);
+        }
+        for (let i = 0; i < children.length; ++i) {
+            createElm(children[i], queue, vnode.elm, undefined, children, i);
+        }
+    }
+    else if (vnode.text) {
+        (vnode.elm!).appendChild(document.createTextNode(vnode.text));
+    }
+}
 
 /** 组件初始化 */
 function initComponent(vnode: VNode, queue: VNode[]) {
-    if (isDef(vnode.data.pendingInsert)) {
-        insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert);
-        vnode.data.pendingInsert = null;
-    }
+    vnode.elm = (vnode.componentInstance!).$el;
 
-    vnode.elm = vnode.componentInstance.$el;
-
-    if (isPatchable(vnode)) {
+    if (vnode.tag) {
         invokeCreateHooks(vnode, queue);
     }
     else {
@@ -34,37 +36,17 @@ function initComponent(vnode: VNode, queue: VNode[]) {
     }
 }
 
-/** 创建组件 */
-function createComponent(vnode: VNode, queue: VNode[], parentElm: Element, refElm: Element) {
-    // call init hook
-    vnode.invokeHook('init', vnode);
-
-    // after calling the init hook, if the vnode is a child component
-    // it should've created a child instance and mounted it. the child
-    // component also has set the placeholder vnode's elm.
-    // in that case we can just return the element and be done.
-    if (vnode.componentInstance) {
-        initComponent(vnode, queue);
-        insert(parentElm, vnode.elm, refElm);
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-
 /** 创建 DOM */
 export function createElm(
     vnode: VNode,
     queue: VNode[],
     parentElm?: Element,
     refElm?: Element,
-    nested?: boolean,
     ownerArray?: VNode[],
     index?: number,
 ) {
+    // This vnode was used in a previous render!
     if (vnode.elm && ownerArray && isNumber(index)) {
-        // This vnode was used in a previous render!
         // now it's used as a new node, overwriting its elm would cause
         // potential patch errors down the road when it's used as an insertion
         // reference node. Instead, we clone the node on-demand before creating
@@ -72,8 +54,15 @@ export function createElm(
         vnode = ownerArray[index] = cloneVNode(vnode);
     }
 
-    vnode.isRootInsert = !nested; // for transition enter check
-    if (createComponent(vnode, queue, parentElm, refElm)) {
+    // create component
+    vnode.invokeHook('init', vnode);
+    // after calling the init hook, if the vnode is a child component
+    // it should've created a child instance and mounted it. the child
+    // component also has set the placeholder vnode's elm.
+    // in that case we can just return the element and be done.
+    if (vnode.componentInstance) {
+        initComponent(vnode, queue);
+        insert(parentElm, vnode.elm, refElm);
         return;
     }
 
