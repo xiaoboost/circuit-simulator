@@ -1,6 +1,3 @@
-import './component.styl';
-
-import { CreateElement } from 'vue';
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 
 /** 验证规则接口 */
@@ -78,23 +75,5 @@ export default class InputVerifiable extends Vue {
         this.txt = value;
         this.validate(value);
         this.$emit('input', value);
-    }
-
-    private render(h: CreateElement) {
-        return <div class='input-verifiable'>
-            <input
-                ref='input'
-                type='text'
-                value={this.txt}
-                maxLength={this.maxlength}
-                placeholder={this.placeholder}
-                onInput={(e: Event) => {
-                    const target: HTMLInputElement = e.target as any;
-                    this.update(target.value);
-                }}/>
-            <span class='input-bar correct-bar'></span>
-            <span class={['input-bar error-bar', { error: !!this.errorMessage }]}></span>
-            {this.errorMessage ? <span class='input-error-message'>{this.errorMessage}</span> : ''}
-        </div>;
     }
 }

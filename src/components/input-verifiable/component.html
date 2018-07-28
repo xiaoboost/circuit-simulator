@@ -1,0 +1,11 @@
+<div class="input-verifiable">
+    <input
+        ref="input"
+        type="text"
+        v-model="txt"
+        :maxLength="maxlength"
+        :placeholder="placeholder">
+    <span class="input-bar correct-bar"></span>
+    <span :class="['input-bar error-bar', { is-error: !!errorMessage }]"></span>
+    <span v-if="errorMessage" class="input-error-message">{{ errorMessage }}</span>
+</div>
