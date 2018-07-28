@@ -1,5 +1,5 @@
-import * as assert from './assertion';
 import { Matrix } from './matrix';
+import { isNumber, isUndef } from './utils';
 
 type PointLike = number[] | Point;
 type PointInput = PointLike | number;
@@ -9,62 +9,28 @@ type PointInput = PointLike | number;
  *
  * @class Point
  */
-class Point {
-    /**
-     * 断言：输入是否是 Point 类实例
-     *
-     * @static
-     * @param {*} point
-     * @returns {boolean}
-     */
-    static isPoint(point: any): point is Point {
-        return (point instanceof Point);
-    }
-    /**
-     * 断言：输入是否是类似 Point 实例的对象
-     *
-     * @static
-     * @param {*} point
-     * @returns {boolean}
-     */
-    static isPointLike(point: any | any[]): point is PointLike {
-        return (
-            Point.isPoint(point) ||
-            (
-                assert.isObject(point) &&
-                typeof point[0] === 'number' &&
-                typeof point[1] === 'number'
-            )
-        );
-    }
-
+export default class Point {
     0: number;
     1: number;
     readonly length!: 2;
 
     /**
-     * Creates an instance of Point.
+     * 创建一个点或者向量
      * @param {PointInput} start
-     * @param {PointInput} [end]
+     * @param {PointInput} end
      */
-    constructor(start?: PointInput)
     constructor(start: number, end: number)
     constructor(start: PointLike, end: PointLike)
-    constructor(start: PointInput, end?: PointInput) {
-        // 输入一（或二）个数
-        if (assert.isNumber(start)) {
+    constructor(start: PointInput, end: PointInput) {
+        // 输入两个数 -> 点
+        if (isNumber(start)) {
             this[0] = start;
-            this[1] = assert.isNumber(end) ? end : start;
+            this[1] = end as number;
         }
-        // 输入是两个点，当作向量处理
-        else if (Point.isPointLike(end)) {
+        // 输入两个点 -> 向量
+        else {
             this[0] = end[0] - start[0];
             this[1] = end[1] - start[1];
-        }
-        // 输入一个点
-        else {
-            this[0] = start[0];
-            this[1] = start[1];
         }
 
         Object.defineProperty(this, 'length', {
@@ -73,6 +39,32 @@ class Point {
             configurable: false,
             value: 2,
         });
+    }
+
+    /**
+     * 从类似 Point 结构的数据中创建 Point
+     */
+    static from(point: number): Point;
+    static from(point: PointLike): Point;
+    static from(start: number, end: number): Point;
+    static from(start: PointLike, end: PointLike): Point;
+    static from(start: PointInput, end?: PointInput) {
+        // 输入一个值
+        if (isUndef(end)) {
+            if (isNumber(start)) {
+                return new Point(start, start);
+            }
+            else {
+                return new Point(start[0], start[1]);
+            }
+        }
+        // 输入了两个值
+        else {
+            return new Point(
+                start as PointLike,
+                end as PointLike,
+            );
+        }
     }
 
     /**
@@ -111,8 +103,8 @@ class Point {
      * @returns {Point}
      */
     add(added: PointInput, label: number = 1): Point {
-        const sum = new Point(0);
-        if (assert.isNumber(added)) {
+        const sum = new Point(0, 0);
+        if (isNumber(added)) {
             sum[0] = this[0] + added * label;
             sum[1] = this[1] + added * label;
         }
@@ -132,8 +124,8 @@ class Point {
      * @returns {Point}
      */
     mul(multiplier: PointInput, label: number = 1): Point {
-        const sum = new Point(0);
-        if (assert.isNumber(multiplier)) {
+        const sum = new Point(0, 0);
+        if (isNumber(multiplier)) {
             sum[0] = this[0] * ((label < 0) ? (1 / multiplier) : multiplier);
             sum[1] = this[1] * ((label < 0) ? (1 / multiplier) : multiplier);
         }
@@ -215,8 +207,8 @@ class Point {
      */
     round(fixed: number = 20): Point {
         return (new Point(
-            Number.parseInt((this[0] / fixed).toFixed()) * fixed,
-            Number.parseInt((this[1] / fixed).toFixed()) * fixed,
+            Number.parseInt((this[0] / fixed).toFixed(), 10) * fixed,
+            Number.parseInt((this[1] / fixed).toFixed(), 10) * fixed,
         ));
     }
     /**
@@ -227,8 +219,8 @@ class Point {
      */
     roundToSmall(fixed: number = 20): Point {
         return (new Point(
-            Number.parseInt((this[0] / fixed).toFixed()),
-            Number.parseInt((this[1] / fixed).toFixed()),
+            Number.parseInt((this[0] / fixed).toFixed(), 10),
+            Number.parseInt((this[1] / fixed).toFixed(), 10),
         ));
     }
     /**
@@ -369,7 +361,7 @@ class Point {
      * @returns {Point[]}
      */
     around(predicate: (point: Point) => boolean, factor: number = 1): Point[] {
-        const ans: Point[] = predicate(this) ? [new Point(this)] : [];
+        const ans: Point[] = predicate(this) ? [Point.from(this)] : [];
 
         for (let m = 1; ans.length < 1; m++) {
             for (let i = 0; i < m; i++) {
@@ -400,7 +392,7 @@ class Point {
             throw new Error('(point) points can not be a empty array.');
         }
 
-        return new Point(points.reduce(
+        return Point.from(points.reduce(
             (pre, next) =>
                 this.distance(pre) < this.distance(next) ? pre : next,
         ));
@@ -424,7 +416,7 @@ class Point {
             );
         }
 
-        return new Point(vectors.reduce(
+        return Point.from(vectors.reduce(
             (pre, next) =>
                 cosAB(this, pre) > cosAB(this, next) ? pre : next,
         ));
@@ -437,7 +429,7 @@ class Point {
      */
     toGrid(len: number = 20): [Point, Point, Point, Point] {
         return ([
-            new Point(this),
+            new Point(this[0], this[1]),
             new Point(this[0] + len, this[1]),
             new Point(this[0], this[1] + len),
             new Point(this[0] + len, this[1] + len),
@@ -464,18 +456,4 @@ class Point {
     }
 }
 
-/**
- * new Point(start, end) 运算的封装
- *
- * @param {PointInput} [start=[0, 0]]
- * @param {PointInput} [end]
- * @returns {Point}
- */
-function $P(start?: PointInput): Point;
-function $P(start: number, end?: number): Point;
-function $P(start: PointLike, end?: PointLike): Point;
-function $P(start: PointInput = [0, 0], end?: PointInput): Point {
-    return (new Point(start as PointLike, end as PointLike));
-}
-
-export { $P, Point, PointLike };
+export const $P = Point.from;
