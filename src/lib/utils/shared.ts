@@ -1,4 +1,12 @@
+import { checkCircularStructure } from './clone';
 import { supportsOnce, supportsPassive } from './env';
+
+import {
+    isFunc,
+    isArray,
+    isBaseType,
+    isObject,
+} from './assertion';
 
 /**
  * 生成异步延迟函数
@@ -91,6 +99,54 @@ export function hasOwn(obj: object, key: string): boolean {
  * 对象是否为空
  * @param obj 待检测对象
  */
-export function isEmpty(obj: object): boolean {
+export function isEmpty(obj: object) {
     return Object.keys(obj).length > 0;
+}
+
+/**
+ * 比较两个值是否相等
+ * @param from 被比较值
+ * @param to 比较值
+ */
+export function isEqual(from: any, to: any, deepCheck = false): boolean {
+    if (isBaseType(from)) {
+        return from === to;
+    }
+
+    if (deepCheck && checkCircularStructure(from)) {
+        throw new Error('(isEqual) Can not have circular structure.');
+    }
+
+    if (isArray(from)) {
+        if (!isArray(to) || from.length !== to.length) {
+            return false;
+        }
+        else {
+            return from.every((item, i) => isEqual(item, to[i]));
+        }
+    }
+    else {
+        if (!isObject(to) || isEqual(Object.keys(from), Object.keys(to))) {
+            return false;
+        }
+        else {
+            return Object.entries(from).every(([key, value]) => isEqual(value, to[key]));
+        }
+    }
+}
+
+/**
+ * 在对象中添加隐藏属性
+ * @param from 待添加属性的对象
+ * @param properties 添加的属性
+ */
+export function def(from: object, properties: object) {
+    Object.entries(properties).forEach(
+        ([key, value]) => Object.defineProperty(from, key, {
+            configurable: true,
+            writable: true,
+            enumerable: false,
+            value,
+        }),
+    );
 }

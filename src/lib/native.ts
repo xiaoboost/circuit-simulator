@@ -1,50 +1,10 @@
-/* tslint:disable:ban-types  */
+import {
+    def,
+    isFunc,
+    isUndef,
+} from './utils';
 
-import { mixins } from 'src/lib/utils';
-import * as assert from './assertion';
-
-mixins(Object.prototype, {
-    /** 比较对象是否相等 */
-    isEqual(this: Object, obj: Object): boolean {
-        if (!assert.isObject(obj)) {
-            return (false);
-        }
-        if (!Object.keys(this).isEqual(Object.keys(obj))) {
-            return (false);
-        }
-
-        return Object.entries(this).every(
-            ([key, value]) =>
-                (assert.isObject(value) && assert.isFunction(value.isEqual))
-                    ? value.isEqual(obj[key])
-                    : value === obj[key],
-        );
-    },
-});
-
-mixins(Array.prototype, {
-    /**
-     * 当前数组与输入是否相等
-     *
-     * @param {any} to
-     * @returns {boolean}
-     */
-    isEqual(this: any[], to: any): boolean {
-        if (!assert.isArray(to)) {
-            return (false);
-        }
-        if (this.length !== to.length) {
-            return (false);
-        }
-
-        return this.every(
-            (item, i) =>
-                (assert.isObject(item) && assert.isFunction(item.isEqual))
-                    ? item.isEqual(to[i])
-                    : item === to[i],
-        );
-    },
-
+def(Array.prototype, {
     /**
      * 根据下标取出当前数组元素
      *
@@ -76,11 +36,7 @@ mixins(Array.prototype, {
      * @returns {boolean}
      */
     delete<T>(this: T[], predicate: T | ((value: T, index: number) => boolean), whole = true): boolean {
-        const fn = (
-            assert.isFunction(predicate)
-                ? predicate
-                : (item: T) => item === predicate
-        );
+        const fn = isFunc(predicate) ? predicate : (item: T) => item === predicate;
 
         let index = 0, flag = false;
         while (index >= 0) {
@@ -108,7 +64,7 @@ mixins(Array.prototype, {
      * @returns {T[]}
      */
     unique<T>(this: T[], label?: (value: T, index: number) => number | string): T[] {
-        if (assert.isUndef(label)) {
+        if (isUndef(label)) {
             return [...new Set(this)];
         }
 
@@ -127,7 +83,7 @@ mixins(Array.prototype, {
     },
 });
 
-mixins(Number, {
+def(Number, {
     /**
      * 用于匹配科学记数法表示的字符串
      */
@@ -148,9 +104,9 @@ mixins(Number, {
             return Number(base) * Math.pow(10, Number(power));
         }
         else if (/[puμnmkMG]$/.test(notation)) {
-            const exp = { p: -12, u: -9, μ: -9, n: -6, m: -3, k: 3, M: 6, G: 9 },
-                power = exp[notation[notation.length - 1]] as number,
-                base = notation.substring(0, notation.length - 1);
+            const exp = { p: -12, u: -9, μ: -9, n: -6, m: -3, k: 3, M: 6, G: 9 };
+            const power = exp[notation[notation.length - 1]] as number;
+            const base = notation.substring(0, notation.length - 1);
 
             return Number(base) * Math.pow(10, power);
         }
@@ -160,7 +116,7 @@ mixins(Number, {
     },
 });
 
-mixins(Number.prototype, {
+def(Number.prototype, {
     /**
      * 按照有效数字的位数进行四舍五入。
      *  - 默认 6 位有效数字 [bits=6]
@@ -175,21 +131,23 @@ mixins(Number.prototype, {
             throw new Error('(number) cannot run .toRound() on NaN');
         }
 
-        const value = Math.abs(origin),
-            toInt = Math.floor(Math.log10(value)) - bits + 1,
-            transform = 10 ** toInt,
-            // round 一定是整数
-            round = String(Math.round(value / transform)),
-            // 原始数据符号
-            sign = origin < 0 ? '-' : '';
+        const value = Math.abs(origin);
+        const toInt = Math.floor(Math.log10(value)) - bits + 1;
+        const transform = 10 ** toInt;
+        // round 一定是整数
+        const round = String(Math.round(value / transform));
+        // 原始数据符号
+        const sign = origin < 0 ? '-' : '';
 
         // 插入小数点
         let str = '';
         if (toInt > 0) {
             str = round + '0'.repeat(toInt);
-        } else if (-toInt >= bits) {
+        }
+        else if (-toInt >= bits) {
             str = `0.${'0'.repeat(-toInt - bits)}${round}`;
-        } else {
+        }
+        else {
             str = `${round.slice(0, toInt)}.${round.slice(toInt)}`;
         }
 
