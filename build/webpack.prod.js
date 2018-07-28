@@ -10,11 +10,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 baseConfig.plugins.push(
-    new OptimizeCSSPlugin({
-        cssProcessorOptions: {
-            safe: true,
-        },
-    }),
+    new OptimizeCSSPlugin(),
     new UglifyJSPlugin({
         test: /\.js$/i,
         cache: false,
