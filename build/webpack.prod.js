@@ -1,12 +1,13 @@
 process.env.NODE_ENV = 'production';
 
-const chalk = require('chalk'),
-    shell = require('shelljs'),
-    webpack = require('webpack'),
-    config = require('./config'),
-    baseConfig = require('./webpack.base'),
-    UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
-    OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+const { rm } = require('shelljs');
+const { cyan } = require('chalk');
+
+const webpack = require('webpack');
+const config = require('./config');
+const baseConfig = require('./webpack.base');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
 baseConfig.plugins.push(
     new OptimizeCSSPlugin({
@@ -18,7 +19,7 @@ baseConfig.plugins.push(
         test: /\.js$/i,
         cache: false,
         uglifyOptions: {
-            ecma: 8,  // 2017
+            ecma: 6,
             ie8: false,
             safari10: false,
             output: {
@@ -29,11 +30,11 @@ baseConfig.plugins.push(
 );
 
 if (config.bundleAnalyzer) {
-    const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+    const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
     baseConfig.plugins.push(new BundleAnalyzerPlugin());
 }
 
-shell.rm('-rf', config.output);
+rm('-rf', config.output);
 
 webpack(baseConfig, (err, stats) => {
     if (err) {
@@ -51,5 +52,5 @@ webpack(baseConfig, (err, stats) => {
         children: false,
     }));
 
-    console.log(chalk.cyan('\n  Build complete.\n'));
+    console.log(cyan('\n  Build complete.\n'));
 });

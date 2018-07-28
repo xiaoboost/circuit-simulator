@@ -1,20 +1,20 @@
-const chalk = require('chalk'),
-    webpack = require('webpack'),
-    utils = require('./utils'),
-    config = require('./config'),
-    buildTag = utils.createBuildTag(),
-    isDevelopment = process.env.NODE_ENV === 'development',
-    isWebpackServer = process.env.SERVER_TYPE === 'webpack',
-    CopyWebpackPlugin = require('copy-webpack-plugin'),
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
-    ProgressBarPlugin = require('progress-bar-webpack-plugin'),
-    MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { yellow, green } = require('chalk');
+const { resolve, buildTag } = require('./utils');
+
+const config = require('./config');
+const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 const banner =
 `Project: Circuit Simulator
 Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
-Build: ${buildTag}
+Build: ${buildTag()}
 filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
@@ -22,13 +22,12 @@ Released under the MIT License.`;
 
 // 清空屏幕
 console.log('\x1Bc');
-console.log(chalk.yellow('> Start Compile:\n'));
+console.log(yellow('> Start Compile:\n'));
 
 module.exports = {
     mode: process.env.NODE_ENV,
     entry: {
-        // 主业务逻辑文件
-        main: utils.resolve('./src/main.ts'),
+        main: resolve('src/main.ts'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -46,12 +45,12 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.ts', '.tsx', '.js', '.vue', '.json', '.styl'],
+        extensions: ['.ts', '.js', '.vue', '.json', '.styl'],
         // 目录下的默认主文件
-        mainFiles: ['index.ts', 'index.tsx', 'index.js'],
+        mainFiles: ['index.ts'],
         // 默认路径别名
         alias: {
-            'src': utils.resolve('src'),
+            'src': resolve('src'),
             'vue$': isDevelopment
                 ? 'vue/dist/vue.esm.js'
                 : 'vue/dist/vue.runtime.esm.js',
@@ -60,34 +59,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                loader: 'tslint-loader',
-                enforce: 'pre',
-                include: [utils.resolve('src')],
-                options: {
-                    typeCheck: true,
-                    emitErrors: true,
-                    configFile: 'tslint.json',
-                    tsConfigFile: 'tsconfig.json',
-                    formattersDirectory: 'node_modules/tslint-loader/formatters/',
-                },
-            },
-            {
                 test: /\.ts$/,
                 exclude: /node_modules/,
                 loader: 'ts-loader',
             },
             {
-                test: /\.tsx$/,
-                exclude: /node_modules/,
-                use: ['babel-loader', 'ts-loader'],
-            },
-            {
                 test: /\.styl(us)?$/,
                 use: [
-                    (isDevelopment && isWebpackServer)
-                        ? 'style-loader'
-                        : MiniCssExtractPlugin.loader,
+                    MiniCssExtractPlugin.loader,
                     'css-loader',
                     'stylus-loader',
                 ],
@@ -115,7 +94,6 @@ module.exports = {
         // 定义全局注入变量
         new webpack.DefinePlugin({
             'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
-            '$ENV.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
         // 保持模块的 hash id 不变
         new webpack.HashedModuleIdsPlugin({
@@ -146,7 +124,7 @@ module.exports = {
                 build: buildTag,
                 year: new Date().getFullYear(),
             },
-            template: utils.resolve('src/index.html'),
+            template: resolve('src/index.html'),
             inject: true,
             minify: {
                 removeComments: !isDevelopment,
@@ -160,7 +138,7 @@ module.exports = {
         }),
         new ProgressBarPlugin({
             width: 40,
-            format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
+            format: `${green('> building:')} [:bar] ${green(':percent')} (:elapsed seconds)`,
         }),
     ],
 };

@@ -12,14 +12,10 @@
         // 如何处理模块
         "moduleResolution": "node",
         // 编译输出目标 ES 版本
-        "target": "es2016",
-        // 输出为 jsx 文件
-        "jsx": "preserve",
-        // jsx 工厂函数名称
-        "jsxFactory": "h",
+        "target": "es6",
         // 允许从没有设置默认导出的模块中默认导入
         "allowSyntheticDefaultImports": true,
-        // 将每个文件作为单独的模块
+        //  不将每个文件作为单独的模块
         "isolatedModules": false,
         // 启用装饰器
         "experimentalDecorators": true,
@@ -44,7 +40,7 @@
         // 允许编译 javascript 文件
         "allowJs": true,
         // 包含的库定义文件
-        "lib": ["es2015", "es2016", "es2017", "dom", "webworker"],
+        "lib": ["es2015", "es2016", "es2017", "dom"],
         // 编译的基础路径
         "baseUrl": "."
     },

@@ -1,54 +1,62 @@
-const path = require('path');
+const { join } = require('path');
 
 /**
  * Generate tag of build
- *
  * @returns {string}
  */
-exports.createBuildTag = function() {
-    const now = new Date(),
-        year = now.getFullYear(),
-        month = String(now.getMonth() + 1).padStart(2, '0'),
-        date = String(now.getDate()).padStart(2, '0'),
-        time = now.toTimeString().slice(0, 8);
+exports.buildTag = function() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const date = String(now.getDate()).padStart(2, '0');
+    const time = now.toTimeString().slice(0, 8);
 
     return `${year}.${month}.${date} - ${time}`;
-};
-
-/**
- * Translate a normal object to a object that used in DefinePlugin
- *
- * @param {object}
- * @returns {object}
- */
-exports.dataForDefinePlugin = function expand(obj) {
-    return Object
-        .entries(obj)
-        .reduce((ans, [key, value]) => {
-            if (
-                ((typeof value !== 'string' && !(value instanceof Object))) ||
-                ((typeof value === 'string') && !/^"[\d\D]+"$/.test(value))
-            ) {
-                ans[key] = JSON.stringify(value);
-            }
-            else if (!(ans instanceof Object)) {
-                ans[key] = value;
-            }
-            else {
-                const subObject = expand(value);
-                Object
-                    .entries(subObject)
-                    .forEach(([subKey, subValue]) => (ans[`${key}.${subKey}`] = subValue));
-            }
-
-            return ans;
-        }, {});
 };
 
 /**
  * 定位到项目根目录
  * @param {string} dir 路径
  */
-exports.resolve = function(dir) {
-    return path.join(__dirname, '..', dir);
+exports.resolve = (dir) => join(__dirname, '..', dir);
+
+/**
+ * 内存中间件
+ * @param {object} fs 文件系统
+ * @param {string} 文件根目录
+ */
+exports.ramMiddleware = function(fs, root) {
+    return function middleware(ctx, next) {
+        if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
+            ctx.status = 405;
+            ctx.length = 0;
+            ctx.set('Allow', 'GET, HEAD');
+            next();
+            return (false);
+        }
+
+        const filePath = ctx.path[ctx.path.length - 1] === '/'
+            ? join(root, ctx.path, 'index.html')
+            : join(root, ctx.path);
+
+        const fileStat = fs.statSync(filePath);
+
+        ctx.type = filePath;
+        ctx.lastModified = new Date();
+
+        ctx.set('Accept-Ranges', 'bytes');
+        ctx.set('Cache-Control', 'max-age=0');
+
+        // memory-fs
+        if (fileStat.size) {
+            ctx.length = fileStat.size;
+        }
+        // node-fs
+        else {
+            ctx.length = Buffer.from(fs.readFileSync(filePath)).length;
+        }
+
+        ctx.body = fs.createReadStream(filePath);
+        next();
+    };
 };
