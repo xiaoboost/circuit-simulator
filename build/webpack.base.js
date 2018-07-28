@@ -5,6 +5,7 @@ const config = require('./config');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -45,7 +46,7 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.ts', '.js', '.vue', '.json', '.styl'],
+        extensions: ['.vue', '.ts', '.js', '.json', '.styl'],
         // 目录下的默认主文件
         mainFiles: ['index.ts'],
         // 默认路径别名
@@ -58,6 +59,10 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader',
+            },
             {
                 test: /\.ts$/,
                 exclude: /node_modules/,
@@ -86,6 +91,8 @@ module.exports = {
         },
     },
     plugins: [
+        // vue loader 配置
+        new VueLoaderPlugin(),
         // 添加文件抬头信息
         new webpack.BannerPlugin({
             banner,
@@ -121,7 +128,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             data: {
-                build: buildTag,
+                build: buildTag(),
                 year: new Date().getFullYear(),
             },
             template: resolve('src/index.html'),
