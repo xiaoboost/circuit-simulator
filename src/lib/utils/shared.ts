@@ -1,3 +1,5 @@
+import { supportsOnce, supportsPassive } from './env';
+
 /**
  * 生成异步延迟函数
  * @param {number} [time=0]
@@ -13,7 +15,7 @@ export function delay(time = 0) {
  * @param {string} type
  * @returns {Promise<Event>}
  */
-export function onceEvent(el: Element, type: string) {
+export function onceEvent(el: Element, type: string): Promise<Event> {
     let option: boolean | {
         passive?: boolean;
         once?: boolean;
@@ -69,26 +71,11 @@ export function randomString(len = 16) {
 }
 
 /**
- * 返回一个判断 key 是否存在其中的函数
- * @param {string} map 数据聚合
- * @param {boolean} [expectsLowerCase=false] 判断时是否变为小写
- */
-export function makeMap(map: string, expectsLowerCase = false) {
-    const inside = {};
-
-    map.split(',').forEach((key) => (inside[key] = true));
-
-    return expectsLowerCase
-        ? (key: string) => Boolean(inside[key.toLowerCase()])
-        : (key: string) => Boolean(inside[key]);
-}
-
-/**
  * Hyphenate a camelCase string.
  * @param {string} str
  */
 export function hyphenate(str: string) {
-  return str.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+    return str.replace(/\B([A-Z])/g, '-$1').toLowerCase();
 }
 
 /**

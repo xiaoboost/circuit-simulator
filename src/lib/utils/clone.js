@@ -1,4 +1,7 @@
-import { isBaseType } from './assertion';
+import {
+    isArray,
+    isBaseType,
+} from './assertion';
 
 /**
  * 检查输入数据是否含有循环结构
@@ -39,19 +42,11 @@ export function clone(data, check = true) {
         throw new Error('Can not clone circular structure.');
     }
 
-    // TODO: 全部改成使用 from 静态接口
-    if (data instanceof Point) {
-        return $P(data);
-    }
-    else if (data instanceof Matrix) {
-        return $M(data);
-    }
-    else if (data instanceof LineWay) {
-        return LineWay.from(data);
-    }
-    else if (assert.isArray(data)) {
+    // 数组，深度复制
+    if (isArray(data)) {
         return data.map((n) => clone(n));
     }
+    // FIXME: 全部改成使用 from 静态接口
     // 默认对象
     else {
         return Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {});
