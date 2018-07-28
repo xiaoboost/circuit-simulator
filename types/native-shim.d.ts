@@ -1,27 +1,4 @@
-interface Object {
-    /**
-     * 当前对象是否含有可枚举元素
-     *
-     * @returns {boolean}
-     */
-    isEmpty(): boolean;
-    /**
-     * 当前对象实例与输入对象是否相等
-     *
-     * @param {*} obj
-     * @returns {boolean}
-     */
-    isEqual(obj: any): boolean;
-}
-
 interface Array<T> {
-    /**
-     * 当前数组与输入是否相等
-     *
-     * @param {any} to
-     * @returns {boolean}
-     */
-    isEqual(to: any): boolean;
     /**
      * 根据下标取出当前数组元素
      *
@@ -58,12 +35,6 @@ interface Array<T> {
      * @param {T} value
      */
     $set(index: number, value: T): void;
-    /**
-     * 在数组本身引用不变的情况下，替换整个数组内容
-     *
-     * @param {T[]} replace 被替换的内容
-     */
-    $replace(replace: T[]): void;
 }
 
 interface NumberConstructor {
