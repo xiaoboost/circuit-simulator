@@ -1,4 +1,4 @@
-import { Matrix } from './matrix';
+import Matrix from './matrix';
 import { isNumber, isUndef } from './utils';
 
 type PointLike = number[] | Point;

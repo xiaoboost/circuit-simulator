@@ -1,21 +1,23 @@
-import * as assert from './assertion';
+import {
+    isUndef,
+    isArray,
+    isNumber,
+} from './utils';
 
 /**
  * 矩阵类
  *
  * @class Matrix
  */
-class Matrix {
+export default class Matrix {
     /**
      * 矩阵的行数
-     *
      * @type {number}
      */
     row: number;
 
     /**
      * 矩阵的列数
-     *
      * @type {number}
      */
     column: number;
@@ -24,7 +26,6 @@ class Matrix {
      * 矩阵数据
      *  - 一维数组
      *  - 64位 double 类型浮点数
-     *
      * @private
      * @type {Float64Array}
      */
@@ -32,45 +33,25 @@ class Matrix {
 
     /**
      * Creates an instance of Matrix.
-     * @param {(number | number[][] | Matrix)} row
+     * @param {number} row
      * @param {(number | 'E')} [column]
      * @param {number} [value=0]
      */
-    constructor(matrix: number[][] | Matrix);
     constructor(order: number, value?: number | 'E');
     constructor(row: number, column: number, value?: number);
-    constructor(row: number | number[][] | Matrix, column?: number | 'E', value: number = 0) {
-        // 从数组创建矩阵
-        if (assert.isArray(row)) {
-            const data: number[] = [], size = calMatrixSize(row);
-
-            this.row = size.row;
-            this.column = size.column;
-            row.forEach((n) => data.push(...n));
-
-            const buffer = new ArrayBuffer(this.row * this.column * 8);
-            this._view = new Float64Array(buffer);
-            this._view.set(data);
-        }
-        // 复制矩阵
-        else if (isMatrix(row)) {
-            this.row = row.row;
-            this.column = row.column;
-            this._view = Float64Array.from(row._view);
-        }
+    constructor(row: number, column?: number | 'E', value = 0) {
         // 单位矩阵
-        else if (column === 'E') {
+        if (column === 'E') {
             this.row = row;
             this.column = row;
-            const buffer = new ArrayBuffer(this.row * this.column * 8);
-            this._view = new Float64Array(buffer);
+            this._view = new Float64Array(new ArrayBuffer(this.row * this.column * 8));
 
             for (let i = 0; i < row; i++) {
                 this._view[i * (row + 1)] = 1;
             }
         }
         // 零矩阵
-        else if (assert.isUndef(column)) {
+        else if (isUndef(column)) {
             this.row = row;
             this.column = row;
             this._view = Float64Array.from(Array(row * row).fill(0));
@@ -81,6 +62,26 @@ class Matrix {
             this.column = column;
             this._view = Float64Array.from(Array(row * column).fill(value));
         }
+    }
+
+    static from(matrix: number[][] | Matrix) {
+        let result: Matrix;
+
+        // 从数组创建矩阵
+        if (isArray(matrix)) {
+            const { row, column } = calMatrixSize(matrix);
+            const data = matrix.reduce((ans, item) => ans.concat(item), []);
+
+            result = new Matrix(row, column);
+            result._view.set(data);
+        }
+        // 复制矩阵
+        else {
+            result = new Matrix(matrix.row, matrix.column);
+            result._view = Float64Array.from(matrix._view);
+        }
+
+        return result;
     }
 
     /**
@@ -199,7 +200,7 @@ class Matrix {
      * @returns {Matrix}
      */
     mul(ma: number[][] | Matrix): Matrix {
-        const a = isMatrix(ma) ? ma : (new Matrix(ma));
+        const a = isMatrix(ma) ? ma : (Matrix.from(ma));
 
         if (this.column !== a.row) {
             throw new Error('(matrix) this can not be multiplied with ma.');
@@ -231,7 +232,7 @@ class Matrix {
      * @returns {Matrix}
      */
     multo(ma: number[][] | Matrix): Matrix {
-        const a = isMatrix(ma) ? ma : (new Matrix(ma));
+        const a = isMatrix(ma) ? ma : (Matrix.from(ma));
 
         if (this.column !== a.row) {
             throw new Error('(matrix) ma can not be multiplied with this.');
@@ -250,7 +251,7 @@ class Matrix {
         }
 
         const n = this.row,             // 行列式的行数
-            U = new Matrix(this),       // 上三角行列式
+            U = Matrix.from(this),      // 上三角行列式
             L = new Matrix(n),          // 下三角行列式
             P = new Matrix(n, 'E');     // 变换行列式，初始为单位矩阵
 
@@ -373,9 +374,9 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 
     // 列连续且列长均相等
     if (!ma.every((col) =>
-            assert.isArray(col) && col.length === column &&
+            isArray(col) && col.length === column &&
             Object.keys(col).every((n, i) => +n === i) &&
-            Object.values(col).every((n) => assert.isNumber(n) && !Number.isNaN(n)),
+            Object.values(col).every((n) => isNumber(n) && !Number.isNaN(n)),
     )) {
         throw new Error('(matrix) this is not a matrix.');
     }
@@ -389,7 +390,6 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 
 /**
  * new Matrix(row, column, value) 运算的封装
- *
  * @param {(number | number[][] | Matrix)} row
  * @param {(number | 'E')} [column]
  * @param {number} [value=0]
@@ -399,15 +399,12 @@ function $M(matrix: number[][] | Matrix): Matrix;
 function $M(order: number, value?: number | 'E'): Matrix;
 function $M(row: number, column: number, value?: number): Matrix;
 function $M(row: number | number[][] | Matrix, column?: number | 'E', value?: number) {
-    return new Matrix(row as number, column as number, value);
+    if (isArray(row) || row instanceof Matrix) {
+        return Matrix.from(row);
+    }
+    else {
+        return new Matrix(row, column as number, value);
+    }
 }
 
-// 旋转矩阵
-const rotates: [Matrix, Matrix, Matrix, Matrix] = [
-    $M([[0, 1], [-1, 0]]),  // 顺时针
-    $M([[0, -1], [1, 0]]),  // 逆时针
-    $M([[1, 0], [0, -1]]),  // 沿 X 轴镜像
-    $M([[-1, 0], [0, 1]]),  // 沿 Y 轴镜像
-];
-
-export { $M, Matrix, rotates };
+export { $M };

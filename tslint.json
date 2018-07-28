@@ -2,6 +2,10 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 函数重载不强制合并
+        "unified-signatures": false,
+        // 不强制规定类属性的排序
+        "member-ordering": false,
         // 类定义时，不需要写出 public 关键字
         "member-access": [true, "no-public"],
         // 允许带有副作用的 import 语句
