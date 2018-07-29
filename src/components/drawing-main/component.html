@@ -1,0 +1,15 @@
+<section
+    id="drawing-main"
+    :style="backgroundStyle"
+    :class="{ 'no-event': !exclusion }">
+    <svg
+        version="2" height="100%" width="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        @mousedown.stop.self.right.passive="moveMap"
+        @click.stop.self.right.passive="openRightMenu"
+        @wheel.passive="resizeMap">
+        <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
+            器件导线留白
+        </g>
+    </svg>
+</section>
