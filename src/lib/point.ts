@@ -44,26 +44,12 @@ export default class Point {
     /**
      * 从类似 Point 结构的数据中创建 Point
      */
-    static from(point: number): Point;
-    static from(point: PointLike): Point;
-    static from(start: number, end: number): Point;
-    static from(start: PointLike, end: PointLike): Point;
-    static from(start: PointInput, end?: PointInput) {
-        // 输入一个值
-        if (isUndef(end)) {
-            if (isNumber(start)) {
-                return new Point(start, start);
-            }
-            else {
-                return new Point(start[0], start[1]);
-            }
+    static from(start: PointInput) {
+        if (isNumber(start)) {
+            return new Point(start, start);
         }
-        // 输入了两个值
         else {
-            return new Point(
-                start as PointLike,
-                end as PointLike,
-            );
+            return new Point(start[0], start[1]);
         }
     }
 
@@ -346,7 +332,7 @@ export default class Point {
     everyRect(rect: number[][], predicate: (node: Point) => boolean): boolean {
         for (let i = this[0] + rect[0][0]; i <= this[0] + rect[1][0]; i++) {
             for (let j = this[1] + rect[0][1]; j <= this[1] + rect[1][1]; j++) {
-                if (!predicate($P(i, j))) {
+                if (!predicate(new Point(i, j))) {
                     return (false);
                 }
             }
@@ -456,4 +442,30 @@ export default class Point {
     }
 }
 
-export const $P = Point.from;
+/**
+ * 从类似 Point 结构的数据中创建 Point
+ */
+function $P(point: number): Point;
+function $P(point: PointLike): Point;
+function $P(start: number, end: number): Point;
+function $P(start: PointLike, end: PointLike): Point;
+function $P(start: PointInput, end?: PointInput) {
+    // 输入一个值
+    if (isUndef(end)) {
+        if (isNumber(start)) {
+            return new Point(start, start);
+        }
+        else {
+            return new Point(start[0], start[1]);
+        }
+    }
+    // 输入了两个值
+    else {
+        return new Point(
+            start as PointLike,
+            end as PointLike,
+        );
+    }
+}
+
+export { $P };

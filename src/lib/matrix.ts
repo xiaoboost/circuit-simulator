@@ -399,7 +399,7 @@ function $M(matrix: number[][] | Matrix): Matrix;
 function $M(order: number, value?: number | 'E'): Matrix;
 function $M(row: number, column: number, value?: number): Matrix;
 function $M(row: number | number[][] | Matrix, column?: number | 'E', value?: number) {
-    if (isArray(row) || row instanceof Matrix) {
+    if (isArray(row) || isMatrix(row)) {
         return Matrix.from(row);
     }
     else {
