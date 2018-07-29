@@ -15,7 +15,7 @@
                 @mousemove="setTip(part, $event)"
                 @mouseleave.stop.self="() => tipStyle = { display: 'none' }">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
-                    <part-show :type="part"></part-show>
+                    <part-show v-once :type="part"></part-show>
                 </svg>
             </button>
         </div>
