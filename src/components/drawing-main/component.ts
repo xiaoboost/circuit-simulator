@@ -3,7 +3,46 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
 
-@Component
+/** 图纸状态接口 */
+export type MapStatus =
+    Readonly<Pick<DrawingMain, 'zoom' | 'position' | 'exclusion'>> &
+    Pick<DrawingMain, 'partsNow' | 'linesNow'>;
+
+@Component({
+    provide(this: DrawingMain) {
+        const mapStatus: MapStatus = {} as any;
+
+        Object.defineProperties(mapStatus, {
+            partsNow: {
+                enumerable: true,
+                get: () => this.partsNow,
+                set: (value: string[]) => this.partsNow = value.slice(),
+            },
+            linesNow: {
+                enumerable: true,
+                get: () => this.linesNow,
+                set: (value: string[]) => this.linesNow = value.slice(),
+            },
+            zoom: {
+                enumerable: true,
+                get: () => this.zoom,
+            },
+            position: {
+                enumerable: true,
+                get: () => $P(this.position),
+            },
+            exclusion: {
+                enumerable: true,
+                get: () => this.exclusion,
+            },
+        });
+
+        return {
+            mapStatus,
+            createDrawEvent: this.createDrawEvent,
+        };
+    },
+})
 export default class DrawingMain extends Vue {
     zoom = 1;
     position = $P(0, 0);
