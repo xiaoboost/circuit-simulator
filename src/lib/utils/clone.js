@@ -46,10 +46,20 @@ export function clone(data, check = true) {
     if (isArray(data)) {
         return data.map((n) => clone(n));
     }
-    // FIXME: 全部改成使用 from 静态接口
     // 默认对象
     else {
-        return Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {});
+        const prototype = Object.getPrototypeOf(data);
+
+        if (
+            prototype &&
+            prototype.constructor &&
+            prototype.constructor.from
+        ) {
+            return prototype.constructor.from(data);
+        }
+        else {
+            return Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {});
+        }
     }
 }
 

@@ -33,7 +33,5 @@ if (inBrowser) {
     catch (e) {}
 }
 
-// 正式环境下网页禁止右键
-if (process.env.NODE_ENV === 'production') {
-    document.oncontextmenu = () => false;
-}
+// 全局禁止右键
+document.oncontextmenu = () => false;

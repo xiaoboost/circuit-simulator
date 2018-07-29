@@ -1,6 +1,5 @@
-import * as utils from 'src/lib/utils';
-import * as assert from 'src/lib/assertion';
-import { $P, Point, PointLike } from 'src/lib/point';
+import { clone, isArray } from 'src/lib/utils';
+import Point, { $P, PointLike } from 'src/lib/point';
 
 export interface MapPointData {
     /**
@@ -62,7 +61,7 @@ function point2key(node: PointLike): string {
  */
 function dataClone(data: MapPointData): MapPointData {
     const mustKeys = ['id', 'point', 'type', 'connect'];
-    const ans = utils.clone(data);
+    const ans = clone(data);
 
     Object
         .keys(ans)
@@ -146,8 +145,8 @@ export function mergePoint(data: MapPointData, large = false): void {
     }
 
     if (
-        assert.isArray(newData.connect) &&
-        oriData && assert.isArray(oriData.connect)
+        isArray(newData.connect) &&
+        oriData && isArray(oriData.connect)
     ) {
         newData.connect = newData.connect.concat(oriData.connect);
         newData.connect = newData.connect.unique(point2key);
@@ -313,7 +312,7 @@ export function alongTheLine(
 
     // 起点并不是导线或者起点等于终点，直接返回
     if (!isLine(sNode) || sNode.isEqual(eNode)) {
-        return (new Point(start));
+        return $P(start);
     }
 
     let node = sNode, next = node.add(uVector);

@@ -468,4 +468,4 @@ function $P(start: PointInput, end?: PointInput) {
     }
 }
 
-export { $P };
+export { $P, PointLike };
