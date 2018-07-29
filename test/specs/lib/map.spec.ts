@@ -1,6 +1,6 @@
 import 'src/lib/native';
 
-import Point, { $P } from 'src/lib/point';
+import { $P } from 'src/lib/point';
 import * as map from 'src/lib/map';
 
 describe('map.ts: Data marked by drawings', () => {
@@ -87,11 +87,10 @@ describe('map.ts: Data marked by drawings', () => {
         expect(map.hasPoint([2, 3])).toBeFalse();
     });
     test('hasConnect/addConnect/deleteConnect()', () => {
-        const data = {
+        const data: map.MapPointData = {
             id: 'R_1',
             type: 'line',
             point: $P(1, 3),
-            connect: undefined as (undefined | Point[]),
         };
 
         expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
