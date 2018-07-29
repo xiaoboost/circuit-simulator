@@ -5,15 +5,15 @@ module.exports = {
     moduleFileExtensions: [
         'vue',
         'ts',
-        'tsx',
         'js',
+        'json',
     ],
     moduleNameMapper: {
         '^src/(.*)$': '<rootDir>/src/$1',
         '\\.(css|styl(us)?)$': '<rootDir>/test/mocks/style.js',
     },
     transform: {
-        '^.+\\.(j|t)sx?$': '<rootDir>/node_modules/ts-jest',
+        '^.+\\.(j|t)s$': '<rootDir>/node_modules/ts-jest',
         '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
     },
     testURL: 'http://localhost/',
@@ -22,18 +22,21 @@ module.exports = {
     setupTestFrameworkScriptFile: '<rootDir>/test/setups/env.ts',
     coverageDirectory: '<rootDir>/test/coverage',
     collectCoverageFrom: [
-        'src/**/*.ts',
+        'src/**/*.{ts,vue}',
 
         '!src/main.ts',
         '!src/**/*.d.ts',
         '!src/lib/utils/*',
-        '!src/**/{types,icons,debugger}.ts',
         '!src/components/electronic-part/parts/*',
+        '!src/**/{types,icons,debugger,component}.ts',
         '!**/node_modules/**',
     ],
     globals: {
         'vue-jest': {
-            tsConfigFile: 'tsconfig.json',
+            tsConfigFile: 'tsconfig.jest.json',
+        },
+        'ts-jest': {
+            tsConfigFile: 'tsconfig.jest.json',
         },
     },
 };
