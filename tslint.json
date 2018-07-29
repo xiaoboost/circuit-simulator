@@ -2,6 +2,8 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 不强制使用 interface 字面量
+        "interface-over-type-literal": false,
         // 函数重载不强制合并
         "unified-signatures": false,
         // 不强制规定类属性的排序

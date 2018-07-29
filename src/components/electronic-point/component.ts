@@ -1,9 +1,9 @@
-import './component.styl';
-
-import * as assert from 'src/lib/assertion';
-import { CreateElement } from 'vue';
-import { MapStatus } from 'src/components/drawing-main';
+import { MapStatus } from 'src/components/drawing-main/component';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
+import { isString, isArray } from 'src/lib/utils';
+
+type ClassObject = { [className: string]: boolean };
+type ClassInput = string | ClassObject | Array<ClassObject | string>;
 
 /** 半径变化 */
 const radius = {
@@ -29,7 +29,7 @@ export default class ElectronicPoint extends Vue {
     readonly r!: number;
 
     @Prop({ type: [Array, String, Object], default: '' })
-    readonly classList!: JSX.Vue.VueAttributes['class'];
+    readonly classList!: ClassInput;
 
     @Inject()
     mapStatus!: MapStatus;
@@ -46,29 +46,30 @@ export default class ElectronicPoint extends Vue {
     private animateTo = 0;
 
     /** 实际的半径 */
-    get actual(): number {
+    get actual() {
         return (this.r >= 0) ? this.r : this.inner;
     }
+
     /** 当前节点 class 的字符串 */
-    get className(): string {
+    get className() {
         /**
          * 解析 class 对象
          * @param {{ [className: string]: boolean }} classObject
          * @return {string} className
          */
-        function parseClassObject(classObject: { [className: string]: boolean }) {
+        function parseClassObject(classObject: ClassObject) {
             return Object.keys(classObject).filter((key) => classObject[key]).join(' ');
         }
 
         // 输入是字符串，返回本身
-        if (assert.isString(this.classList)) {
+        if (isString(this.classList)) {
             return this.classList;
         }
         // 输入数组
-        else if (assert.isArray(this.classList)) {
+        else if (isArray(this.classList)) {
             return this.classList.map(
                 (item) =>
-                    assert.isString(item) ? item : parseClassObject(item),
+                    isString(item) ? item : parseClassObject(item),
             ).join(' ');
         }
         // 输入对象
@@ -112,24 +113,5 @@ export default class ElectronicPoint extends Vue {
     mounted() {
         this.mouseleave();
         this.setAnimate(this.actual);
-    }
-
-    private render(h: CreateElement) {
-        return <g staticClass='electron-point' class={this.className}>
-            <circle ref='circle' cx='0' cy='0'>
-                <animate
-                    ref='animate' fill='freeze'
-                    attributeType='XML' attributeName='r'
-                    values={`${this.animateFrom}; ${this.animateTo}`}
-                    begin='indefinite' dur={`${this.animateTime}ms`}
-                    calcMode='spline'  keyTimes='0; 1' keySplines='.2 1 1 1'>
-                </animate>
-            </circle>
-            <rect
-                x='-8.5' y='-8.5' height='17' width='17'
-                onMouseenter={this.mouseenter}
-                onMouseleave={this.mouseleave}>
-            </rect>
-        </g>;
     }
 }
