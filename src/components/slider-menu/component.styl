@@ -5,15 +5,6 @@ width = 380px
 size = 50px
 
 #slider
-    section
-        position fixed
-        height 100%
-        width width
-        top 0
-        right 0
-        z-index 20
-        background-color White
-        box-shadow -5px 0 15px Shadow
     .gray-cover
         position fixed
         height 100%
@@ -45,7 +36,18 @@ size = 50px
             transform translate(10px, 22.5px) rotate(45deg)
         span::after
             transform translate(10px, 22.5px) rotate(135deg)
-    header
+    
+    /deep/ section
+        position fixed
+        height 100%
+        width width
+        top 0
+        right 0
+        z-index 20
+        background-color White
+        box-shadow -5px 0 15px Shadow
+
+    /deep/ header
         color White
         text-align  center
         background-color Blue
@@ -59,87 +61,86 @@ size = 50px
             font-size 40px
         h2
             font-size 25px
-    article
+    /deep/ article
         margin 10px 20px
         color Black
 
-#slider .time-config
-    h1
-        font-size 25px
-        line-height 1.5
-        font-weight normal
-        label
-            font-family font-serif
-            position absolute
-            color Silver
-        span
-            margin-left 35px
-            color Black
-    .form-item
-        display flex
-        margin 15px 10px 15px 35px
+    /deep/ #config-panel
+        h1
+            font-size 25px
+            line-height 1.5
+            font-weight normal
+            label
+                font-family font-serif
+                position absolute
+                color Silver
+            span
+                margin-left 35px
+                color Black
+        .form-item
+            display flex
+            margin 15px 10px 15px 35px
 
-        label
-            white-space nowrap
-        .input-grow
-            flex-grow 1
-            margin-right 10px
+            label
+                white-space nowrap
+            .input-grow
+                flex-grow 1
+                margin-right 10px
 
-#slider .parts-panel
-    .tool-tip
-        display none
-        position fixed
-        padding 5px
-        margin 6px
-        background #d9edf7
-        color #3f8aaf
-        font-family font-text
-        box-shadow 0 0 2px Shadow
-        border-radius 3px
-        height auto
-        font-size 16px
-        transform translate(-100%, -100%)
+    /deep/ #parts-panel
+        .tool-tip
+            display none
+            position fixed
+            padding 5px
+            margin 6px
+            background #d9edf7
+            color #3f8aaf
+            font-family font-text
+            box-shadow 0 0 2px Shadow
+            border-radius 3px
+            height auto
+            font-size 16px
+            transform translate(-100%, -100%)
 
-    .parts-list
-        margin 20px 0
+        .parts-list
+            margin 20px 0
 
-    .part-item
-        height 66px
-        width 66px
-        margin 0 10px
-        padding 0
-        outline 0
-        background #f2f2f2
-        border-radius 5px
-        border 1px solid Gray
-        box-shadow 0 0 3px Shadow
-        transition all .3s cubic-bezier(.3,.3,.1,1)
-        &:hover
-            background White
-        &:focus
-            background White
-            border 1px solid Light-Blue
-            box-shadow 0 0 3px Light-Blue
-        svg
-            height 58px
-            width 58px
-            margin 3px
-            stroke Black
-            stroke-width 2
-            stroke-linecap round
-            fill transparent
-
-            .fill-white
-                fill White
-            .fill-black
-                fill Black
-            path
+        .part-item
+            height 66px
+            width 66px
+            margin 0 10px
+            padding 0
+            outline 0
+            background #f2f2f2
+            border-radius 5px
+            border 1px solid Gray
+            box-shadow 0 0 3px Shadow
+            transition all .3s cubic-bezier(.3,.3,.1,1)
+            &:hover
+                background White
+            &:focus
+                background White
+                border 1px solid Light-Blue
+                box-shadow 0 0 3px Light-Blue
+            svg
+                height 58px
+                width 58px
+                margin 3px
+                stroke Black
                 stroke-width 2
-            rect,
-            polygon.fill-black
-                stroke-width 0
+                stroke-linecap round
+                fill transparent
 
-// 动画设定
+                .fill-white
+                    fill White
+                .fill-black
+                    fill Black
+                path
+                    stroke-width 2
+                rect,
+                polygon.fill-black
+                    stroke-width 0
+
 #slider.move-slide-enter-active,
 #slider.move-slide-leave-active
     transition opacity time

@@ -1,4 +1,5 @@
 import { actions } from './icons';
+import { Getter } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
 
 type IconKey = keyof typeof actions;
@@ -18,22 +19,20 @@ export default class ActionMenu extends Vue {
     private isRun = false;
 
     /** 是否显示菜单 */
-    get vision(): boolean {
-        // return this.$store.getters.isSpace;
-        return true;
-    }
+    @Getter('isSpace')
+    vision!: boolean;
 
     action(name: IconKey) {
         switch (name) {
             case 'add':
-                // this.$store.commit('OPEN_ADD_PARTS');
+                this.$store.commit('OPEN_ADD_PARTS');
                 break;
             case 'config':
-                // this.$store.commit('OPEN_MAIN_CONFIG');
+                this.$store.commit('OPEN_MAIN_CONFIG');
                 break;
             case 'run':
                 this.isRun = true;
-                // this.$store.dispatch('SOLVE_CIRCUIT');
+                this.$store.dispatch('SOLVE_CIRCUIT');
                 break;
             default:
         }

@@ -1,0 +1,24 @@
+<section id="parts-panel">
+    <header>
+        <h1>添加器件</h1>
+        <h2>Add Parts</h2>
+    </header>
+    <article>
+        <div
+            v-for="category in categories"
+            class="parts-list"
+            :key="category.key">
+            <button
+                v-for="part in category.parts"
+                class="part-item" :key="part"
+                @click="addPart(part)"
+                @mousemove="setTip(part, $event)"
+                @mouseleave.stop.self="() => tipStyle = { display: 'none' }">
+                <svg x="0px" y="0px" viewBox="0 0 80 80">
+                    <part-show :type="part"></part-show>
+                </svg>
+            </button>
+        </div>
+    </article>
+    <footer class="tool-tip" :style="tipStyle">{{ tipText }}</footer>
+</section>

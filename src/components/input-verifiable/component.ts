@@ -28,26 +28,32 @@ export default class InputVerifiable extends Vue {
 
     /** 组件内部值字符串 */
     txt = this.value;
-    /** 当前错误文本 */
+    /** 当前是否发生错误 */
+    isError = false;
+    /** 当前错误信息 */
     errorMessage = '';
 
     validate(value: string = this.txt): boolean {
-        this.errorMessage = '';
-
         const rules = this.rules instanceof Array ? this.rules : [this.rules];
+
+        this.isError = false;
+        this.errorMessage = '';
 
         for (const rule of rules) {
             if (rule.required && !value) {
+                this.isError = true;
                 this.errorMessage = rule.message || '';
                 return (false);
             }
 
             if (rule.pattern && !rule.pattern.test(value)) {
+                this.isError = true;
                 this.errorMessage = rule.message || '';
                 return (false);
             }
 
             if (rule.validator && !rule.validator(value)) {
+                this.isError = true;
                 this.errorMessage = rule.message || '';
                 return (false);
             }

@@ -7,7 +7,7 @@
             <div
                 class="fab-container"
                 v-for="icon in icons"
-                :key="icon.name" @click="action(icon)">
+                :key="icon.name" @click="action(icon.name)">
                 <span
                     v-if="icon.intro"
                     class="fab-tip"
