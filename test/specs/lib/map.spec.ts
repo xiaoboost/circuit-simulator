@@ -1,6 +1,6 @@
 import 'src/lib/native';
 
-import { $P, Point } from 'src/lib/point';
+import Point, { $P } from 'src/lib/point';
 import * as map from 'src/lib/map';
 
 describe('map.ts: Data marked by drawings', () => {

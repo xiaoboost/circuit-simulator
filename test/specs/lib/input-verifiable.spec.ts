@@ -1,10 +1,10 @@
 import Vue from 'vue';
-import { shallow, Wrapper } from '@vue/test-utils';
-import InputVerifiable from 'src/components/input-verifiable';
+import { shallowMount, Wrapper } from '@vue/test-utils';
+import InputVerifiable from 'src/components/input-verifiable/component';
 
 describe('input-verifiable.vue', () => {
     test('init without any props', () => {
-        const wrapper = shallow(InputVerifiable);
+        const wrapper = shallowMount(InputVerifiable);
         const props = wrapper.props()!;
 
         expect(props.value).toBe('');
@@ -13,7 +13,7 @@ describe('input-verifiable.vue', () => {
         expect(props.rules).toEqual([]);
     });
     test('update and clear the value', () => {
-        const wrapper = shallow(InputVerifiable);
+        const wrapper = shallowMount(InputVerifiable);
         const input = wrapper.find('input') as Wrapper<Vue> & { element: InputVerifiable['$refs']['input'] };
 
         // change props
@@ -32,14 +32,14 @@ describe('input-verifiable.vue', () => {
         expect(events[1][0]).toBe('');
     });
     test('call focus(), element of input should get focus', () => {
-        const wrapper = shallow(InputVerifiable);
+        const wrapper = shallowMount(InputVerifiable);
 
         wrapper.vm.focus();
 
         expect(document.activeElement).toBe(wrapper.vm.$refs.input);
     });
     test('check(), validate the value', () => {
-        const wrapper = shallow(InputVerifiable);
+        const wrapper = shallowMount(InputVerifiable);
 
         expect(wrapper.vm.validate()).toBeTrue();
 

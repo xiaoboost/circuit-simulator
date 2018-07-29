@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 
 import predicate from './predicate';
-import { Matrix } from 'src/lib/matrix';
+import Matrix from 'src/lib/matrix';
 
 function toString(ma: Matrix) {
     const maxColumnLen: number[] = [];

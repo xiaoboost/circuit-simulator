@@ -1,4 +1,4 @@
-import toEqualMatrix from './matchers/toEqualMatrix';
+import toEqualMatrix from './toEqualMatrix';
 
 const jestExpect = (global as any).expect as jest.Expect;
 
