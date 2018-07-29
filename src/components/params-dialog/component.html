@@ -1,0 +1,53 @@
+<transition name="fade" @enter="enter" @leave="leave">
+    <section class="params-dialog__wrapper" v-show="vision">
+        <div
+            ref="dialog"
+            class="params-dialog"
+            :style="{
+                left: `${position[0]}px`,
+                top: `${position[1]}px`,
+                transform: `translate(${bias[0]}px, ${bias[1]}px) scale(${scale})`,
+            }">
+            <header>参数设置</header>
+            <article>
+                <section class="params__label">
+                    <label>{{ idLabel }}</label>
+                    <label
+                        v-for="param in params"
+                        :key="param.label"
+                        v-text="param.label">
+                    </label>
+                </section>
+                <section class="params__input">
+                    <input-verifiable
+                        ref="id"
+                        v-model="id"
+                        :rules="idRules"
+                        placeholder="请输入编号">
+                    </input-verifiable>
+                    <input-verifiable
+                        ref="params"
+                        v-for="param in params"
+                        :key="param.label"
+                        :rules="paramsRules"
+                        v-model="param.value"
+                        placeholder="请输入参数">
+                    </input-verifiable>
+                </section>
+                <section class="params__unit">
+                    <span>&nbsp;</span>
+                    <span
+                        v-for="param in params"
+                        :key="param.label"
+                        v-text="param.unit">
+                    </span>
+                </section>
+            </article>
+            <footer>
+                <button class="cancel" onClick={this.beforeCancel}>取消</button>
+                <button class="confirm" onClick={this.beforeConfirm}>确定</button>
+            </footer>
+            <i class="triangle-icon" :style="this.triangleStyle"></i>
+        </div>
+    </section>
+</transition>

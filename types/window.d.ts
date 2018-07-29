@@ -1,7 +1,3 @@
-interface Environment {
-    readonly NODE_ENV: 'development';
-}
-
 interface Point {
     0: number;
     1: number;
@@ -28,12 +24,6 @@ interface MapDebug {
     whole(): void;
 }
 
-interface Extend extends Event, MouseEvent, WheelEvent, KeyboardEvent {
-    target: HTMLElement;
-    currentTarget: HTMLElement;
-}
-
-
 interface SVGAnimationElement extends SVGElement {
     readonly targetElement: SVGElement | null;
 
@@ -50,6 +40,4 @@ declare const SVGAnimationElement: {
 
 declare const supportsOnce: boolean;
 declare const supportsPassive: boolean;
-declare const $ENV: Environment;
 declare const $debugger: MapDebug;
-declare type EventExtend = Extend;

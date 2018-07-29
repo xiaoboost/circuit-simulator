@@ -1,16 +1,10 @@
-import './component.styl';
-
-import { CreateElement } from 'vue';
-import { Component, Vue, Watch } from 'vue-property-decorator';
-import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable';
-
 import vuex from 'src/vuex';
-import { $P } from 'src/lib/point';
-import { delay } from 'src/lib/utils';
-import { ParmasDescription } from 'src/components/electronic-part';
-import * as assert from 'src/lib/assertion';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable/component';
 
-const passive = supportsPassive ? { passive: true } : false;
+import { $P } from 'src/lib/point';
+import { delay, isEqual, supportsPassive } from 'src/lib/utils';
+import { ParmasDescription } from 'src/components/electronic-part/parts';
 
 /** 参数描述接口 */
 export interface Params extends Omit<ParmasDescription, 'default' | 'vision'> {
@@ -28,7 +22,7 @@ export default class ParamsDialog extends Vue {
     /** 参数列表 */
     params: Params[] = [];
     /** 指向的器件坐标 */
-    position = $P();
+    position = $P(0);
     /** 是否显示 */
     vision = false;
 
@@ -71,7 +65,7 @@ export default class ParamsDialog extends Vue {
     /** ID 的说明文本 */
     private idLabel = '编号：';
     /** 对话框偏移量 */
-    private bias = $P();
+    private bias = $P(0);
     /** 中心最小限制 */
     private min = 10;
     /** 对话框缩放比例 */
@@ -80,7 +74,6 @@ export default class ParamsDialog extends Vue {
     private isMounted = false;
 
     mounted() {
-        // 初始化完成标记置高
         this.isMounted = true;
     }
 
@@ -175,7 +168,11 @@ export default class ParamsDialog extends Vue {
     @Watch('vision')
     private visionHandler(status: boolean) {
         if (status) {
-            document.body.addEventListener('keyup', this.keyboardHandler, passive);
+            document.body.addEventListener(
+                'keyup',
+                this.keyboardHandler,
+                supportsPassive ? { passive: true } : false,
+            );
             this.$nextTick(() => this.$refs.id.focus());
         }
         else {
@@ -198,7 +195,7 @@ export default class ParamsDialog extends Vue {
 
         // 旋转角度
         const avg = this.location.reduce((add, di) => add + deg[di], 0) / len;
-        base.transform = this.location.isEqual(['bottom', 'right'])
+        base.transform = isEqual(this.location, ['bottom', 'right'])
             ? 'rotate(315deg)'
             : `rotate(${avg}deg)`;
 
@@ -310,60 +307,5 @@ export default class ParamsDialog extends Vue {
         ) {
             this.confirm();
         }
-    }
-
-    private render(h: CreateElement) {
-        return <transition name='fade' onEnter={this.enter} onLeave={this.leave}>
-            <section class='params-dialog__wrapper' v-show={this.vision}>
-                <div
-                    ref='dialog'
-                    class='params-dialog'
-                    style={{
-                        left: `${this.position[0]}px`,
-                        top: `${this.position[1]}px`,
-                        transform: `translate(${this.bias[0]}px, ${this.bias[1]}px) scale(${this.scale})`,
-                    }}>
-                    <header>参数设置</header>
-                    <article>
-                        <section class='params__label'>
-                            <label>{this.idLabel}</label>
-                            {this.params.map((param, i) =>
-                                <label key={i}>{`${param.label}：`}</label>,
-                            )}
-                        </section>
-                        <section class='params__input'>
-                            <input-verifiable
-                                ref='id'
-                                value={this.id}
-                                rules={this.idRules}
-                                placeholder='请输入编号'
-                                onInput={(val: string) => this.id = val}>
-                            </input-verifiable>
-                            {this.params.map((param, i) =>
-                                <input-verifiable
-                                    key={i}
-                                    ref='params' refInFor
-                                    value={param.value}
-                                    rules={this.paramsRules}
-                                    placeholder='请输入参数'
-                                    onInput={(val: string) => param.value = val}>
-                                </input-verifiable>,
-                            )}
-                        </section>
-                        <section class='params__unit'>
-                            <span>&nbsp;</span>
-                            {this.params.map((param, i) =>
-                                <span key={i}>{param.unit}</span>,
-                            )}
-                        </section>
-                    </article>
-                    <footer>
-                        <button class='cancel' onClick={this.beforeCancel}>取消</button>
-                        <button class='confirm' onClick={this.beforeConfirm}>确定</button>
-                    </footer>
-                    <i class='triangle-icon' style={this.triangleStyle}></i>
-                </div>
-            </section>
-        </transition>;
     }
 }
