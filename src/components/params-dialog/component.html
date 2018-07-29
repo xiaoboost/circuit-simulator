@@ -44,8 +44,8 @@
                 </section>
             </article>
             <footer>
-                <button class="cancel" onClick={this.beforeCancel}>取消</button>
-                <button class="confirm" onClick={this.beforeConfirm}>确定</button>
+                <button class="cancel" @click="beforeCancel">取消</button>
+                <button class="confirm" @click="beforeConfirm">确定</button>
             </footer>
             <i class="triangle-icon" :style="this.triangleStyle"></i>
         </div>
