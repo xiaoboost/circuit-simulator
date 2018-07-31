@@ -1,21 +1,26 @@
 import { Component } from 'vue-property-decorator';
 
 import * as map from 'src/lib/map';
-import { isEqual, randomString } from 'src/lib/utils';
 import { $M } from 'src/lib/matrix';
 import Point, { $P, PointLike } from 'src/lib/point';
 
-import Electronics, { ElectronicPrototype } from './parts';
-import ElectronicCore, { createId } from './common';
 import setPartParams from './dialog-controller';
+import Electronics, { ElectronicPrototype } from './parts';
+import ElectronicCore, { createId, findPartComponent } from './common';
 import ElectronicPoint from 'src/components/electronic-point/component';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
+import {
+    isEqual,
+    randomString,
+    copyProperties,
+} from 'src/lib/utils';
+
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
 
 export type PartData = Pick<PartComponent, dispatchKey>;
-export const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
 
 /** 兼容 PointLike 类型的点乘矩阵 */
 const product = (point: PointLike, ma: Matrix): Point => {
@@ -41,7 +46,7 @@ export const createPartData = (type: keyof Electronics): PartData => ({
         ElectronicPoint,
     },
 })
-export default class PartComponent extends ElectronicCore implements PartData {
+export default class PartComponent extends ElectronicCore {
     /** 器件原始数据 */
     readonly value!: PartData;
     /** 器件类型 */
@@ -97,6 +102,7 @@ export default class PartComponent extends ElectronicCore implements PartData {
     get points() {
         return this.origin.points.map((point, i) => ({
             size: this.pointSize[i],
+            originPosition: $P(point.position),
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
@@ -172,6 +178,13 @@ export default class PartComponent extends ElectronicCore implements PartData {
         this.points.forEach((point) => map.deletePoint(point.position.floorToSmall().add(position)));
     }
 
+    /** 将当前器件数据更新至`vuex` */
+    dispatch() {
+        this.$store.commit(
+            'UPDATE_PART',
+            copyProperties(this, disptchKeys),
+        );
+    }
     /** 当前位置是否被占用 */
     isCover(location = this.position) {
         const coverHash = {}, margin = this.margin;
@@ -221,7 +234,7 @@ export default class PartComponent extends ElectronicCore implements PartData {
             }
 
             // 校验相互距离
-            const part = this.findPartComponent(status.id);
+            const part = findPartComponent(status.id);
             const another = part.margin.outter;
             const distance = position.add(part.position.floorToSmall(), -1);
 
@@ -243,6 +256,14 @@ export default class PartComponent extends ElectronicCore implements PartData {
         });
 
         return (label);
+    }
+    /** TODO: 渲染说明文本 */
+    renderText() {
+
+    }
+    /** TODO: 移动说明文本 */
+    moveText() {
+
     }
 
     /** 设置属性 */

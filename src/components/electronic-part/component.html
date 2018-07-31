@@ -1,3 +1,32 @@
-<g>
-    器件占位
+<g
+    @dblclick.passive="setParams"
+    :class="['part', { focus }]"
+    :transform="`matrix(${rotate.join()},${position.join()})`">
+    <g class="focus-partial">
+        <!-- {this.origin.shape.map(
+            (shape) =>
+                h(shape.name, { attrs: shape.attribute }),
+        )} -->
+        <electronic-point
+            v-for="(point, i) in points"
+            :key="i" :r="point.size"
+            :classList="['part-point', point.class]"
+            :transform="`translate(${point.originPosition.join()})`">
+        </electronic-point>
+    </g>
+    <g
+        v-if="type !== 'reference_ground'"
+        @mousedown.passive="moveText"
+        :class="`text-params text-placement-${textPlacement}`"
+        :transform="`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`">
+        <text>
+            <tspan>{{ id.split('_')[0] }}</tspan>
+            <tspan>{{ id.split('_')[1] }}</tspan>
+        </text>
+        <text
+            v-for="(txt, i) in texts"
+            :key="i" :dy="16 * (i + 1)"
+            v-text="txt">
+        </text>
+    </g>
 </g>

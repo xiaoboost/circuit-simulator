@@ -1,8 +1,9 @@
 import { $P } from 'src/lib/point';
+import { State } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
-import PartComponent from '../electronic-part/component';
+import PartComponent, { PartData } from '../electronic-part/component';
 
 /** 图纸状态接口 */
 export type MapStatus =
@@ -54,6 +55,9 @@ export default class DrawingMain extends Vue {
     linesNow: string[] = [];
 
     exclusion = false;
+
+    @State('parts')
+    partsAll!: PartData[];
 
     /** 背景图纸样式 */
     get backgroundStyle() {

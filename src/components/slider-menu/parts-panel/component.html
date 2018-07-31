@@ -11,9 +11,9 @@
             <button
                 v-for="part in category.parts"
                 class="part-item" :key="part"
-                @click="addPart(part)"
-                @mousemove="setTip(part, $event)"
-                @mouseleave.stop.self="() => tipStyle = { display: 'none' }">
+                @click.passive="addPart(part)"
+                @mousemove.passive="setTip(part, $event)"
+                @mouseleave.stop.self.passive="() => tipStyle = { display: 'none' }">
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <part-show v-once :type="part"></part-show>
                 </svg>

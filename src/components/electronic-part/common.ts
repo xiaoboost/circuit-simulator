@@ -4,8 +4,8 @@ import { randomString, clone, isString, copyProperties } from 'src/lib/utils';
 import Electronics from './parts';
 import DrawingMain, { MapStatus } from '../drawing-main/component';
 
-import PartComponent, { disptchKeys as disptchPartKeys } from 'src/components/electronic-part/component';
-import LineComponent, { disptchKeys as disptchLineKeys } from 'src/components/electronic-line/component';
+import PartComponent from 'src/components/electronic-part/component';
+import LineComponent from 'src/components/electronic-line/component';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
@@ -32,6 +32,33 @@ export function createId(id: string): string {
     }
 
     throw new Error(`(electronic) The maximum number of Devices is ${maxNumber}.`);
+}
+
+/** 搜索器件组件 */
+export function findPartComponent(value: string | HTMLElement): PartComponent {
+    const prop = isString(value) ? 'id' : '$el';
+    const valueMatch = isString(value)
+        ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
+        : value;
+
+    const result = PartComponents.find((part) => part[prop] === valueMatch);
+
+    if (!result) {
+        throw new Error('Can not find this part');
+    }
+
+    return result as any;
+}
+/** 搜索导线组件 */
+export function  findLineComponent(value: string | HTMLElement): LineComponent {
+    const prop = (isString(value)) ? 'id' : '$el';
+    const result = LineComponents.find((line) => line[prop] === value);
+
+    if (!result) {
+        throw new Error('Can not find this line');
+    }
+
+    return result as any;
 }
 
 /** 元件数据基类 */
@@ -72,17 +99,17 @@ export default class ElectronicCore extends Vue {
     }
 
     /** 将当前器件数据更新至`vuex` */
-    dispatch() {
-        this.type === 'line'
-            ? this.$store.commit(
-                'UPDATE_LINE',
-                copyProperties(this, disptchLineKeys as any[]),
-            )
-            : this.$store.commit(
-                'UPDATE_PART',
-                copyProperties(this, disptchPartKeys as any[]),
-            );
-    }
+    // dispatch() {
+    //     this.type === 'line'
+    //         ? this.$store.commit(
+    //             'UPDATE_LINE',
+    //             copyProperties(this, disptchLineKeys as any[]),
+    //         )
+    //         : this.$store.commit(
+    //             'UPDATE_PART',
+    //             copyProperties(this, disptchPartKeys as any[]),
+    //         );
+    // }
 
     created() {
         this.id = createId(
@@ -100,32 +127,5 @@ export default class ElectronicCore extends Vue {
         this.type === 'line'
             ? LineComponents.delete((line) => line.hash === this.hash)
             : PartComponents.delete((part) => part.hash === this.hash);
-    }
-
-    /** 搜索器件组件 */
-    findPartComponent(value: string | HTMLElement): PartComponent {
-        const prop = isString(value) ? 'id' : '$el';
-        const valueMatch = isString(value)
-            ? (value.match(/[a-zA-Z]+_[a-zA-Z0-9]+/)!)[0]
-            : value;
-
-        const result = PartComponents.find((part) => part[prop] === valueMatch);
-
-        if (!result) {
-            throw new Error('Can not find this part');
-        }
-
-        return result as PartComponent;
-    }
-    /** 搜索导线组件 */
-    findLineComponent(value: string | HTMLElement): LineComponent {
-        const prop = (isString(value)) ? 'id' : '$el';
-        const result = LineComponents.find((line) => line[prop] === value);
-
-        if (!result) {
-            throw new Error('Can not find this line');
-        }
-
-        return result as LineComponent;
     }
 }
