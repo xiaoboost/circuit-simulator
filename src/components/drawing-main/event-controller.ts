@@ -132,7 +132,7 @@ export default class EventController {
 
         // 如果有互斥事件在运行，且当前事件也是互斥的，那么忽略当前事件
         if (this.Comp.exclusion && this.exclusion) {
-            return;
+            return Promise.resolve();
         }
         else {
             this.Comp.exclusion = this.exclusion;
@@ -147,7 +147,7 @@ export default class EventController {
         );
 
         // 停止事件被触发后自动停止运行
-        this.stopEvent().then(() => this.stop());
+        return this.stopEvent().then(() => this.stop());
     }
     stop() {
         this.Comp.exclusion = false;
@@ -160,6 +160,8 @@ export default class EventController {
                 this._handlerOption(handler),
             ),
         );
+
+        return this.Comp.$nextTick();
     }
 
     setCursor(style: string | ((event: DrawEvent) => string)) {

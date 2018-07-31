@@ -2,6 +2,7 @@ import { $P } from 'src/lib/point';
 import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
+import PartComponent from '../electronic-part/component';
 
 /** 图纸状态接口 */
 export type MapStatus =
@@ -9,6 +10,9 @@ export type MapStatus =
     Pick<DrawingMain, 'partsNow' | 'linesNow'>;
 
 @Component({
+    components: {
+        PartComponent,
+    },
     provide(this: DrawingMain) {
         const mapStatus: MapStatus = {} as any;
 
