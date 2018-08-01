@@ -87,7 +87,7 @@ class MapDebug {
     }
     whole() {
         let count = 0;
-        store.state.Lines.forEach((line) => {
+        store.state.lines.forEach((line) => {
             this.text(
                 [1000, count * 25 + 50],
                 `${line.connect[0]} ---> ${line.id} ---> ${line.connect[1]}`,

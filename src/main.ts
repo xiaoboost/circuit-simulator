@@ -1,21 +1,16 @@
 import 'src/css/main';
-import 'src/lib/init';
 import 'src/lib/native';
 
-import Vue, { VNodeChildrenArrayContents } from 'vue';
+import Vue from 'vue';
+import Debug from 'src/lib/debugger';
 import store, { CircuitStorage } from 'src/vuex';
+import { get, getQueryByName } from 'src/lib/utils';
 
-import * as utils from 'src/lib/utils';
-import debug from 'src/lib/debugger';
-import modal from 'src/mixins/params';
+import ActionMenu from './components/action-menu/component';
+import SliderMenu from './components/slider-menu/component';
+import DrawingMain from './components/drawing-main/component';
 
-import ActionMenu from 'src/components/action-menu';
-import SliderMenu from 'src/components/slider-menu';
-import DrawingMain from 'src/components/drawing-main';
-
-Vue.use(modal);
-
-Vue.config.productionTip = ($ENV.NODE_ENV === 'development');
+Vue.config.productionTip = (process.env.NODE_ENV === 'development');
 
 // 移除 loading 界面
 function loaded() {
@@ -35,36 +30,37 @@ new Vue({
     components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
-        [h('drawing-main'), h('slider-menu'), h('action-menu')] as VNodeChildrenArrayContents,
+        [h('drawing-main'), h('slider-menu'), h('action-menu')] as any,
     ),
     async mounted() {
-        if ($ENV.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development') {
             const area = document.querySelector('#drawing-main svg g')!;
 
             Object.defineProperty(window, '$debugger', {
                 enumerable: false,
                 writable: false,
-                value: new debug(),
+                value: new Debug(),
             });
 
             area.appendChild($debugger.$el);
         }
 
-        const map = utils.getQueryByName('map');
-        let data: CircuitStorage = { data: [] };
+        const map = getQueryByName('map');
 
         if (map) {
+            let data: CircuitStorage = { data: [] };
+
             try {
-                data = await utils.get<CircuitStorage>(`/examples/${map}.json`);
+                data = await get<CircuitStorage>(`/examples/${map}.json`);
             }
             catch (e) {
                 console.error(e);
             }
-        }
 
-        // 加载数据
-        await this.$store.dispatch('IMPORT_DATA', data);
-        await this.$nextTick();
+            // 加载数据
+            await this.$store.dispatch('IMPORT_DATA', data);
+            await this.$nextTick();
+        }
 
         // 初始化完成
         loaded();
