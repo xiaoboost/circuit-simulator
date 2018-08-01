@@ -14,21 +14,19 @@ document.body.appendChild(dialog.$el);
 
 /**
  * 打开器件的参数设置对话框
- *  - 返回`Promise<void>`表示点击了取消按钮
- *  - 返回`Promise<{ id: string; params: string[] }>`表示点击了确定按钮，其中数据即为最后对话框中输入的数据
- *
+ *  - 返回等待点击确定按钮的 Promise
  * @param {string} id
  * @param {string[]} params
  * @param {Point} position
  * @param {(keyof Electronics)} type
- * @returns {(Promise<{ id: string; params: string[] } | void>)}
+ * @returns {(Promise<{ id: string; params: string[] }>)}
  */
 export default function setPartParams(
     type: keyof Electronics,
     id: string,
     position: Point,
     params: string[],
-): Promise<{ id: string; params: string[] } | void> {
+): Promise<{ id: string; params: string[] }> {
     // 参数对话框初始化赋值
     dialog.id = id;
     dialog.position = $P(position);
@@ -38,10 +36,7 @@ export default function setPartParams(
     dialog.vision = true;
 
     return new Promise((resolve) => {
-        dialog.cancel = () => {
-            dialog.vision = false;
-            resolve();
-        };
+        dialog.cancel = () => dialog.vision = false;
         dialog.confirm = () => {
             dialog.vision = false;
             resolve({

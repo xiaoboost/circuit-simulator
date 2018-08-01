@@ -2,7 +2,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { CreateElement, VNodeChildrenArrayContents } from 'vue';
 
 import Electronics from 'src/components/electronic-part/parts';
-import { createPartData } from 'src/components/electronic-part/component';
+import { createPartData } from 'src/components/electronic-part/helper';
 import { findPartComponent } from 'src/components/electronic-part/common';
 
 @Component

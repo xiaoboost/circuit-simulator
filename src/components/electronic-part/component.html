@@ -3,10 +3,7 @@
     :class="['part', { focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
     <g class="focus-partial">
-        <!-- {this.origin.shape.map(
-            (shape) =>
-                h(shape.name, { attrs: shape.attribute }),
-        )} -->
+        <part-shape :value="origin.shape"></part-shape>
         <electronic-point
             v-for="(point, i) in points"
             :key="i" :r="point.size"
@@ -16,7 +13,7 @@
     </g>
     <g
         v-if="type !== 'reference_ground'"
-        @mousedown.passive="moveText"
+        @mousedown.stop.left.passive="moveText"
         :class="`text-params text-placement-${textPlacement}`"
         :transform="`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`">
         <text>

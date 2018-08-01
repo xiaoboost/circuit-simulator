@@ -2,19 +2,16 @@ import { Component } from 'vue-property-decorator';
 
 import * as map from 'src/lib/map';
 import { $M } from 'src/lib/matrix';
-import Point, { $P, PointLike } from 'src/lib/point';
+import { $P } from 'src/lib/point';
 
 import setPartParams from './dialog-controller';
+import { product, PartShape } from './helper';
 import Electronics, { ElectronicPrototype } from './parts';
-import ElectronicCore, { createId, findPartComponent } from './common';
+import ElectronicCore, { findPartComponent } from './common';
 import ElectronicPoint from 'src/components/electronic-point/component';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
-import {
-    isEqual,
-    randomString,
-    copyProperties,
-} from 'src/lib/utils';
+import { isEqual, copyProperties } from 'src/lib/utils';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
@@ -22,28 +19,9 @@ const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'c
 
 export type PartData = Pick<PartComponent, dispatchKey>;
 
-/** 兼容 PointLike 类型的点乘矩阵 */
-const product = (point: PointLike, ma: Matrix): Point => {
-    return Point.prototype.rotate.call(point, ma);
-};
-
-/**
- * 生成完整的初始化器件数据
- * @param type 器件类型
- */
-export const createPartData = (type: keyof Electronics): PartData => ({
-    type,
-    hash: randomString(),
-    rotate: $M(2, 'E'),
-    position: $P(1e6, 1e6),
-    id: createId(Electronics[type].pre),
-    params: Electronics[type].params.map((n) => n.default),
-    connect: Array(Electronics[type].points.length).fill(''),
-});
-
 @Component({
     components: {
-        ElectronicPoint,
+        ElectronicPoint, PartShape,
     },
 })
 export default class PartComponent extends ElectronicCore {
@@ -257,13 +235,64 @@ export default class PartComponent extends ElectronicCore {
 
         return (label);
     }
-    /** TODO: 渲染说明文本 */
+    /** 渲染说明文本 */
     renderText() {
+        // TODO: 缺正中央
+        const textHeight = 11,
+            spaceHeight = 5,
+            len = this.texts.length,
+            local = this.origin.txtLBias,
+            pend = this.textPosition,
+            points = this.points.map((p) => p.direction),
+            direction = [$P(0, 1), $P(0, -1), $P(1, 0), $P(-1, 0)]
+                .filter((di) => points.every((point) => !point.isEqual(di)))
+                .map((di) => di.mul(local))
+                .reduce(
+                    (pre, next) =>
+                        pre.distance(pend) < next.distance(pend) ? pre : next,
+                );
 
+        if (direction[0]) {
+            pend[1] = ((1 - len) * textHeight - len * spaceHeight) / 2;
+
+            if (direction[0] > 0) {
+                pend[0] = local;
+                this.textPlacement = 'right';
+            }
+            else {
+                pend[0] = -local;
+                this.textPlacement = 'left';
+            }
+        }
+        else {
+            pend[0] = 0;
+
+            if (direction[1] > 0) {
+                this.textPlacement = 'bottom';
+                pend[1] = textHeight + local;
+            }
+            else {
+                this.textPlacement = 'top';
+                pend[1] = -((textHeight + spaceHeight) * len + local);
+            }
+        }
     }
-    /** TODO: 移动说明文本 */
-    moveText() {
+    /** 移动说明文本 */
+    async moveText() {
+        this.mapStatus.partsNow = [this.id];
 
+        await this
+            .createDrawEvent()
+            .setCursor('move_part')
+            .setHandlerEvent(
+                (e: DrawEvent) => {
+                    this.textPosition = this.textPosition.add(e.$movement);
+                },
+            )
+            .setStopEvent({ type: 'mouseup', which: 'left' })
+            .start();
+
+        this.renderText();
     }
 
     /** 设置属性 */
@@ -279,11 +308,6 @@ export default class PartComponent extends ElectronicCore {
             this.params,
         );
 
-        // 并未改变参数
-        if (!status) {
-            return;
-        }
-
         // 参数更新
         if (
             this.id !== status.id ||
@@ -296,6 +320,7 @@ export default class PartComponent extends ElectronicCore {
     async startCreateEvent() {
         this.$el.setAttribute('opacity', '0.4');
         this.mapStatus.partsNow = [this.id];
+        this.renderText();
 
         await this
             .createDrawEvent()
