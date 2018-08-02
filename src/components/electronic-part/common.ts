@@ -44,7 +44,7 @@ export function findPartComponent(value: string | HTMLElement): PartComponent {
     const result = PartComponents.find((part) => part[prop] === valueMatch);
 
     if (!result) {
-        throw new Error('Can not find this part');
+        throw new Error(`Can not find this part: ${isString(value) ? value : value.id}`);
     }
 
     return result as any;
@@ -55,7 +55,7 @@ export function  findLineComponent(value: string | HTMLElement): LineComponent {
     const result = LineComponents.find((line) => line[prop] === value);
 
     if (!result) {
-        throw new Error('Can not find this line');
+        throw new Error(`Can not find this line: ${isString(value) ? value : value.id}`);
     }
 
     return result as any;
@@ -112,7 +112,7 @@ export default class ElectronicCore extends Vue {
     // }
 
     created() {
-        this.id = createId(
+        this.id = this.id || createId(
             this.type === 'line'
                 ? 'line'
                 : Electronics[this.type].pre,

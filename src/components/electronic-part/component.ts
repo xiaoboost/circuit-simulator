@@ -25,8 +25,6 @@ export type PartData = Pick<PartComponent, dispatchKey>;
     },
 })
 export default class PartComponent extends ElectronicCore {
-    /** 器件原始数据 */
-    readonly value!: PartData;
     /** 器件类型 */
     readonly type!: keyof Electronics;
     /** 当前器件数据原型 */
@@ -53,9 +51,15 @@ export default class PartComponent extends ElectronicCore {
         const origin = Electronics[this.type];
         const pointLen = origin.points.length;
 
-        this.connect = Array(pointLen).fill('');
         this.pointSize = Array(pointLen).fill(-1);
-        this.params = origin.params.map((n) => n.default);
+
+        if (this.connect.length === 0) {
+            this.connect = Array(pointLen).fill('');
+        }
+
+        if (this.params.length === 0) {
+            this.params = origin.params.map((n) => n.default);
+        }
 
         Object.defineProperty(this, 'origin', {
             enumerable: true,
@@ -63,6 +67,8 @@ export default class PartComponent extends ElectronicCore {
             configurable: true,
             value: origin,
         });
+
+        this.renderText();
     }
 
     /** 当前旋转矩阵的逆矩阵 */

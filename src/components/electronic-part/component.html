@@ -18,7 +18,7 @@
         :transform="`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`">
         <text>
             <tspan>{{ id.split('_')[0] }}</tspan>
-            <tspan>{{ id.split('_')[1] }}</tspan>
+            <tspan dx="-4">{{ id.split('_')[1] }}</tspan>
         </text>
         <text
             v-for="(txt, i) in texts"
