@@ -30,7 +30,11 @@ export default function setPartParams(
     // 参数对话框初始化赋值
     dialog.id = id;
     dialog.position = $P(position);
-    dialog.params = Electronics[type].params.map((param, i) => ({ ...param, value: params[i] }));
+    dialog.params = Electronics[type].params.map((param, i) => ({
+        unit: param.unit,
+        label: param.label + '：',
+        value: params[i],
+    }));
 
     // 参数对话框显示
     dialog.vision = true;
