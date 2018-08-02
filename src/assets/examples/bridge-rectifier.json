@@ -47,7 +47,8 @@
             "id": "R_1",
             "position": [560, 320],
             "rotate": [[0, 1], [-1, 0]],
-            "params": ["2k"]
+            "params": ["2k"],
+            "text": "right"
         },
         {
             "type": "current_meter",
@@ -59,13 +60,15 @@
             "type": "voltage_meter",
             "id": "V_out",
             "position": [640, 320],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         },
         {
             "type": "voltage_meter",
             "id": "V_in",
             "position": [240, 320],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         },
         {
             "type": "reference_ground",
