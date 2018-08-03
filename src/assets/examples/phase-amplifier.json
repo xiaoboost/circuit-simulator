@@ -19,7 +19,8 @@
             "id": "R_1",
             "position": [380, 240],
             "rotate": [[1, 0], [0, 1]],
-            "params": ["10k"]
+            "params": ["10k"],
+            "text": "bottom"
         },
         {
             "type": "reference_ground",
@@ -70,7 +71,8 @@
             "type": "voltage_meter",
             "id": "V_out",
             "position": [620, 320],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         },
         {
             "type": "line",

@@ -77,7 +77,8 @@
             "type": "voltage_meter",
             "id": "V_out",
             "position": [520, 220],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         }
     ]
 }

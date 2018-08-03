@@ -84,13 +84,15 @@
             "type": "voltage_meter",
             "id": "V_in",
             "position": [180, 360],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         },
         {
             "type": "voltage_meter",
             "id": "V_out",
             "position": [660, 340],
-            "rotate": [[1, 0], [0, 1]]
+            "rotate": [[1, 0], [0, 1]],
+            "text": "right"
         },
         {
             "type": "reference_ground",
