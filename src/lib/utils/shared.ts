@@ -117,20 +117,36 @@ export function isEqual(from: any, to: any, deepCheck = false): boolean {
         throw new Error('(isEqual) Can not have circular structure.');
     }
 
+    if (isFunc(from.isEqual)) {
+        return Boolean(from.isEqual(to));
+    }
+
     if (isArray(from)) {
         if (!isArray(to) || from.length !== to.length) {
             return false;
         }
         else {
-            return from.every((item, i) => isEqual(item, to[i]));
+            return from.every(
+                (item, i) => isBaseType(item)
+                    ? item === to[i]
+                    : isEqual(item, to[i]),
+            );
         }
     }
     else {
-        if (!isObject(to) || isEqual(Object.keys(from), Object.keys(to))) {
+        if (
+            !isObject(to) ||
+            !Object.keys(from).every((key) => to.hasOwnProperty(key)) ||
+            !Object.keys(to).every((key) => from.hasOwnProperty(key))
+        ) {
             return false;
         }
         else {
-            return Object.entries(from).every(([key, value]) => isEqual(value, to[key]));
+            return Object.entries(from).every(
+                ([key, value]) => isBaseType(value)
+                    ? value === to[key]
+                    : isEqual(value, to[key]),
+            );
         }
     }
 }
