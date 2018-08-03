@@ -8,12 +8,17 @@ import Vuex, {
 
 import { $M } from 'src/lib/matrix';
 import { $P } from 'src/lib/point';
-import { clone, delay } from 'src/lib/utils';
-import * as slover from './parser';
+import { isArray, clone, randomString } from 'src/lib/utils';
 
-import Electronics from 'src/components/electronic-part/parts';
-import { PartCore, PartCoreData } from 'src/components/electronic-part';
-import { LineCore, LineCoreData, LineWay } from 'src/components/electronic-line';
+import { PartData } from 'src/components/electronic-part/component';
+import { LineData } from 'src/components/electronic-line/component';
+
+import {
+    markId,
+    createId,
+    findPartComponent,
+    findLineComponent,
+} from 'src/components/electronic-part/common';
 
 import {
     StateType,
@@ -37,15 +42,15 @@ const local: StateType = {
     },
 
     page: '',
-    Parts: [],
-    Lines: [],
+    parts: [],
+    lines: [],
     historyData: [],
 };
 
 const getters: GetterTree<StateType, StateType> = {
     isSpace: (context) => !context.page,
-    showAddParts: (context) => context.page === 'add-parts',
-    showMainConfig: (context) => context.page === 'main-config',
+    showPartsPanel: (context) => context.page === 'add-parts',
+    showConfigPanel: (context) => context.page === 'main-config',
     showGraphView: (context) => context.page === 'graph-view',
 };
 
@@ -62,102 +67,116 @@ const mutations: MutationTree<StateType> = {
     /** 设置时间 */
     SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
 
-    /** 生成新器件 */
-    NEW_PART: ({ Parts }, data: PartCoreData) => Parts.push(clone(data)),
+    /** 新器件压栈 */
+    PUSH_PART: ({ parts }, data: PartData | PartData[]) => {
+        isArray(data)
+            ? parts.push(...clone(data))
+            : parts.push(clone(data));
+    },
     /** 更新器件数据 */
-    UPDATE_PART: ({ Parts }, data: PartCoreData) => {
-        const index = Parts.findIndex((part) => part.hash === data.hash);
+    UPDATE_PART: ({ parts }, data: PartData) => {
+        const index = parts.findIndex((part) => part.hash === data.hash);
 
         if (index < 0) {
             throw new Error(`(vuex) Part not found. id: ${data.id}`);
         }
 
-        const idNumber = Parts.reduce((ans, part) => (part.id === data.id) ? (ans + 1) : ans, 0);
+        const idNumber = parts.reduce((ans, part) => (part.id === data.id) ? (ans + 1) : ans, 0);
 
         if (idNumber >= 2) {
             throw new Error(`(vuex) Part ID is duplicated. id: ${data.id}`);
         }
 
-        Parts.splice(index, 1, clone(data));
+        parts.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    // COPY_PART({ Parts }, IDs: string[]) {
-    //     IDs.forEach((id) => {
-    //         const part = Parts.find((elec) => elec.id === id);
+    COPY_PART({ parts }, IDs: string[]) {
+        IDs.forEach((id) => {
+            const part = parts.find((elec) => elec.id === id);
 
-    //         if (!part) {
-    //             throw new Error(`(vuex) Part not found. id: ${id}`);
-    //         }
+            if (!part) {
+                throw new Error(`(vuex) Part not found. id: ${id}`);
+            }
 
-    //         Parts.push({
-    //             ...clone(part),
-    //             id: createId(part.id),
-    //             hash: randomString(),
-    //         });
-    //     });
-    // },
+            parts.push({
+                ...clone(part),
+                id: createId(part.id),
+                hash: randomString(),
+            });
+        });
+    },
 
     /** 新导线压栈 */
-    NEW_LINE: ({ Lines }, data: LineCoreData) => Lines.unshift(clone(data)),
+    PUSH_LINE: ({ lines }, data: LineData | LineData[]) => {
+        isArray(data)
+            ? lines.push(...clone(data))
+            : lines.push(clone(data));
+    },
     /** 更新器件数据 */
-    UPDATE_LINE: ({ Lines }, data: LineCoreData) => {
-        const index = Lines.findIndex((line) => line.hash === data.hash);
+    UPDATE_LINE: ({ lines }, data: LineData) => {
+        const index = lines.findIndex((line) => line.hash === data.hash);
 
         if (index < 0) {
             throw new Error(`(vuex) Line not found. id: ${data.id}`);
         }
 
-        const idNumber = Lines.reduce((ans, line) => (line.id === data.id) ? (ans + 1) : ans, 0);
+        const idNumber = lines.reduce((ans, line) => (line.id === data.id) ? (ans + 1) : ans, 0);
 
         if (idNumber >= 2) {
             throw new Error(`(vuex) Line ID is duplicated. id: ${data.id}`);
         }
 
-        Lines.splice(index, 1, clone(data));
+        lines.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    // COPY_LINE({ Lines }, IDs: string[]) {
-    //     IDs.forEach((id) => {
-    //         const line = Lines.find((elec) => elec.id === id);
+    COPY_LINE({ lines }, IDs: string[]) {
+        IDs.forEach((id) => {
+            const line = lines.find((elec) => elec.id === id);
 
-    //         if (!line) {
-    //             throw new Error(`(vuex) Line not found. id: ${id}`);
-    //         }
+            if (!line) {
+                throw new Error(`(vuex) Line not found. id: ${id}`);
+            }
 
-    //         Lines.push({
-    //             ...clone(line),
-    //             id: createId('line'),
-    //             hash: randomString(),
-    //         });
-    //     });
-    // },
+            lines.push({
+                ...clone(line),
+                id: createId('line'),
+                hash: randomString(),
+            });
+        });
+    },
 
-    /** 删除器件 */
-    DELETE_PART: ({ Parts }, part: string) => Parts.delete((item) => item.id === part),
-    /** 删除导线 */
-    DELETE_LINE: ({ Lines }, line: string) => Lines.delete((item) => item.id === line),
+    /** 删除器件与导线 */
+    DELETE_ELEC: ({ parts, lines }, eles: string | string[]) => {
+        const data = isArray(eles) ? eles : [eles];
+
+        for (const id of data) {
+            /^line_/.test(id)
+                ? lines.delete((item) => item.id === id)
+                : parts.delete((item) => item.id === id);
+        }
+    },
 
     /** 导线放置到底层 */
 
     /** 记录当前数据 */
-    RECORD_MAP({ historyData, Parts, Lines }) {
-        const stack: Array<PartCoreData | LineCoreData> = [];
-        historyData.push(stack.concat(Parts).concat(Lines));
+    RECORD_MAP({ historyData, parts, lines }) {
+        const stack: Array<PartData | LineData> = [];
+        historyData.push(clone(stack.concat(parts).concat(lines)));
 
         while (historyData.length > historyLimit) {
-            historyData.splice(0, 1);
+            historyData.shift();
         }
     },
     /** 图纸数据回滚 */
-    HISTORY_BACK({ historyData, Parts, Lines }) {
-        const current = historyData.pop();
+    HISTORY_BACK(state) {
+        const current = state.historyData.pop();
 
         if (!current) {
             return;
         }
 
-        Parts.$replace(current.filter((part): part is PartCore => part.type !== 'line'));
-        Lines.$replace(current.filter((line): line is LineCore => line.type === 'line'));
+        state.parts = current.filter((part): part is PartData => part.type !== 'line');
+        state.lines = current.filter((line): line is LineData => line.type === 'line');
     },
 };
 
@@ -174,49 +193,75 @@ const actions: ActionTree<StateType, StateType> = {
 
         // load parts
         const parts = data.data.filter((part): part is PartStorageData => part.type !== 'line');
-        parts.forEach((storage) => {
-            const part = PartCore.noVueInstance(storage.type);
+        await Promise.all(parts.map(async (storage) => {
+            const partData: PartData = {
+                type: storage.type,
+                id: storage.id,
+                hash: randomString(),
+                params: storage.params || [],
+                rotate: storage.rotate ? $M(storage.rotate) : $M(2, 'E'),
+                position: $P(storage.position),
+                connect: [],
+            };
 
-            commit('NEW_PART', part);
+            commit('PUSH_PART', partData);
 
-            storage.params && (part.params = storage.params);
-            storage.rotate && (part.rotate = $M(storage.rotate));
-            storage.position && (part.position = $P(storage.position));
+            await Vue.nextTick();
 
-            part.status = 'import';
+            const part = findPartComponent(partData.id);
+
+            if (storage.text) {
+                if (storage.text === 'top') {
+                    part.textPosition = $P(0, -100);
+                }
+                else if (storage.text === 'right') {
+                    part.textPosition = $P(100, 0);
+                }
+                else if (storage.text === 'bottom') {
+                    part.textPosition = $P(0, 100);
+                }
+                else if (storage.text === 'left') {
+                    part.textPosition = $P(100, 0);
+                }
+
+                part.renderText();
+            }
+
             part.markSign();
-            part.dispatch();
-        });
-
-        // wait parts loaded
-        await delay(10);
+        }));
 
         // loaded lines
         const lines = data.data.filter((line): line is LineStorageData => line.type === 'line');
-        lines.forEach((storage) => {
-            const line = LineCore.noVueInstance();
+        lines.forEach(async (storage) => {
+            const lineData: LineData = {
+                type: storage.type,
+                id: createId('line'),
+                hash: randomString(),
+                connect: ['', ''],
+                way: storage.way.map((node, i) => $P(node)),
+            };
 
-            commit('NEW_LINE', line);
+            markId(lineData.id);
+            commit('PUSH_LINE', lineData);
 
-            line.way = LineWay.from(storage.way);
-            line.status = 'import';
+            await Vue.nextTick();
+
+            const line = findLineComponent(lineData.id);
+
             line.setConnectByWay();
             line.markSign();
             line.dispatch();
         });
-
-        // wait lines loaded
-        await delay(10);
     },
     /** 求解电路 */
-    async SOLVE_CIRCUIT({ state }) {
-        debugger;
-        slover.compilePartsNet(state.Lines);
-    },
+    // async SOLVE_CIRCUIT({ state }) {
+    //     debugger;
+    //     slover.compilePartsNet(state.Lines);
+    // },
 };
 
 export default new Vuex.Store<StateType>({
-    strict: $ENV.NODE_ENV === 'development',
+    strict: process.env.NODE_ENV === 'development',
     state: local,
     getters,
     mutations,

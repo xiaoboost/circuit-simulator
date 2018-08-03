@@ -4,6 +4,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
 import PartComponent, { PartData } from '../electronic-part/component';
+import LineComponent, { LineData } from '../electronic-line/component';
 
 /** 图纸状态接口 */
 export type MapStatus =
@@ -12,7 +13,7 @@ export type MapStatus =
 
 @Component({
     components: {
-        PartComponent,
+        PartComponent, LineComponent,
     },
     provide(this: DrawingMain) {
         const mapStatus: MapStatus = {} as any;
@@ -58,6 +59,9 @@ export default class DrawingMain extends Vue {
 
     @State('parts')
     partsAll!: PartData[];
+
+    @State('lines')
+    linesAll!: LineData[];
 
     /** 背景图纸样式 */
     get backgroundStyle() {

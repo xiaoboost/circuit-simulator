@@ -1,5 +1,5 @@
 import { Component, Vue, Prop, Watch, Inject } from 'vue-property-decorator';
-import { randomString, clone, isString, copyProperties } from 'src/lib/utils';
+import { randomString, clone, isString } from 'src/lib/utils';
 
 import Electronics from './parts';
 import DrawingMain, { MapStatus } from '../drawing-main/component';
@@ -12,6 +12,7 @@ const maxNumber = 50;
 
 const PartComponents: ElectronicCore[] = [];
 const LineComponents: ElectronicCore[] = [];
+const mapHash: { [key: string]: boolean } = {};
 
 /**
  * 生成器件或者导线的新 ID
@@ -19,19 +20,33 @@ const LineComponents: ElectronicCore[] = [];
  * @returns {string}
  */
 export function createId(id: string): string {
-    const electrons = PartComponents.concat(LineComponents);
-
     const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
     const max = (pre[1] === 'line') ? Infinity : maxNumber;
 
     for (let i = 1; i <= max; i++) {
         const ans = `${pre[1]}_${i}`;
-        if (electrons.findIndex((elec) => elec.id === ans) === -1) {
-            return (ans);
+        if (!mapHash[ans]) {
+            return ans;
         }
     }
 
     throw new Error(`(electronic) The maximum number of Devices is ${maxNumber}.`);
+}
+
+/** 标记输入符号到全局 */
+export function markId(id: string) {
+    mapHash[id] = true;
+}
+
+/** 从表中删除全局标记 */
+export function deleteId(id: string) {
+    if (mapHash[id]) {
+        delete mapHash[id];
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 /** 搜索器件组件 */
@@ -98,19 +113,6 @@ export default class ElectronicCore extends Vue {
         return this.mapStatus.partsNow.includes(this.id);
     }
 
-    /** 将当前器件数据更新至`vuex` */
-    // dispatch() {
-    //     this.type === 'line'
-    //         ? this.$store.commit(
-    //             'UPDATE_LINE',
-    //             copyProperties(this, disptchLineKeys as any[]),
-    //         )
-    //         : this.$store.commit(
-    //             'UPDATE_PART',
-    //             copyProperties(this, disptchPartKeys as any[]),
-    //         );
-    // }
-
     created() {
         this.id = this.id || createId(
             this.type === 'line'
@@ -118,14 +120,22 @@ export default class ElectronicCore extends Vue {
                 : Electronics[this.type].pre,
         );
 
+        markId(this.id);
+
         this.type === 'line'
             ? LineComponents.push(this)
             : PartComponents.push(this);
     }
 
     beforeDestroy() {
+        deleteId(this.id);
+
         this.type === 'line'
             ? LineComponents.delete((line) => line.hash === this.hash)
             : PartComponents.delete((part) => part.hash === this.hash);
+    }
+
+    deleteSelf() {
+        this.$store.commit('DELETE_ELEC', this.id);
     }
 }

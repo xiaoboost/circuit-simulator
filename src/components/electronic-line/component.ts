@@ -1,70 +1,102 @@
-import vuex from 'src/vuex';
-
-import * as schMap from 'src/lib/map';
-import * as assert from 'src/lib/assertion';
-import * as common from 'src/components/drawing-main/common';
+import { Component, Vue } from 'vue-property-decorator';
 
 import { LineWay } from './line-way';
-import { $P, Point } from 'src/lib/point';
-import { $M, Matrix } from 'src/lib/matrix';
-import { ElectronicCore } from '../drawing-main/abstract';
-import { clone, copyProperties, mixins } from 'src/lib/utils';
+import ElectronicCore, {
+    findLineComponent,
+    findPartComponent,
+} from 'src/components/electronic-part/common';
 
-type dispatchKey = 'id' | 'type' | 'way' | 'hash' | 'connect' | 'status';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'hash', 'connect', 'status'];
+import * as map from 'src/lib/map';
+import Point, { $P } from 'src/lib/point';
+import ElectronicPoint from 'src/components/electronic-point/component';
 
-/** 用于储存的器件导线类型 */
-export type LineCoreData = Pick<LineCore, dispatchKey>;
+import {
+    isUndef,
+    isBoolean,
+    copyProperties,
+} from 'src/lib/utils';
 
-export class LineCore extends ElectronicCore {
-    /** 原型链形式的 LineCore 实例 */
-    static noVueInstance(): LineCore {
-        const instance = new LineCore();
+type dispatchKey = 'id' | 'type' | 'way' | 'hash' | 'connect';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'hash', 'connect'];
 
-        const data: LineCore = copyProperties(instance, disptchKeys) as any;
-        Object.setPrototypeOf(data, LineCore.prototype);
+const matchLine = /(line_\d+ ?)+/;
+const matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;
 
-        return data;
-    }
+export type LineData = Pick<LineComponent, dispatchKey>;
 
-    /** 导线路径 */
-    way = new LineWay();
-    /** 导线的连接表 */
-    connect = ['', ''];
+@Component({
+    components: {
+        ElectronicPoint,
+    },
+})
+export default class LineComponent extends ElectronicCore {
     /** 导线类型 */
     readonly type!: 'line';
 
-    /** 匹配导线 ID */
-    protected matchLine = /(line_\d+ ?)+/;
-    /** 匹配器件端点 ID */
-    protected matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;
+    /** 导线路径 */
+    way: Point[] = [];
+    /** 导线的连接表 */
+    connect = ['', ''];
+    /** 引脚大小 */
+    pointSize: number[] = [];
 
-    constructor() {
-        super('line');
+    /** 导线的两个节点属性 */
+    get points() {
+        return Array(2).fill(false).map((_, i) => ({
+            size: this.pointSize[i],
+            position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
+            class: {
+                'line-point-open': !this.connect[i],
+                'line-point-part': matchPart.test(this.connect[i]),
+                'line-point-cross': matchLine.test(this.connect[i]),
+            },
+        }));
+    }
+    /** 路径转为 path 字符串 */
+    get way2path() {
+        return this.way.length === 0 ? ''　: `M${this.way.map((n) => n.join(',')).join('L')}`;
+    }
+    /** 路径转为 rect 坐标 */
+    get pathRects() {
+        const ans = [], wide = 14;
+
+        for (let i = 0; i < this.way.length - 1; i++) {
+            const start = this.way[i], end = this.way[i + 1];
+            const left = Math.min(start[0], end[0]);
+            const top = Math.min(start[1], end[1]);
+            const right = Math.max(start[0], end[0]);
+            const bottom = Math.max(start[1], end[1]);
+
+            ans.push({
+                x: left - wide / 2,
+                y: top - wide / 2,
+                height: (left === right) ? bottom - top + wide　: wide,
+                width: (left === right) ? wide : right - left + wide,
+            });
+        }
+
+        return ans;
     }
 
-    /**
-     * 将数据更新至 vuex
-     */
-    dispatch() {
-        vuex.commit('UPDATE_LINE', copyProperties(this, disptchKeys));
+    /** 销毁导线 */
+    beforeDestroy() {
+        this.freeConnect();
+        this.deleteSign();
     }
 
-    /**
-     * 在图纸标记当前器件
-     */
+    /** 在图纸标记当前器件 */
     markSign() {
         const way = LineWay.from(this.way);
 
         let last: Point;
         way.forEachPoint((point) => {
             // 当前点状态
-            const status = schMap.getPoint(point, true);
+            const status = map.getPoint(point, true);
             // 端点
             if (point.isEqual(way.get(0)) || point.isEqual(way.get(-1))) {
                 // 空
                 if (!status) {
-                    schMap.setPoint(
+                    map.setPoint(
                         {
                             point,
                             type: 'line-point',
@@ -79,12 +111,12 @@ export class LineCore extends ElectronicCore {
                     status.type = 'cross-point';
                     status.id += ' ' + this.id;
 
-                    schMap.mergePoint(status, true);
+                    map.mergePoint(status, true);
                 }
             }
             // 非端点
             else {
-                schMap.setPoint(
+                map.setPoint(
                     {
                         point,
                         type: 'line',
@@ -98,30 +130,28 @@ export class LineCore extends ElectronicCore {
             }
 
             if (last) {
-                schMap.addConnect(point, last, true);
-                schMap.addConnect(last, point, true);
+                map.addConnect(point, last, true);
+                map.addConnect(last, point, true);
             }
 
             last = point;
         });
     }
-    /**
-     * 删除当前器件在图纸中的标记
-     */
+    /** 删除当前器件在图纸中的标记 */
     deleteSign() {
         const way = LineWay.from(this.way);
 
         let last: Point;
         way.forEachPoint((point) => {
-            const status = schMap.getPoint(point, true)!;
+            const status = map.getPoint(point, true)!;
 
             // 删除连接
-            last && schMap.deleteConnect(point, last, true);
-            last && schMap.hasPoint(last, true) && schMap.deleteConnect(last, point, true);
+            last && map.deleteConnect(point, last, true);
+            last && map.hasPoint(last, true) && map.deleteConnect(last, point, true);
 
             // 普通点
             if (/line(-point)?/.test(status.type)) {
-                schMap.deletePoint(point, true);
+                map.deletePoint(point, true);
             }
             // 交错/覆盖节点
             else if (/(cross|cover)-point/.test(status.type)) {
@@ -133,10 +163,10 @@ export class LineCore extends ElectronicCore {
                 );
 
                 if (status.id) {
-                    schMap.setPoint(status, true);
+                    map.setPoint(status, true);
                 }
                 else {
-                    schMap.deletePoint(point, true);
+                    map.deletePoint(point, true);
                 }
             }
 
@@ -144,6 +174,15 @@ export class LineCore extends ElectronicCore {
         });
     }
 
+    /**
+     * 将当前导线数据更新至`vuex`
+     */
+    dispatch() {
+        this.$store.commit(
+            'UPDATE_LINE',
+            copyProperties(this, disptchKeys),
+        );
+    }
     /**
      * 导线反转
      */
@@ -160,6 +199,22 @@ export class LineCore extends ElectronicCore {
         return this.connect.join(' ').includes(id);
     }
     /**
+     * 判断输入坐标是当前导线的起点还是终点
+     * @param {Point} node
+     * @returns {(-1 | 0 | 1)}
+     */
+    findConnectIndex(node: Point) {
+        if (node.isEqual(this.way[0])) {
+            return (0);
+        }
+        else if (node.isEqual(this.way.get(-1))) {
+            return (1);
+        }
+        else {
+            return (-1);
+        }
+    }
+    /**
      * 释放导线连接
      * @param {(0 | 1)} [index]
      */
@@ -172,15 +227,15 @@ export class LineCore extends ElectronicCore {
 
         const connect = this.connect[index];
 
-        if (this.matchPart.test(connect)) {
-            const part = this.findPartCore(connect);
+        if (matchPart.test(connect)) {
+            const part = findPartComponent(connect);
             const mark = +connect.split('-')[1];
 
             part.connect[mark] = '';
             part.dispatch();
         }
-        else if (this.matchLine.test(connect)) {
-            const lines = connect.split(' ').map((id) => this.findLineCore(id));
+        else if (matchLine.test(connect)) {
+            const lines = connect.split(' ').map(findLineComponent);
 
             if (lines.length === 2) {
                 lines[0].concat(lines[1].id);
@@ -201,26 +256,40 @@ export class LineCore extends ElectronicCore {
     deleteConnect(id: string) {
         const re = new RegExp(`${id} ?`, 'i');
 
-        this.connect.$replace(this.connect.map((item) => item.replace(re, '')));
+        this.connect = this.connect.map((item) => item.replace(re, ''));
         this.dispatch();
     }
     /**
-     * 判断输入坐标是当前导线的起点还是终点
-     * @param {Point} node
-     * @returns {(-1 | 0 | 1)}
+     * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
+     * @param {(0 | 1)} index 连接标号
+     * @param {string} newId 替换的 id
      */
-    findConnectIndex(node: Point) {
-        if (node.isEqual(this.way[0])) {
-            return (0);
+    replaceConnect(index: 0 | 1, newId: string) {
+        const connect = this.connect[index];
+
+        if (matchPart.test(connect)) {
+            const part = findPartComponent(connect);
+            const mark = +connect.split('-')[1];
+
+            part.connect[mark] = newId;
+            part.dispatch();
         }
-        else if (node.isEqual(this.way.get(-1))) {
-            return (1);
-        }
-        else {
-            return (-1);
+        else if (matchLine.test(connect)) {
+            connect
+                .split(' ')
+                .map(findLineComponent)
+                .forEach((line) => {
+                    line.connect[0] = line.connect[0].replace(this.id, newId);
+                    line.connect[1] = line.connect[1].replace(this.id, newId);
+                    line.dispatch();
+                });
+
+            const crossMapData = map.getPoint(this.way.get(-1 * index), true)!;
+
+            crossMapData.id = crossMapData.id.replace(this.id, newId);
+            map.setPoint(crossMapData, true);
         }
     }
-
     /**
      * 由路径信息设置导线两端连接
      * @param {boolean} [concat=false] 是否合并浮动导线
@@ -233,19 +302,19 @@ export class LineCore extends ElectronicCore {
      */
     setConnectByWay(index?: 0 | 1, concat?: boolean): void;
     setConnectByWay(index?: 0 | 1 | boolean, concat = false) {
-        if (assert.isBoolean(index)) {
+        if (isBoolean(index)) {
             this.setConnectByWay(0, index);
             this.setConnectByWay(1, index);
             return;
         }
-        else if (assert.isNull(index)) {
+        else if (isUndef(index)) {
             this.setConnectByWay(0);
             this.setConnectByWay(1);
             return;
         }
 
         const node = this.way.get(-1 * index).round();
-        const status = schMap.getPoint(node, true);
+        const status = map.getPoint(node, true);
 
         // 端点为空
         if (!status) {
@@ -255,7 +324,7 @@ export class LineCore extends ElectronicCore {
         // 端点为器件引脚
         else if (status.type === 'part-point') {
             const [id, mark] = status.id.split('-');
-            const part = this.findPartCore(id);
+            const part = findPartComponent(id);
 
             part.connect[mark] = this.id;
             this.connect[index] = status.id;
@@ -271,12 +340,12 @@ export class LineCore extends ElectronicCore {
             }
             // 不允许合并，则该点变更为交错节点
             else {
-                const line = this.findLineCore(status.id);
+                const line = findLineComponent(status.id);
                 const mark = line.findConnectIndex(node);
 
                 status.type = 'cross-point';
                 status.id = `${this.id} ${line.id}`;
-                schMap.mergePoint(status);
+                map.mergePoint(status);
 
                 line.connect[mark] = this.id;
                 this.connect[index] = line.id;
@@ -306,7 +375,7 @@ export class LineCore extends ElectronicCore {
                 this.connect[index] = lines.join(' ');
 
                 lines.forEach((id) => {
-                    const line = this.findLineCore(id);
+                    const line = findLineComponent(id);
                     const mark = line.findConnectIndex(node);
                     const connect = lines.filter((n) => n !== line.id);
 
@@ -317,39 +386,8 @@ export class LineCore extends ElectronicCore {
                 });
 
                 status.id = `${status.id} ${this.id}`;
-                schMap.mergePoint(status);
+                map.mergePoint(status);
             }
-        }
-    }
-    /**
-     * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
-     * @param {(0 | 1)} index 连接标号
-     * @param {string} newId 替换的 id
-     */
-    replaceConnect(index: 0 | 1, newId: string) {
-        const connect = this.connect[index];
-
-        if (this.matchPart.test(connect)) {
-            const part = this.findPartCore(connect);
-            const mark = +connect.split('-')[1];
-
-            part.connect[mark] = newId;
-            part.dispatch();
-        }
-        else if (this.matchLine.test(connect)) {
-            connect
-                .split(' ')
-                .map((id) => this.findLineCore(id))
-                .forEach((line) => {
-                    line.connect[0] = line.connect[0].replace(this.id, newId);
-                    line.connect[1] = line.connect[1].replace(this.id, newId);
-                    line.dispatch();
-                });
-
-            const crossMapData = schMap.getPoint(this.way.get(-1 * index), true)!;
-
-            crossMapData.id = crossMapData.id.replace(this.id, newId);
-            schMap.setPoint(crossMapData, true);
         }
     }
     /**
@@ -357,7 +395,7 @@ export class LineCore extends ElectronicCore {
      * @param {string} id 待连接导线的 id
      */
     concat(id: string) {
-        const line = this.findLineCore(id);
+        const line = findLineComponent(id);
 
         /** 交错节点 */
         let crossIndex: 0 | 1;
@@ -389,7 +427,7 @@ export class LineCore extends ElectronicCore {
 
         // 更新及删除
         this.dispatch();
-        vuex.commit('DELETE_LINE', line.id);
+        this.deleteSelf();
     }
     /**
      * 拆分导线
@@ -397,7 +435,7 @@ export class LineCore extends ElectronicCore {
      * @param {(0 | 1)} index 当前导线的起点/终点作为分割点
      */
     split(id: string, index: 0 | 1) {
-        const splited = this.findLineCore(id);
+        const splited = findLineComponent(id);
         const crossPoint = $P(this.way.get(-1 * index));
 
         // 验证拆分点是否在拆分路径上
@@ -413,9 +451,9 @@ export class LineCore extends ElectronicCore {
             throw new Error('(line) split line failed.');
         }
 
-        // 生成新导线
-        const devices = new LineCore();
-        vuex.commit('NEW_LINE', devices);
+        // 生成临时导线
+        const Comp = Vue.extend(LineComponent);
+        const devices = new Comp<LineComponent>();
 
         // devices 连接关系设定
         splited.replaceConnect(1, devices.id);                  // splited 原终点器件连接替换为 devices
@@ -425,7 +463,7 @@ export class LineCore extends ElectronicCore {
         // devices 路径为交错点至原 splited 终点
         devices.way = LineWay.from(splited.way.slice(crossSub + 1));
         devices.way.unshift(crossPoint);
-        devices.way.checkWayRepeat();
+        LineWay.prototype.checkWayRepeat.call(devices.way);
 
         // splited 的终点连接变更
         splited.connect[1] = `${devices.id} ${this.id}`;
@@ -433,13 +471,13 @@ export class LineCore extends ElectronicCore {
         // splited 路径变更为起点至交错点部分
         splited.way = LineWay.from(splited.way.slice(0, crossSub + 1));
         splited.way.push(crossPoint);
-        splited.way.checkWayRepeat();
+        LineWay.prototype.checkWayRepeat.call(splited.way);
 
         // 当前导线端点连接为拆分而成的两个导线
         this.connect[index] = `${splited.id} ${devices.id}`;    // 分割旧导线的导线终点由新旧导线 ID 组成
 
         // 交错节点设定
-        schMap.setPoint({
+        map.setPoint({
             type: 'cross-point',
             point: crossPoint.floorToSmall(),
             id: `${this.id} ${splited.id} ${devices.id}`,
@@ -454,16 +492,11 @@ export class LineCore extends ElectronicCore {
         // 更新数据
         this.dispatch();
         splited.dispatch();
-        devices.dispatch();
-    }
-    /**
-     * 删除导线
-     */
-    deleteSelf() {
-        this.freeConnect();
-        this.deleteSign();
-        vuex.commit('DELETE_LINE', this.id);
+
+        // 加载临时导线
+        this.$store.commit('PUSH_LINE', copyProperties(devices, disptchKeys));
+
+        // 销毁临时导线
+        devices.$destroy();
     }
 }
-
-mixins(LineCore.prototype, common);

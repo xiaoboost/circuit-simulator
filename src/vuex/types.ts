@@ -1,11 +1,13 @@
-import { LineCoreData } from 'src/components/electronic-line';
-import { PartCoreData, PartTypes } from 'src/components/electronic-part';
+import { LineData } from 'src/components/electronic-line/component';
+import { PartData } from 'src/components/electronic-part/component';
+import { PartTypes } from 'src/components/electronic-part/parts';
 
 /** 时间配置接口 */
 export interface TimeConfig {
     end: string;
     step: string;
 }
+
 /** vuex 状态接口 */
 export interface StateType {
     /**
@@ -19,15 +21,15 @@ export interface StateType {
     /**
      * 全局器件堆栈
      */
-    Parts: PartCoreData[];
+    parts: PartData[];
     /**
      * 全局导线堆栈
      */
-    Lines: LineCoreData[];
+    lines: LineData[];
     /**
      * 历史数据
      */
-    historyData: Array<Array<PartCoreData | LineCoreData>>;
+    historyData: Array<Array<PartData | LineData>>;
 }
 
 /** 储存用的器件数据接口 */

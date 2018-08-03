@@ -9,6 +9,7 @@
         @click.stop.self.right.passive="openRightMenu"
         @wheel.passive="resizeMap">
         <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
+            <line-component v-for="line in linesAll" :key="line.hash" :value="line"></line-component>
             <part-component v-for="part in partsAll" :key="part.hash" :value="part"></part-component>
         </g>
     </svg>
