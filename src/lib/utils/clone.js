@@ -71,5 +71,27 @@ export function clone(data, check = true) {
  * @param {U[]} keys 属性集合
  */
 export function copyProperties(object, keys) {
-    return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
+    return keys.reduce((v, k) => ((v[k] = object[k]), v), {});
+}
+
+/**
+ * 复制一个类的原型对象
+ * @template T extends classType
+ * @param {T} from 待复制的类
+ * @returns {T['prototype']}
+ */
+export function clonePrototype(object) {
+    const copyPrptotype = {};
+    const methodNames = Object.getOwnPropertyNames(object.prototype);
+
+    for (const key of methodNames) {
+        Object.defineProperty(copyPrptotype, key, {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: object.prototype[key],
+        });
+    }
+
+    return copyPrptotype;
 }

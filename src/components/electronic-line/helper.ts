@@ -1,6 +1,5 @@
-import { $P } from 'src/lib/point';
 import { randomString } from 'src/lib/utils';
-
+import { LineWay } from './line-way';
 import { LineData } from './component';
 import { createId } from 'src/components/electronic-part/common';
 
@@ -12,5 +11,5 @@ export const createLineData = (): LineData => ({
     hash: randomString(),
     id: createId('line'),
     connect: ['', ''],
-    way: [$P(0, 0), $P(0, 0)],
+    way: LineWay.from([[0, 0], [0, 0]]),
 });

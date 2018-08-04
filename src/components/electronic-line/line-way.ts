@@ -1,3 +1,4 @@
+import { clonePrototype } from 'src/lib/utils';
 import Point, { $P, PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
@@ -14,6 +15,15 @@ export class LineWay extends Array<Point> {
 
     constructor(len = 0) {
         super(len);
+    }
+
+    /**
+     * 将输入路径复制并全局替换当前实例
+     * @param way 待替换的路径
+     */
+    replace(way: Point[]) {
+        const newWay = LineWay.from(way);
+        this.splice(0, this.length, ...newWay);
     }
 
     /**
@@ -117,3 +127,6 @@ export class LineWay extends Array<Point> {
         callback(LineWay.from(this), index);
     }
 }
+
+/** 导线类原型副本 */
+export const CopyLineWayProto = clonePrototype(LineWay);

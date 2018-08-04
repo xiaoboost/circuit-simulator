@@ -1,6 +1,10 @@
 import { Component, Vue } from 'vue-property-decorator';
 
-import { LineWay } from './line-way';
+import {
+    LineWay,
+    CopyLineWayProto,
+} from './line-way';
+
 import ElectronicCore, {
     findLineComponent,
     findPartComponent,
@@ -32,13 +36,30 @@ export type LineData = Pick<LineComponent, dispatchKey>;
 export default class LineComponent extends ElectronicCore {
     /** 导线类型 */
     readonly type!: 'line';
-
     /** 导线路径 */
-    way: Point[] = [];
+    readonly way = new LineWay();
+
     /** 导线的连接表 */
     connect = ['', ''];
     /** 引脚大小 */
     pointSize: number[] = [];
+
+    created() {
+        /**
+         * 将`LineWay`的原型副本插入`way`属性的原型链中
+         * 从而实现`Array`继承实例的数据绑定
+         */
+        const oldProto = Object.getPrototypeOf(this.way);
+        Object.setPrototypeOf(this.way, CopyLineWayProto);
+
+        /**
+         * `LineWay`原型副本与`Vue`内部用于数组数据绑定的原型建立原型链关系
+         * 只需要绑定一次就行了，编号`line_1`为第一根导线
+         */
+        if (this.id === 'line_1') {
+            Object.setPrototypeOf(CopyLineWayProto, oldProto);
+        }
+    }
 
     /** 导线的两个节点属性 */
     get points() {
@@ -86,14 +107,12 @@ export default class LineComponent extends ElectronicCore {
 
     /** 在图纸标记当前器件 */
     markSign() {
-        const way = LineWay.from(this.way);
-
         let last: Point;
-        way.forEachPoint((point) => {
+        this.way.forEachPoint((point) => {
             // 当前点状态
             const status = map.getPoint(point, true);
             // 端点
-            if (point.isEqual(way.get(0)) || point.isEqual(way.get(-1))) {
+            if (point.isEqual(this.way.get(0)) || point.isEqual(this.way.get(-1))) {
                 // 空
                 if (!status) {
                     map.setPoint(
@@ -139,10 +158,8 @@ export default class LineComponent extends ElectronicCore {
     }
     /** 删除当前器件在图纸中的标记 */
     deleteSign() {
-        const way = LineWay.from(this.way);
-
         let last: Point;
-        way.forEachPoint((point) => {
+        this.way.forEachPoint((point) => {
             const status = map.getPoint(point, true)!;
 
             // 删除连接
@@ -419,11 +436,11 @@ export default class LineComponent extends ElectronicCore {
         line.replaceConnect(crossIndex, this.id);
         this.connect[crossIndex] = line.connect[crossIndex];
 
-        this.way = LineWay.prototype.checkWayRepeat.call(
+        this.way.replace(LineWay.prototype.checkWayRepeat.call(
             crossIndex === 0
                 ? line.way.concat(this.way)
                 : this.way.concat(line.way),
-        );
+        ));
 
         // 更新及删除
         this.dispatch();
@@ -461,7 +478,7 @@ export default class LineComponent extends ElectronicCore {
         devices.connect[0] = `${splited.id} ${this.id}`;        // 新导线起点由旧导线 ID 和分割旧导线的导线 ID 组成
 
         // devices 路径为交错点至原 splited 终点
-        devices.way = LineWay.from(splited.way.slice(crossSub + 1));
+        devices.way.replace(splited.way.slice(crossSub + 1));
         devices.way.unshift(crossPoint);
         LineWay.prototype.checkWayRepeat.call(devices.way);
 
@@ -469,7 +486,7 @@ export default class LineComponent extends ElectronicCore {
         splited.connect[1] = `${devices.id} ${this.id}`;
 
         // splited 路径变更为起点至交错点部分
-        splited.way = LineWay.from(splited.way.slice(0, crossSub + 1));
+        splited.way.replace(splited.way.slice(0, crossSub + 1));
         splited.way.push(crossPoint);
         LineWay.prototype.checkWayRepeat.call(splited.way);
 

@@ -10,6 +10,7 @@ import { $M } from 'src/lib/matrix';
 import { $P } from 'src/lib/point';
 import { isArray, clone, randomString } from 'src/lib/utils';
 
+import { LineWay } from 'src/components/electronic-line/line-way';
 import { PartData } from 'src/components/electronic-part/component';
 import { LineData } from 'src/components/electronic-line/component';
 
@@ -238,7 +239,7 @@ const actions: ActionTree<StateType, StateType> = {
                 id: createId('line'),
                 hash: randomString(),
                 connect: ['', ''],
-                way: storage.way.map((node, i) => $P(node)),
+                way: LineWay.from(storage.way),
             };
 
             markId(lineData.id);

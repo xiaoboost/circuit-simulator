@@ -22,3 +22,13 @@ export function clone<T>(data: T, check?: boolean): T;
  * @param {U[]} keys 属性集合
  */
 export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Pick<T, U>;
+
+type classType = { prototype: { [key: string]: any }};
+
+/**
+ * 复制一个类的原型对象
+ * @template T extends classType
+ * @param {T} from 待复制的类
+ * @returns {T['prototype']}
+ */
+export function clonePrototype<T extends classType>(object: T): T['prototype'];
