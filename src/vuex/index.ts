@@ -113,7 +113,7 @@ const mutations: MutationTree<StateType> = {
             ? lines.push(...clone(data))
             : lines.push(clone(data));
     },
-    /** 更新器件数据 */
+    /** 更新导线数据 */
     UPDATE_LINE: ({ lines }, data: LineData) => {
         const index = lines.findIndex((line) => line.hash === data.hash);
 
@@ -158,6 +158,17 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 导线放置到底层 */
+    LINE_TO_BOTTOM: ({ lines }, id: string) => {
+        const index = lines.findIndex((item) => item.id === id);
+        const line = lines[index];
+
+        if (index < 0) {
+            throw new Error(`(vuex) Line not found. id: ${id}`);
+        }
+
+        lines.splice(index, 1);
+        lines.unshift(line);
+    },
 
     /** 记录当前数据 */
     RECORD_MAP({ historyData, parts, lines }) {

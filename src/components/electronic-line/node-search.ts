@@ -1,9 +1,8 @@
-import { Rules } from './rules';
+import { Rules } from './search-rules';
 import { LineWay } from './line-way';
-import { $P, Point } from 'src/lib/point';
+import Point, { $P } from 'src/lib/point';
 
-import { ExchangeData } from './types';
-
+/** 搜索用节点数据 */
 export interface NodeData {
     position: Point;
     direction: Point;
@@ -11,6 +10,15 @@ export interface NodeData {
     junction: number;
     parent?: NodeData;
     cornerParent: NodeData;
+}
+
+/** 节点搜索选项接口 */
+export interface SearchOption {
+    start: Point;
+    end: Point;
+    status: string;
+    direction: Point;
+    endBias?: Point;
 }
 
 // 全局四方向定义
@@ -119,7 +127,13 @@ function newNode(node: NodeData, index: number): NodeData {
     };
 }
 
-export function nodeSearch({ start, end, status, direction: originDirection, endBias = start }: ExchangeData): LineWay {
+export function nodeSearch({
+    start,
+    end,
+    status,
+    direction: originDirection,
+    endBias = start,
+}: SearchOption): LineWay {
     const map = new SearchMap();
     const stack = new SearchStack(map);
     const rules = new Rules(start, end, status);
@@ -144,7 +158,7 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
     stack.push(first);
 
     // 调试用时，指示终点
-    if ($ENV.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
         $debugger.point(first.position, 'red', 20);
     }
 
@@ -166,7 +180,7 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
             break;
         }
 
-        if ($ENV.NODE_ENV === 'development') {
+        if (process.env.NODE_ENV === 'development') {
             $debugger.point(nodenow.position, 'blue', 20);
         }
 
@@ -176,7 +190,7 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
             const nodeExpand = newNode(nodenow, i);
             nodeExpand.value = rules.calValue(nodeExpand);
 
-            if ($ENV.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development') {
                 $debugger.point(nodeExpand.position, 'black', 20);
             }
 
@@ -198,7 +212,7 @@ export function nodeSearch({ start, end, status, direction: originDirection, end
         }
     }
 
-    if ($ENV.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development') {
         $debugger.clearAll();
     }
 

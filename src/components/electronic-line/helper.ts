@@ -11,5 +11,5 @@ export const createLineData = (): LineData => ({
     hash: randomString(),
     id: createId('line'),
     connect: ['', ''],
-    way: LineWay.from([[0, 0], [0, 0]]),
+    way: LineWay.from([[1e6, 1e6]]),
 });

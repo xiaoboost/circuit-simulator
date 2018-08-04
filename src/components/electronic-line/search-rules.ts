@@ -1,5 +1,5 @@
-import * as schMap from 'src/lib/map';
-import { Point } from 'src/lib/point';
+import * as map from 'src/lib/map';
+import Point from 'src/lib/point';
 import { NodeData } from './node-search';
 
 /**
@@ -9,7 +9,7 @@ import { NodeData } from './node-search';
 // 工具函数
 // 返回 node 所在器件
 function getPart(node: Point): string {
-    const status = schMap.getPoint(node);
+    const status = map.getPoint(node);
 
     if (status && status.type === 'part') {
         return status.id;
@@ -23,7 +23,7 @@ function getPart(node: Point): string {
 }
 // 返回 node 所在线段
 function getSegment(node: Point) {
-    if (!schMap.isLine(node)) {
+    if (!map.isLine(node)) {
         return [];
     }
 
@@ -31,8 +31,8 @@ function getSegment(node: Point) {
     for (let i = 0; i < 2; i++) {
         const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
         const limit = [
-            schMap.alongTheLine(node, undefined, directors[i * 2]),
-            schMap.alongTheLine(node, undefined, directors[i * 2 + 1]),
+            map.alongTheLine(node, undefined, directors[i * 2]),
+            map.alongTheLine(node, undefined, directors[i * 2 + 1]),
         ];
 
         if (!limit[0].isEqual(limit[1])) {
@@ -54,7 +54,7 @@ function nodesDistance(a: Point, b: Point) {
 }
 // node 所在线段是否和当前节点方向垂直
 function isNodeVerticalLine(node: NodeData) {
-    const status = schMap.getPoint(node.position);
+    const status = map.getPoint(node.position);
 
     if (!status || !status.connect) {
         return false;
@@ -116,7 +116,7 @@ function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
 // 扩展判定
 // 通用状态
 function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boolean {
-    const status = schMap.getPoint(node.position);
+    const status = map.getPoint(node.position);
 
     // 空节点
     if (!status) {
@@ -144,7 +144,7 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
         );
     }
     // 导线
-    else if (schMap.isLine(node.position)) {
+    else if (map.isLine(node.position)) {
         // 当前节点方向必须和所在导线方向垂直
         return (isNodeVerticalLine(node));
     }
@@ -203,10 +203,10 @@ export class Rules {
             this.calValue = calToPoint;
 
             // 绘制情况下，end 只可能是点，根据终点属性来分类
-            const endData = schMap.getPoint(this.end);
+            const endData = map.getPoint(this.end);
 
             // 终点在导线上
-            if (schMap.isLine(this.end)) {
+            if (map.isLine(this.end)) {
                 this.endLines.push(...getSegment(this.end));
                 this.isEnd = checkNodeInLineWhenDraw;
                 this.checkPoint = isLegalPointAlign;

@@ -8,7 +8,8 @@
             v-for="(point, i) in points"
             :key="i" :r="point.size"
             :classList="['part-point', point.class]"
-            :transform="`translate(${point.originPosition.join()})`">
+            :transform="`translate(${point.originPosition.join()})`"
+            @mousedown.native.stop.left.passive="startDrawLine(i)">
         </electronic-point>
     </g>
     <g

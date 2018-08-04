@@ -2,6 +2,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import {
     LineWay,
+    WayMap,
     CopyLineWayProto,
 } from './line-way';
 
@@ -10,9 +11,13 @@ import ElectronicCore, {
     findPartComponent,
 } from 'src/components/electronic-part/common';
 
+import * as search from './line-search';
+
 import * as map from 'src/lib/map';
 import Point, { $P } from 'src/lib/point';
-import ElectronicPoint from 'src/components/electronic-point/component';
+
+import { DrawEvent } from '../drawing-main/event-controller';
+import ElectronicPoint from '../electronic-point/component';
 
 import {
     isUndef,
@@ -42,7 +47,7 @@ export default class LineComponent extends ElectronicCore {
     /** 导线的连接表 */
     connect = ['', ''];
     /** 引脚大小 */
-    pointSize: number[] = [];
+    pointSize = [-1, -1];
 
     created() {
         /**
@@ -103,6 +108,10 @@ export default class LineComponent extends ElectronicCore {
     beforeDestroy() {
         this.freeConnect();
         this.deleteSign();
+    }
+    /** 将当前导线移动到绘图区的底层 */
+    toBottom() {
+        this.$store.commit('LINE_TO_BOTTOM', this.id);
     }
 
     /** 在图纸标记当前器件 */
@@ -189,6 +198,119 @@ export default class LineComponent extends ElectronicCore {
 
             last = point;
         });
+    }
+
+    /** 单点绘制 */
+    async drawing(index: 0 | 1) {
+        // 保持绘制点为终点
+        if (index === 0) {
+            this.reverse();
+        }
+
+        // 绘制期间，导线终点默认最大半径
+        this.pointSize.$set(1, 8);
+
+        const handler = this.createDrawEvent();
+        const mapData = map.getPoint(this.way[0], true)!;
+        const [id, mark] = mapData.id.split('-');
+        const connectPart = findPartComponent(id);
+        const direction = connectPart.points[mark].direction;
+
+        // 设置事件属性
+        handler
+            .setCursor('draw_line')
+            .setStopEvent({ type: 'mouseup', which: 'left' });
+
+        const wayMap = new WayMap();
+        const onPart: search.DrawingOption['onPart'] = {
+            status: 'idle',
+        };
+
+        // 器件的 mouseenter 和 mouseleave 事件
+        handler.setHandlerEvent([
+            {
+                type: 'mouseenter',
+                capture: true,
+                callback: (e: DrawEvent) => {
+                    const className = e.target.getAttribute('class') || '';
+                    let part: typeof connectPart;
+
+                    if (className.includes('focus-partial')) {
+                        part = findPartComponent(e.target.parentElement!);
+                    }
+                    else if (
+                        className.includes('focus-transparent') &&
+                        connectPart.$el.contains(e.target)
+                    ) {
+                        part = connectPart;
+                    }
+                    else {
+                        return;
+                    }
+
+                    Object.assign(onPart, { part, status: 'over', pointIndex: -1 });
+                },
+            },
+            {
+                type: 'mouseleave',
+                capture: true,
+                callback: (e: DrawEvent) => {
+                    const className = e.target.getAttribute('class') || '';
+
+                    if (!className.includes('focus-partial')) {
+                        return;
+                    }
+
+                    // debugger;
+                    // onPart.status = 'leave';
+                },
+            },
+        ]);
+
+        // 搜索事件
+        handler.setHandlerEvent((e: DrawEvent) => this.way.replace(
+            search.drawingSearch({
+                start: $P(this.way[0]),
+                end: e.$position,
+                mouseBais: e.$movement,
+                pointSize: this.pointSize,
+                wayMap, direction, onPart,
+            }),
+        ));
+
+        // 开始运行
+        await handler.start();
+
+        let finalEnd = this.way.get(-1).round();
+        const status = map.getPoint(finalEnd, true);
+        const endNode = this.way.get(-1);
+
+        // 起点和终点相等或者只有一个点，则删除当前导线
+        if (this.way.length < 2 || finalEnd.isEqual(this.way[0])) {
+            this.deleteSelf();
+            return;
+        }
+
+        // 终点被占用
+        if (status && status.type === 'part') {
+            finalEnd = (
+                finalEnd
+                    .around((node) => !map.hasPoint(node), 20)
+                    .reduce(
+                        (pre, next) =>
+                            endNode.distance(pre) < endNode.distance(next) ? pre : next,
+                    )
+            );
+        }
+
+        // 导线最终设置
+        this.pointSize.$set(1, -1);
+        this.way.endToPoint(finalEnd);
+        this.setConnectByWay(1);
+
+        // 更新数据
+        this.dispatch();
+        this.markSign();
     }
 
     /**

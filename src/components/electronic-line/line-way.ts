@@ -1,3 +1,4 @@
+import { SearchOption } from './node-search';
 import { clonePrototype } from 'src/lib/utils';
 import Point, { $P, PointLike } from 'src/lib/point';
 
@@ -70,6 +71,43 @@ export class LineWay extends Array<Point> {
         }
         return (this);
     }
+    checkWayExcess(option: SearchOption) {
+        // ..
+    }
+    /**
+     * 终点（起点）指向某点
+     *  - 导线节点数量少于`1`则忽略
+     * @param {Point} node
+     * @param {('start' | 'end')} [dir='end']
+     * @returns {this}
+     */
+    endToPoint(node: Point, mode: 'start' | 'end' = 'end'): this {
+        if (this.length <= 1) {
+            return this;
+        }
+
+        let last, prev;
+        if (mode === 'end') {
+            last = this.length - 1;
+            prev = this.length - 2;
+        }
+        else if (mode === 'start') {
+            last = 0;
+            prev = 1;
+        }
+        else {
+            throw new Error('LineWay: Illegal mode');
+        }
+
+        if (this[last][0] === this[prev][0]) {
+            this[prev][0] = node[0];
+        } else {
+            this[prev][1] = node[1];
+        }
+        this[last] = $P(node);
+
+        return this;
+    }
     /**
      * 枚举导线中的所有节点
      *  - 回调的参数
@@ -125,6 +163,25 @@ export class LineWay extends Array<Point> {
         }
 
         callback(LineWay.from(this), index);
+    }
+}
+
+/** 导线搜索图 类 */
+export class WayMap {
+    /** 路径数据 */
+    private _data: { [key: string]: LineWay } = {};
+
+    has(node: Point) {
+        return !!this._data[node.join(',')];
+    }
+    set(node: Point, way: LineWay) {
+        this._data[node.join(',')] = way;
+    }
+    get(node: Point): LineWay | undefined {
+        return this._data[node.join(',')];
+    }
+    delete(node: Point): boolean {
+        return Reflect.deleteProperty(this._data, node.join(','));
     }
 }
 

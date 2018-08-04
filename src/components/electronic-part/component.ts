@@ -7,11 +7,13 @@ import { $P } from 'src/lib/point';
 import setPartParams from './dialog-controller';
 import { product, PartShape } from './helper';
 import Electronics, { ElectronicPrototype } from './parts';
-import ElectronicCore, { findPartComponent } from './common';
+import ElectronicCore, { findPartComponent, findLineComponent } from './common';
 import ElectronicPoint from 'src/components/electronic-point/component';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
 import { isEqual, copyProperties } from 'src/lib/utils';
+import { createLineData } from '../electronic-line/helper';
+import LineComponent from '../electronic-line/component';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
@@ -349,5 +351,50 @@ export default class PartComponent extends ElectronicCore {
         this.dispatch();
         this.markSign();
         this.$el.removeAttribute('opacity');
+    }
+    /** 开始绘制导线 */
+    async startDrawLine(i: number) {
+        // 当前引脚坐标
+        const node = this.position.add(this.points[i].position);
+
+        let line: LineComponent;
+
+        // 该引脚已有连接
+        if (this.connect[i]) {
+            line = findLineComponent(this.connect[i]);
+            const mark = line.findConnectIndex(node);
+
+            if (mark === 0) {
+                line.reverse();
+            }
+
+            // 取消当前两者连接
+            this.connect.$set(i, '');
+            line.connect.$set(mark, '');
+
+            // 删除导线在图纸中的标记
+            line.deleteSign();
+        }
+        // 该引脚为空
+        else {
+            const data = createLineData();
+            this.$store.commit('PUSH_LINE', data);
+            await this.$nextTick();
+
+            line = findLineComponent(data.id);
+
+            // 设置当前两者连接
+            this.connect.$set(i, line.id);
+            line.connect.$set(0, `${this.id}-${i}`);
+
+            // 新导线起点为当前节点
+            line.way.splice(0, line.way.length, $P(node), $P(node));
+        }
+
+        // 设置高亮
+        this.mapStatus.partsNow = [this.id, line.id];
+
+        line.toBottom();
+        line.drawing(1);
     }
 }
