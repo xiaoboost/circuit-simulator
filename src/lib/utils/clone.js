@@ -1,6 +1,7 @@
 import {
     isArray,
     isBaseType,
+    isFunc,
 } from './assertion';
 
 /**
@@ -32,8 +33,8 @@ export function checkCircularStructure(data, parents = []) {
  * @returns {T}
  */
 export function clone(data, check = true) {
-    // 基础类型，直接返回其本身
-    if (isBaseType(data)) {
+    // 基础类型和函数，直接返回其本身
+    if (isBaseType(data) || isFunc(data)) {
         return data;
     }
 
@@ -71,7 +72,7 @@ export function clone(data, check = true) {
  * @param {U[]} keys 属性集合
  */
 export function copyProperties(object, keys) {
-    return keys.reduce((v, k) => ((v[k] = object[k]), v), {});
+    return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
 }
 
 /**
