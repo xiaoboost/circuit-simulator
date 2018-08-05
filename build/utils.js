@@ -47,11 +47,11 @@ exports.ramMiddleware = function(fs, root) {
         ctx.set('Accept-Ranges', 'bytes');
         ctx.set('Cache-Control', 'max-age=0');
 
-        // memory-fs
+        // node-fs
         if (fileStat.size) {
             ctx.length = fileStat.size;
         }
-        // node-fs
+        // memory-fs
         else {
             ctx.length = Buffer.from(fs.readFileSync(filePath)).length;
         }
