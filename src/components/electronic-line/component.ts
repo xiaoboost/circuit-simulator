@@ -222,33 +222,35 @@ export default class LineComponent extends ElectronicCore {
             .setStopEvent({ type: 'mouseup', which: 'left' });
 
         const wayMap = new WayMap();
-        const onPart: search.DrawingOption['onPart'] = {
+        const mouseOver: search.DrawingOption['mouseOver'] = {
             status: 'idle',
         };
 
-        // 器件的 mouseenter 和 mouseleave 事件
+        // mouseenter 以及 mouseleave 事件
         handler.setHandlerEvent([
             {
                 type: 'mouseenter',
                 capture: true,
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
-                    let part: typeof connectPart;
 
-                    if (className.includes('focus-partial')) {
-                        part = findPartComponent(e.target.parentElement!);
+                    // 器件的 mouseenter
+                    if (/focus-partial/.test(className)) {
+                        Object.assign(mouseOver, {
+                            status: 'part',
+                            part: findPartComponent(e.target.parentElement!),
+                        });
                     }
+                    // 导线的 mouseenter
                     else if (
-                        className.includes('focus-transparent') &&
-                        connectPart.$el.contains(e.target)
+                        /line-rect|line-point/.test(className) &&
+                        !this.$el.contains(e.target)
                     ) {
-                        part = connectPart;
+                        Object.assign(mouseOver, {
+                            status: 'line',
+                            line: findLineComponent(e.target.parentElement!),
+                        });
                     }
-                    else {
-                        return;
-                    }
-
-                    Object.assign(onPart, { part, status: 'over', pointIndex: -1 });
                 },
             },
             {
@@ -257,12 +259,12 @@ export default class LineComponent extends ElectronicCore {
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
 
-                    if (!className.includes('focus-partial')) {
-                        return;
+                    if (
+                        /focus-partial|line-rect|line-point/.test(className) &&
+                        !this.$el.contains(e.target)
+                    ) {
+                        mouseOver.status = 'idle';
                     }
-
-                    // debugger;
-                    // onPart.status = 'leave';
                 },
             },
         ]);
@@ -274,7 +276,7 @@ export default class LineComponent extends ElectronicCore {
                 end: e.$position,
                 mouseBais: e.$movement,
                 pointSize: this.pointSize,
-                wayMap, direction, onPart,
+                wayMap, direction, mouseOver,
             }),
         ));
 
@@ -496,7 +498,11 @@ export default class LineComponent extends ElectronicCore {
         // 端点在导线上
         else if (status.type === 'line') {
             if (this.hasConnect(status.id)) {
-                this.deleteSelf();
+                /**
+                 * 因为`setConnectByWay`函数运行之后可能还有后续动作
+                 * 所以这里需要等待一个更新周期
+                 */
+                this.$nextTick().then(() => this.deleteSelf());
             }
             else {
                 this.split(status.id, index);

@@ -217,7 +217,7 @@ export function nodeSearch({
     }
 
     if (!endStatus) {
-        throw new Error('(node search) not found end.');
+        return LineWay.from([start, end]);
     }
 
     // 终点回溯，生成路径

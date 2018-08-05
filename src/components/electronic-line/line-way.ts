@@ -72,7 +72,7 @@ export class LineWay extends Array<Point> {
         return (this);
     }
     checkWayExcess(option: SearchOption) {
-        // ..
+        return this;
     }
     /**
      * 终点（起点）指向某点
