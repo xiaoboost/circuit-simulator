@@ -287,7 +287,7 @@ export default class PartComponent extends ElectronicCore {
     }
     /** 移动说明文本 */
     async moveText() {
-        this.mapStatus.partsNow = [this.id];
+        this.mapStatus.devicesNow = [this.id];
 
         await this
             .createDrawEvent()
@@ -305,7 +305,7 @@ export default class PartComponent extends ElectronicCore {
 
     /** 设置属性 */
     async setParams() {
-        this.mapStatus.partsNow = [this.id];
+        this.mapStatus.devicesNow = [this.id];
 
         const status = await setPartParams(
             this.type,
@@ -327,7 +327,7 @@ export default class PartComponent extends ElectronicCore {
     /** 开始新器件设置事件 */
     async startCreateEvent() {
         this.$el.setAttribute('opacity', '0.4');
-        this.mapStatus.partsNow = [this.id];
+        this.mapStatus.devicesNow = [this.id];
         this.renderText();
 
         await this
@@ -392,7 +392,7 @@ export default class PartComponent extends ElectronicCore {
         }
 
         // 设置高亮
-        this.mapStatus.partsNow = [this.id, line.id];
+        this.mapStatus.devicesNow = [this.id, line.id];
 
         line.toBottom();
         line.drawing(1);

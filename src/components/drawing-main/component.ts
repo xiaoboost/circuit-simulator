@@ -9,7 +9,7 @@ import LineComponent, { LineData } from '../electronic-line/component';
 /** 图纸状态接口 */
 export type MapStatus =
     Readonly<Pick<DrawingMain, 'zoom' | 'position' | 'exclusion'>> &
-    Pick<DrawingMain, 'partsNow' | 'linesNow'>;
+    Pick<DrawingMain, 'devicesNow'>;
 
 @Component({
     components: {
@@ -19,15 +19,10 @@ export type MapStatus =
         const mapStatus: MapStatus = {} as any;
 
         Object.defineProperties(mapStatus, {
-            partsNow: {
+            devicesNow: {
                 enumerable: true,
-                get: () => this.partsNow,
-                set: (value: string[]) => this.partsNow = value.slice(),
-            },
-            linesNow: {
-                enumerable: true,
-                get: () => this.linesNow,
-                set: (value: string[]) => this.linesNow = value.slice(),
+                get: () => this.devicesNow,
+                set: (value: string[]) => this.devicesNow = value.slice(),
             },
             zoom: {
                 enumerable: true,
@@ -52,8 +47,7 @@ export type MapStatus =
 export default class DrawingMain extends Vue {
     zoom = 1;
     position = $P(0, 0);
-    partsNow: string[] = [];
-    linesNow: string[] = [];
+    devicesNow: string[] = [];
 
     exclusion = false;
 

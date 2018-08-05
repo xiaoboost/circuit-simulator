@@ -110,7 +110,7 @@ export default class ElectronicCore extends Vue {
 
     /** 当前器件是否被选中 */
     get focus() {
-        return this.mapStatus.partsNow.includes(this.id);
+        return this.mapStatus.devicesNow.includes(this.id);
     }
 
     created() {

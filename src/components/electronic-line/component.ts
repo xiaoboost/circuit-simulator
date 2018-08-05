@@ -313,6 +313,10 @@ export default class LineComponent extends ElectronicCore {
         // 更新数据
         this.dispatch();
         this.markSign();
+
+        // 染色
+        const parts = this.connect.map((item) => item.replace(/-\d+/, ''));
+        this.mapStatus.devicesNow = `${this.id} ${parts.join(' ')}`.split(' ');
     }
 
     /**
