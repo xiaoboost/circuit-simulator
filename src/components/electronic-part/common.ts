@@ -62,7 +62,7 @@ export function findPartComponent(value: string | HTMLElement): PartComponent {
         throw new Error(`Can not find this part: ${isString(value) ? value : value.id}`);
     }
 
-    return result as any;
+    return result as PartComponent;
 }
 /** 搜索导线组件 */
 export function  findLineComponent(value: string | HTMLElement): LineComponent {
@@ -73,7 +73,7 @@ export function  findLineComponent(value: string | HTMLElement): LineComponent {
         throw new Error(`Can not find this line: ${isString(value) ? value : value.id}`);
     }
 
-    return result as any;
+    return result as LineComponent;
 }
 
 /** 元件数据基类 */
