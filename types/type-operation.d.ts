@@ -9,3 +9,6 @@ declare type Writeable<T extends object, K extends keyof T> = Combine<Omit<T, K>
 
 /** Overwrite some property types in an interface */
 declare type Overwrite<T extends object, K extends object> = Combine<Omit<T, Extract<keyof T, keyof K>> & K>;
+
+/** return parameters type of function */
+declare type Parameters<T extends Function> = T extends (...args: infer R) => any ? R : never;

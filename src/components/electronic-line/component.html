@@ -10,6 +10,7 @@
         v-for="(point, i) in points"
         :key="i" :r="point.size"
         :class-list="['line-point', point.class]"
-        :transform="`translate(${point.position.join()})`">
+        :transform="`translate(${point.position.join()})`"
+        @mousedown.native.stop.left.passive="drawing(i)">
     </electronic-point>
 </g>

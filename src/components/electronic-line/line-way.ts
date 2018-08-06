@@ -19,15 +19,6 @@ export class LineWay extends Array<Point> {
     }
 
     /**
-     * 将输入路径复制并全局替换当前实例
-     * @param way 待替换的路径
-     */
-    replace(way: Point[]) {
-        const newWay = LineWay.from(way);
-        this.splice(0, this.length, ...newWay);
-    }
-
-    /**
      * 导线节点坐标标准化
      * @param {number} [base=20]
      * @returns {this}
@@ -185,5 +176,12 @@ export class WayMap {
     }
 }
 
-/** 导线类原型副本 */
-export const CopyLineWayProto = clonePrototype(LineWay);
+/**
+ * TODO: 等待官方修复求函数参数列表的错误
+ *  - @link: https://github.com/Microsoft/TypeScript/issues/26019
+ *  - @link: https://github.com/Microsoft/TypeScript/issues/26136
+ */
+type LineWayKey = Exclude<keyof LineWay, keyof Array<Point>>;
+export function LineWayCall<T extends LineWayKey>(way: Point[], name: T, ...args: any[]): ReturnType<LineWay[T]> {
+    return LineWay.prototype[name].call(way, ...args);
+}

@@ -103,6 +103,9 @@ export default class ElectronicCore extends Vue {
     @Inject()
     readonly createDrawEvent!: DrawingMain['createDrawEvent'];
 
+    /** 当前器件是否在执行事件 */
+    protected _status: 'idle' | 'pendding' = 'idle';
+
     @Watch('value', { immediate: true })
     update(val: object) {
         Object.assign(this, clone(val));
