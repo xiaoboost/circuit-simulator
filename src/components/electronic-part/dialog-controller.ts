@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Point, { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 
 import ParamsDialog from 'src/components/params-dialog/component';
 import Electronics from 'src/components/electronic-part/parts';
@@ -29,7 +29,7 @@ export default function setPartParams(
 ): Promise<{ id: string; params: string[] }> {
     // 参数对话框初始化赋值
     dialog.id = id;
-    dialog.position = $P(position);
+    dialog.position = Point.from(position);
     dialog.params = Electronics[type].params.map((param, i) => ({
         unit: param.unit,
         label: param.label + '：',
