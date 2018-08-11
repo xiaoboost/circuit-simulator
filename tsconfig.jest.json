@@ -1,28 +1,8 @@
 {
+    "extends": "./tsconfig.json",
     "compilerOptions": {
-        "sourceMap": true,
-        "strict": true,
-        "strictPropertyInitialization": true,
         "module": "commonjs",
-        "moduleResolution": "node",
-        "target": "es5",
         "allowSyntheticDefaultImports": true,
-        "isolatedModules": false,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "noImplicitReturns": false,
-        "strictNullChecks": true,
-        "importHelpers": true,
-        "listFiles": false,
-        "removeComments": false,
-        "downlevelIteration": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "allowJs": true,
-        "lib": ["es2015", "es2016", "es2017", "dom"],
-        "baseUrl": "."
+        "esModuleInterop": true
     },
-    "include": ["src", "types", "test"],
-    "exclude": ["node_modules", "dist"]
 }

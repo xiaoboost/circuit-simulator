@@ -14,12 +14,13 @@ module.exports = {
     },
     transform: {
         '^.+\\.(j|t)s$': '<rootDir>/node_modules/ts-jest',
-        '.*\\.(vue)$': '<rootDir>/node_modules/vue-jest',
+        '.*\\.vue$': '<rootDir>/node_modules/vue-jest',
     },
     testURL: 'http://localhost/',
     testRegex: '(/test/.*spec)\\.ts$',
     snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
     setupTestFrameworkScriptFile: '<rootDir>/test/setups/env.ts',
+    setupFiles: ['<rootDir>/test/setups/vue.ts'],
     coverageDirectory: '<rootDir>/test/coverage',
     collectCoverageFrom: [
         'src/**/*.{ts,vue}',
