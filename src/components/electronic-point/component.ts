@@ -102,10 +102,12 @@ export default class ElectronicPoint extends Vue {
             return;
         }
 
+        const rect = this.$refs.circle.getBoundingClientRect();
+
+        // 计算当前值
+        this.animateFrom = rect ? rect.width / this.mapStatus.zoom / 2 : 0;
         // 确定新的终点值
         this.animateTo = value;
-        // 计算当前值
-        this.animateFrom = this.$refs.circle.getClientRects()[0].width / this.mapStatus.zoom / 2;
         // 动画启动
         this.$refs.animate.beginElement();
     }
