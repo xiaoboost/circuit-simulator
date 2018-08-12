@@ -111,6 +111,12 @@ export default class ElectronicCore extends Vue {
         Object.assign(this, clone(val));
     }
 
+    @Watch('id')
+    changeId(newId: string, oldId: string) {
+        markId(newId);
+        deleteId(oldId);
+    }
+
     /** 当前器件是否被选中 */
     get focus() {
         return this.mapStatus.devicesNow.includes(this.id);
