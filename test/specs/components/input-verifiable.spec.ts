@@ -1,5 +1,5 @@
-import Vue from 'vue';
-import { shallowMount, Wrapper } from '@vue/test-utils';
+import { WrapperElement } from '../types';
+import { shallowMount } from '@vue/test-utils';
 import InputVerifiable from 'src/components/input-verifiable/component';
 
 describe('input-verifiable.vue', () => {
@@ -14,7 +14,7 @@ describe('input-verifiable.vue', () => {
     });
     test('update and clear the value', () => {
         const wrapper = shallowMount(InputVerifiable);
-        const input = wrapper.find('input') as Wrapper<Vue> & { element: InputVerifiable['$refs']['input'] };
+        const input = wrapper.find('input') as WrapperElement<InputVerifiable['$refs']['input']>;
 
         // change props
         wrapper.setProps({ value: 'props' });
