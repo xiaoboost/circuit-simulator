@@ -99,45 +99,46 @@ export default class LineComponent extends ElectronicCore {
 
     /** 在图纸标记当前器件 */
     markSign() {
-        let last: Point;
-        LineWayCall(this.way, 'forEachPoint', (point: Point) => {
+        let last!: Point;
+
+        for (const point of LineWayCall(this.way, 'eachPoint')) {
             // 当前点状态
             const status = map.getPoint(point, true);
-            // 端点
-            if (point.isEqual(this.way.get(0)) || point.isEqual(this.way.get(-1))) {
-                // 空
-                if (!status) {
-                    map.setPoint(
-                        {
-                            point,
-                            type: 'line-point',
-                            id: this.id,
-                            connect: [],
-                        },
-                        true,
-                    );
-                }
-                // 导线节点
-                else if (/line(-point)?/.test(status.type)) {
-                    status.type = 'cross-point';
-                    status.id += ' ' + this.id;
 
-                    map.mergePoint(status, true);
-                }
+            // 为空
+            if (!status) {
+                const data = {
+                    point,
+                    id: this.id,
+                    connect: [],
+                    type: this.findConnectIndex(point) >= 0
+                        ? 'line-point'
+                        : 'line',
+                };
+
+                map.setPoint(data, true);
             }
-            // 非端点
-            else {
-                map.setPoint(
-                    {
-                        point,
-                        type: 'line',
-                        id: this.id,
-                        connect: [],
-                    },
-                    true,
-                );
+            // 导线节点
+            else if (/^line/.test(status.type)) {
+                status.id += ` ${this.id}`;
+                status.type = this.findConnectIndex(point) >= 0
+                    ? 'cross-point'
+                    : 'cover-point';
 
-                // TODO: 还要导线相互交错的情况
+                map.mergePoint(status, true);
+            }
+            // 器件引脚不处理，其他类型全部抛出错误
+            else if (status.type !== 'part-point') {
+                const info = `the type of line point(${point.join(',')}) is  illegal.`;
+
+                if (process.env.NODE_ENV === 'development') {
+                    $debugger.point(point, 'red');
+                    throw new Error(info);
+                }
+                else {
+                    console.error(info);
+                    return;
+                }
             }
 
             if (last) {
@@ -146,17 +147,23 @@ export default class LineComponent extends ElectronicCore {
             }
 
             last = point;
-        });
+        }
     }
     /** 删除当前器件在图纸中的标记 */
     deleteSign() {
-        let last: Point;
-        LineWayCall(this.way, 'forEachPoint', (point: Point) => {
-            const status = map.getPoint(point, true)!;
+        let last!: Point;
 
-            // 删除连接
-            last && map.deleteConnect(point, last, true);
-            last && map.hasPoint(last, true) && map.deleteConnect(last, point, true);
+        for (const point of LineWayCall(this.way, 'eachPoint')) {
+            const status = map.getPoint(point, true);
+
+            if (last) {
+                map.deleteConnect(point, last, true);
+                map.hasPoint(last, true) && map.deleteConnect(last, point, true);
+            }
+
+            if (!status) {
+                continue;
+            }
 
             // 普通点
             if (/line(-point)?/.test(status.type)) {
@@ -180,7 +187,7 @@ export default class LineComponent extends ElectronicCore {
             }
 
             last = point;
-        });
+        }
     }
 
     /** 单点绘制 */

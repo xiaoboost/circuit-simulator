@@ -1,5 +1,4 @@
 import { SearchOption } from './node-search';
-import { clonePrototype } from 'src/lib/utils';
 import Point, { $P, PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
@@ -18,22 +17,14 @@ export class LineWay extends Array<Point> {
         super(len);
     }
 
-    /**
-     * 导线节点坐标标准化
-     * @param {number} [base=20]
-     * @returns {this}
-     */
+    /** 导线节点坐标标准化 */
     standardize(base: number = 20): this {
         for (let i = 0; i < this.length; i++) {
             this[i] = this[i].round(base);
         }
         return (this);
     }
-    /**
-     * 导线坐标整体偏移
-     * @param {(Point | [number, number])} [bias=[0, 0]]
-     * @returns {this}
-     */
+    /** 导线坐标整体偏移 */
     offset(bias: Point | [number, number] = [0, 0]): this {
         for (let i = 0; i < this.length; i++) {
             this[i] = this[i].add(bias);
@@ -43,7 +34,6 @@ export class LineWay extends Array<Point> {
     /**
      * 去除节点冗余
      *  - 相邻三点共线或者相邻两点相等
-     * @returns {this}
      */
     checkWayRepeat(): this {
         for (let i = 0; i < this.length - 2; i++) {
@@ -68,9 +58,6 @@ export class LineWay extends Array<Point> {
     /**
      * 终点（起点）指向某点
      *  - 导线节点数量少于`1`则忽略
-     * @param {Point} node
-     * @param {('start' | 'end')} [dir='end']
-     * @returns {this}
      */
     endToPoint(node: Point, mode: 'start' | 'end' = 'end'): this {
         if (this.length <= 1) {
@@ -99,65 +86,42 @@ export class LineWay extends Array<Point> {
 
         return this;
     }
-    /**
-     * 枚举导线中的所有节点
-     *  - 回调的参数
-     *     - point 当前节点坐标
-     *     - index 当前节点的编号
-     *     - segmentIndex 当前节点在导线的第几个线段
-     * @param {(point: Point, index: number, segmentIndex: number) => void} callback
-     */
-    forEachPoint(callback: (point: Point, index: number, segmentIndex: number) => void) {
-        let index = 0;
 
-        for (let i = 0; i < this.length - 1; i++) {
-            const vector = $P(this[i], this[i + 1]).sign().mul(20);
-
-            for (
-                let node = $P(this[i]);
-                !node.isEqual(this[i + 1]);
-                node = node.add(vector)
-            ) {
-                callback($P(node), i, index++);
-            }
-        }
-
-        callback($P(this.get(-1)), this.length - 2, index);
+    /** 获取当前线段的方向 */
+    getSubWayVector(index: number) {
+        return new Point(this[index], this[index + 1]).sign().mul(20);
     }
-    /**
-     * 枚举导线中的所有子路径
-     *  - 回调的参数
-     *     - way 当前子路径
-     *     - index 当前子路径的编号
-     * @param {(point: Point, index: number) => void} callback
-     */
-    forEachSubway(callback: (way: LineWay, index: number) => void) {
+
+    /** 生成导线途径所有点的迭代器 */
+    eachPoint() {
         let index = 0;
+        let node = Point.from(this[0]);
+        let vector = LineWayCall(this, 'getSubWayVector', 0);
 
-        for (let i = 0; i < this.length - 1; i++) {
-            const vector = $P(this[i], this[i + 1]).sign().mul(20);
-            const tempway = this.slice(0, i + 1);
+        const next = () => {
+            const result = {
+                value: node,
+                done: node.isEqual(this.get(-1)),
+            };
+            
+            node = node.add(vector);
 
-            for (
-                let node = $P(this[i]);
-                !node.isEqual(this[i + 1]);
-                node = node.add(vector)
+            if (
+                index < this.length - 2 &&
+                node.isEqual(this[index + 1])
             ) {
-                const way = LineWay.from(tempway);
-
-                if (!node.isEqual(way.get(-1))) {
-                    way.push($P(node));
-                }
-
-                callback(way, index++);
+                index++;
+                vector = LineWayCall(this, 'getSubWayVector', index);
             }
+
+            return result;
         }
 
-        callback(LineWay.from(this), index);
+        return { [Symbol.iterator]: () => ({ next }) };
     }
 }
 
-/** 导线搜索图 类 */
+/** 导线搜索图类 */
 export class WayMap {
     /** 路径数据 */
     private _data: { [key: string]: LineWay } = {};
