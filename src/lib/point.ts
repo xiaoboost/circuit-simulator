@@ -59,9 +59,7 @@ export default class Point {
      *
      * @returns {Generator}
      */
-    [Symbol.iterator]() {
-        return ([this[0], this[1]])[Symbol.iterator]();
-    }
+    [Symbol.iterator] = Array.prototype[Symbol.iterator];
 
     /**
      * 判断`this`与`point`是否相等
