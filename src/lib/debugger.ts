@@ -1,7 +1,7 @@
 import store from 'src/vuex';
 
 import { outputMap, MapData } from 'src/lib/map';
-import { $P, PointLike } from './point';
+import Point, { PointLike } from './point';
 
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
@@ -99,7 +99,7 @@ class MapDebug {
         const data = JSON.parse(outputMap()) as MapData;
 
         Object.values(data).forEach((status) => {
-            const point = $P(status.point);
+            const point = Point.from(status.point);
             // 点本身
             this.point(point, nodeColor[status.type] as string, 20);
             // 点的 ID
@@ -116,7 +116,7 @@ class MapDebug {
             }
 
             // 点的连接关系
-            const connect = (status.connect || []).map((node, i) => $P(node));
+            const connect = (status.connect || []).map(Point.from);
             connect.forEach(([tx, ty]) => {
                 const [x, y] = point;
 

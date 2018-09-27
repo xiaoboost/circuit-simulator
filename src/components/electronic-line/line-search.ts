@@ -1,4 +1,4 @@
-import Point, { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 
 import { LineWay, WayMap } from './line-way';
 import { SearchOption, nodeSearch } from './node-search';
@@ -114,7 +114,7 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
     const option: SearchOption = {
         start,
         direction,
-        end: $P(0, 0),
+        end: new Point(0, 0),
         status: 'drawing',
         endBias: vertex.add(10),
     };

@@ -1,8 +1,8 @@
 import Matrix from './matrix';
 import { isNumber, isUndef } from './utils';
 
-type PointLike = number[] | Point;
-type PointInput = PointLike | number;
+export type PointLike = number[] | Point;
+export type PointInput = PointLike | number;
 
 /**
  * 点和向量类
@@ -439,31 +439,3 @@ export default class Point {
         return [callback(this[0], 0), callback(this[1], 1)];
     }
 }
-
-/**
- * 从类似 Point 结构的数据中创建 Point
- */
-function $P(point: number): Point;
-function $P(point: PointLike): Point;
-function $P(start: number, end: number): Point;
-function $P(start: PointLike, end: PointLike): Point;
-function $P(start: PointInput, end?: PointInput) {
-    // 输入一个值
-    if (isUndef(end)) {
-        if (isNumber(start)) {
-            return new Point(start, start);
-        }
-        else {
-            return new Point(start[0], start[1]);
-        }
-    }
-    // 输入了两个值
-    else {
-        return new Point(
-            start as PointLike,
-            end as PointLike,
-        );
-    }
-}
-
-export { $P, PointLike };

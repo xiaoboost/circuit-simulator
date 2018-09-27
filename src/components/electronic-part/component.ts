@@ -1,8 +1,8 @@
 import { Component } from 'vue-property-decorator';
 
 import * as map from 'src/lib/map';
-import { $M } from 'src/lib/matrix';
-import { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
+import Matrix from 'src/lib/matrix';
 
 import setPartParams from './dialog-controller';
 import { product, PartShape } from './helper';
@@ -33,9 +33,9 @@ export default class PartComponent extends ElectronicCore {
     readonly origin!: ElectronicPrototype;
 
     /** 器件当前旋转矩阵 */
-    rotate = $M(2, 'E');
+    rotate = new Matrix(2, 'E');
     /** 器件当前位置 */
-    position = $P(1e6, 1e6);
+    position = new Point(1e6, 1e6);
     /** 器件的内部参数 */
     params: string[] = [];
     /** 器件管教连接 */
@@ -44,7 +44,7 @@ export default class PartComponent extends ElectronicCore {
     /** 引脚大小 */
     pointSize: number[] = [];
     /** 说明文本位置 */
-    textPosition = $P(0, 0);
+    textPosition = new Point(0, 0);
     /** 说明文本方向 */
     textPlacement: TextPlacement = 'bottom';
 
@@ -88,7 +88,7 @@ export default class PartComponent extends ElectronicCore {
     get points() {
         return this.origin.points.map((point, i) => ({
             size: this.pointSize[i],
-            originPosition: $P(point.position),
+            originPosition: Point.from(point.position),
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
             class: this.connect[i] ? 'part-point-close' : 'part-point-open',
@@ -140,7 +140,7 @@ export default class PartComponent extends ElectronicCore {
 
         // 器件内边距占位
         position.everyRect(inner, (node) => map.setPoint({
-            point: $P(node),
+            point: Point.from(node),
             id: this.id,
             type: 'part',
         }) || true);
@@ -176,7 +176,7 @@ export default class PartComponent extends ElectronicCore {
         const coverHash = {}, margin = this.margin;
 
         let label = false;
-        const position = $P(location).floorToSmall();
+        const position = Point.from(location).floorToSmall();
 
         // 检查器件管脚，管脚点不允许存在任何元素
         for (const point of this.points) {
@@ -252,9 +252,9 @@ export default class PartComponent extends ElectronicCore {
             local = this.origin.txtLBias,
             pend = this.textPosition,
             points = this.points.map((p) => p.direction),
-            direction = [$P(0, 1), $P(0, -1), $P(1, 0), $P(-1, 0)]
+            direction = [[0, 1], [0, -1], [1, 0], [-1, 0]]
                 .filter((di) => points.every((point) => !point.isEqual(di)))
-                .map((di) => di.mul(local))
+                .map((di) => Point.from(di).mul(local))
                 .reduce(
                     (pre, next) =>
                         pre.distance(pend) < next.distance(pend) ? pre : next,
@@ -350,7 +350,7 @@ export default class PartComponent extends ElectronicCore {
 
         const node = this.position;
 
-        this.position = $P(
+        this.position = Point.from(
             node.round(20)
                 .around((point) => !this.isCover(point), 20)
                 .reduce(
@@ -397,7 +397,7 @@ export default class PartComponent extends ElectronicCore {
             line.connect.$set(0, `${this.id}-${i}`);
 
             // 新导线起点为当前节点
-            line.way.splice(0, line.way.length, $P(node), $P(node));
+            line.way.splice(0, line.way.length, Point.from(node), Point.from(node));
         }
 
         // 设置高亮

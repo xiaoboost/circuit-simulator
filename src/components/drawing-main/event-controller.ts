@@ -1,5 +1,5 @@
 import DrawingMain from './component';
-import Point, { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 
 import {
     delay,
@@ -96,9 +96,9 @@ export default class EventController {
         let last: false | Point = false;
 
         const fnWrapper = (event: DrawEvent) => {
-            const mouse = $P(event.pageX, event.pageY);
+            const mouse = new Point(event.pageX, event.pageY);
 
-            event.$movement = last ? mouse.add(last, -1).mul(1 / this.Comp.zoom) : $P(0, 0);
+            event.$movement = last ? mouse.add(last, -1).mul(1 / this.Comp.zoom) : new Point(0, 0);
             event.$position = mouse.add(this.Comp.position, -1).mul(1 / this.Comp.zoom);
 
             last = mouse;

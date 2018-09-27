@@ -2,7 +2,7 @@ import vuex from 'src/vuex';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable/component';
 
-import { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 import { delay, isEqual, supportsPassive } from 'src/lib/utils';
 import { ParmasDescription } from 'src/components/electronic-part/parts';
 
@@ -22,7 +22,7 @@ export default class ParamsDialog extends Vue {
     /** 参数列表 */
     params: Params[] = [];
     /** 指向的器件坐标 */
-    position = $P(0);
+    position = new Point(0, 0);
     /** 是否显示 */
     vision = false;
 
@@ -65,7 +65,7 @@ export default class ParamsDialog extends Vue {
     /** ID 的说明文本 */
     private idLabel = '编号：';
     /** 对话框偏移量 */
-    private bias = $P(0);
+    private bias = new Point(0, 0);
     /** 中心最小限制 */
     private min = 10;
     /** 对话框缩放比例 */

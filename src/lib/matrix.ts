@@ -6,7 +6,6 @@ import {
 
 /**
  * 矩阵类
- *
  * @class Matrix
  */
 export default class Matrix {
@@ -200,7 +199,7 @@ export default class Matrix {
      * @returns {Matrix}
      */
     mul(ma: number[][] | Matrix): Matrix {
-        const a = isMatrix(ma) ? ma : (Matrix.from(ma));
+        const a = (ma instanceof Matrix) ? ma : (Matrix.from(ma));
 
         if (this.column !== a.row) {
             throw new Error('(matrix) this can not be multiplied with ma.');
@@ -232,7 +231,7 @@ export default class Matrix {
      * @returns {Matrix}
      */
     multo(ma: number[][] | Matrix): Matrix {
-        const a = isMatrix(ma) ? ma : (Matrix.from(ma));
+        const a = (ma instanceof Matrix) ? ma : (Matrix.from(ma));
 
         if (this.column !== a.row) {
             throw new Error('(matrix) ma can not be multiplied with this.');
@@ -348,16 +347,6 @@ export default class Matrix {
 }
 
 /**
- * 是否是矩阵类
- *
- * @param {*} ma
- * @returns {ma is Matrix}
- */
-function isMatrix(ma: any): ma is Matrix {
-    return (ma instanceof Matrix);
-}
-
-/**
  * 输入的二维数组能否转化为矩阵
  *
  * @param {number[][]} ma
@@ -383,28 +372,3 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 
     return ({ row, column });
 }
-
-// function combination() {
-//     //
-// }
-
-/**
- * new Matrix(row, column, value) 运算的封装
- * @param {(number | number[][] | Matrix)} row
- * @param {(number | 'E')} [column]
- * @param {number} [value=0]
- * @returns {Matrix}
- */
-function $M(matrix: number[][] | Matrix): Matrix;
-function $M(order: number, value?: number | 'E'): Matrix;
-function $M(row: number, column: number, value?: number): Matrix;
-function $M(row: number | number[][] | Matrix, column?: number | 'E', value?: number) {
-    if (isArray(row) || isMatrix(row)) {
-        return Matrix.from(row);
-    }
-    else {
-        return new Matrix(row, column as number, value);
-    }
-}
-
-export { $M };

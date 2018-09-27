@@ -14,7 +14,7 @@ import ElectronicCore, {
 import * as search from './line-search';
 
 import * as map from 'src/lib/map';
-import Point, { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 
 import { DrawEvent } from '../drawing-main/event-controller';
 import ElectronicPoint from '../electronic-point/component';
@@ -53,7 +53,9 @@ export default class LineComponent extends ElectronicCore {
     get points() {
         return Array(2).fill(false).map((_, i) => ({
             size: this.pointSize[i],
-            position: this.way.get(-i) ? $P(this.way.get(-i)) : $P(0, 0),
+            position: this.way.get(-i)
+                ? Point.from(this.way.get(-i))
+                : new Point(0, 0),
             class: {
                 'line-point-open': !this.connect[i],
                 'line-point-part': matchPart.test(this.connect[i]),
@@ -269,7 +271,7 @@ export default class LineComponent extends ElectronicCore {
         // 搜索事件
         handler.setHandlerEvent((e: DrawEvent) => {
             this.way = search.drawingSearch({
-                start: $P(this.way[0]),
+                start: Point.from(this.way[0]),
                 end: e.$position,
                 mouseBais: e.$movement,
                 pointSize: this.pointSize,
@@ -583,7 +585,7 @@ export default class LineComponent extends ElectronicCore {
      */
     split(id: string, index: 0 | 1) {
         const splited = findLineComponent(id);
-        const crossPoint = $P(this.way.get(-1 * index));
+        const crossPoint = Point.from(this.way.get(-1 * index));
 
         // 验证拆分点是否在拆分路径上
         let crossSub = -1;

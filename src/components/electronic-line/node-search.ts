@@ -1,6 +1,6 @@
+import Point from 'src/lib/point';
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
-import Point, { $P } from 'src/lib/point';
 
 /** 搜索用节点数据 */
 export interface NodeData {
@@ -112,10 +112,10 @@ class SearchStack {
 /** 生成新节点 */
 function newNode(node: NodeData, index: number): NodeData {
     const rotate = rotates[index];
-    const direction = $P([
+    const direction = new Point(
         node.direction[0] * rotate[0][0] + node.direction[1] * rotate[1][0],
         node.direction[0] * rotate[0][1] + node.direction[1] * rotate[1][1],
-    ]);
+    );
 
     return {
         direction,
@@ -141,8 +141,8 @@ export function nodeSearch({
     // 方向偏移
     const sumDirection = endBias.add(start, -1).sign().add(originDirection);
     const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
-        ? $P(sumDirection[0], 0).sign()
-        : $P(0, sumDirection[1]).sign();
+        ? new Point(sumDirection[0], 0).sign()
+        : new Point(0, sumDirection[1]).sign();
 
     // 生成初始节点
     const first: NodeData = {
@@ -223,7 +223,7 @@ export function nodeSearch({
     // 终点回溯，生成路径
     const way = new LineWay();
     while (endStatus.parent && endStatus !== endStatus.cornerParent) {
-        way.push($P(endStatus.position).mul(20));
+        way.push(endStatus.position.mul(20));
         endStatus = endStatus.cornerParent;
     }
 

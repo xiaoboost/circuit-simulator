@@ -6,8 +6,8 @@ import Vuex, {
     ActionTree,
 } from 'vuex';
 
-import { $M } from 'src/lib/matrix';
-import { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
+import Matrix from 'src/lib/matrix';
 import { isArray, clone, randomString } from 'src/lib/utils';
 
 import { LineWay } from 'src/components/electronic-line/line-way';
@@ -211,8 +211,10 @@ const actions: ActionTree<StateType, StateType> = {
                 id: storage.id,
                 hash: randomString(),
                 params: storage.params || [],
-                rotate: storage.rotate ? $M(storage.rotate) : $M(2, 'E'),
-                position: $P(storage.position),
+                rotate: storage.rotate
+                    ? Matrix.from(storage.rotate)
+                    : new Matrix(2, 'E'),
+                position: Point.from(storage.position),
                 connect: [],
             };
 
@@ -224,16 +226,16 @@ const actions: ActionTree<StateType, StateType> = {
 
             if (storage.text) {
                 if (storage.text === 'top') {
-                    part.textPosition = $P(0, -100);
+                    part.textPosition = new Point(0, -100);
                 }
                 else if (storage.text === 'right') {
-                    part.textPosition = $P(100, 0);
+                    part.textPosition = new Point(100, 0);
                 }
                 else if (storage.text === 'bottom') {
-                    part.textPosition = $P(0, 100);
+                    part.textPosition = new Point(0, 100);
                 }
                 else if (storage.text === 'left') {
-                    part.textPosition = $P(100, 0);
+                    part.textPosition = new Point(100, 0);
                 }
 
                 part.renderText();

@@ -1,5 +1,5 @@
 import { clone, isArray } from 'src/lib/utils';
-import Point, { $P, PointLike } from 'src/lib/point';
+import Point, { PointLike } from 'src/lib/point';
 
 export interface MapPointData {
     /**
@@ -116,7 +116,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
  * @param {boolean} [large=false]
  */
 export function setPoint(data: MapPointData, large = false): void {
-    data.point = (large ? data.point.mul(0.05) : $P(data.point));
+    data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
     $map[point2key(data.point)] = dataClone(data);
 }
 
@@ -134,7 +134,7 @@ export function setPoint(data: MapPointData, large = false): void {
  * @param {boolean} [large=false]
  */
 export function mergePoint(data: MapPointData, large = false): void {
-    data.point = (large ? data.point.mul(0.05) : $P(data.point));
+    data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
 
     const key = point2key(data.point);
     const newData = dataClone(data);
@@ -162,7 +162,7 @@ export function mergePoint(data: MapPointData, large = false): void {
  * @returns {boolean}
  */
 export function hasPoint(point: PointLike, large = false): boolean {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
+    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
 
     return Boolean($map[point2key(node)]);
 }
@@ -177,7 +177,7 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @returns {(MapPointData | false)}
  */
 export function getPoint(point: PointLike, large = false): MapPointData | undefined {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
+    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
     const data = $map[point2key(node)];
 
     return data ? dataClone(data) : undefined;
@@ -189,7 +189,7 @@ export function getPoint(point: PointLike, large = false): MapPointData | undefi
  * @returns {boolean}
  */
 export function deletePoint(point: PointLike, large = false) {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
+    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
     return Reflect.deleteProperty($map, point2key(node));
 }
 
@@ -232,8 +232,8 @@ export function hasConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {void}
  */
 export function addConnect(point: PointLike, connect: PointLike, large = false): void {
-    const origin = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
-    const check = (large ? Point.prototype.mul.call(connect, 0.05) : $P(connect)) as Point;
+    const origin = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
+    const check = (large ? Point.prototype.mul.call(connect, 0.05) : Point.from(connect)) as Point;
     const data = $map[point2key(origin)];
 
     if (!data) {
@@ -245,7 +245,7 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
     }
 
     if (!hasConnect(origin, check)) {
-        data.connect.push($P(check));
+        data.connect.push(Point.from(check));
     }
 }
 
@@ -260,8 +260,8 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {boolean}
  */
 export function deleteConnect(point: PointLike, connect: PointLike, large = false): boolean {
-    const origin = (large ? Point.prototype.mul.call(point, 0.05) : $P(point)) as Point;
-    const check = (large ? Point.prototype.mul.call(connect, 0.05) : $P(connect)) as Point;
+    const origin = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
+    const check = (large ? Point.prototype.mul.call(connect, 0.05) : Point.from(connect)) as Point;
     const data = $map[point2key(origin)];
 
     if (!data) {
@@ -296,23 +296,23 @@ export function isLine(point: PointLike, large = false) {
  * @export
  * @param {PointLike} start
  * @param {PointLike} [end=[Infinity, Infinity]]
- * @param {PointLike} [vector=$P(end, start)]
+ * @param {PointLike} [vector=new Point(end, start)]
  * @param {boolean} [large=false]
  * @returns {Point}
  */
 export function alongTheLine(
     start: PointLike,
     end: PointLike = [Infinity, Infinity],
-    vector: PointLike = $P(start, end),
+    vector: PointLike = new Point(start, end),
     large: boolean = false,
 ): Point {
-    const uVector = $P(vector).sign(),
-        sNode = large ? $P(start).mul(0.05) : $P(start),
-        eNode = large ? $P(end).mul(0.05) : $P(end);
+    const uVector = Point.from(vector).sign(),
+        sNode = large ? Point.from(start).mul(0.05) : Point.from(start),
+        eNode = large ? Point.from(end).mul(0.05) : Point.from(end);
 
     // 起点并不是导线或者起点等于终点，直接返回
     if (!isLine(sNode) || sNode.isEqual(eNode)) {
-        return $P(start);
+        return Point.from(start);
     }
 
     let node = sNode, next = node.add(uVector);

@@ -1,4 +1,4 @@
-import { $P } from 'src/lib/point';
+import Point from 'src/lib/point';
 import { State } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
 
@@ -30,7 +30,7 @@ export type MapStatus =
             },
             position: {
                 enumerable: true,
-                get: () => $P(this.position),
+                get: () => Point.from(this.position),
             },
             exclusion: {
                 enumerable: true,
@@ -46,7 +46,7 @@ export type MapStatus =
 })
 export default class DrawingMain extends Vue {
     zoom = 1;
-    position = $P(0, 0);
+    position = new Point(0, 0);
     devicesNow: string[] = [];
 
     exclusion = false;
@@ -80,7 +80,7 @@ export default class DrawingMain extends Vue {
 
     /** 放大缩小图纸 */
     resizeMap(e: WheelEvent) {
-        const mousePosition = $P(e.pageX, e.pageY);
+        const mousePosition = new Point(e.pageX, e.pageY);
         let size = this.zoom * 20;
 
         if (e.deltaY > 0) {

@@ -1,5 +1,5 @@
 import { SearchOption } from './node-search';
-import Point, { $P, PointLike } from 'src/lib/point';
+import Point, { PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
 export class LineWay extends Array<Point> {
@@ -7,7 +7,7 @@ export class LineWay extends Array<Point> {
         const way = new LineWay(points.length);
 
         for (let i = 0; i < points.length; i++) {
-            way[i] = $P(points[i]);
+            way[i] = Point.from(points[i]);
         }
 
         return way;
@@ -82,7 +82,7 @@ export class LineWay extends Array<Point> {
         } else {
             this[prev][1] = node[1];
         }
-        this[last] = $P(node);
+        this[last] = Point.from(node);
 
         return this;
     }
