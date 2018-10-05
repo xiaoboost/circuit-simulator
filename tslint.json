@@ -113,8 +113,6 @@
         ],
         // 左大括号和空格必须和前面的语句在同一行
         // "check-catch", "check-finally", "check-else" 三项不检查
-        "one-line": [true, "check-open-brace", "check-whitespace"],
-
-        // 这里没有需要启用`type Checking`的规则
+        "one-line": [true, "check-open-brace", "check-whitespace"]
     }
 }
