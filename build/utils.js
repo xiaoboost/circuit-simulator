@@ -39,6 +39,13 @@ exports.ramMiddleware = function(fs, root) {
             ? join(root, ctx.path, 'index.html')
             : join(root, ctx.path);
 
+        if (!fs.existsSync(filePath)) {
+            ctx.status = 404;
+            ctx.length = 0;
+            next();
+            return (false);
+        }
+
         const fileStat = fs.statSync(filePath);
 
         ctx.type = filePath;
