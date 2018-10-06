@@ -12,10 +12,10 @@ import ElectronicCore, {
 } from 'src/components/electronic-part/common';
 
 import * as search from './line-search';
-
 import * as map from 'src/lib/map';
 import Point from 'src/lib/point';
 
+import { Mutation } from 'src/vuex/constant';
 import { DrawEvent } from '../drawing-main/event-controller';
 import ElectronicPoint from '../electronic-point/component';
 
@@ -96,7 +96,7 @@ export default class LineComponent extends ElectronicCore {
     }
     /** 将当前导线移动到绘图区的底层 */
     toBottom() {
-        this.$store.commit('LINE_TO_BOTTOM', this.id);
+        this.$store.commit(Mutation.LINE_TO_BOTTOM, this.id);
     }
 
     /** 在图纸标记当前器件 */
@@ -324,7 +324,7 @@ export default class LineComponent extends ElectronicCore {
      */
     dispatch() {
         this.$store.commit(
-            'UPDATE_LINE',
+            Mutation.UPDATE_LINE,
             copyProperties(this, disptchKeys),
         );
     }
@@ -643,7 +643,7 @@ export default class LineComponent extends ElectronicCore {
         splited.dispatch();
 
         // 加载临时导线
-        this.$store.commit('PUSH_LINE', copyProperties(devices, disptchKeys));
+        this.$store.commit(Mutation.PUSH_LINE, copyProperties(devices, disptchKeys));
 
         // 销毁临时导线
         devices.$destroy();

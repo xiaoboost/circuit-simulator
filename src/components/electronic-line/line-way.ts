@@ -79,11 +79,20 @@ export class LineWay extends Array<Point> {
 
         if (this[last][0] === this[prev][0]) {
             this[prev][0] = node[0];
-        } else {
+        }
+        else {
             this[prev][1] = node[1];
         }
         this[last] = Point.from(node);
 
+        return this;
+    }
+
+    /**
+     * 终点（起点）指向某线段
+     *  - 导线节点数量少于`1`则忽略
+     */
+    endToLine(line: Point[] | number[][]): this {
         return this;
     }
 
@@ -103,7 +112,7 @@ export class LineWay extends Array<Point> {
                 value: node,
                 done: node.isEqual(this.get(-1)),
             };
-            
+
             node = node.add(vector);
 
             if (
@@ -115,7 +124,7 @@ export class LineWay extends Array<Point> {
             }
 
             return result;
-        }
+        };
 
         return { [Symbol.iterator]: () => ({ next }) };
     }
@@ -140,12 +149,7 @@ export class WayMap {
     }
 }
 
-/**
- * TODO: 等待官方修复求函数参数列表的错误
- *  - @link: https://github.com/Microsoft/TypeScript/issues/26019
- *  - @link: https://github.com/Microsoft/TypeScript/issues/26136
- */
-type LineWayKey = Exclude<keyof LineWay, keyof Array<Point>>;
-export function LineWayCall<T extends LineWayKey>(way: Point[], name: T, ...args: any[]): ReturnType<LineWay[T]> {
+type LineWayKey = Exclude<keyof LineWay, keyof Point[]>;
+export function LineWayCall<T extends LineWayKey>(way: Point[], name: T, ...args: Parameters<LineWay[T]>): ReturnType<LineWay[T]> {
     return LineWay.prototype[name].call(way, ...args);
 }

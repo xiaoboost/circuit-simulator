@@ -11,9 +11,10 @@ import ElectronicCore, { findPartComponent, findLineComponent } from './common';
 import ElectronicPoint from 'src/components/electronic-point/component';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
+import LineComponent from '../electronic-line/component';
 import { isEqual, copyProperties } from 'src/lib/utils';
 import { createLineData } from '../electronic-line/helper';
-import LineComponent from '../electronic-line/component';
+import { Mutation } from 'src/vuex/constant';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
@@ -139,11 +140,15 @@ export default class PartComponent extends ElectronicCore {
         const position = this.position.floorToSmall();
 
         // 器件内边距占位
-        position.everyRect(inner, (node) => map.setPoint({
-            point: Point.from(node),
-            id: this.id,
-            type: 'part',
-        }) || true);
+        position.everyRect(inner, (node) => {
+            map.setPoint({
+                point: Point.from(node),
+                id: this.id,
+                type: 'part',
+            });
+
+            return true;
+        });
 
         // 器件管脚距占位
         this.points.forEach((point, i) => map.setPoint({
@@ -167,7 +172,7 @@ export default class PartComponent extends ElectronicCore {
     /** 将当前器件数据更新至`vuex` */
     dispatch() {
         this.$store.commit(
-            'UPDATE_PART',
+            Mutation.UPDATE_PART,
             copyProperties(this, disptchKeys),
         );
     }
@@ -387,7 +392,7 @@ export default class PartComponent extends ElectronicCore {
         // 该引脚为空
         else {
             const data = createLineData();
-            this.$store.commit('PUSH_LINE', data);
+            this.$store.commit(Mutation.PUSH_LINE, data);
             await this.$nextTick();
 
             line = findLineComponent(data.id);

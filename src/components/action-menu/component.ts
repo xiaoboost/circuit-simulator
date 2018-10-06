@@ -1,6 +1,7 @@
 import { actions } from './icons';
 import { Getter } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
+import { Mutation, Action } from 'src/vuex/constant';
 
 type IconKey = keyof typeof actions;
 const iconkeys: IconKey[] = ['run', 'add', 'config'];
@@ -25,14 +26,14 @@ export default class ActionMenu extends Vue {
     action(name: IconKey) {
         switch (name) {
             case 'add':
-                this.$store.commit('OPEN_ADD_PARTS');
+                this.$store.commit(Mutation.OPEN_ADD_PARTS);
                 break;
             case 'config':
-                this.$store.commit('OPEN_MAIN_CONFIG');
+                this.$store.commit(Mutation.OPEN_MAIN_CONFIG);
                 break;
             case 'run':
                 this.isRun = true;
-                this.$store.dispatch('SOLVE_CIRCUIT');
+                this.$store.dispatch(Action.SOLVE_CIRCUIT);
                 break;
             default:
         }

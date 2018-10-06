@@ -89,7 +89,7 @@ function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
     }
 
     // 是否在终点等效线段中
-    const exLine = isInEndLines.call(this, node.position) as [Point, Point] | undefined;
+    const exLine = isInEndLines.call(this, node) as ReturnType<typeof isInEndLines>;
 
     // 不在等效终线中
     if (!exLine) {

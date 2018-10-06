@@ -127,6 +127,9 @@ function newNode(node: NodeData, index: number): NodeData {
     };
 }
 
+/**
+ * 基于 A* 的单点寻路
+ */
 export function nodeSearch({
     start,
     end,

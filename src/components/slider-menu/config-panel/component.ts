@@ -1,5 +1,5 @@
 import { State } from 'vuex-class';
-import { TimeConfig } from 'src/vuex';
+import { Mutation, TimeConfig } from 'src/vuex/constant';
 import { Component, Watch, Vue } from 'vue-property-decorator';
 
 import InputVerifiable from 'src/components/input-verifiable/component';
@@ -39,7 +39,7 @@ export default class ConfigPanel extends Vue {
             this.end !== this.storeTime.end ||
             this.step !== this.storeTime.step
         ) {
-            this.$store.commit('SET_TIME_CONFIG', {
+            this.$store.commit(Mutation.SET_TIME_CONFIG, {
                 step: this.step,
                 end: this.end,
             });

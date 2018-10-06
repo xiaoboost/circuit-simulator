@@ -27,9 +27,9 @@ import {
     CircuitStorage,
     PartStorageData,
     LineStorageData,
-} from './types';
-
-export * from './types';
+    Mutation,
+    Action,
+} from './constant';
 
 Vue.use(Vuex);
 
@@ -57,25 +57,25 @@ const getters: GetterTree<StateType, StateType> = {
 
 const mutations: MutationTree<StateType> = {
     /** 关闭侧边栏 */
-    CLOSE_SLIDER: (context) => context.page = '',
+    [Mutation.CLOSE_SLIDER]: (context) => context.page = '',
     /** 打开添加器件侧边栏 */
-    OPEN_ADD_PARTS: (context) => context.page = 'add-parts',
+    [Mutation.OPEN_ADD_PARTS]: (context) => context.page = 'add-parts',
     /** 打开总设置侧边栏 */
-    OPEN_MAIN_CONFIG: (context) => context.page = 'main-config',
+    [Mutation.OPEN_MAIN_CONFIG]: (context) => context.page = 'main-config',
     /** 打开波形界面 */
-    OPEN_GRAPH_VIEW: (context) => context.page = 'graph-view',
+    [Mutation.OPEN_GRAPH_VIEW]: (context) => context.page = 'graph-view',
 
     /** 设置时间 */
-    SET_TIME_CONFIG: (context, time: TimeConfig) => context.time = time,
+    [Mutation.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,
 
     /** 新器件压栈 */
-    PUSH_PART: ({ parts }, data: PartData | PartData[]) => {
+    [Mutation.PUSH_PART]: ({ parts }, data: PartData | PartData[]) => {
         isArray(data)
             ? parts.push(...clone(data))
             : parts.push(clone(data));
     },
     /** 更新器件数据 */
-    UPDATE_PART: ({ parts }, data: PartData) => {
+    [Mutation.UPDATE_PART]: ({ parts }, data: PartData) => {
         const index = parts.findIndex((part) => part.hash === data.hash);
 
         if (index < 0) {
@@ -91,7 +91,7 @@ const mutations: MutationTree<StateType> = {
         parts.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    COPY_PART({ parts }, IDs: string[]) {
+    [Mutation.COPY_PART]({ parts }, IDs: string[]) {
         IDs.forEach((id) => {
             const part = parts.find((elec) => elec.id === id);
 
@@ -108,13 +108,13 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 新导线压栈 */
-    PUSH_LINE: ({ lines }, data: LineData | LineData[]) => {
+    [Mutation.PUSH_LINE]: ({ lines }, data: LineData | LineData[]) => {
         isArray(data)
             ? lines.push(...clone(data))
             : lines.push(clone(data));
     },
     /** 更新导线数据 */
-    UPDATE_LINE: ({ lines }, data: LineData) => {
+    [Mutation.UPDATE_LINE]: ({ lines }, data: LineData) => {
         const index = lines.findIndex((line) => line.hash === data.hash);
 
         if (index < 0) {
@@ -130,7 +130,7 @@ const mutations: MutationTree<StateType> = {
         lines.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    COPY_LINE({ lines }, IDs: string[]) {
+    [Mutation.COPY_LINE]({ lines }, IDs: string[]) {
         IDs.forEach((id) => {
             const line = lines.find((elec) => elec.id === id);
 
@@ -147,7 +147,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 删除器件与导线 */
-    DELETE_ELEC: ({ parts, lines }, eles: string | string[]) => {
+    [Mutation.DELETE_ELEC]: ({ parts, lines }, eles: string | string[]) => {
         const data = isArray(eles) ? eles : [eles];
 
         for (const id of data) {
@@ -158,7 +158,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 导线放置到底层 */
-    LINE_TO_BOTTOM: ({ lines }, id: string) => {
+    [Mutation.LINE_TO_BOTTOM]: ({ lines }, id: string) => {
         const index = lines.findIndex((item) => item.id === id);
         const line = lines[index];
 
@@ -171,7 +171,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 记录当前数据 */
-    RECORD_MAP({ historyData, parts, lines }) {
+    [Mutation.RECORD_MAP]({ historyData, parts, lines }) {
         const stack: Array<PartData | LineData> = [];
         historyData.push(clone(stack.concat(parts).concat(lines)));
 
@@ -180,7 +180,7 @@ const mutations: MutationTree<StateType> = {
         }
     },
     /** 图纸数据回滚 */
-    HISTORY_BACK(state) {
+    [Mutation.HISTORY_BACK](state) {
         const current = state.historyData.pop();
 
         if (!current) {
@@ -194,10 +194,10 @@ const mutations: MutationTree<StateType> = {
 
 const actions: ActionTree<StateType, StateType> = {
     /** 外部数据导入 */
-    async IMPORT_DATA({ commit }, data: CircuitStorage) {
+    async [Action.IMPORT_DATA]({ commit }, data: CircuitStorage) {
         // load time config
         if (data.config) {
-            commit('SET_TIME_CONFIG', {
+            commit(Mutation.SET_TIME_CONFIG, {
                 end: data.config.end,
                 step: data.config.step,
             });
@@ -218,7 +218,7 @@ const actions: ActionTree<StateType, StateType> = {
                 connect: [],
             };
 
-            commit('PUSH_PART', partData);
+            commit(Mutation.PUSH_PART, partData);
 
             await Vue.nextTick();
 
@@ -256,7 +256,7 @@ const actions: ActionTree<StateType, StateType> = {
             };
 
             markId(lineData.id);
-            commit('PUSH_LINE', lineData);
+            commit(Mutation.PUSH_LINE, lineData);
 
             await Vue.nextTick();
 
