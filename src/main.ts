@@ -3,7 +3,7 @@ import 'src/lib/native';
 
 import Vue from 'vue';
 import Debug from 'src/lib/debugger';
-import store, { CircuitStorage } from 'src/vuex';
+import { default as store, CircuitStorage } from 'src/vuex';
 import { get, getQueryByName } from 'src/lib/utils';
 
 import ActionMenu from './components/action-menu/component';

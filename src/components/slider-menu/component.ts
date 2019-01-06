@@ -1,5 +1,5 @@
 import { Getter } from 'vuex-class';
-import { Mutation } from 'src/vuex/constant';
+import { Mutation } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
 import PartsPanel from './parts-panel/component';

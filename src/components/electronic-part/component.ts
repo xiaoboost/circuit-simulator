@@ -14,7 +14,7 @@ import { DrawEvent } from 'src/components/drawing-main/event-controller';
 import LineComponent from '../electronic-line/component';
 import { isEqual, copyProperties } from 'src/lib/utils';
 import { createLineData } from '../electronic-line/helper';
-import { Mutation } from 'src/vuex/constant';
+import { Mutation } from 'src/vuex';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';

@@ -31,6 +31,8 @@ import {
     Action,
 } from './constant';
 
+export * from './constant';
+
 Vue.use(Vuex);
 
 /** 历史操作记录上限 */

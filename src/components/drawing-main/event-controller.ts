@@ -57,7 +57,7 @@ function createStopMouseEvent({ el, type, which }: Required<StopMouseEvent>): ()
         ? { passive: true, capture: true }
         : true;
 
-    return () => new Promise((resolve) => {
+    return () => new Promise<void>((resolve) => {
         el.addEventListener(
             type,
             function stop(event: MouseEvent) {
@@ -193,7 +193,7 @@ export default class EventController {
         }
         else {
             this.stopEvent = createStopMouseEvent({
-                el: this.Comp.$el,
+                el: this.Comp.$el as HTMLElement,
                 ...option,
             });
         }

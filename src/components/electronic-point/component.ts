@@ -109,7 +109,12 @@ export default class ElectronicPoint extends Vue {
         // 确定新的终点值
         this.animateTo = value;
         // 动画启动
-        this.$refs.animate.beginElement();
+        /**
+         * FIXME:
+         * typescript 原生库中还未添加这个方法，实际上它是存在的
+         *  - @link: https://developer.mozilla.org/en-US/docs/Web/API/SVGAnimationElement#Methods
+         */
+        (this.$refs.animate as any).beginElement();
     }
 
     mounted() {

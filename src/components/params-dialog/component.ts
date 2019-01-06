@@ -57,6 +57,9 @@ export default class ParamsDialog extends Vue {
         dialog: HTMLElement;
     };
 
+    /** 组件自身元素声明 */
+    $el!: HTMLElement;
+
     /** 用于外部引用的`取消`接口 */
     cancel!: () => void;
     /** 用于外部引用的`确定`接口 */

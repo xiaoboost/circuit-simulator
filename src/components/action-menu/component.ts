@@ -1,7 +1,7 @@
 import { actions } from './icons';
 import { Getter } from 'vuex-class';
 import { Component, Vue } from 'vue-property-decorator';
-import { Mutation, Action } from 'src/vuex/constant';
+import { Mutation, Action } from 'src/vuex';
 
 type IconKey = keyof typeof actions;
 const iconkeys: IconKey[] = ['run', 'add', 'config'];

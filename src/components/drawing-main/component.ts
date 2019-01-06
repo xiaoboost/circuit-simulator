@@ -57,6 +57,8 @@ export default class DrawingMain extends Vue {
     @State('lines')
     linesAll!: LineData[];
 
+    $el!: HTMLElement;
+
     /** 背景图纸样式 */
     get backgroundStyle() {
         const size = this.zoom * 20;

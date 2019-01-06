@@ -15,7 +15,7 @@ import * as search from './line-search';
 import * as map from 'src/lib/map';
 import Point from 'src/lib/point';
 
-import { Mutation } from 'src/vuex/constant';
+import { Mutation } from 'src/vuex';
 import { DrawEvent } from '../drawing-main/event-controller';
 import ElectronicPoint from '../electronic-point/component';
 
