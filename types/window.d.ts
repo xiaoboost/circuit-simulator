@@ -24,20 +24,6 @@ interface MapDebug {
     whole(): void;
 }
 
-interface SVGAnimationElement extends SVGElement {
-    readonly targetElement: SVGElement | null;
-
-    getStartTime(): number;
-    getCurrentTime(): number;
-    beginElement(): void;
-    endElement(): void;
-}
-
-declare const SVGAnimationElement: {
-    prototype: SVGAnimationElement;
-    new(): SVGAnimationElement;
-};
-
 declare const supportsOnce: boolean;
 declare const supportsPassive: boolean;
 declare const $debugger: MapDebug;
