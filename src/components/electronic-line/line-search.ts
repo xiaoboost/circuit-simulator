@@ -1,5 +1,6 @@
 import Point from 'src/lib/point';
 
+import * as map from 'src/lib/map';
 import { LineWay, WayMap } from './line-way';
 import { SearchOption, nodeSearch } from './node-search';
 
@@ -40,7 +41,8 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: Drawi
     // 四方格坐标
     const endGrid = vertex.toGrid();
 
-    let status = 'normal', ends: Point[] = [];
+    let ends: Point[] = [];
+    let status: 'normal' | 'align-point' | 'align-line' = 'normal';
 
     pointSize.$set(1, 8);
 
@@ -81,7 +83,17 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: Drawi
     }
     // 终点在导线上
     else if (mouseOver.status === 'line') {
-        // ..
+        const mouseRound = end.round();
+        const mouseStatus = map.getPoint(mouseRound, true)!;
+
+        if (mouseStatus.type === 'cross-point') {
+            status = 'align-point';
+            ends = [mouseRound];
+        }
+        else {
+            status = 'align-line';
+            ends = endGrid.filter((node) => map.isLine(node, true));
+        }
     }
     // 终点闲置
     else {
@@ -105,9 +117,6 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: Drawi
 }
 
 export function drawingSearch({ start, end, direction, wayMap, pointSize }: DrawingOption) {
-    // 当前终点四方格左上角顶点
-    const vertex = end.floor();
-
     // 计算当前终点以及状态
     const { ends, status } = getDrawingStatus(arguments[0]);
     // 节点搜索选项
@@ -116,7 +125,7 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
         direction,
         end: new Point(0, 0),
         status: 'drawing',
-        endBias: vertex.add(10),
+        endBias: end.floor().add(10),
     };
 
     // 搜索路径
@@ -137,14 +146,50 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
 
     let way: LineWay;
 
-    // 强制对齐模式
     if (status === 'align-point') {
         way = LineWay.from(wayMap.get(ends[0])!);
     }
-    // 普通模式
+    else if (status === 'align-line') {
+        debugger;
+        const endRound = end.round();
+        const endRoundWay = wayMap.get(endRound)!;
+        // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+        const roundSet = ends.filter((node) => {
+            if (map.hasConnect(endRound, node, true)) {
+                const endStatus = map.getPoint(node, true);
+                return endStatus && endStatus.type !== 'part-point';
+            }
+            else {
+                return false;
+            }
+        });
+
+        if (roundSet.length > 0) {
+            // // 交集中离鼠标最近的点
+            // const closest = end.closest(roundSet);
+            // // 导线最后两个节点不同
+            // if (endRoundWay.isSimilar(wayMap.get(closest))) {
+            //     this.shrinkCircle(1);
+            //     this.way.clone(mouseRoundWay);closest
+            //     this.way.endToLine([mouseRound, closest], mousePosition);
+
+            //     pointSize.$set(1, 1);
+            //     way = LineWay.from(wayMap.get(closest)!);
+            //     way.endToLine();
+            // }
+            // else {
+            //     way = LineWay.from(endRoundWay);
+            // }
+
+            way = LineWay.from(endRoundWay);
+        }
+        else {
+            way = LineWay.from(endRoundWay);
+        }
+    }
     else {
-        // 选取四顶点中节点最多的路径
-        const key = vertex.toGrid().filter((node) => wayMap.has(node)).reduce(
+        // 选取终点中节点最多的路径
+        const key = ends.filter((node) => wayMap.has(node)).reduce(
             (pre, next) =>
                 (wayMap.get(pre)!.length >= wayMap.get(next)!.length) ? pre : next,
         );
