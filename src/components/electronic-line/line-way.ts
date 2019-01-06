@@ -151,5 +151,5 @@ export class WayMap {
 
 type LineWayKey = Exclude<keyof LineWay, keyof Point[]>;
 export function LineWayCall<T extends LineWayKey>(way: Point[], name: T, ...args: Parameters<LineWay[T]>): ReturnType<LineWay[T]> {
-    return LineWay.prototype[name].call(way, ...args);
+    return (LineWay.prototype[name] as any).call(way, ...args);
 }
