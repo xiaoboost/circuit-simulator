@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "outDir": "./out",
         "sourceMap": true,
         "strict": true,
         "strictPropertyInitialization": true,
