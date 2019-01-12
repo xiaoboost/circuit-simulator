@@ -1,5 +1,4 @@
-import { CreateElement } from 'vue';
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import Vue from 'vue';
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
@@ -7,23 +6,30 @@ import { randomString } from 'src/lib/utils';
 
 import { createId } from './common';
 import { PartData } from './component';
-import Electronics, { ShapeDescription } from './parts';
+import { default as Electronics, ShapeDescription } from './parts';
 
-@Component
-export class PartShape extends Vue {
-    @Prop({ type: Array, default: () => [] })
-    value!: ShapeDescription[];
+interface Props {
+    value: ShapeDescription[];
+}
 
-    render(h: CreateElement) {
+export const PartShape = Vue.extend<Props>({
+    functional: true,
+    props: {
+        value: {
+            type: Array,
+            default: () => [],
+        },
+    },
+    render(h, context) {
         return h(
             'g',
-            this.value.map(
+            context.props.value.map(
                 (shape) =>
                     h(shape.name, { attrs: shape.attribute }),
             ) as any,
         );
-    }
-}
+    },
+});
 
 /** 兼容 PointLike 类型的点乘矩阵 */
 export const product = (point: Point | number[], ma: Matrix): Point => {
