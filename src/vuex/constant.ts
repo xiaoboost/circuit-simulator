@@ -63,7 +63,7 @@ export interface CircuitStorage {
 }
 
 /** Mutation 键名 */
-export enum Mutation {
+export const enum Mutation {
     /** 关闭侧边栏 */
     CLOSE_SLIDER = 'CLOSE_SLIDER',
     /** 打开添加器件侧边栏 */
@@ -97,7 +97,7 @@ export enum Mutation {
 }
 
 /** Action 键名 */
-export enum Action {
+export const enum Action {
     /** 外部数据导入 */
     IMPORT_DATA = 'IMPORT_DATA',
     /** 求解电路 */
