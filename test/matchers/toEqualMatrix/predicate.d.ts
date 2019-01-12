@@ -1,3 +1,3 @@
-import { Matrix } from 'src/lib/matrix';
+import Matrix from 'src/lib/matrix';
 
 export default function predicate(received: Matrix, argument: Matrix): boolean;
