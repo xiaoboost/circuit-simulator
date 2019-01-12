@@ -1,5 +1,4 @@
-import { clone, isArray } from 'src/lib/utils';
-import Point, { PointLike } from 'src/lib/point';
+import { default as Point, PointLike } from 'src/lib/point';
 
 export interface MapPointData {
     /**
@@ -27,12 +26,11 @@ export interface MapPointData {
      *
      * @type {Point[]}
      */
-    connect?: Point[];
+    connect: Point[];
 }
 
-export interface MapData {
-    [key: string]: MapPointData;
-}
+export type MapData = AnyObject<MapPointData>;
+export type MapPointInputData = PartPartial<MapPointData, 'connect'>;
 
 /**
  * 图纸标记缓存
@@ -56,19 +54,25 @@ function point2key(node: PointLike): string {
 
 /**
  * 返回地图标记数据的副本
- * @param {MapPointData} data
+ * @param {MapPointInputData} data 原始数据
  * @returns {MapPointData}
  */
-function dataClone(data: MapPointData): MapPointData {
-    const mustKeys = ['id', 'point', 'type', 'connect'];
-    const ans = clone(data);
+function dataClone(data: MapPointInputData): MapPointData {
+    return {
+        id: data.id,
+        type: data.type,
+        point: Point.from(data.point),
+        connect: data.connect ? data.connect.map(Point.from) : [],
+    };
+}
 
-    Object
-        .keys(ans)
-        .filter((key) => !mustKeys.includes(key))
-        .forEach((key) => Reflect.deleteProperty(ans, key));
-
-    return (ans);
+type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;
+/**
+ * Point 原型函数封装
+ *  - 主要用于 PointLike 型输入
+ */
+function PointCall<T extends PointMethodKeys>(self: PointLike, name: T, ...args: Parameters<Point[T]>): ReturnType<Point[T]> {
+    return (Point.prototype as any)[name].call(self, ...args);
 }
 
 /**
@@ -115,8 +119,8 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
  * @param {MapPointData} data
  * @param {boolean} [large=false]
  */
-export function setPoint(data: MapPointData, large = false): void {
-    data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
+export function setPoint(data: MapPointInputData, large = false): void {
+    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
     $map[point2key(data.point)] = dataClone(data);
 }
 
@@ -133,22 +137,18 @@ export function setPoint(data: MapPointData, large = false): void {
  * @param {MapPointData} data
  * @param {boolean} [large=false]
  */
-export function mergePoint(data: MapPointData, large = false): void {
+export function mergePoint(data: MapPointInputData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
 
     const key = point2key(data.point);
     const newData = dataClone(data);
-    const oriData = $map[key];
+    const oldData = $map[key];
 
-    if (!oriData) {
+    if (!oldData) {
         $map[key] = newData;
     }
-
-    if (
-        isArray(newData.connect) &&
-        oriData && isArray(oriData.connect)
-    ) {
-        newData.connect = newData.connect.concat(oriData.connect);
+    else {
+        newData.connect = newData.connect.concat(oldData.connect);
         newData.connect = newData.connect.unique(point2key);
     }
 
@@ -162,8 +162,7 @@ export function mergePoint(data: MapPointData, large = false): void {
  * @returns {boolean}
  */
 export function hasPoint(point: PointLike, large = false): boolean {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
-
+    const node = large ? PointCall(point, 'mul', 0.05) : point;
     return Boolean($map[point2key(node)]);
 }
 
@@ -177,7 +176,7 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @returns {(MapPointData | false)}
  */
 export function getPoint(point: PointLike, large = false): MapPointData | undefined {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
+    const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
     const data = $map[point2key(node)];
 
     return data ? dataClone(data) : undefined;
@@ -189,7 +188,7 @@ export function getPoint(point: PointLike, large = false): MapPointData | undefi
  * @returns {boolean}
  */
 export function deletePoint(point: PointLike, large = false) {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
+    const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
     return Reflect.deleteProperty($map, point2key(node));
 }
 
@@ -205,16 +204,13 @@ export function deletePoint(point: PointLike, large = false) {
  * @returns {boolean}
  */
 export function hasConnect(point: PointLike, connect: PointLike, large = false): boolean {
-    const origin = (large ? Point.prototype.mul.call(point, 0.05) : point) as Point;
-    const check = (large ? Point.prototype.mul.call(connect, 0.05) : connect) as Point;
-    const data = $map[point2key(origin)];
+    const origin = large ? PointCall(point, 'mul', 0.05) : point;
+    const check = large ? PointCall(connect, 'mul', 0.05) : connect;
+    const key = point2key(origin);
+    const data = $map[key];
 
     if (!data) {
-        throw new Error('(map) space point.');
-    }
-
-    if (!data.connect) {
-        throw new Error('(map) this point do not have connect.');
+        throw new Error(`(map) space point: ${key}`);
     }
 
     return data.connect.some((item) => item.isEqual(check));
@@ -232,16 +228,13 @@ export function hasConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {void}
  */
 export function addConnect(point: PointLike, connect: PointLike, large = false): void {
-    const origin = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
-    const check = (large ? Point.prototype.mul.call(connect, 0.05) : Point.from(connect)) as Point;
-    const data = $map[point2key(origin)];
+    const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+    const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
+    const key = point2key(origin);
+    const data = $map[key];
 
     if (!data) {
-        throw new Error('(map) space point.');
-    }
-
-    if (!data.connect) {
-        throw new Error('(map) this point do not have connect.');
+        throw new Error(`(map) space point: ${key}`);
     }
 
     if (!hasConnect(origin, check)) {
@@ -260,16 +253,13 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {boolean}
  */
 export function deleteConnect(point: PointLike, connect: PointLike, large = false): boolean {
-    const origin = (large ? Point.prototype.mul.call(point, 0.05) : Point.from(point)) as Point;
-    const check = (large ? Point.prototype.mul.call(connect, 0.05) : Point.from(connect)) as Point;
-    const data = $map[point2key(origin)];
+    const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+    const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
+    const key = point2key(origin);
+    const data = $map[key];
 
     if (!data) {
-        throw new Error('(map) space point.');
-    }
-
-    if (!data.connect) {
-        throw new Error('(map) this point do not have connect.');
+        throw new Error(`(map) space point: ${key}`);
     }
 
     return data.connect.delete((node) => node.isEqual(check));
@@ -281,7 +271,7 @@ export function deleteConnect(point: PointLike, connect: PointLike, large = fals
  * @return {boolean}
  */
 export function isLine(point: PointLike, large = false) {
-    const node = (large ? Point.prototype.mul.call(point, 0.05) : point) as Point;
+    const node = large ? PointCall(point, 'mul', 0.05) : point;
 
     const data = $map[point2key(node)];
     return (

@@ -87,24 +87,17 @@ describe('map.ts: Data marked by drawings', () => {
         expect(map.hasPoint([2, 3])).toBeFalse();
     });
     test('hasConnect/addConnect/deleteConnect()', () => {
-        const data: map.MapPointData = {
+        const data: map.MapPointInputData = {
             id: 'R_1',
             type: 'line',
             point: new Point(1, 3),
         };
 
-        expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
-        expect(() => map.addConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
-        expect(() => map.deleteConnect([1, 3], [1, 2])).toThrowError('(map) space point.');
+        expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) space point: 1,3');
+        expect(() => map.addConnect([1, 3], [1, 2])).toThrowError('(map) space point: 1,3');
+        expect(() => map.deleteConnect([1, 3], [1, 2])).toThrowError('(map) space point: 1,3');
 
         map.setPoint(data);
-
-        expect(() => map.hasConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
-        expect(() => map.addConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
-        expect(() => map.deleteConnect([1, 3], [1, 2])).toThrowError('(map) this point do not have connect.');
-
-        data.connect = [];
-        map.mergePoint(data);
         expect(map.hasConnect([1, 3], [2, 3])).toBeFalse();
 
         map.addConnect([1, 3], [2, 3]);
@@ -156,7 +149,7 @@ describe('map.ts: Data marked by drawings', () => {
     test('alongTheLine()', () => {
         // [4, 2] -> [8, 2]
         for (let i = 4; i < 9; i++) {
-            const data: map.MapPointData = {
+            const data: map.MapPointInputData = {
                 type: 'line',
                 point: new Point(i, 2),
                 id: 'line_1',
@@ -176,7 +169,7 @@ describe('map.ts: Data marked by drawings', () => {
         }
         // [9, 2] -> [12, 2]
         for (let i = 9; i < 13; i++) {
-            const data: map.MapPointData = {
+            const data: map.MapPointInputData = {
                 type: 'line',
                 point: new Point(i, 2),
                 id: 'line_1',
