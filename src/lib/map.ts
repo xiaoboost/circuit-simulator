@@ -272,8 +272,8 @@ export function deleteConnect(point: PointLike, connect: PointLike, large = fals
  */
 export function isLine(point: PointLike, large = false) {
     const node = large ? PointCall(point, 'mul', 0.05) : point;
-
     const data = $map[point2key(node)];
+
     return (
         Boolean(data) &&
         /^(line|cross-point|cover-point)/.test(data.type)
@@ -311,7 +311,8 @@ export function alongTheLine(
         if (hasConnect(node, next)) {
             node = next;
             next = node.add(uVector);
-        } else {
+        }
+        else {
             break;
         }
     }
