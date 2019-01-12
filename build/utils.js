@@ -1,4 +1,5 @@
 const { join } = require('path');
+const { getType } = require('mime');
 
 /**
  * Generate tag of build
@@ -48,7 +49,7 @@ exports.ramMiddleware = function(fs, root) {
 
         const fileStat = fs.statSync(filePath);
 
-        ctx.type = filePath;
+        ctx.type = getType(filePath);
         ctx.lastModified = new Date();
 
         ctx.set('Accept-Ranges', 'bytes');
