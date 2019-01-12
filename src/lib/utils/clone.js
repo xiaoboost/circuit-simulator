@@ -47,7 +47,11 @@ export function clone(data, check = true) {
     if (isArray(data)) {
         return data.map((n) => clone(n));
     }
-    // 默认对象
+    // Date 对象
+    else if (data instanceof Date) {
+        return new Date(data);
+    }
+    // 其余对象
     else {
         const prototype = Object.getPrototypeOf(data);
 
