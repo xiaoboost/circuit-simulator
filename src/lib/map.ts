@@ -19,7 +19,7 @@ export interface MapPointData {
      *
      * @type {string}
      */
-    type: string;
+    type: 'line' | 'line-point' | 'line-cover-point' | 'line-cross-point' | 'part' | 'part-point';
     /**
      * 当前点在图纸中连接着另外哪些点
      *  - 只有导线才有此属性

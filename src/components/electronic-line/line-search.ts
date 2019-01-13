@@ -86,7 +86,7 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: Drawi
         const mouseRound = end.round();
         const mouseStatus = map.getPoint(mouseRound, true)!;
 
-        if (mouseStatus.type === 'cross-point') {
+        if (mouseStatus.type === 'line-cross-point') {
             status = 'align-point';
             ends = [mouseRound];
         }

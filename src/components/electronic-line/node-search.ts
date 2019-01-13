@@ -31,7 +31,7 @@ const rotates = [
 
 /** 搜索用的临时图纸模块 */
 class SearchMap {
-    map: { [key: string]: NodeData };
+    map: AnyObject<NodeData>;
 
     constructor() {
         this.map = {};
@@ -39,14 +39,14 @@ class SearchMap {
     get(node: Point): undefined | NodeData {
         return this.map[node.join(',')];
     }
-    set(node: Point, value: NodeData) {
+    set(node: Point, value: NodeData): void {
         this.map[node.join()] = value;
     }
 }
 
 class SearchStack {
     /** 堆栈数据 */
-    stack: { [key: number]: NodeData[] } = {};
+    stack: AnyObject<NodeData[]> = {};
     /** 堆栈 hash 记录表 */
     hash: number[] = [];
     /** 未处理数据大小 */

@@ -109,10 +109,9 @@ export default class LineComponent extends ElectronicCore {
 
             // 为空
             if (!status) {
-                const data = {
+                const data: map.MapPointInputData = {
                     point,
                     id: this.id,
-                    connect: [],
                     type: this.findConnectIndex(point) >= 0
                         ? 'line-point'
                         : 'line',
@@ -124,8 +123,8 @@ export default class LineComponent extends ElectronicCore {
             else if (/^line/.test(status.type)) {
                 status.id += ` ${this.id}`;
                 status.type = this.findConnectIndex(point) >= 0
-                    ? 'cross-point'
-                    : 'cover-point';
+                    ? 'line-cross-point'
+                    : 'line-cover-point';
 
                 map.mergePoint(status, true);
             }
@@ -488,7 +487,7 @@ export default class LineComponent extends ElectronicCore {
                 const line = findLineComponent(status.id);
                 const mark = line.findConnectIndex(node);
 
-                status.type = 'cross-point';
+                status.type = 'line-cross-point';
                 status.id = `${this.id} ${line.id}`;
                 map.mergePoint(status);
 
@@ -513,7 +512,7 @@ export default class LineComponent extends ElectronicCore {
             }
         }
         // 端点在交错节点
-        else if (status.type === 'cross-point') {
+        else if (status.type === 'line-cross-point') {
             const lines = status.id.split(' ').filter((n) => n !== this.id);
 
             // 只有一个导线
@@ -627,7 +626,7 @@ export default class LineComponent extends ElectronicCore {
 
         // 交错节点设定
         map.setPoint({
-            type: 'cross-point',
+            type: 'line-cross-point',
             point: crossPoint.floorToSmall(),
             id: `${this.id} ${splited.id} ${devices.id}`,
             connect: [],
