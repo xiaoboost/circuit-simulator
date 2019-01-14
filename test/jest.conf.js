@@ -28,6 +28,7 @@ module.exports = {
         '!src/main.ts',
         '!src/**/*.d.ts',
         '!src/lib/utils/*',
+        '!src/components/slider-menu/*',
         '!src/components/electronic-part/parts/*',
         '!src/**/{types,icons,debugger,component}.ts',
         '!**/node_modules/**',
