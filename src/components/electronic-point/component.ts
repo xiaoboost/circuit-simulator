@@ -20,7 +20,7 @@ const radius = {
     },
 };
 
-type ClassObject = { [className: string]: boolean };
+type ClassObject = AnyObject<boolean>;
 export type ClassInput = string | ClassObject | Array<ClassObject | string>;
 export type PointClassName = keyof typeof radius.normal | keyof typeof radius.hover;
 
