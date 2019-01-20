@@ -4,11 +4,17 @@ import { LineWay } from './line-way';
 
 /** 搜索用节点数据 */
 export interface NodeData {
+    /** 当前节点位置 */
     position: Point;
+    /** 当前节点是由什么方向扩展而来 */
     direction: Point;
+    /** 当前节点估值 */
     value: number;
+    /** 扩展到当前节点共有多少个弯道 */
     junction: number;
+    /** 当前节点的祖节点 */
     parent?: NodeData;
+    /** 当前节点拐弯的祖节点 */
     cornerParent: NodeData;
 }
 
@@ -21,76 +27,84 @@ export interface SearchOption {
     endBias?: Point;
 }
 
-// 全局四方向定义
-const rotates = [
-    [[1, 0], [0, 1]],       // 同向
-    [[0, 1], [-1, 0]],      // 顺时针
-    [[0, -1], [1, 0]],      // 逆时针
-    [[-1, 0], [0, -1]],     // 反向
-];
-
 /** 搜索用的临时图纸模块 */
-class SearchMap {
-    map: { [key: string]: NodeData };
+export class SearchMap {
+    /** 数据记录 */
+    private map: AnyObject<NodeData> = {};
 
-    constructor() {
-        this.map = {};
+    static toKey(node: Point) {
+        return node.join(',');
     }
+
     get(node: Point): undefined | NodeData {
-        return this.map[node.join(',')];
+        return this.map[SearchMap.toKey(node)];
     }
-    set(node: Point, value: NodeData) {
-        this.map[node.join()] = value;
+    set(value: NodeData) {
+        this.map[SearchMap.toKey(value.position)] = value;
     }
 }
 
-class SearchStack {
-    /** 堆栈数据 */
-    stack: { [key: number]: NodeData[] } = {};
-    /** 堆栈 hash 记录表 */
-    hash: number[] = [];
+/** 搜索树 */
+export class SearchStack {
+    /** 搜索堆栈数据 */
+    private stack: AnyObject<NodeData[]> = {};
+    /** 数据堆栈估值顺序记录表 */
+    private hash: number[] = [];
+    /** 搜索图数据 */
+    private map = new SearchMap();
+
     /** 未处理数据大小 */
     openSize = 0;
     /** 已处理数据大小 */
     closeSize = 0;
 
-    /** 搜索图数据记录 */
-    map: SearchMap;
-
-    constructor(map: SearchMap) {
-        this.map = map;
-    }
-
+    /** 弹出估值最小且最早入栈的节点数值 */
     shift() {
         const minValue = this.hash[0];
-        const shift = this.stack[minValue].pop();
+        const stackCol = this.stack[minValue];
 
-        if (this.stack[minValue].length === 0) {
-            delete this.stack[minValue];
-            this.hash.shift();
+        if (stackCol) {
+            const shift = stackCol.shift();
+
+            if (stackCol.length === 0) {
+                delete this.stack[minValue];
+                this.hash.shift();
+            }
+
+            this.openSize--;
+            this.closeSize++;
+
+            return (shift);
         }
-
-        this.openSize--;
-        this.closeSize++;
-        return (shift);
     }
+
+    /** 将输入的节点放置到合适的位置 */
     push(node: NodeData) {
         const value = node.value;
         const origin = this.map.get(node.position);
-        const dataColumn = origin && this.stack[origin.value];
 
-        // 当前扩展状态估值比已有状态估值高，则放弃
-        if (origin && (value > origin.value)) {
-            return;
-        }
+        // 当前位置已存在数据
+        if (origin) {
+            // 输入数据的估值并不低于已有数据，于是放弃
+            if (value >= origin.value) {
+                return;
+            }
 
-        // 删除原数据
-        if (origin && dataColumn) {
-            dataColumn.delete(origin);
+            // 已有数据所在的数据列
+            const originCol = this.stack[origin.value];
 
-            if (dataColumn.length === 0) {
-                delete this.stack[origin.value];
-                this.hash.delete(origin.value);
+            /**
+             * 若数据列存在，则在数据列中删除原有数据
+             *  - 这里必须加这个判断，因为数据列是可能不存在的
+             */
+            if (originCol) {
+                // 从数据列中删除已有数据
+                originCol.delete(origin);
+                // 弱数据列为空，则删除数据列
+                if (originCol.length === 0) {
+                    delete this.stack[origin.value];
+                    this.hash.delete(origin.value);
+                }
             }
         }
 
@@ -104,10 +118,22 @@ class SearchStack {
 
         // 当前数据加入堆栈
         this.stack[value].push(node);
-        this.map.set(node.position, node);
+        this.map.set(node);
         this.openSize++;
     }
 }
+
+// 全局四方向定义
+const rotates = [
+    // 同向
+    [[1, 0], [0, 1]],
+    // 顺时针
+    [[0, 1], [-1, 0]],
+    // 逆时针
+    [[0, -1], [1, 0]],
+    // 反向
+    [[-1, 0], [0, -1]],
+];
 
 /** 生成新节点 */
 function newNode(node: NodeData, index: number): NodeData {
@@ -137,8 +163,7 @@ export function nodeSearch({
     direction: originDirection,
     endBias = start,
 }: SearchOption): LineWay {
-    const map = new SearchMap();
-    const stack = new SearchStack(map);
+    const stack = new SearchStack();
     const rules = new Rules(start, end, status);
 
     // 方向偏移
@@ -153,7 +178,8 @@ export function nodeSearch({
         direction,
         junction: 0,
         value: 0,
-    } as any;
+        cornerParent: undefined as any,
+    };
 
     // 起点的 cornerParent 等于其自身
     first.cornerParent = first;
@@ -175,7 +201,7 @@ export function nodeSearch({
 
     // A*搜索，搜索极限为 300
     while (!endStatus && (stack.closeSize < 300)) {
-        // 栈顶元素弹出为当前结点
+        // 栈顶元素弹出为当前节点
         const nodenow = stack.shift();
 
         // 未处理的节点为空，终点无法达到
@@ -191,6 +217,7 @@ export function nodeSearch({
         for (let i = 0; i < 3; i++) {
             // 生成扩展节点
             const nodeExpand = newNode(nodenow, i);
+
             nodeExpand.value = rules.calValue(nodeExpand);
 
             if (process.env.NODE_ENV === 'development') {
@@ -225,6 +252,7 @@ export function nodeSearch({
 
     // 终点回溯，生成路径
     const way = new LineWay();
+
     while (endStatus.parent && endStatus !== endStatus.cornerParent) {
         way.push(endStatus.position.mul(20));
         endStatus = endStatus.cornerParent;
