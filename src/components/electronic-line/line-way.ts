@@ -133,19 +133,23 @@ export class LineWay extends Array<Point> {
 /** 导线搜索图类 */
 export class WayMap {
     /** 路径数据 */
-    private _data: { [key: string]: LineWay } = {};
+    private _data: AnyObject<LineWay> = {};
+
+    static toKey(node: Point) {
+        return node.join();
+    }
 
     has(node: Point) {
-        return !!this._data[node.join(',')];
+        return !!this._data[WayMap.toKey(node)];
     }
     set(node: Point, way: LineWay) {
-        this._data[node.join(',')] = way;
+        this._data[WayMap.toKey(node)] = way;
     }
     get(node: Point): LineWay | undefined {
-        return this._data[node.join(',')];
+        return this._data[WayMap.toKey(node)];
     }
     delete(node: Point): boolean {
-        return Reflect.deleteProperty(this._data, node.join(','));
+        return Reflect.deleteProperty(this._data, WayMap.toKey(node));
     }
 }
 

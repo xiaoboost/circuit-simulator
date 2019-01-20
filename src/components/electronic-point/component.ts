@@ -2,9 +2,6 @@ import { MapStatus } from 'src/components/drawing-main/component';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 import { isString, isArray } from 'src/lib/utils';
 
-type ClassObject = { [className: string]: boolean };
-type ClassInput = string | ClassObject | Array<ClassObject | string>;
-
 /** 半径变化 */
 const radius = {
     normal: {
@@ -22,6 +19,10 @@ const radius = {
         'line-point-cross': 6,
     },
 };
+
+type ClassObject = AnyObject<boolean>;
+export type ClassInput = string | ClassObject | Array<ClassObject | string>;
+export type PointClassName = keyof typeof radius.normal | keyof typeof radius.hover;
 
 @Component
 export default class ElectronicPoint extends Vue {
