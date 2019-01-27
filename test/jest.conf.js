@@ -1,7 +1,8 @@
 const path = require('path');
+const resolve = (input) => path.join(__dirname, '..', input);
 
 module.exports = {
-    rootDir: path.resolve(__dirname, '../'),
+    rootDir: resolve(''),
     moduleFileExtensions: [
         'vue',
         'ts',
@@ -35,10 +36,10 @@ module.exports = {
     ],
     globals: {
         'vue-jest': {
-            tsConfigFile: 'tsconfig.jest.json',
+            tsConfig: resolve('tsconfig.jest.json'),
         },
         'ts-jest': {
-            tsConfigFile: 'tsconfig.jest.json',
+            tsConfig: resolve('tsconfig.jest.json'),
         },
     },
 };
