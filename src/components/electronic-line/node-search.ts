@@ -1,6 +1,7 @@
 import Point from 'src/lib/point';
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
+import { $debugger } from 'src/lib/debugger';
 
 /** 搜索用节点数据 */
 export interface NodeData {

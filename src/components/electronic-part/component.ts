@@ -7,8 +7,8 @@ import Matrix from 'src/lib/matrix';
 import setPartParams from './dialog-controller';
 import { product, PartShape } from './helper';
 import Electronics, { ElectronicPrototype } from './parts';
+import ElectronicPoint, { PointClassName } from '../electronic-point/component';
 import ElectronicCore, { findPartComponent, findLineComponent } from './common';
-import ElectronicPoint from 'src/components/electronic-point/component';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
 import LineComponent from '../electronic-line/component';
@@ -21,6 +21,14 @@ type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'p
 const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
 
 export type PartData = Pick<PartComponent, dispatchKey>;
+
+export interface PartPointAttr {
+    size: number;
+    originPosition: Point;
+    position: Point;
+    direction: Point;
+    class: PointClassName;
+}
 
 @Component({
     components: {
@@ -86,13 +94,13 @@ export default class PartComponent extends ElectronicCore {
             .map((txt) => (txt.value + txt.unit).replace(/u/g, 'μ'));
     }
     /** 当前引脚状态 */
-    get points() {
+    get points(): PartPointAttr[] {
         return this.origin.points.map((point, i) => ({
             size: this.pointSize[i],
             originPosition: Point.from(point.position),
             position: product(point.position, this.rotate),
             direction: product(point.direction, this.rotate),
-            class: this.connect[i] ? 'part-point-close' : 'part-point-open',
+            class: (this.connect[i] ? 'part-point-close' : 'part-point-open') as PointClassName,
         }));
     }
     /** 当前器件范围 */

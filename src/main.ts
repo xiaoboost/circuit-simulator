@@ -2,9 +2,9 @@ import 'src/css/main';
 import 'src/lib/native';
 
 import Vue from 'vue';
-import Debug from 'src/lib/debugger';
-import { default as store, CircuitStorage } from 'src/vuex';
+import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
+import { default as store, CircuitStorage } from 'src/vuex';
 
 import ActionMenu from './components/action-menu/component';
 import SliderMenu from './components/slider-menu/component';
@@ -33,18 +33,6 @@ new Vue({
         [h('drawing-main'), h('slider-menu'), h('action-menu')] as any,
     ),
     async mounted() {
-        if (process.env.NODE_ENV === 'development') {
-            const area = document.querySelector('#drawing-main svg g')!;
-
-            Object.defineProperty(window, '$debugger', {
-                enumerable: false,
-                writable: false,
-                value: new Debug(),
-            });
-
-            area.appendChild($debugger.$el);
-        }
-
         const map = getQueryByName('map');
 
         if (map) {
@@ -61,6 +49,9 @@ new Vue({
             await this.$store.dispatch('IMPORT_DATA', data);
             await this.$nextTick();
         }
+
+        // 调试器初始化
+        debuggerInit();
 
         // 初始化完成
         loaded();

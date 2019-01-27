@@ -16,8 +16,9 @@ import * as map from 'src/lib/map';
 import Point from 'src/lib/point';
 
 import { Mutation } from 'src/vuex';
+import { $debugger } from 'src/lib/debugger';
 import { DrawEvent } from '../drawing-main/event-controller';
-import ElectronicPoint from '../electronic-point/component';
+import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 
 import {
     isUndef,
@@ -32,6 +33,14 @@ const matchLine = /(line_\d+ ?)+/;
 const matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;
 
 export type LineData = Pick<LineComponent, dispatchKey>;
+
+export interface LinePointAttr {
+    size: number;
+    position: Point;
+    class: {
+        [key in PointClassName]?: boolean;
+    };
+}
 
 @Component({
     components: {
@@ -50,7 +59,7 @@ export default class LineComponent extends ElectronicCore {
     pointSize = [-1, -1];
 
     /** 导线的两个节点属性 */
-    get points() {
+    get points(): LinePointAttr[] {
         return Array(2).fill(false).map((_, i) => ({
             size: this.pointSize[i],
             position: this.way.get(-i)

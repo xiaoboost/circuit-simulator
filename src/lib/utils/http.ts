@@ -9,7 +9,7 @@ export function getQueryByName(name: string) {
     const results = regex.exec(window.location.href);
 
     if (!results || !results[2]) {
-        return '';
+        return null;
     }
 
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
@@ -19,8 +19,8 @@ export function getQueryByName(name: string) {
  * ajax get 方法
  * @param {string} url htto 资源路径
  */
-export function get<T>(url: string): Promise<T> {
-    return new Promise((resolve, reject) => {
+export function get<T = any>(url: string): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
         const oAjax = new XMLHttpRequest();
         oAjax.open('GET', url, true);
         oAjax.send();

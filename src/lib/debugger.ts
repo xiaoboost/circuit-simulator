@@ -1,7 +1,7 @@
 import store from 'src/vuex';
 
 import { outputMap, MapData } from 'src/lib/map';
-import Point, { PointLike } from './point';
+import { default as Point, PointLike } from './point';
 
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
@@ -137,4 +137,15 @@ class MapDebug {
     }
 }
 
-export default MapDebug;
+/** 对外暴露的调试器 */
+export let $debugger: MapDebug;
+
+/** 调试器初始化 */
+export function debuggerInit() {
+    if (process.env.NODE_ENV === 'development') {
+        const area = document.querySelector('#drawing-main svg g')!;
+
+        $debugger = new MapDebug();
+        area.appendChild($debugger.$el);
+    }
+}
