@@ -1,9 +1,9 @@
 import { MapStatus } from 'src/components/drawing-main/component';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
-import { isString, isArray } from 'src/lib/utils';
+import { isString, isArray, excludeObject } from 'src/lib/utils';
 
-/** 半径变化 */
-const radius = {
+/** 特定半径 */
+const ConstRadius = {
     normal: {
         'part-point-open': 0,
         'part-point-close': 2,
@@ -20,9 +20,15 @@ const radius = {
     },
 };
 
+/** 半径变化 */
+const radius = {
+    normal: excludeObject(ConstRadius.normal, 0),
+    hover: excludeObject(ConstRadius.hover, 5),
+};
+
 type ClassObject = AnyObject<boolean>;
 export type ClassInput = string | ClassObject | Array<ClassObject | string>;
-export type PointClassName = keyof typeof radius.normal | keyof typeof radius.hover;
+export type PointClassName = keyof typeof ConstRadius.normal | keyof typeof ConstRadius.hover;
 
 @Component
 export default class ElectronicPoint extends Vue {
@@ -80,25 +86,24 @@ export default class ElectronicPoint extends Vue {
     }
 
     mouseenter() {
-        const status = (
-            this.className
+        this.inner = Math.min(
+            ...this.className
                 .split(' ')
-                .find((item) => radius.hover.hasOwnProperty(item))
+                .map((item) => radius.hover[item]),
         );
-
-        this.inner = status ? radius.hover[status] : 5;
     }
 
     @Watch('className')
     mouseleave() {
-        const status = this.className.split(' ')
-            .find((item) => radius.normal.hasOwnProperty(item));
-
-        this.inner = status ? radius.normal[status] : 0;
+        this.inner = Math.max(
+            ...this.className
+                .split(' ')
+                .map((item) => radius.normal[item]),
+        );
     }
 
     @Watch('actual')
-    setAnimate(value: number): void {
+    setAnimate(value: number) {
         if (!this.$refs.circle) {
             return;
         }

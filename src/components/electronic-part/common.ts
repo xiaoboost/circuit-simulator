@@ -3,7 +3,7 @@ import { randomString, clone, isString } from 'src/lib/utils';
 import { Mutation } from 'src/vuex';
 
 import Electronics from './parts';
-import DrawingMain, { MapStatus } from '../drawing-main/component';
+import { default as DrawingMain, MapStatus } from '../drawing-main/component';
 
 import PartComponent from 'src/components/electronic-part/component';
 import LineComponent from 'src/components/electronic-line/component';
@@ -13,7 +13,7 @@ const maxNumber = 50;
 
 const PartComponents: ElectronicCore[] = [];
 const LineComponents: ElectronicCore[] = [];
-const mapHash: { [key: string]: boolean } = {};
+const mapHash: AnyObject<boolean> = {};
 
 /**
  * 生成器件或者导线的新 ID

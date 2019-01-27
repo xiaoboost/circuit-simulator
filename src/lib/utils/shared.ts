@@ -166,3 +166,23 @@ export function def(from: object, properties: object) {
         }),
     );
 }
+
+/**
+ * 代理对象的无效属性
+ *  - 比如，`excludeObject({ a: 1, b: 2, c: 3 }, Infinity)`
+ *  - 这样生成的对象，访问 a, b, c 属性和普通的对象没区别，但是访问 d, e, f 等属性则会得到`Infinity`
+ * @param inside 内部包裹的对象
+ * @param other 无效属性的值
+ */
+export function excludeObject<T extends object, U = undefined>(inside: T, other: U): Readonly<T & AnyObject<U>> {
+    return new Proxy(inside, {
+        get(target, key) {
+            if (key in target) {
+                return target[key];
+            }
+            else {
+                return other;
+            }
+        },
+    }) as any;
+}
