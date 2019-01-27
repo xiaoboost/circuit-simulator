@@ -9,7 +9,7 @@ describe('map.ts: Data marked by drawings', () => {
     test('getPoint/setPoint()', () => {
         expect(map.getPoint([1, 2])).toBeUndefined();
 
-        const data = {
+        const data: map.MapPointData = {
             id: 'r_1',
             type: 'part',
             point: new Point(1, 3),
@@ -26,7 +26,7 @@ describe('map.ts: Data marked by drawings', () => {
     test('outputMap/forceUpdateMap()', () => {
         expect(map.outputMap()).toEqual('{}');
 
-        const data = {
+        const data: map.MapPointData = {
             id: 'r_2',
             type: 'part',
             point: new Point(1, 3),
@@ -47,7 +47,7 @@ describe('map.ts: Data marked by drawings', () => {
         map.forceUpdateMap(dataString, true);
     });
     test('mergePoint()', () => {
-        const originData = {
+        const originData: map.MapPointData = {
             id: 'r_2',
             type: 'part',
             point: new Point(1, 3),
@@ -70,7 +70,12 @@ describe('map.ts: Data marked by drawings', () => {
         expect(map.getPoint([20, 60], true)).toEqual(originData);
     });
     test('hasPoint/deletePoint()', () => {
-        const data = { id: '1', type: '2', point: new Point(2, 3) };
+        const data: map.MapPointData = {
+            id: '1',
+            type: 'part',
+            point: new Point(2, 3),
+            connect: [],
+        };
 
         expect(map.hasPoint([2, 3])).toBeFalse();
         expect(map.hasPoint([40, 60], true)).toBeFalse();
@@ -140,7 +145,7 @@ describe('map.ts: Data marked by drawings', () => {
 
         map.setPoint({
             id: 't',
-            type: 'cross-point',
+            type: 'line-cross-point',
             point: new Point(1, 3),
         });
 
