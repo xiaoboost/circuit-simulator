@@ -2,6 +2,7 @@ import Point from 'src/lib/point';
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
 import { $debugger } from 'src/lib/debugger';
+import { SearchStatus } from './line-search';
 
 /** 搜索用节点数据 */
 export interface NodeData {
@@ -20,12 +21,12 @@ export interface NodeData {
 }
 
 /** 节点搜索选项接口 */
-export interface SearchOption {
+export interface NodeSearchOption {
     start: Point;
     end: Point;
-    status: string;
     direction: Point;
     endBias?: Point;
+    status: SearchStatus;
 }
 
 /** 搜索用的临时图纸模块 */
@@ -161,9 +162,9 @@ export function nodeSearch({
     start,
     end,
     status,
-    direction: originDirection,
     endBias = start,
-}: SearchOption): LineWay {
+    direction: originDirection,
+}: NodeSearchOption): LineWay {
     const stack = new SearchStack();
     const rules = new Rules(start, end, status);
 
@@ -188,6 +189,7 @@ export function nodeSearch({
     stack.push(first);
 
     // 调试用时，指示终点
+    /* istanbul ignore if */
     if (process.env.NODE_ENV === 'development') {
         $debugger.point(first.position, 'red', 20);
     }
@@ -242,7 +244,6 @@ export function nodeSearch({
             return (LineWay.from([start]));
         }
     }
-
     if (process.env.NODE_ENV === 'development') {
         $debugger.clearAll();
     }

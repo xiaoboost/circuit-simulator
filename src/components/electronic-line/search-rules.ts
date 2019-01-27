@@ -1,6 +1,7 @@
 import * as map from 'src/lib/map';
 import Point from 'src/lib/point';
 import { NodeData } from './node-search';
+import { SearchStatus } from './line-search';
 
 /**
  * 下列计算中使用的点坐标均为已缩放的值
@@ -164,7 +165,7 @@ function isLegalPointAlign(this: Rules, node: NodeData) {
 export class Rules {
     start: Point;
     end: Point;
-    status: string;
+    status: SearchStatus;
 
     /** 排除器件 */
     excludeParts: string[] = [];
@@ -184,7 +185,7 @@ export class Rules {
      * @param {Point} end - 终点
      * @param {string} status 当前状态
      */
-    constructor(start: Point, end: Point, status: string) {
+    constructor(start: Point, end: Point, status: SearchStatus) {
         this.start = start.mul(0.05);
         this.end = end.mul(0.05);
         this.status = status;
