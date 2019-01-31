@@ -11,9 +11,9 @@ import ElectronicCore, {
     findPartComponent,
 } from 'src/components/electronic-part/common';
 
-import * as search from './line-search';
-import * as map from 'src/lib/map';
 import Point from 'src/lib/point';
+import * as Map from 'src/lib/map';
+import * as Search from './line-search';
 
 import { Mutation } from 'src/vuex';
 import { $debugger } from 'src/lib/debugger';
@@ -114,31 +114,31 @@ export default class LineComponent extends ElectronicCore {
 
         for (const point of LineWayCall(this.way, 'eachPoint')) {
             // 当前点状态
-            const status = map.getPoint(point, true);
+            const status = Map.getPoint(point, true);
 
             // 为空
             if (!status) {
-                const data: map.MapPointInputData = {
+                const data: Map.NodeInputData = {
                     point,
                     id: this.id,
                     type: this.findConnectIndex(point) >= 0
-                        ? 'line-point'
-                        : 'line',
+                        ? Map.NodeType.LinePoint
+                        : Map.NodeType.Line,
                 };
 
-                map.setPoint(data, true);
+                Map.setPoint(data, true);
             }
-            // 导线节点
-            else if (/^line/.test(status.type)) {
+            // 导线点
+            else if (status.type < 20) {
                 status.id += ` ${this.id}`;
                 status.type = this.findConnectIndex(point) >= 0
-                    ? 'line-cross-point'
-                    : 'line-cover-point';
+                    ? Map.NodeType.LineCrossPoint
+                    : Map.NodeType.LineCoverPoint;
 
-                map.mergePoint(status, true);
+                Map.mergePoint(status, true);
             }
             // 器件引脚不处理，其他类型全部抛出错误
-            else if (status.type !== 'part-point') {
+            else if (status.type !== Map.NodeType.PartPoint) {
                 const info = `the type of line point(${point.join(',')}) is  illegal.`;
 
                 if (process.env.NODE_ENV === 'development') {
@@ -152,8 +152,8 @@ export default class LineComponent extends ElectronicCore {
             }
 
             if (last) {
-                map.addConnect(point, last, true);
-                map.addConnect(last, point, true);
+                Map.addConnect(point, last, true);
+                Map.addConnect(last, point, true);
             }
 
             last = point;
@@ -164,11 +164,11 @@ export default class LineComponent extends ElectronicCore {
         let last!: Point;
 
         for (const point of LineWayCall(this.way, 'eachPoint')) {
-            const status = map.getPoint(point, true);
+            const status = Map.getPoint(point, true);
 
             if (last) {
-                map.deleteConnect(point, last, true);
-                map.hasPoint(last, true) && map.deleteConnect(last, point, true);
+                Map.deleteConnect(point, last, true);
+                Map.hasPoint(last, true) && Map.deleteConnect(last, point, true);
             }
 
             if (!status) {
@@ -176,23 +176,24 @@ export default class LineComponent extends ElectronicCore {
             }
 
             // 普通点
-            if (/line(-point)?/.test(status.type)) {
-                map.deletePoint(point, true);
+            if (
+                status.type === Map.NodeType.Line ||
+                status.type === Map.NodeType.LinePoint
+            ) {
+                Map.deletePoint(point, true);
             }
             // 交错/覆盖节点
-            else if (/(cross|cover)-point/.test(status.type)) {
-                status.id = (
-                    status.id
-                        .split(' ')
-                        .filter((id) => id !== this.id)
-                        .join(' ')
-                );
+            else if (
+                status.type === Map.NodeType.LineCoverPoint ||
+                status.type === Map.NodeType.LineCrossPoint
+            ) {
+                status.id = status.id.split(' ').filter((id) => id !== this.id).join(' ');
 
                 if (status.id) {
-                    map.setPoint(status, true);
+                    Map.setPoint(status, true);
                 }
                 else {
-                    map.deletePoint(point, true);
+                    Map.deletePoint(point, true);
                 }
             }
 
@@ -218,7 +219,7 @@ export default class LineComponent extends ElectronicCore {
         this.pointSize.$set(1, 8);
 
         const handler = this.createDrawEvent();
-        const mapData = map.getPoint(this.way[0], true)!;
+        const mapData = Map.getPoint(this.way[0], true)!;
         const [id, mark] = mapData.id.split('-');
         const connectPart = findPartComponent(id);
         const direction = connectPart.points[mark].direction;
@@ -229,8 +230,8 @@ export default class LineComponent extends ElectronicCore {
             .setStopEvent({ type: 'mouseup', which: 'left' });
 
         const wayMap = new WayMap();
-        const mouseOver: search.DrawingOption['mouseOver'] = {
-            status: 'idle',
+        const mouseOver: Search.DrawSearch.Option['mouseOver'] = {
+            status: Search.DrawSearch.Mouse.Idle,
         };
 
         // mouseenter 以及 mouseleave 事件
@@ -241,6 +242,7 @@ export default class LineComponent extends ElectronicCore {
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
 
+                    // TODO: 这里是错误的
                     // 器件的 mouseenter
                     if (/focus-partial/.test(className)) {
                         Object.assign(mouseOver, {
@@ -266,11 +268,12 @@ export default class LineComponent extends ElectronicCore {
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
 
+                    // TODO: 这里是错误的
                     if (
                         /focus-partial|line-rect|line-point/.test(className) &&
                         !this.$el.contains(e.target)
                     ) {
-                        mouseOver.status = 'idle';
+                        mouseOver.status = Search.DrawSearch.Mouse.Idle;
                     }
                 },
             },
@@ -278,7 +281,7 @@ export default class LineComponent extends ElectronicCore {
 
         // 搜索事件
         handler.setHandlerEvent((e: DrawEvent) => {
-            this.way = search.drawingSearch({
+            this.way = Search.drawingSearch({
                 start: Point.from(this.way[0]),
                 end: e.$position,
                 mouseBais: e.$movement,
@@ -291,7 +294,7 @@ export default class LineComponent extends ElectronicCore {
         await handler.start();
 
         let finalEnd = this.way.get(-1).round();
-        const status = map.getPoint(finalEnd, true);
+        const status = Map.getPoint(finalEnd, true);
         const endNode = this.way.get(-1);
 
         // 起点和终点相等或者只有一个点，则删除当前导线
@@ -301,10 +304,10 @@ export default class LineComponent extends ElectronicCore {
         }
 
         // 终点被占用
-        if (status && status.type === 'part') {
+        if (status && status.type === Map.NodeType.Part) {
             finalEnd = (
                 finalEnd
-                    .around((node) => !map.hasPoint(node), 20)
+                    .around((node) => !Map.hasPoint(node), 20)
                     .reduce(
                         (pre, next) =>
                             endNode.distance(pre) < endNode.distance(next) ? pre : next,
@@ -437,10 +440,10 @@ export default class LineComponent extends ElectronicCore {
                     line.dispatch();
                 });
 
-            const crossMapData = map.getPoint(this.way.get(-1 * index), true)!;
+            const crossMapData = Map.getPoint(this.way.get(-1 * index), true)!;
 
             crossMapData.id = crossMapData.id.replace(this.id, newId);
-            map.setPoint(crossMapData, true);
+            Map.setPoint(crossMapData, true);
         }
     }
     /**
@@ -467,7 +470,7 @@ export default class LineComponent extends ElectronicCore {
         }
 
         const node = this.way.get(-1 * index).round();
-        const status = map.getPoint(node, true);
+        const status = Map.getPoint(node, true);
 
         // 端点为空
         if (!status) {
@@ -475,7 +478,7 @@ export default class LineComponent extends ElectronicCore {
         }
 
         // 端点为器件引脚
-        else if (status.type === 'part-point') {
+        else if (status.type === Map.NodeType.PartPoint) {
             const [id, mark] = status.id.split('-');
             const part = findPartComponent(id);
 
@@ -485,30 +488,8 @@ export default class LineComponent extends ElectronicCore {
             part.dispatch();
             this.dispatch();
         }
-        // 端点为导线空引脚
-        else if (status.type === 'line-point') {
-            // 允许合并
-            if (concat) {
-                this.concat(status.id);
-            }
-            // 不允许合并，则该点变更为交错节点
-            else {
-                const line = findLineComponent(status.id);
-                const mark = line.findConnectIndex(node);
-
-                status.type = 'line-cross-point';
-                status.id = `${this.id} ${line.id}`;
-                map.mergePoint(status);
-
-                line.connect[mark] = this.id;
-                this.connect[index] = line.id;
-
-                line.dispatch();
-                this.dispatch();
-            }
-        }
         // 端点在导线上
-        else if (status.type === 'line') {
+        else if (status.type === Map.NodeType.Line) {
             if (this.hasConnect(status.id)) {
                 /**
                  * 因为`setConnectByWay`函数运行之后可能还有后续动作
@@ -520,8 +501,30 @@ export default class LineComponent extends ElectronicCore {
                 this.split(status.id, index);
             }
         }
+        // 端点为导线空引脚
+        else if (status.type === Map.NodeType.LinePoint) {
+            // 允许合并
+            if (concat) {
+                this.concat(status.id);
+            }
+            // 不允许合并，则该点变更为交错节点
+            else {
+                const line = findLineComponent(status.id);
+                const mark = line.findConnectIndex(node);
+
+                status.type = Map.NodeType.LineCrossPoint;
+                status.id = `${this.id} ${line.id}`;
+                Map.mergePoint(status);
+
+                line.connect[mark] = this.id;
+                this.connect[index] = line.id;
+
+                line.dispatch();
+                this.dispatch();
+            }
+        }
         // 端点在交错节点
-        else if (status.type === 'line-cross-point') {
+        else if (status.type === Map.NodeType.LineCrossPoint) {
             const lines = status.id.split(' ').filter((n) => n !== this.id);
 
             // 只有一个导线
@@ -543,7 +546,7 @@ export default class LineComponent extends ElectronicCore {
                 });
 
                 status.id = `${status.id} ${this.id}`;
-                map.mergePoint(status);
+                Map.mergePoint(status);
             }
         }
     }
@@ -634,8 +637,8 @@ export default class LineComponent extends ElectronicCore {
         this.connect[index] = `${splited.id} ${devices.id}`;    // 分割旧导线的导线终点由新旧导线 ID 组成
 
         // 交错节点设定
-        map.setPoint({
-            type: 'line-cross-point',
+        Map.setPoint({
+            type: Map.NodeType.LineCrossPoint,
             point: crossPoint.floorToSmall(),
             id: `${this.id} ${splited.id} ${devices.id}`,
             connect: [],

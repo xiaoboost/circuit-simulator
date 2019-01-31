@@ -2,6 +2,8 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 允许使用 namespace
+        "no-namespace": false,
         // 允许使用类名代替类型
         "ban-types": false,
         // 不强制使用 interface 字面量

@@ -1,7 +1,7 @@
-import * as map from 'src/lib/map';
+import * as Map from 'src/lib/map';
 import Point from 'src/lib/point';
 import { NodeData } from './node-search';
-import { SearchStatus } from './line-search';
+import { DrawSearch, MoveSearch, DeformSearch } from './line-search';
 
 /**
  * 下列计算中使用的点坐标均为已缩放的值
@@ -10,12 +10,12 @@ import { SearchStatus } from './line-search';
 // 工具函数
 // 返回 node 所在器件
 function getPart(node: Point): string {
-    const status = map.getPoint(node);
+    const status = Map.getPoint(node);
 
-    if (status && status.type === 'part') {
+    if (status && status.type === Map.NodeType.Part) {
         return status.id;
     }
-    else if (status && status.type === 'part-point') {
+    else if (status && status.type === Map.NodeType.PartPoint) {
         return status.id.split('-')[0];
     }
     else {
@@ -24,7 +24,7 @@ function getPart(node: Point): string {
 }
 // 返回 node 所在线段
 function getSegment(node: Point) {
-    if (!map.isLine(node)) {
+    if (!Map.isLine(node)) {
         return [];
     }
 
@@ -32,8 +32,8 @@ function getSegment(node: Point) {
     for (let i = 0; i < 2; i++) {
         const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
         const limit = [
-            map.alongTheLine(node, undefined, directors[i * 2]),
-            map.alongTheLine(node, undefined, directors[i * 2 + 1]),
+            Map.alongTheLine(node, undefined, directors[i * 2]),
+            Map.alongTheLine(node, undefined, directors[i * 2 + 1]),
         ];
 
         if (!limit[0].isEqual(limit[1])) {
@@ -55,7 +55,7 @@ function nodesDistance(a: Point, b: Point) {
 }
 // node 所在线段是否和当前节点方向垂直
 function isNodeVerticalLine(node: NodeData) {
-    const status = map.getPoint(node.position);
+    const status = Map.getPoint(node.position);
 
     if (!status || !status.connect) {
         return false;
@@ -117,18 +117,18 @@ function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
 // 扩展判定
 // 通用状态
 function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boolean {
-    const status = map.getPoint(node.position);
+    const status = Map.getPoint(node.position);
 
     // 空节点
     if (!status) {
         return true;
     }
     // 器件节点
-    else if (status.type === 'part') {
+    else if (status.type === Map.NodeType.Part) {
         return this.excludeParts.includes(status.id);
     }
     // 器件节点
-    else if (status.type === 'part-point') {
+    else if (status.type === Map.NodeType.PartPoint) {
         // 距离等于 1 的范围内都可以
         const [part] = status.id.split('-');
         return (
@@ -137,7 +137,7 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
         );
     }
     // 导线结点
-    else if (status.type === 'line-point') {
+    else if (status.type === Map.NodeType.LinePoint) {
         // 排除、或者距离在 1 以内
         return (
             this.excludeLines.some((line) => isNodeInLine(node.position, line)) ||
@@ -145,7 +145,7 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
         );
     }
     // 导线
-    else if (map.isLine(node.position)) {
+    else if (Map.isLine(node.position)) {
         // 当前节点方向必须和所在导线方向垂直
         return (isNodeVerticalLine(node));
     }
@@ -157,6 +157,9 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
 function isLegalPointAlign(this: Rules, node: NodeData) {
     return isLegalPointGeneral.call(this, node, 1) as boolean;
 }
+
+/** 所有搜索状态 */
+type SearchStatus = DrawSearch.Status | MoveSearch.Status | DeformSearch.Status;
 
 /**
  * 根据状态生成具体的规则集合
@@ -190,35 +193,38 @@ export class Rules {
         this.end = end.mul(0.05);
         this.status = status;
 
-        // 指定规则
-        if (status.includes('modified')) {
-            this.excludeParts.push(getPart(this.end));
-            this.excludeLines.push(...getSegment(this.end));
+        // // 指定规则
+        // if (status === DrawSearch.Status.Modification) {
+        //     this.excludeParts.push(getPart(this.end));
+        //     this.excludeLines.push(...getSegment(this.end));
 
-            this.checkPoint = isLegalPointAlign;
-            this.isEnd = isEndPoint;
-            this.calValue = calToPoint;
-        }
-        else if (status.includes('drawing')) {
+        //     this.checkPoint = isLegalPointAlign;
+        //     this.isEnd = isEndPoint;
+        //     this.calValue = calToPoint;
+        // }
+        // else
+
+        // 绘制模式
+        if (status < 20) {
             // 节点估值
             this.calValue = calToPoint;
 
             // 绘制情况下，end 只可能是点，根据终点属性来分类
-            const endData = map.getPoint(this.end);
+            const endData = Map.getPoint(this.end);
 
             // 终点在导线上
-            if (map.isLine(this.end)) {
+            if (Map.isLine(this.end)) {
                 this.endLines.push(...getSegment(this.end));
                 this.isEnd = checkNodeInLineWhenDraw;
                 this.checkPoint = isLegalPointAlign;
             }
             // 终点是器件引脚
-            else if (endData && endData.type === 'part-point') {
+            else if (endData && endData.type === Map.NodeType.PartPoint) {
                 this.isEnd = isEndPoint;
                 this.checkPoint = isLegalPointAlign;
             }
             // 终点在器件上
-            else if (endData && endData.type === 'part') {
+            else if (endData && endData.type === Map.NodeType.Part) {
                 this.excludeParts.push(getPart(this.end));
                 this.isEnd = isEndPoint;
                 this.checkPoint = isLegalPointGeneral;

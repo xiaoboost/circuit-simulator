@@ -1,6 +1,6 @@
 import { Component } from 'vue-property-decorator';
 
-import * as map from 'src/lib/map';
+import * as Map from 'src/lib/map';
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 
@@ -149,20 +149,19 @@ export default class PartComponent extends ElectronicCore {
 
         // 器件内边距占位
         position.everyRect(inner, (node) => {
-            map.setPoint({
-                point: Point.from(node),
+            Map.setPoint({
                 id: this.id,
-                type: 'part',
+                point: Point.from(node),
+                type: Map.NodeType.Part,
             });
 
             return true;
         });
 
         // 器件管脚距占位
-        this.points.forEach((point, i) => map.setPoint({
+        this.points.forEach((point, i) => Map.setPoint({
             point: point.position.floorToSmall().add(position),
-            connect: [],
-            type: 'part-point',
+            type: Map.NodeType.PartPoint,
             id: `${this.id}-${i}`,
         }));
     }
@@ -172,9 +171,9 @@ export default class PartComponent extends ElectronicCore {
         const position = this.position.floorToSmall();
 
         // 删除器件内边距占位
-        position.everyRect(inner, (node) => map.deletePoint(node));
+        position.everyRect(inner, (node) => Map.deletePoint(node));
         // 删除器件引脚占位
-        this.points.forEach((point) => map.deletePoint(point.position.floorToSmall().add(position)));
+        this.points.forEach((point) => Map.deletePoint(point.position.floorToSmall().add(position)));
     }
 
     /** 将当前器件数据更新至`vuex` */
@@ -194,7 +193,7 @@ export default class PartComponent extends ElectronicCore {
         // 检查器件管脚，管脚点不允许存在任何元素
         for (const point of this.points) {
             const node = position.add(point.position.floorToSmall());
-            if (map.hasPoint(node)) {
+            if (Map.hasPoint(node)) {
                 return (true);
             }
             coverHash[node.join(',')] = true;
@@ -202,7 +201,7 @@ export default class PartComponent extends ElectronicCore {
 
         // 扫描内边距，内边距中不允许存在任何元素
         position.everyRect(margin.inner, (node) => {
-            if (map.hasPoint(node)) {
+            if (Map.hasPoint(node)) {
                 label = true;
                 return false;
             }
@@ -223,12 +222,12 @@ export default class PartComponent extends ElectronicCore {
                 return true;
             }
             // 外边框为空
-            if (!map.hasPoint(node)) {
+            if (!Map.hasPoint(node)) {
                 return true;
             }
             // 外边框不是由器件占据
-            const status = map.getPoint(node);
-            if (!status || status.type !== 'part') {
+            const status = Map.getPoint(node);
+            if (!status || status.type !== Map.NodeType.Part) {
                 return true;
             }
 

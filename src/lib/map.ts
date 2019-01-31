@@ -1,43 +1,42 @@
 import { default as Point, PointLike } from 'src/lib/point';
 
-export interface MapPointData {
-    /**
-     * 当前点属于哪个器件
-     *
-     * @type {string}
-     */
+/** 节点类型常量 */
+export const enum NodeType {
+    /** 导线 */
+    Line = 10,
+    /** 导线空节点 */
+    LinePoint,
+    /** 导线交叠节点（实际并不相交） */
+    LineCoverPoint,
+    /** 导线交错节点 */
+    LineCrossPoint,
+
+    /** 器件节点 */
+    Part = 20,
+    /** 器件引脚节点 */
+    PartPoint,
+}
+
+export interface NodeData {
+    /** 当前点属于哪个器件 */
     id: string;
-    /**
-     * 当前点的小坐标
-     *  - 其乘以 20 才是实际坐标
-     *
-     * @type {Point}
-     */
+    /** 当前点的小坐标（其乘以 20 才是实际坐标） */
     point: Point;
-    /**
-     * 当前点的类型
-     *
-     * @type {string}
-     */
-    type: 'line' | 'line-point' | 'line-cover-point' | 'line-cross-point' | 'part' | 'part-point';
-    /**
-     * 当前点在图纸中连接着另外哪些点
-     *  - 只有导线才有此属性
-     *
-     * @type {Point[]}
-     */
+    /** 当前点的类型 */
+    type: NodeType;
+    /** 当前点在图纸中连接着另外哪些点 */
     connect: Point[];
 }
 
-export type MapData = AnyObject<MapPointData>;
-export type MapPointInputData = PartPartial<MapPointData, 'connect'>;
+export type MapHash = AnyObject<NodeData>;
+export type NodeInputData = PartPartial<NodeData, 'connect'>;
 
 /**
  * 图纸标记缓存
  *  - key 是使用小坐标转换而来的，而内部数据中的 point 则是实际坐标，这点区别必须要注意
  *  - 之所以这么设计，是考虑到
  */
-const $map: MapData = {};
+const $map: MapHash = {};
 
 /** 用于缓存强制更新的 string 数据 */
 let $mapString = '';
@@ -54,10 +53,10 @@ function point2key(node: PointLike): string {
 
 /**
  * 返回地图标记数据的副本
- * @param {MapPointInputData} data 原始数据
- * @returns {MapPointData}
+ * @param {NodeInputData} data 原始数据
+ * @returns {NodeData}
  */
-function dataClone(data: MapPointInputData): MapPointData {
+function dataClone(data: NodeInputData): NodeData {
     return {
         id: data.id,
         type: data.type,
@@ -97,7 +96,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
         return;
     }
 
-    const data = JSON.parse(map) as MapData;
+    const data = JSON.parse(map) as MapHash;
 
     Object
         .keys($map)
@@ -105,7 +104,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
 
     Object
         .values(data)
-        .forEach((value: MapPointData) => setPoint(dataClone(value)));
+        .forEach((value: NodeData) => setPoint(dataClone(value)));
 
     $mapString = map;
 }
@@ -116,10 +115,10 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
  *  - 如果指定点已经有数据，那么当前数据会直接覆盖它
  *
  * @export
- * @param {MapPointData} data
+ * @param {NodeData} data
  * @param {boolean} [large=false]
  */
-export function setPoint(data: MapPointInputData, large = false): void {
+export function setPoint(data: NodeInputData, large = false): void {
     data.point = large ? data.point.mul(0.05) : Point.from(data.point);
     $map[point2key(data.point)] = dataClone(data);
 }
@@ -134,10 +133,10 @@ export function setPoint(data: MapPointInputData, large = false): void {
  *    - connect 将会取两者的并集
  *
  * @export
- * @param {MapPointData} data
+ * @param {NodeData} data
  * @param {boolean} [large=false]
  */
-export function mergePoint(data: MapPointInputData, large = false): void {
+export function mergePoint(data: NodeInputData, large = false): void {
     data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
 
     const key = point2key(data.point);
@@ -173,9 +172,9 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @export
  * @param {PointLike} point
  * @param {boolean} [large=false]
- * @returns {(MapPointData | false)}
+ * @returns {(NodeData | false)}
  */
-export function getPoint(point: PointLike, large = false): MapPointData | undefined {
+export function getPoint(point: PointLike, large = false): NodeData | undefined {
     const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
     const data = $map[point2key(node)];
 
@@ -274,9 +273,10 @@ export function isLine(point: PointLike, large = false) {
     const node = large ? PointCall(point, 'mul', 0.05) : point;
     const data = $map[point2key(node)];
 
-    return (
-        Boolean(data) &&
-        /^(line|cross-point|cover-point)/.test(data.type)
+    return Boolean(data) && (
+        data.type === NodeType.Line ||
+        data.type === NodeType.LineCoverPoint ||
+        data.type === NodeType.LineCrossPoint
     );
 }
 
