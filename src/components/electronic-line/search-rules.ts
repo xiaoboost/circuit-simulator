@@ -1,7 +1,7 @@
 import * as Map from 'src/lib/map';
 import Point from 'src/lib/point';
 import { NodeData } from './node-search';
-import { DrawSearch, MoveSearch, DeformSearch } from './line-search';
+import { SearchStatus } from './line-search';
 
 /**
  * 下列计算中使用的点坐标均为已缩放的值
@@ -157,9 +157,6 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
 function isLegalPointAlign(this: Rules, node: NodeData) {
     return isLegalPointGeneral.call(this, node, 1) as boolean;
 }
-
-/** 所有搜索状态 */
-type SearchStatus = DrawSearch.Status | MoveSearch.Status | DeformSearch.Status;
 
 /**
  * 根据状态生成具体的规则集合

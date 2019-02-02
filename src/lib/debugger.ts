@@ -1,6 +1,6 @@
 import store from 'src/vuex';
 
-import { outputMap, MapData } from 'src/lib/map';
+import { outputMap, MapHash, NodeType } from 'src/lib/map';
 import { default as Point, PointLike } from './point';
 
 // 全局常量
@@ -96,20 +96,23 @@ class MapDebug {
         });
         count++;
 
-        const data = JSON.parse(outputMap()) as MapData;
+        const data = JSON.parse(outputMap()) as MapHash;
 
         Object.values(data).forEach((status) => {
             const point = Point.from(status.point);
             // 点本身
             this.point(point, nodeColor[status.type] as string, 20);
             // 点的 ID
-            if (status.type === 'line') {
+            if (status.type === NodeType.Line) {
                 this.text(point, status.id.split('_')[1], 20);
             }
-            else if (status.type === 'part-point') {
+            else if (status.type === NodeType.PartPoint) {
                 this.text([point[0] + 0.4, point[1] - 0.4], status.id, 20);
             }
-            else if (/(cross-point|cover-point)/.test(status.type)) {
+            else if (
+                status.type === NodeType.LineCoverPoint ||
+                status.type === NodeType.LineCrossPoint
+            ) {
                 this.path([[point[0] * 20, point[1] * 20], [1000, count * 25 + 50]], '#222222');
                 this.text([1000, count * 25 + 50], status.id);
                 count++;

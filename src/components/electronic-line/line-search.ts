@@ -76,6 +76,9 @@ export namespace DeformSearch {
     }
 }
 
+/** 所有搜索状态 */
+export type SearchStatus = DrawSearch.Status | MoveSearch.Status | DeformSearch.Status;
+
 /** 计算单点绘制时的状态与终点 */
 function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawSearch.Option) {
     // 当前终点四方格左上角顶点

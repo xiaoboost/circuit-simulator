@@ -1,4 +1,4 @@
-import { SearchOption } from './node-search';
+import { NodeSearchOption } from './node-search';
 import Point, { PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
@@ -52,7 +52,7 @@ export class LineWay extends Array<Point> {
         }
         return (this);
     }
-    checkWayExcess(option: SearchOption) {
+    checkWayExcess(option: NodeSearchOption) {
         return this;
     }
     /**
