@@ -161,6 +161,7 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawS
     return { status, ends };
 }
 
+/** 绘制时的导线搜索 */
 export function drawingSearch({ start, end, direction, wayMap, pointSize }: DrawSearch.Option) {
     // 计算当前终点以及状态
     const { ends, status } = getDrawingStatus(arguments[0]);

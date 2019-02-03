@@ -299,11 +299,6 @@ export default class PartComponent extends ElectronicCore {
     }
     /** 移动说明文本 */
     async moveText() {
-        if (this._status === 'pendding') {
-            return;
-        }
-
-        this._status = 'pendding';
         this.mapStatus.devicesNow = [this.id];
 
         await this
@@ -318,7 +313,6 @@ export default class PartComponent extends ElectronicCore {
             .start();
 
         this.renderText();
-        this._status = 'idle';
     }
 
     /** 设置属性 */
@@ -344,13 +338,8 @@ export default class PartComponent extends ElectronicCore {
     }
     /** 开始新器件设置事件 */
     async startCreateEvent() {
-        if (this._status === 'pendding') {
-            return;
-        }
-
         this.$el.setAttribute('opacity', '0.4');
         this.mapStatus.devicesNow = [this.id];
-        this._status = 'pendding';
         this.renderText();
 
         await this
@@ -373,7 +362,6 @@ export default class PartComponent extends ElectronicCore {
 
         this.dispatch();
         this.markSign();
-        this._status = 'idle';
         this.$el.removeAttribute('opacity');
     }
     /** 开始绘制导线 */

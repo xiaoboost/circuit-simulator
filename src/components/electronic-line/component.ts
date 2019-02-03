@@ -203,17 +203,12 @@ export default class LineComponent extends ElectronicCore {
 
     /** 单点绘制 */
     async drawing(index: 0 | 1) {
-        if (this._status === 'pendding') {
-            return;
-        }
-
         // 保持绘制点为终点
         if (index === 0) {
             this.reverse();
         }
 
         this.deleteSign();
-        this._status = 'pendding';
 
         // 绘制期间，导线终点默认最大半径
         this.pointSize.$set(1, 8);
@@ -323,7 +318,6 @@ export default class LineComponent extends ElectronicCore {
         // 更新数据
         this.dispatch();
         this.markSign();
-        this._status = 'idle';
 
         // 染色
         const parts = this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, ''));
