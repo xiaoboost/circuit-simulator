@@ -137,7 +137,7 @@ export function setPoint(data: NodeInputData, large = false): void {
  * @param {boolean} [large=false]
  */
 export function mergePoint(data: NodeInputData, large = false): void {
-    data.point = (large ? data.point.mul(0.05) : Point.from(data.point));
+    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
 
     const key = point2key(data.point);
     const newData = dataClone(data);
@@ -237,7 +237,7 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
     }
 
     if (!hasConnect(origin, check)) {
-        data.connect.push(Point.from(check));
+        data.connect.push(check);
     }
 }
 
