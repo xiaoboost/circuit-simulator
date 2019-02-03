@@ -15,12 +15,12 @@ const Switch = {
 
 // 点颜色
 const nodeColor = {
-    'line': 'green',
-    'part': 'black',
-    'part-point': 'red',
-    'line-point': 'orange',
-    'cross-point': 'blue',
-    'cover-point': 'yellow',
+    [NodeType.Part]: 'black',
+    [NodeType.PartPoint]: 'red',
+    [NodeType.Line]: 'green',
+    [NodeType.LinePoint]: 'orange',
+    [NodeType.LineCrossPoint]: 'blue',
+    [NodeType.LineCoverPoint]: 'yellow',
 };
 
 class MapDebug {
@@ -50,7 +50,7 @@ class MapDebug {
 
         this.$el.appendChild(el);
     }
-    path(way: PointLike[], color = 'black'): void {
+    path(way: PointLike[], color = 'black', mul = 1): void {
         if (!Switch.point) {
             return;
         }
@@ -101,20 +101,22 @@ class MapDebug {
         Object.values(data).forEach((status) => {
             const point = Point.from(status.point);
             // 点本身
-            this.point(point, nodeColor[status.type] as string, 20);
+            this.point(point, nodeColor[status.type], 20);
             // 点的 ID
             if (status.type === NodeType.Line) {
                 this.text(point, status.id.split('_')[1], 20);
             }
             else if (status.type === NodeType.PartPoint) {
-                this.text([point[0] + 0.4, point[1] - 0.4], status.id, 20);
+                this.text(new Point(point, [0.4, -0.4]), status.id, 20);
             }
             else if (
                 status.type === NodeType.LineCoverPoint ||
                 status.type === NodeType.LineCrossPoint
             ) {
-                this.path([[point[0] * 20, point[1] * 20], [1000, count * 25 + 50]], '#222222');
-                this.text([1000, count * 25 + 50], status.id);
+                const textPosition = [1000, count * 25 + 50];
+
+                this.path([point.mul(20), textPosition], '#222222');
+                this.text(textPosition, status.id);
                 count++;
             }
 
@@ -150,5 +152,12 @@ export function debuggerInit() {
 
         $debugger = new MapDebug();
         area.appendChild($debugger.$el);
+
+        Object.defineProperty(window, '$debugger', {
+            value: $debugger,
+            enumerable: false,
+            writable: false,
+            configurable: false,
+        });
     }
 }
