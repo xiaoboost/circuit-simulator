@@ -9,7 +9,7 @@ import {
     supportsPassive,
 } from 'src/lib/utils';
 
-type callback = (event: DrawEvent) => void | Promise<void>;
+type callback = (event: DrawEvent) => any | Promise<any>;
 type StopEventOption = StopMouseEvent | ((event?: DrawEvent) => Promise<void>);
 type HandlerEventOption = DrawEventHandler | callback | Array<DrawEventHandler | callback>;
 
@@ -51,7 +51,7 @@ export interface DrawEventSetting {
  * @param {StopMouseEvent} data
  * @returns {() => Promise<void>}
  */
-function createStopMouseEvent({ el, type, which }: Required<StopMouseEvent>): () => Promise<void> {
+function createStopMouseEvent({ el, type, which }: Required<StopMouseEvent>) {
     const code = { left: 0, middle: 1, right: 2 };
     const opts = supportsPassive
         ? { passive: true, capture: true }

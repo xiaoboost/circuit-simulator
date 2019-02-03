@@ -89,10 +89,47 @@ export class LineWay extends Array<Point> {
     }
 
     /**
-     * 终点（起点）指向某线段
-     *  - 导线节点数量少于`1`则忽略
+     * 导线形状相似
+     *  - 节点数量相同
+     *  - 只有最后两个节点不同
+     *  - 最后两个节点组成的线段平行
      */
-    endToLine(line: Point[] | number[][]): this {
+    isSimilar(line: Point[]) {
+        if (this.length !== line.length) {
+            return false;
+        }
+
+        if (this.length < 2) {
+            return true;
+        }
+
+        for (let i = 0; i < this.length - 2; i++) {
+            if (!this[i].isEqual(line[i])) {
+                return false;
+            }
+        }
+
+        const selfSegment = new Point(this.get(-1), this.get(-2));
+        const inputSegment = new Point(line.get(-1), line.get(-2));
+
+        return selfSegment.isParallel(inputSegment);
+    }
+
+    /**
+     * 终点（起点）指向某线段
+     *  - 导线节点数量少于`3`则忽略
+     *  - 输入线段必定与`this`平行
+     */
+    endToLine(segment: Point[] | number[][], mouse: Point): this {
+        if (this.length < 3) {
+            return this;
+        }
+
+        const byMouse = segment[0][0] === segment[1][0] ? 1 : 0;
+
+        this.get(-2)[byMouse] = mouse[byMouse];
+        this.get(-1)[byMouse] = mouse[byMouse];
+
         return this;
     }
 

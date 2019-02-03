@@ -34,6 +34,7 @@ export namespace DrawSearch {
         } | {
             status: Mouse.Line;
             line: LineComponent;
+            recover?(): void;
         };
     }
     /** 鼠标指向的状态 */
@@ -79,8 +80,8 @@ export namespace DeformSearch {
 /** 所有搜索状态 */
 export type SearchStatus = DrawSearch.Status | MoveSearch.Status | DeformSearch.Status;
 
-/** 计算单点绘制时的状态与终点 */
-function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawSearch.Option) {
+/** 单点绘制 - 导线搜索 */
+export function drawingSearch({ start, end, direction, wayMap, pointSize, mouseOver, mouseBais }: DrawSearch.Option) {
     // 当前终点四方格左上角顶点
     const vertex = end.floor();
     // 四方格坐标
@@ -89,18 +90,20 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawS
     let ends: Point[] = [];
     let status = DrawSearch.Status.Space;
 
+    // 导线终点默认最大半径
     pointSize.$set(1, 8);
+
+    // 引脚复位
+    if (mouseOver.recover) {
+        mouseOver.recover();
+        mouseOver.recover = undefined;
+    }
 
     // 终点在器件上
     if (mouseOver.status === DrawSearch.Mouse.Part) {
         const points = mouseOver.part.points.map((point) => point.position);
         const mouseToPart = new Point(mouseOver.part.position, end.add(mouseBais));
         const idlePoint = points.filter((_, i) => !mouseOver.part.connect[i]);
-
-        if (mouseOver.recover) {
-            mouseOver.recover();
-            mouseOver.recover = undefined;
-        }
 
         // 允许直接对齐
         if (idlePoint.length > 0) {
@@ -131,10 +134,15 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawS
         const mouseRound = end.round();
         const mouseStatus = Map.getPoint(mouseRound, true)!;
 
-        if (mouseStatus.type === Map.NodeType.LineCrossPoint) {
+        // 导线交错节点或者是空闲节点，则直接对齐
+        if (
+            mouseStatus.type === Map.NodeType.LinePoint ||
+            mouseStatus.type === Map.NodeType.LineCrossPoint
+        ) {
             status = DrawSearch.Status.AlignPoint;
             ends = [mouseRound];
         }
+        // 否则选取四方格中在导线上的点
         else {
             status = DrawSearch.Status.AlignLine;
             ends = endGrid.filter((node) => Map.isLine(node, true));
@@ -143,14 +151,9 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawS
     // 终点闲置
     else {
         ends = endGrid;
-
-        if (mouseOver.recover) {
-            mouseOver.recover();
-            mouseOver.recover = undefined;
-        }
     }
 
-    // 按照距离起点由远到近的顺序排序
+    // 按照到起点的距离，由大到小排序
     if (ends.length > 1) {
         ends = ends.sort(
             (pre, next) =>
@@ -158,19 +161,12 @@ function getDrawingStatus({ start, end, mouseBais, pointSize, mouseOver }: DrawS
         );
     }
 
-    return { status, ends };
-}
-
-/** 绘制时的导线搜索 */
-export function drawingSearch({ start, end, direction, wayMap, pointSize }: DrawSearch.Option) {
-    // 计算当前终点以及状态
-    const { ends, status } = getDrawingStatus(arguments[0]);
     // 节点搜索选项
-    const option: NodeSearchOption = {
+    const option = {
         start,
         direction,
+        status,
         end: new Point(0, 0),
-        status: DrawSearch.Status.Space,
         endBias: end.floor().add(10),
     };
 
@@ -183,8 +179,11 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
         // 设置当前搜索终点
         option.end = point;
 
-        // 搜索导线
-        const tempWay = nodeSearch(option).checkWayExcess(option);
+        // 搜索并修饰
+        const tempWay = nodeSearch(option).checkWayExcess({
+            ...option,
+            status: DrawSearch.Status.Modification,
+        });
 
         // 记录当前搜索结果
         wayMap.set(point, tempWay);
@@ -196,7 +195,6 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
         way = LineWay.from(wayMap.get(ends[0])!);
     }
     else if (status === DrawSearch.Status.AlignLine) {
-        debugger;
         const endRound = end.round();
         const endRoundWay = wayMap.get(endRound)!;
         // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
@@ -211,23 +209,17 @@ export function drawingSearch({ start, end, direction, wayMap, pointSize }: Draw
         });
 
         if (roundSet.length > 0) {
-            // // 交集中离鼠标最近的点
-            // const closest = end.closest(roundSet);
-            // // 导线最后两个节点不同
-            // if (endRoundWay.isSimilar(wayMap.get(closest))) {
-            //     this.shrinkCircle(1);
-            //     this.way.clone(mouseRoundWay);closest
-            //     this.way.endToLine([mouseRound, closest], mousePosition);
-
-            //     pointSize.$set(1, 1);
-            //     way = LineWay.from(wayMap.get(closest)!);
-            //     way.endToLine();
-            // }
-            // else {
-            //     way = LineWay.from(endRoundWay);
-            // }
-
-            way = LineWay.from(endRoundWay);
+            // 交集中离鼠标最近的点
+            const closest = end.closest(roundSet);
+            // 导线形状相似
+            if (endRoundWay.isSimilar(wayMap.get(closest)!)) {
+                way = LineWay.from(wayMap.get(closest)!);
+                way.endToLine([endRound, closest], end);
+                pointSize.$set(1, 3);
+            }
+            else {
+                way = LineWay.from(endRoundWay);
+            }
         }
         else {
             way = LineWay.from(endRoundWay);

@@ -208,28 +208,26 @@ export default class LineComponent extends ElectronicCore {
             this.reverse();
         }
 
+        // 删除当前导线的所有标记
         this.deleteSign();
 
-        // 绘制期间，导线终点默认最大半径
-        this.pointSize.$set(1, 8);
-
+        const wayMap = new WayMap();
         const handler = this.createDrawEvent();
         const mapData = Map.getPoint(this.way[0], true)!;
         const [id, mark] = mapData.id.split('-');
         const connectPart = findPartComponent(id);
+        const startPoint = Point.from(this.way[0]);
         const direction = connectPart.points[mark].direction;
+        const mouseOver: Search.DrawSearch.Option['mouseOver'] = {
+            status: Search.DrawSearch.Mouse.Idle,
+        };
 
         // 设置事件属性
         handler
             .setCursor('draw_line')
             .setStopEvent({ type: 'mouseup', which: 'left' });
 
-        const wayMap = new WayMap();
-        const mouseOver: Search.DrawSearch.Option['mouseOver'] = {
-            status: Search.DrawSearch.Mouse.Idle,
-        };
-
-        // mouseenter 以及 mouseleave 事件
+        // 事件设置
         handler.setHandlerEvent([
             {
                 type: 'mouseenter',
@@ -237,11 +235,10 @@ export default class LineComponent extends ElectronicCore {
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
 
-                    // TODO: 这里是错误的
                     // 器件的 mouseenter
-                    if (/focus-partial/.test(className)) {
+                    if (/part-focus/.test(className)) {
                         Object.assign(mouseOver, {
-                            status: 'part',
+                            status: Search.DrawSearch.Mouse.Part,
                             part: findPartComponent(e.target.parentElement!),
                         });
                     }
@@ -251,7 +248,7 @@ export default class LineComponent extends ElectronicCore {
                         !this.$el.contains(e.target)
                     ) {
                         Object.assign(mouseOver, {
-                            status: 'line',
+                            status: Search.DrawSearch.Mouse.Line,
                             line: findLineComponent(e.target.parentElement!),
                         });
                     }
@@ -263,27 +260,23 @@ export default class LineComponent extends ElectronicCore {
                 callback: (e: DrawEvent) => {
                     const className = e.target.getAttribute('class') || '';
 
-                    // TODO: 这里是错误的
                     if (
-                        /focus-partial|line-rect|line-point/.test(className) &&
+                        /part-focus|line-rect|line-point/.test(className) &&
                         !this.$el.contains(e.target)
                     ) {
                         mouseOver.status = Search.DrawSearch.Mouse.Idle;
                     }
                 },
             },
-        ]);
-
-        // 搜索事件
-        handler.setHandlerEvent((e: DrawEvent) => {
-            this.way = Search.drawingSearch({
-                start: Point.from(this.way[0]),
+            // 搜索事件
+            (e: DrawEvent) => this.way = Search.drawingSearch({
+                start: startPoint,
                 end: e.$position,
                 mouseBais: e.$movement,
                 pointSize: this.pointSize,
                 wayMap, direction, mouseOver,
-            });
-        });
+            }),
+        ]);
 
         // 开始运行
         await handler.start();
@@ -303,9 +296,8 @@ export default class LineComponent extends ElectronicCore {
             finalEnd = (
                 finalEnd
                     .around((node) => !Map.hasPoint(node), 20)
-                    .reduce(
-                        (pre, next) =>
-                            endNode.distance(pre) < endNode.distance(next) ? pre : next,
+                    .reduce((pre, next) =>
+                        endNode.distance(pre) < endNode.distance(next) ? pre : next,
                     )
             );
         }

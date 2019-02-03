@@ -304,11 +304,9 @@ export default class PartComponent extends ElectronicCore {
         await this
             .createDrawEvent()
             .setCursor('move_part')
-            .setHandlerEvent(
-                (e: DrawEvent) => {
-                    this.textPosition = this.textPosition.add(e.$movement);
-                },
-            )
+            .setHandlerEvent((e: DrawEvent) => {
+                this.textPosition = this.textPosition.add(e.$movement);
+            })
             .setStopEvent({ type: 'mouseup', which: 'left' })
             .start();
 

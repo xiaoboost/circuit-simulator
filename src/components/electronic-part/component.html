@@ -2,7 +2,7 @@
     @dblclick.passive="setParams"
     :class="['part', { focus }]"
     :transform="`matrix(${rotate.join()},${position.join()})`">
-    <g class="focus-partial">
+    <g class="part-focus">
         <part-shape :value="origin.shape"></part-shape>
         <electronic-point
             v-for="(point, i) in points"

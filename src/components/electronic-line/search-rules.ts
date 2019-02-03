@@ -201,12 +201,12 @@ export class Rules {
         // }
         // else
 
-        // 绘制模式
+        // 单点绘制
         if (status < 20) {
             // 节点估值
             this.calValue = calToPoint;
 
-            // 绘制情况下，end 只可能是点，根据终点属性来分类
+            // 绘制情况下，end 只可能是点，根据终点属性来进一步分类
             const endData = Map.getPoint(this.end);
 
             // 终点在导线上
@@ -226,8 +226,8 @@ export class Rules {
                 this.isEnd = isEndPoint;
                 this.checkPoint = isLegalPointGeneral;
             }
+            // 一般状态
             else {
-                // 一般状态
                 this.isEnd = isEndPoint;
                 this.checkPoint = isLegalPointGeneral;
             }

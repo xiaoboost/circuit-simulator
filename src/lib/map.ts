@@ -273,11 +273,7 @@ export function isLine(point: PointLike, large = false) {
     const node = large ? PointCall(point, 'mul', 0.05) : point;
     const data = $map[point2key(node)];
 
-    return Boolean(data) && (
-        data.type === NodeType.Line ||
-        data.type === NodeType.LineCoverPoint ||
-        data.type === NodeType.LineCrossPoint
-    );
+    return Boolean(data) && (data.type < 20);
 }
 
 /**
