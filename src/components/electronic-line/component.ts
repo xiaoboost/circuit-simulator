@@ -21,6 +21,8 @@ import { DrawEvent } from '../drawing-main/event-controller';
 import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 
 import {
+    mergeMark,
+    deleteMark,
     isUndef,
     isBoolean,
     copyProperties,
@@ -57,6 +59,8 @@ export default class LineComponent extends ElectronicCore {
     connect = ['', ''];
     /** 引脚大小 */
     pointSize = [-1, -1];
+    /** 当前导线是否已经标记 */
+    isMark = false;
 
     /** 导线的两个节点属性 */
     get points(): LinePointAttr[] {
@@ -118,6 +122,13 @@ export default class LineComponent extends ElectronicCore {
 
     /** 在图纸标记当前器件 */
     markSign() {
+        // 已经标记，则退出
+        if (this.isMark) {
+            return;
+        }
+
+        this.isMark = true;
+
         let last!: Point;
 
         for (const point of LineWayCall(this.way, 'eachPoint')) {
@@ -138,16 +149,25 @@ export default class LineComponent extends ElectronicCore {
             }
             // 导线点
             else if (status.type < 20) {
-                status.id += ` ${this.id}`;
-                status.type = this.findConnectIndex(point) >= 0
-                    ? Map.NodeType.LineCrossPoint
-                    : Map.NodeType.LineCoverPoint;
+                // 当前节点是否是导线路径的端点
+                const isLineEndpoint = this.findConnectIndex(point) >= 0;
 
-                Map.mergePoint(status, true);
+                status.id = mergeMark(status.id, this.id);
+                status.type = status.id.includes(' ')
+                    // 节点有多个导线
+                    ? isLineEndpoint
+                        ? Map.NodeType.LineCrossPoint
+                        : Map.NodeType.LineCoverPoint
+                    // 节点只有单个导线
+                    : isLineEndpoint
+                        ? Map.NodeType.LinePoint
+                        : Map.NodeType.Line;
+
+                Map.mergePoint(status);
             }
             // 器件引脚不处理，其他类型全部抛出错误
             else if (status.type !== Map.NodeType.PartPoint) {
-                const info = `the type of line point(${point.join(',')}) is  illegal.`;
+                const info = `the type of line point(${point.join(',')}) is illegal.`;
 
                 if (process.env.NODE_ENV === 'development') {
                     $debugger.point(point, 'red');
@@ -169,6 +189,8 @@ export default class LineComponent extends ElectronicCore {
     }
     /** 删除当前器件在图纸中的标记 */
     deleteSign() {
+        this.isMark = false;
+
         let last!: Point;
 
         for (const point of LineWayCall(this.way, 'eachPoint')) {
@@ -195,7 +217,7 @@ export default class LineComponent extends ElectronicCore {
                 status.type === Map.NodeType.LineCoverPoint ||
                 status.type === Map.NodeType.LineCrossPoint
             ) {
-                status.id = status.id.split(' ').filter((id) => id !== this.id).join(' ');
+                status.id = deleteMark(status.id, this.id);
 
                 if (status.id) {
                     Map.setPoint(status, true);
@@ -315,11 +337,13 @@ export default class LineComponent extends ElectronicCore {
 
         // 更新数据
         this.dispatch();
-        this.markSign();
 
         // 节点大小以及终点设置
         this.pointSize.$set(1, -1);
         this.setConnectByWay(1);
+
+        // 标记导线
+        this.markSign();
 
         // 染色
         const parts = this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, ''));
@@ -408,11 +432,11 @@ export default class LineComponent extends ElectronicCore {
     deleteConnect(id: string) {
         const re = new RegExp(`${id} ?`, 'i');
 
-        this.connect = this.connect.map((item) => item.replace(re, ''));
+        this.connect = this.connect.map((item) => item.replace(re, '').trim());
         this.dispatch();
     }
     /**
-     * 指定连接所连接的器件，将这些器件所连接的 this.id 替换成 newId
+     * 将`this.connect`中的器件所连接的`this.id`替换成`newId`
      * @param {(0 | 1)} index 连接标号
      * @param {string} newId 替换的 id
      */
@@ -509,7 +533,7 @@ export default class LineComponent extends ElectronicCore {
                 const mark = line.findConnectIndex(node);
 
                 status.type = Map.NodeType.LineCrossPoint;
-                status.id = `${this.id} ${line.id}`;
+                status.id = mergeMark(this.id, line.id);
                 Map.mergePoint(status);
 
                 line.connect[mark] = this.id;
@@ -521,27 +545,27 @@ export default class LineComponent extends ElectronicCore {
         }
         // 端点在交错节点
         else if (status.type === Map.NodeType.LineCrossPoint) {
-            const lines = status.id.split(' ').filter((n) => n !== this.id);
+            const lines = deleteMark(status.id, this.id);
 
             // 只有一个导线
             if (lines.length === 1 && concat) {
                 this.concat(lines[0]);
             }
             else {
-                this.connect[index] = lines.join(' ');
+                this.connect[index] = lines;
 
-                lines.forEach((id) => {
+                lines.split(' ').forEach((id) => {
                     const line = findLineComponent(id);
                     const mark = line.findConnectIndex(node);
-                    const connect = lines.filter((n) => n !== line.id);
+                    const connect = deleteMark(lines, line.id);
 
                     if (mark !== -1) {
-                        line.connect[mark] = `${connect.join(' ')} ${this.id}`;
+                        line.connect[mark] = mergeMark(connect, this.id);
                         line.dispatch();
                     }
                 });
 
-                status.id = `${status.id} ${this.id}`;
+                status.id = mergeMark(status.id, this.id);
                 Map.mergePoint(status);
             }
         }
@@ -606,6 +630,9 @@ export default class LineComponent extends ElectronicCore {
         if (crossSub < -1) {
             throw new Error('(line) split line failed.');
         }
+
+        // 先删除被分割导线的所有标记
+        splited.deleteSign();
 
         // 生成临时导线
         const Comp = Vue.extend(LineComponent);

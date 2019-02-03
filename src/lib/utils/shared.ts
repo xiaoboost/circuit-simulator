@@ -186,3 +186,31 @@ export function excludeObject<T extends object, U = undefined>(inside: T, other:
         },
     }) as any;
 }
+
+/**
+ * 合并标记
+ * @param args 需要合并的标记
+ * @return {string}
+ */
+export function mergeMark(...args: string[]) {
+    const map: AnyObject<boolean> = Object.create(null);
+
+    // 标记所有的 tag
+    args
+        .join(' ')
+        .split(' ')
+        .filter(Boolean)
+        .forEach((item) => map[item] = true);
+
+    return Object.keys(map).join(' ');
+}
+
+/**
+ * 从主标记中删除元素
+ * @param mark 主要标记
+ * @param args 待删除的标记合集
+ * @return {string}
+ */
+export function deleteMark(mark: string, ...args: string[]) {
+    return mark.split(' ').filter((id) => !args.includes(id)).join(' ');
+}
