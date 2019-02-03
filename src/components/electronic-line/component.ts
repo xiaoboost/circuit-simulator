@@ -100,6 +100,14 @@ export default class LineComponent extends ElectronicCore {
 
     /** 销毁导线 */
     beforeDestroy() {
+        /**
+         * 有时候会存在临时导线
+         * 此时销毁导线可以应该跳过
+         */
+        if (!this.$store) {
+            return;
+        }
+
         this.freeConnect();
         this.deleteSign();
     }
@@ -304,12 +312,14 @@ export default class LineComponent extends ElectronicCore {
 
         // 导线最终设置
         LineWayCall(this.way, 'endToPoint', finalEnd);
-        this.pointSize.$set(1, -1);
-        this.setConnectByWay(1);
 
         // 更新数据
         this.dispatch();
         this.markSign();
+
+        // 节点大小以及终点设置
+        this.pointSize.$set(1, -1);
+        this.setConnectByWay(1);
 
         // 染色
         const parts = this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, ''));
