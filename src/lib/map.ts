@@ -292,9 +292,9 @@ export function alongTheLine(
     vector: PointLike = new Point(start, end),
     large: boolean = false,
 ): Point {
-    const uVector = Point.from(vector).sign(),
-        sNode = large ? Point.from(start).mul(0.05) : Point.from(start),
-        eNode = large ? Point.from(end).mul(0.05) : Point.from(end);
+    const uVector = Point.from(vector).sign();
+    const sNode = large ? PointCall(start, 'mul', 0.05) : Point.from(start);
+    const eNode = large ? PointCall(end, 'mul', 0.05) : Point.from(end);
 
     // 起点并不是导线或者起点等于终点，直接返回
     if (!isLine(sNode) || sNode.isEqual(eNode)) {
