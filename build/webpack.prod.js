@@ -6,16 +6,27 @@ const { cyan } = require('chalk');
 const webpack = require('webpack');
 const config = require('./config');
 const baseConfig = require('./webpack.base');
-const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 
+if (!baseConfig.optimization) {
+    baseConfig.optimization = {};
+}
+
+if (!baseConfig.optimization.minimizer) {
+    baseConfig.optimization.minimizer = [];
+}
+
 baseConfig.plugins.push(
-    new OptimizeCSSPlugin(),
-    new UglifyJSPlugin({
+    new OptimizeCSSPlugin()
+);
+
+baseConfig.optimization.minimizer.push(
+    new TerserPlugin({
         test: /\.js$/i,
         cache: false,
-        uglifyOptions: {
-            ecma: 6,
+        terserOptions: {
+            ecma: 7,
             ie8: false,
             safari10: false,
             output: {
