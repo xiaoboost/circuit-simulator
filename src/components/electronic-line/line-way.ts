@@ -139,22 +139,13 @@ export class LineWay extends Array<Point> {
     }
 
     /** 生成导线途径所有点的迭代器 */
-    eachPoint() {
+    *eachPoint() {
         let index = 0;
-        let isLast = false;
         let node = Point.from(this[0]);
         let vector = LineWayCall(this, 'getSubWayVector', 0);
 
-        const next = () => {
-            const result = {
-                value: node,
-                done: isLast,
-            };
-
-            // 是否等于终点
-            if (node.isEqual(this.get(-1))) {
-                isLast = true;
-            }
+        while (node.isEqual(this.get(-1))) {
+            yield node;
 
             node = node.add(vector);
 
@@ -165,11 +156,9 @@ export class LineWay extends Array<Point> {
                 index++;
                 vector = LineWayCall(this, 'getSubWayVector', index);
             }
+        }
 
-            return result;
-        };
-
-        return { [Symbol.iterator]: () => ({ next }) };
+        yield node;
     }
 }
 
