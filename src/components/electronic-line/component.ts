@@ -299,7 +299,7 @@ export default class LineComponent extends ElectronicCore {
                 },
             },
             // 搜索事件
-            (e: DrawEvent) => this.way = Search.drawingSearch({
+            (e: DrawEvent) => this.way = Search.drawSearch({
                 start: startPoint,
                 end: e.$position,
                 mouseBais: e.$movement,

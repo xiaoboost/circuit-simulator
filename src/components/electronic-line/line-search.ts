@@ -81,7 +81,7 @@ export namespace DeformSearch {
 export type SearchStatus = DrawSearch.Status | MoveSearch.Status | DeformSearch.Status;
 
 /** 单点绘制 - 导线搜索 */
-export function drawingSearch({ start, end, direction, wayMap, pointSize, mouseOver, mouseBais }: DrawSearch.Option) {
+export function drawSearch({ start, end, direction, wayMap, pointSize, mouseOver, mouseBais }: DrawSearch.Option) {
     // 当前终点四方格左上角顶点
     const vertex = end.floor();
     // 四方格坐标

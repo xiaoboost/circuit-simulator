@@ -98,10 +98,10 @@ export default class ElectronicCore extends Vue {
     readonly type: keyof Electronics | 'line' = 'line';
 
     /** 图纸相关状态 */
-    @Inject()
+    @Inject({ default: {} })
     readonly mapStatus!: MapStatus;
     /** 设置图纸事件 */
-    @Inject()
+    @Inject({ default: () => {} })
     readonly createDrawEvent!: DrawingMain['createDrawEvent'];
 
     @Watch('value', { immediate: true })
