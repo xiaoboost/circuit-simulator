@@ -144,7 +144,7 @@ export class LineWay extends Array<Point> {
         let node = Point.from(this[0]);
         let vector = LineWayCall(this, 'getSubWayVector', 0);
 
-        while (node.isEqual(this.get(-1))) {
+        while (!node.isEqual(this.get(-1))) {
             yield node;
 
             node = node.add(vector);
