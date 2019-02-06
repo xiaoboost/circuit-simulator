@@ -9,9 +9,9 @@ describe('map.ts: Data marked by drawings', () => {
     test('getPoint/setPoint()', () => {
         expect(map.getPoint([1, 2])).toBeUndefined();
 
-        const data: map.MapPointData = {
+        const data: map.NodeData = {
             id: 'r_1',
-            type: 'part',
+            type: map.NodeType.Part,
             point: new Point(1, 3),
             connect: [new Point(1, 4), new Point(2, 3)],
         };
@@ -23,17 +23,23 @@ describe('map.ts: Data marked by drawings', () => {
         map.setPoint(data, true);
         expect(map.getPoint([40, 60], true)).toEqual(data);
     });
-    test('outputMap/forceUpdateMap()', () => {
+    test('outputmap/forceUpdatemap()', () => {
         expect(map.outputMap()).toEqual('{}');
 
-        const data: map.MapPointData = {
+        const data: map.NodeData = {
             id: 'r_2',
-            type: 'part',
+            type: map.NodeType.Part,
             point: new Point(1, 3),
             connect: [new Point(1, 4), new Point(2, 3)],
         };
 
-        let dataString = JSON.stringify(data);
+        const copy = {
+            id: data.id,
+            type: data.type,
+            connect: data.connect.map((item) => Array.from(item)),
+        };
+
+        let dataString = JSON.stringify(copy);
 
         map.setPoint(data);
         expect(map.outputMap()).toEqual(`{"1,3":${dataString}}`);
@@ -47,9 +53,9 @@ describe('map.ts: Data marked by drawings', () => {
         map.forceUpdateMap(dataString, true);
     });
     test('mergePoint()', () => {
-        const originData: map.MapPointData = {
+        const originData: map.NodeData = {
             id: 'r_2',
-            type: 'part',
+            type: map.NodeType.Part,
             point: new Point(1, 3),
             connect: [new Point(1, 4), new Point(2, 3)],
         };
@@ -60,7 +66,7 @@ describe('map.ts: Data marked by drawings', () => {
         expect(mapData).toEqual(originData);
 
         originData.id = 'r_1';
-        originData.type = 'line';
+        originData.type = map.NodeType.Line;
         originData.point = new Point(20, 60);
         originData.connect.push(new Point(1, 4), new Point(5, 5));
         expect(map.getPoint([1, 3])).toEqual(mapData);
@@ -70,9 +76,9 @@ describe('map.ts: Data marked by drawings', () => {
         expect(map.getPoint([20, 60], true)).toEqual(originData);
     });
     test('hasPoint/deletePoint()', () => {
-        const data: map.MapPointData = {
+        const data: map.NodeData = {
             id: '1',
-            type: 'part',
+            type: map.NodeType.Part,
             point: new Point(2, 3),
             connect: [],
         };
@@ -92,9 +98,9 @@ describe('map.ts: Data marked by drawings', () => {
         expect(map.hasPoint([2, 3])).toBeFalse();
     });
     test('hasConnect/addConnect/deleteConnect()', () => {
-        const data: map.MapPointInputData = {
+        const data: map.NodeInputData = {
             id: 'R_1',
-            type: 'line',
+            type: map.NodeType.Line,
             point: new Point(1, 3),
         };
 
@@ -121,7 +127,7 @@ describe('map.ts: Data marked by drawings', () => {
     test('isLine()', () => {
         map.setPoint({
             id: 't',
-            type: 'part',
+            type: map.NodeType.Part,
             point: new Point(1, 3),
         });
 
@@ -129,7 +135,7 @@ describe('map.ts: Data marked by drawings', () => {
 
         map.setPoint({
             id: 't',
-            type: 'line',
+            type: map.NodeType.Line,
             point: new Point(1, 3),
         });
 
@@ -137,7 +143,7 @@ describe('map.ts: Data marked by drawings', () => {
 
         map.setPoint({
             id: 't',
-            type: 'line-point',
+            type: map.NodeType.LinePoint,
             point: new Point(1, 3),
         });
 
@@ -145,8 +151,8 @@ describe('map.ts: Data marked by drawings', () => {
 
         map.setPoint({
             id: 't',
-            type: 'line-cross-point',
             point: new Point(1, 3),
+            type: map.NodeType.LineCrossPoint,
         });
 
         expect(map.isLine([20, 60], true)).toBeTrue();
@@ -154,8 +160,8 @@ describe('map.ts: Data marked by drawings', () => {
     test('alongTheLine()', () => {
         // [4, 2] -> [8, 2]
         for (let i = 4; i < 9; i++) {
-            const data: map.MapPointInputData = {
-                type: 'line',
+            const data: map.NodeInputData = {
+                type: map.NodeType.Line,
                 point: new Point(i, 2),
                 id: 'line_1',
             };
@@ -174,8 +180,8 @@ describe('map.ts: Data marked by drawings', () => {
         }
         // [9, 2] -> [12, 2]
         for (let i = 9; i < 13; i++) {
-            const data: map.MapPointInputData = {
-                type: 'line',
+            const data: map.NodeInputData = {
+                type: map.NodeType.Line,
                 point: new Point(i, 2),
                 id: 'line_1',
             };
