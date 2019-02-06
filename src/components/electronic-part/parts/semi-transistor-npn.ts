@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'Q',
-    type: 'transistor_npn',
+    type: PartType.TransistorNPN,
     introduction: 'NPN型三极管',
     txtLBias: 25,
     padding: [1, 0, 1, 0],

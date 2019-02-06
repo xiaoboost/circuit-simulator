@@ -20,24 +20,24 @@ import diode from './semi-diode';
 import transistor_npn from './semi-transistor-npn';
 import operational_amplifier from './semi-amplifier';
 
-const Electronics = {
-    resistance,
-    capacitor,
-    inductance,
-    dc_voltage_source,
-    ac_voltage_source,
-    dc_current_source,
-    reference_ground,
-    voltage_meter,
-    current_meter,
-    diode,
-    transistor_npn,
-    operational_amplifier,
+import { ElectronicPrototype, PartType } from './constant';
+
+type Electronics = { [key in PartType]: ElectronicPrototype };
+const Electronics: Electronics = {
+    [PartType.Resistance]: resistance,
+    [PartType.Capacitor]: capacitor,
+    [PartType.Inductance]: inductance,
+    [PartType.DcVoltageSource]: dc_voltage_source,
+    [PartType.AcVoltageSource]: ac_voltage_source,
+    [PartType.DcCurrentSource]: dc_current_source,
+    [PartType.ReferenceGround]: reference_ground,
+    [PartType.VoltageMeter]: voltage_meter,
+    [PartType.CurrentMeter]: current_meter,
+    [PartType.Diode]: diode,
+    [PartType.TransistorNPN]: transistor_npn,
+    [PartType.OperationalAmplifier]: operational_amplifier,
 };
 
-type Electronics = typeof Electronics;
-
-export * from './types';
-export type PartTypes = keyof Electronics;
+export * from './constant';
 
 export default Electronics;

@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'L',
-    type: 'inductance',
+    type: PartType.Inductance,
     introduction: '电感器',
     txtLBias: 13,
     padding: [0, 1, 0, 1],

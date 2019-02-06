@@ -5,19 +5,19 @@ import { Mutation } from 'src/vuex';
 import { createPartData } from 'src/components/electronic-part/helper';
 import { findPartComponent } from 'src/components/electronic-part/common';
 
-import Electronics from 'src/components/electronic-part/parts';
+import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
 
 @Component
 class PartShow extends Vue {
-    @Prop({ type: String })
+    @Prop({ type: Number })
     type!: keyof Electronics;
 
     // 部分器件作为图标时需要修正其位置和大小
-    fixElementShape(type: string) {
+    fixElementShape(type: PartType) {
         const transform = {
-            current_meter: 'scale(1.2, 1.2)',
-            reference_ground: 'scale(1.2, 1.2) translate(0, 5)',
-            transistor_npn: 'translate(-5, 0)',
+            [PartType.CurrentMeter]: 'scale(1.2, 1.2)',
+            [PartType.ReferenceGround]: 'scale(1.2, 1.2) translate(0, 5)',
+            [PartType.TransistorNPN]: 'translate(-5, 0)',
         };
 
         return {
@@ -65,36 +65,36 @@ export default class PartsPanel extends Vue {
             key: 'virtual_device',
             name: '虚拟器件',
             parts: [
-                'reference_ground',
-                'voltage_meter',
-                'current_meter',
+                PartType.ReferenceGround,
+                PartType.VoltageMeter,
+                PartType.CurrentMeter,
             ],
         },
         {
             key: 'power',
             name: '电源',
             parts: [
-                'dc_voltage_source',
-                'ac_voltage_source',
-                'dc_current_source',
+                PartType.DcVoltageSource,
+                PartType.AcVoltageSource,
+                PartType.DcCurrentSource,
             ],
         },
         {
             key: 'passive_device',
             name: '无源器件',
             parts: [
-                'resistance',
-                'capacitor',
-                'inductance',
+                PartType.Resistance,
+                PartType.Capacitor,
+                PartType.Inductance,
             ],
         },
         {
             key: 'semiconductor_device',
             name: '半导体器件',
             parts: [
-                'diode',
-                'transistor_npn',
-                'operational_amplifier',
+                PartType.Diode,
+                PartType.TransistorNPN,
+                PartType.OperationalAmplifier,
             ],
         },
     ];

@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'IM',
-    type: 'current_meter',
+    type: PartType.CurrentMeter,
     introduction: '电流表',
     txtLBias: 11,
     padding: [0, 0, 0, 0],

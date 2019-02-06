@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'I',
-    type: 'dc_current_source',
+    type: PartType.DcCurrentSource,
     introduction: '直流电流源',
     txtLBias: 24,
     padding: [1, 1, 1, 1],

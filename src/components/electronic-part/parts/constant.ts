@@ -1,3 +1,31 @@
+/** 器件类型枚举常量 */
+export const enum PartType {
+    /** 电阻 */
+    Resistance,
+    /** 电感 */
+    Inductance,
+    /** 电容 */
+    Capacitor,
+    /** 电流测量 */
+    CurrentMeter,
+    /** 电压测量 */
+    VoltageMeter,
+    /** 运算放大器 */
+    OperationalAmplifier,
+    /** 二极管 */
+    Diode,
+    /** npn 三极管 */
+    TransistorNPN,
+    /** 交流电压源 */
+    AcVoltageSource,
+    /** 直流电流源 */
+    DcCurrentSource,
+    /** 直流电压源 */
+    DcVoltageSource,
+    /** 参考地 */
+    ReferenceGround,
+}
+
 /** 器件每项参数的说明 */
 export interface ParmasDescription {
     /**
@@ -64,9 +92,9 @@ export interface ElectronicPrototype {
     readonly pre: string;
     /**
      * 器件种类
-     * @type {string}
+     * @type {PartType}
      */
-    readonly type: string;
+    readonly type: PartType;
     /**
      * 器件简述
      * @type {string}

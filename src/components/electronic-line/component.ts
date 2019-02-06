@@ -106,7 +106,7 @@ export default class LineComponent extends ElectronicCore {
     beforeDestroy() {
         /**
          * 有时候会存在临时导线
-         * 此时销毁导线可以应该跳过
+         * 此时销毁导线应该跳过
          */
         if (!this.$store) {
             return;

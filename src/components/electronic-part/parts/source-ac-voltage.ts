@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'V',
-    type: 'ac_voltage_source',
+    type: PartType.AcVoltageSource,
     introduction: '交流电压源',
     txtLBias: 24,
     padding: [1, 1, 1, 1],

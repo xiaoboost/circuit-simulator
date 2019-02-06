@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'C',
-    type: 'capacitor',
+    type: PartType.Capacitor,
     introduction: '电容器',
     txtLBias: 22,
     padding: [0, 1, 0, 1],

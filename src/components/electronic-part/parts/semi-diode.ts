@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'VD',
-    type: 'diode',
+    type: PartType.Diode,
     introduction: '二极管',
     txtLBias: 18,
     padding: [1, 0, 1, 0],

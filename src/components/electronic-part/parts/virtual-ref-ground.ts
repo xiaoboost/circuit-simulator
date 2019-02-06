@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'GND',
-    type: 'reference_ground',
+    type: PartType.ReferenceGround,
     introduction: '参考地',
     txtLBias: 12,
     padding: [0, 0, 0, 0],

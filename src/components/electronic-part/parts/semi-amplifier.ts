@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'OP',
-    type: 'operational_amplifier',
+    type: PartType.OperationalAmplifier,
     introduction: '运算放大器',
     // TODO: 文字需要位于器件中心
     txtLBias: 0,

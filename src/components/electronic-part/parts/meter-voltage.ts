@@ -1,8 +1,8 @@
-import { ElectronicPrototype } from './types';
+import { ElectronicPrototype, PartType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'VM',
-    type: 'voltage_meter',
+    type: PartType.VoltageMeter,
     introduction: '电压表',
     txtLBias: 24,
     padding: [1, 1, 1, 1],
