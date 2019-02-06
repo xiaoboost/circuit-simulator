@@ -168,11 +168,11 @@ export class WayMap {
     private _data: AnyObject<LineWay> = {};
 
     static toKey(node: Point) {
-        return node.join();
+        return node.join(',');
     }
 
     has(node: Point) {
-        return !!this._data[WayMap.toKey(node)];
+        return Boolean(this._data[WayMap.toKey(node)]);
     }
     set(node: Point, way: LineWay) {
         this._data[WayMap.toKey(node)] = way;

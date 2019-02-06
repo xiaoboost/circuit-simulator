@@ -1,7 +1,8 @@
 import store from 'src/vuex';
 
-import { outputMap, MapHash, NodeType } from 'src/lib/map';
+import { def } from './utils';
 import { default as Point, PointLike } from './point';
+import { outputMap, MapHash, NodeType } from './map';
 
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
@@ -153,11 +154,6 @@ export function debuggerInit() {
         $debugger = new MapDebug();
         area.appendChild($debugger.$el);
 
-        Object.defineProperty(window, '$debugger', {
-            value: $debugger,
-            enumerable: false,
-            writable: false,
-            configurable: false,
-        });
+        def(window, { $debugger });
     }
 }

@@ -1,4 +1,5 @@
 import { default as Point, PointLike } from 'src/lib/point';
+import { def, clone } from './utils';
 
 /** 节点类型常量 */
 export const enum NodeType {
@@ -33,8 +34,7 @@ export type NodeInputData = PartPartial<NodeData, 'connect'>;
 
 /**
  * 图纸标记缓存
- *  - key 是使用小坐标转换而来的，而内部数据中的 point 则是实际坐标，这点区别必须要注意
- *  - 之所以这么设计，是考虑到
+ *  - key 是使用小坐标转换而来的，而内部数据中的 point 则是实际坐标
  */
 const $map: MapHash = {};
 
@@ -80,7 +80,26 @@ function PointCall<T extends PointMethodKeys>(self: PointLike, name: T, ...args:
  * @returns {string}
  */
 export function outputMap() {
-    return JSON.stringify($map);
+    const copy = clone($map);
+
+    Object.values(copy).forEach((data) => {
+        if (data.connect.length === 0) {
+            delete data.connect;
+        }
+        else {
+            data.connect = data.connect.map((item) => Array.from(item)) as any;
+        }
+
+        delete data.point;
+    });
+
+    return JSON.stringify(copy);
+
+}
+
+// 调试阶段，导出函数为全局函数
+if (process.env.NODE_ENV === 'development') {
+    def(window, { $outputMap: outputMap });
 }
 
 /**
@@ -96,15 +115,20 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
         return;
     }
 
-    const data = JSON.parse(map) as MapHash;
+    type ParseNodeData = Omit<PartPartial<NodeData, 'connect'>, 'point'>;
+    const data = JSON.parse(map) as AnyObject<ParseNodeData>;
 
+    // 删除当前所有数据
     Object
         .keys($map)
         .forEach((key) => Reflect.deleteProperty($map, key));
 
-    Object
-        .values(data)
-        .forEach((value: NodeData) => setPoint(dataClone(value)));
+    Object.entries(data).forEach(([key, value]) => {
+        // 节点坐标由 key 转变而来
+        const point = Point.from(key.split(',').map(Number));
+        // 设置节点信息
+        setPoint(dataClone({ ...value, point }));
+    });
 
     $mapString = map;
 }
@@ -290,7 +314,7 @@ export function alongTheLine(
     start: PointLike,
     end: PointLike = [Infinity, Infinity],
     vector: PointLike = new Point(start, end),
-    large: boolean = false,
+    large = false,
 ): Point {
     const uVector = Point.from(vector).sign();
     const sNode = large ? PointCall(start, 'mul', 0.05) : Point.from(start);
