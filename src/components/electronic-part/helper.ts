@@ -6,7 +6,7 @@ import { randomString } from 'src/lib/utils';
 
 import { createId } from './common';
 import { PartData } from './component';
-import { default as Electronics, ShapeDescription } from './parts';
+import { default as Electronics, PartType, ShapeDescription } from './parts';
 
 interface Props {
     value: ShapeDescription[];
@@ -40,7 +40,7 @@ export const product = (point: Point | number[], ma: Matrix): Point => {
  * 生成完整的初始化器件数据
  * @param type 器件类型
  */
-export const createPartData = (type: keyof Electronics): PartData => ({
+export const createPartData = (type: PartType): PartData => ({
     type,
     hash: randomString(),
     rotate: new Matrix(2, 'E'),

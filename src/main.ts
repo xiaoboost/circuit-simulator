@@ -1,10 +1,11 @@
 import 'src/css/main';
 import 'src/lib/native';
 
-import Vue from 'vue';
+import { default as Vue, VNodeChildrenArrayContents } from 'vue';
+import { default as store, CircuitStorage } from 'src/vuex';
+
 import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
-import { default as store, CircuitStorage } from 'src/vuex';
 
 import ActionMenu from './components/action-menu/component';
 import SliderMenu from './components/slider-menu/component';
@@ -30,7 +31,7 @@ new Vue({
     components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
-        [h('drawing-main'), h('slider-menu'), h('action-menu')] as any,
+        [h('drawing-main'), h('slider-menu'), h('action-menu')] as VNodeChildrenArrayContents,
     ),
     async mounted() {
         const map = getQueryByName('map');

@@ -1,5 +1,5 @@
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { CreateElement, VNodeChildrenArrayContents } from 'vue';
+import { Component, Vue } from 'vue-property-decorator';
+import { VNodeChildrenArrayContents } from 'vue';
 
 import { Mutation } from 'src/vuex';
 import { createPartData } from 'src/components/electronic-part/helper';
@@ -7,28 +7,33 @@ import { findPartComponent } from 'src/components/electronic-part/common';
 
 import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
 
-@Component
-class PartShow extends Vue {
-    @Prop({ type: Number })
-    type!: keyof Electronics;
+interface Props {
+    type: PartType;
+}
 
-    // 部分器件作为图标时需要修正其位置和大小
-    fixElementShape(type: PartType) {
+export const PartShow = Vue.extend<Props>({
+    functional: true,
+    props: {
+        type: {
+            type: Number,
+        },
+    },
+    render(h, context) {
+        // 器件位置修正
         const transform = {
             [PartType.CurrentMeter]: 'scale(1.2, 1.2)',
             [PartType.ReferenceGround]: 'scale(1.2, 1.2) translate(0, 5)',
             [PartType.TransistorNPN]: 'translate(-5, 0)',
         };
-
-        return {
+        // 生成修正函数
+        const fixElementShape = (type: PartType) => ({
             transform: transform.hasOwnProperty(type)
                 ? `translate(40,40) ${transform[type]}`
                 : 'translate(40,40)',
-        };
-    }
+        });
 
-    render(h: CreateElement) {
-        const shape = Electronics[this.type].shape;
+        const partType = context.props.type;
+        const shape = Electronics[partType].shape;
         const child = (
             shape
                 .filter((dom) => (
@@ -39,9 +44,9 @@ class PartShow extends Vue {
                 .map((dom) => h(dom.name, { attrs: dom.attribute }))
         ) as VNodeChildrenArrayContents;
 
-        return h('g', { attrs: this.fixElementShape(this.type) }, child);
-    }
-}
+        return h('g', { attrs: fixElementShape(partType) }, child);
+    },
+});
 
 type TipStyle = Partial<CSSStyleDeclaration>;
 type categories = Array<{
@@ -71,7 +76,7 @@ export default class PartsPanel extends Vue {
             ],
         },
         {
-            key: 'power',
+            key: 'source',
             name: '电源',
             parts: [
                 PartType.DcVoltageSource,
