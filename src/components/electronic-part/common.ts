@@ -10,10 +10,11 @@ import LineComponent from 'src/components/electronic-line/component';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
-
-const PartComponents: ElectronicCore[] = [];
-const LineComponents: ElectronicCore[] = [];
+/** 全局器件 id 占位表 */
 const mapHash: AnyObject<boolean> = {};
+
+export const PartComponents: ElectronicCore[] = [];
+export const LineComponents: ElectronicCore[] = [];
 
 /**
  * 生成器件或者导线的新 ID

@@ -2,6 +2,8 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 不强制要求使用 for of 循环
+        "prefer-for-of": false,
         // 复杂数组类型，不强制使用 Array<T> 形式
         "array-type": false,
         // 允许使用 namespace
@@ -65,7 +67,7 @@
         "triple-equals": true,
         // 循环复杂度限定在 20
         // @link: https://palantir.github.io/tslint/rules/cyclomatic-complexity/
-        "cyclomatic-complexity": [true, 20],
+        "cyclomatic-complexity": [true, 30],
         // 强制 LF 换行
         "linebreak-style": [true, "LF"],
         // 每个文件最多声明多少个类
