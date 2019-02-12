@@ -1,5 +1,6 @@
 const { join } = require('path');
 const { getType } = require('mime');
+const { spawn } = require('child_process');
 
 /**
  * Generate tag of build
@@ -19,7 +20,7 @@ exports.buildTag = function() {
  * 定位到项目根目录
  * @param {string} dir 路径
  */
-exports.resolve = (dir) => join(__dirname, '..', dir);
+exports.resolve = (...dir) => join(__dirname, '..', ...dir);
 
 /**
  * 内存中间件
@@ -67,4 +68,13 @@ exports.ramMiddleware = function(fs, root) {
         ctx.body = fs.createReadStream(filePath);
         next();
     };
+};
+
+/** 子进程 promise 封装 */
+exports.promiseSpawn = function(command, ...args) {
+    return new Promise((resolve) => {
+        const task = spawn(command, args);
+        task.on('close', resolve);
+        // task.on('error', reject);
+    });
 };

@@ -2,6 +2,7 @@ const { yellow, green } = require('chalk');
 const { resolve, buildTag } = require('./utils');
 
 const config = require('./config');
+const example = require('./ts-json');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -24,6 +25,9 @@ Released under the MIT License.`;
 // 清空屏幕
 console.log('\x1Bc');
 console.log(yellow('> Start Compile:\n'));
+
+// 编译 example
+example();
 
 module.exports = {
     mode: process.env.NODE_ENV,
