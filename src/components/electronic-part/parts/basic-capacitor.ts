@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, IterativeInputType } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'C',
@@ -39,6 +39,35 @@ const part: ElectronicPrototype = {
             },
         },
     ],
+    iterative(timeInterval) {
+        // 电容值
+        const valueCap = Number.scientificCountParser(this.params[0]);
+        // 积分的中间变量
+        const save = {
+            last: 0,
+            integral: 0,
+        };
+
+        return {
+            output: [],
+            input: [
+                {
+                    type: IterativeInputType.Current,
+                    place: `${this.id}-0`,
+                },
+            ],
+            process(current: number) {
+                // 积分，一阶近似累加
+                const now = (current + save.last) / 2 * timeInterval + save.integral;
+                const voltage = now / valueCap;
+
+                save.last = current;
+                save.integral = now;
+
+                return ([voltage]);
+            },
+        };
+    },
 };
 
 export default part;

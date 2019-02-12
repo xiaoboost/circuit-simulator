@@ -40,6 +40,8 @@ export default class PartComponent extends ElectronicCore {
     readonly type!: keyof Electronics;
     /** 当前器件数据原型 */
     readonly origin!: ElectronicPrototype;
+    /** 迭代函数生成器 */
+    readonly iterative!: ElectronicPrototype['iterative'];
 
     /** 器件当前旋转矩阵 */
     rotate = new Matrix(2, 'E');
@@ -78,6 +80,16 @@ export default class PartComponent extends ElectronicCore {
             configurable: true,
             value: origin,
         });
+
+        // 迭代函数存在，绑定当前器件
+        if (origin.iterative) {
+            Object.defineProperty(this, 'iterative', {
+                enumerable: true,
+                writable: false,
+                configurable: true,
+                value: origin.iterative.bind(this),
+            });
+        }
 
         this.renderText();
     }

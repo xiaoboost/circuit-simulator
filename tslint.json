@@ -2,6 +2,8 @@
     "defaultSeverity": "error",
     "extends":"tslint:recommended",
     "rules": {
+        // 复杂数组类型，不强制使用 Array<T> 形式
+        "array-type": false,
         // 允许使用 namespace
         "no-namespace": false,
         // 允许使用类名代替类型
