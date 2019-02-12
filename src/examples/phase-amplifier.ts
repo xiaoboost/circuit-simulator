@@ -1,5 +1,6 @@
 import { CircuitStorage } from '../vuex';
 import { PartType } from '../components/electronic-part/parts';
+import { LineType } from '../components/electronic-line/helper';
 
 export const data: CircuitStorage = {
     data: [
@@ -78,75 +79,75 @@ export const data: CircuitStorage = {
             text: 'right',
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 240], [220, 240]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[340, 240], [320, 240]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 240], [420, 240]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 280], [320, 240]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 240], [300, 240]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 400], [320, 380]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[340, 200], [320, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 200], [440, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 140], [440, 140], [440, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[440, 200], [420, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[540, 140], [560, 140], [560, 220]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[560, 280], [560, 220]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[560, 220], [540, 220]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[560, 360], [560, 380]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 380], [320, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[620, 280], [620, 220], [560, 220]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[620, 360], [620, 380], [560, 380]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[560, 380], [320, 380]],
         },
     ],

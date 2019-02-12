@@ -10,9 +10,10 @@ import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 import { isArray, clone, randomString } from 'src/lib/utils';
 
+import { LineType } from 'src/components/electronic-line/helper';
 import { LineWay } from 'src/components/electronic-line/line-way';
-import { PartData } from 'src/components/electronic-part/component';
 import { LineData } from 'src/components/electronic-line/component';
+import { PartData } from 'src/components/electronic-part/component';
 
 import {
     markId,
@@ -189,8 +190,8 @@ const mutations: MutationTree<StateType> = {
             return;
         }
 
-        state.parts = current.filter((part): part is PartData => part.type !== -1);
-        state.lines = current.filter((line): line is LineData => line.type === -1);
+        state.parts = current.filter((part): part is PartData => part.type !== LineType.Line);
+        state.lines = current.filter((line): line is LineData => line.type === LineType.Line);
     },
 };
 
@@ -206,7 +207,7 @@ const actions: ActionTree<StateType, StateType> = {
         }
 
         // load parts
-        const parts = data.data.filter((part): part is PartStorageData => part.type !== -1);
+        const parts = data.data.filter((part): part is PartStorageData => part.type !== LineType.Line);
         await Promise.all(parts.map(async (storage) => {
             const partData: PartData = {
                 type: storage.type,
@@ -247,10 +248,10 @@ const actions: ActionTree<StateType, StateType> = {
         }));
 
         // loaded lines
-        const lines = data.data.filter((line): line is LineStorageData => line.type === -1);
+        const lines = data.data.filter((line): line is LineStorageData => line.type === LineType.Line);
         await Promise.all(lines.map(async (storage) => {
             const lineData: LineData = {
-                type: -1,
+                type: LineType.Line,
                 id: createId('line'),
                 hash: randomString(),
                 connect: ['', ''],

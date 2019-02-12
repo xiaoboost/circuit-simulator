@@ -1,5 +1,6 @@
 import { CircuitStorage } from '../vuex';
 import { PartType } from '../components/electronic-part/parts';
+import { LineType } from '../components/electronic-line/helper';
 
 export const data: CircuitStorage = {
     config: {
@@ -97,115 +98,115 @@ export const data: CircuitStorage = {
             rotate: [[1, 0], [0, 1]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[160, 100], [180, 100]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[260, 100], [300, 100]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[400, 320], [400, 340]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 220], [300, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 340], [300, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 280], [360, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[280, 280], [300, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 320], [180, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[120, 320], [120, 280], [180, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 280], [200, 280]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[120, 480], [120, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 400], [180, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[120, 400], [120, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 420], [300, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 460], [120, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[400, 440], [400, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 460], [180, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[600, 440], [600, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[400, 460], [300, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[660, 440], [660, 460], [600, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[600, 460], [400, 460]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[400, 240], [400, 100], [300, 100]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[300, 100], [300, 140]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[540, 340], [600, 340]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[660, 360], [660, 340], [600, 340]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[600, 340], [600, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 340], [400, 340]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[400, 340], [400, 360]],
         },
     ],

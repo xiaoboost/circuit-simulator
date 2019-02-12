@@ -1,6 +1,7 @@
 import { LineData } from 'src/components/electronic-line/component';
 import { PartData } from 'src/components/electronic-part/component';
 import { PartType } from 'src/components/electronic-part/parts';
+import { LineType } from 'src/components/electronic-line/helper';
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -44,7 +45,7 @@ export interface PartStorageData {
 
 /** 储存用的器件数据接口 */
 export interface LineStorageData {
-    type: -1;
+    type: LineType;
     way: number[][];
 }
 

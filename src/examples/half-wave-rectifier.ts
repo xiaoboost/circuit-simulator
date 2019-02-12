@@ -1,5 +1,6 @@
 import { CircuitStorage } from '../vuex';
 import { PartType } from '../components/electronic-part/parts';
+import { LineType } from '../components/electronic-line/helper';
 
 export const data: CircuitStorage = {
     data: [
@@ -25,27 +26,27 @@ export const data: CircuitStorage = {
             params: ['100'],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 180], [180, 140], [240, 140]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 140], [380, 140]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[420, 140], [460, 140]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[520, 180], [520, 140], [460, 140]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 140], [460, 180]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 260], [180, 300], [320, 300]],
         },
         {
@@ -55,19 +56,19 @@ export const data: CircuitStorage = {
             rotate: [[1, 0], [0, 1]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 320], [320, 300]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[320, 300], [460, 300]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[520, 260], [520, 300], [460, 300]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[460, 300], [460, 260]],
         },
         {
