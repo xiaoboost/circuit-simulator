@@ -44,7 +44,7 @@ export interface PartStorageData {
 
 /** 储存用的器件数据接口 */
 export interface LineStorageData {
-    type: 'line';
+    type: -1;
     way: number[][];
 }
 

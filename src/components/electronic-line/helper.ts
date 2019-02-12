@@ -7,7 +7,7 @@ import { createId } from 'src/components/electronic-part/common';
  * 生成完整的初始化导线数据
  */
 export const createLineData = (): LineData => ({
-    type: 'line',
+    type: -1,
     hash: randomString(),
     id: createId('line'),
     connect: ['', ''],

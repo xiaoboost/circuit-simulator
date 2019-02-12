@@ -51,7 +51,7 @@ export interface LinePointAttr {
 })
 export default class LineComponent extends ElectronicCore {
     /** 导线类型 */
-    readonly type!: -1  /** line type */;
+    readonly type!: -1;
 
     /** 导线路径 */
     way: Point[] = [];

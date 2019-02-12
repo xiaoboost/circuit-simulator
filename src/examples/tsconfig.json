@@ -1,0 +1,15 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "module": "commonjs",
+        "removeComments": true,
+        "sourceMap": false,
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true
+    },
+    "exclude": [
+        "../../dist",
+        "../../test",
+        "../../node_modules"
+    ]
+}

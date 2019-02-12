@@ -189,8 +189,8 @@ const mutations: MutationTree<StateType> = {
             return;
         }
 
-        state.parts = current.filter((part): part is PartData => part.type !== 'line');
-        state.lines = current.filter((line): line is LineData => line.type === 'line');
+        state.parts = current.filter((part): part is PartData => part.type !== -1);
+        state.lines = current.filter((line): line is LineData => line.type === -1);
     },
 };
 
@@ -206,7 +206,7 @@ const actions: ActionTree<StateType, StateType> = {
         }
 
         // load parts
-        const parts = data.data.filter((part): part is PartStorageData => part.type !== 'line');
+        const parts = data.data.filter((part): part is PartStorageData => part.type !== -1);
         await Promise.all(parts.map(async (storage) => {
             const partData: PartData = {
                 type: storage.type,
@@ -247,10 +247,10 @@ const actions: ActionTree<StateType, StateType> = {
         }));
 
         // loaded lines
-        const lines = data.data.filter((line): line is LineStorageData => line.type === 'line');
-        lines.forEach(async (storage) => {
+        const lines = data.data.filter((line): line is LineStorageData => line.type === -1);
+        await Promise.all(lines.map(async (storage) => {
             const lineData: LineData = {
-                type: storage.type,
+                type: -1,
                 id: createId('line'),
                 hash: randomString(),
                 connect: ['', ''],
@@ -267,13 +267,12 @@ const actions: ActionTree<StateType, StateType> = {
             line.setConnectByWay();
             line.markSign();
             line.dispatch();
-        });
+        }));
     },
     /** 求解电路 */
-    // async SOLVE_CIRCUIT({ state }) {
-    //     debugger;
-    //     slover.compilePartsNet(state.Lines);
-    // },
+    async [Action.SOLVE_CIRCUIT]({ state }) {
+        debugger;
+    },
 };
 
 export default new Vuex.Store<StateType>({
