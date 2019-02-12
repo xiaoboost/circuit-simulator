@@ -2,7 +2,10 @@ import {
     isUndef,
     isArray,
     isNumber,
+    isString,
 } from './utils';
+
+type MatrixInput = number[][] | Matrix;
 
 /**
  * 矩阵类
@@ -34,36 +37,36 @@ export default class Matrix {
      * Creates an instance of Matrix.
      * @param {number} row
      * @param {(number | 'E')} [column]
-     * @param {number} [value=0]
+     * @param {(number | 'E')} [value=0]
      */
     constructor(order: number, value?: number | 'E');
-    constructor(row: number, column: number, value?: number);
-    constructor(row: number, column?: number | 'E', value = 0) {
-        // 单位矩阵
-        if (column === 'E') {
-            this.row = row;
-            this.column = row;
-            this._view = new Float64Array(new ArrayBuffer(this.row * this.column * 8));
-
-            for (let i = 0; i < row; i++) {
-                this._view[i * (row + 1)] = 1;
-            }
-        }
-        // 零矩阵
-        else if (isUndef(column)) {
+    constructor(row: number, column: number, value?: number | 'E');
+    constructor(row: number, column?: number | 'E', value?: number | 'E') {
+        // 输入一个值 - 零矩阵
+        if (arguments.length === 1) {
             this.row = row;
             this.column = row;
             this._view = Float64Array.from(Array(row * row).fill(0));
         }
-        // 行列式
-        else {
+        // 输入两个值 - 第二个值为填充值的矩阵
+        else if (arguments.length === 2) {
+            const val = (column === 'E' ? 1 : column) as number;
+
             this.row = row;
-            this.column = column;
-            this._view = Float64Array.from(Array(row * column).fill(value));
+            this.column = row;
+            this._view = Float64Array.from(Array(row * row).fill(val));
+        }
+        // 输入三个值 - 第三个值为填充值的行列式
+        else {
+            const val = (value === 'E' ? 1 : value) as number;
+
+            this.row = row;
+            this.column = column as number;
+            this._view = Float64Array.from(Array(this.row * this.column).fill(val));
         }
     }
 
-    static from(matrix: number[][] | Matrix) {
+    static from(matrix: MatrixInput) {
         let result: Matrix;
 
         // 从数组创建矩阵
@@ -81,6 +84,113 @@ export default class Matrix {
         }
 
         return result;
+    }
+
+    /**
+     * 矩阵组合
+     *
+     * @example
+     *  [[0,  4,     A],
+     *   [B, 'E',    0],
+     *   [0,  C,     D]]
+     *
+     * 将形如上面的矩阵合并成一个矩阵，其中 A、B、C、D 为四个不同的矩阵
+     * 在同一行（列）的矩阵必须有相同的行（列）数
+     * 纯数字或者是'E'矩阵，不影响行列数，只做填充
+     */
+    static merge(ma: ('E' | number | MatrixInput)[][]) {
+        // 可组合矩阵类型
+        type MergeMatrix = 'E' | number | Matrix;
+
+        // 每一行有效矩阵的行数
+        const rowNumbers: number[] = [];
+        for (let i = 0; i < ma.length; i++) {
+            let rowNumber = -1;
+
+            for (let j = 0; j < ma[i].length; j++) {
+                const cell = ma[i][j];
+
+                if (isNumber(cell) || isString(cell)) {
+                    continue;
+                }
+
+                const tempRow = cell instanceof Matrix
+                    ? cell.row
+                    : calMatrixSize(cell).row;
+
+                if (rowNumber > 0 && (rowNumber !== tempRow)) {
+                    throw new Error(`无法组合矩阵，第(${i},${j})元素矩阵行数错误`);
+                }
+
+                rowNumber = tempRow;
+            }
+
+            if (rowNumber < 0) {
+                throw new Error(`无法组合矩阵，第${i}行没有有效矩阵`);
+            }
+
+            rowNumbers.push(rowNumber);
+        }
+
+        // 每一列有效矩阵的列数
+        const colNumbers: number[] = [];
+        for (let j = 0; j < ma[0].length; j++) {
+            let colNumber = -1;
+
+            for (let i = 0; i < ma.length; i++) {
+                const cell = ma[i][j];
+
+                if (isNumber(cell) || isString(cell)) {
+                    continue;
+                }
+
+                const tempCol = cell instanceof Matrix
+                    ? cell.column
+                    : calMatrixSize(cell).column;
+
+                if (colNumber > 0 && (colNumber !== tempCol)) {
+                    throw new Error(`无法组合矩阵，第(${i},${j})元素矩阵列数错误`);
+                }
+
+                colNumber = tempCol;
+            }
+
+            if (colNumber < 0) {
+                throw new Error(`无法组合矩阵，第${j}列没有有效矩阵`);
+            }
+
+            colNumbers.push(colNumber);
+        }
+
+        // 串联所有矩阵
+        let ColumnMatrix!: Matrix;
+
+        for (let i = 0; i < ma.length; i++) {
+            let RowMatrix!: Matrix;
+
+            for (let j = 0; j < ma[i].length; j++) {
+                const cell = ma[i][j];
+                const temp = (isString(cell) || isNumber(cell))
+                    ? new Matrix(rowNumbers[i], colNumbers[j], cell)
+                    : Matrix.from(cell);
+
+                if (RowMatrix) {
+                    RowMatrix = RowMatrix.concatRight(temp);
+                }
+                else {
+                    RowMatrix = temp;
+                }
+            }
+
+            if (ColumnMatrix) {
+                ColumnMatrix = ColumnMatrix.concatDown(RowMatrix);
+            }
+            else {
+                ColumnMatrix = RowMatrix;
+            }
+        }
+
+        return ColumnMatrix;
     }
 
     /**
@@ -331,18 +441,71 @@ export default class Matrix {
         return (ans);
     }
     /**
-     * map 迭代
+     * 向右串联矩阵，原矩阵不变，返回新矩阵
+     *
+     * @param args {MatrixInput[]}
+     */
+    concatRight(...args: MatrixInput[]) {
+        const matrixs = args.map((Matrix.from));
+        const totalCol = matrixs.reduce((col, ma) => col + ma.column, this.column);
+        const result = new Matrix(this.row, totalCol);
+
+        // 添加 this 矩阵元素到 result
+        this.forEach((n, [i, j]) => result.set(i, j, n));
+
+        let lastCol = 0;
+
+        // 添加扩展矩阵元素到 result
+        for (const ma of matrixs) {
+            ma.forEach((n, [i, j]) => {
+                result.set(i, j + lastCol, n);
+            });
+
+            lastCol += ma.column;
+        }
+
+        return result;
+    }
+    /**
+     * 向下串联矩阵，原矩阵不变，返回新矩阵
+     *
+     * @param args {MatrixInput[]}
+     */
+    concatDown(...args: MatrixInput[]) {
+        const matrixs = args.map((Matrix.from));
+        const totalRow = matrixs.reduce((row, ma) => row + ma.row, this.row);
+        const result = new Matrix(totalRow, this.column);
+
+        // 添加 this 矩阵元素到 result
+        this.forEach((n, [i, j]) => result.set(i, j, n));
+
+        let lastRow = 0;
+
+        // 添加扩展矩阵元素到 result
+        for (const ma of matrixs) {
+            ma.forEach((n, [i, j]) => {
+                result.set(i + lastRow, j, n);
+            });
+
+            lastRow += ma.row;
+        }
+
+        return result;
+    }
+    /**
+     * forEach 迭代
      *  - 从第一行开始，从左至右
      *
      * @param {(value: number, position: [number, number]) => number} callback
      * @returns {this}
      */
-    map(callback: (value: number, position: [number, number]) => number): this {
+    forEach(callback: (value: number, position: [number, number]) => any) {
         for (let i = 0; i < this._view.length; i++) {
-            const x = ~~(i / this.column), y = i % this.column;
-            this.set(x, y, callback(this._view[i], [x, y]));
+            const x = Math.floor(i / this.column);
+            const y = i % this.column;
+
+            callback(this._view[i], [x, y]);
         }
-        return (this);
     }
 }
 
