@@ -248,7 +248,7 @@ const actions: ActionTree<StateType, StateType> = {
 
         // loaded lines
         const lines = data.data.filter((line): line is LineStorageData => line.type === -1);
-        lines.forEach(async (storage) => {
+        await Promise.all(lines.map(async (storage) => {
             const lineData: LineData = {
                 type: -1,
                 id: createId('line'),
@@ -267,7 +267,7 @@ const actions: ActionTree<StateType, StateType> = {
             line.setConnectByWay();
             line.markSign();
             line.dispatch();
-        });
+        }));
     },
     /** 求解电路 */
     async [Action.SOLVE_CIRCUIT]({ state }) {
