@@ -95,7 +95,7 @@ export default class ElectronicCore extends Vue {
      *  - 器件初始化属性占位，统一初始化为导线
      *  - 在器件调用 created 钩子时再进行纠正
      */
-    readonly type: keyof Electronics | 'line' = 'line';
+    readonly type: keyof Electronics | -1 = -1;
 
     /** 图纸相关状态 */
     @Inject({ default: {} })
@@ -122,14 +122,14 @@ export default class ElectronicCore extends Vue {
 
     created() {
         this.id = this.id || createId(
-            this.type === 'line'
+            this.type === -1
                 ? 'line'
                 : Electronics[this.type].pre,
         );
 
         markId(this.id);
 
-        this.type === 'line'
+        this.type === -1
             ? LineComponents.push(this)
             : PartComponents.push(this);
     }
@@ -137,7 +137,7 @@ export default class ElectronicCore extends Vue {
     beforeDestroy() {
         deleteId(this.id);
 
-        this.type === 'line'
+        this.type === -1
             ? LineComponents.delete((line) => line.hash === this.hash)
             : PartComponents.delete((part) => part.hash === this.hash);
     }
