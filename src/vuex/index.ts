@@ -9,7 +9,7 @@ import Vuex, {
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 import Solver from 'src/lib/solver';
-import { isArray, clone, randomString } from 'src/lib/utils';
+import { isArray, clone } from 'src/lib/utils';
 
 import { LineType } from 'src/components/electronic-line/helper';
 import { LineWay } from 'src/components/electronic-line/line-way';
@@ -82,7 +82,7 @@ const mutations: MutationTree<StateType> = {
     },
     /** 更新器件数据 */
     [Mutation.UPDATE_PART]: ({ parts }, data: PartData) => {
-        const index = parts.findIndex((part) => part.hash === data.hash);
+        const index = parts.findIndex((part) => part.id === data.id);
 
         if (index < 0) {
             throw new Error(`(vuex) Part not found. id: ${data.id}`);
@@ -108,7 +108,6 @@ const mutations: MutationTree<StateType> = {
             parts.push({
                 ...clone(part),
                 id: createId(part.id),
-                hash: randomString(),
             });
         });
     },
@@ -121,7 +120,7 @@ const mutations: MutationTree<StateType> = {
     },
     /** 更新导线数据 */
     [Mutation.UPDATE_LINE]: ({ lines }, data: LineData) => {
-        const index = lines.findIndex((line) => line.hash === data.hash);
+        const index = lines.findIndex((line) => line.id === data.id);
 
         if (index < 0) {
             throw new Error(`(vuex) Line not found. id: ${data.id}`);
@@ -147,7 +146,6 @@ const mutations: MutationTree<StateType> = {
             lines.push({
                 ...clone(line),
                 id: createId('line'),
-                hash: randomString(),
             });
         });
     },
@@ -215,7 +213,6 @@ const actions: ActionTree<StateType, StateType> = {
             const partData: PartData = {
                 type: storage.type,
                 id: storage.id,
-                hash: randomString(),
                 params: storage.params || [],
                 rotate: storage.rotate
                     ? Matrix.from(storage.rotate)
@@ -256,7 +253,6 @@ const actions: ActionTree<StateType, StateType> = {
             const lineData: LineData = {
                 type: LineType.Line,
                 id: createId('line'),
-                hash: randomString(),
                 connect: ['', ''],
                 way: LineWay.from(storage.way),
             };

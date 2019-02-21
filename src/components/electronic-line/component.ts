@@ -30,8 +30,8 @@ import {
     copyProperties,
 } from 'src/lib/utils';
 
-type dispatchKey = 'id' | 'type' | 'way' | 'hash' | 'connect';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'hash', 'connect'];
+type dispatchKey = 'id' | 'type' | 'way' | 'connect';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'connect'];
 
 const matchLine = /(line_\d+ ?)+/;
 const matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;

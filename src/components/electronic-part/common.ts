@@ -1,5 +1,5 @@
 import { Component, Vue, Prop, Watch, Inject } from 'vue-property-decorator';
-import { randomString, clone, isString } from 'src/lib/utils';
+import { clone, isString } from 'src/lib/utils';
 import { Mutation } from 'src/vuex';
 
 import { LineType } from '../electronic-line/helper';
@@ -90,8 +90,6 @@ export default class ElectronicCore extends Vue {
     id = '';
     /** 元件的连接表 */
     connect: string[] = [];
-    /** 元件唯一切不变的 hash 编号 */
-    readonly hash = randomString();
     /**
      * 元件类型
      *  - 器件初始化属性占位，统一初始化为导线
@@ -140,8 +138,8 @@ export default class ElectronicCore extends Vue {
         deleteId(this.id);
 
         this.type === LineType.Line
-            ? LineComponents.delete((line) => line.hash === this.hash)
-            : PartComponents.delete((part) => part.hash === this.hash);
+            ? LineComponents.delete((line) => line.id === this.id)
+            : PartComponents.delete((part) => part.id === this.id);
     }
 
     deleteSelf() {

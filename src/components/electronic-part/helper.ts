@@ -2,7 +2,6 @@ import Vue from 'vue';
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
-import { randomString } from 'src/lib/utils';
 
 import { createId } from './common';
 import { PartData } from './component';
@@ -42,7 +41,6 @@ export const product = (point: Point | number[], ma: Matrix): Point => {
  */
 export const createPartData = (type: PartType): PartData => ({
     type,
-    hash: randomString(),
     rotate: new Matrix(2, 'E'),
     position: new Point(1e6, 1e6),
     id: createId(Electronics[type].pre),

@@ -17,8 +17,8 @@ import { createLineData } from '../electronic-line/helper';
 import { Mutation } from 'src/vuex';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
-type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
+type dispatchKey = 'id' | 'type' | 'params' | 'rotate' | 'connect' | 'position';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'params', 'rotate', 'connect', 'position'];
 
 export type PartData = Pick<PartComponent, dispatchKey>;
 
