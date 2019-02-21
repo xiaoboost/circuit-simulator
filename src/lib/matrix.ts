@@ -350,6 +350,45 @@ export default class Matrix {
         return a.mul(this);
     }
     /**
+     * 矩阵加法
+     *   - ma + this
+     *
+     * @param {(number[][] | Matrix)} ma
+     * @returns {Matrix}
+     */
+    add(ma: number[][] | Matrix): Matrix {
+        const result = Matrix.from(ma);
+
+        if (this.row !== result.row || this.column !== result.column) {
+            throw new Error('(matrix) ma can not be add with this.');
+        }
+
+        for (let i = 0; i < this.row; i++) {
+            for (let j = 0; j < this.column; j++) {
+                result.set(i, j, result.get(i, j) + this.get(i, j));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * 矩阵数值缩放
+     *  - num * this
+     * @param num 放大系数
+     */
+    factor(num: number): Matrix {
+        const result = Matrix.from(this);
+
+        for (let i = 0; i < this.row; i++) {
+            for (let j = 0; j < this.column; j++) {
+                result.set(i, j, result.get(i, j) * num);
+            }
+        }
+
+        return result;
+    }
+    /**
      * 列主元 LU 三角分解，返回 L、U、P 矩阵
      *
      * @returns {[Matrix, Matrix, Matrix]}

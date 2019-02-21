@@ -8,6 +8,7 @@ import Vuex, {
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
+import Solver from 'src/lib/solver';
 import { isArray, clone, randomString } from 'src/lib/utils';
 
 import { LineType } from 'src/components/electronic-line/helper';
@@ -38,6 +39,8 @@ Vue.use(Vuex);
 
 /** 历史操作记录上限 */
 const historyLimit = 10;
+/** 求解器 */
+const solver = new Solver();
 
 const local: StateType = {
     time: {
@@ -272,7 +275,8 @@ const actions: ActionTree<StateType, StateType> = {
     },
     /** 求解电路 */
     async [Action.SOLVE_CIRCUIT]({ state }) {
-        debugger;
+        // 设置求解器
+        solver.setSolver(state.parts, state.lines);
     },
 };
 

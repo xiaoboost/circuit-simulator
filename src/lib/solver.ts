@@ -1,4 +1,3 @@
-import * as utils from './utils';
 import Matrix from 'src/lib/matrix';
 
 import { PartData } from 'src/components/electronic-part/component';
@@ -7,7 +6,7 @@ import { default as Electronics, PartType } from 'src/components/electronic-part
 import { LineData } from 'src/components/electronic-line/component';
 import { LineType } from 'src/components/electronic-line/helper';
 
-type HashMap = utils.HashMap;
+type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => void;
 
 /** 观测器 */
@@ -73,6 +72,60 @@ export default class Solver {
         return result;
     }
 
+    /** 获取输入导线所在节点的所有导线和连接着的所有引脚 */
+    private getNodeConnectByLine(id: string) {
+        /** 入口导线 */
+        const line = this.findPart(id) as LineData;
+        /** 待访问的导线堆栈 */
+        const temp = [line];
+
+        /** 当前节点的所有导线堆栈 */
+        const lines: LineData[] = [];
+        /** 当前节点连接的所有器件引脚 */
+        const partPins: string[] = [];
+
+        // 搜索节点
+        while (temp.length) {
+            const current = temp.pop()!;
+            const connections = current.connect.join(' ').split(' ');
+
+            // 记录当前导线
+            lines.push(current);
+
+            // 循环迭代当前导线所有的连接
+            for (const pin of connections) {
+                const item = this.findPart(id);
+
+                // 导线
+                if (item.type === LineType.Line) {
+                    if (!temp.find((li) => li.id === id)) {
+                        temp.push(item);
+                    }
+                }
+                // 器件引脚
+                else {
+                    partPins.push(pin);
+                }
+            }
+        }
+
+        return { lines, partPins };
+    }
+
+    /** 由管脚到支路电流计算矩阵 */
+    private getCurrentMatrixByPin(pin: string) {
+        const matrix = new Matrix(1, this.nodeNumber, 0);
+        matrix.set(0, this.PinBranchMap[pin], 1);
+        return matrix;
+    }
+
+    /** 由管脚到节点电压计算矩阵 */
+    private getVoltageMatrixByPin(pin: string) {
+        const matrix = new Matrix(1, this.nodeNumber, 0);
+        matrix.set(0, this.PinNodeMap[pin], 1);
+        return matrix;
+    }
+
     /** 扫描所有导线，生成 [管脚->节点号] 对应表 */
     private setPinNodeMap() {
         const pinNodeMap: HashMap = {};
@@ -88,35 +141,15 @@ export default class Solver {
                 continue;
             }
 
-            // 临时导线堆栈
-            const temp = [line];
+            // 当前节点的所有导线和引脚
+            const { lines, partPins } = this.getNodeConnectByLine(line.id);
 
-            // 搜索当前导线构成的节点
-            while (temp.length) {
-                const current = temp.pop()!;
-                const connections = current.connect.join(' ').split(' ');
+            // 标记已经搜索过的导线
+            lines.forEach((item) => lineHash[item.id] = true);
+            // 记录所有引脚连接节点的编号
+            partPins.forEach((pin) => pinNodeMap[pin] = nodeNumber);
 
-                // 记录当前访问导线
-                lineHash[current.id] = true;
-
-                // 循环迭代当前导线所有的连接
-                for (const id of connections) {
-                    const item = this.findPart(id);
-
-                    // 导线
-                    if (item.type === LineType.Line) {
-                        if (!temp.find((li) => li.id === id)) {
-                            temp.push(item);
-                        }
-                    }
-                    // 器件（此时的连接点是带引脚号的）
-                    else {
-                        pinNodeMap[id] = nodeNumber;
-                    }
-                }
-            }
-
-            // 一次 while 循环就是一个节点，节点数量 + 1
+            // 每次循环就是个单独的节点
             nodeNumber++;
         }
     }
@@ -191,6 +224,8 @@ export default class Solver {
                 const branchNumber = this.branchNumber + 1;
                 const insidePrototype = Electronics[insidePart.type];
 
+                // TODO: 拆分的器件是否需要加入总的器件堆栈？
+
                 for (let i = 0; i < insidePrototype.points.length; i++) {
                     PinBranchMap[`${part.id}-${insidePart.id}-${i}`] = branchNumber;
                 }
@@ -245,24 +280,55 @@ export default class Solver {
                     }
                 }
 
-                // 节点对应表中删除电流表
+                // 节点对应表中删除记录
                 delete PinNodeMap[meterInput];
                 delete PinNodeMap[meterOutput];
             }
             // 电压表
             else if (part.type === PartType.VoltageMeter) {
-                // 节点对应表中删除电流表
+                // 从节点对应表中删除记录
                 delete this.PinNodeMap[`${part.id}-0`];
                 delete this.PinNodeMap[`${part.id}-`];
             }
         }
-
-        // TODO: 节点表和支路表值可能会变得稀疏，需要做整理
     }
 
     /** 创建观测矩阵 */
     private observeMeter() {
+        for (const meter of this.parts) {
+            // 电流表
+            if (meter.type === PartType.CurrentMeter) {
+                const { partPins } = this.getNodeConnectByLine(meter.connect[0]);
+                const matrix = new Matrix(1, this.branchNumber, 0);
 
+                /**
+                 * 电流观测矩阵
+                 * 下标 - 节点编号
+                 * TODO: 值 - 当前器件管脚是否是电流正方向
+                 */
+                for (const pin of partPins) {
+                    matrix.set(0, this.PinNodeMap[pin], 1);
+                }
+
+                this.observeCurrent.push({
+                    id: meter.id,
+                    data: [],
+                    matrix,
+                });
+            }
+            // 电压表
+            else if (meter.type === PartType.VoltageMeter) {
+                const inputVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
+                const outputVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
+
+                this.observeVoltage.push({
+                    id: meter.id,
+                    data: [],
+                    // 输入减去输出即为当前电压表电压
+                    matrix: inputVoltage.add(outputVoltage.factor(-1)),
+                });
+            }
+        }
     }
 
     /** 创建电路系数矩阵 */
@@ -287,6 +353,9 @@ export default class Solver {
         this.setPinBranchMap();
         this.splitParts();
         this.handleAttach();
+        this.observeMeter();
+        this.setCircuitMatrix();
+        this.setUpdateMethod();
     }
 
     /** 设置进度条事件 */
