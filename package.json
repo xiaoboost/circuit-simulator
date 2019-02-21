@@ -10,6 +10,7 @@
     "test": "jest --config test/jest.conf.js --coverage"
   },
   "dependencies": {
+    "quasar": "^1.0.0-beta.3",
     "vue": "^2.6.4",
     "vue-class-component": "^6.3.2",
     "vue-property-decorator": "^7.3.0",
