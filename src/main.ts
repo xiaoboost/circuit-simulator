@@ -1,5 +1,4 @@
-import 'src/css/main';
-import 'src/lib/native';
+import 'src/init';
 
 import { default as Vue, VNodeChildrenArrayContents } from 'vue';
 import { default as store, CircuitStorage } from 'src/vuex';
@@ -7,13 +6,10 @@ import { default as store, CircuitStorage } from 'src/vuex';
 import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
 
-import Quasar from 'quasar/src/index.esm.js';
 import ActionMenu from './components/action-menu/component';
 import SliderMenu from './components/slider-menu/component';
 import DrawingMain from './components/drawing-main/component';
 
-// 安装 UI 框架
-Vue.use(Quasar);
 // 调式模式打开调试器
 Vue.config.productionTip = (process.env.NODE_ENV === 'development');
 
