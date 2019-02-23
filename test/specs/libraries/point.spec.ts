@@ -1,4 +1,4 @@
-import 'src/lib/native';
+import 'src/init/native';
 
 import Matrix from 'src/lib/matrix';
 import Point from 'src/lib/point';

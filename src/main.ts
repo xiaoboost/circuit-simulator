@@ -1,5 +1,4 @@
-import 'src/css/main';
-import 'src/lib/native';
+import 'src/init';
 
 import { default as Vue, VNodeChildrenArrayContents } from 'vue';
 import { default as store, CircuitStorage } from 'src/vuex';
@@ -11,6 +10,7 @@ import ActionMenu from './components/action-menu/component';
 import SliderMenu from './components/slider-menu/component';
 import DrawingMain from './components/drawing-main/component';
 
+// 调式模式打开调试器
 Vue.config.productionTip = (process.env.NODE_ENV === 'development');
 
 // 移除 loading 界面
@@ -23,7 +23,7 @@ function loaded() {
     console.log('Schematic Ready.');
 }
 
-// init vue
+// vue 初始化
 new Vue({
     store,
     el: '#app',

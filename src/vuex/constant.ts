@@ -12,9 +12,9 @@ export interface TimeConfig {
 /** vuex 状态接口 */
 export interface StateType {
     /**
-     * 页面状态
+     * 侧边栏状态
      */
-    page: string;
+    sidebar: Sidebar;
     /**
      * 全局时间设置
      */
@@ -103,4 +103,12 @@ export const enum Action {
     IMPORT_DATA = 'IMPORT_DATA',
     /** 求解电路 */
     SOLVE_CIRCUIT = 'SOLVE_CIRCUIT',
+}
+
+/** 侧边栏状态 */
+export const enum Sidebar {
+    Space,
+    Parts,
+    Config,
+    Graph,
 }

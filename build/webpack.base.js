@@ -94,7 +94,11 @@ module.exports = {
             name: true,
             cacheGroups: {
                 commons: {
-                    test: /[\\/]node_modules[\\/]/,
+                    /**
+                     * node_modules 中的 js 或 ts 文件会被提出作为单独的 chunk
+                     * 其余文件将会仍然和 main 入口文件在同一个 chunk
+                     */
+                    test: /[\\/]node_modules[\\/][\d\D]+?\.(t|j)s/,
                     name: 'common',
                     chunks: 'initial',
                 },

@@ -31,6 +31,7 @@ import {
     LineStorageData,
     Mutation,
     Action,
+    Sidebar,
 } from './constant';
 
 export * from './constant';
@@ -48,28 +49,28 @@ const local: StateType = {
         step: '10u',
     },
 
-    page: '',
+    sidebar: Sidebar.Space,
     parts: [],
     lines: [],
     historyData: [],
 };
 
 const getters: GetterTree<StateType, StateType> = {
-    isSpace: (context) => !context.page,
-    showPartsPanel: (context) => context.page === 'add-parts',
-    showConfigPanel: (context) => context.page === 'main-config',
-    showGraphView: (context) => context.page === 'graph-view',
+    isSpace: ({ sidebar }) => sidebar === Sidebar.Space,
+    showPartsPanel: ({ sidebar }) => sidebar === Sidebar.Parts,
+    showConfigPanel: ({ sidebar }) => sidebar === Sidebar.Config,
+    showGraphView: ({ sidebar }) => sidebar === Sidebar.Graph,
 };
 
 const mutations: MutationTree<StateType> = {
     /** 关闭侧边栏 */
-    [Mutation.CLOSE_SLIDER]: (context) => context.page = '',
+    [Mutation.CLOSE_SLIDER]: (context) => context.sidebar = Sidebar.Space,
     /** 打开添加器件侧边栏 */
-    [Mutation.OPEN_ADD_PARTS]: (context) => context.page = 'add-parts',
+    [Mutation.OPEN_ADD_PARTS]: (context) => context.sidebar = Sidebar.Parts,
     /** 打开总设置侧边栏 */
-    [Mutation.OPEN_MAIN_CONFIG]: (context) => context.page = 'main-config',
+    [Mutation.OPEN_MAIN_CONFIG]: (context) => context.sidebar = Sidebar.Config,
     /** 打开波形界面 */
-    [Mutation.OPEN_GRAPH_VIEW]: (context) => context.page = 'graph-view',
+    [Mutation.OPEN_GRAPH_VIEW]: (context) => context.sidebar = Sidebar.Graph,
 
     /** 设置时间 */
     [Mutation.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,

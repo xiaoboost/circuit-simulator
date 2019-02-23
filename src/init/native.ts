@@ -2,7 +2,7 @@ import {
     def,
     isFunc,
     isUndef,
-} from './utils';
+} from '../lib/utils';
 
 def(Array.prototype, {
     /**

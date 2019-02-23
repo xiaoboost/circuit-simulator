@@ -1,4 +1,4 @@
-import 'src/lib/native';
+import 'src/init/native';
 
 import Point from 'src/lib/point';
 import * as map from 'src/lib/map';
