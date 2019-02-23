@@ -36,6 +36,13 @@ baseConfig.optimization.minimizer.push(
     })
 );
 
+baseConfig.performance = {
+    hints: false,
+    // 以下两个选项单位为 bytes
+    maxAssetSize: 512000,
+    maxEntrypointSize: 512000,
+};
+
 if (config.bundleAnalyzer) {
     const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
     baseConfig.plugins.push(new BundleAnalyzerPlugin());
