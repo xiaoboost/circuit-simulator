@@ -1,4 +1,5 @@
-import PartComponent from '../component';
+import Matrix from 'src/lib/matrix';
+import { PartRunData as PartData } from '../component';
 
 /** 器件类型枚举常量 */
 export const enum PartType {
@@ -93,25 +94,67 @@ export const enum IterativeInputType {
     Current,
 }
 
-/** 器件迭代方程生成器 */
-export type IterativeEquation = (this: PartComponent, timeInterval: number) => {
+/** 迭代方程 */
+interface IterativeParams {
+    /** 是否是迭代器 */
+    isIterative: boolean;
     /** 输入参数描述 */
     input: {
         type: IterativeInputType;
         place: string;
     }[];
-    /** 输出值 */
+    /** 输出参数描述 */
     output: number[];
     /** 迭代方程 */
     process(...args: any[]): number[];
-};
+}
+
+interface IterativeParams {
+    part: PartData;
+    timeInterval: number;
+}
+
+interface IterativeEquation {
+    /** 输入参数描述 */
+    input: {
+        type: IterativeInputType;
+        place: string;
+    }[];
+    /** 输出参数描述 */
+    output: number[];
+    /** 迭代方程 */
+    process(...args: any[]): number[];
+}
+
+interface ConstantParams {
+    /** 关联矩阵 */
+    A: Matrix;
+    /** 电导电容矩阵 */
+    F: Matrix;
+    /** 电阻电感矩阵 */
+    H: Matrix;
+    /** 独立电压电流源列向量 */
+    S: Matrix;
+    /** 当前器件所在的支路编号 */
+    branch: number;
+    /** 当前器件参数 */
+    part: PartData;
+}
+
+/** 器件迭代方程生成器 */
+export type IterativeCreation = (params: IterativeParams) => IterativeEquation;
+
+/** 常量参数填充函数 */
+export type ConstantCreation = (param: ConstantParams) => void;
 
 /** 复杂器件的内部拆分 */
 export interface ElectronicApart {
     /** 内部器件列表 */
     parts: {
-        type: PartType;
         id: string;
+        type: PartType;
+        /** 生成当前器件参数 */
+        params(part: PartData): number[];
     }[];
     /**
      * 拆分器件的连接
@@ -146,8 +189,10 @@ export interface ElectronicPrototype {
     readonly points: PointDescription[];
     /** 器件外形元素的描述 */
     readonly shape: ShapeDescription[];
-    /** 迭代方程描述 */
-    readonly iterative?: IterativeEquation;
+    /** 迭代方程生成器 */
+    readonly iterative?: IterativeCreation;
+    /** 常量参数生成器 */
+    readonly constant?: ConstantCreation;
     /** 器件内部拆分描述 */
     readonly apart?: ElectronicApart;
 }

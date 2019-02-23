@@ -5,22 +5,26 @@ import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 
 import setPartParams from './dialog-controller';
-import { product, PartShape } from './helper';
-import Electronics, { ElectronicPrototype } from './parts';
-import ElectronicPoint, { PointClassName } from '../electronic-point/component';
-import ElectronicCore, { findPartComponent, findLineComponent } from './common';
-import { DrawEvent } from 'src/components/drawing-main/event-controller';
-
 import LineComponent from '../electronic-line/component';
-import { isEqual, copyProperties } from 'src/lib/utils';
-import { createLineData } from '../electronic-line/helper';
+
 import { Mutation } from 'src/vuex';
+import { product, PartShape } from './helper';
+import { createLineData } from '../electronic-line/helper';
+import { isEqual, copyProperties } from 'src/lib/utils';
+
+import { DrawEvent } from '../drawing-main/event-controller';
+import { default as Electronics, ElectronicPrototype } from './parts';
+import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
+import { default as ElectronicCore, findPartComponent, findLineComponent } from './common';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'params' | 'rotate' | 'connect' | 'position';
 const disptchKeys: dispatchKey[] = ['id', 'type', 'params', 'rotate', 'connect', 'position'];
 
+/** 器件基础数据 */
 export type PartData = Pick<PartComponent, dispatchKey>;
+/** 器件在运算时需要的数据 */
+export type PartRunData = Omit<PartData, 'position' | 'rotate'>;
 
 export interface PartPointAttr {
     size: number;
@@ -40,8 +44,6 @@ export default class PartComponent extends ElectronicCore {
     readonly type!: keyof Electronics;
     /** 当前器件数据原型 */
     readonly origin!: ElectronicPrototype;
-    /** 迭代函数生成器 */
-    readonly iterative!: ElectronicPrototype['iterative'];
 
     /** 器件当前旋转矩阵 */
     rotate = new Matrix(2, 'E');
@@ -80,16 +82,6 @@ export default class PartComponent extends ElectronicCore {
             configurable: true,
             value: origin,
         });
-
-        // 迭代函数存在，绑定当前器件
-        if (origin.iterative) {
-            Object.defineProperty(this, 'iterative', {
-                enumerable: true,
-                writable: false,
-                configurable: true,
-                value: origin.iterative.bind(this),
-            });
-        }
 
         this.renderText();
     }

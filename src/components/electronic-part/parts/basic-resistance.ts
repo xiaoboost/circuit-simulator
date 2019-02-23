@@ -1,6 +1,6 @@
 import { ElectronicPrototype, PartType } from './constant';
 
-const part: ElectronicPrototype = {
+const data: ElectronicPrototype = {
     pre: 'R',
     type: PartType.Resistance,
     introduction: '电阻器',
@@ -39,6 +39,11 @@ const part: ElectronicPrototype = {
             },
         },
     ],
+    constant: ({ F, H, branch, part }) => {
+        const val = Number.scientificCountParser(part.params[0]);
+        F.set(branch, branch, -1);
+        H.set(branch, branch, val);
+    },
 };
 
-export default part;
+export default data;

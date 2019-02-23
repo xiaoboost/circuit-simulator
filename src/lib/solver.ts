@@ -1,6 +1,6 @@
 import Matrix from 'src/lib/matrix';
 
-import { PartData } from 'src/components/electronic-part/component';
+import { PartRunData as PartData } from 'src/components/electronic-part/component';
 import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
 
 import { LineData } from 'src/components/electronic-line/component';
@@ -23,6 +23,8 @@ interface Observer {
 export default class Solver {
     /** 器件数据 */
     parts: PartData[] = [];
+    /** 经拆分并去掉辅助器件的所有器件数据 */
+    partsAll: PartData[] = [];
     /** 导线数据 */
     lines: LineData[] = [];
     /** 事件函数 */
@@ -219,7 +221,7 @@ export default class Solver {
                 }
             }
 
-            // 根据器件内部结构追加PinBranchMap
+            // 根据器件内部结构追加 PinBranchMap
             for (const insidePart of insideParts) {
                 const branchNumber = this.branchNumber + 1;
                 const insidePrototype = Electronics[insidePart.type];
