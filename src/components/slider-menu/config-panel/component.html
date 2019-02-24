@@ -1,30 +1,34 @@
 <section id="config-panel">
-    <header>
+    <header class="sidebar-title">
         <h1>模拟设置</h1>
         <h2>Simulation Settings</h2>
     </header>
-    <article>
-        <h1>
-            <label>T</label>
-            <span>时域模拟</span>
-        </h1>
-        <div class="form-item">
-            <label>结束时间：</label>
-            <input-verifiable
-                ref="end"
-                v-model="end"
-                :rules="{ pattern }">
-            </input-verifiable>
-            <span class="unit">秒</span>
-        </div>
-        <div class="form-item">
-            <label>固定步长：</label>
-            <input-verifiable
-                ref="step"
-                v-model="step"
-                :rules="{ pattern }">
-            </input-verifiable>
-            <span class="unit">秒</span>
-        </div>
+    <article class="sidebar-body">
+        <!-- 时间设置 -->
+        <section>
+            <h1>
+                <label>T</label>
+                <span>时间设置</span>
+            </h1>
+            <div class="input-unit">
+                <label>结束时间：</label>
+                <input-verifiable
+                    ref="end"
+                    v-model="end"
+                    :rules="{ pattern }">
+                </input-verifiable>
+                <span class="unit">秒</span>
+            </div>
+            <div class="input-unit">
+                <label>固定步长：</label>
+                <input-verifiable
+                    ref="step"
+                    v-model="step"
+                    :rules="{ pattern }">
+                </input-verifiable>
+                <span class="unit">秒</span>
+            </div>
+        </section>
+        <!-- 示波器设置 -->
     </article>
 </section>

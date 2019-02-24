@@ -37,7 +37,7 @@ size = 50px
         span::after
             transform translate(10px, 22.5px) rotate(135deg)
     
-    /deep/ section
+    section
         position fixed
         height 100%
         width width
@@ -47,25 +47,26 @@ size = 50px
         background-color White
         box-shadow -5px 0 15px Shadow
 
-    /deep/ header
-        color White
-        text-align  center
-        background-color Blue
-        padding 1px 0
-        font-family font-serif
+        /deep/ .sidebar-title
+            color White
+            text-align  center
+            background-color Blue
+            padding 1px 0
+            font-family font-serif
 
-        > *
-            font-weight normal
-            margin 20px
-        h1
-            font-size 35px
-            line-height 1.5
-        h2
-            font-size 25px
-            line-height 1.5
-    /deep/ article
-        margin 10px 20px
-        color Black
+            > *
+                font-weight normal
+                margin 20px
+            h1
+                font-size 35px
+                line-height 1.5
+            h2
+                font-size 25px
+                line-height 1.5
+
+        /deep/ .sidebar-body
+            margin 10px 20px
+            color Black
 
     /deep/ #config-panel article
         section
@@ -93,7 +94,7 @@ size = 50px
                 flex-grow 1
                 margin-right 10px
 
-    /deep/ #parts-panel article
+    /deep/ #parts-panel
         .tool-tip
             display none
             position fixed
