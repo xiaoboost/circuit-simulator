@@ -52,7 +52,7 @@ module.exports = {
         // 自动补全的扩展名
         extensions: ['.vue', '.ts', '.js', '.json', '.styl', '.css'],
         // 目录下的默认主文件
-        mainFiles: ['index.ts', 'index.js'],
+        mainFiles: ['index.vue', 'index.ts', 'index.js'],
         // 默认路径别名
         alias: {
             'src': resolve('src'),

@@ -2,7 +2,7 @@ import { Getter } from 'vuex-class';
 import { MutationName } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
-import PartsPanel from './parts-panel/component';
+import PartsPanel from './parts-panel';
 import ConfigPanel from './config-panel/component';
 
 @Component({
