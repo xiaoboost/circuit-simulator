@@ -3,7 +3,7 @@ import { MutationName } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
 import PartsPanel from './parts-panel';
-import ConfigPanel from './config-panel/component';
+import ConfigPanel from './config-panel';
 
 @Component({
     components: {

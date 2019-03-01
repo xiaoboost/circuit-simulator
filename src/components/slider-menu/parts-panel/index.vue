@@ -29,7 +29,7 @@
 </section>
 </template>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 @import '../../../css/variable'
 
 #parts-panel
