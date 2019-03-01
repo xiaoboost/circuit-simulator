@@ -63,7 +63,7 @@ const getters: GetterTree<State, Getter> = {
     showGraphView: ({ sidebar }) => sidebar === Sidebar.Graph,
 };
 
-const Mutations: MutationTree<State, Mutation> = {
+const mutations: MutationTree<State, Mutation> = {
     /** 关闭侧边栏 */
     [MutationName.CLOSE_SLIDER]: (context) => context.sidebar = Sidebar.Space,
     /** 打开添加器件侧边栏 */
@@ -281,10 +281,10 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     },
 };
 
-export default new Vuex.Store<State>({
+export default new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     state: local,
     getters,
-    Mutations,
-    actions,
+    mutations,
+    actions: actions as any,
 });

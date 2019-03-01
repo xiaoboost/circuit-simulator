@@ -33,9 +33,6 @@ export type MutationCall<M extends Record<keyof M, AnyFunc>> = {
     [T in keyof M]: (name: T, ...args: Parameters<M[T]>) => void;
 };
 
-/** 求接口所有属性值的交叉类型 */
-type Values<T extends object> = T[keyof T];
-
 /** Action 参数上下文 */
 interface ActionContext<
     State extends object,
@@ -45,8 +42,8 @@ interface ActionContext<
     RootState extends object = State,
     RootGetter extends object = Getter,
 > {
-    dispatch: Values<ActionCall<Action>>;
-    commit: Values<MutationCall<Mutation>>;
+    dispatcht<T extends keyof Action>(name: T, ...args: Parameters<Action[T]>): ReturnType<Action[T]>;
+    commit<T extends keyof Mutation>(name: T, ...args: Parameters<Mutation[T]>): void;
     state: State;
     getters: Getter;
     rootState: RootState;
