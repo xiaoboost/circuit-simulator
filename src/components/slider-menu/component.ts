@@ -1,5 +1,5 @@
 import { Getter } from 'vuex-class';
-import { Mutation } from 'src/vuex';
+import { MutationName } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
 import PartsPanel from './parts-panel/component';
@@ -35,7 +35,7 @@ export default class SliderMenu extends Vue {
             this.showPartsPanel ||
             (this.showConfigPanel && this.$refs.config.check())
          ) {
-            this.$store.commit(Mutation.CLOSE_SLIDER);
+            this.$store.commit(MutationName.CLOSE_SLIDER);
         }
     }
     beforeEnter() {

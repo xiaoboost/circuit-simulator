@@ -1,6 +1,6 @@
 import { Component, Vue, Prop, Watch, Inject } from 'vue-property-decorator';
 import { randomString, clone, isString } from 'src/lib/utils';
-import { Mutation } from 'src/vuex';
+import { MutationName as Mutation } from 'src/vuex';
 
 import Electronics from './parts';
 import { default as DrawingMain, MapStatus } from '../drawing-main/component';

@@ -1,6 +1,6 @@
 import { State } from 'vuex-class';
-import { Mutation, TimeConfig } from 'src/vuex';
 import { Component, Watch, Vue } from 'vue-property-decorator';
+import { MutationName as Mutation, TimeConfig } from 'src/vuex';
 
 import InputVerifiable from 'src/components/input-verifiable/component';
 

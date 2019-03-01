@@ -12,9 +12,9 @@ import ElectronicCore, { findPartComponent, findLineComponent } from './common';
 import { DrawEvent } from 'src/components/drawing-main/event-controller';
 
 import LineComponent from '../electronic-line/component';
-import { isEqual, copyProperties } from 'src/lib/utils';
 import { createLineData } from '../electronic-line/helper';
-import { Mutation } from 'src/vuex';
+import { isEqual, copyProperties } from 'src/lib/utils';
+import { MutationName as Mutation } from 'src/vuex';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';

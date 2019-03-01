@@ -1,7 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { VNodeChildrenArrayContents } from 'vue';
 
-import { Mutation } from 'src/vuex';
+import { MutationName as Mutation } from 'src/vuex';
 import { createPartData } from 'src/components/electronic-part/helper';
 import { findPartComponent } from 'src/components/electronic-part/common';
 
