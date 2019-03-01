@@ -37,7 +37,7 @@ size = 50px
         span::after
             transform translate(10px, 22.5px) rotate(135deg)
     
-    /deep/ section
+    section
         position fixed
         height 100%
         width width
@@ -47,99 +47,26 @@ size = 50px
         background-color White
         box-shadow -5px 0 15px Shadow
 
-    /deep/ header
-        color White
-        text-align  center
-        background-color Blue
-        padding 1px 0
-        font-family font-serif
+        /deep/ .sidebar-title
+            text-align  center
+            background-color Blue
+            padding 1px 0
+            font-family font-serif
 
-        > *
-            font-weight normal
-            margin 20px
-        h1
-            font-size 40px
-        h2
-            font-size 25px
-    /deep/ article
-        margin 10px 20px
-        color Black
+            > *
+                color White
+                font-weight normal
+                margin 20px
+            h1
+                font-size 35px
+                line-height 1.5
+            h2
+                font-size 25px
+                line-height 1.5
 
-    /deep/ #config-panel
-        h1
-            font-size 25px
-            line-height 1.5
-            font-weight normal
-            label
-                font-family font-serif
-                position absolute
-                color Silver
-            span
-                margin-left 35px
-                color Black
-        .form-item
-            display flex
-            margin 15px 10px 15px 35px
-
-            label
-                white-space nowrap
-            .input-grow
-                flex-grow 1
-                margin-right 10px
-
-    /deep/ #parts-panel
-        .tool-tip
-            display none
-            position fixed
-            padding 5px
-            margin 6px
-            background #d9edf7
-            color #3f8aaf
-            font-family font-text
-            box-shadow 0 0 2px Shadow
-            border-radius 3px
-            height auto
-            font-size 16px
-            transform translate(-100%, -100%)
-
-        .parts-list
-            margin 20px 0
-
-        .part-item
-            height 66px
-            width 66px
-            margin 0 10px
-            padding 0
-            outline 0
-            background #f2f2f2
-            border-radius 5px
-            border 1px solid Gray
-            box-shadow 0 0 3px Shadow
-            transition all .3s cubic-bezier(.3,.3,.1,1)
-            &:hover
-                background White
-            &:focus
-                background White
-                border 1px solid Light-Blue
-                box-shadow 0 0 3px Light-Blue
-            svg
-                height 58px
-                width 58px
-                margin 3px
-                stroke Black
-                stroke-width 2
-                stroke-linecap round
-                fill transparent
-
-                .fill-white
-                    fill White
-                .fill-black
-                    fill Black
-                path
-                    stroke-width 2
-                rect,
-                polygon.fill-black
-                    stroke-width 0
+        /deep/ .sidebar-body
+            margin 10px 20px
+            color Black
 
 #slider.move-slide-enter-active,
 #slider.move-slide-leave-active

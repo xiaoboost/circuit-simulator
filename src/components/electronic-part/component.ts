@@ -7,12 +7,12 @@ import Matrix from 'src/lib/matrix';
 import setPartParams from './dialog-controller';
 import LineComponent from '../electronic-line/component';
 
-import { Mutation } from 'src/vuex';
-import { product, PartShape } from './helper';
+import { DrawEvent } from '../drawing-main/event-controller';
 import { createLineData } from '../electronic-line/helper';
 import { isEqual, copyProperties } from 'src/lib/utils';
+import { MutationName as Mutation } from 'src/vuex';
+import { product, PartShape } from './helper';
 
-import { DrawEvent } from '../drawing-main/event-controller';
 import { default as Electronics, ElectronicPrototype } from './parts';
 import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 import { default as ElectronicCore, findPartComponent, findLineComponent } from './common';

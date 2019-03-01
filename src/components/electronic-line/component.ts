@@ -17,9 +17,9 @@ import * as Map from 'src/lib/map';
 import * as Search from './line-search';
 
 import { LineType } from './helper';
-import { Mutation } from 'src/vuex';
 import { $debugger } from 'src/lib/debugger';
 import { DrawEvent } from '../drawing-main/event-controller';
+import { MutationName as Mutation } from 'src/vuex';
 import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 
 import {

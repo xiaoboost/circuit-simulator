@@ -1,7 +1,9 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { VNodeChildrenArrayContents } from 'vue';
 
-import { Mutation } from 'src/vuex';
+import { Mutation } from 'vuex-class';
+import { MutationName, Mutation as MutationTree } from 'src/vuex';
+
 import { createPartData } from 'src/components/electronic-part/helper';
 import { findPartComponent } from 'src/components/electronic-part/common';
 
@@ -48,12 +50,10 @@ export const PartShow = Vue.extend<Props>({
     },
 });
 
-type TipStyle = Partial<CSSStyleDeclaration>;
-type categories = Array<{
-    key: string;
+interface Category {
     name: string;
     parts: Array<keyof Electronics>;
-}>;
+}
 
 @Component({
     components: {
@@ -61,13 +61,9 @@ type categories = Array<{
     },
 })
 export default class PartsPanel extends Vue {
-    /** 提示文本 */
-    tipText = '';
-    tipStyle: TipStyle = { display: 'none' };
-
-    categories: categories = [
+    /** 器件列表 */
+    categories: Category[] = [
         {
-            key: 'virtual_device',
             name: '虚拟器件',
             parts: [
                 PartType.ReferenceGround,
@@ -76,7 +72,6 @@ export default class PartsPanel extends Vue {
             ],
         },
         {
-            key: 'source',
             name: '电源',
             parts: [
                 PartType.DcVoltageSource,
@@ -85,7 +80,6 @@ export default class PartsPanel extends Vue {
             ],
         },
         {
-            key: 'passive_device',
             name: '无源器件',
             parts: [
                 PartType.Resistance,
@@ -94,7 +88,6 @@ export default class PartsPanel extends Vue {
             ],
         },
         {
-            key: 'semiconductor_device',
             name: '半导体器件',
             parts: [
                 PartType.Diode,
@@ -104,18 +97,20 @@ export default class PartsPanel extends Vue {
         },
     ];
 
-    private setTip(name: keyof Electronics, event: MouseEvent) {
-        this.tipText = Electronics[name].introduction;
-        this.tipStyle = {
-            display: 'inline',
-            left: `${event.pageX - 10}px`,
-            top: `${event.pageY - 10}px`,
-        };
+    /** 储存器件 */
+    @Mutation(MutationName.PUSH_PART)
+    storePart!: MutationTree[MutationName.PUSH_PART];
+
+    /** 获取器件说明文本 */
+    getIntro(name: keyof Electronics) {
+        return Electronics[name].introduction;
     }
 
-    async addPart(name: keyof Electronics) {
+    /** 创建器件 */
+    async createPart(name: keyof Electronics) {
         const data = createPartData(name);
-        this.$store.commit(Mutation.PUSH_PART, data);
+
+        this.storePart(data);
 
         await this.$nextTick();
 

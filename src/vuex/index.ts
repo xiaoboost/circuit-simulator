@@ -1,10 +1,5 @@
 import Vue from 'vue';
-
-import Vuex, {
-    GetterTree,
-    MutationTree,
-    ActionTree,
-} from 'vuex';
+import Vuex from 'vuex';
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
@@ -24,14 +19,24 @@ import {
 } from 'src/components/electronic-part/common';
 
 import {
-    StateType,
+    GetterTree,
+    MutationTree,
+    ActionTree,
+} from './type';
+
+import {
+    Sidebar,
     TimeConfig,
     CircuitStorage,
     PartStorageData,
     LineStorageData,
+
+    State,
+    Getter,
     Mutation,
     Action,
-    Sidebar,
+    MutationName,
+    ActionName,
 } from './constant';
 
 export * from './constant';
@@ -43,7 +48,7 @@ const historyLimit = 10;
 /** 求解器 */
 const solver = new Solver();
 
-const local: StateType = {
+const local: State = {
     time: {
         end: '10m',
         step: '10u',
@@ -55,34 +60,34 @@ const local: StateType = {
     historyData: [],
 };
 
-const getters: GetterTree<StateType, StateType> = {
+const getters: GetterTree<State, Getter> = {
     isSpace: ({ sidebar }) => sidebar === Sidebar.Space,
     showPartsPanel: ({ sidebar }) => sidebar === Sidebar.Parts,
     showConfigPanel: ({ sidebar }) => sidebar === Sidebar.Config,
     showGraphView: ({ sidebar }) => sidebar === Sidebar.Graph,
 };
 
-const mutations: MutationTree<StateType> = {
+const mutations: MutationTree<State, Mutation> = {
     /** 关闭侧边栏 */
-    [Mutation.CLOSE_SLIDER]: (context) => context.sidebar = Sidebar.Space,
+    [MutationName.CLOSE_SLIDER]: (context) => context.sidebar = Sidebar.Space,
     /** 打开添加器件侧边栏 */
-    [Mutation.OPEN_ADD_PARTS]: (context) => context.sidebar = Sidebar.Parts,
+    [MutationName.OPEN_ADD_PARTS]: (context) => context.sidebar = Sidebar.Parts,
     /** 打开总设置侧边栏 */
-    [Mutation.OPEN_MAIN_CONFIG]: (context) => context.sidebar = Sidebar.Config,
+    [MutationName.OPEN_MAIN_CONFIG]: (context) => context.sidebar = Sidebar.Config,
     /** 打开波形界面 */
-    [Mutation.OPEN_GRAPH_VIEW]: (context) => context.sidebar = Sidebar.Graph,
+    [MutationName.OPEN_GRAPH_VIEW]: (context) => context.sidebar = Sidebar.Graph,
 
     /** 设置时间 */
-    [Mutation.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,
+    [MutationName.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,
 
     /** 新器件压栈 */
-    [Mutation.PUSH_PART]: ({ parts }, data: PartData | PartData[]) => {
+    [MutationName.PUSH_PART]: ({ parts }, data: PartData | PartData[]) => {
         isArray(data)
             ? parts.push(...clone(data))
             : parts.push(clone(data));
     },
     /** 更新器件数据 */
-    [Mutation.UPDATE_PART]: ({ parts }, data: PartData) => {
+    [MutationName.UPDATE_PART]: ({ parts }, data: PartData) => {
         const index = parts.findIndex((part) => part.id === data.id);
 
         if (index < 0) {
@@ -98,7 +103,7 @@ const mutations: MutationTree<StateType> = {
         parts.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    [Mutation.COPY_PART]({ parts }, IDs: string[]) {
+    [MutationName.COPY_PART]({ parts }, IDs: string[]) {
         IDs.forEach((id) => {
             const part = parts.find((elec) => elec.id === id);
 
@@ -114,13 +119,13 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 新导线压栈 */
-    [Mutation.PUSH_LINE]: ({ lines }, data: LineData | LineData[]) => {
+    [MutationName.PUSH_LINE]: ({ lines }, data: LineData | LineData[]) => {
         isArray(data)
             ? lines.push(...clone(data))
             : lines.push(clone(data));
     },
     /** 更新导线数据 */
-    [Mutation.UPDATE_LINE]: ({ lines }, data: LineData) => {
+    [MutationName.UPDATE_LINE]: ({ lines }, data: LineData) => {
         const index = lines.findIndex((line) => line.id === data.id);
 
         if (index < 0) {
@@ -136,7 +141,7 @@ const mutations: MutationTree<StateType> = {
         lines.splice(index, 1, clone(data));
     },
     /** 复制器件 */
-    [Mutation.COPY_LINE]({ lines }, IDs: string[]) {
+    [MutationName.COPY_LINE]({ lines }, IDs: string[]) {
         IDs.forEach((id) => {
             const line = lines.find((elec) => elec.id === id);
 
@@ -152,7 +157,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 删除器件与导线 */
-    [Mutation.DELETE_ELEC]: ({ parts, lines }, eles: string | string[]) => {
+    [MutationName.DELETE_ELEC]: ({ parts, lines }, eles: string | string[]) => {
         const data = isArray(eles) ? eles : [eles];
 
         for (const id of data) {
@@ -163,7 +168,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 导线放置到底层 */
-    [Mutation.LINE_TO_BOTTOM]: ({ lines }, id: string) => {
+    [MutationName.LINE_TO_BOTTOM]: ({ lines }, id: string) => {
         const index = lines.findIndex((item) => item.id === id);
         const line = lines[index];
 
@@ -176,7 +181,7 @@ const mutations: MutationTree<StateType> = {
     },
 
     /** 记录当前数据 */
-    [Mutation.RECORD_MAP]({ historyData, parts, lines }) {
+    [MutationName.RECORD_MAP]({ historyData, parts, lines }) {
         const stack: Array<PartData | LineData> = [];
         historyData.push(clone(stack.concat(parts).concat(lines)));
 
@@ -185,7 +190,7 @@ const mutations: MutationTree<StateType> = {
         }
     },
     /** 图纸数据回滚 */
-    [Mutation.HISTORY_BACK](state) {
+    [MutationName.HISTORY_BACK](state) {
         const current = state.historyData.pop();
 
         if (!current) {
@@ -197,12 +202,12 @@ const mutations: MutationTree<StateType> = {
     },
 };
 
-const actions: ActionTree<StateType, StateType> = {
+const actions: ActionTree<State, Getter, Mutation, Action> = {
     /** 外部数据导入 */
-    async [Action.IMPORT_DATA]({ commit }, data: CircuitStorage) {
+    async [ActionName.IMPORT_DATA]({ commit }, data: CircuitStorage) {
         // load time config
         if (data.config) {
-            commit(Mutation.SET_TIME_CONFIG, {
+            commit(MutationName.SET_TIME_CONFIG, {
                 end: data.config.end,
                 step: data.config.step,
             });
@@ -222,7 +227,7 @@ const actions: ActionTree<StateType, StateType> = {
                 connect: [],
             };
 
-            commit(Mutation.PUSH_PART, partData);
+            commit(MutationName.PUSH_PART, partData);
 
             await Vue.nextTick();
 
@@ -259,7 +264,7 @@ const actions: ActionTree<StateType, StateType> = {
             };
 
             markId(lineData.id);
-            commit(Mutation.PUSH_LINE, lineData);
+            commit(MutationName.PUSH_LINE, lineData);
 
             await Vue.nextTick();
 
@@ -271,16 +276,16 @@ const actions: ActionTree<StateType, StateType> = {
         }));
     },
     /** 求解电路 */
-    async [Action.SOLVE_CIRCUIT]({ state }) {
+    async [ActionName.SOLVE_CIRCUIT]({ state }) {
         // 设置求解器
         solver.setSolver(state.parts, state.lines);
     },
 };
 
-export default new Vuex.Store<StateType>({
+export default new Vuex.Store({
     strict: process.env.NODE_ENV === 'development',
     state: local,
     getters,
     mutations,
-    actions,
+    actions: actions as any,
 });

@@ -1,6 +1,6 @@
 import { Component, Vue, Prop, Watch, Inject } from 'vue-property-decorator';
 import { clone, isString } from 'src/lib/utils';
-import { Mutation } from 'src/vuex';
+import { MutationName as Mutation } from 'src/vuex';
 
 import { LineType } from '../electronic-line/helper';
 import { default as Electronics, PartType } from './parts';

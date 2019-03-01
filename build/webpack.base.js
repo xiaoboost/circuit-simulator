@@ -50,9 +50,9 @@ module.exports = {
     },
     resolve: {
         // 自动补全的扩展名
-        extensions: ['.vue', '.ts', '.js', '.json', '.styl'],
+        extensions: ['.vue', '.ts', '.js', '.json', '.styl', '.css'],
         // 目录下的默认主文件
-        mainFiles: ['index.ts'],
+        mainFiles: ['index.vue', 'index.ts', 'index.js'],
         // 默认路径别名
         alias: {
             'src': resolve('src'),
@@ -78,6 +78,13 @@ module.exports = {
                      */
                     configFile: '../tsconfig.build.json',
                 },
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                ],
             },
             {
                 test: /\.styl(us)?$/,
