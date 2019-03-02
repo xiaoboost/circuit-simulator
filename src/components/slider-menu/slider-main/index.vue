@@ -1,4 +1,30 @@
-@import '../../css/variable'
+<script lang="ts" src="./index.ts"></script>
+
+<template>
+<transition
+    name="move-slide"
+    @beforeEnter="beforeEnter"
+    @afterLeave="afterLeave">
+    <aside id="slider" v-show="vision">
+        <parts-panel ref="parts" v-show="partsPanelDelay"></parts-panel>
+        <config-panel ref="config" v-show="configPanelDelay"></config-panel>
+        <div
+            class="close-button"
+            v-show="partsPanelDelay"
+            @click="close">
+            <span></span>
+        </div>
+        <div
+            class="gray-cover"
+            v-show="configPanelDelay"
+            @click="close">
+        </div>
+    </aside>
+</transition>
+</template>
+
+<style lang="stylus" scoped>
+@import '../../../css/variable'
 
 time = .4s
 width = 380px
@@ -84,3 +110,4 @@ size = 50px
     .close-button
         transform scale(.5, .5)
         right -(size / 2)
+</style>
