@@ -282,7 +282,7 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     },
 };
 
-export default new Vuex.Store({
+export default new Vuex.Store<State>({
     strict: process.env.NODE_ENV === 'development',
     state: local,
     getters,

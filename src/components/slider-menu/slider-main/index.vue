@@ -6,8 +6,8 @@
     @beforeEnter="beforeEnter"
     @afterLeave="afterLeave">
     <aside id="slider" v-show="vision">
-        <parts-panel ref="parts" v-show="partsPanelDelay"></parts-panel>
-        <config-panel ref="config" v-show="configPanelDelay"></config-panel>
+        <parts-panel ref="parts" v-show="partsPanelDelay" />
+        <config-panel ref="config" v-show="configPanelDelay" />
         <div
             class="close-button"
             v-show="partsPanelDelay"
