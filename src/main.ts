@@ -6,9 +6,9 @@ import { default as store, CircuitStorage } from 'src/vuex';
 import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
 
-import ActionMenu from './components/action-menu/component';
-import SliderMenu from './components/slider-menu/slider-main';
+import ActionMenu from './components/action-menu';
 import DrawingMain from './components/drawing-main/component';
+import SliderMenu from './components/slider-menu/slider-main';
 
 // 调式模式打开调试器
 Vue.config.productionTip = (process.env.NODE_ENV === 'development');

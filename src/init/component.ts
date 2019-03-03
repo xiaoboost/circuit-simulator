@@ -30,8 +30,3 @@ Vue.use(Tooltip);
 Vue.use(Select);
 Vue.use(Button);
 Vue.use(InputNumber);
-
-// directive
-import Decorator from 'ant-design-vue/es/_util/FormDecoratorDirective';
-
-Vue.use(Decorator);

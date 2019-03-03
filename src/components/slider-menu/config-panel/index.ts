@@ -2,7 +2,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 
 import * as Store from 'src/vuex';
 import { State, Mutation } from 'vuex-class';
-import { createSelectList } from 'src/lib/native';
+import { createSelectList, NumberUnit } from 'src/lib/native';
 import { PartType } from 'src/components/electronic-part/parts';
 
 /** 表单数据接口 */
@@ -12,9 +12,9 @@ interface FormData {
     /** 模拟步长 */
     step: number;
     /** 模拟时长单位 */
-    endUnit: '' | 'm' | 'u';
+    endUnit: NumberUnit;
     /** 模拟步长单位 */
-    stepUnit: 'm' | 'u' | 'p';
+    stepUnit: NumberUnit;
 
     /** 示波器设置 */
     charts: Store.State['charts'];
@@ -89,8 +89,8 @@ export default class ConfigPanel extends Vue {
 
         this.data.end = end.number;
         this.data.step = step.number;
-        this.data.endUnit = end.unit as FormData['endUnit'];
-        this.data.stepUnit = step.unit as FormData['stepUnit'];
+        this.data.endUnit = end.unit as NumberUnit;
+        this.data.stepUnit = step.unit as NumberUnit;
     }
 
     /** 添加示波器 */

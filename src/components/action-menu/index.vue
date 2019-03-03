@@ -1,3 +1,36 @@
+<script lang="ts" src="./index.ts"></script>
+
+<template>
+<transition name="fade">
+    <footer class="action-menu" v-show="vision">
+        <div v-if="isRun" class="fab-container">
+            <div class="fab" id="fab-text"></div>
+        </div>
+        <template v-else>
+            <div
+                class="fab-container"
+                v-for="icon in icons"
+                :key="icon.name"
+                @click="action(icon.name)">
+                <span
+                    v-if="icon.intro"
+                    class="fab-tip"
+                    v-text="icon.intro">
+                </span>
+                <div class="fab">
+                    <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
+                        <g :transform="`translate(${icon.translate(zoom)}) scale(${zoom}, ${zoom})`">
+                            <path :d="icon.d"></path>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+        </template>
+    </footer>
+</transition>
+</template>
+
+<style lang="stylus" scoped>
 @import '../../css/variable'
 
 .action-menu
@@ -100,3 +133,5 @@
         text-align center
         fill #FFFFFF
         stroke-width 0
+
+</style>

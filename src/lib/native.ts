@@ -33,7 +33,8 @@ export function numberParser(notation: string) {
     }
 }
 
-type NumberUnit = 'p' | 'n' | 'u' | 'μ' | 'm' | '' | 'k' | 'M' | 'G';
+/** 简写数字单位 */
+export type NumberUnit = 'p' | 'n' | 'u' | 'μ' | 'm' | '' | 'k' | 'M' | 'G';
 
 /** 生成简写单位下拉列表选项 */
 export function createSelectList(units: NumberUnit[], label: string) {
