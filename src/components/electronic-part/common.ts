@@ -1,8 +1,9 @@
 import { Component, Vue, Prop, Watch, Inject } from 'vue-property-decorator';
-import { randomString, clone, isString } from 'src/lib/utils';
+import { clone, isString } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
 
-import Electronics from './parts';
+import { LineType } from '../electronic-line/helper';
+import { default as Electronics, PartType } from './parts';
 import { default as DrawingMain, MapStatus } from '../drawing-main/component';
 
 import PartComponent from 'src/components/electronic-part/component';
@@ -10,10 +11,11 @@ import LineComponent from 'src/components/electronic-line/component';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;
-
-const PartComponents: ElectronicCore[] = [];
-const LineComponents: ElectronicCore[] = [];
+/** 全局器件 id 占位表 */
 const mapHash: AnyObject<boolean> = {};
+
+export const PartComponents: ElectronicCore[] = [];
+export const LineComponents: ElectronicCore[] = [];
 
 /**
  * 生成器件或者导线的新 ID
@@ -88,14 +90,12 @@ export default class ElectronicCore extends Vue {
     id = '';
     /** 元件的连接表 */
     connect: string[] = [];
-    /** 元件唯一切不变的 hash 编号 */
-    readonly hash = randomString();
     /**
      * 元件类型
      *  - 器件初始化属性占位，统一初始化为导线
      *  - 在器件调用 created 钩子时再进行纠正
      */
-    readonly type: keyof Electronics | -1 = -1;
+    readonly type: PartType | LineType = LineType.Line;
 
     /** 图纸相关状态 */
     @Inject({ default: {} })
@@ -122,14 +122,14 @@ export default class ElectronicCore extends Vue {
 
     created() {
         this.id = this.id || createId(
-            this.type === -1
+            this.type === LineType.Line
                 ? 'line'
                 : Electronics[this.type].pre,
         );
 
         markId(this.id);
 
-        this.type === -1
+        this.type === LineType.Line
             ? LineComponents.push(this)
             : PartComponents.push(this);
     }
@@ -137,9 +137,9 @@ export default class ElectronicCore extends Vue {
     beforeDestroy() {
         deleteId(this.id);
 
-        this.type === -1
-            ? LineComponents.delete((line) => line.hash === this.hash)
-            : PartComponents.delete((part) => part.hash === this.hash);
+        this.type === LineType.Line
+            ? LineComponents.delete((line) => line.id === this.id)
+            : PartComponents.delete((part) => part.id === this.id);
     }
 
     deleteSelf() {

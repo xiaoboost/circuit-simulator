@@ -1,6 +1,6 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, IterativeInputType } from './constant';
 
-const part: ElectronicPrototype = {
+const data: ElectronicPrototype = {
     pre: 'C',
     type: PartType.Capacitor,
     introduction: '电容器',
@@ -39,6 +39,35 @@ const part: ElectronicPrototype = {
             },
         },
     ],
+    iterative({ part, timeInterval }) {
+        // 电容值
+        const valueCap = Number.scientificCountParser(part.params[0]);
+        // 积分的中间变量
+        const save = {
+            last: 0,
+            integral: 0,
+        };
+
+        return {
+            output: [],
+            input: [
+                {
+                    type: IterativeInputType.Current,
+                    place: `${part.id}-0`,
+                },
+            ],
+            process(current: number) {
+                // 积分，一阶近似累加
+                const now = (current + save.last) / 2 * timeInterval + save.integral;
+                const voltage = now / valueCap;
+
+                save.last = current;
+                save.integral = now;
+
+                return ([voltage]);
+            },
+        };
+    },
 };
 
-export default part;
+export default data;

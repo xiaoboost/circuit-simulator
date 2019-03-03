@@ -3,11 +3,13 @@ import Vuex from 'vuex';
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
-import { isArray, clone, randomString } from 'src/lib/utils';
+import Solver from 'src/lib/solver';
+import { isArray, clone } from 'src/lib/utils';
 
+import { LineType } from 'src/components/electronic-line/helper';
 import { LineWay } from 'src/components/electronic-line/line-way';
-import { PartData } from 'src/components/electronic-part/component';
 import { LineData } from 'src/components/electronic-line/component';
+import { PartData } from 'src/components/electronic-part/component';
 
 import {
     markId,
@@ -43,17 +45,19 @@ Vue.use(Vuex);
 
 /** 历史操作记录上限 */
 const historyLimit = 10;
+/** 求解器 */
+const solver = new Solver();
 
 const local: State = {
     time: {
         end: '10m',
         step: '10u',
     },
-
-    sidebar: Sidebar.Space,
+    charts: [],
     parts: [],
     lines: [],
     historyData: [],
+    sidebar: Sidebar.Space,
 };
 
 const getters: GetterTree<State, Getter> = {
@@ -84,7 +88,7 @@ const mutations: MutationTree<State, Mutation> = {
     },
     /** 更新器件数据 */
     [MutationName.UPDATE_PART]: ({ parts }, data: PartData) => {
-        const index = parts.findIndex((part) => part.hash === data.hash);
+        const index = parts.findIndex((part) => part.id === data.id);
 
         if (index < 0) {
             throw new Error(`(vuex) Part not found. id: ${data.id}`);
@@ -110,7 +114,6 @@ const mutations: MutationTree<State, Mutation> = {
             parts.push({
                 ...clone(part),
                 id: createId(part.id),
-                hash: randomString(),
             });
         });
     },
@@ -123,7 +126,7 @@ const mutations: MutationTree<State, Mutation> = {
     },
     /** 更新导线数据 */
     [MutationName.UPDATE_LINE]: ({ lines }, data: LineData) => {
-        const index = lines.findIndex((line) => line.hash === data.hash);
+        const index = lines.findIndex((line) => line.id === data.id);
 
         if (index < 0) {
             throw new Error(`(vuex) Line not found. id: ${data.id}`);
@@ -149,7 +152,6 @@ const mutations: MutationTree<State, Mutation> = {
             lines.push({
                 ...clone(line),
                 id: createId('line'),
-                hash: randomString(),
             });
         });
     },
@@ -195,8 +197,8 @@ const mutations: MutationTree<State, Mutation> = {
             return;
         }
 
-        state.parts = current.filter((part): part is PartData => part.type !== -1);
-        state.lines = current.filter((line): line is LineData => line.type === -1);
+        state.parts = current.filter((part): part is PartData => part.type !== LineType.Line);
+        state.lines = current.filter((line): line is LineData => line.type === LineType.Line);
     },
 };
 
@@ -204,20 +206,19 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     /** 外部数据导入 */
     async [ActionName.IMPORT_DATA]({ commit }, data: CircuitStorage) {
         // load time config
-        if (data.config) {
+        if (data.time) {
             commit(MutationName.SET_TIME_CONFIG, {
-                end: data.config.end,
-                step: data.config.step,
+                end: data.time.end,
+                step: data.time.step,
             });
         }
 
         // load parts
-        const parts = data.data.filter((part): part is PartStorageData => part.type !== -1);
+        const parts = data.data.filter((part): part is PartStorageData => part.type !== LineType.Line);
         await Promise.all(parts.map(async (storage) => {
             const partData: PartData = {
                 type: storage.type,
                 id: storage.id,
-                hash: randomString(),
                 params: storage.params || [],
                 rotate: storage.rotate
                     ? Matrix.from(storage.rotate)
@@ -253,12 +254,11 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
         }));
 
         // loaded lines
-        const lines = data.data.filter((line): line is LineStorageData => line.type === -1);
+        const lines = data.data.filter((line): line is LineStorageData => line.type === LineType.Line);
         await Promise.all(lines.map(async (storage) => {
             const lineData: LineData = {
-                type: -1,
+                type: LineType.Line,
                 id: createId('line'),
-                hash: randomString(),
                 connect: ['', ''],
                 way: LineWay.from(storage.way),
             };
@@ -277,11 +277,12 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     },
     /** 求解电路 */
     async [ActionName.SOLVE_CIRCUIT]({ state }) {
-        debugger;
+        // 设置求解器
+        solver.setSolver(state.parts, state.lines);
     },
 };
 
-export default new Vuex.Store({
+export default new Vuex.Store<State>({
     strict: process.env.NODE_ENV === 'development',
     state: local,
     getters,

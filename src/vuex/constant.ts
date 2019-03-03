@@ -1,11 +1,27 @@
 import { LineData } from 'src/components/electronic-line/component';
 import { PartData } from 'src/components/electronic-part/component';
 import { PartType } from 'src/components/electronic-part/parts';
+import { LineType } from 'src/components/electronic-line/helper';
 
 /** 时间配置接口 */
 export interface TimeConfig {
     end: string;
     step: string;
+}
+
+/** 图表类型 */
+export const enum ChartType {
+    /** 电流图像 */
+    Current,
+    /** 电压图像 */
+    Voltage,
+}
+
+export interface ChartConfig {
+    /** 图表类型 */
+    type: ChartType;
+    /** 所观测的器件编号 */
+    meters: string[];
 }
 
 /** 储存用的器件数据接口 */
@@ -20,22 +36,17 @@ export interface PartStorageData {
 
 /** 储存用的器件数据接口 */
 export interface LineStorageData {
-    type: -1;
+    type: LineType;
     way: number[][];
 }
 
 /** 器件数据 */
 export type ElectronicsData = Array<PartStorageData | LineStorageData>;
 
-/** 当前时间配置项 */
-/* tslint:disable-next-line:no-empty-interface  */
-export interface SimulateConfig extends TimeConfig {
-    // TODO: 波形输出标志
-}
-
 /** 电路数据 */
 export interface CircuitStorage {
-    config?: SimulateConfig;
+    time?: TimeConfig;
+    chart?: ChartConfig;
     data: ElectronicsData;
 }
 
@@ -45,30 +56,6 @@ export const enum Sidebar {
     Parts,
     Config,
     Graph,
-}
-
-/** vuex 状态接口 */
-export interface State {
-    /**
-     * 侧边栏状态
-     */
-    sidebar: Sidebar;
-    /**
-     * 全局时间设置
-     */
-    time: TimeConfig;
-    /**
-     * 全局器件堆栈
-     */
-    parts: PartData[];
-    /**
-     * 全局导线堆栈
-     */
-    lines: LineData[];
-    /**
-     * 历史数据
-     */
-    historyData: Array<Array<PartData | LineData>>;
 }
 
 /** Getter 键名 */
@@ -119,6 +106,34 @@ export const enum ActionName {
     IMPORT_DATA = 'IMPORT_DATA',
     /** 求解电路 */
     SOLVE_CIRCUIT = 'SOLVE_CIRCUIT',
+}
+
+/** vuex 状态接口 */
+export interface State {
+    /**
+     * 侧边栏状态
+     */
+    sidebar: Sidebar;
+    /**
+     * 全局时间设置
+     */
+    time: TimeConfig;
+    /**
+     * 全局示波器设置
+     */
+    charts: ChartConfig[];
+    /**
+     * 全局器件堆栈
+     */
+    parts: PartData[];
+    /**
+     * 全局导线堆栈
+     */
+    lines: LineData[];
+    /**
+     * 历史数据
+     */
+    historyData: Array<Array<PartData | LineData>>;
 }
 
 /** Getter 原型定义 */

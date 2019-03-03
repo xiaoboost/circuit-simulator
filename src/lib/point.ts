@@ -439,3 +439,12 @@ export default class Point {
         return [callback(this[0], 0), callback(this[1], 1)];
     }
 }
+
+type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;
+/**
+ * Point 原型函数封装
+ *  - 主要用于 PointLike 型输入
+ */
+export function PointCall<T extends PointMethodKeys>(self: PointLike, name: T, ...args: Parameters<Point[T]>): ReturnType<Point[T]> {
+    return (Point.prototype as any)[name].call(self, ...args);
+}

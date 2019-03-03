@@ -1,3 +1,6 @@
+import Matrix from 'src/lib/matrix';
+import { PartRunData as PartData } from '../component';
+
 /** 器件类型枚举常量 */
 export const enum PartType {
     /** 电阻 */
@@ -83,53 +86,113 @@ export interface ShapeDescription {
     readonly 'non-rotate'?: true;
 }
 
+/** 迭代方程输入参数的类型 */
+export const enum IterativeInputType {
+    /** 电压 */
+    Voltage,
+    /** 电流 */
+    Current,
+}
+
+/** 迭代方程 */
+interface IterativeParams {
+    /** 是否是迭代器 */
+    isIterative: boolean;
+    /** 输入参数描述 */
+    input: {
+        type: IterativeInputType;
+        place: string;
+    }[];
+    /** 输出参数描述 */
+    output: number[];
+    /** 迭代方程 */
+    process(...args: any[]): number[];
+}
+
+interface IterativeParams {
+    part: PartData;
+    timeInterval: number;
+}
+
+interface IterativeEquation {
+    /** 输入参数描述 */
+    input: {
+        type: IterativeInputType;
+        place: string;
+    }[];
+    /** 输出参数描述 */
+    output: number[];
+    /** 迭代方程 */
+    process(...args: any[]): number[];
+}
+
+interface ConstantParams {
+    /** 关联矩阵 */
+    A: Matrix;
+    /** 电导电容矩阵 */
+    F: Matrix;
+    /** 电阻电感矩阵 */
+    H: Matrix;
+    /** 独立电压电流源列向量 */
+    S: Matrix;
+    /** 当前器件所在的支路编号 */
+    branch: number;
+    /** 当前器件参数 */
+    part: PartData;
+}
+
+/** 器件迭代方程生成器 */
+export type IterativeCreation = (params: IterativeParams) => IterativeEquation;
+
+/** 常量参数填充函数 */
+export type ConstantCreation = (param: ConstantParams) => void;
+
+/** 复杂器件的内部拆分 */
+export interface ElectronicApart {
+    /** 内部器件列表 */
+    parts: {
+        id: string;
+        type: PartType;
+        /** 生成当前器件参数 */
+        params(part: PartData): number[];
+    }[];
+    /**
+     * 拆分器件的连接
+     *  - 每个元组即表示内部的一个节点
+     */
+    connect: string[][];
+    /**
+     * 外部引脚对内的映射
+     *  - 数组下标表示是当前器件的第几个引脚
+     *  - 子数组表示连接至此引脚的内部器件引脚
+     */
+    interface: string[][];
+}
+
 /** 器件原型数据类型 */
 export interface ElectronicPrototype {
-    /**
-     * 器件编号的前置标记
-     * @type {string}
-     */
+    /** 器件编号的前置标记 */
     readonly pre: string;
-    /**
-     * 器件种类
-     * @type {PartType}
-     */
+    /** 器件种类 */
     readonly type: PartType;
-    /**
-     * 器件简述
-     * @type {string}
-     */
+    /** 器件简述 */
     readonly introduction: string;
-    /**
-     * 周围文字距离器件中心点的偏移量
-     * @type {number}
-     */
+    /** 周围文字距离器件中心点的偏移量 */
     readonly txtLBias: number;
-    /**
-     * 器件内边框范围
-     *  - 顺序是上、右、下、左
-     * @type {[number, number, number, number]}
-     */
+    /** 器件内边框范围（上、右、下、左） */
     readonly padding: [number, number, number, number];
-    /**
-     * 器件外边框范围
-     *  - 顺序是上、右、下、左
-     * @type {[number, number, number, number]}
-     */
+    /** 器件外边框范围（上、右、下、左） */
     readonly margin: [number, number, number, number];
-    /**
-     * 每项参数的描述
-     * @type {ParmasText[]}
-     */
+    /** 每项参数的描述 */
     readonly params: ParmasDescription[];
-    /**
-     * 器件每个节点的描述
-     * @type {PointDescription[]}
-     */
+    /** 器件每个节点的描述 */
     readonly points: PointDescription[];
-    /**
-     * 器件外形元素的描述
-     * @type {AspectDescription[]}
-     */
+    /** 器件外形元素的描述 */
     readonly shape: ShapeDescription[];
+    /** 迭代方程生成器 */
+    readonly iterative?: IterativeCreation;
+    /** 常量参数生成器 */
+    readonly constant?: ConstantCreation;
+    /** 器件内部拆分描述 */
+    readonly apart?: ElectronicApart;
 }

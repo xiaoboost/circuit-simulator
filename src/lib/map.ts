@@ -1,4 +1,4 @@
-import { default as Point, PointLike } from 'src/lib/point';
+import { default as Point, PointLike, PointCall } from 'src/lib/point';
 import { def, clone } from './utils';
 
 /** 节点类型常量 */
@@ -63,15 +63,6 @@ function dataClone(data: NodeInputData): NodeData {
         point: Point.from(data.point),
         connect: data.connect ? data.connect.map(Point.from) : [],
     };
-}
-
-type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;
-/**
- * Point 原型函数封装
- *  - 主要用于 PointLike 型输入
- */
-function PointCall<T extends PointMethodKeys>(self: PointLike, name: T, ...args: Parameters<Point[T]>): ReturnType<Point[T]> {
-    return (Point.prototype as any)[name].call(self, ...args);
 }
 
 /**

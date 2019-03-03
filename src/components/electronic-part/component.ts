@@ -5,22 +5,26 @@ import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 
 import setPartParams from './dialog-controller';
-import { product, PartShape } from './helper';
-import Electronics, { ElectronicPrototype } from './parts';
-import ElectronicPoint, { PointClassName } from '../electronic-point/component';
-import ElectronicCore, { findPartComponent, findLineComponent } from './common';
-import { DrawEvent } from 'src/components/drawing-main/event-controller';
-
 import LineComponent from '../electronic-line/component';
+
+import { DrawEvent } from '../drawing-main/event-controller';
 import { createLineData } from '../electronic-line/helper';
 import { isEqual, copyProperties } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
+import { product, PartShape } from './helper';
+
+import { default as Electronics, ElectronicPrototype } from './parts';
+import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
+import { default as ElectronicCore, findPartComponent, findLineComponent } from './common';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
-type dispatchKey = 'id' | 'type' | 'hash' | 'params' | 'rotate' | 'connect' | 'position';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'hash', 'params', 'rotate', 'connect', 'position'];
+type dispatchKey = 'id' | 'type' | 'params' | 'rotate' | 'connect' | 'position';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'params', 'rotate', 'connect', 'position'];
 
+/** 器件基础数据 */
 export type PartData = Pick<PartComponent, dispatchKey>;
+/** 器件在运算时需要的数据 */
+export type PartRunData = Omit<PartData, 'position' | 'rotate'>;
 
 export interface PartPointAttr {
     size: number;

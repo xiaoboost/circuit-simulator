@@ -1,5 +1,6 @@
 import { CircuitStorage } from '../vuex';
 import { PartType } from '../components/electronic-part/parts';
+import { LineType } from '../components/electronic-line/helper';
 
 export const data: CircuitStorage = {
     data: [
@@ -31,55 +32,55 @@ export const data: CircuitStorage = {
             rotate: [[1, 0], [0, 1]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[380, 200], [420, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 240], [180, 200], [260, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[180, 320], [180, 360], [260, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[340, 380], [340, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[340, 360], [420, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[520, 240], [520, 200], [420, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[420, 240], [420, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[520, 320], [520, 360], [420, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[420, 320], [420, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[260, 240], [260, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[260, 200], [300, 200]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[260, 320], [260, 360]],
         },
         {
-            type: -1,
+            type: LineType.Line,
             way: [[260, 360], [340, 360]],
         },
         {

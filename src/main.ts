@@ -7,7 +7,7 @@ import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
 
 import ActionMenu from './components/action-menu/component';
-import SliderMenu from './components/slider-menu/component';
+import SliderMenu from './components/slider-menu/slider-main';
 import DrawingMain from './components/drawing-main/component';
 
 // 调式模式打开调试器

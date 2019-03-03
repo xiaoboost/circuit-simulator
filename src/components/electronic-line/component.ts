@@ -6,7 +6,8 @@ import {
     LineWayCall,
 } from './line-way';
 
-import ElectronicCore, {
+import {
+    default as ElectronicCore,
     findLineComponent,
     findPartComponent,
 } from 'src/components/electronic-part/common';
@@ -15,6 +16,7 @@ import Point from 'src/lib/point';
 import * as Map from 'src/lib/map';
 import * as Search from './line-search';
 
+import { LineType } from './helper';
 import { $debugger } from 'src/lib/debugger';
 import { DrawEvent } from '../drawing-main/event-controller';
 import { MutationName as Mutation } from 'src/vuex';
@@ -28,8 +30,8 @@ import {
     copyProperties,
 } from 'src/lib/utils';
 
-type dispatchKey = 'id' | 'type' | 'way' | 'hash' | 'connect';
-const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'hash', 'connect'];
+type dispatchKey = 'id' | 'type' | 'way' | 'connect';
+const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'connect'];
 
 const matchLine = /(line_\d+ ?)+/;
 const matchPart = /[a-zA-Z]+_[a-zA-Z0-9]+-\d+/;
@@ -51,7 +53,7 @@ export interface LinePointAttr {
 })
 export default class LineComponent extends ElectronicCore {
     /** 导线类型 */
-    readonly type!: -1;
+    readonly type!: LineType;
 
     /** 导线路径 */
     way: Point[] = [];

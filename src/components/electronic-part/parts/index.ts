@@ -38,6 +38,9 @@ const Electronics: Electronics = {
     [PartType.OperationalAmplifier]: operational_amplifier,
 };
 
+// 强制冻结所有原型属性
+Object.values(Electronics).forEach(Object.freeze);
+
 export * from './constant';
 
 export default Electronics;
