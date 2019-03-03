@@ -3,7 +3,7 @@ import { PartType } from '../components/electronic-part/parts';
 import { LineType } from '../components/electronic-line/helper';
 
 export const data: CircuitStorage = {
-    config: {
+    time: {
         end: '50m',
         step: '10u',
     },
