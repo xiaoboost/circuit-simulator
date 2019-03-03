@@ -3,6 +3,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable/component';
 
 import Point from 'src/lib/point';
+import { numberMatcher } from 'src/lib/native';
 import { delay, isEqual, supportsPassive } from 'src/lib/utils';
 import { ParmasDescription } from 'src/components/electronic-part/parts';
 
@@ -45,7 +46,7 @@ export default class ParamsDialog extends Vue {
             message: '该项不能为空',
         },
         {
-            pattern: Number.SCIENTIFIC_COUNT_MATCH,
+            pattern: numberMatcher,
             message: '参数值格式错误',
         },
     ];

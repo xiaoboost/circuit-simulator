@@ -1,4 +1,5 @@
 import { ElectronicPrototype, PartType } from './constant';
+import { numberParser } from 'src/lib/native';
 
 const data: ElectronicPrototype = {
     pre: 'R',
@@ -40,7 +41,7 @@ const data: ElectronicPrototype = {
         },
     ],
     constant: ({ F, H, branch, part }) => {
-        const val = Number.scientificCountParser(part.params[0]);
+        const val = numberParser(part.params[0]);
         F.set(branch, branch, -1);
         H.set(branch, branch, val);
     },

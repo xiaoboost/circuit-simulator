@@ -1,4 +1,5 @@
 import { ElectronicPrototype, PartType, IterativeInputType } from './constant';
+import { numberParser } from 'src/lib/native';
 
 const data: ElectronicPrototype = {
     pre: 'C',
@@ -41,7 +42,7 @@ const data: ElectronicPrototype = {
     ],
     iterative({ part, timeInterval }) {
         // 电容值
-        const valueCap = Number.scientificCountParser(part.params[0]);
+        const valueCap = numberParser(part.params[0]);
         // 积分的中间变量
         const save = {
             last: 0,

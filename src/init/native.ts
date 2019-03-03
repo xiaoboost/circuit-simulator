@@ -83,39 +83,6 @@ def(Array.prototype, {
     },
 });
 
-def(Number, {
-    /**
-     * 用于匹配科学记数法表示的字符串
-     */
-    SCIENTIFIC_COUNT_MATCH: /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/,
-
-    /**
-     * 将用科学记数法的字符串转换为对应的数字
-     *
-     * @param {string} notation
-     * @returns {number}
-     */
-    scientificCountParser(notation: string): number {
-        if (!Number.SCIENTIFIC_COUNT_MATCH.test(notation)) {
-            return NaN;
-        }
-        else if (/[eE]/.test(notation)) {
-            const [base, power] = notation.split(/[eE]/);
-            return Number(base) * Math.pow(10, Number(power));
-        }
-        else if (/[puμnmkMG]$/.test(notation)) {
-            const exp = { p: -12, u: -9, μ: -9, n: -6, m: -3, k: 3, M: 6, G: 9 };
-            const power = exp[notation[notation.length - 1]] as number;
-            const base = notation.substring(0, notation.length - 1);
-
-            return Number(base) * Math.pow(10, power);
-        }
-        else {
-            return Number(notation);
-        }
-    },
-});
-
 def(Number.prototype, {
     /**
      * 按照有效数字的位数进行四舍五入。

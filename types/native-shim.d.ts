@@ -37,20 +37,6 @@ interface Array<T> {
     $set(index: number, value: T): void;
 }
 
-interface NumberConstructor {
-    /**
-     * 用于匹配科学记数法表示的字符串
-     */
-    readonly SCIENTIFIC_COUNT_MATCH: RegExp;
-    /**
-     * 将用科学记数法的字符串转换为对应的数字
-     *
-     * @param {string} notation
-     * @returns {number}
-     */
-    scientificCountParser(notation: string): number;
-}
-
 interface Number {
     /**
      * 按照有效数字的位数进行四舍五入。
