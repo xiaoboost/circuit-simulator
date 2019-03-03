@@ -2,6 +2,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 
 import * as Store from 'src/vuex';
 import { State, Mutation } from 'vuex-class';
+import { createSelectList } from 'src/lib/native';
 import { PartType } from 'src/components/electronic-part/parts';
 
 /** 表单数据接口 */
@@ -51,25 +52,9 @@ export default class ConfigPanel extends Vue {
         charts: [],
     };
 
-    /** 时间单位单选列表 */
-    timeUnits = [
-        {
-            label: '秒',
-            value: '',
-        },
-        {
-            label: '毫秒',
-            value: 'm',
-        },
-        {
-            label: '微秒',
-            value: 'u',
-        },
-        {
-            label: '皮秒',
-            value: 'p',
-        },
-    ];
+    // 时间单位选择列表
+    endTimeUnits = createSelectList(['', 'm', 'u'], '秒');
+    stepTimeUnits = createSelectList(['m', 'u', 'n', 'p'], '秒');
 
     /** 示波器类型选项列表 */
     chartTypes = [

@@ -17,10 +17,10 @@
                         <a-input-number :min="0" v-model="data.end" />
                         <a-select v-model="data.endUnit">
                             <a-select-option
-                                v-for="i in 3"
+                                v-for="(unit, i) in endTimeUnits"
                                 :key="i"
-                                :value="timeUnits[i-1].value">
-                                {{ timeUnits[i-1].label }}
+                                :value="unit.value">
+                                {{ unit.label }}
                             </a-select-option>
                         </a-select>
                     </a-col>
@@ -31,10 +31,10 @@
                         <a-input-number :min="0" v-model="data.step" />
                         <a-select v-model="data.stepUnit">
                             <a-select-option
-                                v-for="i in 3"
+                                v-for="(unit, i) in stepTimeUnits"
                                 :key="i"
-                                :value="timeUnits[i].value">
-                                {{ timeUnits[i].label }}
+                                :value="unit.value">
+                                {{ unit.label }}
                             </a-select-option>
                         </a-select>
                     </a-col>

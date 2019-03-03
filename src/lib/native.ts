@@ -32,3 +32,25 @@ export function numberParser(notation: string) {
         return Number(notation);
     }
 }
+
+type NumberUnit = 'p' | 'n' | 'u' | 'μ' | 'm' | '' | 'k' | 'M' | 'G';
+
+/** 生成简写单位下拉列表选项 */
+export function createSelectList(units: NumberUnit[], label: string) {
+    const unitFilted: Exclude<NumberUnit, 'μ'>[] = units.map((unit) => unit === 'μ' ? 'u' : unit);
+    const unitMap = {
+        'p': '皮',
+        'n': '纳',
+        'u': '微',
+        'm': '毫',
+        '': '',
+        'k': '千',
+        'M': '兆',
+        'G': '吉',
+    };
+
+    return unitFilted.map((unit) => ({
+        label: `${unitMap[unit]}${label}`,
+        value: unit,
+    }));
+}
