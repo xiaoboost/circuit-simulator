@@ -21,7 +21,7 @@ interface FormData {
 
 /** 生成过滤器件的函数 */
 const findPart = (type: PartType) => {
-    return ({ parts }: Store.State) => (parts.find((part) => part.type === type) || []);
+    return ({ parts }: Store.State) => (parts.filter((part) => part.type === type) || []);
 };
 
 @Component

@@ -2,7 +2,6 @@ import Vue from 'vue';
 
 // css
 import 'ant-design-vue/es/style/index.css';
-import 'ant-design-vue/es/form/style/index.css';
 import 'ant-design-vue/es/grid/style/index.css';
 import 'ant-design-vue/es/input/style/index.css';
 import 'ant-design-vue/es/select/style/index.css';
