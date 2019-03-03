@@ -53,11 +53,11 @@ const local: State = {
         end: '10m',
         step: '10u',
     },
-
-    sidebar: Sidebar.Space,
+    charts: [],
     parts: [],
     lines: [],
     historyData: [],
+    sidebar: Sidebar.Space,
 };
 
 const getters: GetterTree<State, Getter> = {
@@ -206,10 +206,10 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     /** 外部数据导入 */
     async [ActionName.IMPORT_DATA]({ commit }, data: CircuitStorage) {
         // load time config
-        if (data.config) {
+        if (data.time) {
             commit(MutationName.SET_TIME_CONFIG, {
-                end: data.config.end,
-                step: data.config.step,
+                end: data.time.end,
+                step: data.time.step,
             });
         }
 

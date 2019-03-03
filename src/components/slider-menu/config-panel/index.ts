@@ -1,127 +1,128 @@
 import { Component, Watch, Vue } from 'vue-property-decorator';
-import { MutationName, Mutation, State } from 'src/vuex';
 
-import { Col } from 'ant-design-vue/types/grid/col';
-import { AntdComponent } from 'ant-design-vue/types/component';
-
-import * as deco from 'vuex-class';
-import * as Form from 'ant-design-vue/types/form/form';
-
-type LayoutOpt = Partial<Pick<Col, Exclude<keyof Col, keyof AntdComponent>>>;
-
-/** 表单输入的布局选项 */
-interface FormItemLayout {
-    labelCol?: LayoutOpt;
-    wrapperCol?: LayoutOpt;
-}
+import * as Store from 'src/vuex';
+import { State, Mutation } from 'vuex-class';
+import { PartType } from 'src/components/electronic-part/parts';
 
 /** 表单数据接口 */
 interface FormData {
     /** 模拟时长 */
-    end: string;
+    end: number;
     /** 模拟步长 */
-    step: string;
+    step: number;
     /** 模拟时长单位 */
     endUnit: '' | 'm' | 'u';
     /** 模拟步长单位 */
     stepUnit: 'm' | 'u' | 'p';
+
+    /** 示波器设置 */
+    charts: Store.State['charts'];
 }
 
-/** 表单修饰参数 */
-interface FormDecorator {
-    // TODO: 等待修复
-    [key: string]: (keyof FormData | Form.FieldDecoratorOptions)[];
-}
+/** 生成过滤器件的函数 */
+const findPart = (type: PartType) => {
+    return ({ parts }: Store.State) => (parts.find((part) => part.type === type) || []);
+};
 
 @Component
 export default class ConfigPanel extends Vue {
-    /** 表单本身 */
-    form!: Form.WrappedFormUtils<FormData>;
-    // form!: any;
-    /** 表单标签的布局 */
-    formItemLayout: FormItemLayout = {
-        labelCol: { span: 6 },
-        wrapperCol: { span: 17 },
+    /** vuex 种储存的时间参数 */
+    @State('time')
+    time!: Store.State['time'];
+
+    /** 所有电流表 */
+    @State(findPart(PartType.CurrentMeter))
+    currentMeters!: Store.State['parts'];
+
+    /** 所有电压表 */
+    @State(findPart(PartType.VoltageMeter))
+    voltageMeters!: Store.State['parts'];
+
+    /** 当前时间参数存入 vuex 中 */
+    @Mutation(Store.MutationName.SET_TIME_CONFIG)
+    setTime!: Store.Mutation[Store.MutationName.SET_TIME_CONFIG];
+
+    /** 表单数据 */
+    data: FormData = {
+        end: 10,
+        step: 10,
+        endUnit: 'm',
+        stepUnit: 'u',
+        charts: [],
     };
 
-    @deco.State('time')
-    time!: State['time'];
+    /** 时间单位单选列表 */
+    timeUnits = [
+        {
+            label: '秒',
+            value: '',
+        },
+        {
+            label: '毫秒',
+            value: 'm',
+        },
+        {
+            label: '微秒',
+            value: 'u',
+        },
+        {
+            label: '皮秒',
+            value: 'p',
+        },
+    ];
 
-    @deco.Mutation(MutationName.SET_TIME_CONFIG)
-    setTime!: Mutation[MutationName.SET_TIME_CONFIG];
-
-    /** 表单参数 */
-    get formDecorator(): FormDecorator {
-        return {
-            end: ['end', {
-                initialValue: '10',
-                validateFirst: true,
-                rules: [
-                    {
-                        required: true,
-                        message: '模拟时长不能为空',
-                    },
-                    {
-                        pattern: /^\d+$/,
-                        message: '只允许输入正整数',
-                    },
-                ],
-            }],
-            step: ['step', {
-                initialValue: '10',
-                validateFirst: true,
-                rules: [
-                    {
-                        required: true,
-                        message: '步长时间是必填的',
-                    },
-                    {
-                        pattern: /^\d+$/,
-                        message: '只允许输入正整数',
-                    },
-                ],
-            }],
-            endUnit: ['endUnit', {
-                initialValue: 'm',
-            }],
-            stepUnit: ['stepUnit', {
-                initialValue: 'u',
-            }],
-        };
-    }
+    /** 示波器类型选项列表 */
+    chartTypes = [
+        {
+            label: '电压表',
+            value: Store.ChartType.Voltage,
+        },
+        {
+            label: '电流表',
+            value: Store.ChartType.Current,
+        },
+    ];
 
     @Watch('time')
     private update() {
-        this.form.setFieldsValue({ ...this.time });
+        const getNumber = (str: string) => {
+            const matcher = /^(\d+)([mup]?)$/;
+            const match = matcher.exec(str);
+
+            if (!match) {
+                throw new Error(`Time Error: ${str}`);
+            }
+
+            return {
+                number: +match[1],
+                unit: match[2] || '',
+            };
+        };
+
+        const end = getNumber(this.time.end);
+        const step = getNumber(this.time.step);
+
+        this.data.end = end.number;
+        this.data.step = step.number;
+        this.data.endUnit = end.unit as FormData['endUnit'];
+        this.data.stepUnit = step.unit as FormData['stepUnit'];
     }
 
-    check() {
-        return this.form.validateFields().then((values) => {
-            this.setTime({
-                end: `${values.end}${values.endUnit}`,
-                step: `${values.step}${values.stepUnit}`,
-            });
+    /** 添加示波器 */
+    addMeter() {
+        this.data.charts.push({
+            type: Store.ChartType.Voltage,
+            meters: [],
         });
-
-        // if (!this.$refs.end.validate() || !this.$refs.step.validate()) {
-        //     return false;
-        // }
-
-        // if (
-        //     this.end !== this.time.end ||
-        //     this.step !== this.time.step
-        // ) {
-        //     this.$store.commit(Mutation.SET_TIME_CONFIG, {
-        //         step: this.step,
-        //         end: this.end,
-        //     });
-        // }
-
-        // return true;
     }
 
-    // 生成当前表单作用域
-    beforeCreate() {
-        this.form = this.$form.createForm(this);
+    /** 移除示波器 */
+    removeMeter(i: number) {
+        this.data.charts.splice(i, 1);
+    }
+
+    /** 验证所有设置 */
+    validate() {
+        // ..
     }
 }
