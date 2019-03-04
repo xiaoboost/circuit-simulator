@@ -9,7 +9,7 @@ import { isArray, clone } from 'src/lib/utils';
 import { LineType } from 'src/components/electronic-line/helper';
 import { LineWay } from 'src/components/electronic-line/line-way';
 import { LineData } from 'src/components/electronic-line/component';
-import { PartData } from 'src/components/electronic-part/component';
+import { PartData } from 'src/components/electronic-part';
 
 import {
     markId,

@@ -21,6 +21,9 @@ type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
 type dispatchKey = 'id' | 'type' | 'params' | 'rotate' | 'connect' | 'position';
 const disptchKeys: dispatchKey[] = ['id', 'type', 'params', 'rotate', 'connect', 'position'];
 
+export * from './helper';
+export * from './parts';
+
 /** 器件基础数据 */
 export type PartData = Pick<PartComponent, dispatchKey>;
 /** 器件在运算时需要的数据 */

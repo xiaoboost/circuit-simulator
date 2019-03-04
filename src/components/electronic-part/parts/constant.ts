@@ -1,5 +1,5 @@
 import Matrix from 'src/lib/matrix';
-import { PartRunData as PartData } from '../component';
+import { PartRunData as PartData } from '..';
 
 /** 器件类型枚举常量 */
 export const enum PartType {

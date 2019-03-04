@@ -1,3 +1,6 @@
+<script lang="ts" src="./index.ts"></script>
+
+<template>
 <g
     @dblclick.passive="setParams"
     :class="['part', { focus }]"
@@ -6,7 +9,8 @@
         <part-shape :value="origin.shape"></part-shape>
         <electronic-point
             v-for="(point, i) in points"
-            :key="i" :r="point.size"
+            :key="i"
+            :r="point.size"
             :classList="['part-point', point.class]"
             :transform="`translate(${point.originPosition.join()})`"
             @mousedown.native.stop.left.passive="startDrawLine(i)">
@@ -28,3 +32,4 @@
         </text>
     </g>
 </g>
+</template>

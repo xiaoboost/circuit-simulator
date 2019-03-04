@@ -1,6 +1,6 @@
 import Matrix from 'src/lib/matrix';
 
-import { PartRunData as PartData } from 'src/components/electronic-part/component';
+import { PartRunData as PartData } from 'src/components/electronic-part';
 import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
 
 import { LineData } from 'src/components/electronic-line/component';

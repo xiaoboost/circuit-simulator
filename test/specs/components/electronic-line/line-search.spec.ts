@@ -3,7 +3,7 @@ import * as Search from 'src/components/electronic-line/line-search';
 import { WayMap, LineWay } from 'src/components/electronic-line/line-way';
 import { forceUpdateMap } from 'src/lib/map';
 
-import PartComponent from 'src/components/electronic-part/component';
+import PartComponent from 'src/components/electronic-part';
 // import LineComponent from 'src/components/electronic-line/component';
 
 import { default as Parts , PartType } from 'src/components/electronic-part/parts';

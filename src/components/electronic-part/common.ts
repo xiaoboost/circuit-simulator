@@ -6,7 +6,7 @@ import { LineType } from '../electronic-line/helper';
 import { default as Electronics, PartType } from './parts';
 import { default as DrawingMain, MapStatus } from '../drawing-main/component';
 
-import PartComponent from 'src/components/electronic-part/component';
+import PartComponent from 'src/components/electronic-part';
 import LineComponent from 'src/components/electronic-line/component';
 
 /** 每类器件的最大数量 */

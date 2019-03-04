@@ -3,8 +3,8 @@ import Vue from 'vue';
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 
+import { PartData } from '.';
 import { createId } from './common';
-import { PartData } from './component';
 import { default as Electronics, PartType, ShapeDescription } from './parts';
 
 interface Props {

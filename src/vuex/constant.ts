@@ -1,7 +1,6 @@
 import { LineData } from 'src/components/electronic-line/component';
-import { PartData } from 'src/components/electronic-part/component';
-import { PartType } from 'src/components/electronic-part/parts';
 import { LineType } from 'src/components/electronic-line/helper';
+import { PartData, PartType } from 'src/components/electronic-part';
 
 /** 时间配置接口 */
 export interface TimeConfig {
