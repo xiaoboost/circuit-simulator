@@ -26,14 +26,17 @@ module.exports = {
     collectCoverageFrom: [
         'src/**/*.{ts,vue}',
 
+        '!**/*.d.ts',
+        '!src/init/*',
         '!src/examples/*',
-        '!src/main.ts',
-        '!src/**/*.d.ts',
         '!src/lib/utils/*',
+        '!**/node_modules/**',
         '!src/components/slider-menu/*',
         '!src/components/electronic-part/parts/*',
-        '!src/**/{types,icons,debugger,component}.ts',
-        '!**/node_modules/**',
+
+        '!src/main.ts',
+        '!src/components/action-menu/icons.ts',
+        '!src/lib/{types,debugger,component}.ts',
     ],
     globals: {
         'vue-jest': {
