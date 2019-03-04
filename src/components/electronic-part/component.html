@@ -13,7 +13,7 @@
         </electronic-point>
     </g>
     <g
-        v-if="type !== 'reference_ground'"
+        v-if="showText"
         @mousedown.stop.left.passive="moveText"
         :class="`text-params text-placement-${textPlacement}`"
         :transform="`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`">

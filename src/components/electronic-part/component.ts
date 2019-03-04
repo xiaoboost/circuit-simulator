@@ -13,7 +13,7 @@ import { isEqual, copyProperties } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
 import { product, PartShape } from './helper';
 
-import { default as Electronics, ElectronicPrototype } from './parts';
+import { default as Electronics, ElectronicPrototype, PartType } from './parts';
 import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 import { default as ElectronicCore, findPartComponent, findLineComponent } from './common';
 
@@ -86,6 +86,10 @@ export default class PartComponent extends ElectronicCore {
         this.renderText();
     }
 
+    /** 是否显示文本 */
+    get showText() {
+        return this.type !== PartType.ReferenceGround;
+    }
     /** 当前旋转矩阵的逆矩阵 */
     get invRotate() {
         return this.rotate.inverse();
