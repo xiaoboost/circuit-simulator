@@ -1,5 +1,4 @@
-import { LineWay } from './line-way';
-import { LineData } from './component';
+import { LineData, LineWay } from '.';
 import { createId } from 'src/components/electronic-part/common';
 
 /** 导线类型常量 */

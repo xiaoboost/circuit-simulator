@@ -3,11 +3,8 @@ import { VNodeChildrenArrayContents } from 'vue';
 
 import { Mutation } from 'vuex-class';
 import { MutationName, Mutation as MutationTree } from 'src/vuex';
-
-import { createPartData } from 'src/components/electronic-part/helper';
 import { findPartComponent } from 'src/components/electronic-part/common';
-
-import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
+import { Electronics, PartType, createPartData } from 'src/components/electronic-part';
 
 interface Props {
     type: PartType;

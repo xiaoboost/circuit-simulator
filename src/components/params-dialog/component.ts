@@ -4,8 +4,8 @@ import InputVerifiable, { ValidateRule } from 'src/components/input-verifiable/c
 
 import Point from 'src/lib/point';
 import { numberMatcher } from 'src/lib/native';
+import { ParmasDescription } from 'src/components/electronic-part';
 import { delay, isEqual, supportsPassive } from 'src/lib/utils';
-import { ParmasDescription } from 'src/components/electronic-part/parts';
 
 /** 参数描述接口 */
 export interface Params extends Omit<ParmasDescription, 'default' | 'vision'> {

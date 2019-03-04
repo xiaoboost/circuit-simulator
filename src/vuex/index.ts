@@ -4,12 +4,11 @@ import Vuex from 'vuex';
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 import Solver from 'src/lib/solver';
+
 import { isArray, clone } from 'src/lib/utils';
 
-import { LineType } from 'src/components/electronic-line/helper';
-import { LineWay } from 'src/components/electronic-line/line-way';
-import { LineData } from 'src/components/electronic-line/component';
 import { PartData } from 'src/components/electronic-part';
+import { LineData, LineWay, LineType } from 'src/components/electronic-line';
 
 import {
     markId,

@@ -1,4 +1,4 @@
-import DrawingMain from './component';
+import DrawingMain from '.';
 import Point from 'src/lib/point';
 
 import {

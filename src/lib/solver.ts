@@ -1,10 +1,7 @@
 import Matrix from 'src/lib/matrix';
 
-import { PartRunData as PartData } from 'src/components/electronic-part';
-import { default as Electronics, PartType } from 'src/components/electronic-part/parts';
-
-import { LineData } from 'src/components/electronic-line/component';
-import { LineType } from 'src/components/electronic-line/helper';
+import { LineData, LineType } from 'src/components/electronic-line';
+import { PartRunData as PartData, Electronics, PartType } from 'src/components/electronic-part';
 
 type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => void;

@@ -1,5 +1,4 @@
-import { LineData } from 'src/components/electronic-line/component';
-import { LineType } from 'src/components/electronic-line/helper';
+import { LineData, LineType } from 'src/components/electronic-line';
 import { PartData, PartType } from 'src/components/electronic-part';
 
 /** 时间配置接口 */

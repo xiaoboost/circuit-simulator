@@ -20,7 +20,7 @@ import { LineType } from './helper';
 import { $debugger } from 'src/lib/debugger';
 import { DrawEvent } from '../drawing-main/event-controller';
 import { MutationName as Mutation } from 'src/vuex';
-import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
+import { default as ElectronicPoint, PointClassName } from '../electronic-point';
 
 import {
     mergeMark,
@@ -29,6 +29,9 @@ import {
     isBoolean,
     copyProperties,
 } from 'src/lib/utils';
+
+export * from './helper';
+export * from './line-way';
 
 type dispatchKey = 'id' | 'type' | 'way' | 'connect';
 const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'connect'];

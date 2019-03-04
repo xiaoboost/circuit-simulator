@@ -4,10 +4,10 @@ import { MutationName as Mutation } from 'src/vuex';
 
 import { LineType } from '../electronic-line/helper';
 import { default as Electronics, PartType } from './parts';
-import { default as DrawingMain, MapStatus } from '../drawing-main/component';
+import { default as DrawingMain, MapStatus } from '../drawing-main';
 
 import PartComponent from 'src/components/electronic-part';
-import LineComponent from 'src/components/electronic-line/component';
+import LineComponent from 'src/components/electronic-line';
 
 /** 每类器件的最大数量 */
 const maxNumber = 50;

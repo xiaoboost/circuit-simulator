@@ -1,3 +1,6 @@
+<script lang="ts" src="./index.ts"></script>
+
+<template>
 <g :class="['line', { focus }]">
     <path :d="way2path"></path>
     <rect
@@ -14,3 +17,4 @@
         @mousedown.native.stop.left.passive="drawing(i)">
     </electronic-point>
 </g>
+</template>

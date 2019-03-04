@@ -4,7 +4,7 @@ import * as Map from 'src/lib/map';
 import { LineWay, WayMap } from './line-way';
 import { NodeSearchOption, nodeSearch } from './node-search';
 
-import LineComponent from './component';
+import LineComponent from '.';
 import PartComponent from '../electronic-part';
 
 /** 绘制阶段的相关接口和常量 */

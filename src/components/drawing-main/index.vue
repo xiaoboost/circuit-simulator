@@ -1,3 +1,26 @@
+<script lang="ts" src="./index.ts"></script>
+
+<template>
+<section
+    id="drawing-main"
+    :style="backgroundStyle"
+    :class="{ 'no-event': !exclusion }">
+    <svg
+        version="2" height="100%" width="100%"
+        xmlns="http://www.w3.org/2000/svg"
+        @mousedown.stop.self.right.passive="moveMap"
+        @mousedown.stop.self.left.passive="() => devicesNow = []"
+        @click.stop.self.right.passive="openRightMenu"
+        @wheel.passive="resizeMap">
+        <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
+            <line-component v-for="line in linesAll" :key="line.hash" :value="line"></line-component>
+            <part-component v-for="part in partsAll" :key="part.hash" :value="part"></part-component>
+        </g>
+    </svg>
+</section>
+</template>
+
+<style lang="stylus">
 @import '../../css/variable'
 
 #drawing-main
@@ -115,3 +138,4 @@
             cursor url(/cur/move_part.cur), crosshair
         .line-point-open:hover
             cursor url(/cur/draw_line.cur), crosshair
+</style>

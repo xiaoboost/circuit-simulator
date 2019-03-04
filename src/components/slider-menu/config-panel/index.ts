@@ -3,7 +3,7 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 import * as Store from 'src/vuex';
 import { State, Mutation } from 'vuex-class';
 import { createSelectList, NumberUnit } from 'src/lib/native';
-import { PartType } from 'src/components/electronic-part/parts';
+import { PartType } from 'src/components/electronic-part';
 
 /** 表单数据接口 */
 interface FormData {
@@ -108,6 +108,6 @@ export default class ConfigPanel extends Vue {
 
     /** 验证所有设置 */
     validate() {
-        // ..
+        return true;
     }
 }

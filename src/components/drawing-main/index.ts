@@ -4,7 +4,9 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
 import PartComponent, { PartData } from '../electronic-part';
-import LineComponent, { LineData } from '../electronic-line/component';
+import LineComponent, { LineData } from '../electronic-line';
+
+export * from './event-controller';
 
 /** 图纸状态接口 */
 export type MapStatus =

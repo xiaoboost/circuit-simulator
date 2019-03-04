@@ -33,7 +33,7 @@ export default class SliderMenu extends Vue {
     close() {
         if (
             this.showPartsPanel ||
-            (this.showConfigPanel && this.$refs.config.check())
+            (this.showConfigPanel && this.$refs.config.validate())
          ) {
             this.$store.commit(MutationName.CLOSE_SLIDER);
         }

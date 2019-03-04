@@ -1,6 +1,6 @@
 import { CircuitStorage } from '../vuex';
-import { PartType } from '../components/electronic-part/parts';
-import { LineType } from '../components/electronic-line/helper';
+import { PartType } from '../components/electronic-part';
+import { LineType } from '../components/electronic-line';
 
 export const data: CircuitStorage = {
     time: {

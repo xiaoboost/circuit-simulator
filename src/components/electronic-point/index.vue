@@ -1,3 +1,6 @@
+<script lang="ts" src="./index.ts"></script>
+
+<template>
 <g :class="['electron-point', className]">
     <circle ref="circle" cx="0" cy="0">
         <animate
@@ -19,3 +22,4 @@
         @mouseleave.passive="mouseleave">
     </rect>
 </g>
+</template>

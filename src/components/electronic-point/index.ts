@@ -1,4 +1,4 @@
-import { MapStatus } from 'src/components/drawing-main/component';
+import { MapStatus } from 'src/components/drawing-main';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
 import { isString, isArray, excludeObject } from 'src/lib/utils';
 

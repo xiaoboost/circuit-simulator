@@ -5,7 +5,7 @@ import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
 
 import setPartParams from './dialog-controller';
-import LineComponent from '../electronic-line/component';
+import LineComponent from '../electronic-line';
 
 import { DrawEvent } from '../drawing-main/event-controller';
 import { createLineData } from '../electronic-line/helper';
@@ -13,8 +13,8 @@ import { isEqual, copyProperties } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
 import { product, PartShape } from './helper';
 
+import { default as ElectronicPoint, PointClassName } from '../electronic-point';
 import { default as Electronics, ElectronicPrototype, PartType } from './parts';
-import { default as ElectronicPoint, PointClassName } from '../electronic-point/component';
 import { default as ElectronicCore, findPartComponent, findLineComponent } from './common';
 
 type TextPlacement = 'center' | 'top' | 'right' | 'bottom' | 'left';
@@ -23,6 +23,7 @@ const disptchKeys: dispatchKey[] = ['id', 'type', 'params', 'rotate', 'connect',
 
 export * from './helper';
 export * from './parts';
+export { default as Electronics } from './parts';
 
 /** 器件基础数据 */
 export type PartData = Pick<PartComponent, dispatchKey>;
