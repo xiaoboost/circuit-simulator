@@ -42,27 +42,55 @@ export default class Matrix {
     constructor(order: number, value?: number | 'E');
     constructor(row: number, column: number, value?: number | 'E');
     constructor(row: number, column?: number | 'E', value?: number | 'E') {
-        // 输入一个值 - 零矩阵
+        /** 输入一个值 - 零矩阵 */
         if (arguments.length === 1) {
             this.row = row;
             this.column = row;
             this._view = Float64Array.from(Array(row * row).fill(0));
         }
-        // 输入两个值 - 第二个值为填充值的矩阵
+        /**
+         * 输入两个值
+         *  - 第二个值为填充值
+         *  - 若第二个值为 'E' 则为单位矩阵
+         */
         else if (arguments.length === 2) {
-            const val = (column === 'E' ? 1 : column) as number;
-
             this.row = row;
             this.column = row;
-            this._view = Float64Array.from(Array(row * row).fill(val));
-        }
-        // 输入三个值 - 第三个值为填充值的行列式
-        else {
-            const val = (value === 'E' ? 1 : value) as number;
 
+            if (column === 'E') {
+                // 默认全为 0
+                this._view = Float64Array.from(Array(row * row).fill(0));
+                // 对角线为 1
+                for (let i = 0; i < row; i++) {
+                    this.set(i, i, 1);
+                }
+            }
+            else {
+                this._view = Float64Array.from(Array(row * row).fill(column));
+            }
+        }
+        /**
+         * 输入三个值
+         *  - 第三个值为填充值
+         *  - 若第三个值为 'E'，则从左上角开始的最大子矩阵对角线为 1
+         */
+        else {
             this.row = row;
             this.column = column as number;
-            this._view = Float64Array.from(Array(this.row * this.column).fill(val));
+
+            if (value === 'E') {
+                // 行列数中，较小的那个是最大子矩阵的大小
+                const size = this.row < this.column ? this.row : this.column;
+                // 默认全为 0
+                this._view = Float64Array.from(Array(this.row * this.column).fill(0));
+                // 对角线为 1
+                for (let i = 0; i < size; i++) {
+                    this.set(i, i, 1);
+                }
+            }
+            else {
+                this._view = Float64Array.from(Array(this.row * this.column).fill(value));
+            }
         }
     }
 
@@ -74,12 +102,12 @@ export default class Matrix {
             const { row, column } = calMatrixSize(matrix);
             const data = matrix.reduce((ans, item) => ans.concat(item), []);
 
-            result = new Matrix(row, column);
+            result = new Matrix(row, column, 0);
             result._view.set(data);
         }
         // 复制矩阵
         else {
-            result = new Matrix(matrix.row, matrix.column);
+            result = new Matrix(matrix.row, matrix.column, 0);
             result._view = Float64Array.from(matrix._view);
         }
 
@@ -320,7 +348,7 @@ export default class Matrix {
         const column = a.column;
 
         // 乘法计算
-        const ans = new Matrix(row, column);
+        const ans = new Matrix(row, column, 0);
         for (let i = 0; i < row; i++) {
             for (let j = 0; j < column; j++) {
                 let value = ans.get(i, j);
@@ -391,17 +419,17 @@ export default class Matrix {
     /**
      * 列主元 LU 三角分解，返回 L、U、P 矩阵
      *
-     * @returns {[Matrix, Matrix, Matrix]}
+     * @returns {{ L: Matrix, U: Matrix, P: Matrix }}
      */
-    luDecompose(): [Matrix, Matrix, Matrix] {
+    luDecompose() {
         if (this.row !== this.column) {
             throw new Error('(matrix) only the matrix can be decomposed.');
         }
 
-        const n = this.row,             // 行列式的行数
-            U = Matrix.from(this),      // 上三角行列式
-            L = new Matrix(n),          // 下三角行列式
-            P = new Matrix(n, 'E');     // 变换行列式，初始为单位矩阵
+        const n = this.row;               // 行列式的行数
+        const U = Matrix.from(this);      // 上三角行列式
+        const L = new Matrix(n);          // 下三角行列式
+        const P = new Matrix(n, 'E');     // 变换行列式，初始为单位矩阵
 
         for (let k = 0; k < n; k++) {
             if (k > 0) {
@@ -434,7 +462,7 @@ export default class Matrix {
         for (let i = 0; i < n; i++) {
             L.set(i, i, 1);
         }
-        return ([L, U, P]);
+        return ({ L, U, P });
     }
     /**
      * 基于LU分解的矩阵求逆
@@ -442,7 +470,8 @@ export default class Matrix {
      * @returns {Matrix}
      */
     inverse(): Matrix {
-        const [L, U, P] = this.luDecompose(), n = this.row;
+        const n = this.row;
+        const { L, U, P } = this.luDecompose();
 
         for (let i = 0; i < U.row; i++) {
             if (U.get(i, i) === 0) {
@@ -450,10 +479,11 @@ export default class Matrix {
             }
         }
 
-        // L、U的逆矩阵初始化
-        const li = new Matrix(n), ui = new Matrix(n);
+        // L、U 的逆矩阵初始化
+        const li = new Matrix(n);
+        const ui = new Matrix(n);
 
-        // U的逆矩阵
+        // U 的逆矩阵
         for (let i = 0; i < n; i++) {
             ui.set(i, i, 1 / U.get(i, i));
             for (let j = i - 1; j >= 0; j--) {
@@ -464,7 +494,8 @@ export default class Matrix {
                 ui.set(j, i, s / U.get(j, j));
             }
         }
-        // L的逆矩阵
+
+        // L 的逆矩阵
         for (let i = 0; i < n; i++) {
             li.set(i, i, 1);
             for (let j = i + 1; j < n; j++) {
@@ -475,9 +506,9 @@ export default class Matrix {
                 li.set(j, i, s);
             }
         }
+
         // ul的逆矩阵相乘得到原矩阵的逆矩阵
-        const ans = ui.mul(li).mul(P);
-        return (ans);
+        return ui.mul(li).mul(P);
     }
     /**
      * 向右串联矩阵，原矩阵不变，返回新矩阵
@@ -487,7 +518,7 @@ export default class Matrix {
     concatRight(...args: MatrixInput[]) {
         const matrixs = args.map((Matrix.from));
         const totalCol = matrixs.reduce((col, ma) => col + ma.column, this.column);
-        const result = new Matrix(this.row, totalCol);
+        const result = new Matrix(this.row, totalCol, 0);
 
         // 添加 this 矩阵元素到 result
         this.forEach((n, [i, j]) => result.set(i, j, n));
@@ -513,7 +544,7 @@ export default class Matrix {
     concatDown(...args: MatrixInput[]) {
         const matrixs = args.map((Matrix.from));
         const totalRow = matrixs.reduce((row, ma) => row + ma.row, this.row);
-        const result = new Matrix(totalRow, this.column);
+        const result = new Matrix(totalRow, this.column, 0);
 
         // 添加 this 矩阵元素到 result
         this.forEach((n, [i, j]) => result.set(i, j, n));
@@ -545,6 +576,26 @@ export default class Matrix {
 
             callback(this._view[i], [x, y]);
         }
+    }
+    /**
+     * map 迭代
+     *  - 从第一行开始，从左至右
+     *
+     * @param {(value: number, position: [number, number]) => number} callback
+     * @returns {this}
+     */
+    map(callback: (value: number, position: [number, number]) => number) {
+        const newMa = Matrix.from(this);
+
+        for (let i = 0; i < newMa._view.length; i++) {
+            const x = Math.floor(i / newMa.column);
+            const y = i % newMa.column;
+            const result = callback(newMa._view[i], [x, y]);
+
+            newMa._view[i] = result;
+        }
+
+        return newMa;
     }
 }
 

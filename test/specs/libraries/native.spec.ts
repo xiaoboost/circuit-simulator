@@ -53,15 +53,6 @@ describe('native.ts: extend native data types', () => {
         });
     });
     describe('Number', () => {
-        test('Number.scientificCountParser()', () => {
-            expect(Number.scientificCountParser('mmm')).toBe(NaN);
-            expect(Number.scientificCountParser('100')).toBe(100);
-            expect(Number.scientificCountParser('1m')).toBe(0.001);
-            expect(Number.scientificCountParser('1M')).toBe(1e6);
-            expect(Number.scientificCountParser('1.5G')).toBe(1.5e9);
-            expect(Number.scientificCountParser('1e3')).toBe(1000);
-            expect(Number.scientificCountParser('1e-2')).toBe(0.01);
-        });
         test('Number.prototype.rank()', () => {
             expect((100).rank()).toBe(2);
             expect((0.001).rank()).toBe(-3);

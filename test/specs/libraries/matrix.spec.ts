@@ -4,7 +4,7 @@ describe('matrix.ts: class of Matrix', () => {
     test('create a instance', () => {
         let ma: Matrix;
         // 0 行列式填充以及从数组到行列式
-        expect(Matrix.from([[0, 0, 0], [0, 0, 0]])).toEqualMatrix(new Matrix(2, 3));
+        expect(Matrix.from([[0, 0, 0], [0, 0, 0]])).toEqualMatrix(new Matrix(2, 3, 0));
         // 0矩阵
         ma = new Matrix(5);
         for (let i = 0; i < 5; i++) {
@@ -147,7 +147,7 @@ describe('matrix.ts: class of Matrix', () => {
             [-0.1026,  0.0937,  0.0177,   0.096, -0.1438],
         ]));
 
-        expect(() => new Matrix(3, 4).inverse()).toThrowError('(matrix) only the matrix can be decomposed.');
+        expect(() => new Matrix(3, 4, 0).inverse()).toThrowError('(matrix) only the matrix can be decomposed.');
         expect(() => new Matrix(3).inverse()).toThrowError('(matrix) this matrix has no inverse.');
     });
 });
