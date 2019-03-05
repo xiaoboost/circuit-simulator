@@ -1,3 +1,5 @@
+import { isArray } from './utils';
+
 /**
  * 简写数字正则匹配
  *
@@ -34,24 +36,58 @@ export function numberParser(notation: string) {
 }
 
 /** 简写数字单位 */
-export type NumberUnit = 'p' | 'n' | 'u' | 'μ' | 'm' | '' | 'k' | 'M' | 'G';
+export type NumberUnit = 'G' | 'M' | 'k' | '' | 'm' | 'μ' | 'u' | 'n' | 'p';
 
-/** 生成简写单位下拉列表选项 */
-export function createSelectList(units: NumberUnit[], label: string) {
+/** 简写数字快捷选项下拉列表 */
+export type SelectList = {
+    label: string;
+    value: string;
+}[];
+
+/** 简写数字对应的中文 */
+const unitMap = {
+    'p': '皮',
+    'n': '纳',
+    'u': '微',
+    'm': '毫',
+    '': '',
+    'k': '千',
+    'M': '兆',
+    'G': '吉',
+};
+
+/** 生成简写数字单位快捷选择列表选项 */
+export function createSelectList(label: string, isChinese?: boolean): SelectList;
+export function createSelectList(units: NumberUnit[], label: string, isChinese?: boolean): SelectList;
+export function createSelectList(units: NumberUnit[] | string, label?: string | boolean, isChinese = false) {
+    // 未输入单位列表
+    if (!isArray(units)) {
+        isChinese = Boolean(label);
+        label = units;
+        units = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'];
+    }
+
     const unitFilted: Exclude<NumberUnit, 'μ'>[] = units.map((unit) => unit === 'μ' ? 'u' : unit);
-    const unitMap = {
-        'p': '皮',
-        'n': '纳',
-        'u': '微',
-        'm': '毫',
-        '': '',
-        'k': '千',
-        'M': '兆',
-        'G': '吉',
-    };
 
     return unitFilted.map((unit) => ({
-        label: `${unitMap[unit]}${label}`,
+        label: isChinese
+            ? `${unitMap[unit]}${label}`
+            : `${unit}${label}`,
         value: unit,
     }));
+}
+
+/** 解析输入数字 */
+export function splitNumber(str: string) {
+    const matcher = /^(\d+)([GMkmunp]?)$/;
+    const match = matcher.exec(str);
+
+    if (!match) {
+        throw new Error(`Number Error: ${str}`);
+    }
+
+    return {
+        number: match[1],
+        unit: (match[2] || '') as NumberUnit,
+    };
 }

@@ -2,8 +2,8 @@ import { Component, Watch, Vue } from 'vue-property-decorator';
 
 import * as Store from 'src/vuex';
 import { State, Mutation } from 'vuex-class';
-import { createSelectList, NumberUnit } from 'src/lib/native';
 import { PartType } from 'src/components/electronic-part';
+import { createSelectList, NumberUnit, splitNumber } from 'src/lib/native';
 
 /** 表单数据接口 */
 interface FormData {
@@ -53,8 +53,8 @@ export default class ConfigPanel extends Vue {
     };
 
     // 时间单位选择列表
-    endTimeUnits = createSelectList(['', 'm', 'u'], '秒');
-    stepTimeUnits = createSelectList(['m', 'u', 'n', 'p'], '秒');
+    endTimeUnits = createSelectList(['', 'm', 'u'], '秒', true);
+    stepTimeUnits = createSelectList(['m', 'u', 'n', 'p'], '秒', true);
 
     /** 示波器类型选项列表 */
     chartTypes = [
@@ -70,27 +70,13 @@ export default class ConfigPanel extends Vue {
 
     @Watch('time')
     private update() {
-        const getNumber = (str: string) => {
-            const matcher = /^(\d+)([mup]?)$/;
-            const match = matcher.exec(str);
+        const end = splitNumber(this.time.end);
+        const step = splitNumber(this.time.step);
 
-            if (!match) {
-                throw new Error(`Time Error: ${str}`);
-            }
-
-            return {
-                number: +match[1],
-                unit: match[2] || '',
-            };
-        };
-
-        const end = getNumber(this.time.end);
-        const step = getNumber(this.time.step);
-
-        this.data.end = end.number;
-        this.data.step = step.number;
-        this.data.endUnit = end.unit as NumberUnit;
-        this.data.stepUnit = step.unit as NumberUnit;
+        this.data.end = +end.number;
+        this.data.step = +step.number;
+        this.data.endUnit = end.unit;
+        this.data.stepUnit = step.unit;
     }
 
     /** 添加示波器 */

@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Point from 'src/lib/point';
+import Electronics from './parts';
+import ParamsDialog from 'src/components/params-dialog';
 
-import ParamsDialog from 'src/components/params-dialog/component';
-import Electronics from 'src/components/electronic-part/parts';
+import { createSelectList, splitNumber } from 'src/lib/native';
 
 // 生成全局参数设置对话框组件
 const Comp = Vue.extend(ParamsDialog);
@@ -11,6 +12,11 @@ const dialog = new Comp<ParamsDialog>().$mount(DOM);
 
 // 将组件插入 body 末尾
 document.body.appendChild(dialog.$el);
+
+interface Params {
+    id: string;
+    params: string[];
+}
 
 /**
  * 打开器件的参数设置对话框
@@ -26,26 +32,35 @@ export default function setPartParams(
     id: string,
     position: Point,
     params: string[],
-): Promise<{ id: string; params: string[] }> {
+) {
     // 参数对话框初始化赋值
     dialog.id = id;
+    dialog.title = Electronics[type].introduction;
     dialog.position = Point.from(position);
-    dialog.params = Electronics[type].params.map((param, i) => ({
-        unit: param.unit,
-        label: param.label + '：',
-        value: params[i],
-    }));
+    dialog.params = Electronics[type].params.map((param, i) => {
+        const value = splitNumber(params[i]);
 
-    // 参数对话框显示
-    dialog.vision = true;
+        return {
+            label: param.label,
+            units: createSelectList(param.unit, false),
+            value: value.number,
+            unit: value.unit,
+        };
+    });
 
-    return new Promise((resolve) => {
-        dialog.cancel = () => dialog.vision = false;
+    // 显示对话框
+    dialog.show = true;
+
+    // 关闭对话框函数
+    const close = () => dialog.show = false;
+
+    return new Promise<Params>((resolve) => {
+        dialog.cancel = close;
         dialog.confirm = () => {
-            dialog.vision = false;
+            close();
             resolve({
                 id: dialog.id,
-                params: dialog.params.map((param) => param.value),
+                params: dialog.params.map(({ value, unit }) => value + unit),
             });
         };
     });
