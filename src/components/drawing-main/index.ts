@@ -1,10 +1,11 @@
 import Point from 'src/lib/point';
 import { State } from 'vuex-class';
+import { State as StateTree } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
 import EventController from './event-controller';
-import PartComponent, { PartData } from '../electronic-part';
-import LineComponent, { LineData } from '../electronic-line';
+import PartComponent from '../electronic-part';
+import LineComponent from '../electronic-line';
 
 export * from './event-controller';
 
@@ -55,10 +56,10 @@ export default class DrawingMain extends Vue {
     exclusion = false;
 
     @State('parts')
-    partsAll!: PartData[];
+    partsAll!: StateTree['parts'];
 
     @State('lines')
-    linesAll!: LineData[];
+    linesAll!: StateTree['lines'];
 
     $el!: HTMLElement;
 
@@ -85,6 +86,10 @@ export default class DrawingMain extends Vue {
 
     /** 放大缩小图纸 */
     resizeMap(e: WheelEvent) {
+        if (this.exclusion) {
+            return;
+        }
+
         const mousePosition = new Point(e.pageX, e.pageY);
         let size = this.zoom * 20;
 
