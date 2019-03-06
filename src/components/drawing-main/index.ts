@@ -10,8 +10,8 @@ export * from './event-controller';
 
 /** 图纸状态接口 */
 export type MapStatus =
-    Readonly<Pick<DrawingMain, 'zoom' | 'position' | 'exclusion'>> &
-    Pick<DrawingMain, 'devicesNow'>;
+    Readonly<Pick<DrawingMain, 'zoom' | 'position'>> &
+    Pick<DrawingMain, 'devicesNow' | 'exclusion'>;
 
 @Component({
     components: {
@@ -37,6 +37,7 @@ export type MapStatus =
             exclusion: {
                 enumerable: true,
                 get: () => this.exclusion,
+                set: (value: boolean) => this.exclusion = value,
             },
         });
 

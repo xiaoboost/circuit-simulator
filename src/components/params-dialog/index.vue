@@ -1,7 +1,7 @@
 <script lang="ts" src="./index.ts"></script>
 
 <template>
-<a-popover :title="title" v-model="show">
+<a-popover :title="title" :visible="show">
     <template slot="content">
         <article class="params-dialog__article">
             <!-- 说明 -->
@@ -15,11 +15,20 @@
             </section>
             <!-- 输入 -->
             <section class="params__input">
-                输入
-            </section>
-            <!-- 单位 -->
-            <section class="params__unit">
-                <span>&nbsp;</span>
+                <a-input v-model="id" />
+                <a-input
+                    v-for="(param, i) in params"
+                    v-model="param.value"
+                    :key="i">
+                    <a-select slot="addonAfter" v-model="param.unit">
+                        <a-select-option
+                            v-for="unit in param.units"
+                            :value="unit.value"
+                            :key="unit.value">
+                            {{ unit.label }}
+                        </a-select-option>
+                    </a-select>
+                </a-input>
             </section>
         </article>
         <footer class="params-dialog__footer">
@@ -53,9 +62,12 @@
     background-color transparent
 }
 
+BackLen = -4px
+
 .params-dialog__article {
     padding 0
-    line-height 24px
+    line-height 32px
+    margin 0 BackLen
     display flex
 
     > section {
@@ -69,27 +81,33 @@
         font-size 14px
         font-family font-default
         align-items flex-start
+        margin-right 6px
 
         label::after {
-            content ": "
+            content ":"
         }
     }
 
     .params__input {
-    
+        > * {
+            width 140px
+        }
     }
 
-    .params__unit {
-    
+    .params__label,
+    .params__input {
+        > * {
+            margin-bottom 8px
+        }
     }
 }
 
 .params-dialog__footer {
     text-align right
-    margin-top 6px
+    margin 2px BackLen 0 BackLen
 
     .ant-btn {
-        margin-left 6px
+        margin-left 4px
     }
 }
 </style>

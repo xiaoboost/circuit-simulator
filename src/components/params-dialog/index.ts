@@ -32,6 +32,11 @@ export default class ParamsDialog extends Vue {
     /** 用于外部引用的`确定`接口 */
     confirm!: () => void;
 
+    /** TODO: 参数单位的最大宽度 */
+    get unitWidth() {
+        return 20;
+    }
+
     /** “取消”回调函数 */
     private beforeCancel() {
         // 取消所有状态
