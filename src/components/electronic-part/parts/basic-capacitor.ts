@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType, IterativeInputType } from './constant';
+import { ElectronicPrototype, PartType, IterativeInputType, UnitType  } from './constant';
 import { numberParser } from 'src/lib/native';
 
 const data: ElectronicPrototype = {
@@ -11,7 +11,7 @@ const data: ElectronicPrototype = {
     params: [
         {
             label: '电容量',
-            unit: 'F',
+            unit: UnitType.Farad,
             default: '100u',
             vision: true,
         },

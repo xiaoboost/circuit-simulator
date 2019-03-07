@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'V',
@@ -10,7 +10,7 @@ const part: ElectronicPrototype = {
     params: [
         {
             label: '电压值',
-            unit: 'V',
+            unit: UnitType.Volt,
             default: '12',
             vision: true,
         },

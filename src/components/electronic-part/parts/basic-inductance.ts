@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'L',
@@ -10,7 +10,7 @@ const part: ElectronicPrototype = {
     params: [
         {
             label: '电感量',
-            unit: 'H',
+            unit: UnitType.Henry,
             default: '10u',
             vision: true,
         },

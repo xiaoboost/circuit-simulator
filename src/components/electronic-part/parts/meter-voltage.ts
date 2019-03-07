@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType  } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'VM',

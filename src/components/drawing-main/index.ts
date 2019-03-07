@@ -95,7 +95,8 @@ export default class DrawingMain extends Vue {
 
         if (e.deltaY > 0) {
             size -= 5;
-        } else if (e.deltaY < 0) {
+        }
+        else if (e.deltaY < 0) {
             size += 5;
         }
 

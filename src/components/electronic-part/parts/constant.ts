@@ -29,6 +29,28 @@ export const enum PartType {
     ReferenceGround,
 }
 
+/** 器件参数单位枚举 */
+export const enum UnitType {
+    /** 法拉 - 电容量 */
+    Farad = 'F',
+    /** 亨利 - 电感量 */
+    Henry = 'H',
+    /** 安培 - 电流量 */
+    Ampere = 'A',
+    /** 伏特 - 电压值 */
+    Volt = 'V',
+    /** 欧姆 - 电阻值 */
+    Ohm = 'Ω',
+    /** 赫兹 - 频率 */
+    Hertz = 'Hz',
+    /** 分贝 - 比例对数值 */
+    Decibel = 'dB',
+    /** 相位角 */
+    Degree = '°',
+    /** 无 - 没有单位 */
+    Space = '',
+}
+
 /** 器件每项参数的说明 */
 export interface ParmasDescription {
     /**
@@ -40,7 +62,7 @@ export interface ParmasDescription {
      * 该参数的物理单位
      * @type {string}
      */
-    readonly unit: string;
+    readonly unit: UnitType;
     /**
      * 该参数是否对外显示
      * @type {boolean}

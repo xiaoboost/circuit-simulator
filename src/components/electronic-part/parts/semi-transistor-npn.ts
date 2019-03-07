@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'Q',
@@ -10,25 +10,25 @@ const part: ElectronicPrototype = {
     params: [
         {
             label: '电流放大倍数',
-            unit: '',
+            unit: UnitType.Space,
             default: '40',
             vision: false,
         },
         {
             label: 'B极电阻',
-            unit: 'Ω',
+            unit: UnitType.Ohm,
             default: '26',
             vision: false,
         },
         {
             label: 'BE饱和压降',
-            unit: 'V',
+            unit: UnitType.Volt,
             default: '0.6',
             vision: false,
         },
         {
             label: 'CE饱和压降',
-            unit: 'V',
+            unit: UnitType.Volt,
             default: '1',
             vision: false,
         },

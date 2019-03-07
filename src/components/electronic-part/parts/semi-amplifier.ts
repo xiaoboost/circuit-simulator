@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 
 const part: ElectronicPrototype = {
     pre: 'OP',
@@ -11,19 +11,19 @@ const part: ElectronicPrototype = {
     params: [
         {
             label: '开环增益',
-            unit: 'dB',
+            unit: UnitType.Decibel,
             default: '120',
             vision: false,
         },
         {
             label: '输入电阻',
-            unit: 'Ω',
+            unit: UnitType.Ohm,
             default: '80M',
             vision: false,
         },
         {
             label: '输出电阻',
-            unit: 'Ω',
+            unit: UnitType.Ohm,
             default: '60',
             vision: false,
         },

@@ -1,4 +1,4 @@
-import { ElectronicPrototype, PartType } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 import { numberParser } from 'src/lib/native';
 
 const data: ElectronicPrototype = {
@@ -11,7 +11,7 @@ const data: ElectronicPrototype = {
     params: [
         {
             label: '阻值',
-            unit: 'Ω',
+            unit: UnitType.Ohm,
             default: '10k',
             vision: true,
         },
