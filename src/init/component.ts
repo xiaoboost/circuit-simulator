@@ -3,6 +3,7 @@ import Vue from 'vue';
 // css
 import 'ant-design-vue/es/style/index.css';
 import 'ant-design-vue/es/grid/style/index.css';
+import 'ant-design-vue/es/icon/style/index.css';
 import 'ant-design-vue/es/input/style/index.css';
 import 'ant-design-vue/es/select/style/index.css';
 import 'ant-design-vue/es/popover/style/index.css';
@@ -14,6 +15,7 @@ import 'ant-design-vue/es/input-number/style/index.css';
 import {
     Row,
     Col,
+    Icon,
     Input,
     Popover,
     Tooltip,
@@ -24,6 +26,7 @@ import {
 
 Vue.use(Row);
 Vue.use(Col);
+Vue.use(Icon);
 Vue.use(Input);
 Vue.use(Popover);
 Vue.use(Tooltip);
