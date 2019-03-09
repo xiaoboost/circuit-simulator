@@ -7,23 +7,19 @@
             <div class="fab" id="fab-text"></div>
         </div>
         <template v-else>
-            <div
-                class="fab-container"
-                v-for="icon in icons"
-                :key="icon.name"
-                @click="action(icon.name)">
-                <span
-                    v-if="icon.intro"
-                    class="fab-tip"
-                    v-text="icon.intro">
-                </span>
-                <div class="fab">
-                    <svg :viewBox="`0 0 ${icon.long} ${icon.long}`">
-                        <g :transform="`translate(${icon.translate(zoom)}) scale(${zoom}, ${zoom})`">
-                            <path :d="icon.d"></path>
-                        </g>
-                    </svg>
-                </div>
+            <!-- 模拟运行 -->
+            <div class="fab-container" @click="simulate">
+                <a-icon class="fab" type="caret-right" />
+            </div>
+            <!-- 添加器件 -->
+            <div class="fab-container" @click="addParts">
+                <span class="fab-tip">添加器件</span>
+                <a-icon class="fab" type="plus" />
+            </div>
+            <!-- 运行设置 -->
+            <div class="fab-container" @click="setConfig">
+                <span class="fab-tip">运行设置</span>
+                <a-icon class="fab" type="setting" />
             </div>
         </template>
     </footer>
@@ -56,6 +52,15 @@
 
     .fab-container:nth-child(n+2)
         margin -0.5em 0em
+
+    .fab-container:first-of-type .fab svg
+        width 100%
+        height 100%
+        transform translate(3px, 1px)
+
+    .fab-container:nth-child(n+2) .fab svg
+        width 60%
+        height 60%
 
     &:hover
         .fab-container:nth-child(n+2)
@@ -125,6 +130,9 @@
         overflow hidden
         box-shadow 0px 2px 3px rgba(0, 0, 0, 0.5)
         transition box-shadow 0.2s
+        display flex
+        justify-content center
+        align-items center
 
     .fab:hover
         cursor pointer

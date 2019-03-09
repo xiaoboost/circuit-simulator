@@ -1,22 +1,17 @@
-import { icons, IconName } from './icons';
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation, Action } from 'vuex-class';
 
 import {
     GetterName,
-    Getter as GetterTree,
     MutationName,
-    Mutation as MutationTree,
     ActionName,
+    Getter as GetterTree,
+    Mutation as MutationTree,
     Action as ActionTree,
 } from 'src/vuex';
 
 @Component
 export default class ActionMenu extends Vue {
-    /** 图标缩放比例 */
-    readonly zoom = 0.6;
-    /** 图标数据 */
-    readonly icons = icons;
     /** 当前是否正在运行 */
     private isRun = false;
 
@@ -34,21 +29,11 @@ export default class ActionMenu extends Vue {
 
     /** 运行电路模拟 */
     @Action(ActionName.SOLVE_CIRCUIT)
-    simulate!: ActionTree[ActionName.SOLVE_CIRCUIT];
+    solve!: ActionTree[ActionName.SOLVE_CIRCUIT];
 
-    action(name: IconName) {
-        switch (name) {
-            case IconName.Add:
-                this.addParts();
-                break;
-            case IconName.Config:
-                this.setConfig();
-                break;
-            case IconName.Run:
-                this.isRun = true;
-                this.simulate();
-                break;
-            default:
-        }
+    /** 模拟运行 */
+    simulate() {
+        this.isRun = true;
+        this.solve();
     }
 }
