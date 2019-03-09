@@ -94,6 +94,10 @@ module.exports = {
                     'stylus-loader',
                 ],
             },
+            {
+                test: resolve('node_modules/@ant-design/icons/lib/dist.js'),
+                loader: resolve('build/ant-icons-loader.js'),
+            },
         ],
     },
     optimization: {
