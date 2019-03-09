@@ -1,5 +1,5 @@
 import { ElectronicPrototype, PartType, UnitType  } from './constant';
-import { numberParser } from 'src/lib/native';
+import { numberParser } from 'src/lib/number';
 
 const data: ElectronicPrototype = {
     pre: 'R',

@@ -36,7 +36,7 @@ export function numberParser(notation: string) {
 }
 
 /** 简写数字单位 */
-export type NumberUnit = 'G' | 'M' | 'k' | '' | 'm' | 'μ' | 'u' | 'n' | 'p';
+export type NumberRank = 'G' | 'M' | 'k' | '' | 'm' | 'μ' | 'u' | 'n' | 'p';
 
 /** 简写数字快捷选项下拉列表 */
 export type SelectList = {
@@ -58,8 +58,8 @@ const unitMap = {
 
 /** 生成简写数字单位快捷选择列表选项 */
 export function createSelectList(label: string, isChinese?: boolean): SelectList;
-export function createSelectList(units: NumberUnit[], label: string, isChinese?: boolean): SelectList;
-export function createSelectList(units: NumberUnit[] | string, label?: string | boolean, isChinese = false) {
+export function createSelectList(units: NumberRank[], label: string, isChinese?: boolean): SelectList;
+export function createSelectList(units: NumberRank[] | string, label?: string | boolean, isChinese = false) {
     // 未输入单位列表
     if (!isArray(units)) {
         isChinese = Boolean(label);
@@ -67,7 +67,7 @@ export function createSelectList(units: NumberUnit[] | string, label?: string | 
         units = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'];
     }
 
-    const unitFilted: Exclude<NumberUnit, 'μ'>[] = units.map((unit) => unit === 'μ' ? 'u' : unit);
+    const unitFilted: Exclude<NumberRank, 'μ'>[] = units.map((unit) => unit === 'μ' ? 'u' : unit);
 
     return unitFilted.map((unit) => ({
         label: isChinese
@@ -88,6 +88,6 @@ export function splitNumber(str: string) {
 
     return {
         number: match[1],
-        unit: (match[2] || '') as NumberUnit,
+        rank: (match[2] || '') as NumberRank,
     };
 }
