@@ -15,7 +15,7 @@ function transitionStyle(time: number) {
 
 /** 创建 Transition 组件钩子 */
 function transitionHooks(duration: number) {
-    // 注：情不要改动下面所有函数中操作的赋值顺序
+    // 注：请不要改动下面所有函数中操作的赋值顺序
 
     /** 组件缓存数据 */
     const meta: TransitionMeta = {

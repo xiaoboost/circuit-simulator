@@ -79,7 +79,7 @@ export function createSelectList(units: NumberRank[] | string, label?: string | 
 
 /** 解析输入数字 */
 export function splitNumber(str: string) {
-    const matcher = /^(\d+)([GMkmunp]?)$/;
+    const matcher = /^([\d.]+)([GMkmunp]?)$/;
     const match = matcher.exec(str);
 
     if (!match) {

@@ -23,7 +23,7 @@ export function delay(time = 0) {
  * @param {string} type
  * @returns {Promise<Event>}
  */
-export function onceEvent(el: Element, type: string): Promise<Event> {
+export function onceEvent<T extends Event>(el: Element, type: T['type']): Promise<T> {
     let option: boolean | {
         passive?: boolean;
         once?: boolean;
@@ -47,7 +47,7 @@ export function onceEvent(el: Element, type: string): Promise<Event> {
         el.addEventListener(
             type,
             function once(event: Event) {
-                resolve(event);
+                resolve(event as T);
                 if (!supportsOnce) {
                     el.removeEventListener(type, once);
                 }

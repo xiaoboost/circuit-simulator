@@ -327,14 +327,7 @@ export default class PartComponent extends ElectronicCore {
 
     /** 设置属性 */
     async setParams() {
-        const { mapStatus } = this;
-
-        if (mapStatus.exclusion) {
-            return;
-        }
-
-        mapStatus.exclusion = true;
-        mapStatus.devicesNow = [this.id];
+        this.mapStatus.devicesNow = [this.id];
 
         const params = await setPartParams(
             this.type,
@@ -352,8 +345,6 @@ export default class PartComponent extends ElectronicCore {
         ) {
             this.update(params);
         }
-
-        mapStatus.exclusion = false;
     }
     /** 开始新器件设置事件 */
     async startCreateEvent() {

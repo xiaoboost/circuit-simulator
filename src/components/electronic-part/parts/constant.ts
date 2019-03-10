@@ -193,7 +193,7 @@ export interface ElectronicApart {
 
 /** 器件原型数据类型 */
 export interface ElectronicPrototype {
-    /** 器件编号的前置标记 */
+    /** 器件编号的默认前置标记 */
     readonly pre: string;
     /** 器件种类 */
     readonly type: PartType;

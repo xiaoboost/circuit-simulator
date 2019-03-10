@@ -3,6 +3,8 @@ import { VNodeChildrenArrayContents } from 'vue';
 
 import { Mutation } from 'vuex-class';
 import { MutationName, Mutation as MutationTree } from 'src/vuex';
+
+import { cancelDialog } from 'src/components/params-dialog';
 import { findPartComponent } from 'src/components/electronic-part/common';
 import { Electronics, PartType, createPartData } from 'src/components/electronic-part';
 
@@ -105,6 +107,8 @@ export default class PartsPanel extends Vue {
 
     /** 创建器件 */
     async createPart(name: keyof Electronics) {
+        cancelDialog();
+
         const data = createPartData(name);
 
         this.storePart(data);
