@@ -44,8 +44,6 @@ Vue.use(Vuex);
 
 /** 历史操作记录上限 */
 const historyLimit = 10;
-/** 求解器 */
-const solver = new Solver();
 
 const local: State = {
     time: {
@@ -276,8 +274,7 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
     },
     /** 求解电路 */
     async [ActionName.SOLVE_CIRCUIT]({ state }) {
-        // 设置求解器
-        solver.setSolver(state.parts, state.lines);
+        const solver = new Solver(state.parts, state.lines);
     },
 };
 

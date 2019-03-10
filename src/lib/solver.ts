@@ -20,12 +20,18 @@ interface Observer {
 export default class Solver {
     /** 器件数据 */
     parts: PartData[] = [];
-    /** 经拆分并去掉辅助器件的所有器件数据 */
-    partsAll: PartData[] = [];
     /** 导线数据 */
     lines: LineData[] = [];
     /** 事件函数 */
     events: ProgressHandler[] = [];
+
+    /**
+     * 处理之后的所有器件合集
+     *  - 没有辅助器件
+     *  - 没有可以继续拆分的器件
+     *  - 不包含 connect 数据
+     */
+    partsAll: Omit<PartData, 'connect'>[] = [];
 
     /** 系数矩阵 */
     factor!: Matrix;
@@ -50,6 +56,24 @@ export default class Solver {
     /** 支路数量 */
     get branchNumber() {
         return Math.max(...Object.values(this.PinBranchMap));
+    }
+
+    constructor(parts: PartData[], lines: LineData[]) {
+        // 内部储存初始化
+        this.parts = parts;
+        this.lines = lines;
+        this.PinNodeMap = {};
+        this.PinBranchMap = {};
+
+        // 状态初始化
+        // 注：不可以调整以下函数的调用顺序
+        this.setPinBranchMap();
+        this.setPinNodeMap();
+        this.splitParts();
+        this.handleAttach();
+        this.observeMeter();
+        this.setCircuitMatrix();
+        this.setUpdateMethod();
     }
 
     /** 用 id 搜索器件或导线 */
@@ -220,13 +244,22 @@ export default class Solver {
 
             // 根据器件内部结构追加 PinBranchMap
             for (const insidePart of insideParts) {
+                // 新器件编号
+                const newId = `${part.id}-${insidePart.id}`;
+                // 新器件支路编号
                 const branchNumber = this.branchNumber + 1;
+                // 新器件的原型
                 const insidePrototype = Electronics[insidePart.type];
 
-                // TODO: 拆分的器件是否需要加入总的器件堆栈？
+                // 新器件入栈
+                this.partsAll.push({
+                    id: newId,
+                    type: insidePart.type,
+                    params: insidePart.params(part),
+                });
 
                 for (let i = 0; i < insidePrototype.points.length; i++) {
-                    PinBranchMap[`${part.id}-${insidePart.id}-${i}`] = branchNumber;
+                    PinBranchMap[`${newId}-${i}`] = branchNumber;
                 }
             }
         }
@@ -338,23 +371,6 @@ export default class Solver {
     /** 创建参数迭代函数 */
     private setUpdateMethod() {
 
-    }
-
-    /** 设置求解器 */
-    setSolver(parts: PartData[], lines: LineData[]) {
-        // 内部储存初始化
-        this.parts = parts;
-        this.lines = lines;
-        this.PinNodeMap = {};
-        this.PinBranchMap = {};
-
-        this.setPinNodeMap();
-        this.setPinBranchMap();
-        this.splitParts();
-        this.handleAttach();
-        this.observeMeter();
-        this.setCircuitMatrix();
-        this.setUpdateMethod();
     }
 
     /** 设置进度条事件 */

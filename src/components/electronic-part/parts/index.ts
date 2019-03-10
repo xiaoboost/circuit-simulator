@@ -20,7 +20,7 @@ import diode from './semi-diode';
 import transistor_npn from './semi-transistor-npn';
 import operational_amplifier from './semi-amplifier';
 
-import { ElectronicPrototype, PartType, UnitType  } from './constant';
+import { ElectronicPrototype, PartType } from './constant';
 
 type Electronics = { [key in PartType]: ElectronicPrototype };
 const Electronics: Electronics = {

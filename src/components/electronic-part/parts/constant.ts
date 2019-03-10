@@ -173,10 +173,12 @@ export type ConstantCreation = (param: ConstantParams) => void;
 export interface ElectronicApart {
     /** 内部器件列表 */
     parts: {
+        /** 器件内部编号 */
         id: string;
+        /** 器件类型 */
         type: PartType;
         /** 生成当前器件参数 */
-        params(part: PartData): number[];
+        params(part: PartData): string[];
     }[];
     /**
      * 拆分器件的连接
