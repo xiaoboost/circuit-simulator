@@ -64,10 +64,11 @@ export default class ParamsDialog extends Vue {
     visibleChange(val: this['show']) {
         // 显示对话框时，导出关闭对话框的方法
         if (val) {
-            cancelDialog = () => {
-                this.beforeCancel();
-                this.$nextTick(() => cancelDialog = () => {});
-            };
+            cancelDialog = () => this.beforeCancel();
+        }
+        // 关闭后清空函数
+        else {
+            this.$nextTick(() => cancelDialog = () => {});
         }
     }
 
