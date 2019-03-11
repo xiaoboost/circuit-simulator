@@ -1,6 +1,0 @@
-.deploy_git/*
-.vscode/*
-node_modules/*
-dist/*
-_文档/*
-**/*.vue
