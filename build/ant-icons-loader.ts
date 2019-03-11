@@ -1,30 +1,18 @@
-const fs = require('fs');
-const { resolve } = require('./utils');
-const { getOptions } = require('loader-utils');
-const { extname, join } = require('path');
+import * as fs from 'fs-extra';
 
-/** fs 方法的 Promise 包装器 */
-const fsPromisify = (key) => {
-    return (...args) => new Promise((resolve, reject) =>
-        fs[key](...args, (err, result) => {
-            if (err) {
-                reject(err);
-            }
-            else {
-                resolve(result);
-            }
-        }),
-    )
-};
+import { resolve } from './utils';
+import { getOptions } from 'loader-utils';
+import { extname, join } from 'path';
+
+interface IconData {
+    type: string;
+    theme: string;
+}
 
 /** 生成组件标签正则 */
-const createMatcher = (key) =>{
+const createMatcher = (key: string) => {
     return new RegExp(`a-${key}[\\d\\D]+?(\\/>|<\\/a-${key}>)`, 'ig');
 };
-
-const lstat = fsPromisify('lstat');
-const readdir = fsPromisify('readdir');
-const readFile = fsPromisify('readFile');
 
 /** antd 组件 hash */
 const iconInComponentMap = {};
@@ -38,13 +26,13 @@ const componentIcon = [
 ];
 
 /** 列举出文件夹内的所有文件 */
-async function readFiles(input) {
-    const ans = [];
-    const dirs = await readdir(input);
+async function readFiles(input: string) {
+    const ans: string[] = [];
+    const dirs = await fs.readdir(input);
 
     for (let i = 0; i < dirs.length; i++) {
         const folder = join(input, dirs[i]);
-        const stat = await lstat(folder);
+        const stat = await fs.lstat(folder);
 
         if (stat.isDirectory()) {
             ans.push(...(await readFiles(folder)));
@@ -58,13 +46,13 @@ async function readFiles(input) {
 }
 
 /** 转为驼峰形式 */
-function camelize(input) {
-    input = input.charAt(0).toUpperCase() + input.slice(1)
+function camelize(input: string) {
+    input = input.charAt(0).toUpperCase() + input.slice(1);
     return input.replace(/-(\w)/g, (_, c) => c ? c.toUpperCase() : '');
 }
 
 /** 生成标准图标数据格式 */
-function createIconData(icon) {
+function createIconData(icon: string | PartPartial<IconData, 'theme'>) {
     let data;
 
     if (typeof icon === 'string') {
@@ -99,7 +87,7 @@ function createIconData(icon) {
 }
 
 /** 源码中搜索图标 */
-function constantIcon(content) {
+function constantIcon(content: string) {
     /** 匹配所有的图标 */
     const IconMatcher = createMatcher('icon');
     /** 匹配图标类型 */
@@ -107,7 +95,7 @@ function constantIcon(content) {
     /** 匹配图标主题 */
     const themeMatcher = /theme="([^"]+?)"/;
 
-    const result = [];
+    const result: IconData[] = [];
     const contentMatch = content.match(IconMatcher);
 
     if (!contentMatch) {
@@ -124,7 +112,7 @@ function constantIcon(content) {
 
         result.push(createIconData({
             type: typeMatch[1].trim(),
-            theme: themeMatch && themeMatch[1],
+            theme: (themeMatch && themeMatch[1]) || '',
         }));
     }
 
@@ -132,11 +120,11 @@ function constantIcon(content) {
 }
 
 /** ant 组件内部使用的图标 */
-function iconInComponent(content) {
+function iconInComponent(content: string) {
     /** 图标数据 */
     const result = [];
     /** 是否已经构建 */
-    const hasBuildIn = (name) => Boolean(iconInComponentMap[name]);
+    const hasBuildIn = (name: string) => Boolean(iconInComponentMap[name]);
 
     for (const comp of componentIcon) {
         // 跳过已经构建的图标
@@ -159,18 +147,18 @@ function iconInComponent(content) {
 }
 
 /** 去除重复的图标 */
-function uniqueIcon(icons) {
+function uniqueIcon(icons: IconData[]) {
     const labelMap = {};
-    const label = (icon) => `${icon.type}-${icon.theme}`;
-    
+    const label = ({ type, theme }: IconData) => `${type}-${theme}`;
+
     return icons
-        .map((value, index) => ({ value, key: label(value, index) }))
+        .map((value) => ({ value, key: label(value) }))
         .filter(({ key }) => (labelMap[key] ? false : (labelMap[key] = true)))
         .map(({ value }) => value);
 }
 
 // 专门用于解析 ant-icons 图标的加载器
-module.exports = async function() {
+export default async function(this: any) {
     const options = getOptions(this) || {};
     const icons = (options.inclues || []).map(createIconData);
 
@@ -184,7 +172,7 @@ module.exports = async function() {
             continue;
         }
 
-        const content = (await readFile(file)).toString();
+        const content = (await fs.readFile(file)).toString();
 
         icons.push(...constantIcon(content));
         icons.push(...iconInComponent(content));
@@ -196,6 +184,6 @@ module.exports = async function() {
     // 按照 es 的标准格式导出
     return result.map(({ type, theme }) => {
         const iconType = `${camelize(type)}${camelize(theme)}`;
-        return `export { default as ${iconType} } from './${theme}/${iconType}';`
+        return `export { default as ${iconType} } from './${theme}/${iconType}';`;
     }).join('\n');
-};
+}

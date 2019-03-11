@@ -1,12 +1,13 @@
-const { join } = require('path');
-const { getType } = require('mime');
-const { spawn } = require('child_process');
+import { getType } from 'mime';
+import { Context } from 'koa';
+import { spawn } from 'child_process';
+import { join } from 'path';
 
 /**
  * Generate tag of build
  * @returns {string}
  */
-exports.buildTag = function() {
+export function buildTag() {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -14,21 +15,21 @@ exports.buildTag = function() {
     const time = now.toTimeString().slice(0, 8);
 
     return `${year}.${month}.${date} - ${time}`;
-};
+}
 
 /**
  * 定位到项目根目录
  * @param {string} dir 路径
  */
-exports.resolve = (...dir) => join(__dirname, '..', ...dir);
+export const resolve = (...dir: string[]) => join(__dirname, '..', ...dir);
 
 /**
  * 内存中间件
- * @param {object} fs 文件系统
+ * @param {object} fileSystem 文件系统
  * @param {string} 文件根目录
  */
-exports.ramMiddleware = function(fs, root) {
-    return function middleware(ctx, next) {
+export function ramMiddleware(fileSystem: any, root: string) {
+    return function middleware(ctx: Context, next: Function) {
         if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
             ctx.status = 405;
             ctx.length = 0;
@@ -41,16 +42,16 @@ exports.ramMiddleware = function(fs, root) {
             ? join(root, ctx.path, 'index.html')
             : join(root, ctx.path);
 
-        if (!fs.existsSync(filePath)) {
+        if (!fileSystem.existsSync(filePath)) {
             ctx.status = 404;
             ctx.length = 0;
             next();
             return (false);
         }
 
-        const fileStat = fs.statSync(filePath);
+        const fileStat = fileSystem.statSync(filePath);
 
-        ctx.type = getType(filePath);
+        ctx.type = getType(filePath)!;
         ctx.lastModified = new Date();
 
         ctx.set('Accept-Ranges', 'bytes');
@@ -62,19 +63,19 @@ exports.ramMiddleware = function(fs, root) {
         }
         // memory-fs
         else {
-            ctx.length = Buffer.from(fs.readFileSync(filePath)).length;
+            ctx.length = Buffer.from(fileSystem.readFileSync(filePath)).length;
         }
 
-        ctx.body = fs.createReadStream(filePath);
+        ctx.body = fileSystem.createReadStream(filePath);
         next();
     };
-};
+}
 
 /** 子进程 promise 封装 */
-exports.promiseSpawn = function(command, ...args) {
-    return new Promise((resolve) => {
+export function promiseSpawn(command: string, ...args: string[]) {
+    return new Promise<void>((res, rej) => {
         const task = spawn(command, args);
-        task.on('close', resolve);
-        // task.on('error', reject);
+        task.on('close', res);
+        task.on('error', rej);
     });
-};
+}

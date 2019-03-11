@@ -3,6 +3,6 @@
     "compilerOptions": {
         "module": "commonjs",
     },
-    "include": ["src", "types", "test"],
-    "exclude": ["node_modules", "dist", "build"]
+    "include": ["types", "build"],
+    "exclude": ["node_modules", "dist", "src", "test"]
 }

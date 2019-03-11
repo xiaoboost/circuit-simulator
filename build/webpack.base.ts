@@ -1,14 +1,16 @@
-const { yellow, green } = require('chalk');
-const { resolve, buildTag } = require('./utils');
 
-const config = require('./config');
-const example = require('./ts-json');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const ProgressBarPlugin = require('progress-bar-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+import { resolve, buildTag } from './utils';
+
+import chalk from 'chalk';
+import Webpack from 'webpack';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import VueLoaderPlugin from 'vue-loader/lib/plugin';
+import ProgressBarPlugin from 'progress-bar-webpack-plugin';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+
+import example from './ts-json';
+import * as config from './config';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -24,13 +26,16 @@ Released under the MIT License.`;
 
 // 清空屏幕
 console.log('\x1Bc');
-console.log(yellow('> Start Compile:\n'));
+console.log(chalk.yellow('> Start Compile:\n'));
 
 // 编译 example
 example();
 
-module.exports = {
-    mode: process.env.NODE_ENV,
+type WebpackMode = 'development' | 'production' | 'none';
+type WebpackConfig = GetArrayItem<Parameters<typeof Webpack>[0]>;
+
+const baseConfig: WebpackConfig = {
+    mode: process.env.NODE_ENV as WebpackMode,
     entry: {
         main: resolve('src/main.ts'),
     },
@@ -55,8 +60,8 @@ module.exports = {
         mainFiles: ['index.vue', 'index.ts', 'index.js'],
         // 默认路径别名
         alias: {
-            'src': resolve('src'),
-            'vue$': isDevelopment
+            src: resolve('src'),
+            vue$: isDevelopment
                 ? 'vue/dist/vue.esm.js'
                 : 'vue/dist/vue.runtime.esm.js',
         },
@@ -96,7 +101,7 @@ module.exports = {
             },
             {
                 test: resolve('node_modules/@ant-design/icons/lib/dist.js'),
-                loader: resolve('build/ant-icons-loader.js'),
+                loader: resolve('build/ant-icons-loader.ts'),
             },
         ],
     },
@@ -120,22 +125,22 @@ module.exports = {
         // vue loader 配置
         new VueLoaderPlugin(),
         // 添加文件抬头信息
-        new webpack.BannerPlugin({
+        new Webpack.BannerPlugin({
             banner,
             entryOnly: false,
         }),
         // 定义全局注入变量
-        new webpack.DefinePlugin({
+        new Webpack.DefinePlugin({
             'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
         }),
         // 保持模块的 hash id 不变
-        new webpack.HashedModuleIdsPlugin({
+        new Webpack.HashedModuleIdsPlugin({
             hashFunction: 'sha256',
             hashDigest: 'hex',
             hashDigestLength: 6,
         }),
         // 启用模块的作用域提升
-        new webpack.optimize.ModuleConcatenationPlugin(),
+        new Webpack.optimize.ModuleConcatenationPlugin(),
         // 提取出来的所有 css 文件整合
         new MiniCssExtractPlugin({
             filename: isDevelopment
@@ -171,7 +176,9 @@ module.exports = {
         }),
         new ProgressBarPlugin({
             width: 40,
-            format: `${green('> building:')} [:bar] ${green(':percent')} (:elapsed seconds)`,
+            format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
         }),
     ],
 };
+
+export default baseConfig;

@@ -4,12 +4,11 @@
         "module": "commonjs",
         "removeComments": true,
         "sourceMap": false,
-        "allowSyntheticDefaultImports": true,
-        "esModuleInterop": true
     },
     "exclude": [
         "../../dist",
         "../../test",
+        "../../build",
         "../../node_modules"
     ]
 }

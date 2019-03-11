@@ -1,22 +1,30 @@
-const fs = require('fs');
-const { rm, mkdir } = require('shelljs');
-const { join, basename } = require('path');
-const { assert, example } = require('./config');
-const { promiseSpawn, resolve } = require('./utils');
+import * as fs from 'fs-extra';
+import * as option from '../tsconfig.json';
+
+import { assert } from './config';
+import { join, basename } from 'path';
+import { promiseSpawn, resolve } from './utils';
 
 const tsc = resolve('node_modules/typescript/lib/tsc.js');
-const compileOutput = require('../tsconfig.json').compilerOptions.outDir;
+
+/** 样例文件夹名称 */
+const example = 'examples';
+
+// 文件夹路径
 const exampleInput = resolve('src', example);
 const exampleOutput = join(assert, example);
+const compileOutput = option.compilerOptions.outDir;
 
-module.exports = function main() {
-    rm('-rf', exampleOutput);
-
+export default function main() {
     promiseSpawn('node', tsc, '-p', exampleInput).then(() => {
         const filePath = resolve(compileOutput, example);
         const files = fs.readdirSync(filePath);
 
-        mkdir(exampleOutput);
+        if (fs.pathExistsSync(exampleOutput)) {
+            fs.removeSync(exampleOutput);
+        }
+
+        fs.mkdirpSync(exampleOutput);
 
         for (const file of files) {
             const { data } = require(join(filePath, file));
@@ -26,6 +34,6 @@ module.exports = function main() {
             fs.writeFileSync(join(exampleOutput, `${base}.json`), dataString);
         }
 
-        rm('-rf', compileOutput);
+        fs.removeSync(resolve(compileOutput));
     });
-};
+}

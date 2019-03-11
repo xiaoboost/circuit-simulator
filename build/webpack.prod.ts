@@ -1,13 +1,14 @@
 process.env.NODE_ENV = 'production';
 
-const { rm } = require('shelljs');
-const { cyan } = require('chalk');
+import * as fs from 'fs-extra';
+import * as config from './config';
 
-const webpack = require('webpack');
-const config = require('./config');
-const baseConfig = require('./webpack.base');
-const TerserPlugin = require('terser-webpack-plugin');
-const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
+import chalk from 'chalk';
+import webpack from 'webpack';
+import baseConfig from './webpack.base';
+import TerserPlugin from 'terser-webpack-plugin';
+import OptimizeCSSPlugin from 'optimize-css-assets-webpack-plugin';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
 if (!baseConfig.optimization) {
     baseConfig.optimization = {};
@@ -17,8 +18,8 @@ if (!baseConfig.optimization.minimizer) {
     baseConfig.optimization.minimizer = [];
 }
 
-baseConfig.plugins.push(
-    new OptimizeCSSPlugin()
+baseConfig.plugins!.push(
+    new OptimizeCSSPlugin(),
 );
 
 baseConfig.optimization.minimizer.push(
@@ -33,7 +34,7 @@ baseConfig.optimization.minimizer.push(
                 comments: /^!/,
             },
         },
-    })
+    }),
 );
 
 baseConfig.performance = {
@@ -44,11 +45,13 @@ baseConfig.performance = {
 };
 
 if (config.bundleAnalyzer) {
-    const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-    baseConfig.plugins.push(new BundleAnalyzerPlugin());
+    baseConfig.plugins!.push(new BundleAnalyzerPlugin());
 }
 
-rm('-rf', config.output);
+// 删除输出文件夹
+if (fs.pathExistsSync(config.output)) {
+    fs.removeSync(config.output);
+}
 
 webpack(baseConfig, (err, stats) => {
     if (err) {
@@ -66,5 +69,5 @@ webpack(baseConfig, (err, stats) => {
         children: false,
     }));
 
-    console.log(cyan('\n  Build complete.\n'));
+    console.log(chalk.cyan('\n  Build complete.\n'));
 });
