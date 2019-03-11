@@ -9,7 +9,7 @@ import {
  * @param {*} data
  * @returns {boolean}
  */
-export function checkCircularStructure(data, parents = []) {
+export function checkCircularStructure(data: object, parents: any[] = []): boolean {
     // 如果当前节点与祖先节点中的某一个相等，那么肯定含有循环结构
     if (parents.some((parent) => parent === data)) {
         return true;
@@ -21,7 +21,7 @@ export function checkCircularStructure(data, parents = []) {
     // 检查每个子节点
     return Object.values(data).some(
         (value) =>
-            isBaseType(value) ? false : checkCircularStructure(value, parents.slice())
+            isBaseType(value) ? false : checkCircularStructure(value, parents.slice()),
     );
 }
 
@@ -32,24 +32,28 @@ export function checkCircularStructure(data, parents = []) {
  * @param {boolean} [check=true]
  * @returns {T}
  */
-export function clone(data, check = true) {
+export function clone<T>(data: T, check = true): T {
     // 基础类型和函数，直接返回其本身
     if (isBaseType(data) || isFunc(data)) {
         return data;
     }
 
     // 非基础类型，首先检查是否含有循环引用
-    if (check && checkCircularStructure(data)) {
+    if (check && checkCircularStructure(data as any)) {
         throw new Error('Can not clone circular structure.');
     }
 
-    // 数组，深度复制
-    if (isArray(data)) {
-        return data.map((n) => clone(n));
+    // 函数返回其自身
+    if (isFunc(data)) {
+        return data;
     }
     // Date 对象
     else if (data instanceof Date) {
-        return new Date(data);
+        return (new Date(data) as any);
+    }
+    // 数组，深度复制
+    else if (isArray(data)) {
+        return data.map((n, i) => clone(n)) as any;
     }
     // 其余对象
     else {
@@ -63,7 +67,7 @@ export function clone(data, check = true) {
             return prototype.constructor.from(data);
         }
         else {
-            return Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {});
+            return (Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {}) as any);
         }
     }
 }
@@ -75,28 +79,13 @@ export function clone(data, check = true) {
  * @param {T} from 待复制的对象
  * @param {U[]} keys 属性集合
  */
-export function copyProperties(object, keys) {
-    return clone(keys.reduce((v, k) => ((v[k] = object[k]), v), {}));
-}
+export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Pick<T, U> {
+    const data: T = {} as any;
 
-/**
- * 复制一个类的原型对象
- * @template T extends classType
- * @param {T} from 待复制的类
- * @returns {T['prototype']}
- */
-export function clonePrototype(object) {
-    const copyPrptotype = {};
-    const methodNames = Object.getOwnPropertyNames(object.prototype);
-
-    for (const key of methodNames) {
-        Object.defineProperty(copyPrptotype, key, {
-            enumerable: false,
-            configurable: true,
-            writable: true,
-            value: object.prototype[key],
-        });
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        data[key] = from[key];
     }
 
-    return copyPrptotype;
+    return clone(data);
 }
