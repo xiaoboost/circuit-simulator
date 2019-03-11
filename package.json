@@ -4,7 +4,7 @@
   "description": "在线电路仿真系统",
   "private": true,
   "scripts": {
-    "ts-node": "node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
+    "ts-node": "node node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
     "dev": "cross-env NODE_ENV=development SERVER_TYPE=memory npm run ts-node ./build/webpack.dev.ts",
     "dev:local": "cross-env NODE_ENV=development SERVER_TYPE=local npm run ts-node ./build/webpack.dev.ts",
     "build": "npm run ts-node build/webpack.prod.ts",
