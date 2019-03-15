@@ -119,6 +119,32 @@ function constantIcon(content: string) {
     return result;
 }
 
+/** button 组件中的图标 */
+function iconInButton(content: string) {
+    /** 匹配所有的图标 */
+    const IconMatcher = createMatcher('button');
+    /** 匹配图标类型 */
+    const typeMatcher = /icon="([^"]+?)"/;
+
+    const result: IconData[] = [];
+    const contentMatch = content.match(IconMatcher);
+
+    if (!contentMatch) {
+        return result;
+    }
+
+    for (const iconSource of contentMatch) {
+        const typeMatch = typeMatcher.exec(iconSource);
+
+        // 按钮中有图标
+        if (typeMatch) {
+            result.push(createIconData(typeMatch[1].trim()));
+        }
+    }
+
+    return result;
+}
+
 /** ant 组件内部使用的图标 */
 function iconInComponent(content: string) {
     /** 图标数据 */
@@ -175,6 +201,7 @@ export default async function(this: any) {
         const content = (await fs.readFile(file)).toString();
 
         icons.push(...constantIcon(content));
+        icons.push(...iconInButton(content));
         icons.push(...iconInComponent(content));
     }
 
