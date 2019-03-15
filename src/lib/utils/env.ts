@@ -34,4 +34,5 @@ if (inBrowser) {
 }
 
 // 全局禁止右键
-document.oncontextmenu = () => false;
+document.body.oncontextmenu = null;
+document.body.addEventListener('contextmenu', (event) => event.preventDefault(), true);
