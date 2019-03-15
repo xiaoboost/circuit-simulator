@@ -2,7 +2,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation, Action } from 'vuex-class';
 
 import {
-    GetterName,
     MutationName,
     ActionName,
     Getter as GetterTree,
@@ -16,8 +15,8 @@ export default class ActionMenu extends Vue {
     private isRun = false;
 
     /** 是否显示菜单 */
-    @Getter(GetterName.isSpace)
-    vision!: GetterTree[GetterName.isSpace];
+    @Getter('isSpace')
+    vision!: GetterTree['isSpace'];
 
     /** 打开添加器件侧边栏 */
     @Mutation(MutationName.OPEN_ADD_PARTS)

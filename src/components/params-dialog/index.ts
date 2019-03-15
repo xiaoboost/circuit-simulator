@@ -4,7 +4,7 @@ import { isUndef } from 'src/lib/utils';
 import { UnitType } from '../electronic-part';
 
 import Point from 'src/lib/point';
-import Collapse from '../transitions';
+import Collapse from '../transitions/collapse';
 
 /** 参数接口 */
 export interface Params {

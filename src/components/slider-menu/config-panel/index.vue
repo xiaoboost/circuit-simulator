@@ -12,7 +12,7 @@
             <header class="form-title">时间设置</header>
             <article class="form-body">
                 <a-row class="form-item" :gutter="10" type="flex" align="middle">
-                    <a-col :span="5" class="form-item__label">模拟时长</a-col>
+                    <a-col :span="6" class="form-item__label">模拟时长</a-col>
                     <a-col :span="18" class="form-item__content">
                         <a-input-number :min="0" v-model="data.end" />
                         <a-select v-model="data.endUnit">
@@ -26,7 +26,7 @@
                     </a-col>
                 </a-row>
                 <a-row class="form-item" :gutter="10" type="flex" align="middle">
-                    <a-col :span="5" class="form-item__label">步长时间</a-col>
+                    <a-col :span="6" class="form-item__label">步长时间</a-col>
                     <a-col :span="18" class="form-item__content">
                         <a-input-number :min="0" v-model="data.step" />
                         <a-select v-model="data.stepUnit">
@@ -45,25 +45,44 @@
         <section class="form-section">
             <header class="form-title">示波器设置</header>
             <article class="form-body">
-                <a-input-group
-                    compact
+                <div
+                    class="form-item"
                     v-for="(chart, i) in data.charts"
-                    :key="i"
-                    class="form-item">
-                    <a-select v-model="chart.type">
-                        <a-select-option
-                            v-for="type in chartTypes"
-                            :key="type.value"
-                            :value="type.value">
-                            {{ type.label }}
-                        </a-select-option>
+                    :key="i">
+                    <a-select
+                        mode="multiple"
+                        :value="chart"
+                        placeholder="请选择要显示的仪表"
+                        style="width: 100%;"
+                        @change="(ev) => data.charts.splice(i, 1, ev)">
+                        <!-- 电流表 -->
+                        <a-select-opt-group label="电流表" v-if="currentMeters.length > 0">
+                            <a-select-option
+                                v-for="meter in currentMeters"
+                                :key="meter.id"
+                                :value="meter.id">
+                                {{ meter.id }}
+                            </a-select-option>
+                        </a-select-opt-group>
+                        <!-- 电压表 -->
+                        <a-select-opt-group label="电压表" v-if="voltageMeters.length > 0">
+                            <a-select-option
+                                v-for="meter in voltageMeters"
+                                :key="meter.id"
+                                :value="meter.id">
+                                {{ meter.id }}
+                            </a-select-option>
+                        </a-select-opt-group>
                     </a-select>
-                    <a-select mode="multiple" v-model="chart.meters">
-                        <a-select-option value="Option2-1">Option2-1</a-select-option>
-                        <a-select-option value="Option2-2">Option2-2</a-select-option>
-                    </a-select>
-                </a-input-group>
-                <div class="form-item">
+                    <a-button
+                        type="danger"
+                        shape="circle"
+                        icon="delete"
+                        class="delete-btn"
+                        @click="data.charts.splice(i, 1)"
+                    />
+                </div>
+                <div class="form-item" style="margin-top: 4px;">
                     <a-button type="dashed" @click="addMeter">添加示波器</a-button>
                 </div>
             </article>
@@ -86,10 +105,11 @@ SpaceLeft = 30px
         margin-bottom 8px
         color Black
     .form-body
-        margin-left 14px
+        margin 0 14px
     .form-item
         width 100%
         margin-bottom 6px
+        position relative
         .form-item__label
             font-size 14px
             color rgba(0, 0, 0, 0.85)
@@ -98,4 +118,16 @@ SpaceLeft = 30px
                 width 100px
             .ant-select
                 width 72px
+
+    .delete-btn
+        position absolute
+        top 0px
+        right -16px
+        opacity 0
+        transform scale(.6)
+        transition all .25s ease
+    
+    .form-item:hover .delete-btn
+        opacity 1
+        transform scale(.8)
 </style>

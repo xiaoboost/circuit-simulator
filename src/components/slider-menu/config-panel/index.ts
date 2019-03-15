@@ -56,18 +56,6 @@ export default class ConfigPanel extends Vue {
     endTimeUnits = createSelectList(['', 'm', 'u'], '秒', true);
     stepTimeUnits = createSelectList(['m', 'u', 'n', 'p'], '秒', true);
 
-    /** 示波器类型选项列表 */
-    chartTypes = [
-        {
-            label: '电压表',
-            value: Store.ChartType.Voltage,
-        },
-        {
-            label: '电流表',
-            value: Store.ChartType.Current,
-        },
-    ];
-
     @Watch('time')
     private update() {
         const end = splitNumber(this.time.end);
@@ -81,10 +69,7 @@ export default class ConfigPanel extends Vue {
 
     /** 添加示波器 */
     addMeter() {
-        this.data.charts.push({
-            type: Store.ChartType.Voltage,
-            meters: [],
-        });
+        this.data.charts.push([]);
     }
 
     /** 移除示波器 */
