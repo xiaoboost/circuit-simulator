@@ -34,7 +34,7 @@
                             <!-- id -->
                             <a-tooltip placement="top" title="小写字母与数字">
                                 <a-input
-                                    v-model="id"
+                                    v-model="subId"
                                     @blur.native="validateId"
                                     style="width: calc(60% - 7px);"
                                 />

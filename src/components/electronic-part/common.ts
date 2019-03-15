@@ -52,6 +52,11 @@ export function deleteId(id: string) {
     }
 }
 
+/** 是否含有器件标记 */
+export function hasId(id: string) {
+    return Boolean(mapHash[id]);
+}
+
 /** 搜索器件组件 */
 export function findPartComponent(value: string | HTMLElement): PartComponent {
     const prop = isString(value) ? 'id' : '$el';

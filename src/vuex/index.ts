@@ -98,6 +98,8 @@ const mutations: MutationTree<State, Mutation> = {
         }
 
         parts.splice(index, 1, clone(data));
+
+        // TODO: 如果是 meter 的 id 改变了，那么还需要变更
     },
     /** 复制器件 */
     [MutationName.COPY_PART]({ parts }, IDs: string[]) {

@@ -49,7 +49,7 @@ export default function setPartParams(
 
     // 参数对话框初始化赋值
     dialog.preId = ids[0];
-    dialog.id = ids[1];
+    dialog.subId = ids[1];
     dialog.title = `${origin.introduction} - ${id}`;
     dialog.position = Point.from(position);
     dialog.params = origin.params.map((param, i) => {
@@ -82,7 +82,7 @@ export default function setPartParams(
         dialog.confirm = () => {
             close();
             resolve({
-                id: `${dialog.preId}_${dialog.id}`,
+                id: dialog.id,
                 params: dialog.params.map(({ value, rank }) => value + rank),
             });
         };

@@ -2,6 +2,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import { SelectList, NumberRank } from 'src/lib/number';
 import { isUndef } from 'src/lib/utils';
 import { UnitType } from '../electronic-part';
+import { hasId } from '../electronic-part/common';
 
 import Point from 'src/lib/point';
 import Collapse from '../transitions/collapse';
@@ -32,7 +33,7 @@ export default class ParamsDialog extends Vue {
     /** 前缀 */
     preId = '';
     /** 标签 */
-    id = '';
+    subId = '';
     /** 标题 */
     title = '';
     /** 指向的中心位置 */
@@ -59,6 +60,10 @@ export default class ParamsDialog extends Vue {
     get hasError() {
         return Boolean(this.idErrMsg) || this.paramErrMsgs.some(Boolean);
     }
+    /** 当前输入的器件完整 ID */
+    get id() {
+        return `${this.preId}_${this.subId}`;
+    }
 
     @Watch('show')
     visibleChange(val: this['show']) {
@@ -82,13 +87,18 @@ export default class ParamsDialog extends Vue {
     validateId() {
         this.idErrMsg = '';
 
-        if (!this.preId || !this.id) {
+        if (!this.preId || !this.subId) {
             this.idErrMsg = '器件编号不能为空';
             return;
         }
 
-        if (!/^[A-Z]+$/.test(this.preId) || !/^[a-z0-9]+$/.test(this.id)) {
+        if (!/^[A-Z]+$/.test(this.preId) || !/^[a-z0-9]+$/.test(this.subId)) {
             this.idErrMsg = '器件编号格式错误';
+            return;
+        }
+
+        if (hasId(this.id)) {
+            this.idErrMsg = '该器件编号已经被占用';
             return;
         }
     }
