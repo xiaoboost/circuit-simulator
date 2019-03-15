@@ -161,6 +161,10 @@ BackLen = -4px
         margin-bottom 14px
     }
 
+    .params__input_param /deep/ .ant-select-selection-selected-value {
+        text-overflow: initial;
+    }
+
     .params__error {
         position: absolute;
         color: Red;

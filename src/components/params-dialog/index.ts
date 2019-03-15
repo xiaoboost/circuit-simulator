@@ -77,10 +77,12 @@ export default class ParamsDialog extends Vue {
         }
     }
 
-    /** TODO: 计算参数单位的最大宽度 */
-    unitWidth(units: string[]) {
-        // + 42
-        return `62px`;
+    /** 计算参数单位的最大宽度 */
+    unitWidth(units: SelectList) {
+        const lengths = units.map(({ label }) => label.length);
+        const maxLen = Math.max(...lengths);
+
+        return `${maxLen * 9 + 42}px`;
     }
 
     /** 校验编号 */
