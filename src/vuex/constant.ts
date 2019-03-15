@@ -7,21 +7,6 @@ export interface TimeConfig {
     step: string;
 }
 
-/** 图表类型 */
-export const enum ChartType {
-    /** 电流图像 */
-    Current,
-    /** 电压图像 */
-    Voltage,
-}
-
-export interface ChartConfig {
-    /** 图表类型 */
-    type: ChartType;
-    /** 所观测的器件编号 */
-    meters: string[];
-}
-
 /** 储存用的器件数据接口 */
 export interface PartStorageData {
     type: PartType;
@@ -44,7 +29,7 @@ export type ElectronicsData = Array<PartStorageData | LineStorageData>;
 /** 电路数据 */
 export interface CircuitStorage {
     time?: TimeConfig;
-    chart?: ChartConfig;
+    chart?: string[][];
     data: ElectronicsData;
 }
 
@@ -54,14 +39,6 @@ export const enum Sidebar {
     Parts,
     Config,
     Graph,
-}
-
-/** Getter 键名 */
-export const enum GetterName {
-    isSpace = 'isSpace',
-    showPartsPanel = 'showPartsPanel',
-    showConfigPanel = 'showConfigPanel',
-    showGraphView = 'showGraphView',
 }
 
 /** Mutation 键名 */
@@ -119,7 +96,7 @@ export interface State {
     /**
      * 全局示波器设置
      */
-    charts: ChartConfig[];
+    charts: string[][];
     /**
      * 全局器件堆栈
      */
@@ -136,10 +113,10 @@ export interface State {
 
 /** Getter 原型定义 */
 export interface Getter {
-    [GetterName.isSpace]: boolean;
-    [GetterName.showPartsPanel]: boolean;
-    [GetterName.showConfigPanel]: boolean;
-    [GetterName.showGraphView]: boolean;
+    isSpace: boolean;
+    showPartsPanel: boolean;
+    showConfigPanel: boolean;
+    showGraphView: boolean;
 }
 
 /** Mutation 原型定义 */
