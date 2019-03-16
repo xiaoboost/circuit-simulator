@@ -61,7 +61,7 @@ const getters: GetterTree<State, Getter> = {
     isSpace: ({ sidebar }) => sidebar === Sidebar.Space,
     showPartsPanel: ({ sidebar }) => sidebar === Sidebar.Parts,
     showConfigPanel: ({ sidebar }) => sidebar === Sidebar.Config,
-    showGraphView: ({ sidebar }) => sidebar === Sidebar.Graph,
+    showGraphViewer: ({ sidebar }) => sidebar === Sidebar.Graph,
 };
 
 const mutations: MutationTree<State, Mutation> = {

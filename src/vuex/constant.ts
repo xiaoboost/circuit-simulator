@@ -116,7 +116,7 @@ export interface Getter {
     isSpace: boolean;
     showPartsPanel: boolean;
     showConfigPanel: boolean;
-    showGraphView: boolean;
+    showGraphViewer: boolean;
 }
 
 /** Mutation 原型定义 */

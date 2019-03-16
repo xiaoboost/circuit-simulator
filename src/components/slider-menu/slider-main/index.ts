@@ -1,5 +1,5 @@
 import { Getter } from 'vuex-class';
-import { MutationName } from 'src/vuex';
+import { MutationName, Getter as GetterTree } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
 
 import PartsPanel from '../parts-panel';
@@ -21,10 +21,10 @@ export default class SliderMenu extends Vue {
     };
 
     @Getter
-    showPartsPanel!: boolean;
+    showPartsPanel!: GetterTree['showPartsPanel'];
 
     @Getter
-    showConfigPanel!: boolean;
+    showConfigPanel!: GetterTree['showConfigPanel'];
 
     get vision() {
         return this.showPartsPanel || this.showConfigPanel;
