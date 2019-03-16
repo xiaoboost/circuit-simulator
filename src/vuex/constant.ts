@@ -1,5 +1,6 @@
 import { LineData, LineType } from 'src/components/electronic-line';
 import { PartData, PartType } from 'src/components/electronic-part';
+import { Observer } from 'src/lib/solver';
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -73,6 +74,8 @@ export const enum MutationName {
     RECORD_MAP = 'RECORD_MAP',
     /** 图纸数据回滚 */
     HISTORY_BACK = 'HISTORY_BACK',
+    /** 图纸数据回滚 */
+    SET_METER_DATA = 'SET_METER_DATA',
 }
 
 /** Action 键名 */
@@ -97,6 +100,10 @@ export interface State {
      * 全局示波器设置
      */
     charts: string[][];
+    /**
+     * 全局示波器数据暂存
+     */
+    metersData: Omit<Observer, 'matrix'>[];
     /**
      * 全局器件堆栈
      */
@@ -157,6 +164,8 @@ export interface Mutation {
     [MutationName.RECORD_MAP](): void;
     /** 图纸数据回滚 */
     [MutationName.HISTORY_BACK](): void;
+    /** 设置求解器的求解结果 */
+    [MutationName.SET_METER_DATA](data: State['metersData']): void;
 }
 
 /** Action 原型定义 */

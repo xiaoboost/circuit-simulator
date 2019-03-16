@@ -53,6 +53,7 @@ const local: State = {
     charts: [],
     parts: [],
     lines: [],
+    metersData: [],
     historyData: [],
     sidebar: Sidebar.Space,
 };
@@ -189,15 +190,19 @@ const mutations: MutationTree<State, Mutation> = {
         }
     },
     /** 图纸数据回滚 */
-    [MutationName.HISTORY_BACK](state) {
-        const current = state.historyData.pop();
+    [MutationName.HISTORY_BACK](context) {
+        const current = context.historyData.pop();
 
         if (!current) {
             return;
         }
 
-        state.parts = current.filter((part): part is PartData => part.type !== LineType.Line);
-        state.lines = current.filter((line): line is LineData => line.type === LineType.Line);
+        context.parts = current.filter((part): part is PartData => part.type !== LineType.Line);
+        context.lines = current.filter((line): line is LineData => line.type === LineType.Line);
+    },
+    /** 设置求解器的求解结果 */
+    [MutationName.SET_METER_DATA](context, meters) {
+        context.metersData = meters.map(({ id, data }) => ({ id, data }));
     },
 };
 

@@ -20,5 +20,7 @@
     overflow hidden
     background-color #66CCCC
     font-family font-default
+    padding 14px 20px
+    overflow hidden auto
 }
 </style>
