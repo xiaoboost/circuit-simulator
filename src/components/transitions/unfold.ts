@@ -1,5 +1,5 @@
 import { default as Vue, VNodeChildren } from 'vue';
-import { delay } from 'src/lib/utils';
+import { delay, isString } from 'src/lib/utils';
 
 /** 计算两个点的距离 */
 function getDiagonal(pointA: number[], pointB: number[]) {
@@ -9,7 +9,12 @@ function getDiagonal(pointA: number[], pointB: number[]) {
 }
 
 /** 创建 Transition 组件钩子 */
-function transitionHooks({ duration, start, afterEnter: afterEnterHook }: Props) {
+function transitionHooks({
+    duration,
+    beforeShow,
+    start: startOrigin,
+    afterEnter: afterEnterHook,
+}: Props) {
     // 注：请不要改动下面所有函数中操作的赋值顺序
 
     /** 动画的临时 DOM 元素 */
@@ -18,6 +23,11 @@ function transitionHooks({ duration, start, afterEnter: afterEnterHook }: Props)
     const unfoldTime = duration * 0.7;
     /** 面板渐变显示的时间 */
     const showTime = duration * 0.3;
+    /** 起始点位置 */
+    const start = !isString(startOrigin) ? startOrigin : {
+        left: startOrigin + 'px',
+        top: startOrigin + 'px',
+    };
 
     function beforeEnter(el: HTMLElement) {
         // 元素初始属性
@@ -70,6 +80,11 @@ function transitionHooks({ duration, start, afterEnter: afterEnterHook }: Props)
 
         await delay(unfoldTime);
 
+        // 展开面板但还未显示时的回调
+        if (beforeShow) {
+            beforeShow();
+        }
+
         // 设置本体元素的动画
         el.style.opacity = '1';
         el.style.transition = `opacity ${showTime}ms linear`;
@@ -90,6 +105,11 @@ function transitionHooks({ duration, start, afterEnter: afterEnterHook }: Props)
         el.style.zIndex = null;
         el.style.opacity = null;
         el.style.transition = '';
+
+        // 结束时候的回调
+        if (afterEnterHook) {
+            afterEnterHook();
+        }
     }
 
     function beforeLeave(el: HTMLElement) {
@@ -118,14 +138,16 @@ interface Props {
     /** 动画持续时长 */
     duration: number;
     /** 起始点位置 */
-    start: {
+    start: string | {
         left?: string;
         right?: string;
         top?: string;
         bottom?: string;
     };
-    /** 完全展开的回调 */
-    afterEnter(): void;
+    /** 面板完全展开，但是还未显示出来的时候的回调 */
+    beforeShow?(): void;
+    /** 面板展开的动画完全结束的回调 */
+    afterEnter?(): void;
 }
 
 export default Vue.extend<Props>({
@@ -137,8 +159,12 @@ export default Vue.extend<Props>({
             default: 200,
         },
         start: {
-            type: Object,
+            type: [Object, String],
             default: () => ({}),
+        },
+        beforeShow: {
+            type: Function as any,
+            default: () => () => {},
         },
         afterEnter: {
             type: Function as any,

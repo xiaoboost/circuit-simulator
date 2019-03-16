@@ -7,7 +7,7 @@ type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => void;
 
 /** 观测器 */
-interface Observer {
+export interface Observer {
     /** 观测器编号 */
     id: string;
     /** 观测矩阵 */

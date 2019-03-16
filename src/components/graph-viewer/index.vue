@@ -1,7 +1,7 @@
 <script lang="ts" src="./index.ts"></script>
 
 <template>
-<unfold :duration="500" :start="{ right: '66px', bottom: '64px' }">
+<unfold start="66px" :duration="500" :before-show="setCharts">
     <section id="graph-viewer" v-if="visible">
         波形展示
     </section>
