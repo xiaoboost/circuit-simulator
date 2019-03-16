@@ -15,7 +15,7 @@
                     <a-col :span="6" class="form-item__label">模拟时长</a-col>
                     <a-col :span="18" class="form-item__content">
                         <a-input-number :min="0" v-model="data.end" />
-                        <a-select v-model="data.endUnit">
+                        <a-select v-model="data.endRank">
                             <a-select-option
                                 v-for="(unit, i) in endTimeUnits"
                                 :key="i"
@@ -29,7 +29,7 @@
                     <a-col :span="6" class="form-item__label">步长时间</a-col>
                     <a-col :span="18" class="form-item__content">
                         <a-input-number :min="0" v-model="data.step" />
-                        <a-select v-model="data.stepUnit">
+                        <a-select v-model="data.stepRank">
                             <a-select-option
                                 v-for="(unit, i) in stepTimeUnits"
                                 :key="i"
