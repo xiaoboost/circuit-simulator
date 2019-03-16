@@ -35,7 +35,7 @@ type WebpackConfig = GetArrayItem<Parameters<typeof Webpack>[0]>;
 const baseConfig: WebpackConfig = {
     mode: process.env.NODE_ENV as WebpackConfig['mode'],
     entry: {
-        main: resolve('src/main.ts'),
+        main: resolve('src/init/index.ts'),
     },
     output: {
         // 编译输出的静态资源根路径
@@ -75,11 +75,7 @@ const baseConfig: WebpackConfig = {
                 exclude: /node_modules/,
                 loader: 'ts-loader',
                 options: {
-                    /**
-                     * a relative path to the configuration file.
-                     * It will be resolved relative to the respective `.ts` entry file.
-                     */
-                    configFile: '../tsconfig.build.json',
+                    configFile: resolve('tsconfig.build.json'),
                 },
             },
             {

@@ -6,9 +6,10 @@ import { default as store, CircuitStorage } from 'src/vuex';
 import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
 
-import ActionMenu from './components/action-menu';
-import DrawingMain from './components/drawing-main';
-import SliderMenu from './components/slider-menu/slider-main';
+import ActionMenu from 'src/components/action-menu';
+import DrawingMain from 'src/components/drawing-main';
+import GraphViewer from 'src/components/graph-viewer';
+import SliderMenu from 'src/components/slider-menu/slider-main';
 
 // 调式模式打开调试器
 Vue.config.productionTip = (process.env.NODE_ENV === 'development');
@@ -28,10 +29,9 @@ new Vue({
     store,
     el: '#app',
     name: 'Main',
-    components: { ActionMenu, SliderMenu, DrawingMain },
     render: (h) => h(
         'main', { attrs: { id: 'app' }},
-        [h('drawing-main'), h('slider-menu'), h('action-menu')] as VNodeChildrenArrayContents,
+        [h(DrawingMain), h(SliderMenu), h(GraphViewer), h(ActionMenu)] as VNodeChildrenArrayContents,
     ),
     async mounted() {
         const map = getQueryByName('map');
