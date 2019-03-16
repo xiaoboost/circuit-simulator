@@ -118,18 +118,15 @@ export default class Matrix {
      * 矩阵组合
      *
      * @example
-     *  [[0,  4,     A],
-     *   [B, 'E',    0],
-     *   [0,  C,     D]]
+     *  [[0,  4,  A],
+     *   [B, 'E', 0],
+     *   [0,  C,  D]]
      *
      * 将形如上面的矩阵合并成一个矩阵，其中 A、B、C、D 为四个不同的矩阵
      * 在同一行（列）的矩阵必须有相同的行（列）数
      * 纯数字或者是'E'矩阵，不影响行列数，只做填充
      */
     static merge(ma: ('E' | number | MatrixInput)[][]) {
-        // 可组合矩阵类型
-        type MergeMatrix = 'E' | number | Matrix;
-
         // 每一行有效矩阵的行数
         const rowNumbers: number[] = [];
         for (let i = 0; i < ma.length; i++) {
@@ -223,7 +220,6 @@ export default class Matrix {
 
     /**
      * 取出矩阵元素
-     *
      * @param {number} i
      * @param {number} j
      * @returns {number}
@@ -233,7 +229,6 @@ export default class Matrix {
     }
     /**
      * 设置矩阵值
-     *
      * @param {number} i
      * @param {number} j
      * @param {number} value
@@ -243,7 +238,6 @@ export default class Matrix {
     }
     /**
      * 取出矩阵某一行
-     *
      * @param {number} row
      * @returns {number[]}
      */
@@ -262,7 +256,6 @@ export default class Matrix {
     }
     /**
      * 取出矩阵某一列
-     *
      * @param {number} column
      * @returns {number[]}
      */
@@ -281,7 +274,6 @@ export default class Matrix {
     }
     /**
      * 字符串连接
-     *
      * @param {string} str
      * @returns {string}
      */
@@ -290,7 +282,6 @@ export default class Matrix {
     }
     /**
      * 交换 from、to 所在的行
-     *
      * @param {number} from
      * @param {number} to
      * @returns {this}
@@ -311,7 +302,6 @@ export default class Matrix {
     }
     /**
      * 交换 from、to 所在的列
-     *
      * @param {number} from
      * @param {number} to
      * @returns {this}
@@ -330,9 +320,23 @@ export default class Matrix {
         return this;
     }
     /**
+     * 矩阵转置
+     * @returns {Matrix}
+     */
+    transpose() {
+        const result = new Matrix(this.column, this.row);
+
+        for (let i = 0; i < this.row; i++) {
+            for (let j = 0; j < this.column; j++) {
+                result.set(j, i, this.get(i, j));
+            }
+        }
+
+        return (result);
+    }
+    /**
      * 矩阵乘法
      *   - this * ma
-     *
      * @param {(number[][] | Matrix)} ma
      * @returns {Matrix}
      */
@@ -364,7 +368,6 @@ export default class Matrix {
     /**
      * 矩阵乘法
      *   - ma * this
-     *
      * @param {(number[][] | Matrix)} ma
      * @returns {Matrix}
      */
@@ -380,7 +383,6 @@ export default class Matrix {
     /**
      * 矩阵加法
      *   - ma + this
-     *
      * @param {(number[][] | Matrix)} ma
      * @returns {Matrix}
      */
@@ -418,7 +420,6 @@ export default class Matrix {
     }
     /**
      * 列主元 LU 三角分解，返回 L、U、P 矩阵
-     *
      * @returns {{ L: Matrix, U: Matrix, P: Matrix }}
      */
     luDecompose() {
@@ -466,7 +467,6 @@ export default class Matrix {
     }
     /**
      * 基于LU分解的矩阵求逆
-     *
      * @returns {Matrix}
      */
     inverse(): Matrix {
@@ -512,7 +512,6 @@ export default class Matrix {
     }
     /**
      * 向右串联矩阵，原矩阵不变，返回新矩阵
-     *
      * @param args {MatrixInput[]}
      */
     concatRight(...args: MatrixInput[]) {
@@ -538,7 +537,6 @@ export default class Matrix {
     }
     /**
      * 向下串联矩阵，原矩阵不变，返回新矩阵
-     *
      * @param args {MatrixInput[]}
      */
     concatDown(...args: MatrixInput[]) {
@@ -565,7 +563,6 @@ export default class Matrix {
     /**
      * forEach 迭代
      *  - 从第一行开始，从左至右
-     *
      * @param {(value: number, position: [number, number]) => number} callback
      * @returns {this}
      */
@@ -580,7 +577,6 @@ export default class Matrix {
     /**
      * map 迭代
      *  - 从第一行开始，从左至右
-     *
      * @param {(value: number, position: [number, number]) => number} callback
      * @returns {this}
      */

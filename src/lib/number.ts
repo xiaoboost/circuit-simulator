@@ -91,3 +91,44 @@ export function splitNumber(str: string) {
         rank: (match[2] || '') as NumberRank,
     };
 }
+
+/** 数字标记类 */
+export class MarkNumber {
+    /** 标记值 */
+    private readonly SignTransfer: number;
+    /** 高位数 */
+    private readonly High: number;
+    /** 底位数 */
+    private readonly Low: number;
+
+    /**
+     * 构造函数
+     * @param sign 做标记的数
+     * @param allowBit 允许的低位有效位数
+     */
+    constructor(sign: number, allowBit: number) {
+        this.SignTransfer = sign;
+        this.Low = Math.pow(2, allowBit) - 1;
+        this.High = (Math.pow(2, 64 - allowBit) - 1) << allowBit;
+    }
+
+    /** 生成标记数字 */
+    getMarkNumber(origin: number) {
+        // 超过标记范围
+        if (origin > this.Low) {
+            throw new Error('(Solver) 数字标记超过了最大范围');
+        }
+
+        return this.SignTransfer | origin;
+    }
+
+    /** 检查格式是否正确 */
+    checkMarkNumber(mark: number) {
+        return !(this.SignTransfer ^ (mark & this.High));
+    }
+
+    /** 从标记数字中得到原来的数字 */
+    getOriginNumber(mark: number) {
+        return mark & this.Low;
+    }
+}
