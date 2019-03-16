@@ -34,6 +34,7 @@
     width 100%
     height 100%
     background-image url(/img/circuit-grid.svg)
+    background-color #fff
     background-size 20px
     background-position -40px -40px
     background-repeat repeat

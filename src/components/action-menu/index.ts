@@ -26,13 +26,18 @@ export default class ActionMenu extends Vue {
     @Mutation(MutationName.OPEN_MAIN_CONFIG)
     setConfig!: MutationTree[MutationName.OPEN_MAIN_CONFIG];
 
+    /** 打开波形显示面板 */
+    @Mutation(MutationName.OPEN_GRAPH_VIEW)
+    showGraph!: MutationTree[MutationName.OPEN_GRAPH_VIEW];
+
     /** 运行电路模拟 */
     @Action(ActionName.SOLVE_CIRCUIT)
     solve!: ActionTree[ActionName.SOLVE_CIRCUIT];
 
     /** 模拟运行 */
     simulate() {
-        this.isRun = true;
-        this.solve();
+        // this.isRun = true;
+        // this.solve();
+        this.showGraph();
     }
 }
