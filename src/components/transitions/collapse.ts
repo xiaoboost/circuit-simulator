@@ -1,4 +1,5 @@
 import { default as Vue, VNodeChildren } from 'vue';
+import { delay } from 'src/lib/utils';
 
 interface TransitionMeta {
     oldOverflow: string | null;
@@ -34,7 +35,7 @@ function transitionHooks(duration: number) {
         el.style.transition = transitionStyle(duration);
     }
 
-    function enter(el: HTMLElement) {
+    function enter(el: HTMLElement, done: () => void) {
         meta.oldOverflow = el.style.overflow;
 
         if (el.scrollHeight !== 0) {
@@ -49,6 +50,8 @@ function transitionHooks(duration: number) {
         }
 
         el.style.overflow = 'hidden';
+
+        delay(duration).then(done);
     }
 
     function afterEnter(el: HTMLElement) {
@@ -66,13 +69,15 @@ function transitionHooks(duration: number) {
         el.style.overflow = 'hidden';
     }
 
-    function leave(el: HTMLElement) {
+    function leave(el: HTMLElement, done: () => void) {
         if (el.scrollHeight !== 0) {
             el.style.transition = transitionStyle(duration);
             el.style.height = '0';
             el.style.paddingTop = '0';
             el.style.paddingBottom = '0';
         }
+
+        delay(duration).then(done);
     }
 
     function afterLeave(el: HTMLElement) {
@@ -109,12 +114,7 @@ export default Vue.extend<Props>({
     },
     render(h, { props, children }) {
         const data = {
-            on: {
-                ...transitionHooks(props.duration),
-            },
-            props: {
-                duration: props.duration,
-            },
+            on: transitionHooks(props.duration),
         };
 
         return h('transition', data, children as VNodeChildren);
