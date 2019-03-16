@@ -41,8 +41,8 @@
 
     .fab-container:nth-child(n+2),
     .fab-container:nth-child(n+2) .fab
-        height 2.8em
-        width 2.8em
+        height 44px
+        width 44px
         opacity 0
         transition all 0.4s
 
@@ -51,7 +51,7 @@
         opacity 1
 
     .fab-container:nth-child(n+2)
-        margin -0.5em 0em
+        margin -8px 0em
 
     .fab-container:first-of-type .fab svg
         width 100%
@@ -64,7 +64,7 @@
 
     &:hover
         .fab-container:nth-child(n+2)
-            margin .35em 0em
+            margin 6px 0em
         .fab-container:nth-child(2)
             transition-delay 0
         .fab-container:nth-child(3)
@@ -80,7 +80,7 @@
 
     .fab-container
         position relative
-        margin .35em 0em
+        margin 6px 0em
 
     .fab-container:first-of-type .fab
         background #66CCCC
@@ -100,8 +100,8 @@
     .fab-container:nth-child(n+2) .fab-tip
         position absolute
         top 50%
-        left -0.7em
-        padding .3em .5em
+        left -10px
+        padding 4px 8px
         border-radius 2px
         transform-origin right
         transform translate(-100%, -50%)
@@ -112,7 +112,7 @@
         background #757575
         color #F5F5F5
         font-weight 300
-        font-size .9em
+        font-size 14px
         opacity 0
         z-index 2
 
@@ -123,8 +123,8 @@
         box-shadow 0px 3px 5px rgba(0, 0, 0, 0.5)
 
     .fab
-        height 3.5em
-        width 3.5em
+        height 56px
+        width 56px
         border-radius 50%
         position relative
         overflow hidden
