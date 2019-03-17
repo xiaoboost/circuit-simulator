@@ -1,5 +1,5 @@
 import Matrix from 'src/lib/matrix';
-import { PartRunData as PartData } from '..';
+import { PartData } from '..';
 
 /** 器件类型枚举常量 */
 export const enum PartType {
@@ -108,47 +108,8 @@ export interface ShapeDescription {
     readonly 'non-rotate'?: true;
 }
 
-/** 迭代方程输入参数的类型 */
-export const enum IterativeInputType {
-    /** 电压 */
-    Voltage,
-    /** 电流 */
-    Current,
-}
-
-/** 迭代方程 */
-interface IterativeParams {
-    /** 是否是迭代器 */
-    isIterative: boolean;
-    /** 输入参数描述 */
-    input: {
-        type: IterativeInputType;
-        place: string;
-    }[];
-    /** 输出参数描述 */
-    output: number[];
-    /** 迭代方程 */
-    process(...args: any[]): number[];
-}
-
-interface IterativeParams {
-    part: PartData;
-    timeInterval: number;
-}
-
-interface IterativeEquation {
-    /** 输入参数描述 */
-    input: {
-        type: IterativeInputType;
-        place: string;
-    }[];
-    /** 输出参数描述 */
-    output: number[];
-    /** 迭代方程 */
-    process(...args: any[]): number[];
-}
-
-interface ConstantParams {
+/** 描述电路的四个矩阵 */
+interface CircuitBaseMatrix {
     /** 关联矩阵 */
     A: Matrix;
     /** 电导电容矩阵 */
@@ -157,29 +118,91 @@ interface ConstantParams {
     H: Matrix;
     /** 独立电压电流源列向量 */
     S: Matrix;
-    /** 当前器件所在的支路编号 */
-    branch: number;
-    /** 当前器件参数 */
-    part: PartData;
 }
 
-/** 器件迭代方程生成器 */
-export type IterativeCreation = (params: IterativeParams) => IterativeEquation;
+/** 描述电路求解器的两个矩阵 */
+interface CircuitSolverMatrix {
+    /** 系数矩阵 */
+    factor: Matrix;
+    /** 电源列向量 */
+    source: Matrix;
+}
 
-/** 常量参数填充函数 */
-export type ConstantCreation = (param: ConstantParams) => void;
+/** 迭代方程的运行参数 */
+interface IterativeParameters {
+    /** 电压列向量 */
+    Voltage: Matrix;
+    /** 电流列向量 */
+    Current: Matrix;
+    /** 当前时间 */
+    time: number;
+    /** 模拟步长 */
+    interval: number;
+}
+
+/** 器件在运算时需要的数据 */
+export interface PartRunData extends Pick<PartData, 'id' | 'type'> {
+    /**
+     * 运算时参数联合类型
+     *  - 字符串为常量数字
+     *  - 数字为标记数字
+     */
+    params: (string | number)[];
+}
+
+/** 器件参数列表 */
+type PartParams = PartData['params'];
+/** 运行时的器件参数列表 */
+type PartRunParams = PartRunData['params'];
+/** 迭代方程 */
+type IterativeEquation = (circuit: IterativeParameters) => void;
+
+/** 器件迭代方程数据 */
+export interface IteratorData {
+    /**
+     * 标记迭代方程输出值的位置
+     * @param {CircuitBaseMatrix} circuit 电路矩阵
+     * @param {number} branch 当前器件所在支路编号
+     * @param {number} mark 当前器件的标记编号
+     */
+    markInMatrix(circuit: CircuitBaseMatrix, branch: number, mark: number): void;
+    /**
+     * 迭代方程生成器
+     * @param {CircuitSolverMatrix} solver 求解器矩阵
+     * @param {PartParams} params 器件参数
+     * @param {number} mark 当前器件的标记编号
+     * @return {IterativeEquation} 迭代方程
+     */
+    createIterator(solver: CircuitSolverMatrix, params: PartParams, mark: number): IterativeEquation;
+}
+
+/**
+ * 常量参数填充函数
+ * @param {CircuitBaseMatrix} circuit 电路矩阵
+ * @param {number} branch 当前器件所在支路编号
+ * @param {number} params 当前器件的参数值们
+ */
+export type ConstantCreation = (circuit: CircuitBaseMatrix, branch: number, params: PartRunParams) => void;
+
+/** 可拆分器件的内部器件接口 */
+interface PartInside {
+    /** 器件内部编号 */
+    id: string;
+    /** 器件类型 */
+    type: PartType;
+    /**
+     * 生成当前器件参数
+     * @param {PartRunData} part 完整器件数据
+     * @param {number} mark 完整器件的标记编号
+     * @return {PartRunParams} 可运行的器件参数
+     */
+    params(part: PartRunData, mark: number): PartRunParams;
+}
 
 /** 复杂器件的内部拆分 */
 export interface ElectronicApart {
     /** 内部器件列表 */
-    parts: {
-        /** 器件内部编号 */
-        id: string;
-        /** 器件类型 */
-        type: PartType;
-        /** 生成当前器件参数 */
-        params(part: PartData): string[];
-    }[];
+    parts: PartInside[];
     /**
      * 拆分器件的连接
      *  - 每个元组即表示内部的一个节点
@@ -213,8 +236,8 @@ export interface ElectronicPrototype {
     readonly points: PointDescription[];
     /** 器件外形元素的描述 */
     readonly shape: ShapeDescription[];
-    /** 迭代方程生成器 */
-    readonly iterative?: IterativeCreation;
+    /** 迭代方程数据 */
+    readonly iterative?: IteratorData;
     /** 常量参数生成器 */
     readonly constant?: ConstantCreation;
     /** 器件内部拆分描述 */

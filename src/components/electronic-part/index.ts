@@ -27,8 +27,6 @@ export { default as Electronics } from './parts';
 
 /** 器件基础数据 */
 export type PartData = Pick<PartComponent, dispatchKey>;
-/** 器件在运算时需要的数据 */
-export type PartRunData = Omit<PartData, 'position' | 'rotate'>;
 
 export interface PartPointAttr {
     size: number;

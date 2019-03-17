@@ -1,5 +1,6 @@
 import { ElectronicPrototype, PartType, UnitType  } from './constant';
 import { numberParser } from 'src/lib/number';
+import { isNumber } from 'src/lib/utils';
 
 const data: ElectronicPrototype = {
     pre: 'R',
@@ -40,8 +41,10 @@ const data: ElectronicPrototype = {
             },
         },
     ],
-    constant: ({ F, H, branch, part }) => {
-        const val = numberParser(part.params[0]);
+    constant: ({ F, H }, branch, params) => {
+        const param = params[0];
+        const val = isNumber(param) ? param : numberParser(param);
+
         F.set(branch, branch, -1);
         H.set(branch, branch, val);
     },

@@ -1,7 +1,9 @@
 import Matrix from 'src/lib/matrix';
 
+import * as mark from './mark';
+
 import { LineData, LineType } from 'src/components/electronic-line';
-import { PartRunData as PartData, Electronics, PartType } from 'src/components/electronic-part';
+import { PartData, PartRunData, Electronics, PartType } from 'src/components/electronic-part';
 
 type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => void;
@@ -29,9 +31,8 @@ export default class Solver {
      * 处理之后的所有器件合集
      *  - 没有辅助器件
      *  - 没有可以继续拆分的器件
-     *  - 不包含 connect 数据
      */
-    partsAll: Omit<PartData, 'connect'>[] = [];
+    partsAll: PartRunData[] = [];
 
     /** 系数矩阵 */
     factor!: Matrix;
@@ -73,7 +74,6 @@ export default class Solver {
         this.handleAttach();
         this.observeMeter();
         this.setCircuitMatrix();
-        this.setUpdateMethod();
     }
 
     /** 用 id 搜索器件或导线 */
@@ -137,7 +137,7 @@ export default class Solver {
 
     /** 由管脚到支路电流计算矩阵 */
     private getCurrentMatrixByPin(pin: string) {
-        const matrix = new Matrix(1, this.nodeNumber, 0);
+        const matrix = new Matrix(1, this.branchNumber, 0);
         matrix.set(0, this.PinBranchMap[pin], 1);
         return matrix;
     }
@@ -331,15 +331,11 @@ export default class Solver {
             // 电流表
             if (meter.type === PartType.CurrentMeter) {
                 const { partPins } = this.getNodeConnectByLine(meter.connect[0]);
-                const matrix = new Matrix(1, this.branchNumber, 0);
+                let matrix = new Matrix(1, this.branchNumber, 0);
 
-                /**
-                 * 电流观测矩阵
-                 * 下标 - 节点编号
-                 * TODO: 值 - 当前器件管脚是否是电流正方向
-                 */
+                // 入口处所有支路的电流相加即为当前电流
                 for (const pin of partPins) {
-                    matrix.set(0, this.PinNodeMap[pin], 1);
+                    matrix = matrix.add(this.getCurrentMatrixByPin(pin));
                 }
 
                 this.observeCurrent.push({
@@ -353,11 +349,13 @@ export default class Solver {
                 const inputVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
                 const outputVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
 
+                // 输入减去输出即为当前电压表电压
+                const matrix = inputVoltage.add(outputVoltage.factor(-1));
+
                 this.observeVoltage.push({
                     id: meter.id,
                     data: [],
-                    // 输入减去输出即为当前电压表电压
-                    matrix: inputVoltage.add(outputVoltage.factor(-1)),
+                    matrix,
                 });
             }
         }
@@ -365,12 +363,66 @@ export default class Solver {
 
     /** 创建电路系数矩阵 */
     private setCircuitMatrix() {
+        const { nodeNumber, branchNumber } = this;
 
-    }
+        /** 关联矩阵 */
+        const A = new Matrix(nodeNumber, branchNumber);
+        /** 电导电容矩阵 */
+        const F = new Matrix(branchNumber);
+        /** 电阻电感矩阵 */
+        const H = new Matrix(branchNumber);
+        /** 独立电压电流源列向量 */
+        const S = new Matrix(branchNumber, 1);
 
-    /** 创建参数迭代函数 */
-    private setUpdateMethod() {
+        // 迭代方程包装器暂用堆栈
+        const updateWarppers: (() => () => void)[] = [];
 
+        // 扫描所有支路，建立关联矩阵
+        for (const branch of Object.keys(this.PinBranchMap)) {
+            const node = this.PinNodeMap[branch];
+
+            // 跳过参考节点
+            if (node === 0) {
+                continue;
+            }
+
+            // TODO: 需要再看看原理 记录关联节点
+            A.set(node - 1, this.PinBranchMap[branch], Math.pow(-1, Number(branch[branch.length - 1]) + 1));
+        }
+
+        // 扫描所有器件，建立器件矩阵
+        for (const part of this.partsAll) {
+            /** 当前器件所在支路编号 */
+            const branch = this.PinBranchMap[part.id];
+            /** 当前的器件参数生成器 */
+            const { constant, iterative } = Electronics[part.type];
+
+            // 都不存在则报错
+            if (!constant && !iterative) {
+                throw new Error('该器件不存在参数生成器');
+            }
+            // 常量参数
+            else if (constant) {
+                constant({ A, F, H, S }, branch, part.params);
+            }
+            // 迭代参数
+            else {
+
+            }
+        }
+
+        // 系数矩阵
+        this.factor = Matrix.merge([
+            [0,              0,     A],
+            [A.transpose(), 'E',    0],
+            [0,              F,     H],
+        ]);
+
+        // 电源列向量
+        this.source = (
+            new Matrix(A.row, 1)
+                .concatDown(new Matrix(A.column, 1), S)
+        );
     }
 
     /** 设置进度条事件 */

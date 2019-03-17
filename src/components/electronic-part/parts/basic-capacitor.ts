@@ -1,5 +1,6 @@
-import { ElectronicPrototype, PartType, IterativeInputType, UnitType  } from './constant';
+import { ElectronicPrototype, PartType, UnitType  } from './constant';
 import { numberParser } from 'src/lib/number';
+import { isNumber } from 'src/lib/utils';
 
 const data: ElectronicPrototype = {
     pre: 'C',
@@ -40,34 +41,45 @@ const data: ElectronicPrototype = {
             },
         },
     ],
-    iterative({ part, timeInterval }) {
-        // 电容值
-        const valueCap = numberParser(part.params[0]);
-        // 积分的中间变量
-        const save = {
-            last: 0,
-            integral: 0,
-        };
+    // 电容器动态更新的是它的电压值
+    iterative: {
+        markInMatrix({ F, S }, branch, mark) {
+            F.set(branch, branch, 1);
+            S.set(branch, 0, mark);
+        },
+        createIterator({ factor }, params, mark) {
+            // 电容值
+            const valueCap = numberParser(params[0]);
+            // 积分的中间变量
+            const save = {
+                last: 0,
+                integral: 0,
+            };
+            // 记录位置
+            const position: [number, number][] = [];
+            factor.forEach((num, location) => {
+                if (num === mark) {
+                    position.push(location);
+                }
+            });
 
-        return {
-            output: [],
-            input: [
-                {
-                    type: IterativeInputType.Current,
-                    place: `${part.id}-0`,
-                },
-            ],
-            process(current: number) {
+            // 从 factor 矩阵中找到对应的更新值的位置
+
+            return ({ Current, interval }) => {
+                // TODO: 从电流列向量中取得当前所需要的电流值
+                const last = 0;
+
                 // 积分，一阶近似累加
-                const now = (current + save.last) / 2 * timeInterval + save.integral;
+                const now = (last + save.last) / 2 * interval + save.integral;
                 const voltage = now / valueCap;
 
-                save.last = current;
+                save.last = last;
                 save.integral = now;
 
-                return ([voltage]);
-            },
-        };
+                // 更新系数矩阵
+                position.forEach(([i, j]) => factor.set(i, j, voltage));
+            };
+        },
     },
 };
 
