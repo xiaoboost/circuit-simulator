@@ -1,6 +1,6 @@
 import Matrix from 'src/lib/matrix';
 
-import * as mark from './mark';
+import * as Mark from './mark';
 
 import { LineData, LineType } from 'src/components/electronic-line';
 import { PartData, PartRunData, Electronics, PartType } from 'src/components/electronic-part';
@@ -21,34 +21,34 @@ export interface Observer {
 /** 求解器 */
 export default class Solver {
     /** 器件数据 */
-    parts: PartData[] = [];
+    private parts: PartData[] = [];
     /** 导线数据 */
-    lines: LineData[] = [];
+    private lines: LineData[] = [];
     /** 事件函数 */
-    events: ProgressHandler[] = [];
+    private events: ProgressHandler[] = [];
 
     /**
      * 处理之后的所有器件合集
      *  - 没有辅助器件
      *  - 没有可以继续拆分的器件
      */
-    partsAll: PartRunData[] = [];
+    private partsAll: PartRunData[] = [];
 
     /** 系数矩阵 */
-    factor!: Matrix;
+    private factor!: Matrix;
     /** 电源列向量 */
-    source!: Matrix;
+    private source!: Matrix;
     /** 迭代函数 */
-    update!: Function;
+    private update!: Function;
     /** 电流观测器 */
-    observeCurrent: Observer[] = [];
+    private observeCurrent: Observer[] = [];
     /** 电压观测器 */
-    observeVoltage: Observer[] = [];
+    private observeVoltage: Observer[] = [];
 
     /** [管脚->节点号] 对应表 */
-    PinNodeMap: HashMap = {};
+    private PinNodeMap: HashMap = {};
     /** [管脚->支路号] 对应表 */
-    PinBranchMap: HashMap = {};
+    private PinBranchMap: HashMap = {};
 
     /** 节点数量 */
     get nodeNumber() {
@@ -204,13 +204,14 @@ export default class Solver {
 
     /** 拆分所有能拆分的器件 */
     private splitParts() {
-        for (const part of this.parts) {
+        this.parts.forEach((part, index) => {
             // 器件原型
             const prototype = Electronics[part.type];
 
             // 跳过不需要拆分的器件
             if (!prototype.apart) {
-                continue;
+                this.partsAll.push(part);
+                return;
             }
 
             const {
@@ -255,14 +256,14 @@ export default class Solver {
                 this.partsAll.push({
                     id: newId,
                     type: insidePart.type,
-                    params: insidePart.params(part),
+                    params: insidePart.params(part, Mark.getMark(index)),
                 });
 
                 for (let i = 0; i < insidePrototype.points.length; i++) {
                     PinBranchMap[`${newId}-${i}`] = branchNumber;
                 }
             }
-        }
+        });
     }
 
     /**
@@ -375,7 +376,7 @@ export default class Solver {
         const S = new Matrix(branchNumber, 1);
 
         // 迭代方程包装器暂用堆栈
-        const updateWarppers: (() => () => void)[] = [];
+        const updateWarppers: Function[] = [];
 
         // 扫描所有支路，建立关联矩阵
         for (const branch of Object.keys(this.PinBranchMap)) {
@@ -390,8 +391,8 @@ export default class Solver {
             A.set(node - 1, this.PinBranchMap[branch], Math.pow(-1, Number(branch[branch.length - 1]) + 1));
         }
 
-        // 扫描所有器件，建立器件矩阵
-        for (const part of this.partsAll) {
+        // 建立器件矩阵
+        this.parts.forEach((part, index) => {
             /** 当前器件所在支路编号 */
             const branch = this.PinBranchMap[part.id];
             /** 当前的器件参数生成器 */
@@ -399,17 +400,17 @@ export default class Solver {
 
             // 都不存在则报错
             if (!constant && !iterative) {
-                throw new Error('该器件不存在参数生成器');
+                throw new Error('该器件不存在 参数/常量 生成器');
             }
             // 常量参数
             else if (constant) {
                 constant({ A, F, H, S }, branch, part.params);
             }
-            // 迭代参数
-            else {
-
+            // 标记迭代参数
+            else if (iterative) {
+                iterative.markInMatrix({ A, F, H, S }, branch, Mark.getMark(index));
             }
-        }
+        });
 
         // 系数矩阵
         this.factor = Matrix.merge([
@@ -423,6 +424,28 @@ export default class Solver {
             new Matrix(A.row, 1)
                 .concatDown(new Matrix(A.column, 1), S)
         );
+
+        // 求解方程矩阵
+        const solverMatrix = {
+            factor: this.factor,
+            source: this.source,
+        };
+
+        // 生成迭代方程
+        this.parts.forEach((part, index) => {
+            /** 当前的器件参数生成器 */
+            const { iterative } = Electronics[part.type];
+
+            // 跳过不存在生成器的器件
+            if (!iterative) {
+                return;
+            }
+
+            updateWarppers.push(iterative.createIterator(solverMatrix, part.params, Mark.getMark(index)));
+        });
+
+        // 参数迭代方程包装
+        this.update = () => updateWarppers.forEach((cb) => cb());
     }
 
     /** 设置进度条事件 */

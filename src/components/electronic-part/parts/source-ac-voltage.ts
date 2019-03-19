@@ -1,4 +1,5 @@
 import { ElectronicPrototype, PartType, UnitType  } from './constant';
+import { numberParser } from 'src/lib/number';
 
 const part: ElectronicPrototype = {
     pre: 'V',
@@ -63,6 +64,31 @@ const part: ElectronicPrototype = {
             },
         },
     ],
+    iterative: {
+        markInMatrix({ F, S }, branch, mark) {
+            F.set(branch, branch, 1);
+            S.set(branch, 0, mark);
+        },
+        createIterator({ source }, params, mark) {
+            /** 峰值电压 */
+            const factor = numberParser(params[0]);
+            /** 频率 */
+            const frequency = numberParser(params[1]);
+            /** 偏置电压 */
+            const bias = numberParser(params[2]);
+            /** 初始相角 */
+            const phase = numberParser(params[3]);
+            /** 需要更新的数值位置 */
+            const position = source.filterPostion(mark);
+
+            return ({ time }) => {
+                // 当前输出电压
+                const volt = factor * Math.sin(frequency * time * Math.PI * 2 + phase / 180 * Math.PI) + bias;
+                // 更新矩阵的值
+                position.forEach(([i, j]) => source.set(i, j, volt));
+            };
+        },
+    },
 };
 
 export default part;

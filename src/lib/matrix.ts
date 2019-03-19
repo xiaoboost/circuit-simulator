@@ -593,6 +593,27 @@ export default class Matrix {
 
         return newMa;
     }
+    /**
+     * 过滤矩阵的位置
+     * @param callback 一个数字或者是回调
+     *  - 数字相等或者是回调返回 true，此时矩阵元素的位置会被记录
+     */
+    filterPostion(callback: number | ((value: number, position: [number, number]) => boolean)) {
+        const position: [number, number][] = [];
+        const pre = isNumber(callback) ? (val: number) => val === callback : callback;
+
+        for (let i = 0; i < this._view.length; i++) {
+            const x = Math.floor(i / this.column);
+            const y = i % this.column;
+            const result = pre(this._view[i], [x, y]);
+
+            if (result) {
+                position.push([x, y]);
+            }
+        }
+
+        return position;
+    }
 }
 
 /**
