@@ -279,10 +279,6 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
             line.dispatch();
         }));
     },
-    /** 求解电路 */
-    async [ActionName.SOLVE_CIRCUIT]({ state }) {
-        const solver = new Solver(state.parts, state.lines);
-    },
 };
 
 export default new Vuex.Store<State>({

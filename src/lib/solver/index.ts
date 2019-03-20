@@ -1,9 +1,11 @@
 import Matrix from 'src/lib/matrix';
+import store from 'src/vuex';
 
 import * as Mark from './mark';
 
+import { numberParser } from 'src/lib/number';
 import { LineData, LineType } from 'src/components/electronic-line';
-import { PartData, PartRunData, Electronics, PartType } from 'src/components/electronic-part';
+import { PartData, PartRunData, Electronics, PartType, IterativeEquation } from 'src/components/electronic-part';
 
 type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => void;
@@ -39,7 +41,7 @@ export default class Solver {
     /** 电源列向量 */
     private source!: Matrix;
     /** 迭代函数 */
-    private update!: Function;
+    private update!: IterativeEquation;
     /** 电流观测器 */
     private observeCurrent: Observer[] = [];
     /** 电压观测器 */
@@ -66,6 +68,7 @@ export default class Solver {
         this.PinNodeMap = {};
         this.PinBranchMap = {};
 
+        debugger;
         // 状态初始化
         // 注：不可以调整以下函数的调用顺序
         this.setPinBranchMap();
@@ -376,7 +379,7 @@ export default class Solver {
         const S = new Matrix(branchNumber, 1);
 
         // 迭代方程包装器暂用堆栈
-        const updateWarppers: Function[] = [];
+        const updateWarppers: IterativeEquation[] = [];
 
         // 扫描所有支路，建立关联矩阵
         for (const branch of Object.keys(this.PinBranchMap)) {
@@ -427,8 +430,8 @@ export default class Solver {
 
         // 求解方程矩阵
         const solverMatrix = {
-            factor: this.factor,
-            source: this.source,
+            Factor: this.factor,
+            Source: this.source,
         };
 
         // 生成迭代方程
@@ -445,7 +448,7 @@ export default class Solver {
         });
 
         // 参数迭代方程包装
-        this.update = () => updateWarppers.forEach((cb) => cb());
+        this.update = (arg) => updateWarppers.forEach((cb) => cb(arg));
     }
 
     /** 设置进度条事件 */
@@ -454,7 +457,62 @@ export default class Solver {
     }
 
     /** 开始求解 */
-    startSolve() {
+    async startSolve() {
+        // 终止和步长时间
+        const { state: { time }} = store;
+        const end = numberParser(time.end);
+        const step = numberParser(time.step);
 
+        /** 结点电压列向量 */
+        let nodeVoltage = new Matrix(this.nodeNumber, 1, 0);
+        /** 支路电流列向量 */
+        let branchCurrent = new Matrix(this.branchNumber, 1, 0);
+        /** 系数逆矩阵 */
+        let factorInverse: Matrix;
+        /** 当前时间 */
+        let current = 0;
+
+        // 迭代求解
+        while (current <= end) {
+            // 更新参数
+            this.update({
+                Voltage: nodeVoltage,
+                Current: branchCurrent,
+                time: end,
+                interval: step,
+            });
+
+            // TODO: 系数矩阵更新，重新求逆
+            if (current === 0) {
+                factorInverse = this.factor.inverse();
+            }
+
+            // 求解电路
+            const result = factorInverse!.mul(this.source);
+
+            // 更新列向量
+            nodeVoltage = result.slice([0, 0], [this.nodeNumber - 1, 0]);
+            branchCurrent = result.slice([this.nodeNumber + this.branchNumber, 0], [result.column - 1, 0]);
+
+            // 记录观测电压值
+            for (const ob of this.observeVoltage) {
+                ob.data.push(ob.matrix.mul(nodeVoltage).get(0, 0));
+            }
+
+            // 记录观测电流值
+            for (const ob of this.observeVoltage) {
+                ob.data.push(ob.matrix.mul(branchCurrent).get(0, 0));
+            }
+
+            // 更新当前时间
+            current += step;
+
+            // 当前进度
+            const progress = Math.round(current / end * 100);
+            // 运行进度事件回调
+            for (const ev of this.events) {
+                await ev(progress);
+            }
+        }
     }
 }

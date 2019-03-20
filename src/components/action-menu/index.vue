@@ -4,7 +4,7 @@
 <transition name="fade">
     <footer class="action-menu" v-show="vision">
         <div v-if="isRun" class="fab-container">
-            <div class="fab" id="fab-text"></div>
+            <div class="fab fab-text">{{ progress }} %</div>
         </div>
         <template v-else>
             <!-- 模拟运行 -->
@@ -142,4 +142,8 @@
         fill #FFFFFF
         stroke-width 0
 
+    .fab-text
+        color #fff
+        font-size 17px
+        font-family font-text
 </style>

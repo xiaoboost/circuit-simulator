@@ -1,9 +1,6 @@
-import {
-    isUndef,
-    isArray,
-    isNumber,
-    isString,
-} from './utils';
+import Point from './point';
+
+import { isArray, isNumber, isString } from './utils';
 
 type MatrixInput = number[][] | Matrix;
 
@@ -271,6 +268,38 @@ export default class Matrix {
             ans[i] = this._view[index + i * this.column];
         }
         return ans;
+    }
+    /**
+     * 取出矩阵的中间一部分
+     * @param a 左上角位置
+     * @param b 右下角位置
+     */
+    slice(a: [number, number] | number[] | Point, b: [number, number] | number[] | Point) {
+        // 取出坐标
+        const [ax, ay] = a, [bx, by] = b;
+
+        // 输入格式检查
+        if (!(
+            ax >= 0 && ax < this.row && bx >= 0 && bx < this.row &&
+            ay >= 0 && ay < this.column && by >= 0 && by < this.column
+        )) {
+            throw new Error(`输入位置错误 a: ${a.join()}, b: ${b.join()}`);
+        }
+
+        const xMin = Math.min(ax, bx);
+        const xMax = Math.max(ax, bx);
+        const yMin = Math.min(ay, by);
+        const yMax = Math.max(ay, by);
+
+        const result = new Matrix(xMax - xMin + 1, yMax - yMin + 1, 0);
+
+        for (let i = xMin; i <= xMax; i++) {
+            for (let j = yMin; j <= yMin; j++) {
+                result.set(i - xMin, j - yMin, this.get(i, j));
+            }
+        }
+
+        return (result);
     }
     /**
      * 字符串连接

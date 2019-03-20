@@ -82,8 +82,6 @@ export const enum MutationName {
 export const enum ActionName {
     /** 外部数据导入 */
     IMPORT_DATA = 'IMPORT_DATA',
-    /** 求解电路 */
-    SOLVE_CIRCUIT = 'SOLVE_CIRCUIT',
 }
 
 /** vuex 状态接口 */
@@ -172,6 +170,4 @@ export interface Mutation {
 export interface Action {
     /** 外部数据导入 */
     [ActionName.IMPORT_DATA](data: CircuitStorage): Promise<void>;
-    /** 求解电路 */
-    [ActionName.SOLVE_CIRCUIT](): Promise<void>;
 }

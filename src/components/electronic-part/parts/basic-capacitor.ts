@@ -47,7 +47,7 @@ const data: ElectronicPrototype = {
             F.set(branch, branch, 1);
             S.set(branch, 0, mark);
         },
-        createIterator({ factor }, params, mark) {
+        createIterator({ Factor }, params, mark) {
             // 电容值
             const valueCap = numberParser(params[0]);
             // 积分的中间变量
@@ -57,7 +57,7 @@ const data: ElectronicPrototype = {
             };
             // 记录位置
             const position: [number, number][] = [];
-            factor.forEach((num, location) => {
+            Factor.forEach((num, location) => {
                 if (num === mark) {
                     position.push(location);
                 }
@@ -77,7 +77,7 @@ const data: ElectronicPrototype = {
                 save.integral = now;
 
                 // 更新系数矩阵
-                position.forEach(([i, j]) => factor.set(i, j, voltage));
+                position.forEach(([i, j]) => Factor.set(i, j, voltage));
             };
         },
     },

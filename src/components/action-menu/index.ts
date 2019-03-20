@@ -1,18 +1,20 @@
 import { Component, Vue } from 'vue-property-decorator';
-import { Getter, Mutation, Action } from 'vuex-class';
+import { Getter, Mutation } from 'vuex-class';
+
+import Solver from 'src/lib/solver';
 
 import {
     MutationName,
-    ActionName,
     Getter as GetterTree,
     Mutation as MutationTree,
-    Action as ActionTree,
 } from 'src/vuex';
 
 @Component
 export default class ActionMenu extends Vue {
     /** 当前是否正在运行 */
-    private isRun = false;
+    isRun = false;
+    /** 当前进度 */
+    progress = 0;
 
     /** 是否显示菜单 */
     @Getter('isSpace')
@@ -30,14 +32,23 @@ export default class ActionMenu extends Vue {
     @Mutation(MutationName.OPEN_GRAPH_VIEW)
     showGraph!: MutationTree[MutationName.OPEN_GRAPH_VIEW];
 
-    /** 运行电路模拟 */
-    @Action(ActionName.SOLVE_CIRCUIT)
-    solve!: ActionTree[ActionName.SOLVE_CIRCUIT];
-
     /** 模拟运行 */
-    simulate() {
-        // this.isRun = true;
-        // this.solve();
+    async simulate() {
+        this.isRun = true;
+
+        const { parts, lines } = this.$store.state;
+        const solver = new Solver(parts, lines);
+
+        // 变更当前进度
+        solver.onProgress((progress) => {
+            this.progress = progress;
+            return this.$nextTick();
+        });
+
+        // 等待运行
+        await solver.startSolve();
+
+        // 展示换算结果
         this.showGraph();
     }
 }

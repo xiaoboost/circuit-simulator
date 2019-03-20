@@ -123,9 +123,9 @@ interface CircuitBaseMatrix {
 /** 描述电路求解器的两个矩阵 */
 interface CircuitSolverMatrix {
     /** 系数矩阵 */
-    factor: Matrix;
+    Factor: Matrix;
     /** 电源列向量 */
-    source: Matrix;
+    Source: Matrix;
 }
 
 /** 迭代方程的运行参数 */
@@ -155,7 +155,7 @@ type PartParams = PartData['params'];
 /** 运行时的器件参数列表 */
 type PartRunParams = PartRunData['params'];
 /** 迭代方程 */
-type IterativeEquation = (circuit: IterativeParameters) => void;
+export type IterativeEquation = (circuit: IterativeParameters) => void;
 
 /** 器件迭代方程数据 */
 export interface IteratorData {
