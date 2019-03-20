@@ -68,7 +68,6 @@ export default class Solver {
         this.PinNodeMap = {};
         this.PinBranchMap = {};
 
-        debugger;
         // 状态初始化
         // 注：不可以调整以下函数的调用顺序
         this.setPinBranchMap();
@@ -111,7 +110,7 @@ export default class Solver {
         const partPins: string[] = [];
 
         // 搜索节点
-        while (temp.length) {
+        while (temp.length > 0) {
             const current = temp.pop()!;
             const connections = current.connect.join(' ').split(' ');
 
@@ -120,11 +119,14 @@ export default class Solver {
 
             // 循环迭代当前导线所有的连接
             for (const pin of connections) {
-                const item = this.findPart(id);
+                const item = this.findPart(pin);
 
                 // 导线
                 if (item.type === LineType.Line) {
-                    if (!temp.find((li) => li.id === id)) {
+                    if (
+                        !temp.find((li) => li.id === item.id) &&
+                        !lines.find((li) => li.id === item.id)
+                    ) {
                         temp.push(item);
                     }
                 }
@@ -154,7 +156,6 @@ export default class Solver {
 
     /** 扫描所有导线，生成 [管脚->节点号] 对应表 */
     private setPinNodeMap() {
-        const pinNodeMap: HashMap = {};
         const lineHash: AnyObject<boolean> = {};
 
         /** 节点数量，初始为 1 */
@@ -173,7 +174,7 @@ export default class Solver {
             // 标记已经搜索过的导线
             lines.forEach((item) => lineHash[item.id] = true);
             // 记录所有引脚连接节点的编号
-            partPins.forEach((pin) => pinNodeMap[pin] = nodeNumber);
+            partPins.forEach((pin) => this.PinNodeMap[pin] = nodeNumber);
 
             // 每次循环就是个单独的节点
             nodeNumber++;
@@ -273,7 +274,7 @@ export default class Solver {
      * 处理辅助器件
      *  - 参考地，参考地所在节点全部标号为 0
      *  - 电流表，合并电流表入口，删除节点表中记录
-     *  - 电压表，删除节点表中的记录
+     *  - 电压表，不做处理（因为电压表相当于开路）
      */
     private handleAttach() {
         for (const part of this.parts) {
@@ -288,8 +289,8 @@ export default class Solver {
                     if (PinNodeMap[pin] > GroundNode) {
                         PinNodeMap[pin]--;
                     }
-                    // 参考节点为0
-                    else {
+                    // 参考节点为 0
+                    else if (PinNodeMap[pin] === GroundNode) {
                         PinNodeMap[pin] = 0;
                     }
                 }
@@ -320,12 +321,6 @@ export default class Solver {
                 delete PinNodeMap[meterInput];
                 delete PinNodeMap[meterOutput];
             }
-            // 电压表
-            else if (part.type === PartType.VoltageMeter) {
-                // 从节点对应表中删除记录
-                delete this.PinNodeMap[`${part.id}-0`];
-                delete this.PinNodeMap[`${part.id}-`];
-            }
         }
     }
 
@@ -334,6 +329,7 @@ export default class Solver {
         for (const meter of this.parts) {
             // 电流表
             if (meter.type === PartType.CurrentMeter) {
+                debugger;
                 const { partPins } = this.getNodeConnectByLine(meter.connect[0]);
                 let matrix = new Matrix(1, this.branchNumber, 0);
 
@@ -350,6 +346,7 @@ export default class Solver {
             }
             // 电压表
             else if (meter.type === PartType.VoltageMeter) {
+                debugger;
                 const inputVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
                 const outputVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
 
