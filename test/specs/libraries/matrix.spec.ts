@@ -1,24 +1,74 @@
 import Matrix from 'src/lib/matrix';
 
 describe('matrix.ts: class of Matrix', () => {
-    test('create a instance', () => {
+    test('create a Matrix', () => {
         let ma: Matrix;
         // 0 行列式填充以及从数组到行列式
         expect(Matrix.from([[0, 0, 0], [0, 0, 0]])).toEqualMatrix(new Matrix(2, 3, 0));
+
         // 0矩阵
         ma = new Matrix(5);
         for (let i = 0; i < 5; i++) {
-            for (let j = 0; j <= 0; j++) {
+            for (let j = 0; j < 5; j++) {
                 expect(ma.get(i, j)).toBe(0);
             }
         }
+
         // 单位矩阵
-        ma = new Matrix(5, 'E');
-        for (let i = 0; i < 5; i++) {
-            for (let j = 0; j <= 0; j++) {
-                expect(ma.get(i, j)).toBe(Number(i === j));
+        ma = new Matrix(6, 'E');
+        for (let i = 0; i < 6; i++) {
+            for (let j = 0; j < 6; j++) {
+                if (i === j) {
+                    expect(ma.get(i, j)).toBe(1);
+                }
+                else {
+                    expect(ma.get(i, j)).toBe(0);
+                }
             }
         }
+
+        // 矩阵填充
+        ma = new Matrix(7, 12);
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 7; j++) {
+                expect(ma.get(i, j)).toBe(12);
+            }
+        }
+
+        // 行列式
+        ma = new Matrix(5, 6, 14);
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 6; j++) {
+                expect(ma.get(i, j)).toBe(14);
+            }
+        }
+
+        // 单位行列式
+        ma = new Matrix(5, 7, 'E');
+        for (let i = 0; i < 5; i++) {
+            for (let j = 0; j < 7; j++) {
+                if (i === j) {
+                    expect(ma.get(i, j)).toBe(1);
+                }
+                else {
+                    expect(ma.get(i, j)).toBe(0);
+                }
+            }
+        }
+
+        // 单位行列式
+        ma = new Matrix(7, 5, 'E');
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 5; j++) {
+                if (i === j) {
+                    expect(ma.get(i, j)).toBe(1);
+                }
+                else {
+                    expect(ma.get(i, j)).toBe(0);
+                }
+            }
+        }
+
         // 复制矩阵
         const copy = Matrix.from(ma);
         expect(copy === ma).toBeFalse();
@@ -80,6 +130,61 @@ describe('matrix.ts: class of Matrix', () => {
         ma.exchangeColumn(1, 3);
         expect(ma.getColumn(1)).toEqual([4, 12, 8, 16]);
         expect(ma.getColumn(3)).toEqual([2, 10, 6, 14]);
+    });
+    test('Matrix.prototype.transpose()', () => {
+        const ma1 = Matrix.from([
+            [1,  2,  3,  4],
+            [5,  6,  7,  8],
+            [9, 10, 11, 12],
+        ]);
+
+        const ma2 = Matrix.from([
+            [1, 5,  9],
+            [2, 6, 10],
+            [3, 7, 11],
+            [4, 8, 12],
+        ]);
+
+        expect(ma1.transpose()).toEqualMatrix(ma2);
+    });
+    test('Matrix.prototype.factor()', () => {
+        const ma1 = Matrix.from([
+            [1,  2,  3,  4],
+            [5,  6,  7,  8],
+            [9, 10, 11, 12],
+        ]);
+
+        const ma2 = Matrix.from([
+            [ 2,  4,  6,  8],
+            [10, 12, 14, 16],
+            [18, 20, 22, 24],
+        ]);
+
+        expect(ma1.factor(2)).toEqualMatrix(ma2);
+    });
+    test('Matrix.prototype.add()', () => {
+        const ma1 = Matrix.from([
+            [1,  2,  3,  4],
+            [5,  6,  7,  8],
+            [9, 10, 11, 12],
+        ]);
+
+        const ma2 = Matrix.from([
+            [ 2,  4,  6,  8],
+            [10, 12, 14, 16],
+            [18, 20, 22, 24],
+        ]);
+
+        const ma3 = Matrix.from([
+            [ 3,  6,  9, 12],
+            [15, 18, 21, 24],
+            [27, 30, 33, 36],
+        ]);
+
+        expect(ma1.add(ma2)).toEqualMatrix(ma3);
+
+        const ma4 = new Matrix(2, 2, 0);
+        expect(() => ma1.add(ma4)).toThrowError('(matrix) ma can not be add with this.');
     });
     test('Matrix.prototype.mul/multo()', () => {
         const matrixA = Matrix.from([

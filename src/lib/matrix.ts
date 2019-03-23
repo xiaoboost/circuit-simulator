@@ -353,7 +353,7 @@ export default class Matrix {
      * @returns {Matrix}
      */
     transpose() {
-        const result = new Matrix(this.column, this.row);
+        const result = new Matrix(this.column, this.row, 0);
 
         for (let i = 0; i < this.row; i++) {
             for (let j = 0; j < this.column; j++) {
