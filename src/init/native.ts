@@ -120,19 +120,4 @@ def(Number.prototype, {
 
         return Number.parseFloat(sign + str);
     },
-
-    /**
-     * 求数字的数量级
-     *
-     * @returns {number}
-     */
-    rank(this: number): number {
-        const value = Math.abs(this.valueOf());
-
-        if (Number.isNaN(value)) {
-            throw new Error('(number) cannot run .rank() on NaN');
-        }
-
-        return Math.floor(Math.log10(value));
-    },
 });

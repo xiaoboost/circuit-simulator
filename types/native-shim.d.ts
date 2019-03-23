@@ -36,20 +36,3 @@ interface Array<T> {
      */
     $set(index: number, value: T): void;
 }
-
-interface Number {
-    /**
-     * 按照有效数字的位数进行四舍五入。
-     *  - 默认 6 位有效数字 [bits=6]
-     *
-     * @param {number} [bits=6]
-     * @returns {number}
-     */
-    toRound(bits?: number): number;
-    /**
-     * 求数字的数量级
-     *
-     * @returns {number}
-     */
-    rank(): number;
-}
