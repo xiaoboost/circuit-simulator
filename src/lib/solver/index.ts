@@ -8,7 +8,7 @@ import { LineData, LineType } from 'src/components/electronic-line';
 import { PartData, PartRunData, Electronics, PartType, IterativeEquation } from 'src/components/electronic-part';
 
 type HashMap = AnyObject<number>;
-type ProgressHandler = (progress: number) => void;
+type ProgressHandler = (progress: number) => any | Promise<any>;
 
 /** 观测器 */
 export interface Observer {
@@ -49,16 +49,19 @@ export default class Solver {
 
     /** [管脚->节点号] 对应表 */
     private PinNodeMap: HashMap = {};
-    /** [管脚->支路号] 对应表 */
+    /**
+     * [管脚->支路号] 对应表
+     *  - 在拆分器件之前，可能会有拥有三个或以上管脚的器件，经过拆分之后就没有这种器件存在的
+     */
     private PinBranchMap: HashMap = {};
 
     /** 节点数量 */
     get nodeNumber() {
-        return Math.max(...Object.values(this.PinNodeMap));
+        return Math.max(...Object.values(this.PinNodeMap)) + 1;
     }
     /** 支路数量 */
     get branchNumber() {
-        return Math.max(...Object.values(this.PinBranchMap));
+        return Math.max(...Object.values(this.PinBranchMap)) + 1;
     }
 
     constructor(parts: PartData[], lines: LineData[]) {
@@ -141,9 +144,9 @@ export default class Solver {
     }
 
     /** 由管脚到支路电流计算矩阵 */
-    private getCurrentMatrixByPin(pin: string) {
+    private getCurrentMatrixByPin(part: string) {
         const matrix = new Matrix(1, this.branchNumber, 0);
-        matrix.set(0, this.PinBranchMap[pin], 1);
+        matrix.set(0, this.PinBranchMap[part], 1);
         return matrix;
     }
 
@@ -158,8 +161,8 @@ export default class Solver {
     private setPinNodeMap() {
         const lineHash: AnyObject<boolean> = {};
 
-        /** 节点数量，初始为 1 */
-        let nodeNumber = 1;
+        /** 节点编号，初始为 0 */
+        let nodeNumber = 0;
 
         // 搜索所有导线
         for (const line of this.lines) {
@@ -181,8 +184,9 @@ export default class Solver {
         }
     }
 
-    /** 扫描所有器件，生成 [管脚->支路号] 对应表 */
+    /** 扫描所有器件，生成 [器件->支路号] 对应表 */
     private setPinBranchMap() {
+        /** 支路编号，初始为 0 */
         let branchNumber = 0;
 
         for (const part of this.parts) {
@@ -195,25 +199,28 @@ export default class Solver {
                 continue;
             }
 
-            const prototype = Electronics[part.type];
-
-            // 一个器件一个支路
-            for (let i = 0; i < prototype.points.length; i++) {
-                this.PinBranchMap[`${part.id}-${i}`] = branchNumber;
-            }
-
-            branchNumber++;
+            // 一器件一支路
+            this.PinBranchMap[part.id] = branchNumber++;
         }
     }
 
     /** 拆分所有能拆分的器件 */
     private splitParts() {
         this.parts.forEach((part, index) => {
+            // 跳过辅助器件
+            if (
+                part.type === PartType.ReferenceGround ||
+                part.type === PartType.CurrentMeter ||
+                part.type === PartType.VoltageMeter
+            ) {
+                return;
+            }
+
             // 器件原型
-            const prototype = Electronics[part.type];
+            const { apart } = Electronics[part.type];
 
             // 跳过不需要拆分的器件
-            if (!prototype.apart) {
+            if (!apart) {
                 this.partsAll.push(part);
                 return;
             }
@@ -222,7 +229,7 @@ export default class Solver {
                 interface: external,
                 connect: internal,
                 parts: insideParts,
-            } = prototype.apart;
+            } = apart;
 
             const { PinNodeMap, PinBranchMap } = this;
 
@@ -251,10 +258,6 @@ export default class Solver {
             for (const insidePart of insideParts) {
                 // 新器件编号
                 const newId = `${part.id}-${insidePart.id}`;
-                // 新器件支路编号
-                const branchNumber = this.branchNumber + 1;
-                // 新器件的原型
-                const insidePrototype = Electronics[insidePart.type];
 
                 // 新器件入栈
                 this.partsAll.push({
@@ -263,16 +266,14 @@ export default class Solver {
                     params: insidePart.params(part, Mark.getMark(index)),
                 });
 
-                for (let i = 0; i < insidePrototype.points.length; i++) {
-                    PinBranchMap[`${newId}-${i}`] = branchNumber;
-                }
+                PinBranchMap[newId] = this.branchNumber + 1;
             }
         });
     }
 
     /**
      * 处理辅助器件
-     *  - 参考地，参考地所在节点全部标号为 0
+     *  - 参考地，参考地所在节点全部标号为 -1
      *  - 电流表，合并电流表入口，删除节点表中记录
      *  - 电压表，不做处理（因为电压表相当于开路）
      */
@@ -285,13 +286,13 @@ export default class Solver {
                 const GroundNode = PinNodeMap[GroundPin];
 
                 for (const pin of Object.keys(PinNodeMap)) {
-                    // 标号比参考节点大的依次减1
+                    // 标号比参考节点大的减 1
                     if (PinNodeMap[pin] > GroundNode) {
-                        PinNodeMap[pin]--;
+                        PinNodeMap[pin] -= 1;
                     }
-                    // 参考节点为 0
+                    // 参考节点为 -1
                     else if (PinNodeMap[pin] === GroundNode) {
-                        PinNodeMap[pin] = 0;
+                        PinNodeMap[pin] = -1;
                     }
                 }
 
@@ -329,13 +330,15 @@ export default class Solver {
         for (const meter of this.parts) {
             // 电流表
             if (meter.type === PartType.CurrentMeter) {
-                debugger;
                 const { partPins } = this.getNodeConnectByLine(meter.connect[0]);
                 let matrix = new Matrix(1, this.branchNumber, 0);
 
                 // 入口处所有支路的电流相加即为当前电流
                 for (const pin of partPins) {
-                    matrix = matrix.add(this.getCurrentMatrixByPin(pin));
+                    // 排除掉电流表入口本身
+                    if (pin !== `${meter.id}-0`) {
+                        matrix = matrix.add(this.getCurrentMatrixByPin(pin));
+                    }
                 }
 
                 this.observeCurrent.push({
@@ -346,7 +349,6 @@ export default class Solver {
             }
             // 电压表
             else if (meter.type === PartType.VoltageMeter) {
-                debugger;
                 const inputVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
                 const outputVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
 
@@ -366,34 +368,46 @@ export default class Solver {
     private setCircuitMatrix() {
         const { nodeNumber, branchNumber } = this;
 
-        /** 关联矩阵 */
-        const A = new Matrix(nodeNumber, branchNumber);
+        /**
+         * 关联矩阵
+         *  - 一条支路连接于两个节点，则称该支路与这两个结点相关联
+         *  - `A[j, k] = + 1`表示支路`k`与节点`j`关联，并且它的方向背离结点
+         *  - `A[j, k] = - 1`表示支路`k`与节点`j`关联，并且它指向结点
+         *  - `A[j, k] = 0`表示支路`k`与节点`j`无关联
+         */
+        const A = new Matrix(nodeNumber, branchNumber, 0);
         /** 电导电容矩阵 */
         const F = new Matrix(branchNumber);
         /** 电阻电感矩阵 */
         const H = new Matrix(branchNumber);
         /** 独立电压电流源列向量 */
-        const S = new Matrix(branchNumber, 1);
+        const S = new Matrix(branchNumber, 1, 0);
 
         // 迭代方程包装器暂用堆栈
         const updateWarppers: IterativeEquation[] = [];
 
-        // 扫描所有支路，建立关联矩阵
-        for (const branch of Object.keys(this.PinBranchMap)) {
-            const node = this.PinNodeMap[branch];
+        // 扫描所有器件，建立关联矩阵
+        for (const part of this.partsAll) {
+            for (let i = 0; i < 2; i++) {
+                const node =  this.PinNodeMap[`${part.id}-${i}`];
+                const branch = this.PinBranchMap[part.id];
 
-            // 跳过参考节点
-            if (node === 0) {
-                continue;
+                // 跳过参考节点
+                if (node === -1) {
+                    continue;
+                }
+
+                /**
+                 * 此处划定的正方向统一为从引脚 0 指向引脚 1
+                 * 则引脚 0 的关联矩阵值为 1，引脚 1 的关联矩阵值为 -1
+                 */
+                A.set(node, branch, Math.pow(-1, i));
             }
-
-            // TODO: 需要再看看原理 记录关联节点
-            A.set(node - 1, this.PinBranchMap[branch], Math.pow(-1, Number(branch[branch.length - 1]) + 1));
         }
 
         // 建立器件矩阵
-        this.parts.forEach((part, index) => {
-            /** 当前器件所在支路编号 */
+        this.partsAll.forEach((part, index) => {
+            /** 当前器件所在支路 */
             const branch = this.PinBranchMap[part.id];
             /** 当前的器件参数生成器 */
             const { constant, iterative } = Electronics[part.type];

@@ -199,7 +199,10 @@ interface PartInside {
     params(part: PartRunData, mark: number): PartRunParams;
 }
 
-/** 复杂器件的内部拆分 */
+/**
+ * 复杂器件的内部拆分
+ *  - 拆分出来的器件必须是只有两个引脚的简单器件
+ */
 export interface ElectronicApart {
     /** 内部器件列表 */
     parts: PartInside[];
