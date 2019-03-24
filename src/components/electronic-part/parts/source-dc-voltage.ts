@@ -41,7 +41,7 @@ const part: ElectronicPrototype = {
             },
         },
     ],
-    constant({ H, S }, branch, params) {
+    constant({ H, S }, params, branch) {
         const param = params[0];
         const val = isNumber(param) ? param : numberParser(param);
 

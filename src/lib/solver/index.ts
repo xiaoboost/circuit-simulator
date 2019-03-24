@@ -5,7 +5,15 @@ import * as Mark from './mark';
 
 import { numberParser } from 'src/lib/number';
 import { LineData, LineType } from 'src/components/electronic-line';
-import { PartData, PartRunData, Electronics, PartType, IterativeEquation } from 'src/components/electronic-part';
+
+import {
+    PartData,
+    PartRunData,
+    Electronics,
+    PartType,
+    IterativeEquation,
+    IteratorData,
+} from 'src/components/electronic-part';
 
 type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => any | Promise<any>;
@@ -376,15 +384,22 @@ export default class Solver {
          *  - `A[j, k] = 0`表示支路`k`与节点`j`无关联
          */
         const A = new Matrix(nodeNumber, branchNumber, 0);
-        /** 电导电容矩阵 */
+        /** 导纳描述的电导电容矩阵 */
         const F = new Matrix(branchNumber);
-        /** 电阻电感矩阵 */
+        /** 阻抗描述的电阻电感矩阵 */
         const H = new Matrix(branchNumber);
         /** 独立电压电流源列向量 */
         const S = new Matrix(branchNumber, 1, 0);
 
-        // 迭代方程包装器暂用堆栈
-        const updateWarppers: IterativeEquation[] = [];
+        type IteratorCreator = IteratorData['createIterator'];
+        type UpdateWarpper = (solver: Parameters<IteratorCreator>[0]) => ReturnType<IteratorCreator>;
+
+        /** 迭代方程生成器的矩阵数据 */
+        const updateMatrix = { A, F, H, S };
+        /** 迭代方程包装器堆栈 */
+        const updateWarppers: UpdateWarpper[] = [];
+        /** 迭代方程组标记下标 */
+        let updateIndex = 0;
 
         // 扫描所有器件，建立关联矩阵
         for (const part of this.partsAll) {
@@ -406,7 +421,24 @@ export default class Solver {
         }
 
         // 建立器件矩阵
-        this.partsAll.forEach((part, index) => {
+        // 还未拆分并且有迭代方程的器件
+        for (const part of this.parts) {
+            const { apart, iterative } = Electronics[part.type];
+
+            // 跳过无法拆分或者没有迭代方程的器件
+            if (!apart || !iterative) {
+                continue;
+            }
+
+            const mark = Mark.getMark(updateIndex++);
+
+            // 此时标记的支路编号是无效的
+            iterative.markInMatrix(updateMatrix, mark, -1);
+            updateWarppers.push((solver) => iterative.createIterator(solver, part.params, mark));
+        }
+
+        // 拆分后的所有器件
+        for (const part of this.partsAll) {
             /** 当前器件所在支路 */
             const branch = this.PinBranchMap[part.id];
             /** 当前的器件参数生成器 */
@@ -418,13 +450,19 @@ export default class Solver {
             }
             // 常量参数
             else if (constant) {
-                constant({ A, F, H, S }, branch, part.params);
+                constant(updateMatrix, part.params, branch);
             }
             // 标记迭代参数
             else if (iterative) {
-                iterative.markInMatrix({ A, F, H, S }, branch, Mark.getMark(index));
+                const mark = Mark.getMark(updateIndex++);
+
+                iterative.markInMatrix(updateMatrix, mark, branch);
+                updateWarppers.push(
+                    (solver) =>
+                        iterative.createIterator(solver, part.params as string[], mark),
+                );
             }
-        });
+        }
 
         // 系数矩阵
         this.factor = Matrix.merge([
@@ -435,31 +473,18 @@ export default class Solver {
 
         // 电源列向量
         this.source = (
-            new Matrix(A.row, 1)
-                .concatDown(new Matrix(A.column, 1), S)
+            new Matrix(A.row, 1, 0)
+                .concatDown(new Matrix(A.column, 1, 0), S)
         );
 
-        // 求解方程矩阵
-        const solverMatrix = {
+        /** 迭代方程堆栈 */
+        const updates = updateWarppers.map((func) => func({
             Factor: this.factor,
             Source: this.source,
-        };
-
-        // 生成迭代方程
-        this.parts.forEach((part, index) => {
-            /** 当前的器件参数生成器 */
-            const { iterative } = Electronics[part.type];
-
-            // 跳过不存在生成器的器件
-            if (!iterative) {
-                return;
-            }
-
-            updateWarppers.push(iterative.createIterator(solverMatrix, part.params, Mark.getMark(index)));
-        });
+        }));
 
         // 参数迭代方程包装
-        this.update = (arg) => updateWarppers.forEach((cb) => cb(arg));
+        this.update = (arg) => updates.forEach((cb) => cb(arg));
     }
 
     /** 设置进度条事件 */
@@ -479,7 +504,7 @@ export default class Solver {
         /** 支路电流列向量 */
         let branchCurrent = new Matrix(this.branchNumber, 1, 0);
         /** 系数逆矩阵 */
-        let factorInverse: Matrix;
+        let factorInverse = this.factor.inverse();
         /** 当前时间 */
         let current = 0;
 
@@ -494,7 +519,7 @@ export default class Solver {
             });
 
             // TODO: 系数矩阵更新，重新求逆
-            if (current === 0) {
+            if (false) {
                 factorInverse = this.factor.inverse();
             }
 
@@ -503,7 +528,7 @@ export default class Solver {
 
             // 更新列向量
             nodeVoltage = result.slice([0, 0], [this.nodeNumber - 1, 0]);
-            branchCurrent = result.slice([this.nodeNumber + this.branchNumber, 0], [result.column - 1, 0]);
+            branchCurrent = result.slice([this.nodeNumber + this.branchNumber, 0], [result.row - 1, 0]);
 
             // 记录观测电压值
             for (const ob of this.observeVoltage) {
@@ -511,7 +536,7 @@ export default class Solver {
             }
 
             // 记录观测电流值
-            for (const ob of this.observeVoltage) {
+            for (const ob of this.observeCurrent) {
                 ob.data.push(ob.matrix.mul(branchCurrent).get(0, 0));
             }
 

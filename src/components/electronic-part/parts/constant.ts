@@ -165,13 +165,14 @@ export interface IteratorData {
      * @param {number} branch 当前器件所在支路编号
      * @param {number} mark 当前器件的标记编号
      */
-    markInMatrix(circuit: CircuitBaseMatrix, branch: number, mark: number): void;
+    markInMatrix(circuit: CircuitBaseMatrix, mark: number, branch: number): void;
     /**
      * 迭代方程生成器
      * @param {CircuitSolverMatrix} solver 求解器矩阵
-     * @param {PartParams} params 器件参数
+     * @param {PartRunParams} params 器件参数
      * @param {number} mark 当前器件的标记编号
      * @return {IterativeEquation} 迭代方程
+     * TODO: 现在，有迭代方程的器件还没有需要运行时计算参数的
      */
     createIterator(solver: CircuitSolverMatrix, params: PartParams, mark: number): IterativeEquation;
 }
@@ -182,7 +183,7 @@ export interface IteratorData {
  * @param {number} branch 当前器件所在支路编号
  * @param {number} params 当前器件的参数值们
  */
-export type ConstantCreation = (circuit: CircuitBaseMatrix, branch: number, params: PartRunParams) => void;
+export type ConstantCreation = (circuit: CircuitBaseMatrix, params: PartRunParams, branch: number) => void;
 
 /** 可拆分器件的内部器件接口 */
 interface PartInside {

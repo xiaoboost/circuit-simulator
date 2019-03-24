@@ -65,7 +65,7 @@ const part: ElectronicPrototype = {
         },
     ],
     iterative: {
-        markInMatrix({ F, S }, branch, mark) {
+        markInMatrix({ F, S }, mark, branch) {
             F.set(branch, branch, 1);
             S.set(branch, 0, mark);
         },
@@ -81,9 +81,12 @@ const part: ElectronicPrototype = {
             /** 需要更新的数值位置 */
             const position = Source.filterPostion(mark);
 
-            return ({ time }) => {
+            const Pi2 = Math.PI * 2;
+            const Degree = 180 / Math.PI;
+
+            return ({ interval }) => {
                 // 当前输出电压
-                const volt = factor * Math.sin(frequency * time * Math.PI * 2 + phase / 180 * Math.PI) + bias;
+                const volt = factor * Math.sin(frequency * interval * Pi2 + phase / Degree) + bias;
                 // 更新矩阵的值
                 position.forEach(([i, j]) => Source.set(i, j, volt));
             };

@@ -310,6 +310,21 @@ export default class Matrix {
         return this._view.join(str);
     }
     /**
+     * 以数组的 json 字符串输出
+     * @return {string}
+     */
+    toArrayContent() {
+        const arr: number[][] = [];
+
+        for (let i = 0; i < this.row; i++) {
+            arr.push(this.getRow(i));
+        }
+
+        const arrStr = arr.map((item) => `  [${item.join(', ')}],`);
+
+        return `[\n${arrStr.join('\n')}\n]`;
+    }
+    /**
      * 交换 from、to 所在的行
      * @param {number} from
      * @param {number} to
@@ -544,14 +559,20 @@ export default class Matrix {
      * @param args {MatrixInput[]}
      */
     concatRight(...args: MatrixInput[]) {
-        const matrixs = args.map((Matrix.from));
+        const matrixs = args.map(Matrix.from);
+        const errIndex = matrixs.findIndex((ma) => ma.row !== this.row);
+
+        if (errIndex >= 0) {
+            throw new Error(`(matrix) The row number of the ${errIndex} matrix is not equal to this.`);
+        }
+
         const totalCol = matrixs.reduce((col, ma) => col + ma.column, this.column);
         const result = new Matrix(this.row, totalCol, 0);
 
         // 添加 this 矩阵元素到 result
         this.forEach((n, [i, j]) => result.set(i, j, n));
 
-        let lastCol = 0;
+        let lastCol = this.column;
 
         // 添加扩展矩阵元素到 result
         for (const ma of matrixs) {
@@ -570,13 +591,19 @@ export default class Matrix {
      */
     concatDown(...args: MatrixInput[]) {
         const matrixs = args.map((Matrix.from));
+        const errIndex = matrixs.findIndex((ma) => ma.column !== this.column);
+
+        if (errIndex >= 0) {
+            throw new Error(`(matrix) The column number of the ${errIndex} matrix is not equal to this.`);
+        }
+
         const totalRow = matrixs.reduce((row, ma) => row + ma.row, this.row);
         const result = new Matrix(totalRow, this.column, 0);
 
         // 添加 this 矩阵元素到 result
         this.forEach((n, [i, j]) => result.set(i, j, n));
 
-        let lastRow = 0;
+        let lastRow = this.row;
 
         // 添加扩展矩阵元素到 result
         for (const ma of matrixs) {

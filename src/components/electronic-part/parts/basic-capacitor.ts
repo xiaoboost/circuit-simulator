@@ -43,7 +43,7 @@ const data: ElectronicPrototype = {
     ],
     // 电容器动态更新的是它的电压值
     iterative: {
-        markInMatrix({ F, S }, branch, mark) {
+        markInMatrix({ F, S }, mark, branch) {
             F.set(branch, branch, 1);
             S.set(branch, 0, mark);
         },
