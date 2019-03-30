@@ -3,7 +3,6 @@ import Vuex from 'vuex';
 
 import Point from 'src/lib/point';
 import Matrix from 'src/lib/matrix';
-import Solver from 'src/lib/solver';
 
 import { isArray, clone } from 'src/lib/utils';
 
@@ -50,12 +49,15 @@ const local: State = {
         end: '10m',
         step: '10u',
     },
-    charts: [],
     parts: [],
     lines: [],
-    metersData: [],
     historyData: [],
     sidebar: Sidebar.Space,
+    oscilloscopes: [],
+    solverResult: {
+        times: [],
+        meters: [],
+    },
 };
 
 const getters: GetterTree<State, Getter> = {
@@ -79,13 +81,13 @@ const mutations: MutationTree<State, Mutation> = {
     [MutationName.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,
 
     /** 新器件压栈 */
-    [MutationName.PUSH_PART]: ({ parts }, data: PartData | PartData[]) => {
+    [MutationName.PUSH_PART]({ parts }, data: PartData | PartData[]) {
         isArray(data)
             ? parts.push(...clone(data))
             : parts.push(clone(data));
     },
     /** 更新器件数据 */
-    [MutationName.UPDATE_PART]: ({ parts }, data: PartData) => {
+    [MutationName.UPDATE_PART]({ parts }, data: PartData) {
         const index = parts.findIndex((part) => part.id === data.id);
 
         if (index < 0) {
@@ -119,13 +121,13 @@ const mutations: MutationTree<State, Mutation> = {
     },
 
     /** 新导线压栈 */
-    [MutationName.PUSH_LINE]: ({ lines }, data: LineData | LineData[]) => {
+    [MutationName.PUSH_LINE]({ lines }, data: LineData | LineData[]) {
         isArray(data)
             ? lines.push(...clone(data))
             : lines.push(clone(data));
     },
     /** 更新导线数据 */
-    [MutationName.UPDATE_LINE]: ({ lines }, data: LineData) => {
+    [MutationName.UPDATE_LINE]({ lines }, data: LineData) {
         const index = lines.findIndex((line) => line.id === data.id);
 
         if (index < 0) {
@@ -157,7 +159,7 @@ const mutations: MutationTree<State, Mutation> = {
     },
 
     /** 删除器件与导线 */
-    [MutationName.DELETE_ELEC]: ({ parts, lines }, eles: string | string[]) => {
+    [MutationName.DELETE_ELEC]({ parts, lines }, eles: string | string[]) {
         const data = isArray(eles) ? eles : [eles];
 
         for (const id of data) {
@@ -168,7 +170,7 @@ const mutations: MutationTree<State, Mutation> = {
     },
 
     /** 导线放置到底层 */
-    [MutationName.LINE_TO_BOTTOM]: ({ lines }, id: string) => {
+    [MutationName.LINE_TO_BOTTOM]({ lines }, id: string) {
         const index = lines.findIndex((item) => item.id === id);
         const line = lines[index];
 
@@ -200,9 +202,14 @@ const mutations: MutationTree<State, Mutation> = {
         context.parts = current.filter((part): part is PartData => part.type !== LineType.Line);
         context.lines = current.filter((line): line is LineData => line.type === LineType.Line);
     },
+    /** 设置示波器配置 */
+    [MutationName.SET_OSCILLOSCOPES](context, oscilloscopes) {
+        context.oscilloscopes = oscilloscopes;
+    },
     /** 设置求解器的求解结果 */
-    [MutationName.SET_METER_DATA](context, meters) {
-        context.metersData = meters.map(({ id, data }) => ({ id, data }));
+    [MutationName.SET_SOLVER_RESULT]({ solverResult }, { times, meters }) {
+        solverResult.times = times;
+        solverResult.meters = meters.map(({ id, data }) => ({ id, data }));
     },
 };
 
@@ -215,6 +222,11 @@ const actions: ActionTree<State, Getter, Mutation, Action> = {
                 end: data.time.end,
                 step: data.time.step,
             });
+        }
+
+        // load oscilloscopes config
+        if (data.oscilloscopes) {
+            commit(MutationName.SET_OSCILLOSCOPES, data.oscilloscopes);
         }
 
         // load parts

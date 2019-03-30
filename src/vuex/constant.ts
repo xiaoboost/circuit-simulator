@@ -30,7 +30,7 @@ export type ElectronicsData = Array<PartStorageData | LineStorageData>;
 /** 电路数据 */
 export interface CircuitStorage {
     time?: TimeConfig;
-    chart?: string[][];
+    oscilloscopes?: string[][];
     data: ElectronicsData;
 }
 
@@ -74,8 +74,10 @@ export const enum MutationName {
     RECORD_MAP = 'RECORD_MAP',
     /** 图纸数据回滚 */
     HISTORY_BACK = 'HISTORY_BACK',
+    /** 示波器设置 */
+    SET_OSCILLOSCOPES = 'SET_OSCILLOSCOPES',
     /** 图纸数据回滚 */
-    SET_METER_DATA = 'SET_METER_DATA',
+    SET_SOLVER_RESULT = 'SET_SOLVER_RESULT',
 }
 
 /** Action 键名 */
@@ -86,34 +88,23 @@ export const enum ActionName {
 
 /** vuex 状态接口 */
 export interface State {
-    /**
-     * 侧边栏状态
-     */
+    /** 侧边栏状态 */
     sidebar: Sidebar;
-    /**
-     * 全局时间设置
-     */
+    /** 全局时间设置 */
     time: TimeConfig;
-    /**
-     * 全局示波器设置
-     */
-    charts: string[][];
-    /**
-     * 全局示波器数据暂存
-     */
-    metersData: Omit<Observer, 'matrix'>[];
-    /**
-     * 全局器件堆栈
-     */
+    /** 全局器件堆栈 */
     parts: PartData[];
-    /**
-     * 全局导线堆栈
-     */
+    /** 全局导线堆栈 */
     lines: LineData[];
-    /**
-     * 历史数据
-     */
+    /** 历史数据 */
     historyData: Array<Array<PartData | LineData>>;
+    /** 全局示波器设置 */
+    oscilloscopes: string[][];
+    /** 仿真结果数据暂存 */
+    solverResult: {
+        times: number[];
+        meters: Omit<Observer, 'matrix'>[];
+    };
 }
 
 /** Getter 原型定义 */
@@ -163,7 +154,9 @@ export interface Mutation {
     /** 图纸数据回滚 */
     [MutationName.HISTORY_BACK](): void;
     /** 设置求解器的求解结果 */
-    [MutationName.SET_METER_DATA](data: State['metersData']): void;
+    [MutationName.SET_OSCILLOSCOPES](data: State['oscilloscopes']): void;
+    /** 设置求解器的求解结果 */
+    [MutationName.SET_SOLVER_RESULT](data: State['solverResult']): void;
 }
 
 /** Action 原型定义 */

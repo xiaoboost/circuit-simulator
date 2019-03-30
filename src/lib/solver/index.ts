@@ -555,14 +555,18 @@ export default class Solver {
 
             // 当前进度
             const progress = Math.round(currentCache / end * 100);
+
             // 运行进度事件回调
             for (const ev of this.events) {
                 await ev(progress);
             }
         }
 
-        return this.observeVoltage
-            .concat(this.observeCurrent)
-            .map(({ id, data }) => ({ id, data }));
+        return {
+            times,
+            meters: this.observeVoltage
+                .concat(this.observeCurrent)
+                .map(({ id, data }) => ({ id, data })),
+        };
     }
 }

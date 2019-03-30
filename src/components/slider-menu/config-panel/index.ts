@@ -15,9 +15,8 @@ interface FormData {
     endRank: NumberRank;
     /** 模拟步长单位 */
     stepRank: NumberRank;
-
     /** 示波器设置 */
-    charts: Store.State['charts'];
+    oscilloscopes: Store.State['oscilloscopes'];
 }
 
 /** 生成过滤器件的函数 */
@@ -27,9 +26,13 @@ const findPart = (type: PartType) => {
 
 @Component
 export default class ConfigPanel extends Vue {
-    /** vuex 种储存的时间参数 */
-    @State('time')
+    /** 全局缓存的时间参数 */
+    @State
     time!: Store.State['time'];
+
+    /** 全局缓存的示波器参数 */
+    @State
+    oscilloscopes!: Store.State['oscilloscopes'];
 
     /** 所有电流表 */
     @State(findPart(PartType.CurrentMeter))
@@ -43,13 +46,17 @@ export default class ConfigPanel extends Vue {
     @Mutation(Store.MutationName.SET_TIME_CONFIG)
     setTime!: Store.Mutation[Store.MutationName.SET_TIME_CONFIG];
 
+    /** 保存示波器配置 */
+    @Mutation(Store.MutationName.SET_OSCILLOSCOPES)
+    setOscilloscopes!: Store.Mutation[Store.MutationName.SET_OSCILLOSCOPES];
+
     /** 表单数据 */
     data: FormData = {
         end: 10,
         step: 10,
         endRank: 'm',
         stepRank: 'u',
-        charts: [],
+        oscilloscopes: [],
     };
 
     // 时间单位选择列表
@@ -57,9 +64,9 @@ export default class ConfigPanel extends Vue {
     stepTimeUnits = createSelectList(['m', 'u', 'n', 'p'], '秒', true);
 
     @Watch('time')
-    private update() {
-        const end = splitNumber(this.time.end);
-        const step = splitNumber(this.time.step);
+    private updateTime(time: Store.State['time']) {
+        const end = splitNumber(time.end);
+        const step = splitNumber(time.step);
 
         this.data.end = +end.number;
         this.data.step = +step.number;
@@ -67,18 +74,34 @@ export default class ConfigPanel extends Vue {
         this.data.stepRank = step.rank;
     }
 
+    @Watch('oscilloscopes')
+    private updateOscilloscopes(oscilloscopes: Store.State['oscilloscopes']) {
+        this.data.oscilloscopes = oscilloscopes;
+    }
+
     /** 添加示波器 */
     addMeter() {
-        this.data.charts.push([]);
+        this.data.oscilloscopes.push([]);
     }
 
     /** 移除示波器 */
     removeMeter(i: number) {
-        this.data.charts.splice(i, 1);
+        this.data.oscilloscopes.splice(i, 1);
     }
 
     /** 验证所有设置 */
     validate() {
+        // TODO: 验证数据
+
+        const { data } = this;
+
+        this.setTime({
+            end: `${data.end}${data.endRank}`,
+            step: `${data.step}${data.stepRank}`,
+        });
+
+        this.setOscilloscopes(data.oscilloscopes);
+
         return true;
     }
 }
