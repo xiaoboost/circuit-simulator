@@ -1,5 +1,6 @@
-import Matrix from 'src/lib/matrix';
 import store from 'src/vuex';
+import Matrix from 'src/lib/matrix';
+import BigNumber from 'bignumber.js';
 
 import * as Mark from './mark';
 
@@ -357,11 +358,11 @@ export default class Solver {
             }
             // 电压表
             else if (meter.type === PartType.VoltageMeter) {
-                const inputVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
-                const outputVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
+                const negativeVoltage = this.getVoltageMatrixByPin(`${meter.id}-0`);
+                const positiveVoltage = this.getVoltageMatrixByPin(`${meter.id}-1`);
 
-                // 输入减去输出即为当前电压表电压
-                const matrix = inputVoltage.add(outputVoltage.factor(-1));
+                // 正电极减去负电极，即为测量电压
+                const matrix = positiveVoltage.add(negativeVoltage.factor(-1));
 
                 this.observeVoltage.push({
                     id: meter.id,
@@ -505,11 +506,16 @@ export default class Solver {
         let branchCurrent = new Matrix(this.branchNumber, 1, 0);
         /** 系数逆矩阵 */
         let factorInverse = this.factor.inverse();
-        /** 当前时间 */
-        let current = 0;
+        /** 当前模拟器的精确时间 */
+        let current = new BigNumber(0);
+        /** 当前模拟器的精确时间的缓存 */
+        let currentCache = 0;
+
+        /** 时间坐标数组 */
+        const times = [currentCache];
 
         // 迭代求解
-        while (current <= end) {
+        while (currentCache <= end) {
             // 更新参数
             this.update({
                 Voltage: nodeVoltage,
@@ -541,14 +547,22 @@ export default class Solver {
             }
 
             // 更新当前时间
-            current += step;
+            current = current.plus(step);
+            currentCache = current.toNumber();
+
+            // 时间坐标增加
+            times.push(currentCache);
 
             // 当前进度
-            const progress = Math.round(current / end * 100);
+            const progress = Math.round(currentCache / end * 100);
             // 运行进度事件回调
             for (const ev of this.events) {
                 await ev(progress);
             }
         }
+
+        return this.observeVoltage
+            .concat(this.observeCurrent)
+            .map(({ id, data }) => ({ id, data }));
     }
 }

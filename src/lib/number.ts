@@ -1,4 +1,5 @@
 import { isArray } from './utils';
+import BigNumber from 'bignumber.js';
 
 /**
  * 简写数字正则匹配
@@ -16,23 +17,27 @@ export const numberMatcher = /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\
 
 /** 简写数字编译 */
 export function numberParser(notation: string) {
+    let bigNum: BigNumber;
+
     if (!numberMatcher.test(notation)) {
-        return NaN;
+        bigNum = new BigNumber(NaN);
     }
     else if (/[eE]/.test(notation)) {
         const [base, power] = notation.split(/[eE]/);
-        return Number(base) * Math.pow(10, Number(power));
+        bigNum = new BigNumber(base).multipliedBy(Math.pow(10, Number(power)));
     }
     else if (/[puμnmkMG]$/.test(notation)) {
-        const exp = { p: -12, u: -9, μ: -9, n: -6, m: -3, k: 3, M: 6, G: 9 };
+        const exp = { p: -12, n: -9, u: -6, μ: -6, m: -3, k: 3, M: 6, G: 9 };
         const power = exp[notation[notation.length - 1]] as number;
         const base = notation.substring(0, notation.length - 1);
 
-        return Number(base) * Math.pow(10, power);
+        bigNum = new BigNumber(base).multipliedBy(Math.pow(10, power));
     }
     else {
-        return Number(notation);
+        bigNum = new BigNumber(notation);
     }
+
+    return bigNum.toNumber();
 }
 
 /** 简写数字单位 */

@@ -47,8 +47,8 @@
         "no-invalid-template-strings": true,
         // 允许使用 null 关键字
         "no-null-keyword": false,
-        // 禁止对象字面量的类型断言
-        "no-object-literal-type-assertion": true,
+        // 允许对象字面量的类型断言
+        "no-object-literal-type-assertion": false,
         // 禁止稀疏数组
         "no-sparse-arrays": true,
         // 允许子模块的导入

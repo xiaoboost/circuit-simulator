@@ -28,6 +28,10 @@ export default class ActionMenu extends Vue {
     @Mutation(MutationName.OPEN_MAIN_CONFIG)
     setConfig!: MutationTree[MutationName.OPEN_MAIN_CONFIG];
 
+    /** 记录模拟运算结果 */
+    @Mutation(MutationName.SET_METER_DATA)
+    setMeters!: MutationTree[MutationName.SET_METER_DATA];
+
     /** 打开波形显示面板 */
     @Mutation(MutationName.OPEN_GRAPH_VIEW)
     showGraph!: MutationTree[MutationName.OPEN_GRAPH_VIEW];
@@ -39,16 +43,36 @@ export default class ActionMenu extends Vue {
         const { parts, lines } = this.$store.state;
         const solver = new Solver(parts, lines);
 
+        /** 当前时间 */
+        let last = new Date().getTime();
+
         // 变更当前进度
         solver.onProgress((progress) => {
-            this.progress = progress;
-            return this.$nextTick();
+            const now = new Date().getTime();
+
+            if (now - last > 1000) {
+                last = now;
+                this.progress = progress;
+
+                return this.$nextTick();
+            }
         });
 
-        // 等待运行
-        await solver.startSolve();
+        // 进度完成
+        this.progress = 100;
 
-        // 展示换算结果
-        this.showGraph();
+        if (process.env.NODE_ENV === 'development') {
+            console.time('solve');
+        }
+
+        // 计算完成后打开波形面板
+        this.setMeters(await solver.startSolve());
+
+        if (process.env.NODE_ENV === 'development') {
+            console.timeEnd('solve');
+        }
+
+        // debugger;
+        // this.showGraph();
     }
 }
