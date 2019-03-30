@@ -20,8 +20,11 @@ const iconInComponentMap = {};
 const componentIcon = [
     {
         name: 'select',
-        test: createMatcher('select'),
         icons: ['loading', 'down', 'close', 'check'],
+    },
+    {
+        name: 'input-number',
+        icons: ['up', 'down'],
     },
 ];
 
@@ -159,7 +162,8 @@ function iconInComponent(content: string) {
         }
 
         // 匹配当前组件
-        const matchs = comp.test.test(content);
+        const compTest = createMatcher(comp.name);
+        const matchs = compTest.test(content);
 
         if (!matchs) {
             continue;
