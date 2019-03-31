@@ -1,9 +1,15 @@
 <script lang="ts" src="./index.ts"></script>
 
 <template>
-<unfold start="66px" :duration="500" :before-show="setCharts">
+<unfold start="66px" :duration="500">
     <section id="graph-viewer" v-if="visible">
-        波形展示
+        <line-drawer
+            v-for="(meters, i) in oscilloscopes"
+            :key="i"
+            :id="`line-viewer-${i}`"
+            :meters="meters"
+            class="chart-container"
+        />
     </section>
 </unfold>
 </template>
@@ -18,9 +24,18 @@
     right 0
     position absolute
     overflow hidden
-    background-color #66CCCC
+    background-color #fffdf6
     font-family font-default
-    padding 14px 20px
     overflow hidden auto
+    padding 14px 16px
+    box-shadow -4px 0 8px #eee
+
+    .chart-container {
+        width 100%
+        height 100%
+        padding 0
+        margin 0
+        overflow hidden
+    }
 }
 </style>

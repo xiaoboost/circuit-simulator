@@ -113,6 +113,7 @@ export interface Getter {
     showPartsPanel: boolean;
     showConfigPanel: boolean;
     showGraphViewer: boolean;
+    findPartById(id: string): PartData;
 }
 
 /** Mutation 原型定义 */

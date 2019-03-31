@@ -65,6 +65,9 @@ const getters: GetterTree<State, Getter> = {
     showPartsPanel: ({ sidebar }) => sidebar === Sidebar.Parts,
     showConfigPanel: ({ sidebar }) => sidebar === Sidebar.Config,
     showGraphViewer: ({ sidebar }) => sidebar === Sidebar.Graph,
+    findPartById: ({ parts }) => (id: string) => {
+        return parts.find((item) => item.id === id)!;
+    },
 };
 
 const mutations: MutationTree<State, Mutation> = {

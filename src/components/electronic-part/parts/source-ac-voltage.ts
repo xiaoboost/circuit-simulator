@@ -84,9 +84,9 @@ const part: ElectronicPrototype = {
             const Pi2 = Math.PI * 2;
             const Degree = 180 / Math.PI;
 
-            return ({ interval }) => {
+            return ({ time }) => {
                 // 当前输出电压
-                const volt = factor * Math.sin(frequency * interval * Pi2 + phase / Degree) + bias;
+                const volt = factor * Math.sin(frequency * time * Pi2 + phase / Degree) + bias;
                 // 更新矩阵的值
                 position.forEach(([i, j]) => Source.set(i, j, volt));
             };

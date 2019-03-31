@@ -520,7 +520,7 @@ export default class Solver {
             this.update({
                 Voltage: nodeVoltage,
                 Current: branchCurrent,
-                time: end,
+                time: currentCache,
                 interval: step,
             });
 
@@ -561,6 +561,9 @@ export default class Solver {
                 await ev(progress);
             }
         }
+
+        // 最后的时间元素无效
+        times.pop();
 
         return {
             times,

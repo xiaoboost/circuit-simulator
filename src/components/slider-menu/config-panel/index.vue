@@ -47,14 +47,14 @@
             <article class="form-body">
                 <div
                     class="form-item"
-                    v-for="(chart, i) in data.charts"
+                    v-for="(oscillo, i) in data.oscilloscopes"
                     :key="i">
                     <a-select
                         mode="multiple"
-                        :value="chart"
+                        :value="oscillo"
                         placeholder="请选择要显示的仪表"
                         style="width: 100%;"
-                        @change="(ev) => data.charts.splice(i, 1, ev)">
+                        @change="(ev) => data.oscilloscopes.splice(i, 1, ev)">
                         <!-- 电流表 -->
                         <a-select-opt-group label="电流表" v-if="currentMeters.length > 0">
                             <a-select-option
@@ -79,7 +79,7 @@
                         shape="circle"
                         icon="delete"
                         class="delete-btn"
-                        @click="data.charts.splice(i, 1)"
+                        @click="data.oscilloscopes.splice(i, 1)"
                     />
                 </div>
                 <div class="form-item" style="margin-top: 4px;">

@@ -29,8 +29,8 @@ export default class ActionMenu extends Vue {
     setConfig!: MutationTree[MutationName.OPEN_MAIN_CONFIG];
 
     /** 记录模拟运算结果 */
-    @Mutation(MutationName.SET_METER_DATA)
-    setMeters!: MutationTree[MutationName.SET_METER_DATA];
+    @Mutation(MutationName.SET_SOLVER_RESULT)
+    setSolverResult!: MutationTree[MutationName.SET_SOLVER_RESULT];
 
     /** 打开波形显示面板 */
     @Mutation(MutationName.OPEN_GRAPH_VIEW)
@@ -39,6 +39,7 @@ export default class ActionMenu extends Vue {
     /** 模拟运行 */
     async simulate() {
         this.isRun = true;
+        this.progress = 0;
 
         const { parts, lines } = this.$store.state;
         const solver = new Solver(parts, lines);
@@ -65,14 +66,16 @@ export default class ActionMenu extends Vue {
             console.time('solve');
         }
 
-        // 计算完成后打开波形面板
-        this.setMeters(await solver.startSolve());
+        // 保存计算结果
+        this.setSolverResult(await solver.startSolve());
 
         if (process.env.NODE_ENV === 'development') {
             console.timeEnd('solve');
         }
 
-        // debugger;
-        // this.showGraph();
+        // 一秒之后恢复按钮
+        setTimeout(() => this.isRun = false, 1000);
+        // 打开波形显示界面
+        this.showGraph();
     }
 }
