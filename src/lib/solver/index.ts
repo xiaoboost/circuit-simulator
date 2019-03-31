@@ -153,9 +153,9 @@ export default class Solver {
     }
 
     /** 由管脚到支路电流计算矩阵 */
-    private getCurrentMatrixByPin(part: string) {
+    private getCurrentMatrixByBranch(branch: string) {
         const matrix = new Matrix(1, this.branchNumber, 0);
-        matrix.set(0, this.PinBranchMap[part], 1);
+        matrix.set(0, this.PinBranchMap[branch], 1);
         return matrix;
     }
 
@@ -339,15 +339,22 @@ export default class Solver {
         for (const meter of this.parts) {
             // 电流表
             if (meter.type === PartType.CurrentMeter) {
-                const { partPins } = this.getNodeConnectByLine(meter.connect[0]);
                 let matrix = new Matrix(1, this.branchNumber, 0);
+
+                // 搜索电流表出口所连的所有器件
+                const { partPins } = this.getNodeConnectByLine(meter.connect[1]);
 
                 // 入口处所有支路的电流相加即为当前电流
                 for (const pin of partPins) {
+                    // 当前管脚分解为器件编号
+                    const [partId] = pin.split('-');
+
                     // 排除掉电流表入口本身
-                    if (pin !== `${meter.id}-0`) {
-                        matrix = matrix.add(this.getCurrentMatrixByPin(pin));
+                    if (partId === meter.id) {
+                        continue;
                     }
+
+                    matrix = matrix.add(this.getCurrentMatrixByBranch(partId));
                 }
 
                 this.observeCurrent.push({

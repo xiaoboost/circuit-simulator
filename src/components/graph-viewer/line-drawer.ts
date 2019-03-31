@@ -131,7 +131,7 @@ export default class Chart extends Vue {
         }]);
 
         if (this.hasCurrent) {
-            option.push(['current', {
+            option.push([ChartType[PartType.CurrentMeter], {
                 grid,
                 label,
                 title,
@@ -139,7 +139,7 @@ export default class Chart extends Vue {
         }
 
         if (this.hasVoltage) {
-            option.push(['voltage', {
+            option.push([ChartType[PartType.VoltageMeter], {
                 grid,
                 label,
                 title,
@@ -175,7 +175,7 @@ export default class Chart extends Vue {
             container: this.id,
             forceFit: true,
             height: rect.height,
-            padding: [24, 40, 40, 40],
+            padding: 40,
         });
 
         this.setChart();
