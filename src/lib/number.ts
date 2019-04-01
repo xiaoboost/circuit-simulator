@@ -1,6 +1,18 @@
 import { isArray } from './utils';
 import BigNumber from 'bignumber.js';
 
+/** 数字数量级简写 */
+enum RankEnum {
+    p = -12,
+    n = -9,
+    μ = -6,
+    m = -3,
+    k = 3,
+    M = 6,
+    G = 9,
+    '' = 0,
+}
+
 /**
  * 简写数字正则匹配
  *
@@ -27,9 +39,10 @@ export function numberParser(notation: string) {
         bigNum = new BigNumber(base).multipliedBy(Math.pow(10, Number(power)));
     }
     else if (/[puμnmkMG]$/.test(notation)) {
-        const exp = { p: -12, n: -9, u: -6, μ: -6, m: -3, k: 3, M: 6, G: 9 };
-        const power = exp[notation[notation.length - 1]] as number;
         const base = notation.substring(0, notation.length - 1);
+        const rankOri = notation[notation.length - 1].toLowerCase();
+        const rank = rankOri === 'u' ? 'μ' : rankOri;
+        const power = RankEnum[rank];
 
         bigNum = new BigNumber(base).multipliedBy(Math.pow(10, power));
     }
@@ -102,12 +115,16 @@ export function splitNumber(str: string) {
  *
  * @returns {number}
  */
-export function rank(value: number) {
+export function getRank(value: number) {
     if (Number.isNaN(value)) {
         throw new Error('(number) cannot run .rank() on NaN');
     }
 
-    return Math.floor(Math.log10(value));
+    if (value === 0) {
+        return 0;
+    }
+
+    return Math.floor(Math.log10(Math.abs(value)));
 }
 
 /**
@@ -143,4 +160,25 @@ export function toRound(origin: number, bits: number = 6) {
     }
 
     return Number.parseFloat(sign + str);
+}
+
+/** 将数字转换为科学计数法 */
+export function toScientific(num: number) {
+    /** 输入数字的数量级 */
+    const rank = getRank(num);
+
+    /** 3 整数倍 */
+    let thridRank = Math.floor(rank / 3) * 3;
+
+    if (thridRank > 9) {
+        thridRank = 9;
+    }
+    else if (thridRank < -12) {
+        thridRank = -12;
+    }
+
+    /** 剩余的数字 */
+    const base = new BigNumber(num).dividedBy(Math.pow(10, thridRank));
+
+    return `${base.toNumber()} ${RankEnum[thridRank]}`;
 }

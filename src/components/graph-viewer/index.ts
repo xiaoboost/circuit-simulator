@@ -19,4 +19,9 @@ export default class GraphViewer extends Vue {
     /** 示波器设置 */
     @State('oscilloscopes')
     oscilloscopes!: StateTree['oscilloscopes'];
+
+    /** 示波器是否是半高 */
+    get halfHeight() {
+        return this.oscilloscopes.length > 1;
+    }
 }

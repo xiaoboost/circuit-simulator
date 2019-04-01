@@ -1,10 +1,8 @@
-// import G2 from '@antv/g2/lib/core';
+import G2 from '@antv/g2/lib/core';
 
-// import '@antv/g2/lib/geom/line';
-// import '@antv/g2/lib/component/legend';
-// import '@antv/g2/lib/component/tooltip';
-
-import G2 from '@antv/g2';
+import '@antv/g2/lib/geom/line';
+import '@antv/g2/lib/component/legend';
+import '@antv/g2/lib/component/tooltip';
 
 import { CreateElement } from 'vue';
 import { State, Getter } from 'vuex-class';
@@ -14,12 +12,16 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { PartType } from 'src/components/electronic-part';
 
 import { ScaleConfig } from './type';
+import { toScientific } from 'src/lib/number';
 
 /** 曲线类型 */
 enum ChartType {
     voltage = PartType.VoltageMeter,
     current = PartType.CurrentMeter,
 }
+
+/** 数字格式化函数 */
+const formatter = (unit: string) => (num: number) => `${toScientific(num)}${unit}`;
 
 @Component
 export default class Chart extends Vue {
@@ -29,6 +31,10 @@ export default class Chart extends Vue {
     /** 当前图表编号 */
     @Prop({ type: String, default: '' })
     id!: string;
+
+    /** 当前图表编号 */
+    @Prop({ type: Boolean, default: false })
+    halfHeight!: boolean;
 
     /** 当前图表中的曲线编号 */
     @Prop({ type: Array, default: () => [] })
@@ -75,23 +81,26 @@ export default class Chart extends Vue {
 
         option._time = {
             type: 'linear',
-            alias: '时间',
+            alias: '时间（单位：秒）',
             min: 0,
             max: this.result.times.get(-1),
             tickCount: 11,
+            formatter: formatter('s'),
         };
 
         if (this.hasVoltage) {
             option[ChartType[PartType.VoltageMeter]] = {
-                alias: '电压',
+                alias: '电压（单位：伏特）',
                 type: 'linear',
+                formatter: formatter('V'),
             };
         }
 
         if (this.hasCurrent) {
             option[ChartType[PartType.CurrentMeter]] = {
-                alias: '电流',
+                alias: '电流（单位：安培）',
                 type: 'linear',
+                formatter: formatter('A'),
             };
         }
 
@@ -114,7 +123,8 @@ export default class Chart extends Vue {
             },
         };
         const title: AxisConfig['title'] = {
-            position: 'end',
+            position: 'center',
+            offset: 50,
             textStyle: {
                 fill: '#444',
             },
@@ -126,7 +136,6 @@ export default class Chart extends Vue {
             title: {
                 ...title,
                 offset: 34,
-                position: 'center',
             },
         }]);
 
@@ -164,18 +173,23 @@ export default class Chart extends Vue {
             position: 'top',
         });
 
-        this.chart.line().position('_time*voltage').color('name');
-        this.chart.line().position('_time*current').color('name');
+        if (this.hasVoltage) {
+            this.chart.line().position('_time*voltage').color('name');
+        }
+
+        if (this.hasCurrent) {
+            this.chart.line().position('_time*current').color('name');
+        }
     }
 
     mounted() {
-        const rect = this.$el.getClientRects()[0];
+        const height = this.halfHeight ? window.innerHeight / 2 : window.innerHeight;
 
         this.chart = new G2.Chart({
-            container: this.id,
+            height,
             forceFit: true,
-            height: rect.height,
-            padding: 40,
+            container: this.id,
+            padding: [50, 80, 50, 80],
         });
 
         this.setChart();

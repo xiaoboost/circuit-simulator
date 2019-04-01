@@ -152,7 +152,7 @@ export default class Solver {
         return { lines, partPins };
     }
 
-    /** 由管脚到支路电流计算矩阵 */
+    /** 由支路名称到支路电流计算矩阵 */
     private getCurrentMatrixByBranch(branch: string) {
         const matrix = new Matrix(1, this.branchNumber, 0);
         matrix.set(0, this.PinBranchMap[branch], 1);

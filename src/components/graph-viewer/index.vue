@@ -8,6 +8,7 @@
             :key="i"
             :id="`line-viewer-${i}`"
             :meters="meters"
+            :half-height="halfHeight"
             class="chart-container"
         />
     </section>
@@ -22,20 +23,24 @@
     max-width 100vw
     min-width 160vh
     right 0
+    padding 0
+    margin 0
     position absolute
     overflow hidden
     background-color #fffdf6
     font-family font-default
     overflow hidden auto
-    padding 14px 16px
     box-shadow -4px 0 8px #eee
 
     .chart-container {
         width 100%
-        height 100%
         padding 0
         margin 0
         overflow hidden
+
+        /deep/ div {
+            display: flex;
+        }
     }
 }
 </style>
