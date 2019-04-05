@@ -126,6 +126,10 @@ interface CircuitSolverMatrix {
     Factor: Matrix;
     /** 电源列向量 */
     Source: Matrix;
+    /** 由管脚到节点电压计算矩阵 */
+    getVoltageMatrixByPin(pin: string): Matrix;
+    /** 由支路器件到支路电流计算矩阵 */
+    getCurrentMatrixByBranch(branch: string): Matrix;
 }
 
 /** 迭代方程的运行参数 */
@@ -150,8 +154,6 @@ export interface PartRunData extends Pick<PartData, 'id' | 'type'> {
     params: (string | number)[];
 }
 
-/** 器件参数列表 */
-type PartParams = PartData['params'];
 /** 运行时的器件参数列表 */
 type PartRunParams = PartRunData['params'];
 /** 迭代方程 */
@@ -169,12 +171,12 @@ export interface IteratorData {
     /**
      * 迭代方程生成器
      * @param {CircuitSolverMatrix} solver 求解器矩阵
-     * @param {PartRunParams} params 器件参数
+     * @param {PartData | PartRunData} part 器件数据
      * @param {number} mark 当前器件的标记编号
      * @return {IterativeEquation} 迭代方程
      * TODO: 现在，有迭代方程的器件还没有需要运行时计算参数的
      */
-    createIterator(solver: CircuitSolverMatrix, params: PartParams, mark: number): IterativeEquation;
+    createIterator(solver: CircuitSolverMatrix, part: PartData | PartRunData, mark: number): IterativeEquation;
 }
 
 /**

@@ -3,6 +3,14 @@ import { PartType } from '../components/electronic-part';
 import { LineType } from '../components/electronic-line';
 
 export const data: CircuitStorage = {
+    time: {
+        end: '10m',
+        step: '10u',
+    },
+    oscilloscopes: [
+        ['I_in'],
+        ['V_R1'],
+    ],
     data: [
         {
             type: PartType.Resistance,

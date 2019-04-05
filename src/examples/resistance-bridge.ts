@@ -8,7 +8,8 @@ export const data: CircuitStorage = {
         step: '10u',
     },
     oscilloscopes: [
-        ['V_R4', 'I_R4'],
+        ['V_R4'],
+        ['I_R4'],
     ],
     data: [
         {

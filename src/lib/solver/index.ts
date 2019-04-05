@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import * as Mark from './mark';
 
+import { isDef, isUndef } from 'src/lib/utils';
 import { numberParser } from 'src/lib/number';
 import { LineData, LineType } from 'src/components/electronic-line';
 
@@ -58,6 +59,8 @@ export default class Solver {
 
     /** [管脚->节点号] 对应表 */
     private PinNodeMap: HashMap = {};
+    /** [导线->节点号] 对应表 */
+    private LineNodeMap: HashMap = {};
     /**
      * [管脚->支路号] 对应表
      *  - 在拆分器件之前，可能会有拥有三个或以上管脚的器件，经过拆分之后就没有这种器件存在的
@@ -152,10 +155,33 @@ export default class Solver {
         return { lines, partPins };
     }
 
-    /** 由支路名称到支路电流计算矩阵 */
+    /** 由支路器件到支路电流计算矩阵 */
     private getCurrentMatrixByBranch(branch: string) {
+        /** 电流矩阵 */
         const matrix = new Matrix(1, this.branchNumber, 0);
-        matrix.set(0, this.PinBranchMap[branch], 1);
+        /** 支路器件 */
+        const part = this.findPart(branch);
+
+        // 电流表
+        // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
+        if (isDef(part) && part.type === PartType.CurrentMeter) {
+            // 搜索电流表出口所连的所有器件
+            const { partPins } = this.getNodeConnectByLine(part.connect[1]);
+            // 解析为器件（支路）编号，并排除掉其本身以及无效支路
+            const branchs = partPins.map((pin) => pin.split('-')[0]).filter(
+                (branchName) =>
+                    branchName !== part.id &&
+                    isDef(this.PinBranchMap[branchName]),
+            );
+
+            branchs.forEach((branchName) => matrix.set(0, this.PinBranchMap[branchName], 1));
+        }
+        // 非电流表器件
+        // 直接取支路电流即可
+        else {
+            matrix.set(0, this.PinBranchMap[branch], 1);
+        }
+
         return matrix;
     }
 
@@ -168,23 +194,21 @@ export default class Solver {
 
     /** 扫描所有导线，生成 [管脚->节点号] 对应表 */
     private setPinNodeMap() {
-        const lineHash: AnyObject<boolean> = {};
-
         /** 节点编号，初始为 0 */
         let nodeNumber = 0;
 
         // 搜索所有导线
         for (const line of this.lines) {
             // 当前导线已经访问过了
-            if (lineHash[line.id]) {
+            if (isDef(this.LineNodeMap[line.id])) {
                 continue;
             }
 
             // 当前节点的所有导线和引脚
             const { lines, partPins } = this.getNodeConnectByLine(line.id);
 
-            // 标记已经搜索过的导线
-            lines.forEach((item) => lineHash[item.id] = true);
+            // 记录已经搜索过的导线
+            lines.forEach((item) => this.LineNodeMap[item.id] = nodeNumber);
             // 记录所有引脚连接节点的编号
             partPins.forEach((pin) => this.PinNodeMap[pin] = nodeNumber);
 
@@ -339,28 +363,10 @@ export default class Solver {
         for (const meter of this.parts) {
             // 电流表
             if (meter.type === PartType.CurrentMeter) {
-                let matrix = new Matrix(1, this.branchNumber, 0);
-
-                // 搜索电流表出口所连的所有器件
-                const { partPins } = this.getNodeConnectByLine(meter.connect[1]);
-
-                // 入口处所有支路的电流相加即为当前电流
-                for (const pin of partPins) {
-                    // 当前管脚分解为器件编号
-                    const [partId] = pin.split('-');
-
-                    // 排除掉电流表入口本身
-                    if (partId === meter.id) {
-                        continue;
-                    }
-
-                    matrix = matrix.add(this.getCurrentMatrixByBranch(partId));
-                }
-
                 this.observeCurrent.push({
                     id: meter.id,
                     data: [],
-                    matrix,
+                    matrix: this.getCurrentMatrixByBranch(meter.id),
                 });
             }
             // 电压表
@@ -442,7 +448,7 @@ export default class Solver {
 
             // 此时标记的支路编号是无效的
             iterative.markInMatrix(updateMatrix, mark, -1);
-            updateWarppers.push((solver) => iterative.createIterator(solver, part.params, mark));
+            updateWarppers.push((solver) => iterative.createIterator(solver, part, mark));
         }
 
         // 拆分后的所有器件
@@ -467,7 +473,7 @@ export default class Solver {
                 iterative.markInMatrix(updateMatrix, mark, branch);
                 updateWarppers.push(
                     (solver) =>
-                        iterative.createIterator(solver, part.params as string[], mark),
+                        iterative.createIterator(solver, part, mark),
                 );
             }
         }
@@ -489,6 +495,8 @@ export default class Solver {
         const updates = updateWarppers.map((func) => func({
             Factor: this.factor,
             Source: this.source,
+            getVoltageMatrixByPin: this.getVoltageMatrixByPin.bind(this),
+            getCurrentMatrixByBranch: this.getCurrentMatrixByBranch.bind(this),
         }));
 
         // 参数迭代方程包装
@@ -517,13 +525,18 @@ export default class Solver {
         let current = new BigNumber(0);
         /** 当前模拟器的精确时间的缓存 */
         let currentCache = 0;
+        /** 系数方程是否被更改 */
+        let factorChange = false;
 
         /** 时间坐标数组 */
         const times = [currentCache];
 
         // 迭代求解
         while (currentCache <= end) {
-            // 更新参数
+            // 标志位初始化
+            factorChange = false;
+
+            // 器件迭代
             this.update({
                 Voltage: nodeVoltage,
                 Current: branchCurrent,
@@ -531,8 +544,8 @@ export default class Solver {
                 interval: step,
             });
 
-            // TODO: 系数矩阵更新，重新求逆
-            if (false) {
+            // 若系数矩阵改变，就需要重新求逆
+            if (factorChange) {
                 factorInverse = this.factor.inverse();
             }
 
