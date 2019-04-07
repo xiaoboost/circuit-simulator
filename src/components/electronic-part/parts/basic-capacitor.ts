@@ -1,6 +1,5 @@
 import { ElectronicPrototype, PartType, UnitType  } from './constant';
 import { numberParser } from 'src/lib/number';
-import { isNumber } from 'src/lib/utils';
 import { PartData } from '..';
 
 const data: ElectronicPrototype = {

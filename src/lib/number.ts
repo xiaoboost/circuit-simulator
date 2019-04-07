@@ -40,7 +40,7 @@ export function numberParser(notation: string) {
     }
     else if (/[puμnmkMG]$/.test(notation)) {
         const base = notation.substring(0, notation.length - 1);
-        const rankOri = notation[notation.length - 1].toLowerCase();
+        const rankOri = notation[notation.length - 1];
         const rank = rankOri === 'u' ? 'μ' : rankOri;
         const power = RankEnum[rank];
 

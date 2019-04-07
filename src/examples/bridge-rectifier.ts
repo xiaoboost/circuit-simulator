@@ -3,6 +3,14 @@ import { PartType } from '../components/electronic-part';
 import { LineType } from '../components/electronic-line';
 
 export const data: CircuitStorage = {
+    time: {
+        end: '20m',
+        step: '5u',
+    },
+    oscilloscopes: [
+        ['V_in', 'V_out'],
+        ['I_out'],
+    ],
     data: [
         {
             type: PartType.Diode,
@@ -55,7 +63,7 @@ export const data: CircuitStorage = {
             text: 'right',
         },
         {
-            type: PartType.Capacitor,
+            type: PartType.CurrentMeter,
             id: 'I_out',
             position: [440, 140],
             rotate: [[1, 0], [0, 1]],

@@ -1,10 +1,11 @@
 import store from 'src/vuex';
 import Matrix from 'src/lib/matrix';
 import BigNumber from 'bignumber.js';
+import HashMap from './hashmap';
 
 import * as Mark from './mark';
 
-import { isDef, isUndef } from 'src/lib/utils';
+import { isDef } from 'src/lib/utils';
 import { numberParser } from 'src/lib/number';
 import { LineData, LineType } from 'src/components/electronic-line';
 
@@ -17,8 +18,9 @@ import {
     IteratorData,
 } from 'src/components/electronic-part';
 
-type HashMap = AnyObject<number>;
 type ProgressHandler = (progress: number) => any | Promise<any>;
+type IteratorCreator = IteratorData['createIterator'];
+type UpdateWarpper = (solver: Parameters<IteratorCreator>[0]) => ReturnType<IteratorCreator>;
 
 /** 观测器 */
 export interface Observer {
@@ -45,43 +47,35 @@ export default class Solver {
      *  - 没有可以继续拆分的器件
      */
     private partsAll: PartRunData[] = [];
+    /**
+     * 器件标记
+     *  - 包含所有器件（拆分的和未拆分的）
+     */
+    private partMarks = new HashMap();
 
     /** 系数矩阵 */
     private factor!: Matrix;
     /** 电源列向量 */
     private source!: Matrix;
-    /** 迭代函数 */
-    private update!: IterativeEquation;
+    /** 迭代方程包装器堆栈 */
+    private updateWarppers: UpdateWarpper[] = [];
     /** 电流观测器 */
     private observeCurrent: Observer[] = [];
     /** 电压观测器 */
     private observeVoltage: Observer[] = [];
 
     /** [管脚->节点号] 对应表 */
-    private PinNodeMap: HashMap = {};
-    /** [导线->节点号] 对应表 */
-    private LineNodeMap: HashMap = {};
+    private PinNodeMap = new HashMap();
     /**
      * [管脚->支路号] 对应表
      *  - 在拆分器件之前，可能会有拥有三个或以上管脚的器件，经过拆分之后就没有这种器件存在的
      */
-    private PinBranchMap: HashMap = {};
-
-    /** 节点数量 */
-    get nodeNumber() {
-        return Math.max(...Object.values(this.PinNodeMap)) + 1;
-    }
-    /** 支路数量 */
-    get branchNumber() {
-        return Math.max(...Object.values(this.PinBranchMap)) + 1;
-    }
+    private PinBranchMap = new HashMap();
 
     constructor(parts: PartData[], lines: LineData[]) {
         // 内部储存初始化
         this.parts = parts;
         this.lines = lines;
-        this.PinNodeMap = {};
-        this.PinBranchMap = {};
 
         // 状态初始化
         // 注：不可以调整以下函数的调用顺序
@@ -157,8 +151,10 @@ export default class Solver {
 
     /** 由支路器件到支路电流计算矩阵 */
     private getCurrentMatrixByBranch(branch: string) {
+        const { PinBranchMap } = this;
+
         /** 电流矩阵 */
-        const matrix = new Matrix(1, this.branchNumber, 0);
+        const matrix = new Matrix(1, PinBranchMap.max, 0);
         /** 支路器件 */
         const part = this.findPart(branch);
 
@@ -171,15 +167,15 @@ export default class Solver {
             const branchs = partPins.map((pin) => pin.split('-')[0]).filter(
                 (branchName) =>
                     branchName !== part.id &&
-                    isDef(this.PinBranchMap[branchName]),
+                    PinBranchMap.has(branchName),
             );
 
-            branchs.forEach((branchName) => matrix.set(0, this.PinBranchMap[branchName], 1));
+            branchs.forEach((branchName) => matrix.set(0, PinBranchMap.get(branchName), 1));
         }
         // 非电流表器件
         // 直接取支路电流即可
         else {
-            matrix.set(0, this.PinBranchMap[branch], 1);
+            matrix.set(0, PinBranchMap.get(branch), 1);
         }
 
         return matrix;
@@ -187,40 +183,61 @@ export default class Solver {
 
     /** 由管脚到节点电压计算矩阵 */
     private getVoltageMatrixByPin(pin: string) {
-        const matrix = new Matrix(1, this.nodeNumber, 0);
-        matrix.set(0, this.PinNodeMap[pin], 1);
+        const { PinNodeMap } = this;
+
+        /** 电压矩阵 */
+        const matrix = new Matrix(1, PinNodeMap.max, 0);
+        /** 实际的器件管教 */
+        let realPin = pin;
+
+        // 未找到节点记录
+        if (!PinNodeMap.has(pin)) {
+            /** 引脚编号拆分 */
+            const [partId, pinMark] = pin.split('-');
+            /** 引脚器件 */
+            const part = this.findPart(pin) as PartData;
+            /** 器件拆分原型 */
+            const { apart } = Electronics[part.type];
+
+            // 器件不可拆分，则抛出错误
+            if (!apart) {
+                throw new Error(`(Solver) 非法器件: ${partId}`);
+            }
+
+            realPin = `${partId}_${apart.interface[pinMark][0]}`;
+        }
+
+        matrix.set(0, PinNodeMap.get(realPin), 1);
         return matrix;
     }
 
     /** 扫描所有导线，生成 [管脚->节点号] 对应表 */
     private setPinNodeMap() {
-        /** 节点编号，初始为 0 */
-        let nodeNumber = 0;
+        /** 导线 hash 表 */
+        const lineHash: AnyObject<boolean> = {};
 
         // 搜索所有导线
         for (const line of this.lines) {
             // 当前导线已经访问过了
-            if (isDef(this.LineNodeMap[line.id])) {
+            if (lineHash[line.id]) {
                 continue;
             }
 
             // 当前节点的所有导线和引脚
             const { lines, partPins } = this.getNodeConnectByLine(line.id);
+            // 当前节点最大值
+            const nodeNumber = this.PinNodeMap.max;
 
-            // 记录已经搜索过的导线
-            lines.forEach((item) => this.LineNodeMap[item.id] = nodeNumber);
+            // 记录当前导线
+            lines.forEach(({ id }) => lineHash[id] = true);
             // 记录所有引脚连接节点的编号
-            partPins.forEach((pin) => this.PinNodeMap[pin] = nodeNumber);
-
-            // 每次循环就是个单独的节点
-            nodeNumber++;
+            partPins.forEach((pin) => this.PinNodeMap.set(pin, nodeNumber));
         }
     }
 
     /** 扫描所有器件，生成 [器件->支路号] 对应表 */
     private setPinBranchMap() {
-        /** 支路编号，初始为 0 */
-        let branchNumber = 0;
+        const { PinBranchMap } = this;
 
         for (const part of this.parts) {
             // 辅助器件，不建立支路
@@ -233,29 +250,34 @@ export default class Solver {
             }
 
             // 一器件一支路
-            this.PinBranchMap[part.id] = branchNumber++;
+            PinBranchMap.set(part.id);
         }
     }
 
     /** 拆分所有能拆分的器件 */
     private splitParts() {
-        this.parts.forEach((part, index) => {
+        for (const part of this.parts) {
             // 跳过辅助器件
             if (
                 part.type === PartType.ReferenceGround ||
                 part.type === PartType.CurrentMeter ||
                 part.type === PartType.VoltageMeter
             ) {
-                return;
+                continue;
             }
 
             // 器件原型
             const { apart } = Electronics[part.type];
+            // 取出 HashMap
+            const { PinNodeMap, PinBranchMap, partMarks } = this;
+
+            // 标记当前器件
+            partMarks.set(part.id);
 
             // 跳过不需要拆分的器件
             if (!apart) {
                 this.partsAll.push(part);
-                return;
+                continue;
             }
 
             const {
@@ -264,44 +286,51 @@ export default class Solver {
                 parts: insideParts,
             } = apart;
 
-            const { PinNodeMap, PinBranchMap } = this;
+            /** 由外部到内部的编号连接银映射 */
+            const concatInside = (a: string, b: string) => `${a}_${b}`;
 
             // 对外管脚号转换为内部标号
             for (let i = 0; i < external.length; i++) {
                 const outsidePin = `${part.id}-${i}`;
-                const mark = PinNodeMap[outsidePin];
+                const mark = PinNodeMap.get(outsidePin);
 
-                delete PinNodeMap[outsidePin];
+                PinNodeMap.delete(outsidePin);
 
                 for (const pin of external[i]) {
-                    PinNodeMap[`${part.id}-${pin}`] = mark;
+                    PinNodeMap.set(concatInside(part.id, pin), mark);
                 }
             }
 
             // 根据器件内部结构追加 PinNodeMap
             for (const node of internal) {
-                const nodeNumber = this.nodeNumber + 1;
+                const mark = PinNodeMap.max;
 
                 for (const pin of node) {
-                    PinNodeMap[`${part.id}-${pin}`] = nodeNumber;
+                    PinNodeMap.set(concatInside(part.id, pin), mark);
                 }
             }
 
             // 根据器件内部结构追加 PinBranchMap
             for (const insidePart of insideParts) {
-                // 新器件编号
-                const newId = `${part.id}-${insidePart.id}`;
+                // 新器件编号s
+                const newId = concatInside(part.id, insidePart.id);
 
                 // 新器件入栈
                 this.partsAll.push({
                     id: newId,
                     type: insidePart.type,
-                    params: insidePart.params(part, Mark.getMark(index)),
+                    // 拆分器件的标记值是原器件的标记值
+                    params: insidePart.params(part, Mark.getMark(partMarks.get(part.id))),
                 });
 
-                PinBranchMap[newId] = this.branchNumber + 1;
+                // 标记当前器件
+                partMarks.set(newId);
+                PinBranchMap.set(newId);
             }
-        });
+
+            // 支路对应表中删除原器件
+            PinBranchMap.deleteValue(PinBranchMap.get(part.id));
+        }
     }
 
     /**
@@ -316,20 +345,9 @@ export default class Solver {
             if (part.type === PartType.ReferenceGround) {
                 const { PinNodeMap } = this;
                 const GroundPin = `${part.id}-0`;
-                const GroundNode = PinNodeMap[GroundPin];
 
-                for (const pin of Object.keys(PinNodeMap)) {
-                    // 标号比参考节点大的减 1
-                    if (PinNodeMap[pin] > GroundNode) {
-                        PinNodeMap[pin] -= 1;
-                    }
-                    // 参考节点为 -1
-                    else if (PinNodeMap[pin] === GroundNode) {
-                        PinNodeMap[pin] = -1;
-                    }
-                }
-
-                delete PinNodeMap[GroundPin];
+                PinNodeMap.changeValue(PinNodeMap.get(GroundPin), -1);
+                PinNodeMap.delete(GroundPin);
             }
             // 电流表
             else if (part.type === PartType.CurrentMeter) {
@@ -338,22 +356,15 @@ export default class Solver {
                 // 电流表两端节点编号
                 const meterInput = `${part.id}-0`;
                 const meterOutput = `${part.id}-1`;
-                const nodeMin = Math.min(PinNodeMap[meterInput], PinNodeMap[meterOutput]);
-                const nodeMax = Math.max(PinNodeMap[meterInput], PinNodeMap[meterOutput]);
+                const nodeMin = Math.min(PinNodeMap.get(meterInput), PinNodeMap.get(meterOutput));
+                const nodeMax = Math.max(PinNodeMap.get(meterInput), PinNodeMap.get(meterOutput));
 
                 // 合并电流表两端节点（删除大的）
-                for (const pin of  Object.keys(PinNodeMap)) {
-                    if (PinNodeMap[pin] === nodeMax) {
-                        PinNodeMap[pin] = nodeMin;
-                    }
-                    else if (PinNodeMap[pin] > nodeMax) {
-                        PinNodeMap[pin]--;
-                    }
-                }
+                PinNodeMap.changeValue(nodeMax, nodeMin);
 
                 // 节点对应表中删除记录
-                delete PinNodeMap[meterInput];
-                delete PinNodeMap[meterOutput];
+                PinNodeMap.delete(meterInput);
+                PinNodeMap.delete(meterOutput);
             }
         }
     }
@@ -388,7 +399,10 @@ export default class Solver {
 
     /** 创建电路系数矩阵 */
     private setCircuitMatrix() {
-        const { nodeNumber, branchNumber } = this;
+        // 常量展开
+        const { PinNodeMap, PinBranchMap, partMarks } = this;
+        const nodeNumber = PinNodeMap.max;
+        const branchNumber = PinBranchMap.max;
 
         /**
          * 关联矩阵
@@ -404,22 +418,14 @@ export default class Solver {
         const H = new Matrix(branchNumber);
         /** 独立电压电流源列向量 */
         const S = new Matrix(branchNumber, 1, 0);
-
-        type IteratorCreator = IteratorData['createIterator'];
-        type UpdateWarpper = (solver: Parameters<IteratorCreator>[0]) => ReturnType<IteratorCreator>;
-
         /** 迭代方程生成器的矩阵数据 */
         const updateMatrix = { A, F, H, S };
-        /** 迭代方程包装器堆栈 */
-        const updateWarppers: UpdateWarpper[] = [];
-        /** 迭代方程组标记下标 */
-        let updateIndex = 0;
 
         // 扫描所有器件，建立关联矩阵
         for (const part of this.partsAll) {
             for (let i = 0; i < 2; i++) {
-                const node =  this.PinNodeMap[`${part.id}-${i}`];
-                const branch = this.PinBranchMap[part.id];
+                const node =  PinNodeMap.get(`${part.id}-${i}`);
+                const branch = PinBranchMap.get(part.id);
 
                 // 跳过参考节点
                 if (node === -1) {
@@ -444,17 +450,20 @@ export default class Solver {
                 continue;
             }
 
-            const mark = Mark.getMark(updateIndex++);
+            const mark = Mark.getMark(partMarks.get(part.id));
 
             // 此时标记的支路编号是无效的
-            iterative.markInMatrix(updateMatrix, mark, -1);
-            updateWarppers.push((solver) => iterative.createIterator(solver, part, mark));
+            if (iterative.markInMatrix) {
+                iterative.markInMatrix(updateMatrix, mark, -1);
+            }
+
+            this.updateWarppers.push((solver) => iterative.createIterator(solver, part, mark));
         }
 
         // 拆分后的所有器件
         for (const part of this.partsAll) {
             /** 当前器件所在支路 */
-            const branch = this.PinBranchMap[part.id];
+            const branch = this.PinBranchMap.get(part.id);
             /** 当前的器件参数生成器 */
             const { constant, iterative } = Electronics[part.type];
 
@@ -468,10 +477,13 @@ export default class Solver {
             }
             // 标记迭代参数
             else if (iterative) {
-                const mark = Mark.getMark(updateIndex++);
+                const mark = Mark.getMark(this.partMarks.get(part.id));
 
-                iterative.markInMatrix(updateMatrix, mark, branch);
-                updateWarppers.push(
+                if (iterative.markInMatrix) {
+                    iterative.markInMatrix(updateMatrix, mark, branch);
+                }
+
+                this.updateWarppers.push(
                     (solver) =>
                         iterative.createIterator(solver, part, mark),
                 );
@@ -490,17 +502,6 @@ export default class Solver {
             new Matrix(A.row, 1, 0)
                 .concatDown(new Matrix(A.column, 1, 0), S)
         );
-
-        /** 迭代方程堆栈 */
-        const updates = updateWarppers.map((func) => func({
-            Factor: this.factor,
-            Source: this.source,
-            getVoltageMatrixByPin: this.getVoltageMatrixByPin.bind(this),
-            getCurrentMatrixByBranch: this.getCurrentMatrixByBranch.bind(this),
-        }));
-
-        // 参数迭代方程包装
-        this.update = (arg) => updates.forEach((cb) => cb(arg));
     }
 
     /** 设置进度条事件 */
@@ -515,21 +516,60 @@ export default class Solver {
         const end = numberParser(time.end);
         const step = numberParser(time.step);
 
+        /** 电路常量属性展开 */
+        const {
+            events,
+            factor,
+            source,
+            observeVoltage,
+            observeCurrent,
+            PinNodeMap: {
+                max: nodeNumber,
+            },
+            PinBranchMap: {
+                max: branchNumber,
+            },
+        } = this;
+
         /** 结点电压列向量 */
-        let nodeVoltage = new Matrix(this.nodeNumber, 1, 0);
+        let nodeVoltage = new Matrix(nodeNumber, 1, 0);
         /** 支路电流列向量 */
-        let branchCurrent = new Matrix(this.branchNumber, 1, 0);
-        /** 系数逆矩阵 */
-        let factorInverse = this.factor.inverse();
+        let branchCurrent = new Matrix(branchNumber, 1, 0);
         /** 当前模拟器的精确时间 */
         let current = new BigNumber(0);
         /** 当前模拟器的精确时间的缓存 */
         let currentCache = 0;
         /** 系数方程是否被更改 */
         let factorChange = false;
+        /** 系数逆矩阵 */
+        let factorInverse!: Matrix;
 
         /** 时间坐标数组 */
         const times = [currentCache];
+        /** 系数矩阵代理 */
+        const factorProxy = new Proxy(factor, {
+            get(target, property) {
+                // 代理 set 方法
+                if (property === 'set') {
+                    return (...args: Parameters<Matrix['set']>) => {
+                        factorChange = true;
+                        target.set(...args);
+                    };
+                }
+                else {
+                    return target[property];
+                }
+            },
+        });
+        /** 迭代方程堆栈 */
+        const updates = this.updateWarppers.map((func) => func({
+            Factor: factorProxy,
+            Source: this.source,
+            getVoltageMatrixByPin: this.getVoltageMatrixByPin.bind(this),
+            getCurrentMatrixByBranch: this.getCurrentMatrixByBranch.bind(this),
+        }));
+        /** 参数迭代方程包装 */
+        const update: IterativeEquation = (arg) => updates.forEach((cb) => cb(arg));
 
         // 迭代求解
         while (currentCache <= end) {
@@ -537,7 +577,7 @@ export default class Solver {
             factorChange = false;
 
             // 器件迭代
-            this.update({
+            update({
                 Voltage: nodeVoltage,
                 Current: branchCurrent,
                 time: currentCache,
@@ -545,24 +585,24 @@ export default class Solver {
             });
 
             // 若系数矩阵改变，就需要重新求逆
-            if (factorChange) {
-                factorInverse = this.factor.inverse();
+            if (!factorInverse || factorChange) {
+                factorInverse = factor.inverse();
             }
 
             // 求解电路
-            const result = factorInverse!.mul(this.source);
+            const result = factorInverse.mul(source);
 
             // 更新列向量
-            nodeVoltage = result.slice([0, 0], [this.nodeNumber - 1, 0]);
-            branchCurrent = result.slice([this.nodeNumber + this.branchNumber, 0], [result.row - 1, 0]);
+            nodeVoltage = result.slice([0, 0], [nodeNumber - 1, 0]);
+            branchCurrent = result.slice([nodeNumber + branchNumber, 0], [result.row - 1, 0]);
 
             // 记录观测电压值
-            for (const ob of this.observeVoltage) {
+            for (const ob of observeVoltage) {
                 ob.data.push(ob.matrix.mul(nodeVoltage).get(0, 0));
             }
 
             // 记录观测电流值
-            for (const ob of this.observeCurrent) {
+            for (const ob of observeCurrent) {
                 ob.data.push(ob.matrix.mul(branchCurrent).get(0, 0));
             }
 
@@ -577,7 +617,7 @@ export default class Solver {
             const progress = Math.round(currentCache / end * 100);
 
             // 运行进度事件回调
-            for (const ev of this.events) {
+            for (const ev of events) {
                 await ev(progress);
             }
         }

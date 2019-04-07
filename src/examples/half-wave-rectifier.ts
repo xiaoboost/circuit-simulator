@@ -3,13 +3,21 @@ import { PartType } from '../components/electronic-part';
 import { LineType } from '../components/electronic-line';
 
 export const data: CircuitStorage = {
+    time: {
+        end: '20m',
+        step: '5u',
+    },
+    oscilloscopes: [
+        ['V_in', 'V_out'],
+        ['I_out'],
+    ],
     data: [
         {
             type: PartType.AcVoltageSource,
             id: 'V_1',
-            position: [180, 220],
+            position: [140, 220],
             rotate: [[1, 0], [0, 1]],
-            params: ['20', '200', '0', '0'],
+            params: ['25', '50', '0', '0'],
         },
         {
             type: PartType.Diode,
@@ -26,8 +34,42 @@ export const data: CircuitStorage = {
             params: ['100'],
         },
         {
+            type: PartType.ReferenceGround,
+            id: 'GND_1',
+            position: [320, 340],
+            rotate: [[1, 0], [0, 1]],
+        },
+        {
+            type: PartType.CurrentMeter,
+            id: 'I_out',
+            position: [400, 140],
+            rotate: [[1, 0], [0, 1]],
+        },
+        {
+            type: PartType.VoltageMeter,
+            id: 'V_in',
+            position: [200, 220],
+            rotate: [[1, 0], [0, 1]],
+            text: 'right',
+        },
+        {
+            type: PartType.VoltageMeter,
+            id: 'V_out',
+            position: [520, 220],
+            rotate: [[1, 0], [0, 1]],
+            text: 'right',
+        },
+        {
             type: LineType.Line,
-            way: [[180, 180], [180, 140], [240, 140]],
+            way: [[140, 180], [140, 140], [200, 140]],
+        },
+        {
+            type: LineType.Line,
+            way: [[200, 180], [200, 140]],
+        },
+        {
+            type: LineType.Line,
+            way: [[200, 140], [240, 140]],
         },
         {
             type: LineType.Line,
@@ -47,13 +89,15 @@ export const data: CircuitStorage = {
         },
         {
             type: LineType.Line,
-            way: [[180, 260], [180, 300], [320, 300]],
+            way: [[140, 260], [140, 300], [200, 300]],
         },
         {
-            type: PartType.ReferenceGround,
-            id: 'GND_1',
-            position: [320, 340],
-            rotate: [[1, 0], [0, 1]],
+            type: LineType.Line,
+            way: [[200, 260], [200, 300]],
+        },
+        {
+            type: LineType.Line,
+            way: [[200, 300], [320, 300]],
         },
         {
             type: LineType.Line,
@@ -70,19 +114,6 @@ export const data: CircuitStorage = {
         {
             type: LineType.Line,
             way: [[460, 300], [460, 260]],
-        },
-        {
-            type: PartType.CurrentMeter,
-            id: 'I_out',
-            position: [400, 140],
-            rotate: [[1, 0], [0, 1]],
-        },
-        {
-            type: PartType.VoltageMeter,
-            id: 'V_out',
-            position: [520, 220],
-            rotate: [[1, 0], [0, 1]],
-            text: 'right',
         },
     ],
 };

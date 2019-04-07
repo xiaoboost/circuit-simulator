@@ -167,7 +167,7 @@ export interface IteratorData {
      * @param {number} branch 当前器件所在支路编号
      * @param {number} mark 当前器件的标记编号
      */
-    markInMatrix(circuit: CircuitBaseMatrix, mark: number, branch: number): void;
+    markInMatrix?(circuit: CircuitBaseMatrix, mark: number, branch: number): void;
     /**
      * 迭代方程生成器
      * @param {CircuitSolverMatrix} solver 求解器矩阵

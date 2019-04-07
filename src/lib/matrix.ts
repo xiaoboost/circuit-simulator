@@ -490,6 +490,7 @@ export default class Matrix {
             if (k < n - 1) {
                 // 取绝对值最大的系数为主元
                 let tempmax = 0, tempsub = 0;
+
                 for (let i = k; i < n; i++) {
                     const now = Math.abs(U.get(i, k));
                     if (now > tempmax) {
@@ -497,16 +498,21 @@ export default class Matrix {
                         tempsub = i;
                     }
                 }
+
                 // 交换主元
-                L.exchangeRow(k, tempsub);
-                U.exchangeRow(k, tempsub);
-                P.exchangeRow(k, tempsub);
+                if (tempsub !== 0) {
+                    L.exchangeRow(k, tempsub);
+                    U.exchangeRow(k, tempsub);
+                    P.exchangeRow(k, tempsub);
+                }
             }
         }
+
         // 下三角对角线为1
         for (let i = 0; i < n; i++) {
             L.set(i, i, 1);
         }
+
         return ({ L, U, P });
     }
     /**
