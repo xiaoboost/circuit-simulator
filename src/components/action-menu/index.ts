@@ -2,6 +2,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Mutation } from 'vuex-class';
 
 import Solver from 'src/lib/solver';
+import { delay } from 'src/lib/utils';
 
 import {
     MutationName,
@@ -41,6 +42,8 @@ export default class ActionMenu extends Vue {
         this.isRun = true;
         this.progress = 0;
 
+        await delay();
+
         const { parts, lines } = this.$store.state;
         const solver = new Solver(parts, lines);
 
@@ -54,13 +57,14 @@ export default class ActionMenu extends Vue {
             if (now - last > 1000) {
                 last = now;
                 this.progress = progress;
-
-                return this.$nextTick();
+                return delay();
             }
         });
 
         // 进度完成
         this.progress = 100;
+
+        await delay();
 
         if (process.env.NODE_ENV === 'development') {
             console.time('solve');

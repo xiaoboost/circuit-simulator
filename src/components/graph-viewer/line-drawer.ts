@@ -184,12 +184,13 @@ export default class Chart extends Vue {
 
     mounted() {
         const height = this.halfHeight ? window.innerHeight / 2 : window.innerHeight;
+        const right = (this.hasVoltage && this.hasCurrent) ? 80 : 30;
 
         this.chart = new G2.Chart({
             height,
             forceFit: true,
             container: this.id,
-            padding: [50, 80, 50, 80],
+            padding: [50, right, 50, 80],
         });
 
         this.setChart();
