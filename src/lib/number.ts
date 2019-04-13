@@ -76,23 +76,25 @@ const unitMap = {
 
 /** 生成简写数字单位快捷选择列表选项 */
 export function createSelectList(label: string, isChinese?: boolean): SelectList;
-export function createSelectList(units: NumberRank[], label: string, isChinese?: boolean): SelectList;
-export function createSelectList(units: NumberRank[] | string, label?: string | boolean, isChinese = false) {
+export function createSelectList(ranks: NumberRank[], unit: string, isChinese?: boolean): SelectList;
+export function createSelectList(ranks: NumberRank[] | string, unit?: string | boolean, isChinese = false) {
     // 未输入单位列表
-    if (!isArray(units)) {
-        isChinese = Boolean(label);
-        label = units;
-        units = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'];
+    if (!isArray(ranks)) {
+        isChinese = Boolean(unit);
+        unit = ranks;
+        ranks = ['G', 'M', 'k', '', 'm', 'μ', 'n', 'p'];
     }
 
-    const unitFilted: Exclude<NumberRank, 'μ'>[] = units.map((unit) => unit === 'μ' ? 'u' : unit);
+    return ranks.map((origin) => {
+        const rank = origin === 'μ' ? 'u' : origin;
 
-    return unitFilted.map((unit) => ({
-        label: isChinese
-            ? `${unitMap[unit]}${label}`
-            : `${unit}${label}`,
-        value: unit,
-    }));
+        return {
+            label: isChinese
+                ? `${unitMap[rank]}${unit}`
+                : `${origin}${unit}`,
+            value: rank,
+        };
+    });
 }
 
 /** 解析输入数字 */
@@ -101,7 +103,7 @@ export function splitNumber(str: string) {
     const match = matcher.exec(str);
 
     if (!match) {
-        throw new Error(`Number Error: ${str}`);
+        throw new Error(`(number) Cannot run splitNumber(${str})`);
     }
 
     return {
@@ -117,7 +119,7 @@ export function splitNumber(str: string) {
  */
 export function getRank(value: number) {
     if (Number.isNaN(value)) {
-        throw new Error('(number) cannot run .rank() on NaN');
+        throw new Error('(number) Cannot run getRank(NaN)');
     }
 
     if (value === 0) {
@@ -136,7 +138,7 @@ export function getRank(value: number) {
  */
 export function toRound(origin: number, bits: number = 6) {
     if (Number.isNaN(origin)) {
-        throw new Error('(number) cannot run .toRound() on NaN');
+        throw new Error('(number) Cannot run toRound(NaN)');
     }
 
     const value = Math.abs(origin);

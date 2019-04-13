@@ -89,6 +89,7 @@ export function outputMap() {
 }
 
 // 调试阶段，导出函数为全局函数
+/* istanbul ignore next */
 if (process.env.NODE_ENV === 'development') {
     def(window, { $outputMap: outputMap });
 }

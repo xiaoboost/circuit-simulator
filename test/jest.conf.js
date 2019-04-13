@@ -35,6 +35,7 @@ module.exports = {
         '!src/components/electronic-part/parts/*',
 
         '!src/main.ts',
+        '!src/components/**/index.ts',
         '!src/components/action-menu/icons.ts',
         '!src/lib/{types,debugger,component}.ts',
     ],

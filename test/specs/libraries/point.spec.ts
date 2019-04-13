@@ -2,6 +2,7 @@ import 'src/init/native';
 
 import Matrix from 'src/lib/matrix';
 import Point from 'src/lib/point';
+import { toRound } from 'src/lib/number';
 
 describe('point.ts: class of point and vector', () => {
     test('create a instance', () => {
@@ -49,7 +50,7 @@ describe('point.ts: class of point and vector', () => {
         const node = new Point(1, 2);
 
         expect(node.product([2, 4])).toEqual(10);
-        expect(node.product([0.1, 0.8]).toRound()).toEqual(1.7);
+        expect(toRound(node.product([0.1, 0.8]))).toEqual(1.7);
     });
     test('Point.prototype.rotate()', () => {
         const node = new Point(1, 2);
@@ -78,11 +79,10 @@ describe('point.ts: class of point and vector', () => {
         expect(new Point(5, 5).distance([2, 1])).toEqual(5);
     });
     test('Point.prototype.toUnit()', () => {
-        expect(new Point(3, 4).toUnit().map((n) => n.toRound())).toEqual([0.6, 0.8]);
-        expect(new Point(6, 8).toUnit().map((n) => n.toRound())).toEqual([0.6, 0.8]);
-        expect(new Point(6, 8).toUnit(10).map((n) => n.toRound())).toEqual([6, 8]);
-
-        expect(new Point(1, 1).toUnit().map((n) => n.toRound(8))).toEqual([0.70710678, 0.70710678]);
+        expect(new Point(3, 4).toUnit().map((n, i) => toRound(n))).toEqual([0.6, 0.8]);
+        expect(new Point(6, 8).toUnit().map((n, i) => toRound(n))).toEqual([0.6, 0.8]);
+        expect(new Point(6, 8).toUnit(10).map((n, i) => toRound(n))).toEqual([6, 8]);
+        expect(new Point(1, 1).toUnit().map((n, i) => toRound(n, 8))).toEqual([0.70710678, 0.70710678]);
     });
     test('Point.prototype.round()', () => {
         expect(new Point(912, 830).round()).toEqual(new Point(920, 840));
