@@ -1,4 +1,4 @@
-import { resolve, buildTag } from './utils';
+import { resolve, version } from './utils';
 
 import chalk from 'chalk';
 import Webpack from 'webpack';
@@ -17,7 +17,7 @@ const banner =
 `Project: Circuit Simulator
 Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
-Build: ${buildTag()}
+Build: ${version}
 filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
@@ -153,7 +153,7 @@ const baseConfig: WebpackConfig = {
         new HtmlWebpackPlugin({
             filename: 'index.html',
             data: {
-                build: buildTag(),
+                build: version,
                 year: new Date().getFullYear(),
             },
             template: resolve('src/index.html'),

@@ -5,10 +5,10 @@ import FriendlyErrorsPlugin from 'friendly-errors-webpack-plugin';
 
 import baseConfig from './webpack.base';
 
+import { join } from 'path';
+import { getType } from 'mime';
 import { output } from './config';
-import { ramMiddleware } from './utils';
 
-import * as fsOri from 'fs';
 import * as fs from 'fs-extra';
 
 const host = 'localhost';
@@ -36,13 +36,13 @@ baseConfig.plugins!.push(
 
 const compiler = Webpack(baseConfig);
 
-let fileSystem;
+let fileSystem: MemoryFS | typeof fs;
 
 if (process.env.SERVER_TYPE === 'memory') {
-    compiler.outputFileSystem = fileSystem = new MemoryFS();
+    fileSystem = compiler.outputFileSystem = new MemoryFS();
 }
 else {
-    fileSystem = fsOri;
+    fileSystem = fs;
 }
 
 compiler.watch(
@@ -53,6 +53,45 @@ compiler.watch(
     ),
 );
 
-app
-    .use(ramMiddleware(fileSystem, output))
-    .listen(port);
+app.listen(port);
+
+app.use((ctx, next) => {
+    if (ctx.method !== 'GET' && ctx.method !== 'HEAD') {
+        ctx.status = 405;
+        ctx.length = 0;
+        ctx.set('Allow', 'GET, HEAD');
+        next();
+        return (false);
+    }
+
+    const filePath = ctx.path[ctx.path.length - 1] === '/'
+        ? join(output, ctx.path, 'index.html')
+        : join(output, ctx.path);
+
+    if (!fileSystem.existsSync(filePath)) {
+        ctx.status = 404;
+        ctx.length = 0;
+        next();
+        return (false);
+    }
+
+    const fileStat = fileSystem.statSync(filePath);
+
+    ctx.type = getType(filePath)!;
+    ctx.lastModified = new Date();
+
+    ctx.set('Accept-Ranges', 'bytes');
+    ctx.set('Cache-Control', 'max-age=0');
+
+    // node-fs
+    if (fileStat instanceof fs.Stats) {
+        ctx.length = fileStat.size;
+    }
+    // memory-fs
+    else {
+        ctx.length = Buffer.from(fileSystem.readFileSync(filePath)).length;
+    }
+
+    ctx.body = fileSystem.createReadStream(filePath);
+    next();
+});
