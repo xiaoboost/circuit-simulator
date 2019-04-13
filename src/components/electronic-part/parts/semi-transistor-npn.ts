@@ -13,24 +13,28 @@ const part: ElectronicPrototype = {
             unit: UnitType.Space,
             default: '40',
             vision: false,
+            ranks: [],
         },
         {
             label: 'B极电阻',
             unit: UnitType.Ohm,
             default: '26',
             vision: false,
+            ranks: [],
         },
         {
             label: 'BE饱和压降',
             unit: UnitType.Volt,
             default: '0.6',
             vision: false,
+            ranks: [],
         },
         {
             label: 'CE饱和压降',
             unit: UnitType.Volt,
             default: '1',
             vision: false,
+            ranks: [],
         },
     ],
     points: [

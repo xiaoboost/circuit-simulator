@@ -13,6 +13,7 @@ const part: ElectronicPrototype = {
             unit: UnitType.Henry,
             default: '10u',
             vision: true,
+            ranks: ['', 'm', 'μ', 'n'],
         },
     ],
     points: [

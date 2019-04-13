@@ -15,18 +15,21 @@ const data: ElectronicPrototype = {
             unit: UnitType.Volt,
             default: '1',
             vision: false,
+            ranks: ['', 'm'],
         },
         {
             label: '导通电阻',
             unit: UnitType.Ohm,
             default: '0.5',
             vision: false,
+            ranks: ['', 'm'],
         },
         {
             label: '关断电阻',
             unit: UnitType.Ohm,
             default: '5M',
             vision: false,
+            ranks: ['G', 'M', 'k'],
         },
     ],
     points: [

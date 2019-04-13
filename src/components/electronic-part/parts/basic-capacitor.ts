@@ -15,6 +15,7 @@ const data: ElectronicPrototype = {
             unit: UnitType.Farad,
             default: '100u',
             vision: true,
+            ranks: ['', 'm', 'μ', 'n', 'p'],
         },
     ],
     points: [

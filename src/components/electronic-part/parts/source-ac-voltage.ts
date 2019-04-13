@@ -16,24 +16,28 @@ const part: ElectronicPrototype = {
             unit: UnitType.Volt,
             default: '220',
             vision: true,
+            ranks: ['k', '', 'm'],
         },
         {
             label: '频率',
             unit: UnitType.Hertz,
             default: '50',
             vision: true,
+            ranks: ['M', 'k', '', 'm'],
         },
         {
             label: '偏置电压',
             unit: UnitType.Volt,
             default: '0',
             vision: false,
+            ranks: ['k', '', 'm'],
         },
         {
             label: '初始相角',
             unit: UnitType.Degree,
             default: '0',
             vision: false,
+            ranks: [],
         },
     ],
     points: [

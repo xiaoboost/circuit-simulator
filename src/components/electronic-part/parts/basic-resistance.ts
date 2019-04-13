@@ -15,6 +15,7 @@ const data: ElectronicPrototype = {
             unit: UnitType.Ohm,
             default: '10k',
             vision: true,
+            ranks: ['G', 'M', 'k', ''],
         },
     ],
     points: [

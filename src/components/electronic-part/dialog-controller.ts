@@ -2,13 +2,16 @@ import Vue from 'vue';
 import Point from 'src/lib/point';
 import ParamsDialog from 'src/components/params-dialog';
 
-import { createSelectList, splitNumber } from 'src/lib/number';
+import { createSelectList, splitNumber, NumberRank } from 'src/lib/number';
 import { default as Electronics, UnitType } from './parts';
 
 // 生成全局参数设置对话框组件
 const Comp = Vue.extend(ParamsDialog);
 const DOM = document.createElement('div');
 const dialog = new Comp<ParamsDialog>().$mount(DOM);
+
+// 所有数量级
+const allRanks: NumberRank[] = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'];
 
 // 将组件插入 body 末尾
 document.body.appendChild(dialog.$el);
@@ -17,16 +20,6 @@ interface Params {
     id: string;
     params: string[];
 }
-
-/** 单位对应的扩展映射 */
-const rankMap = {
-    [UnitType.Farad]: ['', 'm', 'u', 'p'],
-    [UnitType.Henry]: ['', 'm', 'u', 'p'],
-    [UnitType.Ohm]: ['M', 'k', '', 'm'],
-    [UnitType.Volt]: ['', 'm'],
-    [UnitType.Ampere]: ['', 'm', 'u'],
-    [UnitType.Hertz]: ['M', 'k', ''],
-};
 
 /**
  * 打开器件的参数设置对话框
@@ -60,7 +53,7 @@ export default function setPartParams(
             value: value.number,
             rank: value.rank,
             unit: param.unit,
-            units: createSelectList(rankMap[param.unit] || [], param.unit, false),
+            units: createSelectList(param.ranks || allRanks, param.unit, false),
         };
     });
 

@@ -113,18 +113,12 @@ export default class ParamsDialog extends Vue {
         }
 
         const { value } = this.params[index];
+        const num = Number(value);
 
         this.paramErrMsgs.$set(index, '');
 
-        if (!value) {
-            this.paramErrMsgs.$set(index, '参数值不能为空');
-            return;
-        }
-
-        const num = Number(value);
-
-        if (Number.isNaN(num) || num <= 0) {
-            this.paramErrMsgs.$set(index, '请输入大于零的合法数字');
+        if (!value || Number.isNaN(num)) {
+            this.paramErrMsgs.$set(index, '请输入合法数字');
             return;
         }
     }

@@ -1,5 +1,7 @@
 import Matrix from 'src/lib/matrix';
+
 import { PartData } from '..';
+import { NumberRank } from 'src/lib/number';
 
 /** 器件类型枚举常量 */
 export const enum PartType {
@@ -73,6 +75,11 @@ export interface ParmasDescription {
      * @type {string}
      */
     readonly default: string;
+    /**
+     * 当前参数的快捷数量级选项
+     * @type {NumberRank[]}
+     */
+    readonly ranks?: NumberRank[];
 }
 
 /** 器件每个节点的描述 */
