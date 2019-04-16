@@ -86,7 +86,7 @@ export default class Point {
      * @param {number} [label=1]
      * @returns {Point}
      */
-    add(added: PointInput, label: number = 1): Point {
+    add(added: PointInput, label = 1): Point {
         const sum = new Point(0, 0);
         if (isNumber(added)) {
             sum[0] = this[0] + added * label;
@@ -107,7 +107,7 @@ export default class Point {
      * @param {number} [label=1]
      * @returns {Point}
      */
-    mul(multiplier: PointInput, label: number = 1): Point {
+    mul(multiplier: PointInput, label = 1): Point {
         const sum = new Point(0, 0);
         if (isNumber(multiplier)) {
             sum[0] = this[0] * ((label < 0) ? (1 / multiplier) : multiplier);
@@ -164,14 +164,23 @@ export default class Point {
     /**
      * 求 this 到 point 的几何距离
      *
-     * @param {PointLike} point
+     * @param {PointLike} [point]
      * @returns {number}
      */
-    distance(point: PointLike): number {
+    distance(point: PointLike = [0, 0]): number {
         return Math.hypot(
             (this[0] - point[0]),
             (this[1] - point[1]),
         );
+    }
+    /**
+     * this 在`vector`上的投影向量
+     *
+     * @param {Point} vector 投影向量
+     * @returns {Point}
+     */
+    toProjection(vector: Point) {
+        return vector.mul(this.product(vector) / vector.distance());
     }
     /**
      * 求与 this 平行且模为 factor 的向量
@@ -179,9 +188,19 @@ export default class Point {
      * @param {number} [factor=1]
      * @returns {Point}
      */
-    toUnit(factor: number = 1): Point {
-        const scale = 1 / this.distance([0, 0]);
+    toUnit(factor = 1) {
+        const scale = 1 / this.distance();
         return this.mul(scale * factor);
+    }
+    /**
+     * this 顺时针旋转 90°
+     *  - x 轴向右为正，y 轴向下为正
+     *
+     * @param {number} [factor=1]
+     * @returns {Point}
+     */
+    toVertical() {
+        return new Point(-this[1], this[0]);
     }
     /**
      * x, y 分别对 n 的余数四舍五入
@@ -189,7 +208,7 @@ export default class Point {
      * @param {number} [fixed=20]
      * @returns {Point}
      */
-    round(fixed: number = 20): Point {
+    round(fixed = 20): Point {
         return (new Point(
             Number.parseInt((this[0] / fixed).toFixed(), 10) * fixed,
             Number.parseInt((this[1] / fixed).toFixed(), 10) * fixed,
@@ -201,7 +220,7 @@ export default class Point {
      * @param {number} [fixed=20]
      * @returns {Point}
      */
-    roundToSmall(fixed: number = 20): Point {
+    roundToSmall(fixed = 20): Point {
         return (new Point(
             Number.parseInt((this[0] / fixed).toFixed(), 10),
             Number.parseInt((this[1] / fixed).toFixed(), 10),
@@ -213,7 +232,7 @@ export default class Point {
      * @param {number} [fixed=20]
      * @returns {Point}
      */
-    floor(fixed: number = 20): Point {
+    floor(fixed = 20): Point {
         return (new Point(
             Math.floor(this[0] / fixed) * fixed,
             Math.floor(this[1] / fixed) * fixed,
@@ -225,7 +244,7 @@ export default class Point {
      * @param {number} [fixed=20]
      * @returns {Point}
      */
-    floorToSmall(fixed: number = 20): Point {
+    floorToSmall(fixed = 20): Point {
         return (new Point(
             Math.floor(this[0] / fixed),
             Math.floor(this[1] / fixed),
@@ -344,7 +363,7 @@ export default class Point {
      * @param {number} [factor=1]
      * @returns {Point[]}
      */
-    around(predicate: (point: Point) => boolean, factor: number = 1): Point[] {
+    around(predicate: (point: Point) => boolean, factor = 1): Point[] {
         const ans: Point[] = predicate(this) ? [Point.from(this)] : [];
 
         for (let m = 1; ans.length < 1; m++) {
@@ -411,7 +430,7 @@ export default class Point {
      * @param {number} [len=20]
      * @returns {[Point, Point, Point, Point]}
      */
-    toGrid(len: number = 20): [Point, Point, Point, Point] {
+    toGrid(len = 20): [Point, Point, Point, Point] {
         return ([
             new Point(this[0], this[1]),
             new Point(this[0] + len, this[1]),

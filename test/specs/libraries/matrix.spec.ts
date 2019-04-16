@@ -1,6 +1,6 @@
 import Matrix from 'src/lib/matrix';
 
-describe('matrix.ts: class of Matrix', () => {
+describe('矩阵 matrix.ts', () => {
     test('create a Matrix', () => {
         let ma: Matrix;
         // 0 行列式填充以及从数组到行列式
@@ -254,5 +254,30 @@ describe('matrix.ts: class of Matrix', () => {
 
         expect(() => new Matrix(3, 4, 0).inverse()).toThrowError('(matrix) only the matrix can be decomposed.');
         expect(() => new Matrix(3).inverse()).toThrowError('(matrix) this matrix has no inverse.');
+    });
+    test('Matrix.prototype.concatRight/concatBottom()', () => {
+        const ma1 = Matrix.from([
+            [1,  2],
+            [5,  6],
+            [9, 10],
+        ]);
+
+        const ma2 = Matrix.from([
+            [ 2,  3],
+            [ 6,  7],
+            [10, 11],
+        ]);
+
+        const ma3 = Matrix.from([
+            [ 4],
+            [ 8],
+            [12],
+        ]);
+
+        expect(ma1.concatRight(ma2, ma3)).toEqualMatrix(Matrix.from([
+            [1,  2,  2,  3,  4],
+            [5,  6,  6,  7,  8],
+            [9, 10, 10, 11, 12],
+        ]));
     });
 });

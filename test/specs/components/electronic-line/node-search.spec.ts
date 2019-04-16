@@ -1,5 +1,5 @@
 import Point from 'src/lib/point';
-import { SearchMap, NodeData, SearchStack } from 'src/components/electronic-line/node-search';
+import { SearchMap, NodeData, SearchStack } from 'src/components/electronic-line/search/node-search';
 
 describe('electronic-line/node-search.ts', () => {
     test('SearchMap', () => {
