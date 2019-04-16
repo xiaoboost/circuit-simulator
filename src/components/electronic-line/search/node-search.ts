@@ -2,7 +2,7 @@ import Point from 'src/lib/point';
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
 import { $debugger } from 'src/lib/debugger';
-import { SearchStatus } from './line-search';
+import { SearchStatus } from './index';
 
 /** 搜索用节点数据 */
 export interface NodeData {

@@ -1,24 +1,20 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 import {
-    LineWay,
-    WayMap,
-    LineWayCall,
-} from './line-way';
-
-import {
     default as ElectronicCore,
     findLineComponent,
     findPartComponent,
 } from 'src/components/electronic-part/common';
 
-import Point from 'src/lib/point';
 import * as Map from 'src/lib/map';
-import * as Search from './line-search';
-
-import { LineType } from './helper';
+import Point from 'src/lib/point';
 import { $debugger } from 'src/lib/debugger';
+
+import { Draw } from './search';
+import { LineType } from './helper';
+import { LineWay } from './search/line-way';
 import { DrawEvent } from '../drawing-main/event-controller';
+
 import { MutationName as Mutation } from 'src/vuex';
 import { default as ElectronicPoint, PointClassName } from '../electronic-point';
 
@@ -31,7 +27,7 @@ import {
 } from 'src/lib/utils';
 
 export * from './helper';
-export * from './line-way';
+export * from './search/line-way';
 
 type dispatchKey = 'id' | 'type' | 'way' | 'connect';
 const disptchKeys: dispatchKey[] = ['id', 'type', 'way', 'connect'];
@@ -136,7 +132,7 @@ export default class LineComponent extends ElectronicCore {
 
         let last!: Point;
 
-        for (const point of LineWayCall(this.way, 'eachPoint')) {
+        for (const point of LineWay.prototype.eachPoint.call(this.way)) {
             // 当前点状态
             const status = Map.getPoint(point, true);
 
@@ -198,7 +194,7 @@ export default class LineComponent extends ElectronicCore {
 
         let last!: Point;
 
-        for (const point of LineWayCall(this.way, 'eachPoint')) {
+        for (const point of LineWay.prototype.eachPoint.call(this.way)) {
             const status = Map.getPoint(point, true);
 
             if (last) {
@@ -246,15 +242,17 @@ export default class LineComponent extends ElectronicCore {
         // 删除当前导线的所有标记
         this.deleteSign();
 
-        const wayMap = new WayMap();
         const handler = this.createDrawEvent();
         const mapData = Map.getPoint(this.way[0], true)!;
         const [id, mark] = mapData.id.split('-');
+
         const connectPart = findPartComponent(id);
         const startPoint = Point.from(this.way[0]);
-        const direction = connectPart.points[mark].direction;
-        const mouseOver: Search.DrawSearch.Option['mouseOver'] = {
-            status: Search.DrawSearch.Mouse.Idle,
+        const { direction } = connectPart.points[+mark];
+
+        const cache = new Draw.Cache(startPoint, direction);
+        const mouseOver: Draw.Option['mouseOver'] = {
+            status: Draw.Mouse.Idle,
         };
 
         // 设置事件属性
@@ -273,7 +271,7 @@ export default class LineComponent extends ElectronicCore {
                     // 器件的 mouseenter
                     if (/part-focus/.test(className)) {
                         Object.assign(mouseOver, {
-                            status: Search.DrawSearch.Mouse.Part,
+                            status: Draw.Mouse.Part,
                             part: findPartComponent(e.target.parentElement!),
                         });
                     }
@@ -283,7 +281,7 @@ export default class LineComponent extends ElectronicCore {
                         !this.$el.contains(e.target)
                     ) {
                         Object.assign(mouseOver, {
-                            status: Search.DrawSearch.Mouse.Line,
+                            status: Draw.Mouse.Line,
                             line: findLineComponent(e.target.parentElement!),
                         });
                     }
@@ -299,17 +297,19 @@ export default class LineComponent extends ElectronicCore {
                         /part-focus|line-rect|line-point/.test(className) &&
                         !this.$el.contains(e.target)
                     ) {
-                        mouseOver.status = Search.DrawSearch.Mouse.Idle;
+                        mouseOver.status = Draw.Mouse.Idle;
                     }
                 },
             },
             // 搜索事件
-            (e: DrawEvent) => this.way = Search.drawSearch({
+            (e: DrawEvent) => this.way = Draw.search({
+                cache,
+                direction,
+                mouseOver,
                 start: startPoint,
                 end: e.$position,
                 mouseBais: e.$movement,
                 pointSize: this.pointSize,
-                wayMap, direction, mouseOver,
             }),
         ]);
 
@@ -338,7 +338,7 @@ export default class LineComponent extends ElectronicCore {
         }
 
         // 导线最终设置
-        LineWayCall(this.way, 'endToPoint', finalEnd);
+        LineWay.prototype.endToPoint.call(this.way, finalEnd);
 
         // 更新数据
         this.dispatch();

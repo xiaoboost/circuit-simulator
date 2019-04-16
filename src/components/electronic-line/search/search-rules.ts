@@ -1,7 +1,7 @@
 import * as Map from 'src/lib/map';
 import Point from 'src/lib/point';
 import { NodeData } from './node-search';
-import { SearchStatus } from './line-search';
+import { SearchStatus } from './index';
 
 /**
  * 下列计算中使用的点坐标均为已缩放的值
@@ -183,7 +183,7 @@ export class Rules {
      *  - 起点和终点都是未缩放的值
      * @param {Point} start - 起点
      * @param {Point} end - 终点
-     * @param {string} status 当前状态
+     * @param {SearchStatus} status 当前状态
      */
     constructor(start: Point, end: Point, status: SearchStatus) {
         this.start = start.mul(0.05);

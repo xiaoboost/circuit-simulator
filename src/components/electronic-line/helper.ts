@@ -6,9 +6,7 @@ export const enum LineType {
     Line = -1,
 }
 
-/**
- * 生成完整的初始化导线数据
- */
+/** 生成完整的初始化导线数据 */
 export const createLineData = (): LineData => ({
     type: LineType.Line,
     id: createId('line'),

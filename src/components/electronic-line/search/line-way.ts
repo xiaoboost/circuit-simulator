@@ -1,5 +1,5 @@
 import { NodeSearchOption } from './node-search';
-import Point, { PointLike } from 'src/lib/point';
+import { default as Point, PointLike } from 'src/lib/point';
 
 /** 导线路径类 */
 export class LineWay extends Array<Point> {
@@ -159,29 +159,6 @@ export class LineWay extends Array<Point> {
         }
 
         yield node;
-    }
-}
-
-/** 导线搜索图类 */
-export class WayMap {
-    /** 路径数据 */
-    private _data: AnyObject<LineWay> = {};
-
-    static toKey(node: Point) {
-        return node.join(',');
-    }
-
-    has(node: Point) {
-        return Boolean(this._data[WayMap.toKey(node)]);
-    }
-    set(node: Point, way: LineWay) {
-        this._data[WayMap.toKey(node)] = way;
-    }
-    get(node: Point): LineWay | undefined {
-        return this._data[WayMap.toKey(node)];
-    }
-    delete(node: Point): boolean {
-        return Reflect.deleteProperty(this._data, WayMap.toKey(node));
     }
 }
 
