@@ -1,7 +1,7 @@
 import Point from 'src/lib/point';
 
 import * as Map from 'src/lib/map';
-import { isUndef } from 'src/lib/utils';
+import { isDef } from 'src/lib/utils';
 import { LineWay } from './line-way';
 import { nodeSearch } from './node-search';
 
@@ -79,10 +79,11 @@ export class Cache {
         const direction = new Point(start, end);
 
         // 方向与初始方向相反
-        if (!direction.isZero && direction.isOppoDirection(origin)) {
-            debugger;
+        if (!direction.isZero() && direction.isOppoDirection(origin)) {
+            // 对终点的偏移量
+            const endBias = new Point(end, bias);
             // 偏移量向原始方向的垂直向量投影
-            const vertical = bias.toProjection(origin.toVertical()).toUnit();
+            const vertical = endBias.toProjection(origin.toVertical()).toUnit();
             // 终点-偏移量 合成标记
             return (`${end.join(',')}-${vertical.join(',')}`);
         }
@@ -92,7 +93,7 @@ export class Cache {
     }
 
     has(end: Point, bias: Point) {
-        return isUndef(this._data[this.toKey(end, bias)]);
+        return isDef(this._data[this.toKey(end, bias)]);
     }
 
     set(end: Point, bias: Point, way: LineWay) {
@@ -190,27 +191,24 @@ function setSearchConfig(params: Option) {
         );
     }
 
-    // 当前终点集合的中心点作为终点偏移量
-    const endBias = ends.reduce((ans, node) => ans.add(node), new Point(0, 0)).mul(1 / ends.length);
-
     return {
         ...params,
         status,
         ends,
-        endBias,
+        endBias: end.floor().add(10),
     };
 }
 
 function searchWay(params: ReturnType<typeof setSearchConfig>) {
-    const { start, end, endBias, cache, direction, status, ends } = params;
+    const { start, endBias, cache, direction, status, ends } = params;
 
     // 节点搜索选项
     const option = {
         start,
         direction,
         status,
+        endBias,
         end: new Point(0, 0),
-        endBias: end.floor().add(10),
     };
 
     // 搜索路径
@@ -232,7 +230,7 @@ function searchWay(params: ReturnType<typeof setSearchConfig>) {
         cache.set(point, endBias, tempWay);
     }
 
-    return { ...params };
+    return params;
 }
 
 function setWayPath(params: ReturnType<typeof searchWay>) {
