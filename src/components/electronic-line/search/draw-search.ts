@@ -1,11 +1,12 @@
 import Point from 'src/lib/point';
 
 import * as Map from 'src/lib/map';
+
 import { isDef } from 'src/lib/utils';
 import { LineWay } from './line-way';
 import { nodeSearch } from './node-search';
 
-import LineComponent from '..';
+import LineComponent from '../index';
 import PartComponent from '../../electronic-part';
 
 /** 绘制状态选项 */

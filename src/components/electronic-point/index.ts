@@ -1,6 +1,6 @@
-import { MapStatus } from 'src/components/drawing-main';
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
-import { isString, isArray, excludeObject } from 'src/lib/utils';
+import { MapStatus } from 'src/components/drawing-main';
+import { isString, isArray } from 'src/lib/utils';
 
 /** 特定半径 */
 const ConstRadius = {
@@ -18,12 +18,6 @@ const ConstRadius = {
         'line-point-part': 2,
         'line-point-cross': 6,
     },
-};
-
-/** 半径变化 */
-const radius = {
-    normal: excludeObject(ConstRadius.normal, 0),
-    hover: excludeObject(ConstRadius.hover, 5),
 };
 
 type ClassObject = AnyObject<boolean>;
@@ -86,20 +80,26 @@ export default class ElectronicPoint extends Vue {
     }
 
     mouseenter() {
-        this.inner = Math.min(
-            ...this.className
+        const inners = (
+            this.className
                 .split(' ')
-                .map((item) => radius.hover[item]),
+                .filter((item): item is PointClassName => item in ConstRadius.hover)
+                .map((item) => ConstRadius.hover[item])
         );
+
+        this.inner = inners.length > 0 ? Math.min(...inners) : 5;
     }
 
     @Watch('className')
     mouseleave() {
-        this.inner = Math.max(
-            ...this.className
+        const inners = (
+            this.className
                 .split(' ')
-                .map((item) => radius.normal[item]),
+                .filter((item): item is PointClassName => item in ConstRadius.normal)
+                .map((item) => ConstRadius.normal[item])
         );
+
+        this.inner = inners.length > 0 ? Math.max(...inners) : 0;
     }
 
     @Watch('actual')
