@@ -1,6 +1,6 @@
 import store from 'src/vuex';
 
-import { def } from './utils';
+import { def, wait } from './utils';
 import { default as Point, PointLike } from './point';
 import { outputMap, MapHash, NodeType } from './map';
 
@@ -24,7 +24,7 @@ const nodeColor = {
     [NodeType.LineCoverPoint]: 'yellow',
 };
 
-class MapDebug {
+export default class MapDebug {
     /**
      * 每个实例都将直接操作此 SVG 元素
      * @type {SVGGElement}
@@ -143,17 +143,16 @@ class MapDebug {
     }
 }
 
-/** 对外暴露的调试器 */
-export let $debugger: MapDebug;
+// 调试器初始化
+if (process.env.NODE_ENV === 'development') {
+    const selector = '#drawing-main .drawing-area';
 
-/** 调试器初始化 */
-export function debuggerInit() {
-    if (process.env.NODE_ENV === 'development') {
-        const area = document.querySelector('#drawing-main svg g')!;
+    wait(() => Boolean(document.querySelector(selector)), 500).then(() => {
+        const area = document.querySelector(selector)!;
+        const $debugger = new MapDebug();
 
-        $debugger = new MapDebug();
         area.appendChild($debugger.$el);
 
         def(window, { $debugger });
-    }
+    });
 }

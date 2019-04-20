@@ -10,13 +10,17 @@
         因为全局禁止原生的右键菜单必须要等这个几个鼠标事件冒泡
     -->
     <svg
-        version="2" height="100%" width="100%"
+        version="2"
+        height="100%"
+        width="100%"
         xmlns="http://www.w3.org/2000/svg"
         @mousedown.self.right.passive="moveMap"
         @mousedown.self.left.passive="() => devicesNow = []"
         @click.self.right.passive="openRightMenu"
         @wheel.passive="resizeMap">
-        <g :transform="`translate(${position.join(',')}) scale(${zoom})`">
+        <g
+            class="drawing-area"
+            :transform="`translate(${position.join(',')}) scale(${zoom})`">
             <line-component v-for="line in linesAll" :key="line.hash" :value="line"></line-component>
             <part-component v-for="part in partsAll" :key="part.hash" :value="part"></part-component>
         </g>

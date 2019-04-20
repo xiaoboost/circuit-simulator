@@ -1,9 +1,5 @@
-import 'src/init';
-
 import { default as Vue, VNodeChildrenArrayContents } from 'vue';
 import { default as store, CircuitStorage } from 'src/vuex';
-
-import { debuggerInit } from 'src/lib/debugger';
 import { get, getQueryByName } from 'src/lib/utils';
 
 import ActionMenu from 'src/components/action-menu';
@@ -50,9 +46,6 @@ new Vue({
             await this.$store.dispatch('IMPORT_DATA', data);
             await this.$nextTick();
         }
-
-        // 调试器初始化
-        debuggerInit();
 
         // 初始化完成
         loaded();

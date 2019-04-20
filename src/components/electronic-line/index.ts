@@ -7,8 +7,8 @@ import {
 } from 'src/components/electronic-part/common';
 
 import * as Map from 'src/lib/map';
+
 import Point from 'src/lib/point';
-import { $debugger } from 'src/lib/debugger';
 
 import { Draw } from './search';
 import { LineType } from './helper';
@@ -171,7 +171,7 @@ export default class LineComponent extends ElectronicCore {
                 const info = `the type of line point(${point.join(',')}) is illegal.`;
 
                 if (process.env.NODE_ENV === 'development') {
-                    $debugger.point(point, 'red');
+                    window.$debugger.point(point, 'red');
                     throw new Error(info);
                 }
                 else {

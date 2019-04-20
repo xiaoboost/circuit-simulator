@@ -1,7 +1,6 @@
 import Point from 'src/lib/point';
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
-import { $debugger } from 'src/lib/debugger';
 import { SearchStatus } from './index';
 
 /** 搜索用节点数据 */
@@ -191,7 +190,7 @@ export function nodeSearch({
     // 调试用时，指示终点
     /* istanbul ignore if */
     if (process.env.NODE_ENV === 'development') {
-        $debugger.point(first.position, 'red', 20);
+        window.$debugger.point(first.position, 'red', 20);
     }
 
     // 终点状态
@@ -213,7 +212,7 @@ export function nodeSearch({
         }
 
         if (process.env.NODE_ENV === 'development') {
-            $debugger.point(nodenow.position, 'blue', 20);
+            window.$debugger.point(nodenow.position, 'blue', 20);
         }
 
         // 按方向扩展
@@ -224,7 +223,7 @@ export function nodeSearch({
             nodeExpand.value = rules.calValue(nodeExpand);
 
             if (process.env.NODE_ENV === 'development') {
-                $debugger.point(nodeExpand.position, 'black', 20);
+                window.$debugger.point(nodeExpand.position, 'black', 20);
             }
 
             // 判断是否是终点
@@ -244,8 +243,9 @@ export function nodeSearch({
             return (LineWay.from([start]));
         }
     }
+
     if (process.env.NODE_ENV === 'development') {
-        $debugger.clearAll();
+        window.$debugger.clearAll();
     }
 
     if (!endStatus) {
