@@ -7,13 +7,6 @@ import { outputMap, MapHash, NodeType } from './map';
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
 
-// 开关
-const Switch = {
-    point: true,
-    path: true,
-    text: true,
-};
-
 // 点颜色
 const nodeColor = {
     [NodeType.Part]: 'black',
@@ -36,11 +29,8 @@ export default class MapDebug {
         this.$el.setAttribute('class', 'map-debugger');
     }
     point([x, y]: PointLike, color = 'black', mul = 1): void {
-        if (!Switch.point) {
-            return;
-        }
-
         const el = doc.createElementNS(NS, 'circle');
+
         el.setAttribute('stroke-width', '3');
         el.setAttribute('fill', 'transparent');
         el.setAttribute('class', 'debug-point');
@@ -52,11 +42,8 @@ export default class MapDebug {
         this.$el.appendChild(el);
     }
     path(way: PointLike[], color = 'black', mul = 1): void {
-        if (!Switch.point) {
-            return;
-        }
-
         const el = doc.createElementNS(NS, 'path');
+
         el.setAttribute('d', `M${way.map((point) => point.join(',')).join('L')}`);
         el.setAttribute('class', 'debug-path');
         el.setAttribute('stroke-width', '2');

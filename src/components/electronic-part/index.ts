@@ -308,19 +308,15 @@ export default class PartComponent extends ElectronicCore {
         }
     }
     /** 移动说明文本 */
-    async moveText() {
+    moveText() {
         this.mapStatus.devicesNow = [this.id];
 
-        await this
+        this
             .createDrawEvent()
             .setCursor('move_part')
-            .setHandlerEvent((e: DrawEvent) => {
-                this.textPosition = this.textPosition.add(e.$movement);
-            })
+            .setHandlerEvent((e: DrawEvent) => this.textPosition = this.textPosition.add(e.$movement))
             .setStopEvent({ type: 'mouseup', which: 'left' })
-            .start();
-
-        this.renderText();
+            .start().then(() => this.renderText());
     }
 
     /** 设置属性 */
