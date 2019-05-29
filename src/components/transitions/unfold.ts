@@ -25,8 +25,8 @@ function transitionHooks({
     const showTime = duration * 0.3;
     /** 起始点位置 */
     const start = !isString(startOrigin) ? startOrigin : {
-        left: startOrigin + 'px',
-        top: startOrigin + 'px',
+        left: startOrigin,
+        top: startOrigin,
     };
 
     function beforeEnter(el: HTMLElement) {

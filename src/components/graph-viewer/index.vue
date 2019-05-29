@@ -1,7 +1,10 @@
 <script lang="ts" src="./index.ts"></script>
 
 <template>
-<unfold start="66px" :duration="500">
+<unfold :duration="500" :start="{
+    right: '66px',
+    bottom: '66px',
+}">
     <section id="graph-viewer" v-if="visible">
         <line-drawer
             v-for="(meters, i) in oscilloscopes"
@@ -27,7 +30,7 @@
     margin 0
     position absolute
     overflow hidden
-    background-color #fffdf6
+    background-color #FFFADC
     font-family font-default
     overflow hidden auto
     box-shadow -4px 0 8px #eee
