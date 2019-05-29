@@ -1,4 +1,5 @@
 import Point from 'src/lib/point';
+import Matrix from 'src/lib/matrix';
 
 import * as Map from 'src/lib/map';
 
@@ -7,27 +8,30 @@ import { SearchMap, NodeData as SearchNodeData, SearchStack } from 'src/componen
 
 import { default as PartComponent, Electronics, PartType } from 'src/components/electronic-part';
 
-type MockPart = Pick<PartComponent, 'type' | 'points' | 'position' | 'connect' | 'pointSize'>;
+type MockPart = Writeable<Pick<PartComponent, 'id' | 'type' | 'points' | 'position' | 'connect' | 'pointSize' | 'margin'>>;
 type MockPartInput = Pick<PartComponent, 'type'> & Partial<Omit<MockPart, 'type'>>;
-
-type MapNodeData = PartPartial<Omit<Map.NodeData, 'point'>, 'connect'>;
-type MapVirtualData = AnyObject<MapNodeData>;
+type MapUpdateData = AnyObject<Map.NodeUpdateData>;
 
 /** 生成虚拟器件组件 */
 function mockPartComponent(prop: MockPartInput) {
-    const data: MockPart = {
+    const options = (PartComponent as any).options;
+    const markSign = (part: MockPart): void => options.methods.markSign.call(part);
+    const getMargin = (part: MockPart): PartComponent['margin'] => options.computed.margin.get.call(part);
+    const getPoints = (part: MockPart): PartComponent['points'] => options.computed.points.get.call(part);
+
+    const data = {
         position: new Point(100, 100),
         connect: [],
         pointSize: [-1, -1],
-        points: Electronics[prop.type].points.map(({ direction, position }) => ({
-            size: -1,
-            class: 'part-point-open' as 'part-point-open',
-            direction: Point.from(direction),
-            position: Point.from(position),
-            originPosition: Point.from(position),
-        })),
+        rotate: Matrix.from([[1, 0], [0, 1]]),
+        origin: Electronics[prop.type],
         ...prop,
-    };
+    } as MockPart;
+
+    data.points = getPoints(data);
+    data.margin = getMargin(data);
+
+    markSign(data);
 
     return data as PartComponent;
 }
@@ -159,41 +163,24 @@ describe('electronic-line 导线组件测试', () => {
     describe('line-search 导线搜索测试', () => {
         let way: LineWay;
 
-        describe('单个器件', () => {
-            /** 虚拟图纸数据 */
-            const MapData: MapVirtualData = {
-                '9,10': {
-                    id: 'R_1-0',
-                    type: Map.NodeType.PartPoint,
-                },
-                '10,10': {
-                    id: 'R_1',
-                    type: Map.NodeType.Part,
-                },
-                '11,10': {
-                    id: 'R_1',
-                    type: Map.NodeType.Part,
-                },
-                '12,10': {
-                    id: 'R_1',
-                    type: Map.NodeType.Part,
-                },
-                '13,10': {
-                    id: 'R_1-1',
-                    type: Map.NodeType.PartPoint,
-                },
-            };
-
-            /** 虚拟器件 */
-            const part = mockPartComponent({
+        describe('两个器件', () => {
+            /** 虚拟器件 1 */
+            const part1 = mockPartComponent({
+                id: 'R_1',
                 position: new Point(11, 10).mul(20),
                 type: PartType.Resistance,
-                connect: ['', 'line_1'],
             });
 
-            const partPosition = part.position;
-            const start = partPosition.add(part.points[1].position);
-            const direction = part.points[1].direction;
+            /** 虚拟器件 2 */
+            const part2 = mockPartComponent({
+                id: 'R_2',
+                position: new Point(25, 25).mul(20),
+                type: PartType.Resistance,
+            });
+
+            const partPosition = part1.position;
+            const start = partPosition.add(part1.points[1].position);
+            const direction = part1.points[1].direction;
             const cache = new Draw.Cache(start, direction);
 
             /** 默认搜索参数 */
@@ -208,9 +195,6 @@ describe('electronic-line 导线组件测试', () => {
                     status: Draw.Mouse.Idle,
                 },
             };
-
-            // 装载图纸数据
-            Map.forceUpdateMap(JSON.stringify(MapData));
 
             test('器件右侧节点为起点，鼠标至空白处', () => {
                 way = Draw.search({
@@ -227,7 +211,7 @@ describe('electronic-line 导线组件测试', () => {
                     end: partPosition.add([-5, -5]),
                     mouseOver: {
                         status: Draw.Mouse.Part,
-                        part,
+                        part: part1,
                     },
                 });
 
@@ -240,7 +224,7 @@ describe('electronic-line 导线组件测试', () => {
                     end: partPosition.add([-5, 5]),
                     mouseOver: {
                         status: Draw.Mouse.Part,
-                        part,
+                        part: part1,
                     },
                 });
 

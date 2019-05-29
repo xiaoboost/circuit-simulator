@@ -2,7 +2,7 @@ import { default as Point, PointLike, PointCall } from 'src/lib/point';
 import { def, clone } from './utils';
 
 /** 节点类型常量 */
-export const enum NodeType {
+export enum NodeType {
     /** 导线 */
     Line = 10,
     /** 导线空节点 */
@@ -31,6 +31,7 @@ export interface NodeData {
 
 export type MapHash = AnyObject<NodeData>;
 export type NodeInputData = PartPartial<NodeData, 'connect'>;
+export type NodeUpdateData = Omit<PartPartial<NodeData, 'connect'>, 'point'>;
 
 /**
  * 图纸标记缓存
@@ -107,8 +108,7 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
         return;
     }
 
-    type ParseNodeData = Omit<PartPartial<NodeData, 'connect'>, 'point'>;
-    const data = JSON.parse(map) as AnyObject<ParseNodeData>;
+    const data = JSON.parse(map) as AnyObject<NodeUpdateData>;
 
     // 删除当前所有数据
     Object

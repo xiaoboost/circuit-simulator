@@ -15,10 +15,11 @@ module.exports = {
     },
     transform: {
         '^.+\\.(j|t)s$': '<rootDir>/node_modules/ts-jest',
-        '.*\\.vue$': '<rootDir>/node_modules/vue-jest',
+        '^.+\\.vue$': '<rootDir>/node_modules/vue-jest',
     },
     testURL: 'http://localhost/',
     testRegex: '(/test/.*spec)\\.ts$',
+    modulePathIgnorePatterns: ['<rootDir>\\_文档'],
     snapshotSerializers: ['<rootDir>/node_modules/jest-serializer-vue'],
     setupFilesAfterEnv: ['<rootDir>/test/setups/env.ts'],
     setupFiles: ['<rootDir>/test/setups/vue.ts'],
@@ -42,6 +43,7 @@ module.exports = {
     globals: {
         'vue-jest': {
             tsConfig: resolve('tsconfig.jest.json'),
+            babelConfig: false,
         },
         'ts-jest': {
             tsConfig: resolve('tsconfig.jest.json'),
