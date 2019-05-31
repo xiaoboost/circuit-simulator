@@ -76,6 +76,9 @@ const baseConfig: WebpackConfig = {
                 loader: 'ts-loader',
                 options: {
                     configFile: resolve('tsconfig.build.json'),
+                    compilerOptions: {
+                        target: isDevelopment ? 'esnext' : 'es6',
+                    },
                 },
             },
             {
