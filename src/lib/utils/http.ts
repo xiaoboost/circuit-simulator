@@ -36,3 +36,19 @@ export function get<T = any>(url: string): Promise<T> {
         };
     });
 }
+
+/**
+ * 下载文件
+ * @param {string} name 下载的文件名字
+ * @param {Blob} content 文件数据
+ */
+export function download(name: string, content: Blob) {
+    const element = document.createElement('a');
+    const url = URL.createObjectURL(content);
+
+    element.href = url;
+    element.download = name;
+    element.click();
+
+    URL.revokeObjectURL(url);
+}

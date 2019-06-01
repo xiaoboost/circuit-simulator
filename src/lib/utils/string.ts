@@ -54,3 +54,21 @@ export function mergeMark(...args: string[]) {
 export function deleteMark(mark: string, ...args: string[]) {
     return mark.split(' ').filter((id) => !args.includes(id)).join(' ');
 }
+
+/**
+ * base64 编码转换为 Blob
+ * @param {string} base64 base64 源码
+ * @return {Blob} 转换后的 blob 数据
+ */
+export function toBlob(base64: string) {
+    const label = 'base64,';
+    const source = base64.slice(base64.indexOf(label) + label.length);
+    const binary =  window.atob(source);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return new Blob([bytes.buffer]);
+}

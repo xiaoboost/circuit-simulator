@@ -113,7 +113,8 @@ export default class Chart extends Vue {
         const grid: AxisConfig['grid'] = {
             type: 'line',
             lineStyle: {
-                fill: '#efefef',
+                // fill: '#efefef',
+                stroke: '#aaa',
                 lineDash: [3, 4],
             },
         };
