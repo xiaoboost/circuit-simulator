@@ -48,12 +48,12 @@ export default class GraphViewer extends Vue {
         let content = 'time,';
 
         // 记录编号
-        meters.forEach(({ id }) => content += `${id},`);
+        meters.forEach(({ id }) => (content += `${id},`));
 
         // 记录内容
         for (let i = 0; i < times.length; i++) {
             content += `\n${times[i]},`;
-            meters.forEach(({ data }) => content += `${data[i]},`);
+            meters.forEach(({ data }) => (content += `${data[i]},`));
         }
 
         download(

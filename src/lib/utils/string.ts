@@ -40,7 +40,7 @@ export function mergeMark(...args: string[]) {
         .join(' ')
         .split(' ')
         .filter(Boolean)
-        .forEach((item) => map[item] = true);
+        .forEach((item) => (map[item] = true));
 
     return Object.keys(map).join(' ');
 }

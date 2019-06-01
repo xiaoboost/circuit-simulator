@@ -103,7 +103,7 @@ export interface State {
     /** 仿真结果数据暂存 */
     solverResult: {
         times: number[];
-        meters: Omit<Observer, 'matrix'>[];
+        meters: Array<Omit<Observer, 'matrix'>>;
     };
 }
 

@@ -229,7 +229,7 @@ export default class Solver {
             const nodeNumber = this.PinNodeMap.max;
 
             // 记录当前导线
-            lines.forEach(({ id }) => lineHash[id] = true);
+            lines.forEach(({ id }) => (lineHash[id] = true));
             // 记录所有引脚连接节点的编号
             partPins.forEach((pin) => this.PinNodeMap.set(pin, nodeNumber));
         }

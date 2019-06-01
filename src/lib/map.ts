@@ -86,13 +86,26 @@ export function outputMap() {
     });
 
     return JSON.stringify(copy);
-
 }
 
 // 调试阶段，导出函数为全局函数
 /* istanbul ignore next */
 if (process.env.NODE_ENV === 'development') {
     def(window, { $outputMap: outputMap });
+}
+
+/**
+ * 将数据写入图纸标记
+ *  - 写入的数据是当前数据的副本
+ *  - 如果指定点已经有数据，那么当前数据会直接覆盖它
+ *
+ * @export
+ * @param {NodeData} data
+ * @param {boolean} [large=false]
+ */
+export function setPoint(data: NodeInputData, large = false): void {
+    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
+    $map[point2key(data.point)] = dataClone(data);
 }
 
 /**
@@ -123,20 +136,6 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
     });
 
     $mapString = map;
-}
-
-/**
- * 将数据写入图纸标记
- *  - 写入的数据是当前数据的副本
- *  - 如果指定点已经有数据，那么当前数据会直接覆盖它
- *
- * @export
- * @param {NodeData} data
- * @param {boolean} [large=false]
- */
-export function setPoint(data: NodeInputData, large = false): void {
-    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
-    $map[point2key(data.point)] = dataClone(data);
 }
 
 /**

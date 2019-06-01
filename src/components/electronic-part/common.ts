@@ -103,7 +103,7 @@ export default class ElectronicCore extends Vue {
     readonly type: PartType | LineType = LineType.Line;
 
     /** 图纸相关状态 */
-    @Inject({ default: {} })
+    @Inject({ default: {}})
     readonly mapStatus!: MapStatus;
     /** 设置图纸事件 */
     @Inject({ default: () => {} })

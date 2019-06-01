@@ -125,7 +125,7 @@ export default class PartComponent extends ElectronicCore {
         for (let i = 0; i < 2; i++) {
             const type = types[i] as 'margin' | 'padding';
             const boxSize = Electronics[this.type][type];
-            const endpoint = [[- boxSize[3], - boxSize[0]], [boxSize[1], boxSize[2]]];
+            const endpoint = [[-boxSize[3], -boxSize[0]], [boxSize[1], boxSize[2]]];
             const data = endpoint.map((point) => product(point, this.rotate));
 
             box[type] = [
@@ -314,7 +314,7 @@ export default class PartComponent extends ElectronicCore {
         this
             .createDrawEvent()
             .setCursor('move_part')
-            .setHandlerEvent((e: DrawEvent) => this.textPosition = this.textPosition.add(e.$movement))
+            .setHandlerEvent((e: DrawEvent) => (this.textPosition = this.textPosition.add(e.$movement)))
             .setStopEvent({ type: 'mouseup', which: 'left' })
             .start().then(() => this.renderText());
     }

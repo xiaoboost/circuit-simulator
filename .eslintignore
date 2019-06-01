@@ -1,0 +1,9 @@
+_文档/*
+.vscode/*
+.deploy_git/*
+
+dist/*
+node_modules/*
+
+**/*-old.*
+test/coverage/*

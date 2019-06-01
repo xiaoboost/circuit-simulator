@@ -79,7 +79,7 @@ export default class LineComponent extends ElectronicCore {
     }
     /** 路径转为 path 字符串 */
     get way2path() {
-        return this.way.length === 0 ? ''　: `M${this.way.map((n) => n.join(',')).join('L')}`;
+        return this.way.length === 0 ? '' : `M${this.way.map((n) => n.join(',')).join('L')}`;
     }
     /** 路径转为 rect 坐标 */
     get pathRects() {
@@ -95,7 +95,7 @@ export default class LineComponent extends ElectronicCore {
             ans.push({
                 x: left - wide / 2,
                 y: top - wide / 2,
-                height: (left === right) ? bottom - top + wide　: wide,
+                height: (left === right) ? bottom - top + wide : wide,
                 width: (left === right) ? wide : right - left + wide,
             });
         }
@@ -302,7 +302,7 @@ export default class LineComponent extends ElectronicCore {
                 },
             },
             // 搜索事件
-            (e: DrawEvent) => this.way = Draw.search({
+            (e: DrawEvent) => (this.way = Draw.search({
                 cache,
                 direction,
                 mouseOver,
@@ -310,7 +310,7 @@ export default class LineComponent extends ElectronicCore {
                 end: e.$position,
                 mouseBais: e.$movement,
                 pointSize: this.pointSize,
-            }),
+            })),
         ]);
 
         // 开始运行

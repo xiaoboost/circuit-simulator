@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import Point from 'src/lib/point';
+import Electronics from './parts';
 import ParamsDialog from 'src/components/params-dialog';
 
 import { createSelectList, splitNumber, NumberRank } from 'src/lib/number';
-import { default as Electronics, UnitType } from './parts';
 
 // 生成全局参数设置对话框组件
 const Comp = Vue.extend(ParamsDialog);

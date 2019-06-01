@@ -72,16 +72,16 @@ const getters: GetterTree<State, Getter> = {
 
 const mutations: MutationTree<State, Mutation> = {
     /** 关闭侧边栏 */
-    [MutationName.CLOSE_SLIDER]: (context) => context.sidebar = Sidebar.Space,
+    [MutationName.CLOSE_SLIDER]: (context) => (context.sidebar = Sidebar.Space),
     /** 打开添加器件侧边栏 */
-    [MutationName.OPEN_ADD_PARTS]: (context) => context.sidebar = Sidebar.Parts,
+    [MutationName.OPEN_ADD_PARTS]: (context) => (context.sidebar = Sidebar.Parts),
     /** 打开总设置侧边栏 */
-    [MutationName.OPEN_MAIN_CONFIG]: (context) => context.sidebar = Sidebar.Config,
+    [MutationName.OPEN_MAIN_CONFIG]: (context) => (context.sidebar = Sidebar.Config),
     /** 打开波形界面 */
-    [MutationName.OPEN_GRAPH_VIEW]: (context) => context.sidebar = Sidebar.Graph,
+    [MutationName.OPEN_GRAPH_VIEW]: (context) => (context.sidebar = Sidebar.Graph),
 
     /** 设置时间 */
-    [MutationName.SET_TIME_CONFIG]: (context, time: TimeConfig) => context.time = time,
+    [MutationName.SET_TIME_CONFIG]: (context, time: TimeConfig) => (context.time = time),
 
     /** 新器件压栈 */
     [MutationName.PUSH_PART]({ parts }, data: PartData | PartData[]) {

@@ -73,7 +73,7 @@ export default class ParamsDialog extends Vue {
         }
         // 关闭后清空函数
         else {
-            this.$nextTick(() => cancelDialog = () => {});
+            this.$nextTick(() => (cancelDialog = () => {}));
         }
     }
 

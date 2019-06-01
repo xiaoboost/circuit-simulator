@@ -109,7 +109,7 @@ export default class Chart extends Vue {
     /** 坐标轴配置 */
     get axiosConfig() {
         type AxisConfig = G2.ChartAxisConfig;
-        const option: [string, AxisConfig][] = [];
+        const option: Array<[string, AxisConfig]> = [];
         const grid: AxisConfig['grid'] = {
             type: 'line',
             lineStyle: {

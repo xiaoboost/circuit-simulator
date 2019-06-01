@@ -78,7 +78,7 @@ export default class ActionMenu extends Vue {
         }
 
         // 一秒之后恢复按钮
-        setTimeout(() => this.isRun = false, 1000);
+        setTimeout(() => (this.isRun = false), 1000);
         // 打开波形显示界面
         this.showGraph();
     }

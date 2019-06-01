@@ -57,10 +57,10 @@ export function numberParser(notation: string) {
 export type NumberRank = 'G' | 'M' | 'k' | '' | 'm' | 'μ' | 'u' | 'n' | 'p';
 
 /** 简写数字快捷选项下拉列表 */
-export type SelectList = {
+export type SelectList = Array<{
     label: string;
     value: string;
-}[];
+}>;
 
 /** 简写数字对应的中文 */
 const unitMap = {

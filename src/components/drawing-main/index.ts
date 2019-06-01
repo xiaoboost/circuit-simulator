@@ -25,7 +25,7 @@ export type MapStatus =
             devicesNow: {
                 enumerable: true,
                 get: () => this.devicesNow,
-                set: (value: string[]) => this.devicesNow = value.slice(),
+                set: (value: string[]) => (this.devicesNow = value.slice()),
             },
             zoom: {
                 enumerable: true,
@@ -38,7 +38,7 @@ export type MapStatus =
             exclusion: {
                 enumerable: true,
                 get: () => this.exclusion,
-                set: (value: boolean) => this.exclusion = value,
+                set: (value: boolean) => (this.exclusion = value),
             },
         });
 

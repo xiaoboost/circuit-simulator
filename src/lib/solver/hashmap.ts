@@ -61,6 +61,6 @@ export default class HashMap {
         }
 
         // 旧节点赋值为新的
-        oldKeys.forEach((key) => map[key] = newVal);
+        oldKeys.forEach((key) => (map[key] = newVal));
     }
 }
