@@ -123,7 +123,7 @@ export default class Matrix {
      * 在同一行（列）的矩阵必须有相同的行（列）数
      * 纯数字或者是'E'矩阵，不影响行列数，只做填充
      */
-    static merge(ma: ('E' | number | MatrixInput)[][]) {
+    static merge(ma: Array<Array<'E' | number | MatrixInput>>) {
         // 每一行有效矩阵的行数
         const rowNumbers: number[] = [];
         for (let i = 0; i < ma.length; i++) {
@@ -661,7 +661,7 @@ export default class Matrix {
      *  - 数字相等或者是回调返回 true，此时矩阵元素的位置会被记录
      */
     filterPostion(callback: number | ((value: number, position: [number, number]) => boolean)) {
-        const position: [number, number][] = [];
+        const position: Array<[number, number]> = [];
         const pre = isNumber(callback) ? (val: number) => val === callback : callback;
 
         for (let i = 0; i < this._view.length; i++) {
@@ -695,9 +695,9 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 
     // 列连续且列长均相等
     if (!ma.every((col) =>
-            isArray(col) && col.length === column &&
-            Object.keys(col).every((n, i) => +n === i) &&
-            Object.values(col).every((n) => isNumber(n) && !Number.isNaN(n)),
+        isArray(col) && col.length === column &&
+        Object.keys(col).every((n, i) => +n === i) &&
+        Object.values(col).every((n) => isNumber(n) && !Number.isNaN(n)),
     )) {
         throw new Error('(matrix) this is not a matrix.');
     }

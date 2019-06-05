@@ -1,5 +1,5 @@
 import Matrix from './matrix';
-import { isNumber, isUndef } from './utils';
+import { isNumber } from './utils';
 
 export type PointLike = number[] | Point;
 export type PointInput = PointLike | number;
@@ -19,8 +19,8 @@ export default class Point {
      * @param {PointInput} start
      * @param {PointInput} end
      */
-    constructor(start: number, end: number)
-    constructor(start: PointLike, end: PointLike)
+    constructor(start: number, end: number);
+    constructor(start: PointLike, end: PointLike);
     constructor(start: PointInput, end: PointInput) {
         // 输入两个数 -> 点
         if (isNumber(start)) {
@@ -71,7 +71,7 @@ export default class Point {
      */
     isEqual(point: PointLike): boolean {
         return (
-            2 === point.length &&
+            point.length === 2 &&
             this[0] === point[0] &&
             this[1] === point[1]
         );

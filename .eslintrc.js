@@ -40,6 +40,8 @@ module.exports =  {
         '@typescript-eslint/camelcase': 0,
         // 除了函数之外，禁止在定义之前使用变量
         '@typescript-eslint/no-use-before-define': [2, 'nofunc'],
+        // 允许构造函数的重载
+        '@typescript-eslint/no-useless-constructor': 0,
 
         // common
         // 不允许扩展原生数据结构
@@ -250,8 +252,8 @@ module.exports =  {
         'no-useless-call': 2,
         // 禁止对象中不必要的计算属性键
         'no-useless-computed-key': 2,
-        // 禁用不必要的构造函数
-        'no-useless-constructor': 2,
+        // 允许不必要的构造函数（这是为了兼容 ts 的构造函数重载）
+        'no-useless-constructor': 0,
         // 禁用不必要的转义
         'no-useless-escape': 2,
         // 点运算前后禁止空白
