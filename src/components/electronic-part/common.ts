@@ -3,8 +3,8 @@ import { clone, isString } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
 
 import { LineType } from '../electronic-line/helper';
+import { ContextData } from '../drawing-main';
 import { default as Electronics, PartType } from './parts';
-import { default as DrawingMain, MapStatus } from '../drawing-main';
 
 import PartComponent from 'src/components/electronic-part';
 import LineComponent from 'src/components/electronic-line';
@@ -104,10 +104,13 @@ export default class ElectronicCore extends Vue {
 
     /** 图纸相关状态 */
     @Inject({ default: {}})
-    readonly mapStatus!: MapStatus;
+    readonly mapStatus!: ContextData['mapStatus'];
     /** 设置图纸事件 */
     @Inject({ default: () => {} })
-    readonly createDrawEvent!: DrawingMain['createDrawEvent'];
+    readonly createDrawEvent!: ContextData['createDrawEvent'];
+    /** 设置当前选中的器件 */
+    @Inject({ default: () => {} })
+    readonly setSelectDevices!: ContextData['setSelectDevices'];
 
     @Watch('value', { immediate: true })
     update(val: object) {
@@ -118,11 +121,6 @@ export default class ElectronicCore extends Vue {
     changeId(newId: string, oldId: string) {
         markId(newId);
         deleteId(oldId);
-    }
-
-    /** 当前器件是否被选中 */
-    get focus() {
-        return this.mapStatus.devicesNow.includes(this.id);
     }
 
     created() {

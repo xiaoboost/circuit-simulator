@@ -351,8 +351,15 @@ export default class LineComponent extends ElectronicCore {
         this.markSign();
 
         // 染色
-        const parts = this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, ''));
-        this.mapStatus.devicesNow = `${this.id} ${parts.join(' ')}`.split(' ');
+        this.setSelectDevices(this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, '')));
+    }
+    /** 整体移动 */
+    moving() {
+        // ..
+    }
+    /** 单点移动 */
+    movePoint() {
+        // ..
     }
 
     /**

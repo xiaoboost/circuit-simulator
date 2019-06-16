@@ -2,19 +2,23 @@
 
 <template>
 <g
-    @dblclick.passive="setParams"
-    :class="['part', { focus }]"
-    :transform="`matrix(${rotate.join()},${position.join()})`">
+    class="part"
+    :style="style"
+    :transform="`matrix(${rotate.join()},${position.join()})`"
+    @dblclick.passive="setParams">
     <g class="part-focus">
-        <part-shape :value="origin.shape"></part-shape>
+        <part-shape
+            :value="origin.shape"
+            @mousedown.stop.left.passive="clickHandler"
+        />
         <electronic-point
             v-for="(point, i) in points"
             :key="i"
             :r="point.size"
             :classList="['part-point', point.class]"
             :transform="`translate(${point.originPosition.join()})`"
-            @mousedown.native.stop.left.passive="startDrawLine(i)">
-        </electronic-point>
+            @mousedown.native.stop.left.passive="setDrawLine(i)"
+        />
     </g>
     <g
         v-if="showText"
@@ -28,8 +32,8 @@
         <text
             v-for="(txt, i) in texts"
             :key="i" :dy="16 * (i + 1)"
-            v-text="txt">
-        </text>
+            v-text="txt"
+        />
     </g>
 </g>
 </template>
