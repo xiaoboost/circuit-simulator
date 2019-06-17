@@ -1,4 +1,4 @@
-import DrawingMain from '.';
+import Vue from 'vue';
 import Point from 'src/lib/point';
 
 import {
@@ -46,6 +46,14 @@ export interface DrawEventSetting {
     afterEvent?(): void;
 }
 
+/** 事件控制器适用的组件结构 */
+export interface EventControllerComp extends Vue {
+    zoom: number;
+    position: Point;
+    exclusion: boolean;
+    $el: HTMLElement;
+}
+
 /**
  * 生成鼠标的一次性结束事件
  * @param {StopMouseEvent} data
@@ -73,7 +81,7 @@ function createStopMouseEvent({ el, type, which }: Required<StopMouseEvent>) {
 
 export default class EventController {
     /** 事件控制器操作的组件 */
-    private Comp: DrawingMain;
+    private Comp: EventControllerComp;
     /** 当前事件队列是否互斥 */
     private exclusion: boolean;
 
@@ -87,7 +95,7 @@ export default class EventController {
     /** 鼠标指针样式 */
     private cursorStyle?: string;
 
-    constructor(Comp: DrawingMain, exclusion: boolean) {
+    constructor(Comp: EventControllerComp, exclusion = true) {
         this.Comp = Comp;
         this.exclusion = exclusion;
     }

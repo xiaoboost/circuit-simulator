@@ -1,5 +1,5 @@
 import { Component, Vue, Prop, Inject, Watch } from 'vue-property-decorator';
-import { MapStatus } from 'src/components/drawing-main';
+import { ContextData } from 'src/components/drawing-main';
 import { isString, isArray } from 'src/lib/utils';
 
 /** 特定半径 */
@@ -33,7 +33,7 @@ export default class ElectronicPoint extends Vue {
     readonly classList!: ClassInput;
 
     @Inject()
-    mapStatus!: MapStatus;
+    mapStatus!: ContextData['mapStatus'];
 
     $refs!: {
         circle: SVGCircleElement;

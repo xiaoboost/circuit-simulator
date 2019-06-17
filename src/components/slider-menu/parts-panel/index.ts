@@ -86,14 +86,14 @@ export default class PartsPanel extends Vue {
                 PartType.Inductance,
             ],
         },
-        // {
-        //     name: '半导体器件',
-        //     parts: [
-        //         PartType.Diode,
-        //         PartType.TransistorNPN,
-        //         PartType.OperationalAmplifier,
-        //     ],
-        // },
+        {
+            name: '半导体器件',
+            parts: [
+                PartType.Diode,
+                PartType.TransistorNPN,
+                PartType.OperationalAmplifier,
+            ],
+        },
     ];
 
     /** 储存器件 */
@@ -116,6 +116,6 @@ export default class PartsPanel extends Vue {
         await this.$nextTick();
 
         const part = findPartComponent(data.id);
-        part.startCreateEvent();
+        part.setCreateEvent();
     }
 }

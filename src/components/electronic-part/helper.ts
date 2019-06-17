@@ -22,6 +22,7 @@ export const PartShape = Vue.extend<Props>({
     render(h, context) {
         return h(
             'g',
+            context.data,
             context.props.value.map(
                 (shape) =>
                     h(shape.name, { attrs: shape.attribute }),

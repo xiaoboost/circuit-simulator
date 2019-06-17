@@ -21,8 +21,19 @@
         <g
             class="drawing-area"
             :transform="`translate(${position.join(',')}) scale(${zoom})`">
-            <line-component v-for="line in linesAll" :key="line.hash" :value="line"></line-component>
-            <part-component v-for="part in partsAll" :key="part.hash" :value="part"></part-component>
+            <line-component
+                v-for="line in linesAll"
+                :class="{ focus: focusDevices[line.id] }"
+                :key="line.id"
+                :value="line"
+            />
+            <part-component
+                v-for="part in partsAll"
+                :class="{ focus: focusDevices[part.id] }"
+                :key="part.id"
+                :value="part"
+                @select="() => movePart(part.id)"
+            />
         </g>
     </svg>
 </section>

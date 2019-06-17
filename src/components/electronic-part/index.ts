@@ -9,7 +9,7 @@ import LineComponent from '../electronic-line';
 
 import { DrawEvent } from '../drawing-main/event-controller';
 import { createLineData } from '../electronic-line/helper';
-import { isEqual, copyProperties } from 'src/lib/utils';
+import { isEqual, delay, copyProperties } from 'src/lib/utils';
 import { MutationName as Mutation } from 'src/vuex';
 import { product, PartShape } from './helper';
 
@@ -62,6 +62,9 @@ export default class PartComponent extends ElectronicCore {
     textPosition = new Point(0, 0);
     /** 说明文本方向 */
     textPlacement: TextPlacement = 'bottom';
+
+    /** 是否完成创建 标志位 */
+    private isCreated = false;
 
     /** 初始化 */
     created() {
@@ -150,6 +153,10 @@ export default class PartComponent extends ElectronicCore {
             outter,
             inner: box.padding,
         };
+    }
+    /** 当前器件显示样式 */
+    get style(): Partial<CSSStyleDeclaration> {
+        return this.isCreated ? { opacity: '1' } : {};
     }
 
     /** 在图纸标记当前器件 */
@@ -309,7 +316,7 @@ export default class PartComponent extends ElectronicCore {
     }
     /** 移动说明文本 */
     moveText() {
-        this.mapStatus.devicesNow = [this.id];
+        this.setSelectDevices([this.id]);
 
         this
             .createDrawEvent()
@@ -319,9 +326,10 @@ export default class PartComponent extends ElectronicCore {
             .start().then(() => this.renderText());
     }
 
+    // 事件接口
     /** 设置属性 */
     async setParams() {
-        this.mapStatus.devicesNow = [this.id];
+        this.setSelectDevices([this.id]);
 
         const params = await setPartParams(
             this.type,
@@ -340,10 +348,9 @@ export default class PartComponent extends ElectronicCore {
             this.update(params);
         }
     }
-    /** 开始新器件设置事件 */
-    async startCreateEvent() {
-        this.$el.setAttribute('opacity', '0.4');
-        this.mapStatus.devicesNow = [this.id];
+    /** 设置新器件设置事件 */
+    async setCreateEvent() {
+        this.setSelectDevices([this.id]);
         this.renderText();
 
         await this
@@ -364,12 +371,15 @@ export default class PartComponent extends ElectronicCore {
                 ),
         );
 
+        // 数据更新
         this.dispatch();
         this.markSign();
-        this.$el.removeAttribute('opacity');
+
+        // 完成创建标志位
+        delay(6).then(() => (this.isCreated = true));
     }
     /** 开始绘制导线 */
-    async startDrawLine(i: number) {
+    async setDrawLine(i: number) {
         // 当前引脚坐标
         const node = this.position.add(this.points[i].position);
 
@@ -405,9 +415,19 @@ export default class PartComponent extends ElectronicCore {
         }
 
         // 设置高亮
-        this.mapStatus.devicesNow = [this.id, line.id];
+        this.setSelectDevices([this.id]);
 
         line.toBottom();
         line.drawing(1);
+    }
+    /** 开始移动 */
+    clickHandler() {
+        if (this.isCreated) {
+            this.$emit('select');
+        }
+    }
+    /** 移动事件 */
+    movePart() {
+        // ..
     }
 }
