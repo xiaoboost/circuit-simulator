@@ -15,7 +15,7 @@
         width="100%"
         xmlns="http://www.w3.org/2000/svg"
         @mousedown.self.right.passive="moveMap"
-        @mousedown.self.left.passive="() => devicesNow = []"
+        @mousedown.self.left.passive="startSelection"
         @click.self.right.passive="openRightMenu"
         @wheel.passive="resizeMap">
         <g
@@ -33,6 +33,11 @@
                 :key="part.id"
                 :value="part"
                 @select="() => movePart(part.id)"
+            />
+            <polygon
+                v-if="selectionBoxPoints"
+                class="select-rect"
+                :points="selectionBoxPoints"
             />
         </g>
     </svg>
@@ -143,6 +148,17 @@
     g.part-point circle
         stroke Dark-Green
         fill Dark-Green
+
+// 多选框
+#drawing-main
+    polygon.select-rect
+        stroke #166CCF
+        stroke-width 1.2
+        fill #BBDEFB
+        opacity 0.3
+    polygon.select-rect.disappear
+        opacity 0
+        transition opacity 80ms linear
 
 #drawing-main.no-event
     .part

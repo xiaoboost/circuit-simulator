@@ -10,14 +10,22 @@ import { default as LineComponent, LineData } from '../electronic-line';
 
 import { isArray } from 'src/lib/utils';
 
-import {
-    MoveStatus,
-    ElectronicStatus,
-    ContextData,
-} from './hepler';
-
-export * from './hepler';
 export * from './event-controller';
+
+/** 组件上下文结构 */
+export interface ContextData {
+    /** 当前图纸信息 */
+    mapStatus: {
+        exclusion: boolean;
+        readonly zoom: number;
+        readonly position: Point;
+    };
+
+    /** 创建图纸事件 */
+    createDrawEvent(exclusion?: boolean): EventController;
+    /** 设置当前选中器件 */
+    setSelectDevices(param: string[] | ((devices: string[]) => string[])): void;
+}
 
 @Component({
     components: {
@@ -54,10 +62,12 @@ export default class DrawingMain extends Vue {
     zoom = 1;
     position = new Point(0, 0);
 
-    /** 当前选中的器件 */
-    selectParts: string[] = [];
     /** 当前是否正在运行互斥事件 */
     exclusion = false;
+    /** 当前选中的器件 */
+    selectParts: string[] = [];
+    /** 多选框当前坐标 */
+    selectionPoints: Point[] = [];
 
     @State('parts')
     partsAll!: StateTree['parts'];
@@ -80,9 +90,15 @@ export default class DrawingMain extends Vue {
     }
     /** 当前的活动器件 */
     get focusDevices() {
+        const { focusDeviceStatus: devices } = this;
         const focus: AnyObject<boolean> = {};
 
-        this.focusDeviceStatus.forEach(({ elec }) => (focus[elec.id] = true));
+        if (!devices) {
+            return focus;
+        }
+
+        devices.move.forEach(({ id }) => (focus[id] = true));
+        devices.transform.forEach(({ id }) => (focus[id] = true));
 
         return focus;
     }
@@ -93,17 +109,23 @@ export default class DrawingMain extends Vue {
 
         // 未选中任何器件则直接返回
         if (selectParts.length === 0) {
-            return [];
+            return;
         }
 
-        /** 当前记录 */
-        const result: ElectronicStatus[] = [];
+        // 器件和导线
+        type Elec = PartData | LineData;
+
+        /** 整体移动的器件 */
+        const move: Elec[] = [];
+        /** 变形的导线 */
+        const transform: Elec[] = [];
+
         /** 器件编号与器件的映射表 */
-        const eleMap: AnyObject<PartData | LineData> = {};
+        const eleMap: AnyObject<Elec> = {};
         /** 当前器件是否被选中 */
         const hasSelected = (id: string) => selectParts.includes(id);
         /** 当前器件是否已经被设定属性 */
-        const hasSearched = (id: string) => Boolean(result.find(({ elec }) => elec.id === id));
+        const hasSearched = (id: string) => Boolean(move.find((item) => item.id === id));
         /** 搜索输入编号器件的连通性 */
         const lineSearch = (id: string) => {
             /** 搜索堆栈元素 */
@@ -160,7 +182,6 @@ export default class DrawingMain extends Vue {
         this.partsAll.forEach((part) => (eleMap[part.id] = part));
         this.linesAll.forEach((line) => (eleMap[line.id] = line));
 
-        debugger;
         // 搜索所有器件
         selectParts.forEach((id) => {
             // 已经搜索过则跳过
@@ -169,15 +190,36 @@ export default class DrawingMain extends Vue {
             }
 
             // 当前连通器件
-            lineSearch(id).forEach((item) => {
-                result.push({
-                    elec: item,
-                    status: MoveStatus.Move,
-                });
-            });
+            lineSearch(id).forEach((item) => move.push(item));
         });
 
-        return result;
+        move.forEach(({ connect }) => {
+            connect
+                .join(' ').split(' ')
+                .filter(Boolean)
+                .filter((item) => {
+                    const find = ({ id }: Elec) => id === item;
+                    return !move.find(find) && !transform.find(find);
+                })
+                .map((id) => eleMap[id])
+                .forEach((item) => transform.push(item));
+        });
+
+        return {
+            move,
+            transform,
+        };
+    }
+    /** 当前选择框顶点坐标字符串属性 */
+    get selectionBoxPoints() {
+        if (this.selectionPoints.length === 0) {
+            return '';
+        }
+
+        const { selectionPoints: [start, end] } = this;
+        const top = start[1], bottom = end[1], left = start[0], right = end[0];
+
+        return `${left},${top} ${right},${top} ${right},${bottom} ${left},${bottom}`;
     }
 
     /** 打开右键菜单 */
@@ -241,9 +283,53 @@ export default class DrawingMain extends Vue {
             this.selectParts = [part.id];
         }
 
-        // 确定当前所选中的导线和器件状态
+        // 当前所选中的导线和器件状态
+        const { move, transform } = this.focusDeviceStatus!;
 
         debugger;
-        console.log(part);
+        console.log(move);
+        console.log(transform);
+    }
+    /** 多选框事件 */
+    async startSelection() {
+        // 初次运行时鼠标的坐标
+        let firstPointReal: Point;
+        // 初次运行时图纸的坐标
+        let firstPointInMap: Point;
+        // 是否绘制多选框
+        let draw = false;
+
+        const event = new EventController(this)
+            .setCursor('select_box')
+            .setStopEvent({ el: this.$el, type: 'mouseup', which: 'left' })
+            .setHandlerEvent((event) => {
+                if (!firstPointReal) {
+                    firstPointInMap = event.$position;
+                    firstPointReal = new Point(event.pageX, event.pageY);
+                }
+
+                // 鼠标坐标大于 70 才开始绘制多选框
+                if (!draw && firstPointReal.distance([event.pageX, event.pageY]) > 16) {
+                    draw = true;
+                }
+
+                // 不绘制则直接退出
+                if (!draw) {
+                    return;
+                }
+
+                // 记录多选框的顶点坐标
+                const top = Math.min(firstPointInMap[1], event.$position[1]);
+                const bottom = Math.max(firstPointInMap[1], event.$position[1]);
+                const left = Math.min(firstPointInMap[0], event.$position[0]);
+                const right = Math.max(firstPointInMap[0], event.$position[0]);
+
+                this.selectionPoints = [new Point(left, top), new Point(right, bottom)];
+            });
+
+        await event.start();
+
+        // 取消多选框
+        this.selectionPoints = [];
     }
 }
