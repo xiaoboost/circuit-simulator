@@ -300,7 +300,7 @@ export default class DrawingMain extends Vue {
         let draw = false;
 
         const event = new EventController(this)
-            .setCursor('select_box')
+            .setCursor(() => draw ? 'select_box' : 'default')
             .setStopEvent({ el: this.$el, type: 'mouseup', which: 'left' })
             .setHandlerEvent((event) => {
                 if (!firstPointReal) {

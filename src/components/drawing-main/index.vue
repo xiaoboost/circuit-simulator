@@ -37,6 +37,7 @@
             <polygon
                 v-if="selectionBoxPoints"
                 class="select-rect"
+                :stroke-width="1.6 / zoom"
                 :points="selectionBoxPoints"
             />
         </g>
@@ -153,7 +154,6 @@
 #drawing-main
     polygon.select-rect
         stroke #166CCF
-        stroke-width 1.2
         fill #BBDEFB
         opacity 0.3
     polygon.select-rect.disappear
