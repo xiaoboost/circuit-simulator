@@ -30,10 +30,8 @@ console.log(chalk.yellow('> Start Compile:\n'));
 // 编译 example
 example();
 
-type WebpackConfig = GetArrayItem<Parameters<typeof Webpack>[0]>;
-
-const baseConfig: WebpackConfig = {
-    mode: process.env.NODE_ENV as WebpackConfig['mode'],
+const baseConfig: Webpack.Configuration = {
+    mode: process.env.NODE_ENV as Webpack.Configuration['mode'],
     entry: {
         main: resolve('src/init/index.ts'),
     },
