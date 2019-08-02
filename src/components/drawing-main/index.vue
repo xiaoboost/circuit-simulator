@@ -54,7 +54,7 @@
                     :class="['context-menu-item', {
                         'context-menu-item__disabled': item.disabled,
                     }]"
-                    @click.left.stop.passive="contextMenuHandler(item.action)"
+                    @click.left.stop.passive="contextHandler(item.action)"
                 >
                     <span class="context-menu-item__title">{{ item.title }}</span>
                     <span class="context-menu-item__tooltip" v-if="item.tooltip">{{ item.tooltip }}</span>

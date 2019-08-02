@@ -224,7 +224,26 @@ export default class DrawingMain extends Vue {
     }
     /** 右键菜单列表 */
     get contextMenus() {
-        return [];
+        const { selectParts: parts, linesAll } = this;
+
+        // 没有选中器件
+        if (parts.length === 0) {
+            return getMenu(MenuMode.space);
+        }
+
+        // 当前选中的全部是导线
+        if (parts.every((id) => linesAll.find((line) => line.id === id))) {
+            return getMenu(MenuMode.line);
+        }
+
+        // 只有一个器件
+        if (parts.length === 1) {
+            return getMenu(MenuMode.singlePart);
+        }
+        // 多个器件
+        else {
+            return getMenu(MenuMode.multipleParts);
+        }
     }
 
     /** 打开右键菜单 */
@@ -232,8 +251,14 @@ export default class DrawingMain extends Vue {
         // ..
     }
     /** 点击右键菜单事件 */
-    contextMenuHandler(action: MenuAction) {
-
+    contextHandler(action: MenuAction) {
+        switch (action) {
+            case MenuAction.edit:
+                break;
+            case MenuAction.copy:
+                break;
+            default:
+        }
     }
 
     // 事件接口
