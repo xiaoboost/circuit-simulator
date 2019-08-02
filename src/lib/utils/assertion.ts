@@ -56,7 +56,7 @@ export function isUndef(x: any): x is null | undefined {
  * @param {*} x
  * @returns {(x is null | undefined)}
  */
-export function isDef(x: any): x is string | number | boolean | symbol | object {
+export function isDef<T>(x: T): x is NonNullable<T> {
     return x !== undefined && x !== null;
 }
 

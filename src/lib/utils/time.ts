@@ -17,7 +17,7 @@ export function delay(time = 0) {
 export function wait(fn: () => boolean, interval = 200, stopTimeout = 60000) {
     let timeout = false;
 
-    const timer = setTimeout(() => timeout = true, stopTimeout);
+    const timer = setTimeout(() => (timeout = true), stopTimeout);
 
     return (function check(): Promise<void> {
         if (fn()) {

@@ -53,6 +53,7 @@ export function clone<T>(data: T, check = true): T {
     }
     // 数组，深度复制
     else if (isArray(data)) {
+        // eslint-disable-next-line
         return data.map((n, i) => clone(n)) as any;
     }
     // 其余对象
