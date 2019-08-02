@@ -2,9 +2,10 @@ import Point from 'src/lib/point';
 import { State } from 'vuex-class';
 import { State as StateTree } from 'src/vuex';
 import { Component, Vue } from 'vue-property-decorator';
-import { findPartComponent, findLineComponent } from '../electronic-part/common';
+import { findPartComponent } from '../electronic-part/common';
 
 import EventController from './event-controller';
+import { MenuAction, MenuMode, getMenu } from './context-menu';
 import { default as PartComponent, PartData } from '../electronic-part';
 import { default as LineComponent, LineData } from '../electronic-line';
 
@@ -221,10 +222,18 @@ export default class DrawingMain extends Vue {
 
         return `${left},${top} ${right},${top} ${right},${bottom} ${left},${bottom}`;
     }
+    /** 右键菜单列表 */
+    get contextMenus() {
+        return [];
+    }
 
     /** 打开右键菜单 */
     openRightMenu() {
         // ..
+    }
+    /** 点击右键菜单事件 */
+    contextMenuHandler(action: MenuAction) {
+
     }
 
     // 事件接口
@@ -283,12 +292,20 @@ export default class DrawingMain extends Vue {
             this.selectParts = [part.id];
         }
 
-        // 当前所选中的导线和器件状态
-        const { move, transform } = this.focusDeviceStatus!;
+        // // 当前所选中的导线和器件状态
+        // const { move, transform } = this.focusDeviceStatus!;
 
-        debugger;
-        console.log(move);
-        console.log(transform);
+        // // 移动事件
+        // const moveParts = () => {
+
+        // };
+
+        new EventController(this)
+            .setCursor('')
+            .start();
+        // debugger;
+        // console.log(move);
+        // console.log(transform);
     }
     /** 多选框事件 */
     async startSelection() {

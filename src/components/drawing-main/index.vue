@@ -42,6 +42,26 @@
             />
         </g>
     </svg>
+
+    <!-- 右键菜单 -->
+    <div class="context-menu">
+        <ul class="context-menu-list">
+            <template v-for="(item, i) in contextMenus">
+                <li v-if="item.action === 0" :key="i" class="context-menu-separate" />
+                <li
+                    v-else
+                    :key="i"
+                    :class="['context-menu-item', {
+                        'context-menu-item__disabled': item.disabled,
+                    }]"
+                    @click.left.stop.passive="contextMenuHandler(item.action)"
+                >
+                    <span class="context-menu-item__title">{{ item.title }}</span>
+                    <span class="context-menu-item__tooltip" v-if="item.tooltip">{{ item.tooltip }}</span>
+                </li>
+            </template>
+        </ul>
+    </div>
 </section>
 </template>
 

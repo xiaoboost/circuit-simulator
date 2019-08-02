@@ -426,8 +426,8 @@ export default class PartComponent extends ElectronicCore {
             this.$emit('select');
         }
     }
-    /** 移动事件 */
-    movePart() {
-        // ..
+    /** 移动当前器件 */
+    moveSelf(bais: Point) {
+        this.position = this.position.add(bais);
     }
 }

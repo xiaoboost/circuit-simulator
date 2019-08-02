@@ -354,8 +354,8 @@ export default class LineComponent extends ElectronicCore {
         this.setSelectDevices(this.connect.filter(Boolean).map((item) => item.replace(/-\d+/, '')));
     }
     /** 整体移动 */
-    moving() {
-        // ..
+    moveSelf(bais: Point) {
+        this.way = this.way.map((point) => point.add(bais));
     }
     /** 单点移动 */
     movePoint() {
