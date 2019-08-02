@@ -3,7 +3,7 @@ import * as option from '../tsconfig.json';
 
 import { assert } from './config';
 import { join, basename } from 'path';
-import { promiseSpawn, resolve } from './utils';
+import { runSpawn, resolve } from './utils';
 
 const tsc = resolve('node_modules/typescript/lib/tsc.js');
 
@@ -16,7 +16,7 @@ const exampleOutput = join(assert, example);
 const compileOutput = option.compilerOptions.outDir;
 
 export default function main() {
-    promiseSpawn('node', tsc, '-p', exampleInput).then(() => {
+    runSpawn('node', tsc, '-p', exampleInput).then(() => {
         const filePath = resolve(compileOutput, example);
         const files = fs.readdirSync(filePath);
 

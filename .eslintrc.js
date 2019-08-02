@@ -42,6 +42,8 @@ module.exports =  {
         '@typescript-eslint/no-use-before-define': [2, 'nofunc'],
         // 允许构造函数的重载
         '@typescript-eslint/no-useless-constructor': 0,
+        // 允许使用 require 读取模块
+        '@typescript-eslint/no-var-requires': 0,
 
         // common
         // 不允许扩展原生数据结构
