@@ -33,14 +33,10 @@ new Vue({
         const map = getQueryByName('map');
 
         if (map) {
-            let data: CircuitStorage = { data: [] };
-
-            try {
-                data = await get<CircuitStorage>(`/examples/${map}.json`);
-            }
-            catch (e) {
+            const data = await get<CircuitStorage>(`/examples/${map}.json`).catch((e) => {
                 console.error(e);
-            }
+                return { data: [] };
+            });
 
             // 加载数据
             await this.$store.dispatch('IMPORT_DATA', data);
