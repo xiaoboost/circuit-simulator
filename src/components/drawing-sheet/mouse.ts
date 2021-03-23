@@ -1,24 +1,15 @@
 import { RefObject, useEffect } from 'react';
-import { useForceUpdate } from 'src/use';
+
+import { mapState } from './state';
+
+import { delay } from 'src/utils/func';
 import { Point } from 'src/lib/point';
+import { removeVal } from 'src/utils/array';
+import { supportsPassive } from 'src/utils/env';
 
 type Callback = (event: DrawEvent) => any | Promise<any>;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);
-type HandlerEventOption = DrawEventOption | Callback | Array<DrawEventOption | Callback>;
-
-/** 绘图事件选项 */
-interface DrawEventOption {
-    capture?: boolean;
-    passive?: boolean;
-    callback: Array<(e?: Event) => void>;
-}
-
-/** 绘图事件数据 */
-interface DrawEventData {
-    move: Callback[];
-    cursor?: string | ((e?: DrawEvent) => string);
-    stop: StopEventInput;
-}
+type CursorEventInput = string | ((event?: DrawEvent) => string | Promise<string>);
 
 /** 鼠标结束事件配置 */
 export interface StopEventOption {
@@ -28,43 +19,103 @@ export interface StopEventOption {
 }
 
 /** 绘图事件 */
-export interface DrawEvent extends MouseEvent {
-    movement: Point;
-    position: Point;
-    target: HTMLElement;
-    currentTarget: HTMLElement;
+export interface DrawEvent {
+    readonly movement: Readonly<Point>;
+    readonly position: Readonly<Point>;
+    readonly target: HTMLElement;
+    readonly currentTarget: HTMLElement;
+    readonly origin: MouseEvent;
+}
+
+export class DrawController {
+    private el: Element;
+
+    events: Callback[] = [];
+
+    constructor(el: Element) {
+        this.el = el;
+    }
+
+    start() {
+
+    }
+
+    stop() {
+
+    }
+
+    setMoveEvent(cb: Callback) {
+
+    }
+
+    setStopEvent(option: StopEventInput) {
+
+    }
 }
 
 /** 全局事件储存 */
-const events: DrawEventData[] = [];
+const _events: DrawController[] = [];
 
-/** 事件控制器 */
-export class EventController {
-    /** 控制器核心元素 */
-    // private el: HTMLElement;
-
-}
-
-export function useMouseBus(ref: RefObject<SVGSVGElement>) {
+export function useMouseBus(ref: RefObject<HTMLElement>) {
     if (process.env.NODE_ENV === 'development') {
         if (typeof ref !== 'object' || typeof ref.current === 'undefined') {
           console.error('useMouseBus expects a single ref argument.');
         }
     }
 
-    const update = useForceUpdate();
-
     useEffect(() => {
-        const mouseHandler = (e: MouseEvent) => {
+        let last: Point;
+
+        const mouseHandler = (event: MouseEvent) => {
+            const { data: map } = mapState;
+            const mouse = new Point(event.pageX, event.pageY);
+            const movement = last ? mouse.add(last, -1).mul(1 / map.zoom) : new Point(0, 0);
+            const position = mouse.add(map.position, -1).mul(1 / map.zoom);
+            const drawEvent: DrawEvent = {
+                movement,
+                position,
+                target: event.target as HTMLElement,
+                currentTarget: event.currentTarget as HTMLElement,
+                origin: event,
+            };
+
+            last = mouse;
+
+            if (process.env.NODE_ENV === 'development') {
+                delay().then(() => {
+                    _events.forEach((item) => {
+                        item.events.forEach((handle) => {
+                            handle(drawEvent);
+                        });
+                    });
+                });
+            }
+            else {
+                _events.forEach((item) => {
+                    item.events.forEach((handle) => {
+                        handle(drawEvent);
+                    });
+                });
+            }
 
         };
 
-        ref.current?.addEventListener('mousemove', mouseHandler);
+        if (ref.current) {
+            if (supportsPassive) {
+                ref.current.addEventListener('mousemove', mouseHandler, {
+                    passive: true,
+                    capture: true,
+                });
+            }
+            else {
+                ref.current.addEventListener('mousemove', mouseHandler, true);
+            }
+        }
     
         return () => {
-            ref.current?.removeEventListener('mousemove', mouseHandler);
+            ref.current?.removeEventListener('mousemove', mouseHandler, true);
         };
     }, [ref.current]);
 
-    return () => new EventController();
+    return () => new DrawController(ref.current!);
 }

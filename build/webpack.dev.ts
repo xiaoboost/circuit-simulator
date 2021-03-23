@@ -8,8 +8,6 @@ import { join } from 'path';
 import { getType } from 'mime';
 import { output } from './config';
 
-import * as fs from 'fs-extra';
-
 const host = 'localhost';
 const port = 8080;
 const app = new Koa();

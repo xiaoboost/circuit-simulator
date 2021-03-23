@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { getQueryByName, get } from 'src/utils/http';
 
 import { DrawingSheet } from 'src/components/drawing-sheet';
+import { SideMenu } from 'src/components/side-menu';
 
 // 移除 loading 界面
 function loaded() {
@@ -39,5 +40,6 @@ export const App = () => {
 
     return <>
         <DrawingSheet />
+        <SideMenu />
     </>;
 };

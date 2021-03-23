@@ -5,3 +5,4 @@ import { PartData } from 'src/components/electronic-part';
 
 export const lines = new Watcher<LineData[]>([]);
 export const parts = new Watcher<PartData[]>([]);
+export const isRun = new Watcher(false);

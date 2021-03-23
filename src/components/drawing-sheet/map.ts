@@ -1,37 +1,27 @@
-import { useForceUpdate } from 'src/use';
 import { Point } from 'src/lib/point';
 
-import { RefObject, useEffect, useRef } from 'react';
+import { mapState, MapState } from './state';
+import { RefObject, useEffect } from 'react';
 
-export interface MapState {
-    zoom: number;
-    position: Point;
-}
-
-export const mapStateDefault: MapState = {
-    zoom: 1,
-    position: Point.from(0),
-};
-
-export function useMap(ref: RefObject<SVGSVGElement>) {
+export function useMap(ref: RefObject<HTMLElement>) {
     if (process.env.NODE_ENV === 'development') {
         if (typeof ref !== 'object' || typeof ref.current === 'undefined') {
           console.error('useMap expects a single ref argument.');
         }
     }
 
-    const update = useForceUpdate();
-    const { current: state } = useRef(mapStateDefault);
     const setMap = (val: Partial<MapState>) => {
-        Object.assign(state, val);
-        update();
+        mapState.setData({
+            ...mapState.data,
+            ...val,
+        });
     };
 
     useEffect(() => {
         const wheelHandler = (e: WheelEvent) => {
             if (ref && ref.current) {
                 const mousePosition = new Point(e.pageX, e.pageY);
-                let size = state.zoom * 20;
+                let size = mapState.data.zoom * 20;
 
                 if (e.deltaY > 0) {
                     size -= 5;
@@ -53,9 +43,9 @@ export function useMap(ref: RefObject<SVGSVGElement>) {
 
                 setMap({
                     zoom: size,
-                    position: state.position
+                    position: mapState.data.position
                         .add(mousePosition, -1)
-                        .mul(size / state.zoom)
+                        .mul(size / mapState.data.zoom)
                         .add(mousePosition)
                         .round(1),
                 });
@@ -69,5 +59,5 @@ export function useMap(ref: RefObject<SVGSVGElement>) {
         };
     }, [ref.current]);
 
-    return { ...state };
+    return { ...mapState.data };
 }

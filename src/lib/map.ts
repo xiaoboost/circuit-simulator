@@ -80,8 +80,7 @@ export function outputMap() {
         if (data.connect.length === 0) {
             // TODO:
             // delete data.connect;
-        }
-        else {
+        }else {
             data.connect = data.connect.map((item) => Array.from(item)) as any;
         }
 

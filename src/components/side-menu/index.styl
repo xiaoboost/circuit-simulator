@@ -1,0 +1,57 @@
+@import 'variable.styl';
+
+.aside {
+    display: flex;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: auto;
+    background-color: #fff;
+}
+
+.menu {
+    display: inline-flex;
+    flex-direction: column;
+    width: 40px;
+    border-right: 1px solid Extra-Light-Gray;
+    box-shadow: 3px 0 5px Extra-Light-Gray;
+    align-items: center;
+    padding: 10px 0;
+
+    wholeRowButton() {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+    }
+
+    :global {
+        .ant-btn {
+            wholeRowButton();
+        }
+    }
+
+    .menu-icon__run {
+        margin-bottom: 20px;
+        
+        :global {
+            .anticon {
+                color: Dark-Green;
+                font-size: 22px;
+            }
+        }
+    }
+
+    .menu-icon__highlight {
+        background-color: Light-Gray;
+    }
+}
+
+.panel {
+    border-right: 1px solid Extra-Light-Gray;
+    box-shadow: 3px 0 5px Extra-Light-Gray;
+}
+
+.add-part-panel {
+    width: 100px;
+}
