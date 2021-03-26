@@ -10,17 +10,17 @@ import { GraphViewer } from 'src/components/graph-viewer';
 import { useState } from 'react';
 
 const statusMap = {
-    [TabStatus.AddParts]: <AddPart />,
-    [TabStatus.Config]: <Config />,
-    [TabStatus.Result]: <GraphViewer />,
+  [TabStatus.AddParts]: <AddPart />,
+  [TabStatus.Config]: <Config />,
+  [TabStatus.Result]: <GraphViewer />,
 };
 
 export function SideMenu() {
-    const [status, setStatus] = useState(TabStatus.None);
-    const [isRun, setIsRun] = useState(false);
+  const [status, setStatus] = useState(TabStatus.None);
+  const [isRun, setIsRun] = useState(false);
 
-    return <aside className={styles.aside}>
-        <Tabs isRun={isRun} status={status} onChange={setStatus} />
-        {statusMap[status] ?? ''}
-    </aside>;
+  return <aside className={styles.aside}>
+    <Tabs isRun={isRun} status={status} onChange={setStatus} />
+    {statusMap[status] ?? ''}
+  </aside>;
 }

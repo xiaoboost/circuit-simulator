@@ -1,17 +1,17 @@
 export default function predicate(received, argument) {
-    if (
-        received.row !== argument.row ||
-        received.column !== argument.column
-    ) {
-        return (false);
-    }
+  if (
+    received.row !== argument.row ||
+    received.column !== argument.column
+  ) {
+    return (false);
+  }
 
-    for (let i = 0; i < received._view.length; i++) {
-        if (received._view[i] !== argument._view[i]) {
-            return (false);
-        }
+  for (let i = 0; i < received._view.length; i++) {
+    if (received._view[i] !== argument._view[i]) {
+      return (false);
     }
+  }
 
-    return true;
+  return true;
 }
 

@@ -4,19 +4,19 @@
  * @returns {string}
  */
 export function randomString(len = 16) {
-    const start = 48, end = 126;
-    const exclude = '\\/[]?{};,<>:|`';
+  const start = 48, end = 126;
+  const exclude = '\\/[]?{};,<>:|`';
 
-    let codes = '';
-    while (codes.length < len) {
-        const code = String.fromCharCode(Math.random() * (end - start) + start);
+  let codes = '';
+  while (codes.length < len) {
+    const code = String.fromCharCode(Math.random() * (end - start) + start);
 
-        if (!exclude.includes(code)) {
-            codes += code;
-        }
+    if (!exclude.includes(code)) {
+      codes += code;
     }
+  }
 
-    return codes;
+  return codes;
 }
 
 /**
@@ -24,7 +24,7 @@ export function randomString(len = 16) {
  * @param {string} str
  */
 export function hyphenate(str: string) {
-    return str.replace(/\B([A-Z])/g, '-$1').toLowerCase();
+  return str.replace(/\B([A-Z])/g, '-$1').toLowerCase();
 }
 
 /**
@@ -33,16 +33,16 @@ export function hyphenate(str: string) {
  * @return {string}
  */
 export function mergeMark(...args: string[]) {
-    const map: AnyObject<boolean> = Object.create(null);
+  const map: AnyObject<boolean> = Object.create(null);
 
-    // 标记所有的 tag
-    args
-        .join(' ')
-        .split(' ')
-        .filter(Boolean)
-        .forEach((item) => (map[item] = true));
+  // 标记所有的 tag
+  args
+    .join(' ')
+    .split(' ')
+    .filter(Boolean)
+    .forEach((item) => (map[item] = true));
 
-    return Object.keys(map).join(' ');
+  return Object.keys(map).join(' ');
 }
 
 /**
@@ -52,7 +52,7 @@ export function mergeMark(...args: string[]) {
  * @return {string}
  */
 export function deleteMark(mark: string, ...args: string[]) {
-    return mark.split(' ').filter((id) => !args.includes(id)).join(' ');
+  return mark.split(' ').filter((id) => !args.includes(id)).join(' ');
 }
 
 /**
@@ -61,14 +61,14 @@ export function deleteMark(mark: string, ...args: string[]) {
  * @return {Blob} 转换后的 blob 数据
  */
 export function toBlob(base64: string) {
-    const label = 'base64,';
-    const source = base64.slice(base64.indexOf(label) + label.length);
-    const binary =  window.atob(source);
-    const bytes = new Uint8Array(binary.length);
+  const label = 'base64,';
+  const source = base64.slice(base64.indexOf(label) + label.length);
+  const binary =  window.atob(source);
+  const bytes = new Uint8Array(binary.length);
 
-    for (let i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-    }
+  for (let i = 0; i < binary.length; i++) {
+    bytes[i] = binary.charCodeAt(i);
+  }
 
-    return new Blob([bytes.buffer]);
+  return new Blob([bytes.buffer]);
 }

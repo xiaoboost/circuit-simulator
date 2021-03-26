@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'production';
 
 /** 空组件 */
 const spaceComponen: ComponentOptions<Vue> = {
-    render: (h) => h('template'),
+  render: (h) => h('template'),
 };
 
 Vue.component('a-button', spaceComponen);

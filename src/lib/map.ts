@@ -5,30 +5,30 @@ import { unique, removeVal } from 'src/utils/array';
 
 /** 节点类型常量 */
 export enum NodeType {
-    /** 导线 */
-    Line = 10,
-    /** 导线空节点 */
-    LinePoint,
-    /** 导线交叠节点（实际并不相交） */
-    LineCoverPoint,
-    /** 导线交错节点 */
-    LineCrossPoint,
+  /** 导线 */
+  Line = 10,
+  /** 导线空节点 */
+  LinePoint,
+  /** 导线交叠节点（实际并不相交） */
+  LineCoverPoint,
+  /** 导线交错节点 */
+  LineCrossPoint,
 
-    /** 器件节点 */
-    Part = 20,
-    /** 器件引脚节点 */
-    PartPoint,
+  /** 器件节点 */
+  Part = 20,
+  /** 器件引脚节点 */
+  PartPoint,
 }
 
 export interface NodeData {
-    /** 当前点属于哪个器件 */
-    id: string;
-    /** 当前点的小坐标（其乘以 20 才是实际坐标） */
-    point: Point;
-    /** 当前点的类型 */
-    type: NodeType;
-    /** 当前点在图纸中连接着另外哪些点 */
-    connect: Point[];
+  /** 当前点属于哪个器件 */
+  id: string;
+  /** 当前点的小坐标（其乘以 20 才是实际坐标） */
+  point: Point;
+  /** 当前点的类型 */
+  type: NodeType;
+  /** 当前点在图纸中连接着另外哪些点 */
+  connect: Point[];
 }
 
 export type MapHash = AnyObject<NodeData>;
@@ -51,7 +51,7 @@ let $mapString = '';
  * @returns {string}
  */
 function point2key(node: PointLike): string {
-    return node.join(',');
+  return node.join(',');
 }
 
 /**
@@ -60,12 +60,12 @@ function point2key(node: PointLike): string {
  * @returns {NodeData}
  */
 function dataClone(data: NodeInputData): NodeData {
-    return {
-        id: data.id,
-        type: data.type,
-        point: Point.from(data.point),
-        connect: data.connect ? data.connect.map(Point.from) : [],
-    };
+  return {
+    id: data.id,
+    type: data.type,
+    point: Point.from(data.point),
+    connect: data.connect ? data.connect.map(Point.from) : [],
+  };
 }
 
 /**
@@ -74,27 +74,27 @@ function dataClone(data: NodeInputData): NodeData {
  * @returns {string}
  */
 export function outputMap() {
-    const copy = clone($map);
+  const copy = clone($map);
 
-    Object.values(copy).forEach((data) => {
-        if (data.connect.length === 0) {
-            // TODO:
-            // delete data.connect;
-        }else {
-            data.connect = data.connect.map((item) => Array.from(item)) as any;
-        }
+  Object.values(copy).forEach((data) => {
+    if (data.connect.length === 0) {
+      // TODO:
+      // delete data.connect;
+    }else {
+      data.connect = data.connect.map((item) => Array.from(item)) as any;
+    }
 
-        // TODO:
-        // delete data.point;
-    });
+    // TODO:
+    // delete data.point;
+  });
 
-    return JSON.stringify(copy);
+  return JSON.stringify(copy);
 }
 
 // 调试阶段，导出函数为全局函数
 /* istanbul ignore next */
 if (process.env.NODE_ENV === 'development') {
-    def(window, { $outputMap: outputMap });
+  def(window, { $outputMap: outputMap });
 }
 
 /**
@@ -107,8 +107,8 @@ if (process.env.NODE_ENV === 'development') {
  * @param {boolean} [large=false]
  */
 export function setPoint(data: NodeInputData, large = false): void {
-    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
-    $map[point2key(data.point)] = dataClone(data);
+  data.point = large ? data.point.mul(0.05) : Point.from(data.point);
+  $map[point2key(data.point)] = dataClone(data);
 }
 
 /**
@@ -119,26 +119,26 @@ export function setPoint(data: NodeInputData, large = false): void {
  * @return {void}
  */
 export function forceUpdateMap(map = '{}', checkCache = false) {
-    // 校验缓存
-    if (checkCache && map === $mapString) {
-        return;
-    }
+  // 校验缓存
+  if (checkCache && map === $mapString) {
+    return;
+  }
 
-    const data = JSON.parse(map) as AnyObject<NodeUpdateData>;
+  const data = JSON.parse(map) as AnyObject<NodeUpdateData>;
 
-    // 删除当前所有数据
-    Object
-        .keys($map)
-        .forEach((key) => Reflect.deleteProperty($map, key));
+  // 删除当前所有数据
+  Object
+    .keys($map)
+    .forEach((key) => Reflect.deleteProperty($map, key));
 
-    Object.entries(data).forEach(([key, value]) => {
-        // 节点坐标由 key 转变而来
-        const point = Point.from(key.split(',').map(Number));
-        // 设置节点信息
-        setPoint(dataClone({ ...value, point }));
-    });
+  Object.entries(data).forEach(([key, value]) => {
+    // 节点坐标由 key 转变而来
+    const point = Point.from(key.split(',').map(Number));
+    // 设置节点信息
+    setPoint(dataClone({ ...value, point }));
+  });
 
-    $mapString = map;
+  $mapString = map;
 }
 
 /**
@@ -146,30 +146,30 @@ export function forceUpdateMap(map = '{}', checkCache = false) {
  *  - 写入的数据是当前数据的副本
  *  - 如果指定的点没有数据，那么将会直接写入当前数据
  *  - 合并规则如下：
- *    - point 不变
- *    - id, type 直接覆盖
- *    - connect 将会取两者的并集
+ *  - point 不变
+ *  - id, type 直接覆盖
+ *  - connect 将会取两者的并集
  *
  * @export
  * @param {NodeData} data
  * @param {boolean} [large=false]
  */
 export function mergePoint(data: NodeInputData, large = false): void {
-    data.point = large ? data.point.mul(0.05) : Point.from(data.point);
+  data.point = large ? data.point.mul(0.05) : Point.from(data.point);
 
-    const key = point2key(data.point);
-    const newData = dataClone(data);
-    const oldData = $map[key];
+  const key = point2key(data.point);
+  const newData = dataClone(data);
+  const oldData = $map[key];
 
-    if (!oldData) {
-        $map[key] = newData;
-    }
-    else {
-        newData.connect = newData.connect.concat(oldData.connect);
-        newData.connect = unique(newData.connect, point2key);
-    }
-
+  if (!oldData) {
     $map[key] = newData;
+  }
+  else {
+    newData.connect = newData.connect.concat(oldData.connect);
+    newData.connect = unique(newData.connect, point2key);
+  }
+
+  $map[key] = newData;
 }
 
 /**
@@ -179,8 +179,8 @@ export function mergePoint(data: NodeInputData, large = false): void {
  * @returns {boolean}
  */
 export function hasPoint(point: PointLike, large = false): boolean {
-    const node = large ? PointCall(point, 'mul', 0.05) : point;
-    return Boolean($map[point2key(node)]);
+  const node = large ? PointCall(point, 'mul', 0.05) : point;
+  return Boolean($map[point2key(node)]);
 }
 
 /**
@@ -193,10 +193,10 @@ export function hasPoint(point: PointLike, large = false): boolean {
  * @returns {(NodeData | false)}
  */
 export function getPoint(point: PointLike, large = false): NodeData | undefined {
-    const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
-    const data = $map[point2key(node)];
+  const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+  const data = $map[point2key(node)];
 
-    return data ? dataClone(data) : undefined;
+  return data ? dataClone(data) : undefined;
 }
 
 /**
@@ -205,8 +205,8 @@ export function getPoint(point: PointLike, large = false): NodeData | undefined 
  * @returns {boolean}
  */
 export function deletePoint(point: PointLike, large = false) {
-    const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
-    return Reflect.deleteProperty($map, point2key(node));
+  const node = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+  return Reflect.deleteProperty($map, point2key(node));
 }
 
 /**
@@ -221,16 +221,16 @@ export function deletePoint(point: PointLike, large = false) {
  * @returns {boolean}
  */
 export function hasConnect(point: PointLike, connect: PointLike, large = false): boolean {
-    const origin = large ? PointCall(point, 'mul', 0.05) : point;
-    const check = large ? PointCall(connect, 'mul', 0.05) : connect;
-    const key = point2key(origin);
-    const data = $map[key];
+  const origin = large ? PointCall(point, 'mul', 0.05) : point;
+  const check = large ? PointCall(connect, 'mul', 0.05) : connect;
+  const key = point2key(origin);
+  const data = $map[key];
 
-    if (!data) {
-        throw new Error(`(map) space point: ${key}`);
-    }
+  if (!data) {
+    throw new Error(`(map) space point: ${key}`);
+  }
 
-    return data.connect.some((item) => item.isEqual(check));
+  return data.connect.some((item) => item.isEqual(check));
 }
 
 /**
@@ -245,18 +245,18 @@ export function hasConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {void}
  */
 export function addConnect(point: PointLike, connect: PointLike, large = false): void {
-    const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
-    const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
-    const key = point2key(origin);
-    const data = $map[key];
+  const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+  const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
+  const key = point2key(origin);
+  const data = $map[key];
 
-    if (!data) {
-        throw new Error(`(map) space point: ${key}`);
-    }
+  if (!data) {
+    throw new Error(`(map) space point: ${key}`);
+  }
 
-    if (!hasConnect(origin, check)) {
-        data.connect.push(check);
-    }
+  if (!hasConnect(origin, check)) {
+    data.connect.push(check);
+  }
 }
 
 /**
@@ -270,18 +270,18 @@ export function addConnect(point: PointLike, connect: PointLike, large = false):
  * @returns {boolean}
  */
 export function deleteConnect(point: PointLike, connect: PointLike, large = false): boolean {
-    const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
-    const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
-    const key = point2key(origin);
-    const data = $map[key];
+  const origin = large ? PointCall(point, 'mul', 0.05) : Point.from(point);
+  const check = large ? PointCall(connect, 'mul', 0.05) : Point.from(connect);
+  const key = point2key(origin);
+  const data = $map[key];
 
-    if (!data) {
-        throw new Error(`(map) space point: ${key}`);
-    }
+  if (!data) {
+    throw new Error(`(map) space point: ${key}`);
+  }
 
-    // TODO:
-    // return data.connect.delete((node) => node.isEqual(check));
-    return false;
+  // TODO:
+  // return data.connect.delete((node) => node.isEqual(check));
+  return false;
 }
 
 /**
@@ -290,10 +290,10 @@ export function deleteConnect(point: PointLike, connect: PointLike, large = fals
  * @return {boolean}
  */
 export function isLine(point: PointLike, large = false) {
-    const node = large ? PointCall(point, 'mul', 0.05) : point;
-    const data = $map[point2key(node)];
+  const node = large ? PointCall(point, 'mul', 0.05) : point;
+  const data = $map[point2key(node)];
 
-    return Boolean(data) && (data.type < 20);
+  return Boolean(data) && (data.type < 20);
 }
 
 /**
@@ -307,31 +307,31 @@ export function isLine(point: PointLike, large = false) {
  * @returns {Point}
  */
 export function alongTheLine(
-    start: PointLike,
-    end: PointLike = [Infinity, Infinity],
-    vector: PointLike = new Point(start, end),
-    large = false,
+  start: PointLike,
+  end: PointLike = [Infinity, Infinity],
+  vector: PointLike = new Point(start, end),
+  large = false,
 ): Point {
-    const uVector = Point.from(vector).sign();
-    const sNode = large ? PointCall(start, 'mul', 0.05) : Point.from(start);
-    const eNode = large ? PointCall(end, 'mul', 0.05) : Point.from(end);
+  const uVector = Point.from(vector).sign();
+  const sNode = large ? PointCall(start, 'mul', 0.05) : Point.from(start);
+  const eNode = large ? PointCall(end, 'mul', 0.05) : Point.from(end);
 
-    // 起点并不是导线或者起点等于终点，直接返回
-    if (!isLine(sNode) || sNode.isEqual(eNode)) {
-        return Point.from(start);
+  // 起点并不是导线或者起点等于终点，直接返回
+  if (!isLine(sNode) || sNode.isEqual(eNode)) {
+    return Point.from(start);
+  }
+
+  let node = sNode, next = node.add(uVector);
+  // 当前点没有到达终点，还在导线所在直线内部，那就前进
+  while (isLine(next) && !node.isEqual(eNode)) {
+    if (hasConnect(node, next)) {
+      node = next;
+      next = node.add(uVector);
     }
-
-    let node = sNode, next = node.add(uVector);
-    // 当前点没有到达终点，还在导线所在直线内部，那就前进
-    while (isLine(next) && !node.isEqual(eNode)) {
-        if (hasConnect(node, next)) {
-            node = next;
-            next = node.add(uVector);
-        }
-        else {
-            break;
-        }
+    else {
+      break;
     }
+  }
 
-    return large ? node.mul(20) : node;
+  return large ? node.mul(20) : node;
 }

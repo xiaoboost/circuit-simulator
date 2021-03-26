@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 enum PromiseStatus {
-    Pending,
-    Fulfilled,
-    Rejected,
+  Pending,
+  Fulfilled,
+  Rejected,
 }
 
 /**
@@ -13,11 +13,11 @@ enum PromiseStatus {
  *  - PromiseStatus 当前状态：`0` Pending，`1` Fulfilled，`2` Rejected
  */
 export function usePromiseState(promise: Promise<any>) {
-    const [state, setState] = useState(PromiseStatus.Pending);
+  const [state, setState] = useState(PromiseStatus.Pending);
 
-    promise
-        .then(() => setState(PromiseStatus.Fulfilled))
-        .catch(() => setState(PromiseStatus.Rejected));
+  promise
+    .then(() => setState(PromiseStatus.Fulfilled))
+    .catch(() => setState(PromiseStatus.Rejected));
 
-    return [state === PromiseStatus.Pending, state] as const;
+  return [state === PromiseStatus.Pending, state] as const;
 }

@@ -1,8 +1,8 @@
 import {
-    isFunc,
-    isArray,
-    isBaseType,
-    isObject,
+  isFunc,
+  isArray,
+  isBaseType,
+  isObject,
 } from './assert';
 
 /**
@@ -10,7 +10,7 @@ import {
  * @param obj 待检测对象
  */
 export function isEmpty(obj: object) {
-    return Object.keys(obj).length === 0;
+  return Object.keys(obj).length === 0;
 }
 
 /**
@@ -19,7 +19,7 @@ export function isEmpty(obj: object) {
  * @param key 检查的属性名称
  */
 export function hasOwn(obj: object, key: string): boolean {
-    return Object.prototype.hasOwnProperty.call(obj, key);
+  return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 /**
@@ -28,14 +28,14 @@ export function hasOwn(obj: object, key: string): boolean {
  * @param properties 添加的属性
  */
 export function def(from: object, properties: object) {
-    Object.entries(properties).forEach(
-        ([key, value]) => Object.defineProperty(from, key, {
-            configurable: true,
-            writable: true,
-            enumerable: false,
-            value,
-        }),
-    );
+  Object.entries(properties).forEach(
+    ([key, value]) => Object.defineProperty(from, key, {
+      configurable: true,
+      writable: true,
+      enumerable: false,
+      value,
+    }),
+  );
 }
 
 /**
@@ -44,42 +44,42 @@ export function def(from: object, properties: object) {
  * @param to 比较值
  */
 export function isEqual(from: any, to: any, deepCheck = false): boolean {
-    if (isBaseType(from)) {
-        return from === to;
-    }
+  if (isBaseType(from)) {
+    return from === to;
+  }
 
-    if (deepCheck && checkCircularStructure(from)) {
-        throw new Error('Can not equal object that have circular structure.');
-    }
+  if (deepCheck && checkCircularStructure(from)) {
+    throw new Error('Can not equal object that have circular structure.');
+  }
 
-    if (isArray(from)) {
-        if (!isArray(to) || from.length !== to.length) {
-            return false;
-        }
-        else {
-            return from.every(
-                (item, i) => isBaseType(item)
-                    ? item === to[i]
-                    : isEqual(item, to[i]),
-            );
-        }
+  if (isArray(from)) {
+    if (!isArray(to) || from.length !== to.length) {
+      return false;
     }
     else {
-        if (
-            !isObject(to) ||
-            !Object.keys(from).every((key) => to.hasOwnProperty(key)) ||
-            !Object.keys(to).every((key) => from.hasOwnProperty(key))
-        ) {
-            return false;
-        }
-        else {
-            return Object.entries(from).every(
-                ([key, value]) => isBaseType(value)
-                    ? value === to[key]
-                    : isEqual(value, to[key]),
-            );
-        }
+      return from.every(
+        (item, i) => isBaseType(item)
+          ? item === to[i]
+          : isEqual(item, to[i]),
+      );
     }
+  }
+  else {
+    if (
+      !isObject(to) ||
+      !Object.keys(from).every((key) => to.hasOwnProperty(key)) ||
+      !Object.keys(to).every((key) => from.hasOwnProperty(key))
+    ) {
+      return false;
+    }
+    else {
+      return Object.entries(from).every(
+        ([key, value]) => isBaseType(value)
+          ? value === to[key]
+          : isEqual(value, to[key]),
+      );
+    }
+  }
 }
 
 /**
@@ -88,19 +88,19 @@ export function isEqual(from: any, to: any, deepCheck = false): boolean {
  * @returns {boolean}
  */
 export function checkCircularStructure(data: object, parents: any[] = []): boolean {
-    // 如果当前节点与祖先节点中的某一个相等，那么肯定含有循环结构
-    if (parents.some((parent) => parent === data)) {
-        return true;
-    }
+  // 如果当前节点与祖先节点中的某一个相等，那么肯定含有循环结构
+  if (parents.some((parent) => parent === data)) {
+    return true;
+  }
 
-    // 队列添加当前节点
-    parents.push(data);
+  // 队列添加当前节点
+  parents.push(data);
 
-    // 检查每个子节点
-    return Object.values(data).some(
-        (value) =>
-            isBaseType(value) ? false : checkCircularStructure(value, parents.slice()),
-    );
+  // 检查每个子节点
+  return Object.values(data).some(
+    (value) =>
+      isBaseType(value) ? false : checkCircularStructure(value, parents.slice()),
+  );
 }
 
 /**
@@ -111,43 +111,43 @@ export function checkCircularStructure(data: object, parents: any[] = []): boole
  * @returns {T}
  */
 export function clone<T>(data: T, check = true): T {
-    // 基础类型和函数，直接返回其本身
-    if (isBaseType(data) || isFunc(data)) {
-        return data;
-    }
+  // 基础类型和函数，直接返回其本身
+  if (isBaseType(data) || isFunc(data)) {
+    return data;
+  }
 
-    // 非基础类型，首先检查是否含有循环引用
-    if (check && checkCircularStructure(data as any)) {
-        throw new Error('Can not clone circular structure.');
-    }
+  // 非基础类型，首先检查是否含有循环引用
+  if (check && checkCircularStructure(data as any)) {
+    throw new Error('Can not clone circular structure.');
+  }
 
-    // 函数返回其自身
-    if (isFunc(data)) {
-        return data;
+  // 函数返回其自身
+  if (isFunc(data)) {
+    return data;
+  }
+  // Date 对象
+  else if (data instanceof Date) {
+    return (new Date(data) as any);
+  }
+  // 数组，深度复制
+  else if (isArray(data)) {
+    return data.map((n) => clone(n, false)) as any;
+  }
+  // 其余对象
+  else {
+    const prototype = Object.getPrototypeOf(data);
+
+    if (
+      prototype &&
+      prototype.constructor &&
+      prototype.constructor.from
+    ) {
+      return prototype.constructor.from(data);
     }
-    // Date 对象
-    else if (data instanceof Date) {
-        return (new Date(data) as any);
-    }
-    // 数组，深度复制
-    else if (isArray(data)) {
-        return data.map((n) => clone(n, false)) as any;
-    }
-    // 其余对象
     else {
-        const prototype = Object.getPrototypeOf(data);
-
-        if (
-            prototype &&
-            prototype.constructor &&
-            prototype.constructor.from
-        ) {
-            return prototype.constructor.from(data);
-        }
-        else {
-            return (Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {}) as any);
-        }
+      return (Object.keys(data).reduce((obj, key) => ((obj[key] = clone(data[key], false)), obj), {}) as any);
     }
+  }
 }
 
 /**
@@ -158,12 +158,12 @@ export function clone<T>(data: T, check = true): T {
  * @param {U[]} keys 属性集合
  */
 export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Pick<T, U> {
-    const data: T = {} as any;
+  const data: T = {} as any;
 
-    for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        data[key] = from[key];
-    }
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    data[key] = from[key];
+  }
 
-    return data;
+  return data;
 }

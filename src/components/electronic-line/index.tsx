@@ -6,11 +6,11 @@ import { useImperativeHandle, ForwardRefRenderFunction, forwardRef } from 'react
 export * from './types';
 
 const Render: ForwardRefRenderFunction<LineRef, LineData> = (props, ref) => {
-    useImperativeHandle(ref, (): LineRef => ({
-        key: 123,
-    }));
+  useImperativeHandle(ref, (): LineRef => ({
+    key: 123,
+  }));
 
-    return <g index-id={props.id}></g>;
+  return <g index-id={props.id}></g>;
 }
 
 export const Line = forwardRef(Render);

@@ -1,6 +1,6 @@
 export enum TabStatus {
-    None,
-    AddParts,
-    Config,
-    Result,
+  None,
+  AddParts,
+  Config,
+  Result,
 }
