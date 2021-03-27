@@ -50,9 +50,10 @@ const baseConfig: Webpack.Configuration = {
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
-          configFile: resolve('tsconfig.build.json'),
+          configFile: resolve('build/tsconfig.build.json'),
           compilerOptions: {
             target: isDevelopment ? 'esnext' : 'es5',
+            module: 'ESNext',
           },
         },
       },

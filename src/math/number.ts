@@ -13,6 +13,8 @@ enum RankEnum {
   '' = 0,
 }
 
+export { BigNumber };
+
 /**
  * 简写数字正则匹配
  *

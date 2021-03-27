@@ -3,7 +3,7 @@
   "version": "2.0.0-alpha",
   "description": "在线电路仿真系统",
   "scripts": {
-    "ts-node": "node node_modules/ts-node/dist/bin.js --project tsconfig.compile.json --transpile-only",
+    "ts-node": "node node_modules/ts-node/dist/bin.js -P ./build/tsconfig.json --transpile-only",
     "dev": "cross-env NODE_ENV=development npm run ts-node ./build/webpack.dev.ts",
     "build": "cross-env NODE_ENV=production npm run ts-node ./build/webpack.prod.ts"
   },

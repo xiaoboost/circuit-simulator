@@ -1,29 +1,9 @@
-import {
-  isFunc,
-  isDef,
-} from './assert';
+import { isFunc, isDef } from './assert';
 
 /** 索引类型 */
 type Index = string | number;
 /** 数组断言函数 */
 type Predicate<T> = (value: T, index: number) => boolean;
-
-/**
- * 根据下标取出当前数组元素
- * @template T
- * @param {T[]} arr
- * @param {number} index
- * @returns {T}
- */
-export function get<T>(arr: T[], index: number): T {
-  const sub = (index >= 0) ? index : arr.length + index;
-
-  if (sub < 0 || sub >= arr.length) {
-    throw new Error('(array) index out of bounds.');
-  }
-
-  return arr[sub];
-}
 
 /**
  * 删除满足条件的元素
@@ -32,7 +12,7 @@ export function get<T>(arr: T[], index: number): T {
  *  - predicate 为非函数时，删除与 predicate 严格相等的元素
  *  - 当 whole 为 false 时，只删除匹配到的第一个元素；为 true 时，删除所有匹配到的元素
  */
-export function removeVal<T>(arr: T[], predicate: T | Predicate<T>, whole = true) {
+export function remove<T>(arr: T[], predicate: T | Predicate<T>, whole = true) {
   const fn = isFunc(predicate) ? predicate : (item: T) => item === predicate;
 
   let index = 0;
