@@ -1,4 +1,4 @@
-import { isFunc } from 'src/utils/assert';
+import { isFunc } from '@utils/assert';
 
 type EventHandler<T = any> = (...payloads: T[]) => any;
 type ReadonlyObject<T> = T extends AnyObject ? Readonly<T> : T;

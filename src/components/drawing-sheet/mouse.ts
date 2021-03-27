@@ -2,10 +2,10 @@ import { RefObject, useEffect } from 'react';
 
 import { mapState } from './state';
 
-import { delay } from 'src/utils/func';
-import { Point } from 'src/lib/point';
-import { removeVal } from 'src/utils/array';
-import { supportsPassive } from 'src/utils/env';
+import { delay } from '@utils/func';
+import { Point } from 'src/math';
+import { removeVal } from '@utils/array';
+import { supportsPassive } from '@utils/env';
 
 type Callback = (event: DrawEvent) => any | Promise<any>;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);

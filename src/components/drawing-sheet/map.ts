@@ -1,4 +1,4 @@
-import { Point } from 'src/lib/point';
+import { Point } from 'src/math';
 
 import { mapState, MapState } from './state';
 import { RefObject, useEffect } from 'react';

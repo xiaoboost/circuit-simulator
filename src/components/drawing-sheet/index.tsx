@@ -1,9 +1,9 @@
 import React from 'react';
-import classnames from 'classnames';
 import styles from './index.styl';
 
 import { useRef } from 'react';
-import { Point } from 'src/lib/point';
+import { Point } from 'src/math';
+import { stringifyClass } from '@utils/string';
 import { useWatcher, useWatcherList } from 'src/use';
 
 import { Line, LineRef } from '../electronic-line';
@@ -27,7 +27,7 @@ export function DrawingSheet() {
   return (
     <section
       ref={SheetRef}
-      className={classnames(styles.drawingSheet)}
+      className={stringifyClass(styles.drawingSheet)}
       style={utils.getBackgroundStyle(map.zoom, map.position)}>
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>

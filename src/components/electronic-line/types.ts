@@ -1,5 +1,4 @@
-import { Point } from 'src/lib/point';
-import { Matrix } from 'src/lib/matrix';
+import { Point, Matrix } from 'src/math';
 
 /** 导线类型枚举常量 */
 export enum LineKind {

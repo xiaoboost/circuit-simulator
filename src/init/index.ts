@@ -1,5 +1,5 @@
 import './styles';
-import '@babel/polyfill';
+import 'core-js/stable';
 
 import { render } from 'react-dom';
 import { createElement } from 'react';

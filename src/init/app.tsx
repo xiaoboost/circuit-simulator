@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useEffect } from 'react';
-import { getQueryByName, get } from 'src/utils/http';
+import { getQueryByName, get } from '@utils/http';
 
 import { DrawingSheet } from 'src/components/drawing-sheet';
 import { SideMenu } from 'src/components/side-menu';

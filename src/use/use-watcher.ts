@@ -3,7 +3,7 @@ import { useForceUpdate } from './use-force-update';
 import { useRef, useEffect } from 'react';
 
 import { Watcher } from 'src/lib/subject';
-import { BaseType, isBaseType } from 'src/utils/assert';
+import { BaseType, isBaseType } from '@utils/assert';
 
 export function useWatcher<T extends BaseType>(watcher: Watcher<T>): [T, (val: T) => void];
 export function useWatcher<T extends AnyObject>(watcher: Watcher<T>): [Readonly<T>, (val: Partial<T>) => void];
@@ -18,7 +18,6 @@ export function useWatcher<T>(watcher: Watcher<T>) {
     });
 
   function handleChange(val: T) {
-    debugger;
     state.current = val as any;
     update();
   }

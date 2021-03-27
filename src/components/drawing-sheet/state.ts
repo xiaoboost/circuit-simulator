@@ -1,5 +1,5 @@
 import { Watcher } from 'src/lib/subject';
-import { Point } from 'src/lib/point';
+import { Point } from 'src/math';
 
 export interface MapState {
   zoom: number;

@@ -1,8 +1,8 @@
 // import store from 'src/vuex';
 
-import { def } from 'src/utils/object';
-import { wait } from 'src/utils/func';
-import { Point, PointLike } from './point';
+import { def } from '@utils/object';
+import { wait } from '@utils/func';
+import { Point, PointLike } from 'src/math';
 import { outputMap, MapHash, NodeType } from './map';
 
 // 全局常量

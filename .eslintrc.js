@@ -65,7 +65,7 @@ module.exports =  {
         // 允许存在不保存值的 new 表达式
         'no-new': 0,
         // 默认退格为4个空格
-        'indent': [2, 4, { 'SwitchCase': 1 }],
+        'indent': [2, 2, { 'SwitchCase': 1 }],
         // 声明可以不合并
         'one-var': 0,
         // 函数名或 function 关键字之后与括号之间不需要空格，async 之后需要空格

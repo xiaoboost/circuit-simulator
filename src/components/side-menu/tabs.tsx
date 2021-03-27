@@ -1,9 +1,9 @@
 import React from 'react';
-import classnames from 'classnames';
 import styles from './index.styl';
 
 import { TabStatus } from './constant';
-import { isUndef } from 'src/utils/assert';
+import { isUndef } from '@utils/assert';
+import { stringifyClass } from '@utils/string';
 
 import {
   Tooltip as TooltipOrigin,
@@ -85,7 +85,7 @@ export function Tabs(props: Props) {
       <Button
         type={btn.type}
         icon={btn.icon}
-        className={classnames({
+        className={stringifyClass({
           [styles.menuIconHighlight]: status === btn.status,
         })}
         onClick={() => clickBtn(btn.status)}

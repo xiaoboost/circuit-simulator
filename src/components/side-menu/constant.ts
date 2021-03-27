@@ -3,4 +3,5 @@ export enum TabStatus {
   AddParts,
   Config,
   Result,
+  Run,
 }

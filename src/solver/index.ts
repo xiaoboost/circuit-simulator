@@ -4,9 +4,8 @@ import HashMap from './hashmap';
 
 import * as Mark from './mark';
 
-import { Matrix } from 'src/lib/matrix';
-import { isDef } from 'src/utils/assert';
-import { numberParser } from 'src/lib/number';
+import { isDef } from '@utils/assert';
+import { Matrix, numberParser } from 'src/math';
 // import { LineData, LineType } from 'src/components/electronic-line';
 
 // import {

@@ -1,4 +1,4 @@
-import { isArray } from 'src/utils/assert';
+import { isArray } from '@utils/assert';
 import BigNumber from 'bignumber.js';
 
 /** 数字数量级简写 */
@@ -75,9 +75,9 @@ const unitMap = {
 };
 
 /** 生成简写数字单位快捷选择列表选项 */
-export function createSelectList(label: string, isChinese?: boolean): SelectList;
-export function createSelectList(ranks: NumberRank[], unit: string, isChinese?: boolean): SelectList;
-export function createSelectList(ranks: NumberRank[] | string, unit?: string | boolean, isChinese = false) {
+export function shortUnitList(label: string, isChinese?: boolean): SelectList;
+export function shortUnitList(ranks: NumberRank[], unit: string, isChinese?: boolean): SelectList;
+export function shortUnitList(ranks: NumberRank[] | string, unit?: string | boolean, isChinese = false) {
   // 未输入单位列表
   if (!isArray(ranks)) {
     isChinese = Boolean(unit);

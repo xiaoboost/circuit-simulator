@@ -1,7 +1,7 @@
-import { Point, PointLike, PointCall } from 'src/lib/point';
+import { Point, PointLike, PointCall } from 'src/math';
 
-import { def, clone } from 'src/utils/object';
-import { unique, removeVal } from 'src/utils/array';
+import { def, clone } from '@utils/object';
+import { unique, removeVal } from '@utils/array';
 
 /** 节点类型常量 */
 export enum NodeType {

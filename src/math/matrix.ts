@@ -1,5 +1,5 @@
 import { Point } from './point';
-import { isArray, isNumber, isString } from 'src/utils/assert';
+import { isArray, isNumber, isString } from '@utils/assert';
 
 type MatrixInput = number[][] | Matrix;
 
