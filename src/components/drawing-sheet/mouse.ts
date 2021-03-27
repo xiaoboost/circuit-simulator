@@ -4,7 +4,7 @@ import { mapState } from './state';
 
 import { delay } from '@utils/func';
 import { Point } from 'src/math';
-import { removeVal } from '@utils/array';
+import { remove } from '@utils/array';
 import { supportsPassive } from '@utils/env';
 
 type Callback = (event: DrawEvent) => any | Promise<any>;
