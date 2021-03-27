@@ -8,6 +8,7 @@
   height: 100%;
   width: auto;
   background-color: #fff;
+  box-shadow: 3px 0 5px Extra-Light-Gray;
 }
 
 .menu {
@@ -15,7 +16,6 @@
   flex-direction: column;
   width: 40px;
   border-right: 1px solid Extra-Light-Gray;
-  box-shadow: 3px 0 5px Extra-Light-Gray;
   align-items: center;
   padding: 10px 0;
 
@@ -33,7 +33,7 @@
 
   .menu-icon__run {
     margin-bottom: 20px;
-    
+
     :global {
       .anticon {
         color: Dark-Green;
@@ -47,11 +47,97 @@
   }
 }
 
+.menu-title {
+  text-align: center;
+  background-color: Blue;
+  padding: 1px 0;
+  font-family: font-serif;
+  padding: 15px 0;
+
+  > * {
+    color: White;
+    font-weight: normal;
+    margin: 0;
+  }
+
+  h1 {
+    font-size: 35px;
+    line-height: 1.4;
+  }
+
+  h2 {
+    font-size: 25px;
+    line-height: 1.4;
+  }
+}
+
+.menu-body {
+  margin: 10px 20px;
+  color: Black;
+}
+
 .panel {
   border-right: 1px solid Extra-Light-Gray;
   box-shadow: 3px 0 5px Extra-Light-Gray;
 }
 
-.add-part-panel {
-  width: 100px;
+.part-panel {
+  width: 300px;
+
+  .part-list {
+    display: flex;
+    margin: 16px 0;
+  }
+
+  .part-item {
+    height: 60px;
+    width: 60px;
+    margin: 0 10px;
+    padding: 0;
+    outline: 0;
+    background: #f2f2f2;
+    border-radius: 5px;
+    border: 1px solid Gray;
+    box-shadow: 0 0 3px Shadow;
+    display: inline-block;
+    transition: all 0.3s cubic-bezier(0.3, 0.3, 0.1, 1);
+
+    &:hover {
+      background: White;
+    }
+
+    &:focus {
+      background: White;
+      border: 1px solid Light-Blue;
+      box-shadow: 0 0 3px Light-Blue;
+    }
+
+    :global {
+      svg {
+        height: 52px;
+        width: 52px;
+        margin: 3px;
+        stroke: Black;
+        stroke-width: 2;
+        stroke-linecap: round;
+        fill: transparent;
+
+        .fill-white {
+          fill: White;
+        }
+
+        .fill-black {
+          fill: Black;
+        }
+
+        path {
+          stroke-width: 2;
+        }
+
+        rect, polygon.fill-black {
+          stroke-width: 0;
+        }
+      }
+    }
+  }
 }

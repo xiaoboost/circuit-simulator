@@ -1,0 +1,42 @@
+import { ElectronicPrototype, Direction } from './constant';
+import { ElectronicKind } from '../types';
+
+export const data: ElectronicPrototype = {
+  pre: 'IM',
+  kind: ElectronicKind.CurrentMeter,
+  introduction: '电流表',
+  txtLBias: 11,
+  padding: [0, 0, 0, 0],
+  margin: [1, 1, 1, 1],
+  params: [],
+  points: [
+    {
+      position: [-20, 0],
+      direction: Direction.Left,
+    },
+    {
+      position: [20, 0],
+      direction: Direction.Right,
+    },
+  ],
+  shape: [
+    {
+      name: 'path',
+      attribute: {
+        d: 'M-20,0H20',
+      },
+    },
+    {
+      name: 'polygon',
+      attribute: {
+        points: '12,0 2,-6 6,0 2,6', className: 'fill-black',
+      },
+    },
+    {
+      name: 'rect',
+      attribute: {
+        x: '-10', y: '-8', width: '20', height: '16', className: 'focus-transparent',
+      },
+    },
+  ],
+};

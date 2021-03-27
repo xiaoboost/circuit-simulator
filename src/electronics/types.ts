@@ -2,7 +2,7 @@ import { Point, Matrix } from 'src/math';
 import { LineWay } from './line-way';
 
 /** 器件类型枚举常量 */
-export const enum ElectronicKind {
+export enum ElectronicKind {
   /** 导线 */
   Line = 1,
 
@@ -33,20 +33,25 @@ export const enum ElectronicKind {
 }
 
 /** 连接点数据 */
-export interface Content {
+export interface Connect {
   id: number;
   mark: number;
 }
 
 /** 导线数据 */
 export interface LineData {
+  id: number;
+  kind: ElectronicKind;
   paths: LineWay;
-  contents: Content[];
+  connects: Connect[];
 }
 
 /** 器件数据 */
 export interface PartData {
+  id: number;
+  kind: ElectronicKind;
   rotate: Matrix;
   position: Point;
-  connect: Content[];
+  connects: Connect[];
+  params: string[];
 }

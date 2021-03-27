@@ -65,7 +65,6 @@ export function Tabs(props: Props) {
   };
 
   return <section className={styles.menu}>
-    {/* 运行 */}
     <Tooltip
       title='运行'
       placement='right'
