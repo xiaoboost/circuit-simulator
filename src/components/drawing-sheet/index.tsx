@@ -6,21 +6,19 @@ import { Point } from 'src/math';
 import { stringifyClass } from '@utils/string';
 import { useWatcher, useWatcherList } from 'src/use';
 
-import { Line, LineRef } from '../electronic-line';
-import { Part, PartRef } from '../electronic-part';
+import { LineRender } from '../electronic-line';
+import { PartRender } from '../electronic-part';
 
-import * as state from 'src/store';
+import * as store from 'src/electronics';
 import * as utils from './utils';
 
 import { useMap } from './map';
 import { useMouseBus } from './mouse';
 
 export function DrawingSheet() {
-  const [lines] = useWatcherList(state.lines);
-  const [parts] = useWatcherList(state.parts);
+  const [lines] = useWatcherList(store.lines);
+  const [parts] = useWatcherList(store.parts);
   const SheetRef = useRef<HTMLElement>(null);
-  const lineRefs = useRef<LineRef[]>([]);
-  const partRefs = useRef<PartRef[]>([]);
   const eventBus = useMouseBus(SheetRef);
   const map = useMap(SheetRef);
 
@@ -31,8 +29,8 @@ export function DrawingSheet() {
       style={utils.getBackgroundStyle(map.zoom, map.position)}>
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
-          {lines.map((data) => <Line key={data.id} ref={lineRefs} {...data} />)}
-          {parts.map((data) => <Part key={data.id} ref={partRefs} {...data} />)}
+          {lines.map((line) => <LineRender key={line.id} data={line} />)}
+          {parts.map((part) => <PartRender key={part.id} data={part} />)}
         </g>
       </svg>
     </section>

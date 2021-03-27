@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.styl';
 
 import { Tooltip } from 'antd';
-import { Electronics, ElectronicPrototype, ElectronicKind } from 'src/electronics';
+import { Electronics, ElectronicPrototype, ElectronicKind, Part } from 'src/electronics';
 
 interface Category {
   name: string;
@@ -77,11 +77,13 @@ export function AddPart() {
     <article className={styles.menuBody}>
       {categories.map((item, i) => (
         <div key={i} className={styles.partList}>
-          {item.parts.map((part, i) => (
-            <Tooltip key={i} placement='top' title={ Electronics[part].introduction }>
-              <span className={styles.partItem}>
+          {item.parts.map((kind, i) => (
+            <Tooltip key={i} placement='top' title={ Electronics[kind].introduction }>
+              <span
+                className={styles.partItem}
+                onClick={() => new Part(kind)}>
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
-                  <PartShape {...Electronics[part]} />
+                  <PartShape {...Electronics[kind]} />
                 </svg>
               </span>
             </Tooltip>

@@ -42,7 +42,7 @@ export interface Connect {
 export interface LineData {
   id: number;
   kind: ElectronicKind;
-  paths: LineWay;
+  path: LineWay;
   connects: Connect[];
 }
 

@@ -1,13 +1,7 @@
 import type { PartData, ElectronicKind } from '../types';
 import type { NumberRank, Matrix } from 'src/math';
 
-/** 器件方向枚举 */
-export enum Direction {
-  Top,
-  Bottom,
-  Left,
-  Right,
-}
+import { Direction } from '@utils/types';
 
 /** 器件参数单位枚举 */
 export enum UnitType {

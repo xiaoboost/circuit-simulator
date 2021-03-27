@@ -17,7 +17,7 @@ const ElectronicHash: Record<number, Electronic | undefined> = {};
 function getElectronics(isLine = true) {
   return Object
     .values(ElectronicHash)
-    .filter((item): item is Line => (
+    .filter((item) => (
       isLine
         ? item?.kind === ElectronicKind.Line
         : item?.kind !== ElectronicKind.Line
@@ -25,8 +25,8 @@ function getElectronics(isLine = true) {
 }
 
 function updateData() {
-  lines.setData(getElectronics(true));
-  lines.setData(getElectronics(false));
+  lines.setData(getElectronics(true) as Line[]);
+  parts.setData(getElectronics(false) as Part[]);
 }
 
 export class Electronic {
@@ -39,6 +39,8 @@ export class Electronic {
 
   constructor(kind: ElectronicKind) {
     this.kind = kind;
+    ElectronicHash[this.id] = this;
+    updateData();
   }
 
   deleteSelf() {

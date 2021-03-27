@@ -1,12 +1,13 @@
-import { resolve, build, version } from './utils';
-
 import chalk from 'chalk';
+import path from 'path';
 import Webpack from 'webpack';
+import typescript from 'typescript';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
+import * as utils from './utils';
 import * as config from './config';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -15,8 +16,8 @@ const banner =
 `Project: Circuit Simulator
 Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
-Version: ${version}
-Build: ${build}
+Version: ${utils.version}
+Build: ${utils.build}
 filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
@@ -27,7 +28,7 @@ console.log('\x1Bc');
 const baseConfig: Webpack.Configuration = {
   mode: process.env.NODE_ENV as Webpack.Configuration['mode'],
   entry: {
-    main: resolve('src/init/index.ts'),
+    main: utils.resolve('src/init/index.ts'),
   },
   output: {
     path: config.output,
@@ -39,8 +40,8 @@ const baseConfig: Webpack.Configuration = {
     extensions: ['.tsx', '.ts', '.js', '.json', '.styl', '.css'],
     mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.styl'],
     alias: {
-      src: resolve('src'),
-      '@utils': resolve('src/utils'),
+      src: utils.resolve('src'),
+      '@utils': utils.resolve('src/utils'),
     },
   },
   module: {
@@ -50,7 +51,7 @@ const baseConfig: Webpack.Configuration = {
         exclude: /node_modules/,
         loader: 'ts-loader',
         options: {
-          configFile: resolve('build/tsconfig.build.json'),
+          configFile: utils.resolve('build/tsconfig.build.json'),
           compilerOptions: {
             target: isDevelopment ? 'esnext' : 'es5',
             module: 'ESNext',
@@ -69,7 +70,7 @@ const baseConfig: Webpack.Configuration = {
             loader: 'css-loader',
             options: {
               modules: {
-                localIdentContext: resolve('src'),
+                localIdentContext: utils.resolve('src'),
                 exportLocalsConvention: 'camelCaseOnly',
                 localIdentName: isDevelopment ? '[local]__[hash:base64:5]' : '[hash:base64:6]',
               },
@@ -80,8 +81,8 @@ const baseConfig: Webpack.Configuration = {
             options: {
               stylusOptions: {
                 paths: [
-                  resolve('node_modules'),
-                  resolve('src/styles'),
+                  utils.resolve('node_modules'),
+                  utils.resolve('src/styles'),
                 ],
               },
             },
@@ -133,7 +134,21 @@ const baseConfig: Webpack.Configuration = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: resolve('src/assets/favicon.ico'),
+          from: utils.resolve('src/assets/favicon.ico'),
+        },
+        {
+          from: utils.resolve('src/examples/*.ts'),
+          to({ absoluteFilename }) {
+            const fileName = path.parse(absoluteFilename).base;
+            return path.join(config.output, 'examples', `${fileName}.json`);
+          },
+          transform(content) {
+            const code = typescript.transpile(content.toString(), {
+              target: typescript.ScriptTarget.ES5,
+              module: typescript.ModuleKind.CommonJS,
+            });
+            return JSON.stringify(utils.runScript(code).data);
+          },
         },
       ],
     }),
@@ -141,11 +156,11 @@ const baseConfig: Webpack.Configuration = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       data: {
-        version,
-        build,
+        version: utils.version,
+        build: utils.build,
         year: new Date().getFullYear(),
       },
-      template: resolve('src/index.html'),
+      template: utils.resolve('src/index.html'),
       inject: true,
       minify: {
         removeComments: !isDevelopment,

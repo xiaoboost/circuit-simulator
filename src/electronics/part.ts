@@ -1,7 +1,8 @@
 import { Electronic } from './base';
 import { Matrix, Point } from 'src/math';
-import { ElectronicPrototype } from './parts';
+import { ElectronicPrototype, Electronics } from './parts';
 import { ElectronicKind, PartData, Connect } from './types';
+import { DeepReadonly } from '@utils/types';
 
 export class Part extends Electronic implements PartData {
   /** 旋转坐标 */
@@ -12,4 +13,12 @@ export class Part extends Electronic implements PartData {
   connects: Connect[] = [];
   /** 参数描述 */
   params: string[] = [];
+
+  /** 器件元数据 */
+  private readonly origin : DeepReadonly<ElectronicPrototype>;
+
+  constructor(kind: ElectronicKind) {
+    super(kind);
+    this.origin = Electronics[kind];
+  }
 }

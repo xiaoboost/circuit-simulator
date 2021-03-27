@@ -1,5 +1,6 @@
-import { ElectronicPrototype, Direction, UnitType } from './constant';
+import { ElectronicPrototype, UnitType } from './constant';
 import { ElectronicKind } from '../types';
+import { Direction } from '@utils/types';
 
 export const data: ElectronicPrototype = {
   pre: 'Q',

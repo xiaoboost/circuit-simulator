@@ -80,8 +80,9 @@ export function Tabs(props: Props) {
       />
     </Tooltip>
 
-    {buttons.map((btn) => (
+    {buttons.map((btn, i) => (
       <Button
+        key={i}
         type={btn.type}
         icon={btn.icon}
         className={stringifyClass({
