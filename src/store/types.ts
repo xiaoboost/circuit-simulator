@@ -1,5 +1,5 @@
 import { ElectronicKind } from 'src/electronics';
-import { Direction } from '@utils/types';
+import { Direction } from 'src/math';
 
 /** 时间配置接口 */
 export interface TimeConfig {

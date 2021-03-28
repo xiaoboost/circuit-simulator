@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './index.styl';
 
+import { useCallback } from 'react';
 import { Tooltip } from 'antd';
 import { Electronics, ElectronicPrototype, ElectronicKind, Part } from 'src/electronics';
 

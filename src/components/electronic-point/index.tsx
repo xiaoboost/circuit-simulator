@@ -1,31 +1,28 @@
 import React from 'react';
 
+import { useWatcher } from 'src/use';
+import { mapState } from '../drawing-sheet/state';
 import { useState, useRef, useEffect } from 'react';
 
 interface Props {
   r?: number;
-  mapZoom?: number;
   className?: string;
-  status: {
+  transform?: string;
+  status?: {
     hover: number;
     normal: number;
   };
 }
 
-export function Point(props: Props) {
-  const {
-    r = 1,
-    mapZoom = 1,
-    className = '',
-    status,
-  } = props;
-
+export function ElectronicPoint(props: Props) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
+  const [{ zoom }] = useWatcher(mapState);
   const [inner, setInner] = useState(0);
   const [actual, setActual] = useState(0);
   const [animateTo, setAnimateTo] = useState(0);
   const [animateFrom, setAnimateFrom] = useState(0);
+  const r = props.r ?? 1;
 
   function setAnimate() {
     if (!circle.current || !animate.current) {
@@ -35,7 +32,7 @@ export function Point(props: Props) {
     const rect = circle.current.getBoundingClientRect();
   
     // 计算当前值
-    setAnimateFrom(rect ? rect.width / mapZoom / 2 : 0);
+    setAnimateFrom(rect ? rect.width / zoom / 2 : 0);
     // 确定新的终点值
     setAnimateTo(actual);
     // 动画启动
@@ -57,7 +54,7 @@ export function Point(props: Props) {
   useEffect(() => setAnimate(), [actual]);
 
   return (
-    <g className={className}>
+    <g className={props.className} transform={props.transform}>
       <circle ref={circle} cx='0' cy='0'>
         <animate
           ref={animate}

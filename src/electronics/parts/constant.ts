@@ -1,7 +1,7 @@
 import type { PartData, ElectronicKind } from '../types';
 import type { NumberRank, Matrix } from 'src/math';
 
-import { Direction } from '@utils/types';
+import { Direction } from 'src/math';
 
 /** 器件参数单位枚举 */
 export enum UnitType {

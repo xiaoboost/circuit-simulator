@@ -1,6 +1,6 @@
 import { ElectronicPrototype, UnitType } from './constant';
 import { ElectronicKind } from '../types';
-import { Direction } from '@utils/types';
+import { Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {
   pre: 'Q',

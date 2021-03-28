@@ -1,4 +1,4 @@
-import { ElectronicKind } from './types';
+import { ElectronicKind, Connect } from './types';
 import { Watcher } from 'src/lib/subject';
 
 import type { Line } from './line';
@@ -24,27 +24,27 @@ function getElectronics(isLine = true) {
     ));
 }
 
-function updateData() {
-  lines.setData(getElectronics(true) as Line[]);
-  parts.setData(getElectronics(false) as Part[]);
-}
-
 export class Electronic {
   /** 元件编号 */
   readonly id = _id++;
   /** 元件类型 */
   readonly kind: ElectronicKind;
   /** 元件的连接表 */
-  connect: string[] = [];
+  connects: Connect[] = [];
 
   constructor(kind: ElectronicKind) {
     this.kind = kind;
     ElectronicHash[this.id] = this;
-    updateData();
+    this.update();
   }
 
-  deleteSelf() {
+  update() {
+    lines.setData(getElectronics(true) as Line[]);
+    parts.setData(getElectronics(false) as Part[]);
+  }
+
+  delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
-    updateData();
+    this.update();
   }
 }

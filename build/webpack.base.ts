@@ -135,6 +135,7 @@ const baseConfig: Webpack.Configuration = {
       patterns: [
         {
           from: utils.resolve('src/assets/favicon.ico'),
+          to: path.join(config.output, 'images/favicon.ico')
         },
         {
           from: utils.resolve('src/examples/*.ts'),

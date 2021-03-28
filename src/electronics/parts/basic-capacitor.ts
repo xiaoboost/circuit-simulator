@@ -1,7 +1,6 @@
 import { ElectronicPrototype, UnitType } from './constant';
 import { PartData, ElectronicKind } from '../types';
-import { numberParser } from 'src/math';
-import { Direction } from '@utils/types';
+import { numberParser, Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {
   pre: 'C',

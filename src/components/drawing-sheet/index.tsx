@@ -6,8 +6,8 @@ import { Point } from 'src/math';
 import { stringifyClass } from '@utils/string';
 import { useWatcher, useWatcherList } from 'src/use';
 
-import { LineRender } from '../electronic-line';
-import { PartRender } from '../electronic-part';
+import { ElectronicLine } from '../electronic-line';
+import { ElectronicPart } from '../electronic-part';
 
 import * as store from 'src/electronics';
 import * as utils from './utils';
@@ -29,8 +29,8 @@ export function DrawingSheet() {
       style={utils.getBackgroundStyle(map.zoom, map.position)}>
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
-          {lines.map((line) => <LineRender key={line.id} data={line} />)}
-          {parts.map((part) => <PartRender key={part.id} data={part} />)}
+          {lines.map((line) => <ElectronicLine key={line.id} data={line} />)}
+          {parts.map((part) => <ElectronicPart key={part.id} data={part} />)}
         </g>
       </svg>
     </section>

@@ -4,11 +4,19 @@ import { isNumber } from '@utils/assert';
 export type PointLike = number[] | Point;
 export type PointInput = PointLike | number;
 
-/**
- * 点和向量类
- *
- * @class Point
- */
+/** 方向 */
+export enum Direction {
+  Top,
+  TopLeft,
+  TopRight,
+  Bottom,
+  BottomLeft,
+  BottomRight,
+  Left,
+  Right,
+}
+
+/** 点和向量类 */
 export class Point {
   0: number;
   1: number;
@@ -457,6 +465,21 @@ export class Point {
   map<T>(callback: (value: number, index: number) => T): [T, T] {
     return [callback(this[0], 0), callback(this[1], 1)];
   }
+}
+
+const DirectionMap = {
+  [Direction.Top]: Point.from([0, -1]),
+  [Direction.Bottom]: Point.from([0, 1]),
+  [Direction.Left]: Point.from([-1, 0]),
+  [Direction.Right]: Point.from([1, 0]),
+  [Direction.TopLeft]: Point.from([-1, -1]),
+  [Direction.TopRight]: Point.from([1, -1]),
+  [Direction.BottomLeft]: Point.from([-1, 1]),
+  [Direction.BottomRight]: Point.from([1, 1]),
+};
+
+export function toDirection(direction: Direction) {
+  return DirectionMap[direction];
 }
 
 type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;

@@ -6,6 +6,6 @@ interface Props {
   data: Line;
 }
 
-export function LineRender({ data }: Props) {
+export function ElectronicLine({ data }: Props) {
   return <g>line: { data.id }</g>
 }

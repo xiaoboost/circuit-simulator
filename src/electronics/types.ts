@@ -38,7 +38,7 @@ export interface Connect {
   mark: number;
 }
 
-/** 导线数据 */
+/** 导线基础数据 */
 export interface LineData {
   id: number;
   kind: ElectronicKind;
@@ -46,7 +46,7 @@ export interface LineData {
   connects: Connect[];
 }
 
-/** 器件数据 */
+/** 器件基础数据 */
 export interface PartData {
   id: number;
   kind: ElectronicKind;
