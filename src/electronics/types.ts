@@ -40,7 +40,7 @@ export interface Connect {
 
 /** 导线基础数据 */
 export interface LineData {
-  id: number;
+  id: string;
   kind: ElectronicKind;
   path: LineWay;
   connects: Connect[];
@@ -48,7 +48,7 @@ export interface LineData {
 
 /** 器件基础数据 */
 export interface PartData {
-  id: number;
+  id: string;
   kind: ElectronicKind;
   rotate: Matrix;
   position: Point;

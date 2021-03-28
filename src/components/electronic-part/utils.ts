@@ -28,11 +28,6 @@ export function useInvRotate(ma: Matrix) {
   return invRotate;
 }
 
-/** 点乘 */
-function product(point: Point | number[], ma: Matrix): Point {
-  return Point.prototype.rotate.call(point, ma);
-}
-
 export function usePoints(part: Part) {
   const prototype = Electronics[part.kind];
   const [points, setPoints] = useState<PartPoint[]>([]);
@@ -43,8 +38,8 @@ export function usePoints(part: Part) {
         size: -1,
         className: '',
         origin: Point.from(point.position),
-        position: product(point.position, part.rotate),
-        direction: product(toDirection(point.direction), part.rotate),
+        position: Point.prototype.rotate.call(point.position, part.rotate),
+        direction: Point.prototype.rotate.call(toDirection(point.direction), part.rotate),
       };
     }));
   }, [part.rotate, part.connects]);

@@ -2,17 +2,21 @@ import React from 'react';
 
 import { useWatcher } from 'src/use';
 import { mapState } from '../drawing-sheet/state';
+import { PointKind, PointStatus, getStyle, getSize } from './utils';
 import { useState, useRef, useEffect } from 'react';
 
 interface Props {
-  r?: number;
+  kind: PointKind;
+  status: PointStatus;
+  size?: number;
   className?: string;
   transform?: string;
-  status?: {
-    hover: number;
-    normal: number;
-  };
 }
+
+export {
+  PointKind,
+  PointStatus,
+};
 
 export function ElectronicPoint(props: Props) {
   const circle = useRef<SVGCircleElement>(null);
@@ -22,7 +26,9 @@ export function ElectronicPoint(props: Props) {
   const [actual, setActual] = useState(0);
   const [animateTo, setAnimateTo] = useState(0);
   const [animateFrom, setAnimateFrom] = useState(0);
-  const r = props.r ?? 1;
+
+  const size = props.size ?? 1;
+  const circleProps = getStyle(props.kind, props.status);
 
   function setAnimate() {
     if (!circle.current || !animate.current) {
@@ -40,22 +46,32 @@ export function ElectronicPoint(props: Props) {
   }
   
   function onMouseEnter() {
-
+    setInner(getSize(props.kind, props.status, true));
   }
 
   function onMouseLeave() {
-
+    setInner(getSize(props.kind, props.status, false));
   }
 
   useEffect(() => {
-    setActual(r >= 0 ? r : inner);
-  }, [r, inner]);
+    setActual(size >= 0 ? size : inner);
+  }, [size, inner]);
 
   useEffect(() => setAnimate(), [actual]);
+  useEffect(() => onMouseLeave(), []);
 
   return (
-    <g className={props.className} transform={props.transform}>
-      <circle ref={circle} cx='0' cy='0'>
+    <g
+      transform={props.transform}
+      className={props.className}
+    >
+      <circle
+        ref={circle}
+        cx='0'
+        cy='0'
+        {...circleProps}
+        className={circleProps.className}
+      >
         <animate
           ref={animate}
           fill='freeze'

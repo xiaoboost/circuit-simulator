@@ -5,3 +5,21 @@
 .part-focus {
   // ..
 }
+
+.part-text {
+  text, tspan {
+    white-space: nowrap;
+  }
+
+  &.text-placement-top, &.text-placement-bottom {
+    text-anchor: middle;
+  }
+
+  &.text-placement-left {
+    text-anchor: end;
+  }
+
+  &.text-placement-right {
+    text-anchor: start;
+  }
+}

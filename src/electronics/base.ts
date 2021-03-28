@@ -1,4 +1,5 @@
 import { ElectronicKind, Connect } from './types';
+import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
 
 import type { Line } from './line';
@@ -24,9 +25,21 @@ function getElectronics(isLine = true) {
     ));
 }
 
+function createId(id: string): string {
+  const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
+
+  let index = 1;
+
+  while (ElectronicHash[`${pre[1]}_${index}`]) {
+    index++;
+  }
+
+  return `${pre[1]}_${index}`;
+}
+
 export class Electronic {
   /** 元件编号 */
-  readonly id = _id++;
+  readonly id: string;
   /** 元件类型 */
   readonly kind: ElectronicKind;
   /** 元件的连接表 */
@@ -34,6 +47,7 @@ export class Electronic {
 
   constructor(kind: ElectronicKind) {
     this.kind = kind;
+    this.id = createId(Electronics[kind].pre);
     ElectronicHash[this.id] = this;
     this.update();
   }

@@ -10,6 +10,8 @@ export class Part extends Electronic implements PartData {
   position = new Point(500, 300);
   /** 参数描述 */
   params: string[] = [];
+  /** 文本位置 */
+  textPosition = new Point(0, 0);
 
   constructor(kind: ElectronicKind) {
     super(kind);
