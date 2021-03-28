@@ -1,10 +1,11 @@
 import React from 'react';
 import styles from './index.styl';
 
+import { useMemo } from 'react';
 import { Part } from 'src/electronics';
 import { Electronics, ElectronicKind } from 'src/electronics';
 import { ElectronicPoint, PointKind, PointStatus } from '../electronic-point';
-import { useInvRotate, usePoints } from './utils';
+import { usePoints, useTexts } from './utils';
 
 interface Props {
   data: Part;
@@ -12,17 +13,11 @@ interface Props {
 
 export function ElectronicPart({ data }: Props) {
   const prototype = Electronics[data.kind];
-  const invRotate = useInvRotate(data.rotate);
+  const invRotate = useMemo(() => data.rotate.inverse(), [data.rotate]);
   const points = usePoints(data);
+  const texts = useTexts(data);
   const label = data.id.split('_');
   const showText = data.kind !== ElectronicKind.ReferenceGround;
-  const texts = data.params
-    .map((v, i) => ({
-      ...Electronics[data.kind].params[i],
-      value: v,
-    }))
-    .filter((txt) => txt.vision)
-    .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'))
 
   return <g
     className='part'

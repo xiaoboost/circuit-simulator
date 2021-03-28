@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 
 import { Matrix, Point, toDirection } from 'src/math';
 import { Part, Electronics } from 'src/electronics';
@@ -14,18 +14,6 @@ interface PartPoint {
   position: Point;
   /** 节点向外的延申方向 */
   direction: Point;
-}
-
-const defaultRotate = new Matrix(2, 'E');
-
-export function useInvRotate(ma: Matrix) {
-  const [invRotate, setInvRotate] = useState<Matrix>(defaultRotate);
-
-  useEffect(() => {
-    setInvRotate(ma.inverse());
-  }, [ma]);
-
-  return invRotate;
 }
 
 export function usePoints(part: Part) {
@@ -45,4 +33,13 @@ export function usePoints(part: Part) {
   }, [part.rotate, part.connects]);
 
   return points;
+}
+
+export function useTexts(data: Part) {
+  return useMemo(() => (
+    data.params
+      .map((v, i) => ({ ...Electronics[data.kind].params[i], value: v }))
+      .filter((txt) => txt.vision)
+      .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'))
+  ), [data.params]);
 }
