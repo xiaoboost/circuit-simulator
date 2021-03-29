@@ -1,63 +1,77 @@
 import { Point } from 'src/math';
+import { Watcher } from 'src/lib/subject';
+import { MouseButtons } from '@utils/event';
+import { useCallback, MouseEvent, WheelEvent } from 'react';
+import { DrawController } from './mouse';
 
-import { mapState, MapState } from './state';
-import { RefObject, useEffect } from 'react';
+export interface MapState {
+  zoom: number;
+  position: Point;
+}
 
-export function useMap(ref: RefObject<HTMLElement>) {
-  if (process.env.NODE_ENV === 'development') {
-    if (typeof ref !== 'object' || typeof ref.current === 'undefined') {
-      console.error('useMap expects a single ref argument.');
+export const mapStateDefault: MapState = {
+  zoom: 1,
+  position: Point.from(0),
+};
+
+export const mapState = new Watcher(mapStateDefault);
+
+export function useMap() {
+  const sizeChangeEvent = useCallback((e: WheelEvent<HTMLElement>) => {
+    const mousePosition = new Point(e.pageX, e.pageY);
+    let size = mapState.data.zoom * 20;
+
+    if (e.deltaY > 0) {
+      size -= 5;
     }
-  }
+    else if (e.deltaY < 0) {
+      size += 5;
+    }
 
-  const setMap = (val: Partial<MapState>) => {
+    if (size < 20) {
+      size = 20;
+      return;
+    }
+    if (size > 80) {
+      size = 80;
+      return;
+    }
+
+    size = size / 20;
+
     mapState.setData({
-      ...mapState.data,
-      ...val,
+      zoom: size,
+      position: mapState.data.position
+        .add(mousePosition, -1)
+        .mul(size / mapState.data.zoom)
+        .add(mousePosition)
+        .round(1),
     });
-  };
+  }, []);
 
-  useEffect(() => {
-    const wheelHandler = (e: WheelEvent) => {
-      if (ref && ref.current) {
-        const mousePosition = new Point(e.pageX, e.pageY);
-        let size = mapState.data.zoom * 20;
+  const moveStartEvent = useCallback((ev: MouseEvent<HTMLElement>) => {
+    if (ev.button !== MouseButtons.Right) {
+      return;
+    }
 
-        if (e.deltaY > 0) {
-          size -= 5;
-        }
-        else if (e.deltaY < 0) {
-          size += 5;
-        }
+    new DrawController()
+      .setStopEvent({
+        type: 'mouseup',
+        which: 'Right',
+      })
+      .setMoveEvent((ev) => {
+        const { zoom, position } = mapState.data;
 
-        if (size < 20) {
-          size = 20;
-          return;
-        }
-        if (size > 80) {
-          size = 80;
-          return;
-        }
-
-        size = size / 20;
-
-        setMap({
-          zoom: size,
-          position: mapState.data.position
-            .add(mousePosition, -1)
-            .mul(size / mapState.data.zoom)
-            .add(mousePosition)
-            .round(1),
+        mapState.setData({
+          zoom,
+          position: position.add(ev.movement.mul(zoom)),
         });
-      }
-    };
+      })
+      .start();
+  }, []);
 
-    ref.current?.addEventListener('wheel', wheelHandler);
-  
-    return () => {
-      ref.current?.removeEventListener('wheel', wheelHandler);
-    };
-  }, [ref.current]);
-
-  return { ...mapState.data };
+  return {
+    sizeChangeEvent,
+    moveStartEvent,
+  };
 }

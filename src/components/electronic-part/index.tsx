@@ -19,10 +19,7 @@ export function ElectronicPart({ data }: Props) {
   const label = data.id.split('_');
   const showText = data.kind !== ElectronicKind.ReferenceGround;
 
-  return <g
-    className='part'
-    transform={`matrix(${data.rotate.join()},${data.position.join()})`}
-  >
+  return <g transform={`matrix(${data.rotate.join()},${data.position.join()})`}>
     <g className="part-focus">
       <g>
         {prototype.shape.map((item, i) => (

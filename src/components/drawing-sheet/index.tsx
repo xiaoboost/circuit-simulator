@@ -12,21 +12,26 @@ import { ElectronicPart } from '../electronic-part';
 import * as store from 'src/electronics';
 import * as utils from './utils';
 
-import { useMap } from './map';
-import { useMouseBus } from './mouse';
+import { useMap, mapState } from './map';
+import { useMouseBusInit } from './mouse';
 
 export function DrawingSheet() {
+  const SheetRef = useRef<HTMLElement>(null);
   const [lines] = useWatcherList(store.lines);
   const [parts] = useWatcherList(store.parts);
-  const SheetRef = useRef<HTMLElement>(null);
-  const eventBus = useMouseBus(SheetRef);
-  const map = useMap(SheetRef);
+  const [map] = useWatcher(mapState);
+  const mapEvent = useMap();
+
+  useMouseBusInit(SheetRef);
 
   return (
     <section
       ref={SheetRef}
       className={stringifyClass(styles.drawingSheet)}
-      style={utils.getBackgroundStyle(map.zoom, map.position)}>
+      style={utils.getBackgroundStyle(map.zoom, map.position)}
+      onMouseDown={mapEvent.moveStartEvent}
+      onWheel={mapEvent.sizeChangeEvent}
+    >
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
           {lines.map((line) => <ElectronicLine key={line.id} data={line} />)}

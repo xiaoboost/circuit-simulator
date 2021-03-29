@@ -1,21 +1,22 @@
 import { RefObject, useEffect } from 'react';
 
-import { mapState } from './state';
+import { mapState } from './map';
 
-import { delay } from '@utils/func';
 import { Point } from 'src/math';
+import { delay } from '@utils/func';
 import { remove } from '@utils/array';
+import { isFunc } from '@utils/assert';
+import { MouseButtons } from '@utils/event';
 import { supportsPassive } from '@utils/env';
 
-type Callback = (event: DrawEvent) => any | Promise<any>;
+type Callback = (event: DrawEvent) => any;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);
-type CursorEventInput = string | ((event?: DrawEvent) => string | Promise<string>);
+type CursorEventInput = string | ((event?: DrawEvent) => string);
 
 /** 鼠标结束事件配置 */
 export interface StopEventOption {
-  el?: HTMLElement;
   type: 'click' | 'dblclick' | 'mousedown' | 'mouseup';
-  which: 'left' | 'middle' | 'right';
+  which: keyof typeof MouseButtons;
 }
 
 /** 绘图事件 */
@@ -27,43 +28,77 @@ export interface DrawEvent {
   readonly origin: MouseEvent;
 }
 
+/** 绘图事件控制器 */
 export class DrawController {
-  private el: Element;
+  /** 图纸 DOM */
+  static sheetEl?: HTMLElement;
+  /** 绘图事件实例 */
+  static data: DrawController[] = [];
 
+  /** 是否开始 */
+  isStart = false;
+  /** 事件数据 */
   events: Callback[] = [];
+  /** 停止事件数据 */
+  stopEvent = () => Promise.resolve();
 
-  constructor(el: Element) {
-    this.el = el;
+  constructor() {
+    DrawController.data.push(this);
   }
 
   start() {
-
+    this.isStart = true;
+    return this.stopEvent().then(() => this.stop());
   }
 
   stop() {
-
+    remove(DrawController.data, this);
   }
 
   setMoveEvent(cb: Callback) {
-
+    this.events.push(cb);
+    return this;
   }
 
-  setStopEvent(option: StopEventInput) {
+  setStopEvent(input: StopEventInput) {
+    if (isFunc(input)) {
+      this.stopEvent = input;
+      return this;
+    }
 
+    const body = document.body;
+    const opts = supportsPassive
+      ? { passive: true, capture: true }
+      : true;
+
+    this.stopEvent = () => new Promise<void>((resolve) => {
+      body.addEventListener(
+        input.type,
+        function stop(event: MouseEvent) {
+          if (event.button === MouseButtons[input.which]) {
+            body.removeEventListener(input.type, stop, true);
+            resolve();
+          }
+        },
+        opts,
+      );
+    });
+
+    return this;
   }
 }
 
-/** 全局事件储存 */
-const _events: DrawController[] = [];
-
-export function useMouseBus(ref: RefObject<HTMLElement>) {
-  if (process.env.NODE_ENV === 'development') {
-    if (typeof ref !== 'object' || typeof ref.current === 'undefined') {
-      console.error('useMouseBus expects a single ref argument.');
-    }
-  }
-
+/** 事件总线初始化 */
+export function useMouseBusInit(ref: RefObject<HTMLElement>) {
   useEffect(() => {
+    if (!ref.current) {
+      return;
+    }
+
+    // 保存 dom
+    DrawController.sheetEl = ref.current;
+
+    // 临时数据，上一次的节点
     let last: Point;
 
     const mouseHandler = (event: MouseEvent) => {
@@ -81,41 +116,31 @@ export function useMouseBus(ref: RefObject<HTMLElement>) {
 
       last = mouse;
 
+      const run = () => {
+        DrawController.data
+          .filter((draw) => draw.isStart)
+          .forEach((draw) => {
+            draw.events.forEach((handle) => handle(drawEvent));
+          });
+      };
+
       if (process.env.NODE_ENV === 'development') {
-        delay().then(() => {
-          _events.forEach((item) => {
-            item.events.forEach((handle) => {
-              handle(drawEvent);
-            });
-          });
-        });
+        delay().then(run);
       }
       else {
-        _events.forEach((item) => {
-          item.events.forEach((handle) => {
-            handle(drawEvent);
-          });
-        });
+        run();
       }
-
     };
-
-    if (ref.current) {
-      if (supportsPassive) {
-        ref.current.addEventListener('mousemove', mouseHandler, {
-          passive: true,
-          capture: true,
-        });
-      }
-      else {
-        ref.current.addEventListener('mousemove', mouseHandler, true);
-      }
-    }
+    const options = !supportsPassive ? true : {
+      passive: true,
+      capture: true,
+    };
+    
+    DrawController.sheetEl.addEventListener('mousemove', mouseHandler, options);
   
     return () => {
-      ref.current?.removeEventListener('mousemove', mouseHandler, true);
+      DrawController.sheetEl?.removeEventListener('mousemove', mouseHandler, true);
+      DrawController.sheetEl = undefined;
     };
   }, [ref.current]);
-
-  return () => new DrawController(ref.current!);
 }

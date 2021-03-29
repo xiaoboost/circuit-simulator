@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useWatcher } from 'src/use';
-import { mapState } from '../drawing-sheet/state';
+import { mapState } from '../drawing-sheet/map';
 import { PointKind, PointStatus, getStyle, getSize } from './utils';
 import { useState, useRef, useEffect } from 'react';
 
