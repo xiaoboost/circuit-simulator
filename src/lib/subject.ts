@@ -5,7 +5,7 @@ type ReadonlyObject<T> = T extends AnyObject ? Readonly<T> : T;
 
 type GetWatcherType<W> = W extends Watcher<infer R> ? R : never;
 type GetWatcherListType<W extends readonly Watcher<any>[]> = { [K in keyof W]: GetWatcherType<W[K]> };
-type CreateWtacherList<V extends readonly any[]> = { [K in keyof V]: Watcher<V[K]> };
+type CreateWatcherList<V extends readonly any[]> = { [K in keyof V]: Watcher<V[K]> };
 
 /** 频道订阅者 */
 export class ChannelSubject {
@@ -116,9 +116,9 @@ export class Watcher<T> extends Subject<T> {
     Watchers extends readonly Watcher<any>[],
     Params extends GetWatcherListType<Watchers>,
     Values extends readonly any[],
-  >(watchers: Watchers, cb: (...args: Params) => Values): CreateWtacherList<Values> {
-    const initVals = cb(...watchers.map(({ _data }) => _data) as any);
-    const newWatchers = initVals.map((init) => new Watcher(init));
+  >(watchers: Watchers, cb: (...args: Params) => Values): CreateWatcherList<Values> {
+    const initVal = cb(...watchers.map(({ _data }) => _data) as any);
+    const newWatchers = initVal.map((init) => new Watcher(init));
 
     // 更新所有观测器的回调
     const observeCb = () => {

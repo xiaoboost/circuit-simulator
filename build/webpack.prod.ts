@@ -22,6 +22,7 @@ baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
   new (CssMinimizerWebpackPlugin as any)(),
   new TerserPlugin({
     test: /\.js$/i,
+    extractComments: false,
     terserOptions: {
       ie8: false,
       safari10: false,

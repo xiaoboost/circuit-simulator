@@ -1,7 +1,6 @@
 import chalk from 'chalk';
 import path from 'path';
 import Webpack from 'webpack';
-import typescript from 'typescript';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
@@ -136,20 +135,6 @@ const baseConfig: Webpack.Configuration = {
         {
           from: utils.resolve('src/assets/favicon.ico'),
           to: path.join(config.output, 'images/favicon.ico')
-        },
-        {
-          from: utils.resolve('src/examples/*.ts'),
-          to({ absoluteFilename }) {
-            const fileName = path.parse(absoluteFilename).base;
-            return path.join(config.output, 'examples', `${fileName}.json`);
-          },
-          transform(content) {
-            const code = typescript.transpile(content.toString(), {
-              target: typescript.ScriptTarget.ES5,
-              module: typescript.ModuleKind.CommonJS,
-            });
-            return JSON.stringify(utils.runScript(code).data);
-          },
         },
       ],
     }),

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { useEffect } from 'react';
-import { getQueryByName, get } from '@utils/http';
+import { delay } from '@utils/func';
+import { getQueryByName } from '@utils/http';
 
 import { DrawingSheet } from 'src/components/drawing-sheet';
 import { SideMenu } from 'src/components/side-menu';
@@ -21,14 +22,17 @@ async function fetchMap() {
   const map = getQueryByName('map');
 
   if (map) {
-    const data = await get(`/examples/${map}.json`).catch((e) => {
+    const response = await import(/* webpackChunkName: "[request]" */ `../examples/${map}.ts`).catch((e) => {
       console.error(e);
-      return { data: [] };
     });
+
+    if (!response) {
+      return;
+    }
 
     // 加载数据
     // await this.$store.dispatch('IMPORT_DATA', data);
-    // await this.$nextTick();
+    await delay();
   }
 }
 

@@ -172,17 +172,17 @@ export function toScientific(num: number) {
   const rank = getRank(num);
 
   /** 3 整数倍 */
-  let thridRank = Math.floor(rank / 3) * 3;
+  let thirdRank = Math.floor(rank / 3) * 3;
 
-  if (thridRank > 9) {
-    thridRank = 9;
+  if (thirdRank > 9) {
+    thirdRank = 9;
   }
-  else if (thridRank < -12) {
-    thridRank = -12;
+  else if (thirdRank < -12) {
+    thirdRank = -12;
   }
 
   /** 剩余的数字 */
-  const base = new BigNumber(num).dividedBy(Math.pow(10, thridRank));
+  const base = new BigNumber(num).dividedBy(Math.pow(10, thirdRank));
 
-  return `${base.toNumber()} ${RankEnum[thridRank]}`;
+  return `${base.toNumber()} ${RankEnum[thirdRank]}`;
 }
