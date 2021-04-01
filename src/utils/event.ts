@@ -42,13 +42,12 @@ export function onceEvent<T extends Event>(el: Element, type: T['type']): Promis
 
 /**
  * 鼠标事件点击按钮
- * @link https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent/buttons#%E8%BF%94%E5%9B%9E%E5%80%BC
+ * @link https://developer.mozilla.org/zh-CN/docs/Web/API/MouseEvent/button#%E8%BF%94%E5%9B%9E%E5%80%BC
  */
 export enum MouseButtons {
-  None = 0,
-  Left = 1,
-  Right = 2,
-  Middle = 4,
-  Back = 8,
-  Forward = 16,
+  Left = 0,
+  Middle,
+  Right,
+  Back,
+  Forward,
 }

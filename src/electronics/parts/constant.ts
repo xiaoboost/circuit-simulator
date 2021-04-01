@@ -1,4 +1,4 @@
-import type { PartData, ElectronicKind } from '../types';
+import type { PartData, ElectronicKind } from '../constant';
 import type { NumberRank, Matrix } from 'src/math';
 
 import { Direction } from 'src/math';

@@ -1,7 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import { Matrix, Point, toDirection } from 'src/math';
+import { Point, toDirection } from 'src/math';
+import { DrawController } from 'src/lib/mouse';
 import { Part, Electronics } from 'src/electronics';
+import { delay } from '@utils/func';
 
 interface PartPoint {
   /** 节点半径 */
@@ -42,4 +44,41 @@ export function useTexts(data: Part) {
       .filter((txt) => txt.vision)
       .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'))
   ), [data.params]);
+}
+
+export function useCreateStatus(data: Part) {
+  useEffect(() => {
+    if (!data.isCreate) {
+      return;
+    }
+
+    // 选中自己
+    data.setSelects([data.id]);
+
+    new DrawController()
+      // .setCursor('move_part')
+      .setStopEvent({ type: 'mousedown', which: 'Left' })
+      .setMoveEvent((e) => {
+        data.position = e.position;
+        data.dispatch();
+      })
+      .start()
+      .then(() => {
+        const node = data.position;
+
+        data.position = Point.from(
+          node.round(20)
+            .around((point) => !data.isOccupied(point), 20)
+            .reduce(
+              (pre, next) =>
+                node.distance(pre) < node.distance(next) ? pre : next,
+            ),
+        );
+
+        data.setSign();
+        data.dispatch();
+
+        delay(6).then(() => data.isCreate = false);
+      });
+  }, []);
 }

@@ -1,17 +1,16 @@
-import { ElectronicKind, Connect } from './types';
+import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
 
 import type { Line } from './line';
 import type { Part } from './part';
 
-/** 全局编号 */
-let _id = 0;
-
 /** 全部导线 */
 export const lines = new Watcher<Line[]>([]);
 /** 全部器件 */
 export const parts = new Watcher<Part[]>([]);
+/** 被选中的器件 */
+export const selects = new Watcher<string[]>([]);
 /** 全局元件速查表 */
 const ElectronicHash: Record<number, Electronic | undefined> = {};
 
@@ -49,16 +48,32 @@ export class Electronic {
     this.kind = kind;
     this.id = createId(Electronics[kind].pre);
     ElectronicHash[this.id] = this;
-    this.update();
+    this.dispatch();
   }
 
-  update() {
+  /** 刷新页面 */
+  dispatch() {
     lines.setData(getElectronics(true) as Line[]);
     parts.setData(getElectronics(false) as Part[]);
   }
 
   delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
-    this.update();
+    this.dispatch();
+  }
+
+  /** 搜索导线 */
+  findLine(id: string) {
+    return lines.data.find((line) => line.id === id);
+  }
+
+  /** 搜索器件 */
+  findPart(id: string) {
+    return parts.data.find((part) => part.id === id);
+  }
+
+  /** 设置选中的器件 */
+  setSelects(parts: string[]) {
+    selects.setData(parts.filter((id) => ElectronicHash[id]));
   }
 }

@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from 'react';
 
-import { mapState } from './map';
+import { mapState } from '../components/drawing-sheet/map';
 
 import { Point } from 'src/math';
 import { delay } from '@utils/func';
@@ -21,8 +21,8 @@ export interface StopEventOption {
 
 /** 绘图事件 */
 export interface DrawEvent {
-  readonly movement: Readonly<Point>;
-  readonly position: Readonly<Point>;
+  readonly movement: Point;
+  readonly position: Point;
   readonly target: HTMLElement;
   readonly currentTarget: HTMLElement;
   readonly origin: MouseEvent;
@@ -33,7 +33,7 @@ export class DrawController {
   /** 图纸 DOM */
   static sheetEl?: HTMLElement;
   /** 绘图事件实例 */
-  static data: DrawController[] = [];
+  static current?: DrawController;
 
   /** 是否开始 */
   isStart = false;
@@ -43,7 +43,9 @@ export class DrawController {
   stopEvent = () => Promise.resolve();
 
   constructor() {
-    DrawController.data.push(this);
+    if (!DrawController.current) {
+      DrawController.current = this;
+    };
   }
 
   start() {
@@ -52,7 +54,7 @@ export class DrawController {
   }
 
   stop() {
-    remove(DrawController.data, this);
+    DrawController.current = undefined;
   }
 
   setMoveEvent(cb: Callback) {
@@ -102,6 +104,7 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>) {
     let last: Point;
 
     const mouseHandler = (event: MouseEvent) => {
+      const { current } = DrawController;
       const { data: map } = mapState;
       const mouse = new Point(event.pageX, event.pageY);
       const movement = last ? mouse.add(last, -1).mul(1 / map.zoom) : new Point(0, 0);
@@ -115,14 +118,12 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>) {
       };
 
       last = mouse;
+      
+      if (!current || !current.isStart) {
+        return;
+      }
 
-      const run = () => {
-        DrawController.data
-          .filter((draw) => draw.isStart)
-          .forEach((draw) => {
-            draw.events.forEach((handle) => handle(drawEvent));
-          });
-      };
+      const run = () => current.events.forEach((handle) => handle(drawEvent));
 
       if (process.env.NODE_ENV === 'development') {
         delay().then(run);

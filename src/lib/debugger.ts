@@ -3,19 +3,19 @@
 import { def } from '@utils/object';
 import { wait } from '@utils/func';
 import { Point, PointLike } from 'src/math';
-import { outputMap, MapHash, NodeType } from './map';
+import { SignNodeKind } from './map';
 
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
 
 // 点颜色
 const nodeColor = {
-  [NodeType.Part]: 'black',
-  [NodeType.PartPoint]: 'red',
-  [NodeType.Line]: 'green',
-  [NodeType.LinePoint]: 'orange',
-  [NodeType.LineCrossPoint]: 'blue',
-  [NodeType.LineCoverPoint]: 'yellow',
+  [SignNodeKind.Part]: 'black',
+  [SignNodeKind.PartPoint]: 'red',
+  [SignNodeKind.Line]: 'green',
+  [SignNodeKind.LinePoint]: 'orange',
+  [SignNodeKind.LineCrossPoint]: 'blue',
+  [SignNodeKind.LineCoverPoint]: 'yellow',
 };
 
 export default class MapDebug {

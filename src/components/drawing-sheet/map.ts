@@ -1,8 +1,9 @@
 import { Point } from 'src/math';
 import { Watcher } from 'src/lib/subject';
 import { MouseButtons } from '@utils/event';
+import { DrawController } from 'src/lib/mouse';
+
 import { useCallback, MouseEvent, WheelEvent } from 'react';
-import { DrawController } from './mouse';
 
 export interface MapState {
   zoom: number;
@@ -55,10 +56,7 @@ export function useMap() {
     }
 
     new DrawController()
-      .setStopEvent({
-        type: 'mouseup',
-        which: 'Right',
-      })
+      .setStopEvent({ type: 'mouseup', which: 'Right' })
       .setMoveEvent((ev) => {
         const { zoom, position } = mapState.data;
 

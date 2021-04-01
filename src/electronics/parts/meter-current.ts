@@ -1,5 +1,5 @@
 import { ElectronicPrototype } from './constant';
-import { ElectronicKind } from '../types';
+import { ElectronicKind } from '../constant';
 import { Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {

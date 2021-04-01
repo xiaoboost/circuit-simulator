@@ -1,6 +1,6 @@
 import { ElectronicPrototype, UnitType } from './constant';
 import { numberParser, Direction } from 'src/math';
-import { ElectronicKind } from '../types';
+import { ElectronicKind } from '../constant';
 import { isNumber } from '@utils/assert';
 
 export const data: ElectronicPrototype = {

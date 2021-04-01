@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { Part } from 'src/electronics';
 import { Electronics, ElectronicKind } from 'src/electronics';
 import { ElectronicPoint, PointKind, PointStatus } from '../electronic-point';
-import { usePoints, useTexts } from './utils';
+import { usePoints, useTexts, useCreateStatus } from './utils';
 
 interface Props {
   data: Part;
@@ -18,6 +18,8 @@ export function ElectronicPart({ data }: Props) {
   const texts = useTexts(data);
   const label = data.id.split('_');
   const showText = data.kind !== ElectronicKind.ReferenceGround;
+
+  useCreateStatus(data);
 
   return <g transform={`matrix(${data.rotate.join()},${data.position.join()})`}>
     <g className="part-focus">

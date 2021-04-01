@@ -1,5 +1,5 @@
 import { ElectronicPrototype, UnitType } from './constant';
-import { PartData, ElectronicKind } from '../types';
+import { PartData, ElectronicKind } from '../constant';
 import { numberParser, Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {

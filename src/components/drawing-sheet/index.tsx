@@ -13,7 +13,7 @@ import * as store from 'src/electronics';
 import * as utils from './utils';
 
 import { useMap, mapState } from './map';
-import { useMouseBusInit } from './mouse';
+import { useMouseBusInit } from 'src/lib/mouse';
 
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);

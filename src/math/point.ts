@@ -163,10 +163,10 @@ export class Point {
    *
    * @returns {Point}
    */
-  sign(): Point {
+  sign(factor = 1): Point {
     return (new Point(
-      Math.sign(this[0]),
-      Math.sign(this[1]),
+      Math.sign(this[0]) * factor,
+      Math.sign(this[1]) * factor,
     ));
   }
   /**

@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './index.styl';
 
-import { useCallback } from 'react';
 import { Tooltip } from 'antd';
 import { Electronics, ElectronicPrototype, ElectronicKind, Part } from 'src/electronics';
 
@@ -70,6 +69,10 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 }
 
 export function AddPart() {
+  const create = (kind: ElectronicKind) => {
+    new Part(kind).isCreate = true;
+  };
+
   return <section className={styles.partPanel}>
     <header className={styles.menuTitle}>
       <h1>添加器件</h1>
@@ -82,7 +85,7 @@ export function AddPart() {
             <Tooltip key={i} placement='top' title={ Electronics[kind].introduction }>
               <span
                 className={styles.partItem}
-                onClick={() => new Part(kind)}>
+                onClick={() => create(kind)}>
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                   <PartShape {...Electronics[kind]} />
                 </svg>

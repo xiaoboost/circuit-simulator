@@ -1,5 +1,6 @@
 import { Point, Matrix } from 'src/math';
 import { LineWay } from './line-way';
+import { SignMap } from 'src/lib/map';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
@@ -55,3 +56,6 @@ export interface PartData {
   connects: Connect[];
   params: string[];
 }
+
+/** 标记图纸 */
+export const map = new SignMap();

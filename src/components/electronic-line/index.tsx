@@ -7,5 +7,9 @@ interface Props {
 }
 
 export function ElectronicLine({ data }: Props) {
-  return <g>line: { data.id }</g>
+  const linePath = data.path.length === 0 ? '' : `M${data.path.map((n) => n.join(',')).join('L')}`;
+
+  return <g>
+    <path path={linePath} />
+  </g>
 }

@@ -1,4 +1,4 @@
-import { ElectronicKind } from '../types';
+import { ElectronicKind } from '../constant';
 
 // 虚拟器件
 import { data as ReferenceGround } from './virtual-ref-ground';
