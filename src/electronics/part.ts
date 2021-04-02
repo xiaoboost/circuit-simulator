@@ -32,6 +32,11 @@ export class Part extends Electronic implements PartData {
     this.position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
   }
 
+  /** 器件原型数据 */
+  get prototype(): DeepReadonly<ElectronicPrototype> {
+    return Electronics[this.kind];
+  }
+
   /** 迭代器件当前覆盖的所有节点 */
   *paddingPoints() {
     const { prototype, position, rotate } = this;
@@ -69,11 +74,6 @@ export class Part extends Electronic implements PartData {
         direction: Point.prototype.rotate.call(toDirection(point.direction), rotate),
       };
     }
-  }
-
-  /** 器件原型数据 */
-  get prototype(): DeepReadonly<ElectronicPrototype> {
-    return Electronics[this.kind];
   }
 
   /** 设置标志位 */

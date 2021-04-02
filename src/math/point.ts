@@ -467,7 +467,7 @@ export class Point {
   }
 }
 
-const DirectionMap = {
+export const Directions: Readonly<Record<Direction, Point>> = {
   [Direction.Top]: Point.from([0, -1]),
   [Direction.Bottom]: Point.from([0, 1]),
   [Direction.Left]: Point.from([-1, 0]),
@@ -477,10 +477,6 @@ const DirectionMap = {
   [Direction.BottomLeft]: Point.from([-1, 1]),
   [Direction.BottomRight]: Point.from([1, 1]),
 };
-
-export function toDirection(direction: Direction) {
-  return DirectionMap[direction];
-}
 
 type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;
 /**
