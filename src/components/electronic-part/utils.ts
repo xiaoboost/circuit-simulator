@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 
-import { Point, toDirection } from 'src/math';
+import { Point } from 'src/math';
 import { DrawController } from 'src/lib/mouse';
 import { Part, Electronics } from 'src/electronics';
 import { delay } from '@utils/func';
@@ -19,19 +19,14 @@ interface PartPoint {
 }
 
 export function usePoints(part: Part) {
-  const prototype = Electronics[part.kind];
   const [points, setPoints] = useState<PartPoint[]>([]);
 
   useEffect(() => {
-    setPoints(prototype.points.map((point) => {
-      return {
-        size: -1,
-        className: '',
-        origin: Point.from(point.position),
-        position: Point.prototype.rotate.call(point.position, part.rotate),
-        direction: Point.prototype.rotate.call(toDirection(point.direction), part.rotate),
-      };
-    }));
+    setPoints(Array.from(part.connectPoints()).map((point) => ({
+      ...point,
+      size: -1,
+      className: '',
+    })));
   }, [part.rotate, part.connects]);
 
   return points;

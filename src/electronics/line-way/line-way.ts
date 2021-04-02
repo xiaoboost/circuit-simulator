@@ -16,6 +16,11 @@ export class LineWay extends Array<Point> {
     super(len);
   }
 
+  /** 转换为 path 路径 */
+  stringify() {
+    return this.length === 0 ? '' : `M${this.map((n) => n.join(',')).join('L')}`;
+  }
+
   /** 获取节点 */
   get(index: number) {
     const sub = (index >= 0) ? index : this.length + index;

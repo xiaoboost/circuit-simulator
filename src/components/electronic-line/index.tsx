@@ -1,15 +1,19 @@
 import React from 'react';
 
 import { Line } from 'src/electronics';
+import { usePathRects } from './utils';
 
 interface Props {
   data: Line;
 }
 
 export function ElectronicLine({ data }: Props) {
-  const linePath = data.path.length === 0 ? '' : `M${data.path.map((n) => n.join(',')).join('L')}`;
+  const rects = usePathRects(data);
 
   return <g>
-    <path path={linePath} />
+    <path path={data.path.stringify()} />
+    {rects.map((rect, i) => (
+      <rect key={i} {...rect} />
+    ))}
   </g>
 }

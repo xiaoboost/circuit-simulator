@@ -1,10 +1,10 @@
 import { Electronic } from './base';
-import { Matrix, Point, toDirection } from 'src/math';
 import { isNumber } from '@utils/assert';
 import { DeepReadonly } from '@utils/types';
 import { ElectronicPrototype, Electronics } from './parts';
 import { ElectronicKind, PartData, map } from './constant';
 import { SignNodeKind } from 'src/lib/map';
+import { Matrix, Point, PointInput, toDirection } from 'src/math';
 
 export class Part extends Electronic implements PartData {
   /** 旋转坐标 */
@@ -33,7 +33,7 @@ export class Part extends Electronic implements PartData {
   }
 
   /** 迭代器件当前覆盖的所有节点 */
-  private *paddingPoints() {
+  *paddingPoints() {
     const { prototype, position, rotate } = this;
     const boxSize = prototype.padding;
     const endpoint = [[-boxSize[3], -boxSize[0]], [boxSize[1], boxSize[2]]];
@@ -55,16 +55,17 @@ export class Part extends Electronic implements PartData {
       }
     }
   }
-  
+
   /** 迭代器件当前所有引脚节点 */
-  private *connectPoints() {
-    const { prototype, position, rotate } = this;
+  *connectPoints() {
+    const { prototype, rotate } = this;
 
     for (let i = 0; i < prototype.points.length; i++) {
       const point = prototype.points[i];
       yield {
         label: `${this.id}_${i}`,
-        position: Point.prototype.rotate.call(point.position, rotate).add(position),
+        origin: Point.from(point.position as PointInput),
+        position: Point.prototype.rotate.call(point.position, rotate),
         direction: Point.prototype.rotate.call(toDirection(point.direction), rotate),
       };
     }
@@ -88,7 +89,7 @@ export class Part extends Electronic implements PartData {
     for (const point of this.connectPoints()) {
       map.set({
         label: this.id,
-        point: point.position,
+        point: point.position.add(this.position),
         kind: SignNodeKind.PartPoint,
       });
     }
@@ -100,7 +101,7 @@ export class Part extends Electronic implements PartData {
       map.delete(point);
     }
     for (const point of this.connectPoints()) {
-      map.delete(point.position);
+      map.delete(point.position.add(this.position));
     }
   }
 
