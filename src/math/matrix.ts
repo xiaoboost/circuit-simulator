@@ -470,10 +470,14 @@ export class Matrix {
       throw new Error('(matrix) only the matrix can be decomposed.');
     }
 
-    const n = this.row;         // 行列式的行数
-    const U = Matrix.from(this);    // 上三角行列式
-    const L = new Matrix(n);      // 下三角行列式
-    const P = new Matrix(n, 'E');   // 变换行列式，初始为单位矩阵
+    /** 行列式行数 */
+    const n = this.row;
+    /** 上三角行列式 */
+    const U = Matrix.from(this);
+    /** 下三角行列式 */
+    const L = new Matrix(n);
+    /** 变换行列式，初始为单位矩阵 */
+    const P = new Matrix(n, 'E');
 
     for (let k = 0; k < n; k++) {
       if (k > 0) {
@@ -488,21 +492,21 @@ export class Matrix {
       }
       if (k < n - 1) {
         // 取绝对值最大的系数为主元
-        let tempmax = 0, tempsub = 0;
+        let tempMax = 0, tempSub = 0;
 
         for (let i = k; i < n; i++) {
           const now = Math.abs(U.get(i, k));
-          if (now > tempmax) {
-            tempmax = now;
-            tempsub = i;
+          if (now > tempMax) {
+            tempMax = now;
+            tempSub = i;
           }
         }
 
         // 交换主元
-        if (tempsub !== 0) {
-          L.exchangeRow(k, tempsub);
-          U.exchangeRow(k, tempsub);
-          P.exchangeRow(k, tempsub);
+        if (tempSub !== 0) {
+          L.exchangeRow(k, tempSub);
+          U.exchangeRow(k, tempSub);
+          P.exchangeRow(k, tempSub);
         }
       }
     }
@@ -564,14 +568,14 @@ export class Matrix {
    * @param args {MatrixInput[]}
    */
   concatRight(...args: MatrixInput[]) {
-    const matrixs = args.map(Matrix.from);
-    const errIndex = matrixs.findIndex((ma) => ma.row !== this.row);
+    const matrixes = args.map(Matrix.from);
+    const errIndex = matrixes.findIndex((ma) => ma.row !== this.row);
 
     if (errIndex >= 0) {
       throw new Error(`(matrix) The row number of the ${errIndex} matrix is not equal to this.`);
     }
 
-    const totalCol = matrixs.reduce((col, ma) => col + ma.column, this.column);
+    const totalCol = matrixes.reduce((col, ma) => col + ma.column, this.column);
     const result = new Matrix(this.row, totalCol, 0);
 
     // 添加 this 矩阵元素到 result
@@ -580,7 +584,7 @@ export class Matrix {
     let lastCol = this.column;
 
     // 添加扩展矩阵元素到 result
-    for (const ma of matrixs) {
+    for (const ma of matrixes) {
       ma.forEach((n, [i, j]) => {
         result.set(i, j + lastCol, n);
       });
@@ -595,14 +599,14 @@ export class Matrix {
    * @param args {MatrixInput[]}
    */
   concatDown(...args: MatrixInput[]) {
-    const matrixs = args.map((Matrix.from));
-    const errIndex = matrixs.findIndex((ma) => ma.column !== this.column);
+    const matrixes = args.map((Matrix.from));
+    const errIndex = matrixes.findIndex((ma) => ma.column !== this.column);
 
     if (errIndex >= 0) {
       throw new Error(`(matrix) The column number of the ${errIndex} matrix is not equal to this.`);
     }
 
-    const totalRow = matrixs.reduce((row, ma) => row + ma.row, this.row);
+    const totalRow = matrixes.reduce((row, ma) => row + ma.row, this.row);
     const result = new Matrix(totalRow, this.column, 0);
 
     // 添加 this 矩阵元素到 result
@@ -611,7 +615,7 @@ export class Matrix {
     let lastRow = this.row;
 
     // 添加扩展矩阵元素到 result
-    for (const ma of matrixs) {
+    for (const ma of matrixes) {
       ma.forEach((n, [i, j]) => {
         result.set(i + lastRow, j, n);
       });
@@ -659,7 +663,7 @@ export class Matrix {
    * @param callback 一个数字或者是回调
    *  - 数字相等或者是回调返回 true，此时矩阵元素的位置会被记录
    */
-  filterPostion(callback: number | ((value: number, position: [number, number]) => boolean)) {
+  filterPosition(callback: number | ((value: number, position: [number, number]) => boolean)) {
     const position: Array<[number, number]> = [];
     const pre = isNumber(callback) ? (val: number) => val === callback : callback;
 

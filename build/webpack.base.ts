@@ -48,13 +48,11 @@ const baseConfig: Webpack.Configuration = {
       {
         test: /\.tsx?$/,
         exclude: /node_modules/,
-        loader: 'ts-loader',
+        loader: 'esbuild-loader',
         options: {
-          configFile: utils.resolve('build/tsconfig.build.json'),
-          compilerOptions: {
-            target: isDevelopment ? 'esnext' : 'es5',
-            module: 'ESNext',
-          },
+          loader: 'tsx',
+          target: 'es2015',
+          tsconfigRaw: require(utils.resolve('tsconfig.json')),
         },
       },
       {

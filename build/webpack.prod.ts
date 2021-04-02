@@ -4,9 +4,8 @@ import * as config from './config';
 import chalk from 'chalk';
 import webpack from 'webpack';
 import baseConfig from './webpack.base';
-import TerserPlugin from 'terser-webpack-plugin';
-import CssMinimizerWebpackPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { ESBuildMinifyPlugin } from 'esbuild-loader';
 
 if (!baseConfig.optimization) {
   baseConfig.optimization = {
@@ -19,17 +18,9 @@ if (!baseConfig.optimization.minimizer) {
 }
 
 baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
-  new (CssMinimizerWebpackPlugin as any)(),
-  new TerserPlugin({
-    test: /\.js$/i,
-    extractComments: false,
-    terserOptions: {
-      ie8: false,
-      safari10: false,
-      output: {
-        comments: /^!/,
-      },
-    },
+  new ESBuildMinifyPlugin({
+    target: 'es2015',
+    css: true,
   }),
 ]);
 
