@@ -5,10 +5,7 @@ import { useRef } from 'react';
 import { stringifyClass } from '@utils/string';
 import { useWatcher } from 'src/use';
 
-import { ElectronicLine } from '../electronic-line';
-import { ElectronicPart } from '../electronic-part';
-
-import * as store from 'src/electronics';
+import * as store from '../electronics';
 import * as utils from './utils';
 
 import { useMap, mapState } from './map';
@@ -33,8 +30,8 @@ export function DrawingSheet() {
     >
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
-          {lines.map((line) => <ElectronicLine key={line.id} data={line} />)}
-          {parts.map((part) => <ElectronicPart key={part.id} data={part} />)}
+          {lines.map(({ Render, id }) => <Render key={id} />)}
+          {parts.map(({ Render, id }) => <Render key={id} />)}
         </g>
       </svg>
     </section>

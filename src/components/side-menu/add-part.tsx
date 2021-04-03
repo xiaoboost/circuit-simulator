@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './index.styl';
 
 import { Tooltip } from 'antd';
-import { Electronics, ElectronicPrototype, ElectronicKind, Part } from 'src/electronics';
+import { Electronics, ElectronicPrototype, ElectronicKind, Part } from '../electronics';
 
 interface Category {
   name: string;
@@ -70,7 +70,7 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 
 export function AddPart() {
   const create = (kind: ElectronicKind) => {
-    new Part(kind).isCreate = true;
+    new Part(kind).create();
   };
 
   return <section className={styles.partPanel}>

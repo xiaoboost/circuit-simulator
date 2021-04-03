@@ -2,6 +2,7 @@ import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
 import { SignMap } from 'src/lib/map';
+import { Component } from 'react';
 
 import type { Line } from './line';
 import type { Part } from './part';
@@ -56,12 +57,13 @@ export class Electronic {
     this.dispatch();
   }
 
-  /** 刷新页面 */
+  /** 刷新所有组件 */
   dispatch() {
     lines.setData(getElectronics(true) as Line[]);
     parts.setData(getElectronics(false) as Part[]);
   }
 
+  /** 删除自己 */
   delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
     this.dispatch();

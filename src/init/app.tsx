@@ -22,7 +22,7 @@ async function fetchMap() {
   const map = getQueryByName('map');
 
   if (map) {
-    const response = await import(/* webpackChunkName: "[request]" */ `../examples/${map}.ts`).catch((e) => {
+    const response = await import(`../examples/${map}.ts`).catch((e) => {
       console.error(e);
     });
 
@@ -36,11 +36,9 @@ async function fetchMap() {
   }
 }
 
-export const App = () => {
+export function App() {
   // 初始化
-  useEffect(() => {
-    fetchMap().then(loaded);
-  }, []);
+  useEffect(() => void fetchMap().then(loaded), []);
 
   return <>
     <DrawingSheet />
