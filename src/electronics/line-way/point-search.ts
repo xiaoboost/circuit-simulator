@@ -140,7 +140,7 @@ function newNode(node: SearchNodeData, index: RotateMatrix): SearchNodeData {
 }
 
 /** A* 单点寻路 */
-export function PointSearch({
+export function pointSearch({
   start,
   end,
   status,

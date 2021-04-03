@@ -3,6 +3,10 @@ import { Line } from 'src/electronics';
 
 export function usePathRects(line: Line) {
   return useMemo(() => {
+    if (line.inDrawStatus) {
+      return [];
+    }
+
     const ans = [], wide = 14;
 
     for (let i = 0; i < line.path.length - 1; i++) {
@@ -21,5 +25,5 @@ export function usePathRects(line: Line) {
     }
 
     return ans;
-  }, [line.path.stringify()])
+  }, [line.inDrawStatus, line.path.stringify()])
 }

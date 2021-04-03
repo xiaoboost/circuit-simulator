@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { Point } from 'src/math';
 import { DrawController } from 'src/lib/mouse';
@@ -76,4 +76,8 @@ export function useCreateStatus(data: Part) {
         delay(6).then(() => data.isCreate = false);
       });
   }, []);
+}
+
+export function useCreateLine(data: Part) {
+  // ..
 }

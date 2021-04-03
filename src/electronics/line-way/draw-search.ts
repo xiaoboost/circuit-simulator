@@ -1,11 +1,10 @@
 import { Point } from 'src/math';
 import { isDef } from '@utils/assert';
 import { LineWay } from './line-way';
-import { nodeSearch } from './point-search';
+import { pointSearch } from './point-search';
 
 import { Line } from '../line';
 import { Part } from '../part';
-import { map } from '../constant';
 
 /** 绘制状态选项 */
 export interface Option {
@@ -120,7 +119,7 @@ function setSearchConfig(params: Option) {
   let status = Status.Space;
 
   // 导线终点默认最大半径
-  pointSize.$set(1, 8);
+  // pointSize.$set(1, 8);
 
   // 引脚复位
   if (mouseOver.recover) {
@@ -130,52 +129,52 @@ function setSearchConfig(params: Option) {
 
   // 终点在器件上
   if (mouseOver.status === Mouse.Part) {
-    const points = mouseOver.part.points.map((point) => point.position);
-    const mouseToPart = new Point(mouseOver.part.position, end.add(mouseBais));
-    const idlePoint = points.filter((_, i) => !mouseOver.part.connect[i]);
+    // const points = mouseOver.part.points.map((point) => point.position);
+    // const mouseToPart = new Point(mouseOver.part.position, end.add(mouseBais));
+    // const idlePoint = points.filter((_, i) => !mouseOver.part.connect[i]);
 
-    // 允许直接对齐
-    if (idlePoint.length > 0) {
-      // 导线终点缩小
-      pointSize.$set(1, 2);
+    // // 允许直接对齐
+    // if (idlePoint.length > 0) {
+    //   // 导线终点缩小
+    //   pointSize.$set(1, 2);
 
-      // 优先对齐的引脚
-      const allowPoint = mouseToPart.minAngle(idlePoint);
-      const index = points.findIndex((node) => node.isEqual(allowPoint));
+    //   // 优先对齐的引脚
+    //   const allowPoint = mouseToPart.minAngle(idlePoint);
+    //   const index = points.findIndex((node) => node.isEqual(allowPoint));
 
-      // 该引脚缩放
-      mouseOver.part.pointSize.$set(index, 2);
-      // 缩放状态复位函数
-      mouseOver.recover = () => mouseOver.part.pointSize.$set(index, -1);
+    //   // 该引脚缩放
+    //   mouseOver.part.pointSize.$set(index, 2);
+    //   // 缩放状态复位函数
+    //   mouseOver.recover = () => mouseOver.part.pointSize.$set(index, -1);
 
-      // 点对齐状态
-      status = Status.AlignPoint;
-      // 终点只有需要对齐的点
-      ends = [allowPoint.add(mouseOver.part.position)];
-    }
-    // 不允许直接对齐
-    else {
-      ends = endGrid;
-    }
+    //   // 点对齐状态
+    //   status = Status.AlignPoint;
+    //   // 终点只有需要对齐的点
+    //   ends = [allowPoint.add(mouseOver.part.position)];
+    // }
+    // // 不允许直接对齐
+    // else {
+    //   ends = endGrid;
+    // }
   }
   // 终点在导线上
   else if (mouseOver.status === Mouse.Line) {
-    const mouseRound = end.round();
-    const mouseStatus = map.get(mouseRound)!;
+    // const mouseRound = end.round();
+    // const mouseStatus = map.get(mouseRound)!;
 
-    // 导线交错节点或者是空闲节点，则直接对齐
-    if (
-      mouseStatus.type === map.NodeType.LinePoint ||
-      mouseStatus.type === map.NodeType.LineCrossPoint
-    ) {
-      status = Status.AlignPoint;
-      ends = [mouseRound];
-    }
-    // 否则选取四方格中在导线上的点
-    else {
-      status = Status.AlignLine;
-      ends = endGrid.filter((node) => map.isLine(node, true));
-    }
+    // // 导线交错节点或者是空闲节点，则直接对齐
+    // if (
+    //   mouseStatus.type === map.NodeType.LinePoint ||
+    //   mouseStatus.type === map.NodeType.LineCrossPoint
+    // ) {
+    //   status = Status.AlignPoint;
+    //   ends = [mouseRound];
+    // }
+    // // 否则选取四方格中在导线上的点
+    // else {
+    //   status = Status.AlignLine;
+    //   ends = endGrid.filter((node) => map.isLine(node, true));
+    // }
   }
   // 终点闲置
   else {
@@ -212,21 +211,21 @@ function searchWay(params: ReturnType<typeof setSearchConfig>) {
 
   // 搜索路径
   for (const point of ends) {
-    if (cache.has(point, endBias)) {
-      continue;
-    }
+    // if (cache.has(point, endBias)) {
+    //   continue;
+    // }
 
-    // 设置当前搜索终点
-    option.end = point;
+    // // 设置当前搜索终点
+    // option.end = point;
 
-    // 搜索并修饰
-    const tempWay = nodeSearch(option).checkWayExcess({
-      ...option,
-      status: Status.Modification,
-    });
+    // // 搜索并修饰
+    // const tempWay = nodeSearch(option).checkWayExcess({
+    //   ...option,
+    //   status: Status.Modification,
+    // });
 
-    // 记录当前搜索结果
-    cache.set(point, endBias, tempWay);
+    // // 记录当前搜索结果
+    // cache.set(point, endBias, tempWay);
   }
 
   return params;
@@ -237,52 +236,52 @@ function setWayPath(params: ReturnType<typeof searchWay>) {
 
   let way: LineWay;
 
-  if (status === Status.AlignPoint) {
-    way = LineWay.from(cache.get(ends[0], endBias)!);
-  }
-  else if (status === Status.AlignLine) {
-    const endRound = end.round();
-    const endRoundWay = cache.get(endRound, endBias)!;
-    // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
-    const roundSet = ends.filter((node) => {
-      if (map.hasConnect(endRound, node, true)) {
-        const endStatus = map.getPoint(node, true);
-        return endStatus && endStatus.type !== map.NodeType.PartPoint;
-      }
-      else {
-        return false;
-      }
-    });
+  // if (status === Status.AlignPoint) {
+  //   way = LineWay.from(cache.get(ends[0], endBias)!);
+  // }
+  // else if (status === Status.AlignLine) {
+  //   const endRound = end.round();
+  //   const endRoundWay = cache.get(endRound, endBias)!;
+  //   // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+  //   const roundSet = ends.filter((node) => {
+  //     if (map.hasConnect(endRound, node, true)) {
+  //       const endStatus = map.getPoint(node, true);
+  //       return endStatus && endStatus.type !== map.NodeType.PartPoint;
+  //     }
+  //     else {
+  //       return false;
+  //     }
+  //   });
 
-    if (roundSet.length > 0) {
-      // 交集中离鼠标最近的点
-      const closest = end.closest(roundSet);
-      // 导线形状相似
-      if (endRoundWay.isSimilar(cache.get(closest, endBias)!)) {
-        way = LineWay.from(cache.get(closest, endBias)!);
-        way.endToLine([endRound, closest], end);
-        pointSize.$set(1, 3);
-      }
-      else {
-        way = LineWay.from(endRoundWay);
-      }
-    }
-    else {
-      way = LineWay.from(endRoundWay);
-    }
-  }
-  else {
-    // 选取终点中节点最多的路径
-    const key = ends.filter((node) => cache.has(node, endBias)).reduce(
-      (pre, next) =>
-        (cache.get(pre, endBias)!.length >= cache.get(next, endBias)!.length) ? pre : next,
-    );
+  //   if (roundSet.length > 0) {
+  //     // 交集中离鼠标最近的点
+  //     const closest = end.closest(roundSet);
+  //     // 导线形状相似
+  //     if (endRoundWay.isSimilar(cache.get(closest, endBias)!)) {
+  //       way = LineWay.from(cache.get(closest, endBias)!);
+  //       way.endToLine([endRound, closest], end);
+  //       // pointSize.$set(1, 3);
+  //     }
+  //     else {
+  //       way = LineWay.from(endRoundWay);
+  //     }
+  //   }
+  //   else {
+  //     way = LineWay.from(endRoundWay);
+  //   }
+  // }
+  // else {
+  //   // 选取终点中节点最多的路径
+  //   const key = ends.filter((node) => cache.has(node, endBias)).reduce(
+  //     (pre, next) =>
+  //       (cache.get(pre, endBias)!.length >= cache.get(next, endBias)!.length) ? pre : next,
+  //   );
 
-    way = LineWay.from(cache.get(key, endBias)!);
-    way.endToPoint(end);
-  }
+  //   way = LineWay.from(cache.get(key, endBias)!);
+  //   way.endToPoint(end);
+  // }
 
-  return way;
+  return way!;
 }
 
 /** 单点绘制 - 导线搜索 */

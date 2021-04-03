@@ -33,7 +33,7 @@ export class LineWay extends Array<Point> {
   }
 
   /** 导线节点坐标标准化 */
-  standardize(base: number = 20) {
+  standardize(base = 20) {
     for (let i = 0; i < this.length; i++) {
       this[i] = this[i].round(base);
     }
@@ -42,7 +42,7 @@ export class LineWay extends Array<Point> {
   }
 
   /** 导线坐标整体偏移 */
-  offset(bias: PointLike = [0, 0]) {
+  move(bias: PointLike = [0, 0]) {
     for (let i = 0; i < this.length; i++) {
       this[i] = this[i].add(bias);
     }
@@ -79,7 +79,7 @@ export class LineWay extends Array<Point> {
    *  - 只有最后两个节点不同
    *  - 最后两个节点组成的线段平行
    */
-   isSimilar(line: LineWay) {
+  isSimilar(line: LineWay) {
     if (this.length !== line.length) {
       return false;
     }

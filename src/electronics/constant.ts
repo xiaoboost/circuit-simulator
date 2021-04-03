@@ -1,6 +1,5 @@
 import { Point, Matrix } from 'src/math';
 import { LineWay } from './line-way';
-import { SignMap } from 'src/lib/map';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
@@ -57,5 +56,10 @@ export interface PartData {
   params: string[];
 }
 
-/** 标记图纸 */
-export const map = new SignMap();
+/** 节点状态 */
+export interface PointStatus {
+  /** 节点半径 */
+  size?: number;
+  /** 节点样式名称 */
+  className?: string;
+}

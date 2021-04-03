@@ -1,10 +1,13 @@
 import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
+import { SignMap } from 'src/lib/map';
 
 import type { Line } from './line';
 import type { Part } from './part';
 
+/** 全局图纸 */
+const map = new SignMap();
 /** 全部导线 */
 export const lines = new Watcher<Line[]>([]);
 /** 全部器件 */
@@ -41,6 +44,8 @@ export class Electronic {
   readonly id: string;
   /** 元件类型 */
   readonly kind: ElectronicKind;
+  /** 图纸数据 */
+  readonly map = map;
   /** 元件的连接表 */
   connects: Connect[] = [];
 

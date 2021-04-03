@@ -2,9 +2,8 @@ import React from 'react';
 import styles from './index.styl';
 
 import { useRef } from 'react';
-import { Point } from 'src/math';
 import { stringifyClass } from '@utils/string';
-import { useWatcher, useWatcherList } from 'src/use';
+import { useWatcher } from 'src/use';
 
 import { ElectronicLine } from '../electronic-line';
 import { ElectronicPart } from '../electronic-part';
@@ -17,8 +16,8 @@ import { useMouseBusInit } from 'src/lib/mouse';
 
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
-  const [lines] = useWatcherList(store.lines);
-  const [parts] = useWatcherList(store.parts);
+  const [lines] = useWatcher(store.lines);
+  const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
 

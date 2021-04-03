@@ -1,10 +1,10 @@
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
 import { DeepReadonly } from '@utils/types';
-import { ElectronicPrototype, Electronics } from './parts';
-import { ElectronicKind, PartData, map } from './constant';
 import { SignNodeKind } from 'src/lib/map';
-import { Matrix, Point, PointInput, toDirection } from 'src/math';
+import { ElectronicPrototype, Electronics } from './parts';
+import { ElectronicKind, PartData, PointStatus } from './constant';
+import { Matrix, Point, PointInput, Directions } from 'src/math';
 
 export class Part extends Electronic implements PartData {
   /** 旋转坐标 */
@@ -15,9 +15,10 @@ export class Part extends Electronic implements PartData {
   params: string[];
   /** 文本位置 */
   textPosition = new Point(0, 0);
-
   /** 创建标志位 */
   isCreate = false;
+  /** 引脚状态 */
+  pointStatus: PointStatus[];
 
   constructor(kind: ElectronicKind | Partial<PartData>) {
     super(isNumber(kind) ? kind : kind.kind!);
@@ -30,6 +31,7 @@ export class Part extends Electronic implements PartData {
     this.params = data.params ?? prototype.params.map((n) => n.default);
     this.rotate = data.rotate ? Matrix.from(data.rotate) : new Matrix(2, 'E');
     this.position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
+    this.pointStatus = Array(prototype.points.length).fill(false).map(() => ({}));
   }
 
   /** 器件原型数据 */
@@ -71,7 +73,7 @@ export class Part extends Electronic implements PartData {
         label: `${this.id}_${i}`,
         origin: Point.from(point.position as PointInput),
         position: Point.prototype.rotate.call(point.position, rotate),
-        direction: Point.prototype.rotate.call(toDirection(point.direction), rotate),
+        direction: Point.prototype.rotate.call(Directions[point.direction], rotate),
       };
     }
   }
@@ -79,7 +81,7 @@ export class Part extends Electronic implements PartData {
   /** 设置标志位 */
   setSign() {
     for (const point of this.paddingPoints()) {
-      map.set({
+      this.map.set({
         label: this.id,
         point: point,
         kind: SignNodeKind.Part,
@@ -87,7 +89,7 @@ export class Part extends Electronic implements PartData {
     }
 
     for (const point of this.connectPoints()) {
-      map.set({
+      this.map.set({
         label: this.id,
         point: point.position.add(this.position),
         kind: SignNodeKind.PartPoint,
@@ -98,10 +100,10 @@ export class Part extends Electronic implements PartData {
   /** 删除标记 */
   deleteSign() {
     for (const point of this.paddingPoints()) {
-      map.delete(point);
+      this.map.delete(point);
     }
     for (const point of this.connectPoints()) {
-      map.delete(point.position.add(this.position));
+      this.map.delete(point.position.add(this.position));
     }
   }
 
