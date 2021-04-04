@@ -3,7 +3,7 @@ import * as Move from './move-search';
 import * as Deform from './deform-search';
 
 export enum SearchStatus {
-  
+
 }
 
 export {

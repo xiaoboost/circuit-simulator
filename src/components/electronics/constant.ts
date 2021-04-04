@@ -34,7 +34,7 @@ export enum ElectronicKind {
 
 /** 连接点数据 */
 export interface Connect {
-  id: number;
+  id: string;
   mark: number;
 }
 
@@ -43,7 +43,7 @@ export interface LineData {
   id: string;
   kind: ElectronicKind;
   path: LineWay;
-  connects: Connect[];
+  connects: (Connect | undefined)[];
 }
 
 /** 器件基础数据 */
@@ -52,7 +52,7 @@ export interface PartData {
   kind: ElectronicKind;
   rotate: Matrix;
   position: Point;
-  connects: Connect[];
+  connects: (Connect | undefined)[];
   params: string[];
 }
 
@@ -77,6 +77,8 @@ export interface PartPinStatus {
   className?: string;
   /** 引脚标记 */
   label: string;
+  /** 节点是否连接着导线 */
+  isConnected: boolean;
   /** 原本节点相对器件原点位置 */
   origin: Point;
   /** 现在节点相对器件原点位置 */

@@ -82,7 +82,7 @@ export class SignMapNode implements SignNodeData {
   towardEnd(end: PointLike): SignMapNode {
     const { map } = this;
     const uVector = new Point(this.point, end).sign(20);
-  
+
     if (!this.isLine || this.point.isEqual(end)) {
       return this;
     }
@@ -108,7 +108,7 @@ export class SignMapNode implements SignNodeData {
   alongLine(vector: PointLike): SignMapNode {
     const { map } = this;
     const uVector = Point.from(vector).sign(20);
-  
+
     if (!this.isLine) {
       return this;
     }

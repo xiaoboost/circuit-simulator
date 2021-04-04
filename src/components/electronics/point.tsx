@@ -12,6 +12,7 @@ export interface Props {
   size?: number;
   className?: string;
   transform?: string;
+  onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
 export function getStyle(kind: PointKind, status: PointStatus, isSelected = false) {
@@ -76,7 +77,7 @@ export function ElectronicPoint(props: Props) {
     }
 
     const rect = circle.current.getBoundingClientRect();
-  
+
     // 计算当前值
     setAnimateFrom(rect ? rect.width / zoom / 2 : 0);
     // 确定新的终点值
@@ -84,7 +85,7 @@ export function ElectronicPoint(props: Props) {
     // 动画启动
     animate.current.beginElement();
   }
-  
+
   function onMouseEnter() {
     setInner(getSize(props.kind, props.status, true));
   }
@@ -132,6 +133,7 @@ export function ElectronicPoint(props: Props) {
         width='17'
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onMouseDown={props.onMouseDown}
       />
     </g>
   );

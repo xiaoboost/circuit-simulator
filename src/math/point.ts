@@ -6,6 +6,7 @@ export type PointInput = PointLike | number;
 
 /** 方向 */
 export enum Direction {
+  Center,
   Top,
   TopLeft,
   TopRight,
@@ -211,6 +212,44 @@ export class Point {
     return new Point(-this[1], this[0]);
   }
   /**
+   * 获取点的方向
+   */
+  toDirection() {
+    if (this[0] > 0) {
+      if (this[1] > 0) {
+        return Direction.BottomRight;
+      }
+      else if (this[1] < 0) {
+        return Direction.TopRight;
+      }
+      else {
+        return Direction.Right;
+      }
+    }
+    else if (this[0] < 0) {
+      if (this[1] > 0) {
+        return Direction.BottomLeft;
+      }
+      else if (this[1] < 0) {
+        return Direction.TopLeft;
+      }
+      else {
+        return Direction.Left;
+      }
+    }
+    else {
+      if (this[1] > 0) {
+        return Direction.Bottom;
+      }
+      else if (this[1] < 0) {
+        return Direction.Top;
+      }
+      else {
+        return Direction.Center;
+      }
+    }
+  }
+  /**
    * x, y 分别对 n 的余数四舍五入
    *
    * @param {number} [fixed=20]
@@ -348,23 +387,6 @@ export class Point {
     );
   }
   /**
-   * 以 this 为中心、rect 为四角顶点，遍历其中所有整数节点
-   *
-   * @param {number[][]} margin
-   * @param {(node: Point) => boolean} predicate
-   * @returns {boolean}
-   */
-  everyRect(rect: number[][], predicate: (node: Point) => boolean): boolean {
-    for (let i = this[0] + rect[0][0]; i <= this[0] + rect[1][0]; i++) {
-      for (let j = this[1] + rect[0][1]; j <= this[1] + rect[1][1]; j++) {
-        if (!predicate(new Point(i, j))) {
-          return (false);
-        }
-      }
-    }
-    return (true);
-  }
-  /**
    * 以 this 为中心点，过滤距离中心点距离为 factor 的所有点，返回使 predicate 输出 true 的点的集合
    *
    * @param {(point: Point) => boolean} predicate
@@ -468,6 +490,7 @@ export class Point {
 }
 
 export const Directions: Readonly<Record<Direction, Point>> = {
+  [Direction.Center]: Point.from([0, 0]),
   [Direction.Top]: Point.from([0, -1]),
   [Direction.Bottom]: Point.from([0, 1]),
   [Direction.Left]: Point.from([-1, 0]),

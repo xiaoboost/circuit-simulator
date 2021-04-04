@@ -48,7 +48,7 @@ export class Electronic {
   /** 图纸数据 */
   readonly map = map;
   /** 元件的连接表 */
-  connects: Connect[] = [];
+  connects: (Connect | undefined)[] = [];
 
   constructor(kind: ElectronicKind) {
     this.kind = kind;
@@ -67,6 +67,11 @@ export class Electronic {
   delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
     this.dispatch();
+  }
+  
+  /** 移动到最底层 */
+  toBottom() {
+    
   }
 
   /** 搜索导线 */

@@ -72,7 +72,7 @@ export class LineWay extends Array<Point> {
 
     return this;
   }
-  
+
   /**
    * 导线形状相似
    *  - 节点数量相同
@@ -99,7 +99,7 @@ export class LineWay extends Array<Point> {
 
     return selfSegment.isParallel(inputSegment);
   }
-  
+
   /** 获取当前线段的方向 */
   getSubWayVector(index: number) {
     return new Point(this[index], this[index + 1]).sign().mul(20);

@@ -10,9 +10,9 @@ export type DeepReadonly<T> = T extends (infer R)[]
     : T extends AnyObject
       ? DeepReadonlyObject<T>
       : T;
- 
+
 export interface DeepReadonlyArray<T> extends ReadonlyArray<DeepReadonly<T>> {}
- 
+
 export type DeepReadonlyObject<T> = {
   readonly [P in keyof T]: DeepReadonly<T[P]>;
 };

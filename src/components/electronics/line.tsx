@@ -11,24 +11,24 @@ export class Line extends Electronic implements LineData {
   path: LineWay;
   /** 绘制状态 */
   isDrawStatus = false;
-  
-  /** 更新页面 */
-  update?: () => void;
   /** 接触面积方块 */
   rects: RectSize[] = [];
+
+  /** 更新页面 */
+  private _update?: () => void;
 
   constructor(paths: PointLike[] = []) {
     super(ElectronicKind.Line);
     this.path = LineWay.from(paths);
   }
-  
+
   /** 初始化 hook */
-  useInit() {
-    this.update = useForceUpdate();
+  private useInit() {
+    this._update = useForceUpdate();
   }
 
   /** 更新接触方块 */
-  updateRect() {
+  private updateRect() {
     if (this.isDrawStatus) {
       this.rects = [];
     }
@@ -51,6 +51,36 @@ export class Line extends Electronic implements LineData {
     }
 
     this.rects = ans;
+  }
+  
+  /** 更新组件 */
+  update() {
+    this._update?.();
+  }
+
+  /** 设置标志位 */
+  setSign() {
+
+  }
+
+  /** 删除标记 */
+  deleteSign() {
+
+  }
+
+  /** 导线反转 */
+  reverse() {
+    this.path.reverse();
+    this.connects.reverse();
+  }
+
+  /** 绘制导线 */
+  drawing(isEnd = true) {
+    if (isEnd) {
+      this.reverse();
+    }
+
+    this.deleteSign();
   }
 
   /** 渲染函数 */

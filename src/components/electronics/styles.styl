@@ -3,17 +3,20 @@
 .part-text {
   text, tspan {
     white-space: nowrap;
+    font-family: font-text;
+    fill: Black;
+    stroke-width: 0;
   }
 
-  &.text-placement-top, &.text-placement-bottom {
+  &.placement-top, &.placement-bottom {
     text-anchor: middle;
   }
 
-  &.text-placement-left {
+  &.placement-left {
     text-anchor: end;
   }
 
-  &.text-placement-right {
+  &.placement-right {
     text-anchor: start;
   }
 }

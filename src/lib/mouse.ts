@@ -118,7 +118,7 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>) {
       };
 
       last = mouse;
-      
+
       if (!current || !current.isStart) {
         return;
       }
@@ -136,9 +136,9 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>) {
       passive: true,
       capture: true,
     };
-    
+
     DrawController.sheetEl.addEventListener('mousemove', mouseHandler, options);
-  
+
     return () => {
       DrawController.sheetEl?.removeEventListener('mousemove', mouseHandler, true);
       DrawController.sheetEl = undefined;
