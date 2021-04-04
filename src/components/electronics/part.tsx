@@ -67,6 +67,7 @@ export class Part extends Electronic implements PartData {
 
     this.updatePoints();
     this.updateRotate();
+    this.updateMargin();
     this.updateTextPosition();
   }
 
@@ -138,7 +139,6 @@ export class Part extends Electronic implements PartData {
   /** 更新文本位置 */
   private updateTextPosition() {
     this.updateTexts();
-    this.updateMargin();
 
     const {
       texts,
@@ -146,6 +146,7 @@ export class Part extends Electronic implements PartData {
       margin,
       textHeight,
       textSpaceHeight,
+      prototype,
       textPosition: position,
     } = this;
 
@@ -159,8 +160,7 @@ export class Part extends Electronic implements PartData {
       .toDirection();
 
     const len = texts.length;
-    const marginIndex = MarginDirection[this.textPlacement];
-    const bias = margin.margin[marginIndex] + margin.padding[marginIndex];
+    const bias = prototype.txtLBias;
 
     switch (this.textPlacement) {
       case Direction.Top: {
