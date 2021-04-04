@@ -25,6 +25,14 @@ export enum UnitType {
   Space = '',
 }
 
+/** 边距方向映射 */
+export const MarginDirection = {
+  [Direction.Top]: 0,
+  [Direction.Right]: 1,
+  [Direction.Bottom]: 2,
+  [Direction.Left]: 3,
+};
+
 /** 器件每项参数的说明 */
 export interface ParamsDescription {
   /** 该参数的文字描述 */

@@ -8,7 +8,7 @@ import { MouseButtons } from '@utils/event';
 import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
 import { DrawController } from 'src/lib/mouse';
-import { ElectronicPrototype, Electronics } from './parts';
+import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
 import { useForceUpdate } from 'src/use';
 import { ElectronicPoint } from './point';
@@ -24,7 +24,7 @@ import {
 
 export class Part extends Electronic implements PartData {
   /** 旋转坐标 */
-  _rotate: Matrix;
+  rotate: Matrix;
   /** 位置坐标 */
   position: Point;
   /** 参数描述 */
@@ -38,7 +38,7 @@ export class Part extends Electronic implements PartData {
   /** 引脚状态 */
   points: PartPinStatus[] = [];
   /** 旋转逆矩阵 */
-  _invRotate = new Matrix(2, 'E');
+  invRotate = new Matrix(2, 'E');
   /** 器件边距 */
   margin = {
     margin: [0, 0, 0, 0] as const,
@@ -47,8 +47,8 @@ export class Part extends Electronic implements PartData {
 
   /** 文本高度 */
   readonly textHeight = 14;
-  /** 文本间隔高度 */
-  readonly textSpaceHeight = 5;
+  /** 文本高度间隔 */
+  readonly textSpaceHeight = 2;
 
   /** 更新页面 */
   private _update?: () => void;
@@ -66,23 +66,13 @@ export class Part extends Electronic implements PartData {
     this.position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
 
     this.updatePoints();
-    this.updateTexts();
     this.updateRotate();
+    this.updateTextPosition();
   }
 
   /** 器件原型数据 */
   get prototype(): DeepReadonly<ElectronicPrototype> {
     return Electronics[this.kind];
-  }
-
-  /** 旋转坐标 */
-  get rotate() {
-    return this._rotate;
-  }
-
-  set rotate(ma: Matrix) {
-    this._rotate = ma;
-    this._invRotate = ma.inverse();
   }
 
   /** 初始化 hook */
@@ -125,71 +115,72 @@ export class Part extends Electronic implements PartData {
   }
 
   /** 获取器件当前内外边界 */
-  private getMargin() {
+  private updateMargin() {
     const { prototype, rotate } = this;
-    /** 方向下标顺序 */
-    const directionIndex = {
-      [Direction.Top]: 0,
-      [Direction.Right]: 1,
-      [Direction.Bottom]: 2,
-      [Direction.Left]: 3,
-    };
-    /** 盒子四个数值的顺序 */
-    const marginDirections = (
-      [Direction.Top, Direction.Right, Direction.Bottom, Direction.Left]
-        .map((item) => Directions[item])
-    );
 
-    debugger;
-    for (const key of ['margin', 'padding'] as const) {
-      prototype[key]
-        .map((item, i) => marginDirections[i].rotate(rotate).mul(item * 20))
-        .forEach((point) => {
-          const index = directionIndex[point.toDirection()];
-          const len = point.product([1, 1]);
-          (this.margin[key] as any)[index] = len;
-        });
-    }
+    [Direction.Top, Direction.Right, Direction.Bottom, Direction.Left]
+      .map((item) => Directions[item].rotate(rotate))
+      .forEach((vector, i) => {
+        const index = MarginDirection[vector.toDirection()];
+        const paddingLen = Math.abs(vector.product([1, 1])) * 20 * prototype.padding[i];
+        const marginLen = Math.abs(vector.product([1, 1])) * 20 * prototype.margin[i];
+        (this.margin.margin as any)[index] = marginLen;
+        (this.margin.padding as any)[index] = paddingLen;
+      });
   }
 
   /** 更新矩阵 */
   private updateRotate() {
     this.invRotate = this.rotate.inverse();
-    this.getMargin();
+    this.updateMargin();
   }
 
   /** 更新文本位置 */
   private updateTextPosition() {
     this.updateTexts();
+    this.updateMargin();
 
     const {
       texts,
       points,
       margin,
-      textPosition: tPosition,
+      textHeight,
+      textSpaceHeight,
+      textPosition: position,
     } = this;
 
-    debugger;
     this.textPlacement = [Direction.Top, Direction.Bottom, Direction.Left, Direction.Right]
       .map((item) => Directions[item])
       .filter((di) => points.every((point) => !point.direction.isEqual(di)))
       .reduce(
         (pre, next) =>
-          pre.distance(tPosition) < next.distance(tPosition) ? pre : next,
+          pre.distance(position) < next.distance(position) ? pre : next,
       )
       .toDirection();
 
+    const len = texts.length;
+    const marginIndex = MarginDirection[this.textPlacement];
+    const bias = margin.margin[marginIndex] + margin.padding[marginIndex];
+
     switch (this.textPlacement) {
       case Direction.Top: {
+        position[0] = 0;
+        position[1] = -((textHeight + textSpaceHeight) * len + bias);
         break;
       }
       case Direction.Bottom: {
+        position[0] = 0;
+        position[1] = textHeight + bias;
         break;
       }
       case Direction.Left: {
+        position[0] = -bias;
+        position[1] = ((1 - len) * textHeight - len * textSpaceHeight) / 2;
         break;
       }
       case Direction.Right: {
+        position[0] = bias;
+        position[1] = ((1 - len) * textHeight - len * textSpaceHeight) / 2;
         break;
       }
       default: {
@@ -349,7 +340,7 @@ export class Part extends Electronic implements PartData {
     } = this;
 
     const showText = this.kind !== ElectronicKind.ReferenceGround;
-    const [label, subId] = this.id.split('_')[0];
+    const [label, subId] = this.id.split('_');
 
     return (
       <g transform={`matrix(${rotate.join()},${position.join()})`}>
@@ -384,7 +375,7 @@ export class Part extends Electronic implements PartData {
           >
             <text>
               <tspan>{label}</tspan>
-              <tspan fontSize="70%">{subId}</tspan>
+              <tspan fontSize="60%">{subId}</tspan>
             </text>
             {texts.map((text, i) => (
               <text key={i} dy={(textHeight + textSpaceHeight) * (i + 1)}>{text}</text>
