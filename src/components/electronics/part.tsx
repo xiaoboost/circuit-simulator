@@ -253,6 +253,29 @@ export class Part extends Electronic implements PartData {
     return false;
   }
 
+  /** 移动文本 */
+  moveText(ev: React.MouseEvent) {
+    if (ev.button !== MouseButtons.Left) {
+      return;
+    }
+
+    ev.stopPropagation();
+    this.setSelects([this.id]);
+    
+    new DrawController()
+      // .setCursor('move_part')
+      .setStopEvent({ type: 'mouseup', which: 'Left' })
+      .setMoveEvent((e) => {
+        this.textPosition = this.textPosition.add(e.movement);
+        this.update();
+      })
+      .start()
+      .then(() => {
+        this.updateTextPosition();
+        this.update();
+      });
+  }
+
   /** 创建器件 */
   create() {
     // 选中自己
@@ -263,7 +286,7 @@ export class Part extends Electronic implements PartData {
       .setStopEvent({ type: 'mousedown', which: 'Left' })
       .setMoveEvent((e) => {
         this.position = e.position;
-        this.update?.();
+        this.update();
       })
       .start()
       .then(() => {
@@ -279,7 +302,7 @@ export class Part extends Electronic implements PartData {
         );
 
         this.setSign();
-        this.update?.();
+        this.update();
       });
   }
 
@@ -288,6 +311,8 @@ export class Part extends Electronic implements PartData {
     if (ev.button !== MouseButtons.Left) {
       return;
     }
+
+    ev.stopPropagation();
 
     let line: Line;
 
@@ -341,6 +366,7 @@ export class Part extends Electronic implements PartData {
 
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const [label, subId] = this.id.split('_');
+    const moveText = React.useCallback(this.moveText.bind(this), []);
 
     return (
       <g transform={`matrix(${rotate.join()},${position.join()})`}>
@@ -372,6 +398,7 @@ export class Part extends Electronic implements PartData {
               styles[`placement${Direction[textPlacement]}`],
             )}
             transform={`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`}
+            onMouseDown={moveText}
           >
             <text>
               <tspan>{label}</tspan>
