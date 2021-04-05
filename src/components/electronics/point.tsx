@@ -1,8 +1,8 @@
 import React from 'react';
-import styles from './styles.styl';
 
 import { useWatcher } from 'src/use';
 import { mapState } from '../drawing-sheet/map';
+import { point as pointStyles } from './styles';
 import { useState, useRef, useEffect } from 'react';
 import { PointKind, PointStatus } from './constant';
 
@@ -14,56 +14,10 @@ interface Props {
   onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
-function getCircleStyle(kind: PointKind, status: PointStatus, isSelected = false) {
-  const data: React.SVGProps<SVGCircleElement> = {};
-  const classNameNormal = isSelected ? 'selected' : 'normal';
-
-  let hollow: 'Hollow' | 'Solid' = 'Solid';
-
-  if (kind === PointKind.Part) {
-    hollow = 'Solid';
-  }
-  else if (kind === PointKind.Line) {
-    hollow = 'Hollow';
-
-    if (status === PointStatus.Open) {
-      data.strokeDasharray = '1.5 4';
-    }
-  }
-  else if (kind === PointKind.LineCross) {
-    hollow = 'Solid';
-  }
-
-  data.className = styles[`${classNameNormal}${hollow}`];
-
-  return data;
-}
-
-function getPointClassName(kind: PointKind, status: PointStatus) {
-  return '';
-}
-
-function getSize(kind: PointKind, status: PointStatus, hover: boolean) {
-  if (kind === PointKind.LineCross) {
-    return hover ? 6 : 2;
-  }
-  else if (kind === PointKind.Part) {
-    return status === PointStatus.Open
-      ? hover ? 5 : 0
-      : 2;
-  }
-  else if (kind === PointKind.Line) {
-    return status === PointStatus.Close
-      ? hover ? 8 : 4
-      : 2;
-  }
-
-  return 0;
-}
-
 export function ElectronicPoint(props: Props) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
+  const classNames = pointStyles();
   const [{ zoom }] = useWatcher(mapState);
   const [inner, setInner] = useState(0);
   const [actual, setActual] = useState(0);
@@ -88,11 +42,49 @@ export function ElectronicPoint(props: Props) {
   }
 
   function onMouseEnter() {
-    setInner(getSize(props.kind, props.status, true));
+    setInner(getSize(true));
   }
 
   function onMouseLeave() {
-    setInner(getSize(props.kind, props.status, false));
+    setInner(getSize(false));
+  }
+  
+  function getCircleStyle() {
+    const data: React.SVGProps<SVGCircleElement> = {};
+
+    if (props.kind === PointKind.Part) {
+      data.className = classNames.solidCircle;
+    }
+    else if (props.kind === PointKind.Line) {
+      data.className = classNames.hollowCircle;
+
+      if (props.status === PointStatus.Open) {
+        data.strokeDasharray = '1.5 4';
+      }
+    }
+    else if (props.kind === PointKind.LineCross) {
+      data.className = classNames.solidCircle;
+    }
+
+    return data;
+  }
+
+  function getSize(hover: boolean) {
+    if (props.kind === PointKind.LineCross) {
+      return hover ? 6 : 2;
+    }
+    else if (props.kind === PointKind.Part) {
+      return props.status === PointStatus.Open
+        ? hover ? 5 : 0
+        : 2;
+    }
+    else if (props.kind === PointKind.Line) {
+      return props.status === PointStatus.Close
+        ? hover ? 8 : 4
+        : 2;
+    }
+
+    return 0;
   }
 
   useEffect(() => {
@@ -105,12 +97,13 @@ export function ElectronicPoint(props: Props) {
   return (
     <g
       transform={props.transform}
+      className={classNames.point}
     >
       <circle
         cx='0'
         cy='0'
         ref={circle}
-        {...getCircleStyle(props.kind, props.status)}
+        {...getCircleStyle()}
       >
         <animate
           ref={animate}

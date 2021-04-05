@@ -1,11 +1,8 @@
 import React from 'react';
-// import styles from './index.styl';
-
-import { styles as css } from './styles';
 
 import { useRef } from 'react';
-import { stringifyClass } from '@utils/string';
 import { useWatcher } from 'src/use';
+import { styles } from './styles';
 
 import * as store from '../electronics';
 import * as utils from './utils';
@@ -19,7 +16,7 @@ export function DrawingSheet() {
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
-  const classNames = css();
+  const classNames = styles();
 
   useMouseBusInit(SheetRef);
 

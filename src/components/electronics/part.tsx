@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from './styles.styl';
 
+import { part as partStyles } from './styles';
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
 import { DeepReadonly } from '@utils/types';
@@ -366,12 +366,13 @@ export class Part extends Electronic implements PartData {
     } = this;
 
     const [label, subId] = this.id.split('_');
+    const classNames = partStyles();
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
 
     return (
       <g
-        className={styles.part}
+        className={classNames.part}
         transform={`matrix(${rotate.join()},${position.join()})`}
       >
         <g className="part-focus">
@@ -398,8 +399,8 @@ export class Part extends Electronic implements PartData {
           <g
             fontSize={`${textHeight}px`}
             className={stringifyClass(
-              styles.partText,
-              styles[`placement${Direction[textPlacement]}`],
+              classNames.partText,
+              classNames[Direction[textPlacement]],
             )}
             transform={`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`}
             onMouseDown={moveText}

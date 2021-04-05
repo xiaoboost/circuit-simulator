@@ -7,12 +7,10 @@ import { delay } from '@utils/func';
 import { isFunc } from '@utils/assert';
 import { MouseButtons } from '@utils/event';
 import { supportsPassive } from '@utils/env';
-import { getCursorStyle, CursorKind } from 'src/lib/cursor';
 
 type Callback = (event: DrawEvent) => any;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);
 type ClassNameEventInput = string | ((event?: DrawEvent) => string);
-type CursorEventInput = CursorKind | ((event?: DrawEvent) => CursorKind);
 
 /** 鼠标结束事件配置 */
 export interface StopEventOption {
@@ -82,25 +80,6 @@ export class DrawController {
     else {
       this.events.push(() => {
         DrawController.sheetEl?.classList.add(input);
-      });
-    }
-
-    return this;
-  }
-
-  setCursor(cursor: CursorEventInput) {
-    if (isFunc(cursor)) {
-      this.events.push((ev) => {
-        DrawController.sheetEl && (
-          DrawController.sheetEl.style.cursor = getCursorStyle(cursor(ev))
-        );
-      });
-    }
-    else {
-      this.events.push(() => {
-        DrawController.sheetEl && (
-          DrawController.sheetEl.style.cursor = getCursorStyle(cursor)
-        );
       });
     }
 

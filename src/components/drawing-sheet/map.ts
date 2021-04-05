@@ -1,10 +1,8 @@
-import styles from './index.styl';
-
 import { Point } from 'src/math';
 import { Watcher } from 'src/lib/subject';
 import { MouseButtons } from '@utils/event';
 import { DrawController } from 'src/lib/mouse';
-import { CursorKind } from 'src/lib/cursor';
+import { styles } from 'src/lib/cursor';
 
 import { useCallback, MouseEvent, WheelEvent } from 'react';
 
@@ -21,6 +19,7 @@ export const mapStateDefault: MapState = {
 export const mapState = new Watcher(mapStateDefault);
 
 export function useMap() {
+  const classNames = styles();
   const sizeChangeEvent = useCallback((e: WheelEvent<HTMLElement>) => {
     const mousePosition = new Point(e.pageX, e.pageY);
     let size = mapState.data.zoom * 20;
@@ -59,7 +58,7 @@ export function useMap() {
     }
 
     new DrawController()
-      .setCursor(CursorKind.MoveMap)
+      .setClassName(classNames.moveMap)
       .setStopEvent({ type: 'mouseup', which: 'Right' })
       .setMoveEvent((ev) => {
         const { zoom, position } = mapState.data;
