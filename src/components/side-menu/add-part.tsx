@@ -1,5 +1,7 @@
 import React from 'react';
-import styles from './index.styl';
+// import styles from './index.styl';
+
+import { part, menu } from './styles';
 
 import { Tooltip } from 'antd';
 import { Electronics, ElectronicPrototype, ElectronicKind, Part } from '../electronics';
@@ -69,22 +71,24 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 }
 
 export function AddPart() {
+  const partClass = part();
+  const menuClass = menu();
   const create = (kind: ElectronicKind) => {
     new Part(kind).create();
   };
 
-  return <section className={styles.partPanel}>
-    <header className={styles.menuTitle}>
+  return <section className={partClass.panel}>
+    <header className={menuClass.title}>
       <h1>添加器件</h1>
       <h2>Add Parts</h2>
     </header>
-    <article className={styles.menuBody}>
+    <article className={menuClass.body}>
       {categories.map((item, i) => (
-        <div key={i} className={styles.partList}>
+        <div key={i} className={partClass.list}>
           {item.parts.map((kind, i) => (
             <Tooltip key={i} placement='top' title={ Electronics[kind].introduction }>
               <span
-                className={styles.partItem}
+                className={partClass.item}
                 onClick={() => create(kind)}>
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                   <PartShape {...Electronics[kind]} />

@@ -57,7 +57,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'path',
       attribute: {
-        d: 'M-25,-35V35L25,0Z', className: 'fill-white',
+        d: 'M-25,-35V35L25,0Z', fill: '#ffffff',
       },
     },
     {

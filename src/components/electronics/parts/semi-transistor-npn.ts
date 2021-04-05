@@ -63,7 +63,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'polygon',
       attribute: {
-        className: 'fill-black',
+        fill: 'currentColor',
         points: '0,0 -11,-6 -7,0 -11,6',
         transform: 'translate(18, 26.4) rotate(38.7)',
       },

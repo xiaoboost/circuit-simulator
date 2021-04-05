@@ -24,7 +24,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'circle',
       attribute: {
-        cx: '0', cy: '0', r: '19', className: 'fill-white',
+        cx: '0', cy: '0', r: '19', fill: '#ffffff',
       },
     },
     {

@@ -32,7 +32,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'circle',
       attribute: {
-        cx: '0', cy: '0', r: '19', className: 'fill-white',
+        cx: '0', cy: '0', r: '19', fill: '#ffffff',
       },
     },
     {
@@ -44,7 +44,8 @@ export const data: ElectronicPrototype = {
     {
       name: 'polygon',
       attribute: {
-        points: '0,-14 -5,-4 0,-8 5,-4', className: 'fill-black', // fill: '#3B4449', 'strokeWidth': '0.5', 'stroke-linecap': 'square'
+        points: '0,-14 -5,-4 0,-8 5,-4', fill: 'currentColor',
+        // 'strokeWidth': '0.5', 'stroke-linecap': 'square'
       },
     },
     {

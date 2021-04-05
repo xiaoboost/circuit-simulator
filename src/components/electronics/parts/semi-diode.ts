@@ -52,7 +52,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'polygon',
       attribute: {
-        points: '0,-11 -13,11 13,11', className: 'fill-black', // fill: '#3B4449', 'strokeWidth': '1'
+        points: '0,-11 -13,11 13,11', fill: 'currentColor',
       },
     },
     {

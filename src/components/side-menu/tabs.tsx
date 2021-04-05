@@ -1,6 +1,6 @@
 import React from 'react';
-import styles from './index.styl';
 
+import { tabs } from './styles';
 import { TabStatus } from './constant';
 import { isUndef } from '@utils/assert';
 import { stringifyClass } from '@utils/string';
@@ -56,6 +56,7 @@ function Tooltip(props: TooltipProps) {
 }
 
 export function Tabs(props: Props) {
+  const classNames = tabs();
   const status = props.status ?? TabStatus.None;
   const [isRun, setRun] = useState(false);
   const clickBtn = (val: TabStatus) => {
@@ -64,7 +65,7 @@ export function Tabs(props: Props) {
     }
   };
 
-  return <section className={styles.menu}>
+  return <section className={classNames.tabs}>
     <Tooltip
       title='运行'
       placement='right'
@@ -73,9 +74,10 @@ export function Tabs(props: Props) {
     >
       <Button
         type='link'
+        size='large'
         icon={<RightCircleOutlined />}
+        className={classNames.runIcon}
         loading={status === TabStatus.Run}
-        className={styles.menuIconRun}
         onClick={() => clickBtn(TabStatus.Run)}
       />
     </Tooltip>
@@ -85,8 +87,9 @@ export function Tabs(props: Props) {
         key={i}
         type={btn.type}
         icon={btn.icon}
-        className={stringifyClass({
-          [styles.menuIconHighlight]: status === btn.status,
+        size='large'
+        className={stringifyClass(classNames.tabIcon, {
+          [classNames.highlight]: status === btn.status,
         })}
         onClick={() => clickBtn(btn.status)}
       />

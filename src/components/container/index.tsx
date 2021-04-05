@@ -5,8 +5,8 @@ import { useEffect } from 'react';
 import { delay } from '@utils/func';
 import { getQueryByName } from '@utils/http';
 
-// import { DrawingSheet } from 'src/components/drawing-sheet';
-// import { SideMenu } from 'src/components/side-menu';
+import { DrawingSheet } from 'src/components/drawing-sheet';
+import { SideMenu } from 'src/components/side-menu';
 
 // 移除 loading 界面
 function loaded() {
@@ -43,8 +43,7 @@ export function App() {
   useEffect(() => void fetchMap().then(loaded), []);
 
   return <div className={classNames.container}>
-    测试
-    {/* <DrawingSheet />
-    <SideMenu /> */}
+    <DrawingSheet />
+    <SideMenu />
   </div>;
 };

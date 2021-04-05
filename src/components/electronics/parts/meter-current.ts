@@ -30,7 +30,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'polygon',
       attribute: {
-        points: '12,0 2,-6 6,0 2,6', className: 'fill-black',
+        points: '12,0 2,-6 6,0 2,6', fill: 'currentColor',
       },
     },
     {

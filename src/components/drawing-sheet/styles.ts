@@ -17,7 +17,6 @@ export const styles = createUseStyles({
     userSelect: 'none',
     cursor: 'default',
     outline: 'none',
-
     '& svg': {
       height: '100%',
       width: '100%',
@@ -27,16 +26,6 @@ export const styles = createUseStyles({
       strokeWidth: '2',
       strokeLinecap: 'round',
       fill: 'transparent',
-    },
-
-    '& path': {
-      // stroke: Black;
-      strokeWidth: 2,
-    },
-
-    '& rect': {
-      fill: 'transparent',
-      stroke: 'transparent',
     },
   },
 });
