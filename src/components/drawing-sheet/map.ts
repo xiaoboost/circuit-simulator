@@ -1,7 +1,10 @@
+import styles from './index.styl';
+
 import { Point } from 'src/math';
 import { Watcher } from 'src/lib/subject';
 import { MouseButtons } from '@utils/event';
 import { DrawController } from 'src/lib/mouse';
+import { CursorKind } from 'src/lib/cursor';
 
 import { useCallback, MouseEvent, WheelEvent } from 'react';
 
@@ -56,6 +59,7 @@ export function useMap() {
     }
 
     new DrawController()
+      .setCursor(CursorKind.MoveMap)
       .setStopEvent({ type: 'mouseup', which: 'Right' })
       .setMoveEvent((ev) => {
         const { zoom, position } = mapState.data;

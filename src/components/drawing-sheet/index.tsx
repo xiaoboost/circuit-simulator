@@ -1,5 +1,7 @@
 import React from 'react';
-import styles from './index.styl';
+// import styles from './index.styl';
+
+import { styles as css } from './styles';
 
 import { useRef } from 'react';
 import { stringifyClass } from '@utils/string';
@@ -17,13 +19,14 @@ export function DrawingSheet() {
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
+  const classNames = css();
 
   useMouseBusInit(SheetRef);
 
   return (
     <section
       ref={SheetRef}
-      className={stringifyClass(styles.drawingSheet)}
+      className={classNames.sheet}
       style={utils.getBackgroundStyle(map.zoom, map.position)}
       onMouseDown={mapEvent.moveStartEvent}
       onWheel={mapEvent.sizeChangeEvent}

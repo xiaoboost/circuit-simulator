@@ -1,11 +1,12 @@
 import React from 'react';
 
+import { styles } from './styles';
 import { useEffect } from 'react';
 import { delay } from '@utils/func';
 import { getQueryByName } from '@utils/http';
 
-import { DrawingSheet } from 'src/components/drawing-sheet';
-import { SideMenu } from 'src/components/side-menu';
+// import { DrawingSheet } from 'src/components/drawing-sheet';
+// import { SideMenu } from 'src/components/side-menu';
 
 // 移除 loading 界面
 function loaded() {
@@ -22,7 +23,7 @@ async function fetchMap() {
   const map = getQueryByName('map');
 
   if (map) {
-    const response = await import(`../examples/${map}.ts`).catch((e) => {
+    const response = await import(`src/examples/${map}.ts`).catch((e) => {
       console.error(e);
     });
 
@@ -37,11 +38,13 @@ async function fetchMap() {
 }
 
 export function App() {
-  // 初始化
+  const classNames = styles();
+
   useEffect(() => void fetchMap().then(loaded), []);
 
-  return <>
-    <DrawingSheet />
-    <SideMenu />
-  </>;
+  return <div className={classNames.container}>
+    测试
+    {/* <DrawingSheet />
+    <SideMenu /> */}
+  </div>;
 };

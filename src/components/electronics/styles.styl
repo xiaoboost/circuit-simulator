@@ -1,4 +1,24 @@
 @import 'variable';
+  
+.normal-solid {
+  fill: Black;
+  stroke: Black;
+}
+
+.normal-hollow {
+  fill: White;
+  stroke: Black;
+}
+
+.selected-solid {
+  fill: Dark-Green;
+  stroke: Black;
+}
+
+.selected-hollow {
+  fill: White;
+  stroke: Dark-Green;
+}
 
 .part-text {
   text, tspan {
@@ -21,22 +41,16 @@
   }
 }
 
-.normal-solid {
-  fill: Black;
-  stroke: Black;
+.part {
+  // &:hover
+  //     cursor url(/cur/move_part.cur), crosshair
+  .part-point-open:hover {
+    cursor: url('src/assets/cursor/draw-line.svg') 16 16, crosshair;
+  }
+  // .part-point-close:hover
+  //     cursor url(/cur/close_point.cur), crosshair
 }
 
-.normal-hollow {
-  fill: White;
-  stroke: Black;
-}
-
-.selected-solid {
-  fill: Dark-Green;
-  stroke: Black;
-}
-
-.selected-hollow {
-  fill: White;
-  stroke: Dark-Green;
+.line {
+  // ..
 }

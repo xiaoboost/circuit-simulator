@@ -4,14 +4,15 @@ import { mapState } from '../components/drawing-sheet/map';
 
 import { Point } from 'src/math';
 import { delay } from '@utils/func';
-import { remove } from '@utils/array';
 import { isFunc } from '@utils/assert';
 import { MouseButtons } from '@utils/event';
 import { supportsPassive } from '@utils/env';
+import { getCursorStyle, CursorKind } from 'src/lib/cursor';
 
 type Callback = (event: DrawEvent) => any;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);
-type CursorEventInput = string | ((event?: DrawEvent) => string);
+type ClassNameEventInput = string | ((event?: DrawEvent) => string);
+type CursorEventInput = CursorKind | ((event?: DrawEvent) => CursorKind);
 
 /** 鼠标结束事件配置 */
 export interface StopEventOption {
@@ -39,6 +40,10 @@ export class DrawController {
   isStart = false;
   /** 事件数据 */
   events: Callback[] = [];
+  /** 记录当前 className */
+  className = '';
+  /** 记录当前 cursor */
+  cursor = '';
   /** 停止事件数据 */
   stopEvent = () => Promise.resolve();
 
@@ -49,12 +54,57 @@ export class DrawController {
   }
 
   start() {
+    // 当前事件不是自己，则不启动
+    if (DrawController.current !== this) {
+      return Promise.resolve();
+    }
+
     this.isStart = true;
+    this.className = DrawController.sheetEl?.getAttribute('class') ?? '';
     return this.stopEvent().then(() => this.stop());
   }
 
   stop() {
     DrawController.current = undefined;
+
+    if (DrawController.sheetEl) {
+      DrawController.sheetEl.setAttribute('class', this.className);
+      DrawController.sheetEl.style.cursor = '';
+    }
+  }
+
+  setClassName(input: ClassNameEventInput) {
+    if (isFunc(input)) {
+      this.events.push((ev) => {
+        DrawController.sheetEl?.classList.add(input(ev));
+      });
+    }
+    else {
+      this.events.push(() => {
+        DrawController.sheetEl?.classList.add(input);
+      });
+    }
+
+    return this;
+  }
+
+  setCursor(cursor: CursorEventInput) {
+    if (isFunc(cursor)) {
+      this.events.push((ev) => {
+        DrawController.sheetEl && (
+          DrawController.sheetEl.style.cursor = getCursorStyle(cursor(ev))
+        );
+      });
+    }
+    else {
+      this.events.push(() => {
+        DrawController.sheetEl && (
+          DrawController.sheetEl.style.cursor = getCursorStyle(cursor)
+        );
+      });
+    }
+
+    return this;
   }
 
   setMoveEvent(cb: Callback) {

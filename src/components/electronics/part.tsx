@@ -7,6 +7,7 @@ import { DeepReadonly } from '@utils/types';
 import { MouseButtons } from '@utils/event';
 import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
+import { CursorKind } from 'src/lib/cursor';
 import { DrawController } from 'src/lib/mouse';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
@@ -253,29 +254,6 @@ export class Part extends Electronic implements PartData {
     return false;
   }
 
-  /** 移动文本 */
-  moveText(ev: React.MouseEvent) {
-    if (ev.button !== MouseButtons.Left) {
-      return;
-    }
-
-    ev.stopPropagation();
-    this.setSelects([this.id]);
-    
-    new DrawController()
-      // .setCursor('move_part')
-      .setStopEvent({ type: 'mouseup', which: 'Left' })
-      .setMoveEvent((e) => {
-        this.textPosition = this.textPosition.add(e.movement);
-        this.update();
-      })
-      .start()
-      .then(() => {
-        this.updateTextPosition();
-        this.update();
-      });
-  }
-
   /** 创建器件 */
   create() {
     // 选中自己
@@ -283,7 +261,7 @@ export class Part extends Electronic implements PartData {
 
     new DrawController()
       // .setCursor('move_part')
-      .setStopEvent({ type: 'mousedown', which: 'Left' })
+      .setStopEvent({ type: 'click', which: 'Left' })
       .setMoveEvent((e) => {
         this.position = e.position;
         this.update();
@@ -302,6 +280,29 @@ export class Part extends Electronic implements PartData {
         );
 
         this.setSign();
+        this.update();
+      });
+  }
+
+  /** 移动文本 */
+  moveText(ev: React.MouseEvent) {
+    if (ev.button !== MouseButtons.Left) {
+      return;
+    }
+
+    ev.stopPropagation();
+    this.setSelects([this.id]);
+
+    new DrawController()
+      // .setCursor('move_part')
+      .setStopEvent({ type: 'mouseup', which: 'Left' })
+      .setMoveEvent((e) => {
+        this.textPosition = this.textPosition.add(e.movement);
+        this.update();
+      })
+      .start()
+      .then(() => {
+        this.updateTextPosition();
         this.update();
       });
   }
@@ -327,7 +328,7 @@ export class Part extends Electronic implements PartData {
       line = this.findLine(lineId)!;
 
       if (mark === 0) {
-          line.reverse();
+        line.reverse();
       }
 
       this.connects[i] = undefined;
@@ -364,12 +365,15 @@ export class Part extends Electronic implements PartData {
       textSpaceHeight,
     } = this;
 
-    const showText = this.kind !== ElectronicKind.ReferenceGround;
     const [label, subId] = this.id.split('_');
+    const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
 
     return (
-      <g transform={`matrix(${rotate.join()},${position.join()})`}>
+      <g
+        className={styles.part}
+        transform={`matrix(${rotate.join()},${position.join()})`}
+      >
         <g className="part-focus">
           <g>
             {prototype.shape.map((item, i) => (

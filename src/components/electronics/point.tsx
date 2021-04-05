@@ -6,16 +6,15 @@ import { mapState } from '../drawing-sheet/map';
 import { useState, useRef, useEffect } from 'react';
 import { PointKind, PointStatus } from './constant';
 
-export interface Props {
+interface Props {
   kind: PointKind;
   status: PointStatus;
   size?: number;
-  className?: string;
   transform?: string;
   onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
-export function getStyle(kind: PointKind, status: PointStatus, isSelected = false) {
+function getCircleStyle(kind: PointKind, status: PointStatus, isSelected = false) {
   const data: React.SVGProps<SVGCircleElement> = {};
   const classNameNormal = isSelected ? 'selected' : 'normal';
 
@@ -40,7 +39,11 @@ export function getStyle(kind: PointKind, status: PointStatus, isSelected = fals
   return data;
 }
 
-export function getSize(kind: PointKind, status: PointStatus, hover: boolean) {
+function getPointClassName(kind: PointKind, status: PointStatus) {
+  return '';
+}
+
+function getSize(kind: PointKind, status: PointStatus, hover: boolean) {
   if (kind === PointKind.LineCross) {
     return hover ? 6 : 2;
   }
@@ -58,7 +61,6 @@ export function getSize(kind: PointKind, status: PointStatus, hover: boolean) {
   return 0;
 }
 
-
 export function ElectronicPoint(props: Props) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
@@ -69,7 +71,6 @@ export function ElectronicPoint(props: Props) {
   const [animateFrom, setAnimateFrom] = useState(0);
 
   const size = props.size ?? -1;
-  const circleProps = getStyle(props.kind, props.status);
 
   function setAnimate() {
     if (!circle.current || !animate.current) {
@@ -104,14 +105,12 @@ export function ElectronicPoint(props: Props) {
   return (
     <g
       transform={props.transform}
-      className={props.className}
     >
       <circle
-        ref={circle}
         cx='0'
         cy='0'
-        {...circleProps}
-        className={circleProps.className}
+        ref={circle}
+        {...getCircleStyle(props.kind, props.status)}
       >
         <animate
           ref={animate}
