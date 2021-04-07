@@ -2,13 +2,29 @@ import { Point } from 'src/math';
 import { isDef } from '@utils/assert';
 import { LineWay } from './line-way';
 import { pointSearch } from './point-search';
+import { Rules } from './search-rules';
+import { Cache } from './cache';
+import { SearchStatus } from './types';
 
 import type { Line } from '../line';
 import type { Part } from '../part';
 import type { DrawEvent } from 'src/lib/mouse';
 
+// mouseOver: {
+//   status: Mouse.Idle;
+//   recover?(): void;
+// } | {
+//   status: Mouse.Part;
+//   part: Part;
+//   recover?(): void;
+// } | {
+//   status: Mouse.Line;
+//   line: Line;
+//   recover?(): void;
+// };
+
 /** 鼠标指向的状态 */
-const enum Mouse {
+const enum MouseStatus {
   /** 鼠标指向为控 */
   Idle,
   /** 鼠标指向器件 */
@@ -17,34 +33,32 @@ const enum Mouse {
   Line,
 }
 
-/** 搜索状态 */
-const enum Status {
-  /** 普通状态 */
-  Space = 10,
-  /** 对齐引脚 */
-  AlignPoint,
-  /** 对齐导线 */
-  AlignLine,
-  /** 导线修饰 */
-  Modification,
+/** 当前搜索状态 */
+let mouseStatus: MouseStatus = MouseStatus.Idle;
+/** 搜索缓存 */
+// let cache = new Cache();
+
+/** 搜索初始化 */
+export function init() {
+  mouseStatus = MouseStatus.Idle;
 }
 
-function setSearchConfig(start: Point, direction: Point, event: DrawEvent, line: Line) {
-  // const { start, end, pointSize, mouseOver, mouseBias } = params;
-  // const { start, end } = params;
+/** 单点绘制 */
+export function search(start: Point, direction: Point, event: DrawEvent, line: Line) {
+  /** 终点 */
   const end = event.position;
-
-  // 当前终点四方格左上角顶点
+  /** 终点所在方块左上角坐标 */
   const vertex = end.floor();
-  // 四方格坐标
+  /** 四方格坐标 */
   const endGrid = vertex.toGrid();
 
   let ends: Point[] = [];
-  let status = Status.Space;
+  let status = SearchStatus.DrawSpace;
 
-  debugger;
+  // debugger;
+
   // 导线终点默认最大半径
-  // pointSize.$set(1, 8);
+  line.points[1].size = 8;
 
   // 引脚复位
   // if (mouseOver.recover) {
@@ -53,7 +67,7 @@ function setSearchConfig(start: Point, direction: Point, event: DrawEvent, line:
   // }
 
   // 终点在器件上
-  // if (mouseOver.status === Mouse.Part) {
+  if (mouseStatus === MouseStatus.Part) {
     // const points = mouseOver.part.points.map((point) => point.position);
     // const mouseToPart = new Point(mouseOver.part.position, end.add(mouseBias));
     // const idlePoint = points.filter((_, i) => !mouseOver.part.connect[i]);
@@ -81,9 +95,9 @@ function setSearchConfig(start: Point, direction: Point, event: DrawEvent, line:
     // else {
     //   ends = endGrid;
     // }
-  // }
+  }
   // 终点在导线上
-  // else if (mouseOver.status === Mouse.Line) {
+  else if (mouseStatus === MouseStatus.Line) {
     // const mouseRound = end.round();
     // const mouseStatus = map.get(mouseRound)!;
 
@@ -100,11 +114,11 @@ function setSearchConfig(start: Point, direction: Point, event: DrawEvent, line:
     //   status = Status.AlignLine;
     //   ends = endGrid.filter((node) => map.isLine(node, true));
     // }
-  // }
-  // // 终点闲置
-  // else {
-  //   ends = endGrid;
-  // }
+  }
+  // 终点闲置
+  else {
+    ends = endGrid;
+  }
 
   // 按照到起点的距离，由大到小排序
   if (ends.length > 1) {
@@ -114,18 +128,7 @@ function setSearchConfig(start: Point, direction: Point, event: DrawEvent, line:
     );
   }
 
-  return {
-    // ...params,
-    status,
-    ends,
-    endBias: end.floor().add(10),
-  };
-}
-
-function searchWay(params: ReturnType<typeof setSearchConfig>) {
-  // const { start, endBias, direction, status, ends } = params;
-
-  // // 节点搜索选项
+  // 节点搜索选项
   // const option = {
   //   start,
   //   direction,
@@ -134,33 +137,34 @@ function searchWay(params: ReturnType<typeof setSearchConfig>) {
   //   end: new Point(0, 0),
   // };
 
-  // // 搜索路径
-  // for (const point of ends) {
+
+  // 搜索路径
+  for (const point of ends) {
     // if (cache.has(point, endBias)) {
     //   continue;
     // }
 
-    // // 设置当前搜索终点
+    // 设置当前搜索终点
     // option.end = point;
 
-    // // 搜索并修饰
-    // const tempWay = nodeSearch(option).checkWayExcess({
+    // 搜索并修饰
+    const tempWay = pointSearch(
+      start,
+      point,
+      Point.from([0, 1]),
+      new Rules(start, point, status, line.map),
+    );
+    
+    // .checkWayExcess({
     //   ...option,
     //   status: Status.Modification,
     // });
 
-    // // 记录当前搜索结果
+    // 记录当前搜索结果
     // cache.set(point, endBias, tempWay);
-  // }
+  }
 
-  return params;
-}
-
-function setWayPath(params: ReturnType<typeof searchWay>) {
-  // const { end, endBias, cache, pointSize, status, ends } = params;
-  // const { end, endBias, status, ends } = params;
-
-  // let way: LineWay;
+  let way = new LineWay();
 
   // if (status === Status.AlignPoint) {
   //   way = LineWay.from(cache.get(ends[0], endBias)!);
@@ -197,20 +201,15 @@ function setWayPath(params: ReturnType<typeof searchWay>) {
   //   }
   // }
   // else {
-  //   // 选取终点中节点最多的路径
-  //   const key = ends.filter((node) => cache.has(node, endBias)).reduce(
-  //     (pre, next) =>
-  //       (cache.get(pre, endBias)!.length >= cache.get(next, endBias)!.length) ? pre : next,
-  //   );
+    // 选取终点中节点最多的路径
+    const key = ends.filter((node) => cache.has(node, endBias)).reduce(
+      (pre, next) =>
+        (cache.get(pre, endBias)!.length >= cache.get(next, endBias)!.length) ? pre : next,
+    );
 
-  //   way = LineWay.from(cache.get(key, endBias)!);
-  //   way.endToPoint(end);
+    way = LineWay.from(cache.get(key, endBias)!);
+    way.endToPoint(end);
   // }
 
-  return new LineWay();
-}
-
-/** 单点绘制 - 导线搜索 */
-export function search(...params: Parameters<typeof setSearchConfig>) {
-  return setWayPath(searchWay(setSearchConfig(...params)));
+  return way!;
 }

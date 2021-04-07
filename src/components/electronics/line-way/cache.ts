@@ -6,19 +6,19 @@ import { isDef } from '@utils/assert';
 export class Cache {
   /** 搜索数据 */
   private _data: AnyObject<LineWay | undefined> = {};
-  /** 当前搜索的起点 */
-  private _start: Point;
-  /** 当前搜索的起始方向 */
-  private _direction: Point;
+  // /** 当前搜索的起点 */
+  // private _start: Point;
+  // /** 当前搜索的起始方向 */
+  // private _direction: Point;
 
   constructor(start: Point, direction: Point) {
-    this._start = start;
-    this._direction = direction;
+    // this._start = start;
+    // this._direction = direction;
   }
 
   /** 输入转换为特征值 */
   private toKey(end: Point, bias: Point) {
-    const { _start: start, _direction: origin } = this;
+    // const { _start: start, _direction: origin } = this;
     const direction = new Point(start, end);
 
     // 方向与初始方向相反

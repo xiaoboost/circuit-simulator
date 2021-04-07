@@ -1,6 +1,3 @@
 export * from './line-way';
 
-export {
-    search as drawSearch,
-    
-} from './draw-search';
+export * as draw from './draw-search';

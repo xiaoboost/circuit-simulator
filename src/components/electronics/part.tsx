@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { part as partStyles } from './styles';
+import { part, part as partStyles } from './styles';
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
 import { DeepReadonly } from '@utils/types';
@@ -341,6 +341,9 @@ export class Part extends Electronic implements PartData {
       line.connects[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
     }
+    
+    this.updatePoints();
+    this.update();
 
     line.toBottom();
     line.drawing();

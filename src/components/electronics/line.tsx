@@ -1,13 +1,23 @@
 import React from 'react';
 
-import { Electronic, lines } from './base';
+import { Electronic } from './base';
 import { LineWay } from './line-way';
 import { PointLike } from 'src/math';
 import { useForceUpdate } from 'src/use';
-import { ElectronicKind, LineData, RectSize } from './constant';
 import { DrawController } from 'src/lib/mouse';
 import { cursorStyles } from 'src/lib/styles';
-import { drawSearch } from './line-way';
+import { ElectronicPoint } from './point';
+
+import { draw } from './line-way';
+
+import {
+  ElectronicKind,
+  LineData,
+  RectSize,
+  LinePinStatus,
+  PointKind,
+  PointStatus,
+} from './constant';
 
 export class Line extends Electronic implements LineData {
   /** 路径数据 */
@@ -16,6 +26,8 @@ export class Line extends Electronic implements LineData {
   isDrawStatus = false;
   /** 接触面积方块 */
   rects: RectSize[] = [];
+  /** 导线引脚状态 */
+  points: LinePinStatus[] = [];
 
   /** 更新页面 */
   private _update?: () => void;
@@ -23,6 +35,8 @@ export class Line extends Electronic implements LineData {
   constructor(paths: PointLike[] = []) {
     super(ElectronicKind.Line);
     this.path = LineWay.from(paths);
+    this.updateRects();
+    this.updatePoints();
   }
 
   /** 初始化 hook */
@@ -31,7 +45,7 @@ export class Line extends Electronic implements LineData {
   }
 
   /** 更新接触方块 */
-  private updateRect() {
+  private updateRects() {
     if (this.isDrawStatus) {
       this.rects = [];
     }
@@ -54,6 +68,32 @@ export class Line extends Electronic implements LineData {
     }
 
     this.rects = ans;
+  }
+
+  /** 更新节点 */
+  private updatePoints() {
+    if (this.path.length === 0) {
+      this.points = [];
+    }
+
+    for (let i = 0; i < 2; i++) {
+      const position = this.path[i * (this.path.length - 1)];
+      const oldData = this.points[i];
+
+      this.points[i] = {
+        label: `${this.id}_${i}`,
+        isConnected: Boolean(this.connects[i]),
+        position,
+      };
+      
+      if (oldData?.size) {
+        this.points[i].size = oldData.size;
+      }
+
+      if (oldData?.className) {
+        this.points[i].className = oldData.className;
+      }
+    }
   }
   
   /** 更新组件 */
@@ -84,6 +124,8 @@ export class Line extends Electronic implements LineData {
     }
 
     this.deleteSign();
+    this.rects = [];
+    draw.init();
 
     const start = this.path[0];
     const connect = this.connects[0];
@@ -105,7 +147,8 @@ export class Line extends Electronic implements LineData {
       .setClassName(cursorStyles.drawLine)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {
-        this.path = drawSearch(start, direction, ev, this);
+        this.path = draw.search(start, direction, ev, this);
+        this.updatePoints();
         this.update();
       })
       .start();
@@ -117,13 +160,20 @@ export class Line extends Electronic implements LineData {
   Render = () => {
     this.useInit();
 
-    const { path, rects } = this;
+    const { path, rects, points } = this;
 
     return (
       <g>
-        <path path={path.stringify()} />
-        {rects.map((rect, i) => (
-          <rect key={i} {...rect} />
+        <path d={path.stringify()} />
+        {rects.map((rect, i) => <rect key={i} {...rect} />)}
+        {points.map((point) => (
+          <ElectronicPoint
+            key={point.label}
+            size={point.size}
+            kind={PointKind.Line}
+            status={point.isConnected ? PointStatus.Close : PointStatus.Open}
+            transform={`translate(${point.position.join()})`}
+          />
         ))}
       </g>
     );

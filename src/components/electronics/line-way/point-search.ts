@@ -140,21 +140,20 @@ function newNode(node: SearchNodeData, index: RotateMatrix): SearchNodeData {
 }
 
 /** A* 单点寻路 */
-export function pointSearch({
-  start,
-  end,
-  status,
-  endBias = start,
-  direction: originDirection,
-}: PointSearchOption): LineWay {
+export function pointSearch(
+  start: Point,
+  end: Point,
+  direction: Point,
+  rules: Rules,
+): LineWay {
   const stack = new SearchStack();
-  const rules = new Rules(start, end, status);
+  // const rules = new Rules(start, end, status);
 
-  // 方向偏移
-  const sumDirection = endBias.add(start, -1).sign().add(originDirection);
-  const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
-    ? new Point(sumDirection[0], 0).sign()
-    : new Point(0, sumDirection[1]).sign();
+  // // 方向偏移
+  // const sumDirection = endBias.add(start, -1).sign().add(originDirection);
+  // const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
+  //   ? new Point(sumDirection[0], 0).sign()
+  //   : new Point(0, sumDirection[1]).sign();
 
   // 生成初始节点
   const first: SearchNodeData = {
@@ -187,21 +186,21 @@ export function pointSearch({
   // A*搜索，搜索极限为 300
   while (!endStatus && (stack.closeSize < 300)) {
     // 栈顶元素弹出为当前节点
-    const nodenow = stack.shift();
+    const nodeNow = stack.shift();
 
     // 未处理的节点为空，终点无法达到
-    if (!nodenow) {
+    if (!nodeNow) {
       break;
     }
 
     if (process.env.NODE_ENV === 'development') {
-      window.$debugger.point(nodenow.position, 'blue', 20);
+      window.$debugger.point(nodeNow.position, 'blue', 20);
     }
 
     // 按方向扩展
     for (let i = 0; i < 3; i++) {
       // 生成扩展节点
-      const nodeExpand = newNode(nodenow, i);
+      const nodeExpand = newNode(nodeNow, i);
 
       nodeExpand.value = rules.calValue(nodeExpand);
 

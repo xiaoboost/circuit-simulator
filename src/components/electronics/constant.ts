@@ -69,7 +69,7 @@ export enum PointStatus {
   Close,
 }
 
-/** 引脚状态 */
+/** 器件引脚状态 */
 export interface PartPinStatus {
   /** 节点半径 */
   size?: number;
@@ -85,6 +85,20 @@ export interface PartPinStatus {
   position: Point;
   /** 节点向外的延申方向 */
   direction: Point;
+}
+
+/** 导线引脚状态 */
+export interface LinePinStatus {
+  /** 节点半径 */
+  size?: number;
+  /** 节点样式名称 */
+  className?: string;
+  /** 引脚标记 */
+  label: string;
+  /** 节点是否连接着器件 */
+  isConnected: boolean;
+  /** 现在节点相对图纸原点位置 */
+  position: Point;
 }
 
 /** 导线接触方块大小 */

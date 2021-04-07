@@ -1,11 +1,8 @@
-import * as Map from 'src/lib/map';
-import Point from 'src/lib/point';
-import { NodeData } from './point-search';
-import { SearchStatus } from './index';
+import { SignMap, SignNodeKind } from 'src/lib/map';
 
-/**
- * 下列计算中使用的点坐标均为已缩放的值
- */
+import { Point } from 'src/math';
+import { SearchStatus } from './types';
+import { SearchNodeData } from './point-search';
 
 // 工具函数
 // 返回 node 所在器件
@@ -54,7 +51,7 @@ function nodesDistance(a: Point, b: Point) {
   );
 }
 // node 所在线段是否和当前节点方向垂直
-function isNodeVerticalLine(node: NodeData) {
+function isNodeVerticalLine(node: SearchNodeData) {
   const status = Map.getPoint(node.position);
 
   if (!status || !status.connect) {
@@ -69,21 +66,21 @@ function isNodeVerticalLine(node: NodeData) {
 
 // 价值估算
 // node 到终点距离 + 拐弯数量
-function calToPoint(this: Rules, node: NodeData) {
+function calToPoint(this: Rules, node: SearchNodeData) {
   return (nodesDistance(this.end, node.position) + node.junction);
 }
 
 // 终点判定
 // 等于终点
-function isEndPoint(this: Rules, node: NodeData) {
+function isEndPoint(this: Rules, node: SearchNodeData) {
   return this.end.isEqual(node.position);
 }
 // 在终点等效线段中
-function isInEndLines(this: Rules, node: NodeData) {
+function isInEndLines(this: Rules, node: SearchNodeData) {
   return this.endLines.find((line) => isNodeInLine(node.position, line));
 }
 // 绘制导线时，终点在导线中
-function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
+function checkNodeInLineWhenDraw(this: Rules, node: SearchNodeData) {
   // 优先判断是否等于终点
   if (node.position.isEqual(this.end)) {
     return (true);
@@ -116,7 +113,7 @@ function checkNodeInLineWhenDraw(this: Rules, node: NodeData) {
 
 // 扩展判定
 // 通用状态
-function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boolean {
+function isLegalPointGeneral(this: Rules, node: SearchNodeData, pointLimit = 2): boolean {
   const status = Map.getPoint(node.position);
 
   // 空节点
@@ -154,7 +151,7 @@ function isLegalPointGeneral(this: Rules, node: NodeData, pointLimit = 2): boole
   }
 }
 // 强制对齐
-function isLegalPointAlign(this: Rules, node: NodeData) {
+function isLegalPointAlign(this: Rules, node: SearchNodeData) {
   return isLegalPointGeneral.call(this, node, 1) as boolean;
 }
 
@@ -174,9 +171,9 @@ export class Rules {
   /** 终点等效线段 */
   endLines: Point[][] = [];
 
-  calValue!: (node: NodeData) => number;
-  checkPoint!: (node: NodeData) => boolean;
-  isEnd!: (node: NodeData) => boolean;
+  calValue!: (node: SearchNodeData) => number;
+  checkPoint!: (node: SearchNodeData) => boolean;
+  isEnd!: (node: SearchNodeData) => boolean;
 
   /**
    * 创建规则集合的实例
@@ -185,7 +182,7 @@ export class Rules {
    * @param {Point} end - 终点
    * @param {SearchStatus} status 当前状态
    */
-  constructor(start: Point, end: Point, status: SearchStatus) {
+  constructor(start: Point, end: Point, status: SearchStatus, map: SignMap) {
     this.start = start.mul(0.05);
     this.end = end.mul(0.05);
     this.status = status;
@@ -207,7 +204,7 @@ export class Rules {
       this.calValue = calToPoint;
 
       // 绘制情况下，end 只可能是点，根据终点属性来进一步分类
-      const endData = Map.getPoint(this.end);
+      const endData = map.get(this.end);
 
       // 终点在导线上
       if (Map.isLine(this.end)) {
