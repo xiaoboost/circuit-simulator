@@ -1,10 +1,13 @@
 import React from 'react';
 
-import { Electronic } from './base';
+import { Electronic, lines } from './base';
 import { LineWay } from './line-way';
 import { PointLike } from 'src/math';
 import { useForceUpdate } from 'src/use';
 import { ElectronicKind, LineData, RectSize } from './constant';
+import { DrawController } from 'src/lib/mouse';
+import { cursorStyles } from 'src/lib/styles';
+import { drawSearch } from './line-way';
 
 export class Line extends Electronic implements LineData {
   /** 路径数据 */
@@ -75,12 +78,39 @@ export class Line extends Electronic implements LineData {
   }
 
   /** 绘制导线 */
-  drawing(isEnd = true) {
+  async drawing(isEnd = true) {
     if (isEnd) {
       this.reverse();
     }
 
     this.deleteSign();
+
+    const start = this.path[0];
+    const connect = this.connects[0];
+
+    if (!connect) {
+      throw new Error(`空连接导线`);
+    }
+
+    const startPart = this.findPart(connect.id);
+    const direction = startPart?.points[connect.mark]?.direction;
+
+    if (!startPart || !direction) {
+      throw new Error(`不存在的器件：${connect.id}`);
+    }
+
+    const drawEvent = new DrawController();
+
+    await drawEvent
+      .setClassName(cursorStyles.drawLine)
+      .setStopEvent({ type: 'mouseup', which: 'Left' })
+      .setMoveEvent((ev) => {
+        this.path = drawSearch(start, direction, ev, this);
+        this.update();
+      })
+      .start();
+
+    debugger;
   }
 
   /** 渲染函数 */

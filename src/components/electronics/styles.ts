@@ -1,8 +1,6 @@
 import { createUseStyles } from 'react-jss';
 import { Direction } from 'src/math';
-import { Black, FontText, White } from 'src/lib/styles';
-
-import DrawLine from 'src/assets/cursor/draw-line.svg';
+import { Black, FontText, White, movePartCursor, drawLineCursor } from 'src/lib/styles';
 
 export const part = createUseStyles({
   part: {
@@ -10,6 +8,10 @@ export const part = createUseStyles({
 
     '& .focus-transparent': {
       strokeWidth: 0,
+    },
+    
+    '&:hover': {
+      cursor: movePartCursor,
     },
   },
   partText: {
@@ -38,7 +40,7 @@ export const point = createUseStyles({
       strokeWidth: 0,
     },
     '&:hover': {
-      cursor: `url("${DrawLine}") 16 16, crosshair`,
+      cursor: drawLineCursor,
     },
   },
   solidCircle: {

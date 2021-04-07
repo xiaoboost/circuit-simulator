@@ -52,7 +52,14 @@ export class Electronic {
 
   constructor(kind: ElectronicKind) {
     this.kind = kind;
-    this.id = createId(Electronics[kind].pre);
+
+    if (kind === ElectronicKind.Line) {
+      this.id = createId('line');
+    }
+    else {
+      this.id = createId(Electronics[kind].pre);
+    }
+
     ElectronicHash[this.id] = this;
     this.dispatch();
   }

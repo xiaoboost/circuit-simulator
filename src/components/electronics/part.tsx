@@ -7,7 +7,7 @@ import { DeepReadonly } from '@utils/types';
 import { MouseButtons } from '@utils/event';
 import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
-import { CursorKind } from 'src/lib/cursor';
+import { cursorStyles } from 'src/lib/styles';
 import { DrawController } from 'src/lib/mouse';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
@@ -294,7 +294,7 @@ export class Part extends Electronic implements PartData {
     this.setSelects([this.id]);
 
     new DrawController()
-      // .setCursor('move_part')
+      .setClassName(cursorStyles.movePart)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((e) => {
         this.textPosition = this.textPosition.add(e.movement);
@@ -317,7 +317,6 @@ export class Part extends Electronic implements PartData {
 
     let line: Line;
 
-    debugger;
     const startPoint = this.position.add(this.points[i].position);
     const connect = this.connects[i];
 
@@ -343,7 +342,6 @@ export class Part extends Electronic implements PartData {
       this.setSelects([this.id]);
     }
 
-    debugger;
     line.toBottom();
     line.drawing();
   }

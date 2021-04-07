@@ -1,3 +1,29 @@
+import { createUseStyles, jss } from 'react-jss';
+
+import DrawLine from '../assets/cursor/draw-line.svg';
+import MoveMap from '../assets/cursor/move-map.svg';
+import MovePart from '../assets/cursor/move-part.svg';
+
+function getCursorStyle(url: string, offset = 16) {
+  return `url("${url}") ${offset} ${offset}, crosshair`;
+}
+
+export const drawLineCursor = getCursorStyle(DrawLine);
+export const moveMapCursor = getCursorStyle(MoveMap);
+export const movePartCursor = getCursorStyle(MovePart, 10);
+
+export const cursorStyles = jss.createStyleSheet({
+  drawLine: {
+    cursor: drawLineCursor,
+  },
+  moveMap: {
+    cursor: moveMapCursor,
+  },
+  movePart: {
+    cursor: movePartCursor,
+  },
+}).attach().classes;
+
 // 主要颜色定义
 export const Blue = '#20A0FF';
 export const DarkBlue = '#1D8CE0';
