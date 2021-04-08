@@ -2,6 +2,7 @@ import { Rules } from './search-rules';
 import { LineWay } from './line-way';
 import { SearchStatus } from './types';
 import { remove } from '@utils/array';
+import { Debugger } from 'src/lib/debugger';
 import { Point, Rotates, RotateMatrix } from 'src/math';
 
 /** 搜索用节点数据 */
@@ -172,7 +173,7 @@ export function pointSearch(
   // 调试用时，指示终点
   /* istanbul ignore if */
   if (process.env.NODE_ENV === 'development') {
-    window.$debugger.point(first.position, 'red', 20);
+    Debugger.point(first.position, 'red', 20);
   }
 
   // 终点状态
@@ -194,7 +195,7 @@ export function pointSearch(
     }
 
     if (process.env.NODE_ENV === 'development') {
-      window.$debugger.point(nodeNow.position, 'blue', 20);
+      Debugger.point(nodeNow.position, 'blue', 20);
     }
 
     // 按方向扩展
@@ -205,7 +206,7 @@ export function pointSearch(
       nodeExpand.value = rules.calValue(nodeExpand);
 
       if (process.env.NODE_ENV === 'development') {
-        window.$debugger.point(nodeExpand.position, 'black', 20);
+        Debugger.point(nodeExpand.position, 'black', 20);
       }
 
       // 判断是否是终点
@@ -227,7 +228,7 @@ export function pointSearch(
   }
 
   if (process.env.NODE_ENV === 'development') {
-    window.$debugger.clearAll();
+    Debugger.clearAll();
   }
 
   if (!endStatus) {

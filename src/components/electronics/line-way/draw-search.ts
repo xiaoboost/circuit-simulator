@@ -36,11 +36,14 @@ const enum MouseStatus {
 /** 当前搜索状态 */
 let mouseStatus: MouseStatus = MouseStatus.Idle;
 /** 搜索缓存 */
-// let cache = new Cache();
+let cache: Cache<Point>;
 
 /** 搜索初始化 */
 export function init() {
   mouseStatus = MouseStatus.Idle;
+  cache = new Cache<Point>((point) => {
+    return point.join(',');
+  });
 }
 
 /** 单点绘制 */
@@ -55,7 +58,7 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
   let ends: Point[] = [];
   let status = SearchStatus.DrawSpace;
 
-  // debugger;
+  debugger;
 
   // 导线终点默认最大半径
   line.points[1].size = 8;
@@ -151,7 +154,7 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
     const tempWay = pointSearch(
       start,
       point,
-      Point.from([0, 1]),
+      direction,
       new Rules(start, point, status, line.map),
     );
     
@@ -161,7 +164,7 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
     // });
 
     // 记录当前搜索结果
-    // cache.set(point, endBias, tempWay);
+    cache.set(point, tempWay);
   }
 
   let way = new LineWay();
@@ -202,12 +205,12 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
   // }
   // else {
     // 选取终点中节点最多的路径
-    const key = ends.filter((node) => cache.has(node, endBias)).reduce(
+    const key = ends.filter((node) => cache.has(node)).reduce(
       (pre, next) =>
-        (cache.get(pre, endBias)!.length >= cache.get(next, endBias)!.length) ? pre : next,
+        (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
     );
 
-    way = LineWay.from(cache.get(key, endBias)!);
+    way = LineWay.from(cache.get(key)!);
     way.endToPoint(end);
   // }
 

@@ -1,5 +1,3 @@
-// import store from 'src/vuex';
-
 import { def } from '@utils/object';
 import { wait } from '@utils/func';
 import { Point, PointLike } from 'src/math';
@@ -18,7 +16,7 @@ const nodeColor = {
   [SignNodeKind.LineCoverPoint]: 'yellow',
 };
 
-export default class MapDebug {
+class MapDebug {
   /**
    * 每个实例都将直接操作此 SVG 元素
    * @type {SVGGElement}
@@ -131,16 +129,14 @@ export default class MapDebug {
   }
 }
 
+export const Debugger = new MapDebug();
+
 // 调试器初始化
 if (process.env.NODE_ENV === 'development') {
-  const selector = '#drawing-main .drawing-area';
+  const selector = '#root svg';
 
   wait(() => Boolean(document.querySelector(selector)), 500).then(() => {
     const area = document.querySelector(selector)!;
-    const $debugger = new MapDebug();
-
-    area.appendChild($debugger.$el);
-
-    def(window, { $debugger });
+    area.appendChild(Debugger.$el);
   });
 }
