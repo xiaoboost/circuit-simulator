@@ -6,6 +6,8 @@
     "ts-node": "node node_modules/ts-node/dist/bin.js -P ./build/tsconfig.json --transpile-only",
     "dev": "cross-env NODE_ENV=development npm run ts-node ./build/webpack.dev.ts",
     "build": "cross-env NODE_ENV=production npm run ts-node ./build/webpack.prod.ts",
+    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ./.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
+    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ./.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
     "test": "nyc ava --no-cache"
   },
   "ava": {
@@ -57,6 +59,7 @@
     "css-loader": "^5.2.0",
     "esbuild-loader": "^2.11.0",
     "eslint": "^7.23.0",
+    "eslint-plugin-react": "^7.23.1",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.1.0",
     "generate-json-webpack-plugin": "^2.0.0",

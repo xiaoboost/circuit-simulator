@@ -1,0 +1,38 @@
+name: PR
+on: [push, pull_request]
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - '14'
+        platform:
+          - windows-latest
+
+    name: '${{ matrix.platform }} / Node.js v${{ matrix.node }}'
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Configure Git
+        run: |
+          git config --global core.autocrlf false
+          git config --global user.name "xyz"
+          git config --global user.email "x@y.z"
+      - name: Checkout Commit
+        uses: actions/checkout@v1
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install pnpm
+        run: |
+          npm install --g pnpm
+          pnpm --version
+      - name: Install Packages
+        run: pnpm install
+      - name: Run Tests
+        run: |
+          pnpm run lint
+          pnpm run test

@@ -305,7 +305,7 @@ export class Matrix {
    * @param {string} str
    * @returns {string}
    */
-  join(str: string = ','): string {
+  join(str = ','): string {
     return this._view.join(str);
   }
   /**
@@ -692,14 +692,14 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
   const row = ma.length, column = ma[0].length;
 
   // 行连续
-  if (!Object.keys(ma).every((n, i) => +n === i)) {
+  if (!Object.keys(ma).every((n, i) => Number(n) === i)) {
     throw new Error('(matrix) this is not a matrix.');
   }
 
   // 列连续且列长均相等
   if (!ma.every((col) =>
     isArray(col) && col.length === column &&
-    Object.keys(col).every((n, i) => +n === i) &&
+    Object.keys(col).every((n, i) => Number(n) === i) &&
     Object.values(col).every((n) => isNumber(n) && !Number.isNaN(n)),
   )) {
     throw new Error('(matrix) this is not a matrix.');

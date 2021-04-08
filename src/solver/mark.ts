@@ -5,9 +5,9 @@
  *  - 低 4 位为有效数字
  *  - 最大可标记值为`4095`
  */
-const SignTransfer   = 0xFBFA0000;
-const SignAtHigh     = 0xFFFF0000;
-const SignIdTransfer   = 0x0000FFF0;
+const SignTransfer = 0xFBFA0000;
+const SignAtHigh = 0xFFFF0000;
+const SignIdTransfer = 0x0000FFF0;
 const SignMarkTransfer = 0x0000000F;
 
 /** 生成标记数字 */

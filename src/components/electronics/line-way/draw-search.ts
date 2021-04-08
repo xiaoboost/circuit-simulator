@@ -56,7 +56,7 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
   const endGrid = vertex.toGrid();
 
   let ends: Point[] = [];
-  let status = SearchStatus.DrawSpace;
+  const status = SearchStatus.DrawSpace;
 
   debugger;
 
@@ -204,14 +204,14 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
   //   }
   // }
   // else {
-    // 选取终点中节点最多的路径
-    const key = ends.filter((node) => cache.has(node)).reduce(
-      (pre, next) =>
-        (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
-    );
+  // 选取终点中节点最多的路径
+  const key = ends.filter((node) => cache.has(node)).reduce(
+    (pre, next) =>
+      (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
+  );
 
-    way = LineWay.from(cache.get(key)!);
-    way.endToPoint(end);
+  way = LineWay.from(cache.get(key)!);
+  way.endToPoint(end);
   // }
 
   return way!;

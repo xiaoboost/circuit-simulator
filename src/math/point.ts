@@ -476,7 +476,7 @@ export class Point {
    * @param {string} [str=',']
    * @returns
    */
-  join(str: string = ',') {
+  join(str = ',') {
     return `${this[0]}${str}${this[1]}`;
   }
   /**

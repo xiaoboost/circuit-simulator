@@ -138,7 +138,7 @@ export function getRank(value: number) {
  * @param {number} [bits=6]
  * @returns {number}
  */
-export function toRound(origin: number, bits: number = 6) {
+export function toRound(origin: number, bits = 6) {
   if (Number.isNaN(origin)) {
     throw new Error('(number) Cannot run toRound(NaN)');
   }

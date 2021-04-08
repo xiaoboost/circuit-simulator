@@ -1,3 +1,5 @@
+import type { AnyObject } from './types';
+
 type AnyFunction = (...args: any[]) => any;
 
 const _toString = Object.prototype.toString;
@@ -86,7 +88,7 @@ export function isFunc(x: unknown): x is AnyFunction {
  * @param {*} x
  * @returns {x is object}
  */
-export function isStrictObject(x: unknown): x is object {
+export function isStrictObject(x: unknown): x is AnyObject {
   return _toString.call(x) === '[object Object]';
 }
 
@@ -98,7 +100,7 @@ export function isStrictObject(x: unknown): x is object {
  * @param {*} x
  * @returns {x is object}
  */
-export function isObject(x: unknown): x is object {
+export function isObject(x: unknown): x is AnyObject {
   const type = typeof x;
   return (
     isDef(x) &&

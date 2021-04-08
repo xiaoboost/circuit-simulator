@@ -46,4 +46,4 @@ export function App() {
     <DrawingSheet />
     <SideMenu />
   </div>;
-};
+}

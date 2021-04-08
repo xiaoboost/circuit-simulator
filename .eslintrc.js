@@ -9,7 +9,7 @@ const ignorePaths = [
   '.vscode/*',
   '.eslintrc.js',
   '**/*.js',
-].map((name) => path.join(relativeRoot, name).replace(/\\+/g, '/'));
+].map((name) => path.join(workspace, name).replace(/\\+/g, '/'));
 
 module.exports =  {
   parser: '@typescript-eslint/parser',
@@ -58,5 +58,7 @@ module.exports =  {
     '@typescript-eslint/brace-style': ['error', 'stroustrup', {
       allowSingleLine: true,
     }],
+    '@typescript-eslint/no-empty-interface': 'off',
+    '@typescript-eslint/no-this-alias': 'off',
   },
 };

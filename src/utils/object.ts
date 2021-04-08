@@ -5,11 +5,13 @@ import {
   isObject,
 } from './assert';
 
+import { AnyObject } from './types';
+
 /**
  * 对象是否为空
  * @param obj 待检测对象
  */
-export function isEmpty(obj: object) {
+export function isEmpty(obj: AnyObject) {
   return Object.keys(obj).length === 0;
 }
 
@@ -18,7 +20,7 @@ export function isEmpty(obj: object) {
  * @param obj 检查对象
  * @param key 检查的属性名称
  */
-export function hasOwn(obj: object, key: string): boolean {
+export function hasOwn(obj: AnyObject, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(obj, key);
 }
 
@@ -27,7 +29,7 @@ export function hasOwn(obj: object, key: string): boolean {
  * @param from 待添加属性的对象
  * @param properties 添加的属性
  */
-export function def(from: object, properties: object) {
+export function def(from: AnyObject, properties: AnyObject) {
   Object.entries(properties).forEach(
     ([key, value]) => Object.defineProperty(from, key, {
       configurable: true,
@@ -49,7 +51,7 @@ export function isEqual(from: any, to: any, deepCheck = false): boolean {
   }
 
   if (deepCheck && checkCircularStructure(from)) {
-    throw new Error('Can not equal object that have circular structure.');
+    throw new Error('Can not equal AnyObject that have circular structure.');
   }
 
   if (isArray(from)) {
@@ -87,7 +89,7 @@ export function isEqual(from: any, to: any, deepCheck = false): boolean {
  * @param {*} data
  * @returns {boolean}
  */
-export function checkCircularStructure(data: object, parents: any[] = []): boolean {
+export function checkCircularStructure(data: AnyObject, parents: any[] = []): boolean {
   // 如果当前节点与祖先节点中的某一个相等，那么肯定含有循环结构
   if (parents.some((parent) => parent === data)) {
     return true;
@@ -106,7 +108,7 @@ export function checkCircularStructure(data: object, parents: any[] = []): boole
 /**
  * 深复制对象
  * @template T
- * @param {T} object
+ * @param {T} AnyObject
  * @param {boolean} [check=true]
  * @returns {T}
  */
@@ -152,12 +154,12 @@ export function clone<T>(data: T, check = true): T {
 
 /**
  * 按照 keys 复制对象属性
- * @template T extends object
+ * @template T extends AnyObject
  * @template U extends keyof T
  * @param {T} from 待复制的对象
  * @param {U[]} keys 属性集合
  */
-export function copyProperties<T extends object, U extends keyof T>(from: T, keys: U[]): Pick<T, U> {
+export function copyProperties<T extends AnyObject, U extends keyof T>(from: T, keys: U[]): Pick<T, U> {
   const data: T = {} as any;
 
   for (let i = 0; i < keys.length; i++) {

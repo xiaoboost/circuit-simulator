@@ -103,12 +103,12 @@ export class Line extends Electronic implements LineData {
 
   /** 设置标志位 */
   setSign() {
-
+    // ..
   }
 
   /** 删除标记 */
   deleteSign() {
-
+    // ..
   }
 
   /** 导线反转 */

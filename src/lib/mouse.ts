@@ -48,7 +48,7 @@ export class DrawController {
   constructor() {
     if (!DrawController.current) {
       DrawController.current = this;
-    };
+    }
   }
 
   start() {

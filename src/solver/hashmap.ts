@@ -34,7 +34,7 @@ export default class HashMap {
   deleteValue(value: number) {
     const { _map: map } = this;
 
-    for (const key of  Object.keys(map)) {
+    for (const key of Object.keys(map)) {
       if (map[key] === value) {
         this.delete(key);
       }

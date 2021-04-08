@@ -26,7 +26,7 @@ export class LineWay extends Array<Point> {
     const sub = (index >= 0) ? index : this.length + index;
 
     if (sub < 0 || sub >= this.length) {
-        throw new Error('(lineway) index out of bounds.');
+      throw new Error('(lineway) index out of bounds.');
     }
 
     return this[sub];

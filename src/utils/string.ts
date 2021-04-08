@@ -96,7 +96,7 @@ export function deleteMark(mark: string, ...args: string[]) {
 export function toBlob(base64: string) {
   const label = 'base64,';
   const source = base64.slice(base64.indexOf(label) + label.length);
-  const binary =  window.atob(source);
+  const binary = window.atob(source);
   const bytes = new Uint8Array(binary.length);
 
   for (let i = 0; i < binary.length; i++) {

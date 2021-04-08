@@ -1,7 +1,6 @@
 export type AnyObject<T = any> = Record<string, T>;
 export type AnyFunction = (...args: any[]) => any;
 export type EmptyObject = Record<string, never>;
-export type Empty = {};
 
 export type DeepReadonly<T> = T extends (infer R)[]
   ? DeepReadonlyArray<R>

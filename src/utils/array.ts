@@ -1,4 +1,7 @@
+/* eslint-disable max-len  */
+
 import { isFunc, isDef } from './assert';
+import type { AnyObject } from './types';
 
 /** 索引类型 */
 type Index = string | number;
@@ -80,7 +83,7 @@ export function cut<T>(arr: T[], number: number): T[][] {
 export function unique<T extends Index>(arr: T[]): T[];
 export function unique<T>(arr: T[], label: (value: T, index: number) => Index): T[];
 export function unique<T>(arr: T[], label?: (value: T, index: number) => Index): T[] {
-  let labelMap: Record<Index, boolean> = {};
+  const labelMap: Record<Index, boolean> = {};
 
   if (isDef(label)) {
     return arr
@@ -120,9 +123,9 @@ export function transArr<T>(item?: T | T[]): T[] {
 type IndexCb<T, U> = (val: T, index: number) => U;
 
 /** 生成`hash`查询表 */
-export function toMap<T extends object, U extends Index>(arr: T[], toKey: IndexCb<T, U>): Record<U, T | undefined>;
-export function toMap<T extends object, U extends Index, V>(arr: T[], toKey: IndexCb<T, U>, toVal: IndexCb<T, V>): Record<U, V | undefined>
-export function toMap<T extends object, U extends Index, V>(arr: T[], toKey: IndexCb<T, U>, toVal?: IndexCb<T, V>) {
+export function toMap<T extends AnyObject, U extends Index>(arr: T[], toKey: IndexCb<T, U>): Record<U, T | undefined>;
+export function toMap<T extends AnyObject, U extends Index, V>(arr: T[], toKey: IndexCb<T, U>, toVal: IndexCb<T, V>): Record<U, V | undefined>
+export function toMap<T extends AnyObject, U extends Index, V>(arr: T[], toKey: IndexCb<T, U>, toVal?: IndexCb<T, V>) {
   const map: Record<U, any> = {} as any;
 
   if (toVal) {
@@ -153,7 +156,7 @@ export function toBoolMap<T, U extends Index>(arr: T[], cb?: IndexCb<T, U>) {
 
 /** 在`rest`数组中，且不在`arr`数组中的 */
 export function exclude<T extends Index>(arr: T[], rest: T[]): T[];
-export function exclude<T extends object, U extends Index>(arr: T[], rest: T[], cb: IndexCb<T, U>): T[];
+export function exclude<T extends AnyObject, U extends Index>(arr: T[], rest: T[], cb: IndexCb<T, U>): T[];
 export function exclude<T, U extends Index>(arr: T[], rest: T[], cb?: IndexCb<T, U>) {
   if (cb) {
     const map = toBoolMap(arr, cb);

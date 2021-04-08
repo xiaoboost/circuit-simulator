@@ -20,7 +20,9 @@ if (inBrowser) {
     });
     document.body.addEventListener('test', null as any, opts);
   }
-  catch (e) {}
+  catch (e) {
+    // ..
+  }
 
   try {
     const opts = Object.defineProperty({}, 'once', {
@@ -30,7 +32,9 @@ if (inBrowser) {
     });
     document.body.addEventListener('test', null as any, opts);
   }
-  catch (e) {}
+  catch (e) {
+    // ..
+  }
 }
 
 // 全局禁止右键
