@@ -1,3 +1,3 @@
-import '../matchers';
-import 'jest-extended';
-import 'src/init/native';
+const browserEnv = require('browser-env');
+
+browserEnv(['window', 'document', 'navigator']);

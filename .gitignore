@@ -1,9 +1,11 @@
 _文档/
 .vscode/
 .deploy_git
+.nyc_output
 
 dist
 draft
+coverage
 node_modules
 npm-debug.log*
 

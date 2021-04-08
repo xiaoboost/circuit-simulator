@@ -68,7 +68,9 @@ export class Point {
    *
    * @returns {Generator}
    */
-  [Symbol.iterator] = Array.prototype[Symbol.iterator];
+  [Symbol.iterator]() {
+    return Array.prototype[Symbol.iterator].call(this);
+  }
 
   /**
    * 判断`this`与`point`是否相等
@@ -500,12 +502,3 @@ export const Directions: Readonly<Record<Direction, Point>> = {
   [Direction.BottomLeft]: Point.from([-1, 1]),
   [Direction.BottomRight]: Point.from([1, 1]),
 };
-
-type PointMethodKeys = Exclude<keyof Point, 0 | 1 | 'length'>;
-/**
- * Point 原型函数封装
- *  - 主要用于 PointLike 型输入
- */
-export function PointCall<T extends PointMethodKeys>(self: PointLike, name: T, ...args: Parameters<Point[T]>): ReturnType<Point[T]> {
-  return (Point.prototype as any)[name].call(self, ...args);
-}
