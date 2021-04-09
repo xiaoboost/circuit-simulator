@@ -9,6 +9,7 @@ export interface TimeConfig {
 
 /** 储存用的器件数据接口 */
 export interface PartStorageData {
+  id?: string;
   kind: keyof typeof ElectronicKind;
   position: number[];
   rotate?: number[][];

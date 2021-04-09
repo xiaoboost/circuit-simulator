@@ -165,13 +165,13 @@ export class Part extends Electronic {
       )
       .toDirection();
 
-    const len = texts.length;
+    const len = texts.length + 1;
     const bias = prototype.txtLBias;
 
     switch (this.textPlacement) {
       case Direction.Top: {
         position[0] = 0;
-        position[1] = -((textHeight + textSpaceHeight) * len + bias);
+        position[1] = -((textHeight + textSpaceHeight) * (len - 1) + bias);
         break;
       }
       case Direction.Bottom: {
@@ -181,18 +181,21 @@ export class Part extends Electronic {
       }
       case Direction.Left: {
         position[0] = -bias;
-        position[1] = ((1 - len) * textHeight - len * textSpaceHeight) / 2;
+        position[1] = textHeight - (len * textHeight + (len - 1) * textSpaceHeight) / 2;
         break;
       }
       case Direction.Right: {
         position[0] = bias;
-        position[1] = ((1 - len) * textHeight - len * textSpaceHeight) / 2;
+        position[1] = textHeight - (len * textHeight + (len - 1) * textSpaceHeight) / 2;
         break;
       }
       default: {
         throw new Error(`错误的器件方向: ${Direction[this.textPlacement]}`);
       }
     }
+
+    // 整体向上偏移 2 像素
+    position[1] -= 2;
   }
 
   /** 更新页面 */
