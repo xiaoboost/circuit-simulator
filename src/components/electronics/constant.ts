@@ -1,5 +1,4 @@
-import { Point, Matrix } from 'src/math';
-import { LineWay } from './line-way';
+import { Point } from 'src/math';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {

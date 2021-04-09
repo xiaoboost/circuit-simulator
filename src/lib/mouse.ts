@@ -51,22 +51,32 @@ export class DrawController {
     }
   }
 
-  start() {
+  async start() {
     // 当前事件不是自己，则不启动
     if (DrawController.current !== this) {
-      return Promise.resolve();
+      return;
     }
+
+    await delay();
 
     this.isStart = true;
     this.className = DrawController.sheetEl?.getAttribute('class') ?? '';
-    return this.stopEvent().then(() => this.stop());
+
+    await this.stopEvent();
+
+    this.stop();
   }
 
   stop() {
+    const className = this.className;
+
     DrawController.current = undefined;
 
+    this.isStart = false;
+    this.className = '';
+
     if (DrawController.sheetEl) {
-      DrawController.sheetEl.setAttribute('class', this.className);
+      DrawController.sheetEl.setAttribute('class', className);
       DrawController.sheetEl.style.cursor = '';
     }
   }
@@ -148,17 +158,15 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>) {
 
       last = mouse;
 
-      if (!current || !current.isStart) {
-        return;
-      }
-
-      const run = () => current.events.forEach((handle) => handle(drawEvent));
-
-      if (process.env.NODE_ENV === 'development') {
-        delay().then(run);
-      }
-      else {
-        run();
+      /**
+       * delay 内部的判断，主要是因为很有可能发生在 stop 函数已经运行，但是 move 回调在之后又运行的情况
+       */
+      if (current?.isStart) {
+        delay().then(() => {
+          if (current?.isStart) {
+            current.events.forEach((handle) => handle(drawEvent));
+          }
+        });
       }
     };
     const options = !supportsPassive ? true : {

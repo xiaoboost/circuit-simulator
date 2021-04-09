@@ -359,8 +359,6 @@ export class Part extends Electronic {
   Render = () => {
     this.useInit();
 
-    console.log(this.id);
-
     const {
       prototype,
       rotate,
