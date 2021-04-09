@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { part, part as partStyles } from './styles';
+import { part as partStyles } from './styles';
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
 import { DeepReadonly } from '@utils/types';
@@ -8,6 +8,7 @@ import { MouseButtons } from '@utils/event';
 import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
 import { cursorStyles } from 'src/lib/styles';
+import { PartStorageData } from 'src/store';
 import { DrawController } from 'src/lib/mouse';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
@@ -17,13 +18,12 @@ import { Line } from './line';
 
 import {
   ElectronicKind,
-  PartData,
   PartPinStatus,
   PointKind,
   PointStatus,
 } from './constant';
 
-export class Part extends Electronic implements PartData {
+export class Part extends Electronic {
   /** 旋转坐标 */
   rotate: Matrix;
   /** 位置坐标 */
@@ -54,17 +54,17 @@ export class Part extends Electronic implements PartData {
   /** 更新页面 */
   private _update?: () => void;
 
-  constructor(kind: ElectronicKind | Partial<PartData>) {
-    super(isNumber(kind) ? kind : kind.kind!);
+  constructor(kind: ElectronicKind | PartStorageData) {
+    super(isNumber(kind) ? kind : ElectronicKind[kind.kind]);
 
     const { prototype } = this;
-    const data: Partial<PartData> = !isNumber(kind) ? kind : {
-      kind,
-    };
+    const data: Partial<Omit<PartStorageData, 'kind'>> = !isNumber(kind) ? kind : {};
 
     this.params = data.params ?? prototype.params.map((n) => n.default);
     this.rotate = data.rotate ? Matrix.from(data.rotate) : new Matrix(2, 'E');
     this.position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
+    this.textPlacement = data.text ? Direction[data.text] : Direction.Bottom;
+    this.textPosition = Directions[this.textPlacement].mul(100);
 
     this.updatePoints();
     this.updateRotate();
@@ -151,7 +151,12 @@ export class Part extends Electronic implements PartData {
       textPosition: position,
     } = this;
 
-    this.textPlacement = [Direction.Top, Direction.Bottom, Direction.Left, Direction.Right]
+    this.textPlacement = [
+      Direction.Top,
+      Direction.Bottom,
+      Direction.Left,
+      Direction.Right,
+    ]
       .map((item) => Directions[item])
       .filter((di) => points.every((point) => !point.direction.isEqual(di)))
       .reduce(
@@ -340,6 +345,7 @@ export class Part extends Electronic implements PartData {
       this.connects[i] = { id: line.id, mark: 0 };
       line.connects[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
+      this.dispatch();
     }
     
     this.updatePoints();
@@ -352,6 +358,8 @@ export class Part extends Electronic implements PartData {
   /** 渲染函数 */
   Render = () => {
     this.useInit();
+
+    console.log(this.id);
 
     const {
       prototype,

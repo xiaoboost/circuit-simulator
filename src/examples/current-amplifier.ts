@@ -1,7 +1,7 @@
 import type { CircuitStorage } from 'src/store';
 
 export const data: CircuitStorage = {
-  data: [
+  electronics: [
     {
       kind: 'DcVoltageSource',
       position: [180, 280],

@@ -9,7 +9,7 @@ export const data: CircuitStorage = {
     ['V_in', 'V_out'],
     ['I_out'],
   ],
-  data: [
+  electronics: [
     {
       kind: 'Diode',
       position: [300, 200],
@@ -39,12 +39,14 @@ export const data: CircuitStorage = {
       position: [180, 320],
       rotate: [[1, 0], [0, 1]],
       params: ['220', '200', '0', '0'],
+      text: 'Left',
     },
     {
       kind: 'Capacitor',
       position: [500, 320],
       rotate: [[0, 1], [-1, 0]],
       params: ['100u'],
+      text: 'Left',
     },
     {
       kind: 'Resistance',

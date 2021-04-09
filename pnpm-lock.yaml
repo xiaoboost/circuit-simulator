@@ -11,6 +11,7 @@ specifiers:
   '@types/mime': ^2.0.3
   '@types/mini-css-extract-plugin': ^1.4.1
   '@types/node': ^14.14.37
+  '@types/qs': ^6.9.6
   '@types/react': ^17.0.3
   '@types/react-dom': ^17.0.3
   '@types/react-transition-group': ^4.4.1
@@ -39,6 +40,7 @@ specifiers:
   mini-css-extract-plugin: ^1.4.1
   nyc: 14.1.1
   progress-bar-webpack-plugin: ^2.1.0
+  qs: ^6.10.1
   react: ^17.0.2
   react-dom: ^17.0.2
   react-jss: ^10.6.0
@@ -61,6 +63,7 @@ dependencies:
   antd: 4.15.0_react-dom@17.0.2+react@17.0.2
   bignumber.js: 9.0.1
   core-js: 3.10.1
+  qs: 6.10.1
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-jss: 10.6.0_react@17.0.2
@@ -75,6 +78,7 @@ devDependencies:
   '@types/mime': 2.0.3
   '@types/mini-css-extract-plugin': 1.4.1
   '@types/node': 14.14.37
+  '@types/qs': 6.9.6
   '@types/react': 17.0.3
   '@types/react-dom': 17.0.3
   '@types/react-transition-group': 4.4.1
@@ -441,6 +445,8 @@ packages:
       js-yaml: 3.14.1
       minimatch: 3.0.4
       strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@nodelib/fs.scandir/2.1.4:
@@ -653,6 +659,8 @@ packages:
       '@types/node': 14.14.37
       tapable: 2.2.0
       webpack: 5.31.0
+    transitivePeerDependencies:
+      - webpack-cli
     dev: true
 
   /@types/node/14.14.37:
@@ -755,6 +763,10 @@ packages:
     peerDependencies:
       '@typescript-eslint/parser': ^4.0.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/experimental-utils': 4.21.0_eslint@7.23.0+typescript@4.2.4
       '@typescript-eslint/parser': 4.21.0_eslint@7.23.0+typescript@4.2.4
@@ -768,7 +780,7 @@ packages:
       tsutils: 3.21.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:
-      - typescript
+      - supports-color
     dev: true
 
   /@typescript-eslint/experimental-utils/4.21.0_eslint@7.23.0+typescript@4.2.4:
@@ -785,6 +797,7 @@ packages:
       eslint-scope: 5.1.1
       eslint-utils: 2.1.0
     transitivePeerDependencies:
+      - supports-color
       - typescript
     dev: true
 
@@ -793,6 +806,10 @@ packages:
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/scope-manager': 4.21.0
       '@typescript-eslint/types': 4.21.0
@@ -801,7 +818,7 @@ packages:
       eslint: 7.23.0
       typescript: 4.2.4
     transitivePeerDependencies:
-      - typescript
+      - supports-color
     dev: true
 
   /@typescript-eslint/scope-manager/4.21.0:
@@ -820,6 +837,11 @@ packages:
   /@typescript-eslint/typescript-estree/4.21.0_typescript@4.2.4:
     resolution: {integrity: sha1-OBe9kYV77q7/kPafHxEupY01Cwo=, tarball: '@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-4.21.0.tgz'}
     engines: {node: ^10.12.0 || >=12.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/types': 4.21.0
       '@typescript-eslint/visitor-keys': 4.21.0
@@ -830,7 +852,7 @@ packages:
       tsutils: 3.21.0_typescript@4.2.4
       typescript: 4.2.4
     transitivePeerDependencies:
-      - typescript
+      - supports-color
     dev: true
 
   /@typescript-eslint/visitor-keys/4.21.0:
@@ -1330,6 +1352,8 @@ packages:
       update-notifier: 5.1.0
       write-file-atomic: 3.0.3
       yargs: 16.2.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /aws-sign2/0.7.0:
@@ -1485,7 +1509,6 @@ packages:
     dependencies:
       function-bind: 1.1.1
       get-intrinsic: 1.1.1
-    dev: true
 
   /caller-callsite/2.0.0:
     resolution: {integrity: sha1-hH4PzgoiN1CpoCfFSzNzGtMVQTQ=, tarball: caller-callsite/download/caller-callsite-2.0.0.tgz}
@@ -2040,6 +2063,11 @@ packages:
   /debug/4.3.1:
     resolution: {integrity: sha1-8NIpxQXgxtjEmsVT0bE9wYP2su4=, tarball: debug/download/debug-4.3.1.tgz}
     engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.2
     dev: true
@@ -2531,6 +2559,8 @@ packages:
       table: 6.0.9
       text-table: 0.2.0
       v8-compile-cache: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /espree/7.3.1:
@@ -2752,7 +2782,6 @@ packages:
 
   /function-bind/1.1.1:
     resolution: {integrity: sha1-pWiZ0+o8m6uHS7l3O3xe3pL0iV0=, tarball: function-bind/download/function-bind-1.1.1.tgz}
-    dev: true
 
   /functional-red-black-tree/1.0.1:
     resolution: {integrity: sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=, tarball: functional-red-black-tree/download/functional-red-black-tree-1.0.1.tgz}
@@ -2779,7 +2808,6 @@ packages:
       function-bind: 1.1.1
       has: 1.0.3
       has-symbols: 1.0.2
-    dev: true
 
   /get-stream/4.1.0:
     resolution: {integrity: sha1-wbJVV189wh1Zv8ec09K0axw6VLU=, tarball: get-stream/download/get-stream-4.1.0.tgz}
@@ -2924,7 +2952,6 @@ packages:
   /has-symbols/1.0.2:
     resolution: {integrity: sha1-Fl0wcMADCXUqEjakeTMeOsVvFCM=, tarball: has-symbols/download/has-symbols-1.0.2.tgz}
     engines: {node: '>= 0.4'}
-    dev: true
 
   /has-yarn/2.1.0:
     resolution: {integrity: sha1-E34RNUp7W/EapctknPDG8/8rLnc=, tarball: has-yarn/download/has-yarn-2.1.0.tgz}
@@ -2936,7 +2963,6 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
-    dev: true
 
   /hasha/3.0.0:
     resolution: {integrity: sha1-UqMvq4Vp1BymmmH/GiFPjrfIvTk=, tarball: hasha/download/hasha-3.0.0.tgz}
@@ -4277,7 +4303,6 @@ packages:
 
   /object-inspect/1.9.0:
     resolution: {integrity: sha1-yQUh104RJ7ZyZt7TOUrWEWmGUzo=, tarball: object-inspect/download/object-inspect-1.9.0.tgz}
-    dev: true
 
   /object-keys/1.1.1:
     resolution: {integrity: sha1-HEfyct8nfzsdrwYWd9nILiMixg4=, tarball: object-keys/download/object-keys-1.1.1.tgz}
@@ -4830,6 +4855,13 @@ packages:
     dependencies:
       escape-goat: 2.1.1
     dev: true
+
+  /qs/6.10.1:
+    resolution: {integrity: sha1-STFIL6jWR6Wqt5nFJx0hM7mB+2o=, tarball: qs/download/qs-6.10.1.tgz}
+    engines: {node: '>=0.6'}
+    dependencies:
+      side-channel: 1.0.4
+    dev: false
 
   /qs/6.5.2:
     resolution: {integrity: sha1-yzroBuh0BERYTvFUzo7pjUA/PjY=, tarball: qs/download/qs-6.5.2.tgz?cache=0&sync_timestamp=1616385641529&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fqs%2Fdownload%2Fqs-6.5.2.tgz}
@@ -5796,7 +5828,6 @@ packages:
       call-bind: 1.0.2
       get-intrinsic: 1.1.1
       object-inspect: 1.9.0
-    dev: true
 
   /signal-exit/3.0.3:
     resolution: {integrity: sha1-oUEMLt2PB3sItOJTyOrPyvBXRhw=, tarball: signal-exit/download/signal-exit-3.0.3.tgz}
@@ -6479,6 +6510,9 @@ packages:
     peerDependencies:
       file-loader: '*'
       webpack: ^4.0.0 || ^5.0.0
+    peerDependenciesMeta:
+      file-loader:
+        optional: true
     dependencies:
       file-loader: 6.2.0_webpack@5.31.0
       loader-utils: 2.0.0
@@ -6608,6 +6642,11 @@ packages:
     resolution: {integrity: sha1-+rYdC+iW/spK+Hva1cGIFcDWNFU=, tarball: webpack/download/webpack-5.31.0.tgz}
     engines: {node: '>=10.13.0'}
     hasBin: true
+    peerDependencies:
+      webpack-cli: '*'
+    peerDependenciesMeta:
+      webpack-cli:
+        optional: true
     dependencies:
       '@types/eslint-scope': 3.7.0
       '@types/estree': 0.0.46
@@ -6756,6 +6795,11 @@ packages:
     peerDependencies:
       bufferutil: ^4.0.1
       utf-8-validate: ^5.0.2
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
     dev: true
 
   /xdg-basedir/4.0.0:

@@ -12,14 +12,13 @@ import { draw } from './line-way';
 
 import {
   ElectronicKind,
-  LineData,
   RectSize,
   LinePinStatus,
   PointKind,
   PointStatus,
 } from './constant';
 
-export class Line extends Electronic implements LineData {
+export class Line extends Electronic {
   /** 路径数据 */
   path: LineWay;
   /** 绘制状态 */

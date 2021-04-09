@@ -9,7 +9,7 @@ export const data: CircuitStorage = {
     ['V_in', 'V_out'],
     ['I_out'],
   ],
-  data: [
+  electronics: [
     {
       kind: 'AcVoltageSource',
       position: [140, 220],

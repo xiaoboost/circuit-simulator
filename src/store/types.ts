@@ -1,5 +1,5 @@
-import { ElectronicKind } from 'src/electronics';
-import { Direction } from 'src/math';
+import type { ElectronicKind } from 'src/components/electronics';
+import type { Direction } from 'src/math';
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -11,7 +11,6 @@ export interface TimeConfig {
 export interface PartStorageData {
   kind: keyof typeof ElectronicKind;
   position: number[];
-  id?: number;
   rotate?: number[][];
   text?: keyof typeof Direction;
   params?: string[];
@@ -30,5 +29,5 @@ export type ElectronicsData = Array<PartStorageData | LineStorageData>;
 export interface CircuitStorage {
   time?: TimeConfig;
   oscilloscopes?: string[][];
-  data: ElectronicsData;
+  electronics: ElectronicsData;
 }

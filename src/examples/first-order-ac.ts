@@ -8,7 +8,7 @@ export const data: CircuitStorage = {
   oscilloscopes: [
     ['V_in', 'V_C1'],
   ],
-  data: [
+  electronics: [
     {
       kind: 'Resistance',
       position: [340, 200],

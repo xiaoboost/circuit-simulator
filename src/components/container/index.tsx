@@ -1,9 +1,10 @@
 import React from 'react';
 
+import { parse } from 'qs';
 import { styles } from './styles';
 import { useEffect } from 'react';
 import { delay } from '@utils/func';
-import { getQueryByName } from '@utils/http';
+import { load } from 'src/store';
 
 import { DrawingSheet } from 'src/components/drawing-sheet';
 import { SideMenu } from 'src/components/side-menu';
@@ -20,7 +21,7 @@ function loaded() {
 
 // 获取原理图信息
 async function fetchMap() {
-  const map = getQueryByName('map');
+  const map = parse(location.search.slice(1)).map;
 
   if (map) {
     const response = await import(`src/examples/${map}.ts`).catch((e) => {
@@ -32,7 +33,7 @@ async function fetchMap() {
     }
 
     // 加载数据
-    // await this.$store.dispatch('IMPORT_DATA', data);
+    await load(response.data);
     await delay();
   }
 }

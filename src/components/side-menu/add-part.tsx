@@ -74,7 +74,7 @@ export function AddPart() {
   const partClass = part();
   const menuClass = menu();
   const create = (kind: ElectronicKind) => {
-    new Part(kind).create();
+    new Part(kind).dispatch().create();
   };
 
   return <section className={partClass.panel}>

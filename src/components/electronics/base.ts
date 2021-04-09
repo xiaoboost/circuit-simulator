@@ -2,7 +2,6 @@ import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
 import { SignMap } from 'src/lib/map';
-import { Component } from 'react';
 
 import type { Line } from './line';
 import type { Part } from './part';
@@ -40,6 +39,12 @@ function createId(id: string): string {
   return `${pre[1]}_${index}`;
 }
 
+/** 更新图纸 */
+export function dispatch() {
+  lines.setData(getElectronics(true) as Line[]);
+  parts.setData(getElectronics(false) as Part[]);
+}
+
 export class Electronic {
   /** 元件编号 */
   readonly id: string;
@@ -61,19 +66,19 @@ export class Electronic {
     }
 
     ElectronicHash[this.id] = this;
-    this.dispatch();
   }
 
   /** 刷新所有组件 */
   dispatch() {
-    lines.setData(getElectronics(true) as Line[]);
-    parts.setData(getElectronics(false) as Part[]);
+    dispatch();
+    return this;
   }
 
   /** 删除自己 */
   delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
     this.dispatch();
+    return this;
   }
   
   /** 移动到最底层 */

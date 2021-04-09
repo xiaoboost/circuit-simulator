@@ -5,7 +5,7 @@ export const data: CircuitStorage = {
     end: '50m',
     step: '10u',
   },
-  data: [
+  electronics: [
     {
       kind: 'DcVoltageSource',
       position: [220, 100],

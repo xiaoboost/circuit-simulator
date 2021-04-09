@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useWatcher } from 'src/use';
 import { styles } from './styles';
 
@@ -17,6 +17,14 @@ export function DrawingSheet() {
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
   const classNames = styles();
+  const LinesList = useMemo(
+    () => lines.map(({ Render, id }) => <Render key={id} />),
+    [parts],
+  );
+  const PartsList = useMemo(
+    () => parts.map(({ Render, id }) => <Render key={id} />),
+    [parts],
+  );
 
   useMouseBusInit(SheetRef);
 
@@ -30,8 +38,8 @@ export function DrawingSheet() {
     >
       <svg height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
-          {lines.map(({ Render, id }) => <Render key={id} />)}
-          {parts.map(({ Render, id }) => <Render key={id} />)}
+          {LinesList}
+          {PartsList}
         </g>
       </svg>
     </section>

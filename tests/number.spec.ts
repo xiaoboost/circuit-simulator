@@ -61,7 +61,7 @@ test('toScientific()', ({ is }) => {
   is(toScientific(8.97e-14), '0.0897 p');
 });
 
-test('createSelectList(), 下拉列表选项生成器', ({ deepEqual }) => {
+test('createSelectList()', ({ deepEqual }) => {
   deepEqual(shortUnitList(['G', 'm', 'μ'], 'x'), [
     {
       label: 'Gx',

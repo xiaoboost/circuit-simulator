@@ -90,7 +90,7 @@ export const menu = createUseStyles({
 
 export const part = createUseStyles({
   panel: {
-    width: 300,
+    width: 280,
   },
   list: {
     display: 'flex',

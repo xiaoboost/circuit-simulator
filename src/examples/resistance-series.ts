@@ -9,7 +9,7 @@ export const data: CircuitStorage = {
     ['I_in'],
     ['V_R1'],
   ],
-  data: [
+  electronics: [
     {
       kind: 'Resistance',
       position: [700, 160],

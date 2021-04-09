@@ -38,24 +38,6 @@ export interface Connect {
   mark: number;
 }
 
-/** 导线基础数据 */
-export interface LineData {
-  id: string;
-  kind: ElectronicKind;
-  path: LineWay;
-  connects: (Connect | undefined)[];
-}
-
-/** 器件基础数据 */
-export interface PartData {
-  id: string;
-  kind: ElectronicKind;
-  rotate: Matrix;
-  position: Point;
-  connects: (Connect | undefined)[];
-  params: string[];
-}
-
 /** 节点类型 */
 export enum PointKind {
   Part,
