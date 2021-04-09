@@ -22,12 +22,9 @@ export class Matrix {
 
   /**
    * 矩阵数据
-   *  - 一维数组
-   *  - 64位 double 类型浮点数
-   * @private
    * @type {Float64Array}
    */
-  private _view: Float64Array;
+  private _data: number[];
 
   /**
    * Creates an instance of Matrix.
@@ -42,7 +39,7 @@ export class Matrix {
     if (arguments.length === 1) {
       this.row = row;
       this.column = row;
-      this._view = Float64Array.from(Array(row * row).fill(0));
+      this._data = Array(row * row).fill(0);
     }
     /**
      * 输入两个值
@@ -55,14 +52,14 @@ export class Matrix {
 
       if (column === 'E') {
         // 默认全为 0
-        this._view = Float64Array.from(Array(row * row).fill(0));
+        this._data = Array(row * row).fill(0);
         // 对角线为 1
         for (let i = 0; i < row; i++) {
           this.set(i, i, 1);
         }
       }
       else {
-        this._view = Float64Array.from(Array(row * row).fill(column));
+        this._data = Array(row * row).fill(column);
       }
     }
     /**
@@ -78,14 +75,14 @@ export class Matrix {
         // 行列数中，较小的那个是最大子矩阵的大小
         const size = this.row < this.column ? this.row : this.column;
         // 默认全为 0
-        this._view = Float64Array.from(Array(this.row * this.column).fill(0));
+        this._data = Array(this.row * this.column).fill(0);
         // 对角线为 1
         for (let i = 0; i < size; i++) {
           this.set(i, i, 1);
         }
       }
       else {
-        this._view = Float64Array.from(Array(this.row * this.column).fill(value));
+        this._data = Array(this.row * this.column).fill(value);
       }
     }
   }
@@ -99,12 +96,12 @@ export class Matrix {
       const data = matrix.reduce((ans, item) => ans.concat(item), []);
 
       result = new Matrix(row, column, 0);
-      result._view.set(data);
+      result._data = data.slice();
     }
     // 复制矩阵
     else {
       result = new Matrix(matrix.row, matrix.column, 0);
-      result._view = Float64Array.from(matrix._view);
+      result._data = matrix._data.slice();
     }
 
     return result;
@@ -221,7 +218,7 @@ export class Matrix {
    * @returns {number}
    */
   get(i: number, j: number) {
-    return this._view[i * this.column + j];
+    return this._data[i * this.column + j];
   }
   /**
    * 设置矩阵值
@@ -230,7 +227,7 @@ export class Matrix {
    * @param {number} value
    */
   set(i: number, j: number, value: number) {
-    this._view[i * this.column + j] = value;
+    this._data[i * this.column + j] = value;
   }
   /**
    * 取出矩阵某一行
@@ -246,7 +243,7 @@ export class Matrix {
 
     const ans: number[] = [], start = index * this.column;
     for (let i = 0; i < this.column; i++) {
-      ans[i] = this._view[start + i];
+      ans[i] = this._data[start + i];
     }
     return ans;
   }
@@ -264,7 +261,7 @@ export class Matrix {
 
     const ans: number[] = [];
     for (let i = 0; i < this.row; i++) {
-      ans[i] = this._view[index + i * this.column];
+      ans[i] = this._data[index + i * this.column];
     }
     return ans;
   }
@@ -306,7 +303,7 @@ export class Matrix {
    * @returns {string}
    */
   join(str = ','): string {
-    return this._view.join(str);
+    return this._data.join(str);
   }
   /**
    * 以数组的 json 字符串输出
@@ -335,9 +332,9 @@ export class Matrix {
       const end = to * this.column;
 
       for (let i = 0; i < this.column; i++) {
-        const temp = this._view[start + i];
-        this._view[start + i] = this._view[end + i];
-        this._view[end + i] = temp;
+        const temp = this._data[start + i];
+        this._data[start + i] = this._data[end + i];
+        this._data[end + i] = temp;
       }
     }
 
@@ -353,10 +350,10 @@ export class Matrix {
     if (from !== to) {
       for (let i = 0; i < this.row; i++) {
         const nowRow = i * this.column;
-        const temp = this._view[nowRow + from];
+        const temp = this._data[nowRow + from];
 
-        this._view[nowRow + from] = this._view[nowRow + to];
-        this._view[nowRow + to] = temp;
+        this._data[nowRow + from] = this._data[nowRow + to];
+        this._data[nowRow + to] = temp;
       }
     }
 
@@ -632,11 +629,11 @@ export class Matrix {
    * @returns {this}
    */
   forEach(callback: (value: number, position: [number, number]) => any) {
-    for (let i = 0; i < this._view.length; i++) {
+    for (let i = 0; i < this._data.length; i++) {
       const x = Math.floor(i / this.column);
       const y = i % this.column;
 
-      callback(this._view[i], [x, y]);
+      callback(this._data[i], [x, y]);
     }
   }
   /**
@@ -648,12 +645,12 @@ export class Matrix {
   map(callback: (value: number, position: [number, number]) => number) {
     const newMa = Matrix.from(this);
 
-    for (let i = 0; i < newMa._view.length; i++) {
+    for (let i = 0; i < newMa._data.length; i++) {
       const x = Math.floor(i / newMa.column);
       const y = i % newMa.column;
-      const result = callback(newMa._view[i], [x, y]);
+      const result = callback(newMa._data[i], [x, y]);
 
-      newMa._view[i] = result;
+      newMa._data[i] = result;
     }
 
     return newMa;
@@ -667,10 +664,10 @@ export class Matrix {
     const position: Array<[number, number]> = [];
     const pre = isNumber(callback) ? (val: number) => val === callback : callback;
 
-    for (let i = 0; i < this._view.length; i++) {
+    for (let i = 0; i < this._data.length; i++) {
       const x = Math.floor(i / this.column);
       const y = i % this.column;
-      const result = pre(this._view[i], [x, y]);
+      const result = pre(this._data[i], [x, y]);
 
       if (result) {
         position.push([x, y]);

@@ -38,6 +38,7 @@ module.exports =  {
     'indent': 'off',
     'brace-style': 'off',
     'no-debugger': 'off',
+    'no-multi-spaces': 'off',
 
     'max-len': ['warn', {
       code: 90,
@@ -47,7 +48,6 @@ module.exports =  {
     'eqeqeq': ['error', 'always'],
     'no-extra-label': 'error',
     'no-implicit-coercion': 'error',
-    'no-multi-spaces': 'error',
 
     '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/no-explicit-any': 'off',

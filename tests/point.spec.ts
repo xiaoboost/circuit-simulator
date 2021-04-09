@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { Point, Matrix, toRound } from 'src/math';
 
-test('创建', ({ deepEqual }) => {
+test('创建节点', ({ deepEqual }) => {
   deepEqual(Point.from(5), new Point(5, 5));
   deepEqual(Point.from([0, 0]), new Point(0, 0));
   deepEqual(Point.from([5, 4]), new Point(5, 4));
