@@ -1,4 +1,4 @@
-import { ElectronicPrototype } from './constant';
+import { ElectronicPrototype, MouseFocusClassName } from './constant';
 import { ElectronicKind } from '../constant';
 import { Direction } from 'src/math';
 
@@ -24,26 +24,36 @@ export const data: ElectronicPrototype = {
     {
       name: 'circle',
       attribute: {
-        cx: '0', cy: '0', r: '19', fill: '#ffffff',
+        cx: '0',
+        cy: '0',
+        r: '19',
+        fill: '#ffffff',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'path',
       attribute: {
         d: 'M0,-40V-20M0,20V40M0,-16V-8M-4,-12H4M-4,12H4',
+        stroke: 'currentColor',
       },
     },
     {
-      'name': 'path',
-      'non-rotate': true,
-      'attribute': {
-        d: 'M-7,-6L0,7L7,-6',
+      name: 'path',
+      nonRotate: true,
+      attribute: {
+        d: 'M-5,-4L0,6L5,-4',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'rect',
       attribute: {
-        x: '-20', y: '-30', width: '40', height: '60', className: 'focus-transparent',
+        x: '-20',
+        y: '-30',
+        width: '40',
+        height: '60',
+        className: MouseFocusClassName,
       },
     },
   ],

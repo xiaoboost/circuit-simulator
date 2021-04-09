@@ -1,4 +1,4 @@
-import { ElectronicPrototype, UnitType } from './constant';
+import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
 import { numberParser, Direction } from 'src/math';
 import { ElectronicKind } from '../constant';
 import { isNumber } from '@utils/assert';
@@ -32,26 +32,38 @@ export const data: ElectronicPrototype = {
     {
       name: 'circle',
       attribute: {
-        cx: '0', cy: '0', r: '19', fill: '#ffffff',
+        cx: '0',
+        cy: '0',
+        r: '19',
+        fill: '#ffffff',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'path',
       attribute: {
         d: 'M0,-40V-20M0,20V40M0,-12V12',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'polygon',
       attribute: {
-        points: '0,-14 -5,-4 0,-8 5,-4', fill: 'currentColor',
-        // 'strokeWidth': '0.5', 'stroke-linecap': 'square'
+        points: '0,-14 -5,-4 0,-8 5,-4',
+        fill: 'currentColor',
+        stroke: 'currentColor',
+        strokeWidth: '0.5',
+        strokeLinecap: 'square',
       },
     },
     {
       name: 'rect',
       attribute: {
-        x: '-20', y: '-30', width: '40', height: '60', className: 'focus-transparent',
+        x: '-20',
+        y: '-30',
+        width: '40',
+        height: '60',
+        className: MouseFocusClassName,
       },
     },
   ],

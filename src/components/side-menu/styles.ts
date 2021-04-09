@@ -1,4 +1,5 @@
 import { createUseStyles } from 'react-jss';
+import { MouseFocusClassName } from '../electronics/parts';
 
 import {
   ExtraLightGray,
@@ -129,8 +130,10 @@ export const part = createUseStyles({
       strokeLinecap: 'round',
       fill: 'transparent',
 
-      '& .focus-transparent': {
+      [`& .${MouseFocusClassName}`]: {
         strokeWidth: 0,
+        fill: 'transparent',
+        stroke: 'transparent',
       },
     },
   },

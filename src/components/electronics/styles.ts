@@ -1,13 +1,16 @@
 import { createUseStyles } from 'react-jss';
 import { Direction } from 'src/math';
+import { MouseFocusClassName } from './parts/constant';
 import { Black, FontText, White, movePartCursor, drawLineCursor } from 'src/lib/styles';
 
 export const part = createUseStyles({
   part: {
     color: Black,
 
-    '& .focus-transparent': {
+    [`& .${MouseFocusClassName}`]: {
       strokeWidth: 0,
+      fill: 'transparent',
+      stroke: 'transparent',
     },
     
     '&:hover': {

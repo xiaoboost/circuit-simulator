@@ -1,4 +1,4 @@
-import { ElectronicPrototype, UnitType } from './constant';
+import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
 import { ElectronicKind } from '../constant';
 import { Direction } from 'src/math';
 
@@ -58,12 +58,14 @@ export const data: ElectronicPrototype = {
       name: 'path',
       attribute: {
         d: 'M-20,0H0M0,-25V25M20,-40V-28L0,-12M0,12L20,28V40',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'polygon',
       attribute: {
         fill: 'currentColor',
+        stroke: 'currentColor',
         points: '0,0 -11,-6 -7,0 -11,6',
         transform: 'translate(18, 26.4) rotate(38.7)',
       },
@@ -71,7 +73,11 @@ export const data: ElectronicPrototype = {
     {
       name: 'rect',
       attribute: {
-        x: '-10', y: '-30', width: '30', height: '60', className: 'focus-transparent',
+        x: '-10',
+        y: '-30',
+        width: '30',
+        height: '60',
+        className: MouseFocusClassName,
       },
     },
   ],

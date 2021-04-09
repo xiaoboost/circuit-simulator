@@ -1,7 +1,10 @@
-import type { PartData, ElectronicKind } from '../constant';
+import type { ElectronicKind } from '../constant';
 import type { NumberRank, Matrix } from 'src/math';
 
 import { Direction } from 'src/math';
+
+/** 鼠标控制元素类名称 */
+export const MouseFocusClassName = '_focus-transparent';
 
 /** 器件参数单位枚举 */
 export enum UnitType {
@@ -62,7 +65,7 @@ export interface ShapeDescription {
   /** DOM 元素的所有属性 */
   readonly attribute: { [x: string]: string };
   /** 某些元素不可旋转 */
-  readonly 'non-rotate'?: true;
+  readonly nonRotate?: true;
 }
 
 /** 描述电路的四个矩阵 */
@@ -102,7 +105,7 @@ interface IterativeParameters {
 }
 
 /** 器件在运算时需要的数据 */
-export interface PartRunData extends Pick<PartData, 'id' | 'kind'> {
+export interface PartRunData extends Pick<any, 'id' | 'kind'> {
   /**
    * 运算时参数联合类型
    *  - 字符串为常量数字
@@ -133,7 +136,8 @@ export interface IteratorData {
    * @return {IterativeEquation} 迭代方程
    * TODO: 现在，有迭代方程的器件还没有需要运行时计算参数的
    */
-  createIterator(solver: CircuitSolverMatrix, part: PartData | PartRunData, mark: number): IterativeEquation;
+  // createIterator(solver: CircuitSolverMatrix, part: PartData | PartRunData, mark: number): IterativeEquation;
+  createIterator(solver: CircuitSolverMatrix, part: any | PartRunData, mark: number): IterativeEquation;
 }
 
 /**

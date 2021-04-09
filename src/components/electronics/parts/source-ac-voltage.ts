@@ -1,6 +1,6 @@
-import { ElectronicPrototype, UnitType } from './constant';
-import { PartData, ElectronicKind } from '../constant';
-import { numberParser, Direction } from 'src/math';
+import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
+import { ElectronicKind } from '../constant';
+import { Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
@@ -53,19 +53,29 @@ export const data: ElectronicPrototype = {
     {
       name: 'circle',
       attribute: {
-        cx: '0', cy: '0', r: '19', fill: '#ffffff',
+        cx: '0',
+        cy: '0',
+        r: '19',
+        fill: '#ffffff',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'path',
       attribute: {
-        d: 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,15H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0',
+        // eslint-disable-next-line
+        d: 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,12H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'rect',
       attribute: {
-        x: '-20', y: '-30', width: '40', height: '60', className: 'focus-transparent',
+        x: '-20',
+        y: '-30',
+        width: '40',
+        height: '60',
+        className: MouseFocusClassName,
       },
     },
   ],
@@ -74,7 +84,7 @@ export const data: ElectronicPrototype = {
       F.set(branch, branch, 1);
       S.set(branch, 0, mark);
     },
-    createIterator({ Source }, data: PartData, mark) {
+    createIterator({ Source }, data: any, mark) {
       // /** 峰值电压 */
       // const factor = numberParser(data.params[0]);
       // /** 频率 */

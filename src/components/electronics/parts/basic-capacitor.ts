@@ -1,6 +1,6 @@
-import { ElectronicPrototype, UnitType } from './constant';
-import { PartData, ElectronicKind } from '../constant';
-import { numberParser, Direction } from 'src/math';
+import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
+import { ElectronicKind } from '../constant';
+import { Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {
   pre: 'C',
@@ -33,12 +33,17 @@ export const data: ElectronicPrototype = {
       name: 'path',
       attribute: {
         d: 'M5,0H40M-40,0H-5M-5,-16V16M5,-16V16',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'rect',
       attribute: {
-        x: '-30', y: '-15', width: '60', height: '30', className: 'focus-transparent',
+        x: '-30',
+        y: '-15',
+        width: '60',
+        height: '30',
+        className: MouseFocusClassName,
       },
     },
   ],
@@ -48,7 +53,7 @@ export const data: ElectronicPrototype = {
       F.set(branch, branch, 1);
       S.set(branch, 0, mark);
     },
-    createIterator({ Source, getCurrentMatrixByBranch }, part: PartData, mark) {
+    createIterator({ Source, getCurrentMatrixByBranch }, part: any, mark) {
       // /** 电容值 */
       // const valueCap = numberParser(part.params[0]);
       // /** 需要更新的数值位置 */

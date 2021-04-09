@@ -1,6 +1,6 @@
-import { ElectronicPrototype, UnitType } from './constant';
-import { PartData, ElectronicKind } from '../constant';
-import { numberParser, Direction } from 'src/math';
+import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
+import { ElectronicKind } from '../constant';
+import { Direction } from 'src/math';
 
 export const data: ElectronicPrototype = {
   pre: 'VD',
@@ -47,18 +47,25 @@ export const data: ElectronicPrototype = {
       name: 'path',
       attribute: {
         d: 'M0,-40V40M-13,-11H13',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'polygon',
       attribute: {
-        points: '0,-11 -13,11 13,11', fill: 'currentColor',
+        points: '0,-11 -13,11 13,11',
+        fill: 'currentColor',
+        stroke: 'currentColor',
       },
     },
     {
       name: 'rect',
       attribute: {
-        x: '-13', y: '-30', width: '26', height: '60', className: 'focus-transparent',
+        x: '-13',
+        y: '-30',
+        width: '26',
+        height: '60',
+        className: MouseFocusClassName,
       },
     },
   ],
@@ -88,7 +95,7 @@ export const data: ElectronicPrototype = {
     ],
   },
   iterative: {
-    createIterator({ Factor, Source, getVoltageMatrixByPin }, part: PartData, mark) {
+    createIterator({ Factor, Source, getVoltageMatrixByPin }, part: any, mark) {
       // /** 导通电压 */
       // const onVol = numberParser(part.params[0]);
       // /** 导通电阻 */
