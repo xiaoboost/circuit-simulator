@@ -28,7 +28,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
     "@antv/g2": "^4.1.13",
-    "antd": "^4.15.0",
+    "antd": "^4.15.1",
     "bignumber.js": "^9.0.1",
     "core-js": "^3.10.1",
     "qs": "^6.10.1",
@@ -58,9 +58,9 @@
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^8.1.1",
     "cross-env": "^7.0.3",
-    "css-loader": "^5.2.0",
+    "css-loader": "^5.2.1",
     "esbuild-loader": "^2.11.0",
-    "eslint": "^7.23.0",
+    "eslint": "^7.24.0",
     "eslint-plugin-react": "^7.23.2",
     "file-loader": "^6.2.0",
     "fs-extra": "^9.1.0",
@@ -81,7 +81,7 @@
     "typescript": "^4.2.4",
     "typescript-plugin-css-modules": "^3.2.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.31.0",
+    "webpack": "^5.31.2",
     "webpack-bundle-analyzer": "^4.4.0"
   },
   "engines": {
