@@ -386,14 +386,12 @@ export class Part extends Electronic {
         transform={`matrix(${rotate.join()},${position.join()})`}
       >
         <g className="part-focus">
-          <g>
-            {prototype.shape.map((item, i) => (
-              React.createElement(item.name, {
-                ...item.attribute,
-                key: i,
-              })
-            ))}
-          </g>
+          {prototype.shape.map((item, i) => (
+            React.createElement(item.name, {
+              ...item.attribute,
+              key: i,
+            })
+          ))}
           {points.map((point, i) => (
             <ElectronicPoint
               key={point.label}

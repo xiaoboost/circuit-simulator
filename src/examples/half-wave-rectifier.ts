@@ -12,99 +12,99 @@ export const data: CircuitStorage = {
   electronics: [
     {
       kind: 'AcVoltageSource',
-      position: [140, 220],
+      position: [540, 220],
       rotate: [[1, 0], [0, 1]],
       params: ['25', '50', '0', '0'],
     },
     {
       kind: 'Diode',
-      position: [280, 140],
+      position: [680, 140],
       rotate: [[0, 1], [-1, 0]],
       params: ['1', '0.5', '0.2G'],
     },
     {
       kind: 'Resistance',
-      position: [460, 220],
+      position: [860, 220],
       rotate: [[0, 1], [-1, 0]],
       params: ['100'],
     },
     {
       kind: 'ReferenceGround',
-      position: [320, 340],
+      position: [720, 340],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'CurrentMeter',
-      position: [400, 140],
+      position: [800, 140],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'VoltageMeter',
-      position: [200, 220],
+      position: [600, 220],
       rotate: [[1, 0], [0, 1]],
       text: 'Right',
     },
     {
       kind: 'VoltageMeter',
-      position: [520, 220],
+      position: [920, 220],
       rotate: [[1, 0], [0, 1]],
       text: 'Right',
     },
     {
       kind: 'Line',
-      path: [[140, 180], [140, 140], [200, 140]],
+      path: [[540, 180], [540, 140], [600, 140]],
     },
     {
       kind: 'Line',
-      path: [[200, 180], [200, 140]],
+      path: [[600, 180], [600, 140]],
     },
     {
       kind: 'Line',
-      path: [[200, 140], [240, 140]],
+      path: [[600, 140], [640, 140]],
     },
     {
       kind: 'Line',
-      path: [[320, 140], [380, 140]],
+      path: [[720, 140], [780, 140]],
     },
     {
       kind: 'Line',
-      path: [[420, 140], [460, 140]],
+      path: [[820, 140], [860, 140]],
     },
     {
       kind: 'Line',
-      path: [[520, 180], [520, 140], [460, 140]],
+      path: [[920, 180], [920, 140], [860, 140]],
     },
     {
       kind: 'Line',
-      path: [[460, 140], [460, 180]],
+      path: [[860, 140], [860, 180]],
     },
     {
       kind: 'Line',
-      path: [[140, 260], [140, 300], [200, 300]],
+      path: [[540, 260], [540, 300], [600, 300]],
     },
     {
       kind: 'Line',
-      path: [[200, 260], [200, 300]],
+      path: [[600, 260], [600, 300]],
     },
     {
       kind: 'Line',
-      path: [[200, 300], [320, 300]],
+      path: [[600, 300], [720, 300]],
     },
     {
       kind: 'Line',
-      path: [[320, 320], [320, 300]],
+      path: [[720, 320], [720, 300]],
     },
     {
       kind: 'Line',
-      path: [[320, 300], [460, 300]],
+      path: [[720, 300], [860, 300]],
     },
     {
       kind: 'Line',
-      path: [[520, 260], [520, 300], [460, 300]],
+      path: [[920, 260], [920, 300], [860, 300]],
     },
     {
       kind: 'Line',
-      path: [[460, 300], [460, 260]],
+      path: [[860, 300], [860, 260]],
     },
   ],
 };

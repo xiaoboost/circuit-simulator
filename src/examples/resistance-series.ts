@@ -12,87 +12,87 @@ export const data: CircuitStorage = {
   electronics: [
     {
       kind: 'Resistance',
-      position: [700, 160],
+      position: [1100, 160],
       rotate: [[0, 1], [-1, 0]],
       text: 'Right',
       params: ['1k'],
     },
     {
       kind: 'Resistance',
-      position: [700, 320],
+      position: [1100, 320],
       rotate: [[0, 1], [-1, 0]],
       text: 'Right',
       params: ['1k'],
     },
     {
       kind: 'ReferenceGround',
-      position: [500, 420],
+      position: [900, 420],
     },
     {
       kind: 'VoltageMeter',
-      position: [780, 160],
+      position: [1180, 160],
       text: 'Right',
     },
     {
       kind: 'DcCurrentSource',
-      position: [500, 180],
+      position: [900, 180],
       text: 'Right',
       params: ['10m'],
     },
     {
       kind: 'DcVoltageSource',
-      position: [500, 300],
+      position: [900, 300],
       text: 'Right',
       params: ['12'],
     },
     {
       kind: 'CurrentMeter',
-      position: [600, 100],
+      position: [1000, 100],
       text: 'Top',
     },
     {
       kind: 'Line',
-      path: [[700, 120], [700, 100]],
+      path: [[1100, 120], [1100, 100]],
     },
     {
       kind: 'Line',
-      path: [[780, 200], [780, 220], [700, 220]],
+      path: [[1180, 200], [1180, 220], [1100, 220]],
     },
     {
       kind: 'Line',
-      path: [[700, 200], [700, 220]],
+      path: [[1100, 200], [1100, 220]],
     },
     {
       kind: 'Line',
-      path: [[700, 220], [700, 280]],
+      path: [[1100, 220], [1100, 280]],
     },
     {
       kind: 'Line',
-      path: [[500, 400], [500, 380]],
+      path: [[900, 400], [900, 380]],
     },
     {
       kind: 'Line',
-      path: [[500, 140], [500, 100], [580, 100]],
+      path: [[900, 140], [900, 100], [980, 100]],
     },
     {
       kind: 'Line',
-      path: [[620, 100], [700, 100]],
+      path: [[1020, 100], [1100, 100]],
     },
     {
       kind: 'Line',
-      path: [[700, 100], [780, 100], [780, 120]],
+      path: [[1100, 100], [1180, 100], [1180, 120]],
     },
     {
       kind: 'Line',
-      path: [[500, 340], [500, 380]],
+      path: [[900, 340], [900, 380]],
     },
     {
       kind: 'Line',
-      path: [[500, 380], [700, 380], [700, 360]],
+      path: [[900, 380], [1100, 380], [1100, 360]],
     },
     {
       kind: 'Line',
-      path: [[500, 260], [500, 220]],
+      path: [[900, 260], [900, 220]],
     },
   ],
 };
