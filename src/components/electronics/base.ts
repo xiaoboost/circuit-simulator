@@ -2,6 +2,7 @@ import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher } from 'src/lib/subject';
 import { SignMap } from 'src/lib/map';
+import { isNumber } from '@utils/assert';
 
 import type { Line } from './line';
 import type { Part } from './part';
@@ -45,27 +46,53 @@ export function dispatch() {
   parts.setData(getElectronics(false) as Part[]);
 }
 
+interface ElectronicOption {
+  kind: ElectronicKind | keyof typeof ElectronicKind;
+  id?: string;
+  connects?: (Connect | undefined)[];
+}
+
 export class Electronic {
   /** 元件编号 */
-  readonly id: string;
+  private _id: string;
   /** 元件类型 */
   readonly kind: ElectronicKind;
   /** 图纸数据 */
   readonly map = map;
   /** 元件的连接表 */
-  connects: (Connect | undefined)[] = [];
+  connects: (Connect | undefined)[];
 
-  constructor(kind: ElectronicKind) {
-    this.kind = kind;
+  constructor(opt: ElectronicKind | ElectronicOption) {
+    const options = isNumber(opt)
+      ? {
+        kind: opt,
+      }
+      : {
+        ...opt,
+        kind: isNumber(opt.kind)
+          ? opt.kind
+          : ElectronicKind[opt.kind],
+      };
 
-    if (kind === ElectronicKind.Line) {
-      this.id = createId('line');
+    this.kind = options.kind;
+    this.connects = options.connects ?? [];
+
+    if (options.id) {
+      this._id = options.id;
+    }
+    else if (options.kind === ElectronicKind.Line) {
+      this._id = createId('line');
     }
     else {
-      this.id = createId(Electronics[kind].pre);
+      this._id = createId(Electronics[options.kind].pre);
     }
 
     ElectronicHash[this.id] = this;
+  }
+
+  /** 元件编号 */
+  get id() {
+    return this._id;
   }
 
   /** 刷新所有组件 */
@@ -84,6 +111,16 @@ export class Electronic {
   /** 移动到最底层 */
   toBottom() {
     // ..
+  }
+
+  /** 变更器件编号 */
+  setId(newId: string) {
+    const old = this.id;
+
+    this._id = newId;
+
+    delete ElectronicHash[old];
+    ElectronicHash[this.id] = this;
   }
 
   /** 搜索导线 */

@@ -1,4 +1,4 @@
-import { Point } from 'src/math';
+import type { Point, Direction } from 'src/math';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
@@ -42,6 +42,22 @@ export enum PointKind {
   Part,
   Line,
   LineCross,
+}
+
+/** 器件数据 */
+export interface PartData {
+  id?: string;
+  kind: keyof typeof ElectronicKind;
+  position: number[];
+  rotate?: number[][];
+  text?: keyof typeof Direction;
+  params?: string[];
+}
+
+/** 导线数据 */
+export interface LineData {
+  kind: keyof typeof ElectronicKind;
+  path: number[][];
 }
 
 /** 节点状态 */

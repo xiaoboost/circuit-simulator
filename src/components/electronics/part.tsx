@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { Popover } from 'antd';
 import { part as partStyles } from './styles';
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
@@ -8,8 +9,9 @@ import { MouseButtons } from '@utils/event';
 import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
 import { cursorStyles } from 'src/lib/styles';
-import { PartStorageData } from 'src/store';
+import { PartData } from './constant';
 import { DrawController } from 'src/lib/mouse';
+import { editPartParams } from '../params-dialog';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
 import { useForceUpdate } from 'src/use';
@@ -46,6 +48,8 @@ export class Part extends Electronic {
     padding: [0, 0, 0, 0] as const,
   };
 
+  visible = false;
+
   /** 文本高度 */
   readonly textHeight = 14;
   /** 文本高度间隔 */
@@ -54,11 +58,11 @@ export class Part extends Electronic {
   /** 更新页面 */
   private _update?: () => void;
 
-  constructor(kind: ElectronicKind | PartStorageData) {
-    super(isNumber(kind) ? kind : ElectronicKind[kind.kind]);
+  constructor(kind: ElectronicKind | PartData) {
+    super(kind);
 
     const { prototype } = this;
-    const data: Partial<Omit<PartStorageData, 'kind'>> = !isNumber(kind) ? kind : {};
+    const data: Partial<Omit<PartData, 'kind'>> = !isNumber(kind) ? kind : {};
 
     this.params = data.params ?? prototype.params.map((n) => n.default);
     this.rotate = data.rotate ? Matrix.from(data.rotate) : new Matrix(2, 'E');
@@ -292,6 +296,19 @@ export class Part extends Electronic {
       });
   }
 
+  /** 编辑参数 */
+  editParams(ev: React.MouseEvent<SVGGElement>) {
+    // this.visible = true;
+    // this.update();
+
+    editPartParams({
+      id: this.id,
+      position: this.position,
+      params: this.texts,
+      kind: this.kind,
+    });
+  }
+
   /** 移动文本 */
   moveText(ev: React.MouseEvent) {
     if (ev.button !== MouseButtons.Left) {
@@ -379,10 +396,12 @@ export class Part extends Electronic {
     const classNames = partStyles();
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
+    const editParam = React.useCallback(this.editParams.bind(this), []);
 
     return (
       <g
         className={classNames.part}
+        onDoubleClick={editParam}
         transform={`matrix(${rotate.join()},${position.join()})`}
       >
         <g className="part-focus">

@@ -1,5 +1,4 @@
-import type { ElectronicKind } from 'src/components/electronics';
-import type { Direction } from 'src/math';
+import { PartData, LineData } from 'src/components/electronics';
 
 /** 时间配置接口 */
 export interface TimeConfig {
@@ -7,24 +6,8 @@ export interface TimeConfig {
   step: string;
 }
 
-/** 储存用的器件数据接口 */
-export interface PartStorageData {
-  id?: string;
-  kind: keyof typeof ElectronicKind;
-  position: number[];
-  rotate?: number[][];
-  text?: keyof typeof Direction;
-  params?: string[];
-}
-
-/** 储存用的器件数据接口 */
-export interface LineStorageData {
-  kind: keyof typeof ElectronicKind;
-  path: number[][];
-}
-
 /** 器件数据 */
-export type ElectronicsData = Array<PartStorageData | LineStorageData>;
+export type ElectronicsData = Array<PartData | LineData>;
 
 /** 电路数据 */
 export interface CircuitStorage {
