@@ -1,4 +1,4 @@
-import { createUseStyles, jss } from 'react-jss';
+import { jss } from 'react-jss';
 
 import DrawLine from '../assets/cursor/draw-line.svg';
 import MoveMap from '../assets/cursor/move-map.svg';

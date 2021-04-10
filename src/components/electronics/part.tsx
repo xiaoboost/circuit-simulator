@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { Popover } from 'antd';
 import { part as partStyles } from './styles';
 import { Electronic } from './base';
 import { isNumber } from '@utils/assert';
@@ -12,6 +11,7 @@ import { cursorStyles } from 'src/lib/styles';
 import { PartData } from './constant';
 import { DrawController } from 'src/lib/mouse';
 import { editPartParams } from '../params-dialog';
+import { mapState } from '../drawing-sheet/map';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
 import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
 import { useForceUpdate } from 'src/use';
@@ -297,15 +297,14 @@ export class Part extends Electronic {
   }
 
   /** 编辑参数 */
-  editParams(ev: React.MouseEvent<SVGGElement>) {
-    // this.visible = true;
-    // this.update();
-
+  editParams() {
     editPartParams({
       id: this.id,
-      position: this.position,
       params: this.texts,
       kind: this.kind,
+      position: this.position
+        .mul(mapState.data.zoom)
+        .add(mapState.data.position),
     });
   }
 
