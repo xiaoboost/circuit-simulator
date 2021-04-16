@@ -1,14 +1,14 @@
 import { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import { Point } from 'src/math';
+import { Point, splitNumber, shortUnitList, allRanks } from 'src/math';
 import { ParamsDialog } from './render';
-import { ElectronicKind } from '../electronics';
-import { delayTime } from './styles';
+import { ElectronicPrototype } from '../electronics';
+import { transformTime } from './styles';
 
 export interface ParamsOption {
   id: string;
-  kind: ElectronicKind;
+  prototype: ElectronicPrototype;
   params: string[];
   position: Point;
 }
@@ -29,7 +29,7 @@ function mountComponent(comp: React.FunctionComponentElement<any>) {
 function unMountComponent() {
   setTimeout(() => {
     currentContainer && unmountComponentAtNode(currentContainer);
-  }, delayTime);
+  }, transformTime);
 }
 
 /** 编辑器件参数 */
@@ -40,12 +40,21 @@ export async function editPartParams(opt: ParamsOption) {
     root.appendChild(currentContainer);
   }
 
-
   const component = createElement(ParamsDialog, {
     visible: true,
     id: opt.id,
-    params: [],
     position: opt.position,
+    params: opt.prototype.params.map((param, i) => {
+      const value = splitNumber(opt.params[i]);
+
+      return {
+        label: param.label,
+        value: value.number,
+        rank: value.rank,
+        unit: param.unit,
+        units: shortUnitList(param.ranks ?? allRanks, param.unit, false),
+      };
+    }),
     onCancel() {
       unMountComponent();
     },

@@ -77,7 +77,7 @@ export class Part extends Electronic {
   }
 
   /** 器件原型数据 */
-  get prototype(): DeepReadonly<ElectronicPrototype> {
+  get prototype(): ElectronicPrototype {
     return Electronics[this.kind];
   }
 
@@ -300,8 +300,8 @@ export class Part extends Electronic {
   editParams() {
     editPartParams({
       id: this.id,
-      params: this.texts,
-      kind: this.kind,
+      params: this.params,
+      prototype: this.prototype,
       position: this.position
         .mul(mapState.data.zoom)
         .add(mapState.data.position),

@@ -76,15 +76,18 @@ const unitMap = {
   'G': '吉',
 };
 
+// 所有数量级
+export const allRanks = Object.keys(unitMap) as NumberRank[];
+
 /** 生成简写数字单位快捷选择列表选项 */
-export function shortUnitList(label: string, isChinese?: boolean): SelectList;
+export function shortUnitList(unit: string, isChinese?: boolean): SelectList;
 export function shortUnitList(ranks: NumberRank[], unit: string, isChinese?: boolean): SelectList;
 export function shortUnitList(ranks: NumberRank[] | string, unit?: string | boolean, isChinese = false) {
   // 未输入单位列表
   if (!isArray(ranks)) {
     isChinese = Boolean(unit);
     unit = ranks;
-    ranks = ['G', 'M', 'k', '', 'm', 'μ', 'n', 'p'];
+    ranks = allRanks;
   }
 
   return ranks.map((origin) => {

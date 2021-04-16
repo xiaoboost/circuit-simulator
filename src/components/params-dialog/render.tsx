@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Point, SelectList, NumberRank } from 'src/math';
+import { Form, Input, Button, Select } from 'antd';
+import { delay } from '@utils/func';
 import { UnitType } from '../electronics';
-import { styles } from './styles';
-import { Form, Input, Button } from 'antd';
+import { styles, StyleProps, transformTime } from './styles';
 
 export interface Params {
   /** 该参数的文字说明 */
@@ -34,45 +35,133 @@ export interface Props {
   onConfirm?(): void;
 }
 
-export interface FormValue {
+export interface FormData {
   label: string;
   suffix: string;
+  params: {
+    value: string;
+    rank: NumberRank;
+  }[];
+}
+
+type ValidateStatus = "" | "error";
+
+function toFormData(props: Props): FormData {
+  const [label, suffix] = props.id.split('_');
+  return {
+    label,
+    suffix,
+    params: props.params.map((item) => ({
+      value: item.value,
+      rank: item.rank,
+    })),
+  };
 }
 
 export function ParamsDialog(props: Props) {
-  const [visible, setVisible] = useState(false);
+  const dialogEl = useRef<HTMLDivElement>(null);
   const [label, suffix] = props.id.split('_');
-  const [form] = Form.useForm<FormValue>();
-  const classNames = styles({
-    visible
+  const [formStatus, setFormStatus] = useState<ValidateStatus[]>([]);
+  const [formData, setFormData] = useState<FormData>({
+    label: '',
+    suffix: '',
+    params: [],
   });
-  const onCancel = () => {
-    setVisible(false);
-    props.onCancel?.();
-  };
+  const [styleStatus, setStyleStatus] = useState<StyleProps>({
+    isStart: false,
+    isPending: true,
+    left: 1e6,
+    top: 1e6,
+    height: 0,
+    width: 0,
+  });
+  const classNames = styles(styleStatus);
+  const onCancel = () => props.onCancel?.();
+  
+  useEffect(() => {
+    setFormData(toFormData(props));
+    setFormStatus(Array(props.params.length + 1).fill(''));
+  }, [props]);
 
   useEffect(() => {
-    setVisible(true);
-  }, []);
+    (async () => {
+      if (props.visible) {
+        setStyleStatus({
+          isStart: true,
+          isPending: false,
+          left: props.position[0],
+          top: props.position[1],
+          height: 0,
+          width: 0,
+        });
+
+        await delay();
+
+        const rect = dialogEl.current!.getBoundingClientRect();
+
+        debugger;
+        setStyleStatus({
+          isStart: true,
+          isPending: false,
+          height: rect.height,
+          width: rect.width,
+          left: props.position[0],
+          top: props.position[1],
+        });
+
+        await delay(transformTime);
+
+        setStyleStatus({
+          isStart: false,
+          isPending: false,
+          height: rect.height,
+          width: rect.width,
+          left: props.position[0],
+          top: props.position[1],
+        });
+        
+        await delay();
+
+        setStyleStatus({
+          isStart: false,
+          isPending: true,
+          height: rect.height,
+          width: rect.width,
+          left: props.position[0],
+          top: props.position[1],
+        });
+      }
+      else {
+        setStyleStatus({
+          ...styleStatus,
+          isStart: false,
+        });
+      }
+    })();
+  }, [props.visible]);
 
   return <div className={classNames.boxWrapper}>
     <div
+      ref={dialogEl}
       className={classNames.box}
-      style={{
-        left: props.position[0],
-        top: props.position[1],
-      }}
     >
       <header className={classNames.boxHeader}>器件参数</header>
       <article className={classNames.boxBody}>
+        <section className={classNames.formLabelList}>
+          <div className={classNames.formLabelItem}>编号</div>
+          {props.params.map((param) => (
+            <div className={classNames.formLabelItem} key={param.label}>{param.label}</div>
+          ))}
+        </section>
         <Form
-          form={form}
           layout='horizontal'
           labelAlign='right'
+          className={classNames.form}
         >
-          <Form.Item label='编号'>
+          <Form.Item validateStatus={formStatus[0]}>
             <Input.Group compact>
               <Input
+                required
                 size='small'
                 value={label}
                 placeholder='Label'
@@ -85,6 +174,7 @@ export function ParamsDialog(props: Props) {
                 placeholder="-"
               />
               <Input
+                required
                 size='small'
                 value={suffix}
                 className={classNames.idSubInput}
@@ -92,7 +182,29 @@ export function ParamsDialog(props: Props) {
               />
             </Input.Group>
           </Form.Item>
-          <Form.Item label='编号编号'></Form.Item>
+          {props.params.map((param, i) => (
+            <Form.Item key={param.label} validateStatus={formStatus[i + 1]}>
+              {param.units.length > 0
+                ? <Input.Group compact>
+                  <Input
+                    size='small'
+                    value={param.value}
+                    placeholder='Param Value'
+                  />
+                  <Select value={param.rank} size='small'>
+                    {param.units.map((item) => (
+                      <Select.Option value={item.value} key={item.value}>{item.label}</Select.Option>
+                    ))}
+                  </Select>
+                </Input.Group>
+                : <Input
+                  size='small'
+                  value={param.value}
+                  addonAfter={param.unit}
+                />
+              }
+            </Form.Item>
+          ))}
         </Form>
       </article>
       <footer className={classNames.boxFooter}>
@@ -104,8 +216,15 @@ export function ParamsDialog(props: Props) {
         >
           取消
         </Button>
-        <Button type='text' size='small'>确定</Button>
+        <Button
+          type='text'
+          size='small'
+          className={classNames.confirmBtn}
+        >
+          确定
+        </Button>
       </footer>
+      <aside className={classNames.dialogTriangle} />
     </div>
   </div>;
 }
