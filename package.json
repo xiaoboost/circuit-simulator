@@ -16,7 +16,8 @@
     ],
     "require": [
       "ts-node/register/transpile-only",
-      "tsconfig-paths/register"
+      "tsconfig-paths/register",
+      "./tests/setups/env.ts"
     ],
     "environmentVariables": {
       "TS_NODE_PROJECT": "tsconfig.json"
@@ -27,7 +28,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@antv/g2": "^4.1.13",
+    "@antv/g2": "^4.1.14",
     "antd": "^4.15.1",
     "bignumber.js": "^9.0.1",
     "core-js": "^3.10.1",
@@ -39,27 +40,27 @@
   },
   "devDependencies": {
     "@types/copy-webpack-plugin": "^6.4.1",
-    "@types/fs-extra": "^9.0.10",
+    "@types/fs-extra": "^9.0.11",
     "@types/generate-json-webpack-plugin": "^0.3.3",
     "@types/html-webpack-plugin": "^3.2.5",
     "@types/koa": "^2.13.1",
     "@types/mime": "^2.0.3",
     "@types/mini-css-extract-plugin": "^1.4.1",
-    "@types/node": "^14.14.37",
+    "@types/node": "^14.14.41",
     "@types/qs": "^6.9.6",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@types/react-transition-group": "^4.4.1",
-    "@types/webpack-bundle-analyzer": "^3.9.2",
-    "@typescript-eslint/eslint-plugin": "^4.21.0",
-    "@typescript-eslint/parser": "^4.21.0",
+    "@types/webpack-bundle-analyzer": "^3.9.3",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "ava": "^3.15.0",
     "browser-env": "^3.3.0",
     "chalk": "^4.1.0",
     "copy-webpack-plugin": "^8.1.1",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.1",
-    "esbuild-loader": "^2.11.0",
+    "esbuild-loader": "^2.12.0",
     "eslint": "^7.24.0",
     "eslint-plugin-react": "^7.23.2",
     "file-loader": "^6.2.0",
@@ -81,8 +82,8 @@
     "typescript": "^4.2.4",
     "typescript-plugin-css-modules": "^3.2.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.31.2",
-    "webpack-bundle-analyzer": "^4.4.0"
+    "webpack": "^5.33.2",
+    "webpack-bundle-analyzer": "^4.4.1"
   },
   "engines": {
     "node": ">= 9.0.0",
