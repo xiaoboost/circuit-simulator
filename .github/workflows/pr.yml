@@ -20,19 +20,25 @@ jobs:
           git config --global core.autocrlf false
           git config --global user.name "xyz"
           git config --global user.email "x@y.z"
+
       - name: Checkout Commit
         uses: actions/checkout@v1
+
       - name: Setup Node
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
+
       - name: Install pnpm
         run: |
           npm install --g pnpm
           pnpm --version
-      - name: Install Packages
+
+      - name: Install Dependencies
         run: pnpm install
+
+      - name: Check Code Style
+        run: pnpm run lint
+
       - name: Run Tests
-        run: |
-          pnpm run lint
-          pnpm run test
+        run: pnpm run test
