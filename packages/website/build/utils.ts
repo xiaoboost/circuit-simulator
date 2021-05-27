@@ -1,7 +1,7 @@
 import path from 'path';
 
 /** 当前版本号 */
-export  { version } from '../package.json';
+export { version } from '../package.json';
 
 /**
  * Generate tag of build
@@ -24,7 +24,9 @@ export const build = buildTag();
  * 定位到项目根目录
  * @param {string} dir 路径
  */
-export const resolve = (...dir: string[]) => path.join(__dirname, '..', ...dir).replace(/[\\\/]/g, '/');
+export const resolve = (...dir: string[]) => {
+  return path.join(__dirname, '..', ...dir).replace(/[\\/]/g, '/');
+};
 
 /** 运行脚本代码 */
 export function runScript<T = any>(script: string): T {

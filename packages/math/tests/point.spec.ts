@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { Point, Matrix, toRound } from 'src/math';
+import { Point, Matrix, toRound } from '../src';
 
 test('创建节点', ({ deepEqual }) => {
   deepEqual(Point.from(5), new Point(5, 5));

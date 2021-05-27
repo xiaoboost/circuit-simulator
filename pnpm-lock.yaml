@@ -10,37 +10,39 @@ importers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.1.0
+      ava: ^3.15.0
       bignumber.js: ^9.0.1
       eslint: ^7.27.0
-      rimraf: ^3.0.2
+      ts-node: ^10.0.0
       tslib: ^2.2.0
-      typescript: ^4.2.4
+      typescript: ^4.3.2
     dependencies:
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.1.0
       bignumber.js: 9.0.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.27.0
-      rimraf: 3.0.2
+      ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.2
       tslib: 2.2.0
-      typescript: registry.nlark.com/typescript/4.2.4
+      typescript: registry.nlark.com/typescript/4.3.2
 
   packages/solver:
     specifiers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       eslint: ^7.27.0
-      rimraf: ^3.0.2
+      ts-node: ^10.0.0
       tslib: ^2.2.0
-      typescript: ^4.2.4
+      typescript: ^4.3.2
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       eslint: registry.nlark.com/eslint/7.27.0
-      rimraf: 3.0.2
+      ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.2
       tslib: 2.2.0
-      typescript: registry.nlark.com/typescript/4.2.4
+      typescript: registry.nlark.com/typescript/4.3.2
 
   packages/tsconfig:
     specifiers: {}
@@ -67,7 +69,6 @@ importers:
       '@types/qs': ^6.9.6
       '@types/react': ^17.0.8
       '@types/react-dom': ^17.0.5
-      '@types/react-transition-group': ^4.4.1
       '@types/webpack-bundle-analyzer': ^4.4.0
       '@typescript-eslint/eslint-plugin': ^4.25.0
       '@typescript-eslint/parser': ^4.25.0
@@ -107,8 +108,8 @@ importers:
     dependencies:
       '@ant-design/icons': 4.6.2_react-dom@17.0.2+react@17.0.2
       '@antv/g2': registry.nlark.com/@antv/g2/4.1.17
-      '@circuit/math': link:../solver
-      '@circuit/solver': link:../math
+      '@circuit/math': link:../math
+      '@circuit/solver': link:../solver
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.1.0
       antd: registry.nlark.com/antd/4.16.0_react-dom@17.0.2+react@17.0.2
       core-js: registry.nlark.com/core-js/3.13.0
@@ -129,7 +130,6 @@ importers:
       '@types/qs': registry.nlark.com/@types/qs/6.9.6
       '@types/react': registry.nlark.com/@types/react/17.0.8
       '@types/react-dom': registry.nlark.com/@types/react-dom/17.0.5
-      '@types/react-transition-group': registry.nlark.com/@types/react-transition-group/4.4.1
       '@types/webpack-bundle-analyzer': registry.nlark.com/@types/webpack-bundle-analyzer/4.4.0
       '@typescript-eslint/eslint-plugin': registry.nlark.com/@typescript-eslint/eslint-plugin/4.25.0_ec7770e83475322b368bff30b543badb
       '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.25.0_eslint@7.27.0+typescript@4.3.2
@@ -560,7 +560,7 @@ packages:
     engines: {node: '>= 8'}
     dependencies:
       normalize-path: 3.0.0
-      picomatch: registry.nlark.com/picomatch/2.2.3
+      picomatch: registry.nlark.com/picomatch/2.3.0
     dev: true
 
   /arg/4.1.3:
@@ -639,7 +639,7 @@ packages:
     dependencies:
       '@concordance/react': 2.0.0
       acorn: registry.nlark.com/acorn/8.2.4
-      acorn-walk: registry.nlark.com/acorn-walk/8.0.2
+      acorn-walk: registry.nlark.com/acorn-walk/8.1.0
       ansi-styles: registry.nlark.com/ansi-styles/5.2.0
       arrgv: 1.0.2
       arrify: registry.nlark.com/arrify/2.0.1
@@ -672,12 +672,12 @@ packages:
       lodash: 4.17.21
       matcher: 3.0.0
       md5-hex: registry.nlark.com/md5-hex/3.0.1
-      mem: registry.nlark.com/mem/8.1.0
+      mem: registry.nlark.com/mem/8.1.1
       ms: 2.1.3
       ora: 5.4.0
       p-event: 4.2.0
       p-map: 4.0.0
-      picomatch: registry.nlark.com/picomatch/2.2.3
+      picomatch: registry.nlark.com/picomatch/2.3.0
       pkg-conf: 3.1.0
       plur: 4.0.0
       pretty-ms: 7.0.1
@@ -693,6 +693,8 @@ packages:
       update-notifier: 5.1.0
       write-file-atomic: 3.0.3
       yargs: registry.nlark.com/yargs/16.2.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /aws-sign2/0.7.0:
@@ -802,7 +804,7 @@ packages:
       http-cache-semantics: 4.1.0
       keyv: 3.1.0
       lowercase-keys: 2.0.0
-      normalize-url: registry.nlark.com/normalize-url/4.5.0
+      normalize-url: registry.nlark.com/normalize-url/4.5.1
       responselike: 1.0.2
     dev: true
 
@@ -1607,7 +1609,7 @@ packages:
       glob-parent: registry.nlark.com/glob-parent/5.1.2
       merge2: 1.4.1
       micromatch: 4.0.4
-      picomatch: registry.nlark.com/picomatch/2.2.3
+      picomatch: registry.nlark.com/picomatch/2.3.0
     dev: true
 
   /fast-json-stable-stringify/2.1.0:
@@ -2600,7 +2602,7 @@ packages:
     engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.2
-      picomatch: registry.nlark.com/picomatch/2.2.3
+      picomatch: registry.nlark.com/picomatch/2.3.0
     dev: true
 
   /mime-db/1.47.0:
@@ -3470,7 +3472,7 @@ packages:
     resolution: {integrity: sha1-m6dMAZsV02UnjS6Ru4xI17TULJ4=, tarball: readdirp/download/readdirp-3.5.0.tgz}
     engines: {node: '>=8.10.0'}
     dependencies:
-      picomatch: registry.nlark.com/picomatch/2.2.3
+      picomatch: registry.nlark.com/picomatch/2.3.0
     dev: true
 
   /regenerator-runtime/0.13.7:
@@ -3617,8 +3619,8 @@ packages:
   /resolve/1.20.0:
     resolution: {integrity: sha1-YpoBP7P3B1XW8LeTXMHCxTeLGXU=, tarball: resolve/download/resolve-1.20.0.tgz?cache=0&sync_timestamp=1613098300584&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fresolve%2Fdownload%2Fresolve-1.20.0.tgz}
     dependencies:
-      is-core-module: registry.nlark.com/is-core-module/2.2.0
-      path-parse: registry.nlark.com/path-parse/1.0.6
+      is-core-module: registry.nlark.com/is-core-module/2.4.0
+      path-parse: registry.nlark.com/path-parse/1.0.7
     dev: true
 
   /resolve/2.0.0-next.3:
@@ -3819,7 +3821,7 @@ packages:
     resolution: {integrity: sha1-3s6BrJweZxPl99G28X1Gj6U9iak=, tarball: spdx-correct/download/spdx-correct-3.1.1.tgz}
     dependencies:
       spdx-expression-parse: 3.0.1
-      spdx-license-ids: registry.nlark.com/spdx-license-ids/3.0.7
+      spdx-license-ids: registry.nlark.com/spdx-license-ids/3.0.9
     dev: true
 
   /spdx-exceptions/2.3.0:
@@ -3830,7 +3832,7 @@ packages:
     resolution: {integrity: sha1-z3D1BILu/cmOPOCmgz5KU87rpnk=, tarball: spdx-expression-parse/download/spdx-expression-parse-3.0.1.tgz}
     dependencies:
       spdx-exceptions: 2.3.0
-      spdx-license-ids: registry.nlark.com/spdx-license-ids/3.0.7
+      spdx-license-ids: registry.nlark.com/spdx-license-ids/3.0.9
     dev: true
 
   /sprintf-js/1.0.3:
@@ -4548,6 +4550,8 @@ packages:
       js-yaml: 3.14.1
       minimatch: 3.0.4
       strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/@polka/url/1.0.0-next.12:
@@ -4816,6 +4820,8 @@ packages:
       '@types/node': registry.nlark.com/@types/node/15.6.1
       tapable: 2.2.0
       webpack: registry.nlark.com/webpack/5.38.0
+    transitivePeerDependencies:
+      - webpack-cli
     dev: true
 
   registry.nlark.com/@types/node/15.0.1:
@@ -4860,24 +4866,6 @@ packages:
     version: 17.0.5
     dependencies:
       '@types/react': registry.nlark.com/@types/react/17.0.8
-    dev: true
-
-  registry.nlark.com/@types/react-transition-group/4.4.1:
-    resolution: {integrity: sha1-4aPLJ4339H8XtQgrGz2hcXC9RLE=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/react-transition-group/download/@types/react-transition-group-4.4.1.tgz}
-    name: '@types/react-transition-group'
-    version: 4.4.1
-    dependencies:
-      '@types/react': registry.nlark.com/@types/react/17.0.4
-    dev: true
-
-  registry.nlark.com/@types/react/17.0.4:
-    resolution: {integrity: sha1-pnxvekYNJmDpUNnMwcLxhSXCgiA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/react/download/@types/react-17.0.4.tgz}
-    name: '@types/react'
-    version: 17.0.4
-    dependencies:
-      '@types/prop-types': registry.nlark.com/@types/prop-types/15.7.3
-      '@types/scheduler': registry.nlark.com/@types/scheduler/0.16.1
-      csstype: registry.nlark.com/csstype/3.0.7
     dev: true
 
   registry.nlark.com/@types/react/17.0.8:
@@ -5107,6 +5095,13 @@ packages:
     resolution: {integrity: sha1-1GMr/GP9k9DxX9BeoOmE/9P1qMM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/acorn-walk/download/acorn-walk-8.0.2.tgz}
     name: acorn-walk
     version: 8.0.2
+    engines: {node: '>=0.4.0'}
+    dev: true
+
+  registry.nlark.com/acorn-walk/8.1.0:
+    resolution: {integrity: sha1-08ap+vAJh6Xiub21BsKqds1wf4M=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/acorn-walk/download/acorn-walk-8.1.0.tgz}
+    name: acorn-walk
+    version: 8.1.0
     engines: {node: '>=0.4.0'}
     dev: true
 
@@ -5627,6 +5622,8 @@ packages:
       table: registry.nlark.com/table/6.7.1
       text-table: 0.2.0
       v8-compile-cache: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/fs-extra/10.0.0:
@@ -5720,6 +5717,14 @@ packages:
     resolution: {integrity: sha1-lwN+89UiJNhRY/VZeytj2a/tmBo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/is-core-module/download/is-core-module-2.2.0.tgz}
     name: is-core-module
     version: 2.2.0
+    dependencies:
+      has: 1.0.3
+    dev: true
+
+  registry.nlark.com/is-core-module/2.4.0:
+    resolution: {integrity: sha1-jp/I4VAnsBFBgCbpjw5vTYYwXME=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/is-core-module/download/is-core-module-2.4.0.tgz}
+    name: is-core-module
+    version: 2.4.0
     dependencies:
       has: 1.0.3
     dev: true
@@ -5850,10 +5855,10 @@ packages:
       blueimp-md5: 2.18.0
     dev: true
 
-  registry.nlark.com/mem/8.1.0:
-    resolution: {integrity: sha1-RF5Hgn+3V6Tl81sKamJ0PL/cCg0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/mem/download/mem-8.1.0.tgz}
+  registry.nlark.com/mem/8.1.1:
+    resolution: {integrity: sha1-zxGLNXxlq3t+CBe98AyAYil8ASI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/mem/download/mem-8.1.1.tgz}
     name: mem
-    version: 8.1.0
+    version: 8.1.1
     engines: {node: '>=10'}
     dependencies:
       map-age-cleaner: 0.1.3
@@ -5889,10 +5894,10 @@ packages:
     version: 1.1.71
     dev: true
 
-  registry.nlark.com/normalize-url/4.5.0:
-    resolution: {integrity: sha1-RTNUCH5sqWlXvY9br3U/WYIUISk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/normalize-url/download/normalize-url-4.5.0.tgz}
+  registry.nlark.com/normalize-url/4.5.1:
+    resolution: {integrity: sha1-DdkM8SiO4dExO4cIHJpZMu5IUYo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/normalize-url/download/normalize-url-4.5.1.tgz}
     name: normalize-url
-    version: 4.5.0
+    version: 4.5.1
     engines: {node: '>=8'}
     dev: true
 
@@ -5938,10 +5943,16 @@ packages:
     version: 1.0.6
     dev: true
 
-  registry.nlark.com/picomatch/2.2.3:
-    resolution: {integrity: sha1-RlVH81nMwgbTxI5Goby4m/fuYZ0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/picomatch/download/picomatch-2.2.3.tgz}
+  registry.nlark.com/path-parse/1.0.7:
+    resolution: {integrity: sha1-+8EUtgykKzDZ2vWFjkvWi77bZzU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/path-parse/download/path-parse-1.0.7.tgz}
+    name: path-parse
+    version: 1.0.7
+    dev: true
+
+  registry.nlark.com/picomatch/2.3.0:
+    resolution: {integrity: sha1-8fBh3o9qS/AiiS4tEoI0+5gwKXI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/picomatch/download/picomatch-2.3.0.tgz}
     name: picomatch
-    version: 2.2.3
+    version: 2.3.0
     engines: {node: '>=8.6'}
     dev: true
 
@@ -6374,10 +6385,10 @@ packages:
     engines: {node: '>=0.10.0'}
     dev: true
 
-  registry.nlark.com/spdx-license-ids/3.0.7:
-    resolution: {integrity: sha1-6cGKQQ5e1+EkQqVJ+9ivp2cDjWU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/spdx-license-ids/download/spdx-license-ids-3.0.7.tgz}
+  registry.nlark.com/spdx-license-ids/3.0.9:
+    resolution: {integrity: sha1-illRNd75WSvaaXCUdPHL7qfCRn8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/spdx-license-ids/download/spdx-license-ids-3.0.9.tgz}
     name: spdx-license-ids
-    version: 3.0.7
+    version: 3.0.9
     dev: true
 
   registry.nlark.com/string.prototype.matchall/4.0.4:
@@ -6504,6 +6515,37 @@ packages:
       yn: 3.1.1
     dev: true
 
+  registry.nlark.com/ts-node/10.0.0_typescript@4.3.2:
+    resolution: {integrity: sha1-BfELmnFrC2JBKa1E8OoF2shLo74=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/ts-node/download/ts-node-10.0.0.tgz}
+    id: registry.nlark.com/ts-node/10.0.0
+    name: ts-node
+    version: 10.0.0
+    engines: {node: '>=12.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@swc/core': '>=1.2.45'
+      '@swc/wasm': '>=1.2.45'
+      '@types/node': '*'
+      typescript: '>=2.7'
+    peerDependenciesMeta:
+      '@swc/core':
+        optional: true
+      '@swc/wasm':
+        optional: true
+    dependencies:
+      '@tsconfig/node10': registry.nlark.com/@tsconfig/node10/1.0.7
+      '@tsconfig/node12': registry.nlark.com/@tsconfig/node12/1.0.7
+      '@tsconfig/node14': registry.nlark.com/@tsconfig/node14/1.0.0
+      '@tsconfig/node16': registry.nlark.com/@tsconfig/node16/1.0.1
+      arg: 4.1.3
+      create-require: 1.1.1
+      diff: 4.0.2
+      make-error: 1.3.6
+      source-map-support: 0.5.19
+      typescript: registry.nlark.com/typescript/4.3.2
+      yn: 3.1.1
+    dev: true
+
   registry.nlark.com/type-fest/0.13.1:
     resolution: {integrity: sha1-AXLLW86AsL1ULqNI21DH4hg02TQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/type-fest/download/type-fest-0.13.1.tgz}
     name: type-fest
@@ -6544,14 +6586,6 @@ packages:
     name: type-fest
     version: 1.0.2
     engines: {node: '>=10'}
-    dev: true
-
-  registry.nlark.com/typescript/4.2.4:
-    resolution: {integrity: sha1-hhC1l0feAo/aiYqK7w4QPxVtCWE=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/typescript/download/typescript-4.2.4.tgz?cache=0&other_urls=https%3A%2F%2Fregistry.nlark.com%2Ftypescript%2Fdownload%2Ftypescript-4.2.4.tgz}
-    name: typescript
-    version: 4.2.4
-    engines: {node: '>=4.2.0'}
-    hasBin: true
     dev: true
 
   registry.nlark.com/typescript/4.3.2:

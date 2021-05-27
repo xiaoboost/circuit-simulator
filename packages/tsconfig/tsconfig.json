@@ -6,7 +6,7 @@
     "declaration": true,
     "moduleResolution": "node",
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "CommonJS",
     "jsx": "react",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,

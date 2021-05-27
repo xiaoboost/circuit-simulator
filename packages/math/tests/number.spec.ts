@@ -7,7 +7,7 @@ import {
   numberParser,
   toScientific,
   shortUnitList,
-} from 'src/math';
+} from '../src';
 
 test('getRank()', ({ is, throws }) => {
   is(getRank(0), 0);

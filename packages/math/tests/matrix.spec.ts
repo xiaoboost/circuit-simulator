@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { Matrix } from 'src/math';
+import { Matrix } from '../src';
 
 test('创建 0 矩阵', ({ deepEqual, is }) => {
   deepEqual(Matrix.from([[0, 0, 0], [0, 0, 0]]), new Matrix(2, 3, 0));

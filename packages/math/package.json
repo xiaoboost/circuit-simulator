@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/solver",
-  "description": "circuit's solver",
+  "name": "@circuit/math",
+  "description": "circuit's math",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
@@ -12,14 +12,27 @@
     "package.json"
   ],
   "scripts": {
-    "clear": "rimraf ./dist",
-    "build": "pnpm run clear && tsc -p .",
+    "test": "ava --no-cache",
     "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
     "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/xiaoboost/circuit-simulator.git"
+  },
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register/transpile-only"
+    ],
+    "environmentVariables": {
+      "TS_NODE_PROJECT": "tsconfig.json"
+    },
+    "files": [
+      "tests/**/*.spec.ts"
+    ]
   },
   "dependencies": {
     "@xiao-ai/utils": "^1.1.0",
@@ -28,9 +41,10 @@
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
+    "ava": "^3.15.0",
     "eslint": "^7.27.0",
-    "rimraf": "^3.0.2",
+    "ts-node": "^10.0.0",
     "tslib": "^2.2.0",
-    "typescript": "^4.2.4"
+    "typescript": "^4.3.2"
   }
 }

@@ -10,12 +10,11 @@
     "package.json"
   ],
   "scripts": {
-    "ts-node": "node node_modules/ts-node/dist/bin.js -P ./build/tsconfig.json --transpile-only",
+    "ts-node": "ts-node -P ./build/tsconfig.json --transpile-only",
     "dev": "cross-env NODE_ENV=development npm run ts-node ./build/webpack.dev.ts",
     "build": "cross-env NODE_ENV=production npm run ts-node ./build/webpack.prod.ts",
-    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ./.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
-    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ./.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
-    "test": "ava --no-cache"
+    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
+    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}"
   },
   "ava": {
     "extensions": [
@@ -63,7 +62,6 @@
     "@types/qs": "^6.9.6",
     "@types/react": "^17.0.8",
     "@types/react-dom": "^17.0.5",
-    "@types/react-transition-group": "^4.4.1",
     "@types/webpack-bundle-analyzer": "^4.4.0",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
