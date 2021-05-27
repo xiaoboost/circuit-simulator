@@ -1,4 +1,0 @@
-all: true
-extension: [.ts]
-include: [src/**]
-reporter: [html, text-summary]

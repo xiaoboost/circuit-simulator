@@ -1,0 +1,6 @@
+{
+  "name": "@circuit/tsconfig",
+  "description": "circuit's TypeScript configuration",
+  "version": "1.0.0",
+  "main": "tsconfig.json"
+}

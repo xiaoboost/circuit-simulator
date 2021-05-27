@@ -1,0 +1,32 @@
+{
+  "name": "@circuit/math",
+  "description": "circuit's math",
+  "version": "1.0.0",
+  "author": "xiaoboost",
+  "license": "MIT",
+  "source": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "clear": "rimraf ./dist",
+    "build": "pnpm run clear && tsc -p .",
+    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
+    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaoboost/circuit-simulator.git"
+  },
+  "devDependencies": {
+    "@circuit/tsconfig": "workspace:*",
+    "@types/circuit": "workspace:*",
+    "eslint": "^7.27.0",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.2.0",
+    "typescript": "^4.2.4"
+  }
+}

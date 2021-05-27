@@ -1,0 +1,5 @@
+{
+  "extends": "@circuit/tsconfig",
+  "include": ["src", "typings"],
+  "exclude": ["node_modules", "dist"]
+}
