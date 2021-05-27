@@ -16,10 +16,9 @@ export function DrawingSheet() {
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
-  const classNames = styles();
   const LinesList = useMemo(
     () => lines.map(({ Render, id }) => <Render key={id} />),
-    [parts],
+    [lines],
   );
   const PartsList = useMemo(
     () => parts.map(({ Render, id }) => <Render key={id} />),
@@ -31,7 +30,7 @@ export function DrawingSheet() {
   return (
     <section
       ref={SheetRef}
-      className={classNames.sheet}
+      className={styles.sheet}
       style={utils.getBackgroundStyle(map.zoom, map.position)}
       onMouseDown={mapEvent.moveStartEvent}
       onWheel={mapEvent.sizeChangeEvent}

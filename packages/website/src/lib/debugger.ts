@@ -1,6 +1,5 @@
-import { def } from '@utils/object';
-import { wait } from '@utils/func';
-import { Point, PointLike } from 'src/math';
+import { wait, def } from '@xiao-ai/utils';
+import { Point, PointLike } from '@circuit/math';
 import { SignNodeKind } from './map';
 
 // 全局常量

@@ -41,7 +41,7 @@
     "@antv/g2": "^4.1.17",
     "@circuit/math": "workspace:*",
     "@circuit/solver": "workspace:*",
-    "@xiao-ai/utils": "^1.1.0",
+    "@xiao-ai/utils": "^1.2.0",
     "antd": "^4.16.0",
     "core-js": "^3.13.0",
     "qs": "^6.10.1",

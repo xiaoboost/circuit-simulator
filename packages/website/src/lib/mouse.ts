@@ -2,11 +2,9 @@ import { RefObject, useEffect } from 'react';
 
 import { mapState } from '../components/drawing-sheet/map';
 
-import { Point } from 'src/math';
-import { delay } from '@utils/func';
-import { isFunc } from '@utils/assert';
-import { MouseButtons } from '@utils/event';
-import { supportsPassive } from '@utils/env';
+import { Point } from '@circuit/math';
+import { delay, isFunc } from '@xiao-ai/utils';
+import { MouseButtons, supportsPassive } from '@xiao-ai/utils/web';
 
 type Callback = (event: DrawEvent) => any;
 type StopEventInput = StopEventOption | ((event?: DrawEvent) => Promise<void>);

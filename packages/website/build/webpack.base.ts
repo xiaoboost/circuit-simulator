@@ -36,11 +36,12 @@ const baseConfig: Webpack.Configuration = {
     chunkFilename: isDevelopment ? 'js/[name].js' : 'js/[name].[chunkhash].js',
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.json', '.styl', '.css'],
-    mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.styl'],
+    extensions: ['.tsx', '.ts', '.js', '.json', '.css'],
+    mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.css'],
     alias: {
       src: utils.resolve('src'),
-      '@utils': utils.resolve('src/utils'),
+      '@xiao-ai/utils/web': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/web/index.js'),
+      '@xiao-ai/utils/use': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/use/index.js'),
     },
   },
   module: {
@@ -58,33 +59,6 @@ const baseConfig: Webpack.Configuration = {
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
-      },
-      {
-        test: /\.styl(us)?$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentContext: utils.resolve('src'),
-                exportLocalsConvention: 'camelCaseOnly',
-                localIdentName: isDevelopment ? '[local]__[hash:base64:5]' : '[hash:base64:6]',
-              },
-            },
-          },
-          {
-            loader: 'stylus-loader',
-            options: {
-              stylusOptions: {
-                paths: [
-                  utils.resolve('node_modules'),
-                  utils.resolve('src/styles'),
-                ],
-              },
-            },
-          },
-        ],
       },
       {
         test: /\.(png|jpg|webp|svg)$/i,

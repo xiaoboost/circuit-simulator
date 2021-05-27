@@ -1,5 +1,5 @@
-import { Point, PointLike } from 'src/math';
-import { remove } from '@utils/array';
+import { Point, PointLike } from '@circuit/math';
+import { remove, PartPartial } from '@xiao-ai/utils';
 
 /** 节点类型常量 */
 export enum SignNodeKind {

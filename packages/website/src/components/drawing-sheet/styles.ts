@@ -1,8 +1,8 @@
-import { createUseStyles } from 'react-jss';
+import { createStyles } from 'src/lib/styles';
 
 import Grid from 'src/assets/img/circuit-grid.svg';
 
-export const styles = createUseStyles({
+export const styles = createStyles({
   sheet: {
     backgroundImage: `url("${Grid}")`,
     position: 'absolute',

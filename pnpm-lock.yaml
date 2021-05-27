@@ -72,7 +72,7 @@ importers:
       '@types/webpack-bundle-analyzer': ^4.4.0
       '@typescript-eslint/eslint-plugin': ^4.25.0
       '@typescript-eslint/parser': ^4.25.0
-      '@xiao-ai/utils': ^1.1.0
+      '@xiao-ai/utils': ^1.2.0
       antd: ^4.16.0
       ava: ^3.15.0
       browser-env: ^3.3.0
@@ -115,7 +115,7 @@ importers:
       '@antv/g2': registry.nlark.com/@antv/g2/4.1.17
       '@circuit/math': link:../math
       '@circuit/solver': link:../solver
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.1.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.2.0
       antd: registry.nlark.com/antd/4.16.0_react-dom@17.0.2+react@17.0.2
       core-js: registry.nlark.com/core-js/3.13.0
       qs: 6.10.1
@@ -5123,6 +5123,12 @@ packages:
     resolution: {integrity: sha1-FDh3lDH3EMOblj9z/4Ha8sETlLc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.1.0.tgz}
     name: '@xiao-ai/utils'
     version: 1.1.0
+    dev: false
+
+  registry.nlark.com/@xiao-ai/utils/1.2.0:
+    resolution: {integrity: sha1-P8iO/Co5/qXlygga5LzIptZuWM8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.2.0.tgz}
+    name: '@xiao-ai/utils'
+    version: 1.2.0
     dev: false
 
   registry.nlark.com/acorn-walk/6.2.0:
