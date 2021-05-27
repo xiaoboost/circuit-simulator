@@ -77,7 +77,7 @@ const unitMap = {
 };
 
 // 所有数量级
-export const allRanks = Object.keys(unitMap) as NumberRank[];
+export const allRanks = ['G', 'M', 'k', '', 'm', 'μ', 'n', 'p'] as NumberRank[];
 
 /** 生成简写数字单位快捷选择列表选项 */
 export function shortUnitList(unit: string, isChinese?: boolean): SelectList;
