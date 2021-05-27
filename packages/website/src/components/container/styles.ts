@@ -1,7 +1,6 @@
-import { createUseStyles } from 'react-jss';
-import { FontDefaultSize, FontDefault, Black } from 'src/lib/styles';
+import { createStyles, FontDefaultSize, FontDefault, Black } from 'src/lib/styles';
 
-export const styles = createUseStyles({
+export const styles = createStyles({
   container: {
     height: '100%',
     width: '100%',

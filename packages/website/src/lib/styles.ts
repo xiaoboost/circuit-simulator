@@ -1,8 +1,21 @@
-import { jss } from 'react-jss';
+import jss from 'jss';
+import nested from 'jss-plugin-nested';
+import extend from 'jss-plugin-extend';
+import camelCase from 'jss-plugin-camel-case';
+import ruleValueFunction from 'jss-plugin-rule-value-function';
 
 import DrawLine from '../assets/cursor/draw-line.svg';
 import MoveMap from '../assets/cursor/move-map.svg';
 import MovePart from '../assets/cursor/move-part.svg';
+
+import { Styles, Classes } from 'jss';
+import { isEqual } from '@xiao-ai/utils';
+
+jss
+  .use(nested())
+  .use(extend())
+  .use(camelCase())
+  .use(ruleValueFunction());
 
 function getCursorStyle(url: string, offset = 16) {
   return `url("${url}") ${offset} ${offset}, crosshair`;
@@ -12,7 +25,34 @@ export const drawLineCursor = getCursorStyle(DrawLine);
 export const moveMapCursor = getCursorStyle(MoveMap);
 export const movePartCursor = getCursorStyle(MovePart, 10);
 
-export const cursorStyles = jss.createStyleSheet({
+export function createStyles<
+  C extends string = string,
+  Props = unknown,
+>(styles: Styles<C, Props>, data?: Props): Classes<C> {
+  return createDynamicStyles(styles)(data);
+}
+
+export function createDynamicStyles<
+  C extends string = string,
+  Props = unknown,
+>(styles: Styles<C, Props>): (data?: Props) => Classes<C> {
+  const styleData = jss.createStyleSheet(styles as any);
+
+  let lastProps: Props | undefined = undefined;
+  let lastClasses: Classes<C> = {} as any;
+
+  return (data?: Props) => {
+    if (!lastProps || !lastClasses || !isEqual(data, lastProps)) {
+      styleData.update(data as any);
+      lastProps = data;
+      lastClasses = styleData.attach().classes;
+    }
+
+    return lastClasses;
+  };
+}
+
+export const cursorStyles = createStyles({
   drawLine: {
     cursor: drawLineCursor,
   },
@@ -22,7 +62,7 @@ export const cursorStyles = jss.createStyleSheet({
   movePart: {
     cursor: movePartCursor,
   },
-}).attach().classes;
+});
 
 // 主要颜色定义
 export const Blue = '#20A0FF';
@@ -65,5 +105,5 @@ export const FontSerif = "'Georgia', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 
  */
 export const FontText = "'Times New Roman', 'Microsoft YaHei'";
 
-// 默认字体大小
+/** 默认字体大小 */
 export const FontDefaultSize = '16px';
