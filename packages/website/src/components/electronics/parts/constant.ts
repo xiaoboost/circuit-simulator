@@ -1,7 +1,7 @@
 import type { ElectronicKind } from '../constant';
-import type { NumberRank, Matrix } from 'src/math';
+import type { NumberRank, Matrix } from '@circuit/math';
 
-import { Direction } from 'src/math';
+import { Direction } from '@circuit/math';
 
 /** 鼠标控制元素类名称 */
 export const MouseFocusClassName = '_focus-transparent';

@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Electronic } from './base';
 import { LineWay } from './line-way';
-import { PointLike } from 'src/math';
-import { useForceUpdate } from 'src/use';
+import { PointLike } from '@circuit/math';
+import { useForceUpdate } from '@xiao-ai/utils/use';
 import { DrawController } from 'src/lib/mouse';
 import { cursorStyles } from 'src/lib/styles';
 import { ElectronicPoint } from './point';

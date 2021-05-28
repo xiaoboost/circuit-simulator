@@ -1,5 +1,5 @@
-import { Point } from 'src/math';
-import { isDef } from '@utils/assert';
+import { Point } from '@circuit/math';
+import { isDef } from '@xiao-ai/utils';
 import { LineWay } from './line-way';
 import { pointSearch } from './point-search';
 import { Rules } from './search-rules';

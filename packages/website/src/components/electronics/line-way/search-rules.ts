@@ -1,4 +1,4 @@
-import { Point } from 'src/math';
+import { Point } from '@circuit/math';
 import { SearchStatus } from './types';
 import { SearchNodeData } from './point-search';
 import { SignMap, SignNodeKind } from 'src/lib/map';

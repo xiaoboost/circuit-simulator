@@ -1,6 +1,6 @@
 import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
 import { ElectronicKind } from '../constant';
-import { Direction } from 'src/math';
+import { Direction } from '@circuit/math';
 
 export const data: ElectronicPrototype = {
   pre: 'C',

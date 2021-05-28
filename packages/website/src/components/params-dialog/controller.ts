@@ -1,7 +1,7 @@
 import { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
-import { Point, splitNumber, shortUnitList, allRanks } from 'src/math';
+import { Point, splitNumber, shortUnitList, allRanks } from '@circuit/math';
 import { ParamsDialog } from './render';
 import { ElectronicPrototype } from '../electronics';
 import { transformTime } from './styles';

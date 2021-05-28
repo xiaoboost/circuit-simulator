@@ -2,10 +2,6 @@ import React from 'react';
 
 import { part as partStyles } from './styles';
 import { Electronic } from './base';
-import { isNumber } from '@utils/assert';
-import { DeepReadonly } from '@utils/types';
-import { MouseButtons } from '@utils/event';
-import { stringifyClass } from '@utils/string';
 import { SignNodeKind } from 'src/lib/map';
 import { cursorStyles } from 'src/lib/styles';
 import { PartData } from './constant';
@@ -13,8 +9,10 @@ import { DrawController } from 'src/lib/mouse';
 import { editPartParams } from '../params-dialog';
 import { mapState } from '../drawing-sheet/map';
 import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
-import { Matrix, Point, PointInput, Direction, Directions } from 'src/math';
-import { useForceUpdate } from 'src/use';
+import { Matrix, Point, PointInput, Direction, Directions } from '@circuit/math';
+import { useForceUpdate } from '@xiao-ai/utils/use';
+import { MouseButtons } from '@xiao-ai/utils/web';
+import { isNumber, stringifyClass } from '@xiao-ai/utils';
 import { ElectronicPoint } from './point';
 import { Line } from './line';
 

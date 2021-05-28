@@ -1,6 +1,6 @@
-import { Point } from 'src/math';
-import { Watcher } from 'src/lib/subject';
-import { MouseButtons } from '@utils/event';
+import { Point } from '@circuit/math';
+import { Watcher } from '@xiao-ai/utils';
+import { MouseButtons } from '@xiao-ai/utils/web';
 import { DrawController } from 'src/lib/mouse';
 import { cursorStyles } from 'src/lib/styles';
 

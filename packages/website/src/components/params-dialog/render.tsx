@@ -1,9 +1,9 @@
 import React from 'react';
 
 import { useEffect, useState, useRef } from 'react';
-import { Point, SelectList, NumberRank } from 'src/math';
+import { Point, SelectList, NumberRank } from '@circuit/math';
 import { Form, Input, Button, Select } from 'antd';
-import { delay } from '@utils/func';
+import { delay } from '@xiao-ai/utils';
 import { UnitType } from '../electronics';
 import { styles, StyleProps, transformTime } from './styles';
 

@@ -1,7 +1,7 @@
 import { ElectronicPrototype, UnitType, MouseFocusClassName } from './constant';
-import { numberParser, Direction } from 'src/math';
+import { numberParser, Direction } from '@circuit/math';
 import { ElectronicKind } from '../constant';
-import { isNumber } from '@utils/assert';
+import { isNumber } from '@xiao-ai/utils';
 
 export const data: ElectronicPrototype = {
   pre: 'I',

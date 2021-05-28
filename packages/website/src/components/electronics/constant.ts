@@ -1,4 +1,4 @@
-import type { Point, Direction } from 'src/math';
+import type { Point, Direction } from '@circuit/math';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {

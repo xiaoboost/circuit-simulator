@@ -1,4 +1,4 @@
-import { Point, PointLike } from 'src/math';
+import { Point, PointLike } from '@circuit/math';
 
 /** 导线路径类 */
 export class LineWay extends Array<Point> {

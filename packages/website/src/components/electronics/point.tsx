@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useWatcher } from 'src/use';
+import { useWatcher } from '@xiao-ai/utils/use';
 import { mapState } from '../drawing-sheet/map';
 import { point as pointStyles } from './styles';
 import { useState, useRef, useEffect } from 'react';

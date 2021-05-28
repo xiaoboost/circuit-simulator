@@ -53,7 +53,6 @@
     "@types/circuit": "workspace:*",
     "@types/copy-webpack-plugin": "^8.0.0",
     "@types/fs-extra": "^9.0.11",
-    "@types/generate-json-webpack-plugin": "^0.3.3",
     "@types/html-webpack-plugin": "^3.2.5",
     "@types/koa": "^2.13.2",
     "@types/mime": "^2.0.3",
@@ -63,8 +62,6 @@
     "@types/react": "^17.0.8",
     "@types/react-dom": "^17.0.5",
     "@types/webpack-bundle-analyzer": "^4.4.0",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
     "ava": "^3.15.0",
     "browser-env": "^3.3.0",
     "chalk": "^4.1.1",
@@ -73,10 +70,8 @@
     "css-loader": "^5.2.6",
     "esbuild-loader": "^2.13.1",
     "eslint": "^7.27.0",
-    "eslint-plugin-react": "^7.23.2",
     "file-loader": "^6.2.0",
     "fs-extra": "^10.0.0",
-    "generate-json-webpack-plugin": "^2.0.0",
     "html-webpack-plugin": "^5.3.1",
     "jss": "^10.6.0",
     "jss-plugin-camel-case": "^10.6.0",
@@ -93,9 +88,8 @@
     "tsconfig-paths": "^3.9.0",
     "tslib": "^2.2.0",
     "typescript": "^4.3.2",
-    "typescript-plugin-css-modules": "^3.2.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.38.0",
+    "webpack": "^5.38.1",
     "webpack-bundle-analyzer": "^4.4.2"
   }
 }

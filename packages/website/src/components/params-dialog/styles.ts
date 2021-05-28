@@ -1,4 +1,4 @@
-import { createUseStyles } from 'react-jss';
+import { createDynamicStyles } from 'src/lib/styles';
 import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/lib/styles';
 
 /** 动画持续时间 */
@@ -13,7 +13,7 @@ export interface StyleProps {
   width: number;
 }
 
-export const styles = createUseStyles({
+export const styles = createDynamicStyles({
   boxWrapper: {
     position: 'fixed',
     height: '100%',
@@ -142,7 +142,7 @@ export interface TransformProps {
   width: number;
 }
 
-export const animation = createUseStyles({
+export const animation = createDynamicStyles({
   boxAnimate: {
     opacity: ({ status, name }: TransformProps) => {
       if (status === TransformStatus.None) {

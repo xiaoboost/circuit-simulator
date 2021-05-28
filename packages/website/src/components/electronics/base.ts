@@ -1,8 +1,7 @@
 import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
-import { Watcher } from 'src/lib/subject';
+import { Watcher, isNumber } from '@xiao-ai/utils';
 import { SignMap } from 'src/lib/map';
-import { isNumber } from '@utils/assert';
 
 import type { Line } from './line';
 import type { Part } from './part';

@@ -1,5 +1,5 @@
 import { LineWay } from './line-way';
-import { isDef } from '@utils/assert';
+import { isDef } from '@xiao-ai/utils';
 
 /** 搜索缓存 */
 export class Cache<Key> {

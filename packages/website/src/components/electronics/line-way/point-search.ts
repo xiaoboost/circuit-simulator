@@ -1,9 +1,9 @@
 import { Rules } from './search-rules';
 import { LineWay } from './line-way';
 import { SearchStatus } from './types';
-import { remove } from '@utils/array';
+import { remove, AnyObject } from '@xiao-ai/utils';
 import { Debugger } from 'src/lib/debugger';
-import { Point, Rotates, RotateMatrix } from 'src/math';
+import { Point, Rotates, RotateMatrix } from '@circuit/math';
 
 /** 搜索用节点数据 */
 export interface SearchNodeData {
