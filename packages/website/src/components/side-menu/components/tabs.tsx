@@ -1,23 +1,20 @@
 import React from 'react';
 
-import { tabs } from './styles';
-import { TabStatus } from './constant';
-import { isUndef } from '@utils/assert';
-import { stringifyClass } from '@utils/string';
-
-import {
-  Tooltip as TooltipOrigin,
-  Button,
-} from 'antd';
+import { tabStyle } from './styles';
+import { TabStatus } from '../constant';
+import { DarkGreen } from 'src/lib/styles';
+import { isUndef, stringifyClass } from '@xiao-ai/utils';
+import { Tooltip as TooltipOrigin } from 'antd';
 
 import { useState } from 'react';
 import { TooltipProps } from 'antd/es/tooltip';
 
 import {
   PlusOutlined,
-  RightCircleOutlined,
+  CaretRightOutlined,
   LineChartOutlined,
   SettingOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons';
 
 interface Props {
@@ -56,43 +53,39 @@ function Tooltip(props: TooltipProps) {
 }
 
 export function Tabs(props: Props) {
-  const classNames = tabs();
   const status = props.status ?? TabStatus.None;
-  const [isRun, setRun] = useState(false);
+  const isRun = status === TabStatus.Run;
   const clickBtn = (val: TabStatus) => {
     if (props.onChange) {
       props.onChange(val);
     }
   };
 
-  return <section className={classNames.tabs}>
+  return <section className={tabStyle.tabs}>
     <Tooltip
       title='运行'
       placement='right'
       destroyTooltipOnHide
-      visible={status === TabStatus.Run ? false : undefined}
+      visible={isRun ? false : undefined}
     >
-      <Button
-        type='link'
-        size='large'
-        icon={<RightCircleOutlined />}
-        className={classNames.runIcon}
-        loading={status === TabStatus.Run}
-        onClick={() => clickBtn(TabStatus.Run)}
-      />
+      <div className={stringifyClass(tabStyle.btn, tabStyle.runBtn)}>
+        {isRun
+          ? <LoadingOutlined style={{ color: DarkGreen, fontSize: 18 }} />
+          : <CaretRightOutlined style={{ color: DarkGreen, fontSize: 36 }} />
+        }
+      </div>
     </Tooltip>
 
     {buttons.map((btn, i) => (
-      <Button
+      <div
         key={i}
-        type={btn.type}
-        icon={btn.icon}
-        size='large'
-        className={stringifyClass(classNames.tabIcon, {
-          [classNames.highlight]: status === btn.status,
+        className={stringifyClass(tabStyle.btn, {
+          [tabStyle.highlight]: status === btn.status,
         })}
         onClick={() => clickBtn(btn.status)}
-      />
+      >
+        {btn.icon}
+      </div>
     ))}
   </section>
 }

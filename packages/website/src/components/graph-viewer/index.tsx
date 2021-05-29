@@ -1,8 +1,8 @@
 import React from 'react';
-import styles from './index.styl';
+// import styles from './index.styl';
 
 export function GraphViewer() {
-  return <section className={styles.graphPanel}>
+  return <section className=''>
     GraphViewer
   </section>;
 }

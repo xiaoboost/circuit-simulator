@@ -1,8 +1,11 @@
 import React from 'react';
-import styles from './index.styl';
+
+import { Tooltip } from 'antd';
+import { part } from './styles';
+import { Panel } from './components/panel';
 
 export function Config() {
-  return <section>
+  return <Panel title='模拟设置' subtitle='Simulation Settings'>
     config
-  </section>;
+  </Panel>;
 }

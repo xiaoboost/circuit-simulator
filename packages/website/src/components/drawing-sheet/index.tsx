@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useRef, useMemo } from 'react';
-import { useWatcher } from 'src/use';
+import { useWatcher } from '@xiao-ai/utils/use';
 import { styles } from './styles';
 
 import * as store from '../electronics';

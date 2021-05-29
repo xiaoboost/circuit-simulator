@@ -1,9 +1,8 @@
 import React from 'react';
-// import styles from './index.styl';
-
-import { part, menu } from './styles';
 
 import { Tooltip } from 'antd';
+import { part } from './styles';
+import { Panel } from './components/panel';
 import { Electronics, ElectronicPrototype, ElectronicKind, Part } from '../electronics';
 
 interface Category {
@@ -71,24 +70,18 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 }
 
 export function AddPart() {
-  const partClass = part();
-  const menuClass = menu();
   const create = (kind: ElectronicKind) => {
     new Part(kind).dispatch().create();
   };
 
-  return <section className={partClass.panel}>
-    <header className={menuClass.title}>
-      <h1>添加器件</h1>
-      <h2>Add Parts</h2>
-    </header>
-    <article className={menuClass.body}>
+  return (
+    <Panel title='添加器件' subtitle='Add Parts'>
       {categories.map((item, i) => (
-        <div key={i} className={partClass.list}>
+        <div key={i} className={part.list}>
           {item.parts.map((kind, i) => (
             <Tooltip key={i} placement='top' title={ Electronics[kind].introduction }>
               <span
-                className={partClass.item}
+                className={part.item}
                 onClick={() => create(kind)}>
                 <svg x="0px" y="0px" viewBox="0 0 80 80">
                   <PartShape {...Electronics[kind]} />
@@ -98,6 +91,6 @@ export function AddPart() {
           ))}
         </div>
       ))}
-    </article>
-  </section>;
+    </Panel>
+  );
 }

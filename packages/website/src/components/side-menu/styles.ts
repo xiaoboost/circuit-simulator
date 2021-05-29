@@ -1,95 +1,29 @@
-import { createUseStyles } from 'react-jss';
 import { MouseFocusClassName } from '../electronics/parts';
 
 import {
+  createStyles,
   ExtraLightGray,
-  FontSerif,
   Black,
-  Blue,
   Gray,
   Shadow,
   White,
-  DarkGreen,
-  LightGray,
   LightBlue,
 } from 'src/lib/styles';
 
-export const aside = createUseStyles({
+export const aside = createStyles({
   aside: {
     display: 'flex',
     position: 'fixed',
-    left: '0',
-    top: '0',
+    right: 0,
+    top: 0,
     height: '100%',
     width: 'auto',
-    backgroundColor: '#fff',
-    boxShadow: `3px 0 5px ${ExtraLightGray}`,
+    backgroundColor: White,
+    boxShadow: `-3px 0 5px ${Gray}`,
   },
 });
 
-export const tabs = createUseStyles({
-  tabs: {
-    display: 'inline-flex',
-    flexDirection: 'column',
-    borderRight: `1px solid ${ExtraLightGray}`,
-    alignItems: 'center',
-    width: 50,
-    padding: [10, 0],
-  },
-  runIcon: {
-    marginBottom: 20,
-
-    '& .anticon': {
-      color: DarkGreen,
-      fontSize: 26,
-    },
-  },
-  tabIcon: {
-    marginBottom: 6,
-
-    '&.ant-btn:hover': {
-      backgroundColor: ExtraLightGray,
-    },
-  },
-  highlight: {
-    backgroundColor: LightGray,
-
-    '&.ant-btn:hover': {
-      backgroundColor: LightGray,
-    },
-  },
-});
-
-export const menu = createUseStyles({
-  panel: {
-    borderRight: `1px solid ${ExtraLightGray}`,
-    boxShadow: `3px 0 5px ${ExtraLightGray}`,
-  },
-  title: {
-    textAlign: 'center',
-    backgroundColor: Blue,
-    fontFamily: FontSerif,
-    padding: [15, 0],
-
-    '& *': {
-      color: White,
-      margin: 0,
-    },
-    
-    '& h1': {
-      fontSize: 24,
-    },
-    '& h2': {
-      fontSize: 18,
-    },
-  },
-  body: {
-    margin: [10, 20],
-    color: Black,
-  },
-});
-
-export const part = createUseStyles({
+export const part = createStyles({
   panel: {
     width: 280,
   },

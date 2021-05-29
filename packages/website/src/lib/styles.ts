@@ -1,7 +1,9 @@
 import jss from 'jss';
 import nested from 'jss-plugin-nested';
 import extend from 'jss-plugin-extend';
+import expand from 'jss-plugin-expand';
 import camelCase from 'jss-plugin-camel-case';
+import defaultUnit from 'jss-plugin-default-unit';
 import ruleValueFunction from 'jss-plugin-rule-value-function';
 
 import DrawLine from '../assets/cursor/draw-line.svg';
@@ -14,7 +16,9 @@ import { isEqual } from '@xiao-ai/utils';
 jss
   .use(nested())
   .use(extend())
+  .use(expand())
   .use(camelCase())
+  .use(defaultUnit())
   .use(ruleValueFunction());
 
 function getCursorStyle(url: string, offset = 16) {
