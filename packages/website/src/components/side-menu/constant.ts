@@ -7,5 +7,5 @@ export enum TabStatus {
 }
 
 export const tabWidth = 50;
-export const panelWidth = 280;
+export const panelWidth = 320;
 export const animateTime = 200;

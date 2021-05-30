@@ -45,7 +45,7 @@ module.exports = {
     'no-debugger': 'off',
 
     'max-len': ['warn', {
-      code: 90,
+      code: 100,
     }],
     'keyword-spacing': 'error',
     'curly': 'error',

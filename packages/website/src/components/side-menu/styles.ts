@@ -72,3 +72,30 @@ export const part = createStyles({
     },
   },
 });
+
+export const config = createStyles({
+  section: {
+    margin: [0, 0, 20, 0],
+  },
+  sectionTitle: {
+    fontSize: 20,
+    lineHeight: '1.5',
+    marginBottom: 8,
+    color: Black,
+  },
+  sectionBody: {
+    margin: [0, 0, 0, 14],
+  },
+  formItem: {
+    width: '100%',
+    marginBottom: 12,
+    position: 'relative',
+  },
+  formItemLabel: {
+    fontSize: 14,
+    color: 'rgba(0, 0, 0, 0.85)',
+  },
+  formItemContent: {
+
+  },
+});
