@@ -46,16 +46,31 @@ const baseConfig: Webpack.Configuration = {
   },
   module: {
     rules: [
-      {
-        test: /\.tsx?$/,
-        exclude: /node_modules/,
-        loader: 'esbuild-loader',
-        options: {
-          loader: 'tsx',
-          target: 'es2015',
-          tsconfigRaw: require(utils.resolve('tsconfig.json')),
-        },
-      },
+      (
+        isDevelopment
+          ? {
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            loader: 'ts-loader',
+            options: {
+              configFile: utils.resolve('tsconfig.json'),
+              compilerOptions: {
+                module: 'ESNext',
+                target: 'ESNext',
+              },
+            },
+          }
+          : {
+            test: /\.tsx?$/,
+            exclude: /node_modules/,
+            loader: 'esbuild-loader',
+            options: {
+              loader: 'tsx',
+              target: 'es2015',
+              tsconfigRaw: require(utils.resolve('tsconfig.json')),
+            },
+          }
+      ),
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],

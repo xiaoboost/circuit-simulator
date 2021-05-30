@@ -108,6 +108,7 @@ importers:
       react: ^17.0.2
       react-dom: ^17.0.2
       rimraf: ^3.0.2
+      ts-loader: ^9.2.2
       ts-node: ^10.0.0
       tsconfig-paths: ^3.9.0
       tslib: ^2.2.0
@@ -164,6 +165,7 @@ importers:
       mini-css-extract-plugin: registry.nlark.com/mini-css-extract-plugin/1.6.0_webpack@5.38.1
       progress-bar-webpack-plugin: 2.1.0_webpack@5.38.1
       rimraf: 3.0.2
+      ts-loader: registry.nlark.com/ts-loader/9.2.2_typescript@4.3.2+webpack@5.38.1
       ts-node: registry.nlark.com/ts-node/10.0.0_b89ec6c4eb73802631cbe54606dd8cdb
       tsconfig-paths: 3.9.0
       tslib: 2.2.0
@@ -5763,6 +5765,16 @@ packages:
       tapable: 2.2.0
     dev: true
 
+  registry.nlark.com/enhanced-resolve/5.8.2:
+    resolution: {integrity: sha1-Fd3HeTRcu3PpfGEc0AwBwee/TYs=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/enhanced-resolve/download/enhanced-resolve-5.8.2.tgz}
+    name: enhanced-resolve
+    version: 5.8.2
+    engines: {node: '>=10.13.0'}
+    dependencies:
+      graceful-fs: 4.2.6
+      tapable: 2.2.0
+    dev: true
+
   registry.nlark.com/es-abstract/1.18.3:
     resolution: {integrity: sha1-JcTDOAonqiA8RLK2hbupTaMbY+A=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/es-abstract/download/es-abstract-1.18.3.tgz}
     name: es-abstract
@@ -7006,6 +7018,24 @@ packages:
     version: 1.0.1
     dependencies:
       punycode: 2.1.1
+    dev: true
+
+  registry.nlark.com/ts-loader/9.2.2_typescript@4.3.2+webpack@5.38.1:
+    resolution: {integrity: sha1-QWMzkAYhyC1esbH23qQRQRHwlr8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/ts-loader/download/ts-loader-9.2.2.tgz}
+    id: registry.nlark.com/ts-loader/9.2.2
+    name: ts-loader
+    version: 9.2.2
+    engines: {node: '>=12.0.0'}
+    peerDependencies:
+      typescript: '*'
+      webpack: ^5.0.0
+    dependencies:
+      chalk: registry.nlark.com/chalk/4.1.1
+      enhanced-resolve: registry.nlark.com/enhanced-resolve/5.8.2
+      micromatch: 4.0.4
+      semver: 7.3.5
+      typescript: registry.nlark.com/typescript/4.3.2
+      webpack: registry.nlark.com/webpack/5.38.1
     dev: true
 
   registry.nlark.com/ts-node/10.0.0_b89ec6c4eb73802631cbe54606dd8cdb:

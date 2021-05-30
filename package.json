@@ -1,7 +1,7 @@
 {
   "name": "circuit-simulator",
-  "version": "2.0.0-alpha",
-  "description": "在线电路仿真系统",
+  "version": "1.0.0",
+  "description": "电路仿真代码仓库",
   "scripts": {
     "update": "ncu -u --packageFile ./packages/*/package.json",
     "test": "pnpm run -r test --parallel --filter .",
