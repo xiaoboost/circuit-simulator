@@ -1,7 +1,7 @@
-import type { CircuitStorage } from 'src/store';
+import type { CircuitData } from 'src/store';
 
-export const data: CircuitStorage = {
-  time: {
+export const data: CircuitData = {
+  simulation: {
     end: '20m',
     step: '2u',
   },

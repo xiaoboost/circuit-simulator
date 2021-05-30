@@ -2,11 +2,11 @@ import React from 'react';
 
 import { config } from './styles';
 import { Panel } from './components/panel';
-import { parts, ElectronicKind } from 'src/components/electronics';
+import { ElectronicKind } from 'src/components/electronics';
 import { shortUnitList, NumberRank, SelectList } from '@circuit/math';
 import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
+import { parts, endTime, stepTime, oscilloscopes } from 'src/store';
 
-import { Watcher } from '@xiao-ai/utils';
 import { useWatcher, useWatcherList } from '@xiao-ai/utils/use';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
@@ -16,12 +16,6 @@ import { PropsWithChildren, useState, useMemo } from 'react';
 const endTimeUnits = shortUnitList(['', 'm', 'u'], '秒', true);
 /** 步长时间单位选择 */
 const stepTimeUnits = shortUnitList(['m', 'u', 'n', 'p'], '秒', true);
-/** 结束时间 */
-export const endTime = new Watcher('');
-/** 步长时间 */
-export const stepTime = new Watcher('');
-/** 示波器参数 */
-export const oscilloscopes = new Watcher<string[][]>([]);
 
 interface SectionProps {
   title: string;
@@ -135,7 +129,7 @@ export function Config() {
   const [endTimeUnit, setEndTimeUnit] = useState<NumberRank>('');
   const [stepTime, setStepTime] = useState(0);
   const [stepTimeUnit, setStepTimeUnit] = useState<NumberRank>('m');
-  const [oscList, oscMethod] = useWatcherList<string[], string[][]>(oscilloscopes);
+  const [oscList, oscMethod] = useWatcherList<string[][]>(oscilloscopes);
 
   /** 所有电流表 */
   const currentMeters = useMemo(() => {

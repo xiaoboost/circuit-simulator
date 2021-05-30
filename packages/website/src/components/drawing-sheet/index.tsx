@@ -4,7 +4,7 @@ import { useRef, useMemo } from 'react';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { styles } from './styles';
 
-import * as store from '../electronics';
+import * as store from 'src/store';
 import * as utils from './utils';
 
 import { useMap, mapState } from './map';

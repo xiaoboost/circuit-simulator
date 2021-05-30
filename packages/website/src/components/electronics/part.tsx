@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { part as partStyles } from './styles';
+import { partStyles } from './styles';
 import { Electronic } from './base';
 import { SignNodeKind } from 'src/lib/map';
 import { cursorStyles } from 'src/lib/styles';
@@ -397,14 +397,13 @@ export class Part extends Electronic {
     } = this;
 
     const [label, subId] = this.id.split('_');
-    const classNames = partStyles();
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
     const editParam = React.useCallback(this.editParams.bind(this), []);
 
     return (
       <g
-        className={classNames.part}
+        className={partStyles.part}
         onDoubleClick={editParam}
         transform={`matrix(${rotate.join()},${position.join()})`}
       >
@@ -430,8 +429,8 @@ export class Part extends Electronic {
           <g
             fontSize={`${textHeight}px`}
             className={stringifyClass(
-              classNames.partText,
-              classNames[Direction[textPlacement]],
+              partStyles.partText,
+              partStyles[Direction[textPlacement]],
             )}
             transform={`matrix(${invRotate.join()},${textPosition.rotate(invRotate).join()})`}
             onMouseDown={moveText}

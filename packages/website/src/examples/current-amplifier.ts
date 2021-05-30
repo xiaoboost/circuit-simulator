@@ -1,6 +1,6 @@
-import type { CircuitStorage } from 'src/store';
+import type { CircuitData } from 'src/store';
 
-export const data: CircuitStorage = {
+export const data: CircuitData = {
   electronics: [
     {
       kind: 'DcVoltageSource',

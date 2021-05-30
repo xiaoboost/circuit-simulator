@@ -1,4 +1,4 @@
-import { Point } from 'src/math';
+import { Point } from '@circuit/math';
 
 export function getBackgroundStyle(zoom: number, position: Point): React.CSSProperties {
   const size = zoom * 20;

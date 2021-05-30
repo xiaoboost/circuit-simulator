@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useWatcher } from '@xiao-ai/utils/use';
 import { mapState } from '../drawing-sheet/map';
-import { point as pointStyles } from './styles';
+import { pointStyles } from './styles';
 import { useState, useRef, useEffect } from 'react';
 import { PointKind, PointStatus } from './constant';
 
@@ -17,7 +17,6 @@ interface Props {
 export function ElectronicPoint(props: Props) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
-  const classNames = pointStyles();
   const [{ zoom }] = useWatcher(mapState);
   const [inner, setInner] = useState(0);
   const [actual, setActual] = useState(0);
@@ -53,17 +52,17 @@ export function ElectronicPoint(props: Props) {
     const data: React.SVGProps<SVGCircleElement> = {};
 
     if (props.kind === PointKind.Part) {
-      data.className = classNames.solidCircle;
+      data.className = pointStyles.solidCircle;
     }
     else if (props.kind === PointKind.Line) {
-      data.className = classNames.hollowCircle;
+      data.className = pointStyles.hollowCircle;
 
       if (props.status === PointStatus.Open) {
         data.strokeDasharray = '1.5 4';
       }
     }
     else if (props.kind === PointKind.LineCross) {
-      data.className = classNames.solidCircle;
+      data.className = pointStyles.solidCircle;
     }
 
     return data;
@@ -97,7 +96,7 @@ export function ElectronicPoint(props: Props) {
   return (
     <g
       transform={props.transform}
-      className={classNames.point}
+      className={pointStyles.point}
     >
       <circle
         cx='0'

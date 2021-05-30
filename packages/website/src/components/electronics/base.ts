@@ -2,30 +2,14 @@ import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher, isNumber } from '@xiao-ai/utils';
 import { SignMap } from 'src/lib/map';
-
-import type { Line } from './line';
-import type { Part } from './part';
+import { lines, parts } from 'src/store';
 
 /** 全局图纸 */
 const map = new SignMap();
-/** 全部导线 */
-export const lines = new Watcher<Line[]>([]);
-/** 全部器件 */
-export const parts = new Watcher<Part[]>([]);
 /** 被选中的器件 */
 export const selects = new Watcher<string[]>([]);
 /** 全局元件速查表 */
 const ElectronicHash: Record<number, Electronic | undefined> = {};
-
-function getElectronics(isLine = true) {
-  return Object
-    .values(ElectronicHash)
-    .filter((item) => (
-      isLine
-        ? item?.kind === ElectronicKind.Line
-        : item?.kind !== ElectronicKind.Line
-    ));
-}
 
 function createId(id: string): string {
   const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
@@ -37,12 +21,6 @@ function createId(id: string): string {
   }
 
   return `${pre[1]}_${index}`;
-}
-
-/** 更新图纸 */
-export function dispatch() {
-  lines.setData(getElectronics(true) as Line[]);
-  parts.setData(getElectronics(false) as Part[]);
 }
 
 interface ElectronicOption {
@@ -94,9 +72,10 @@ export class Electronic {
     return this._id;
   }
 
-  /** 刷新所有组件 */
+  /** 强制刷新所有元件 */
   dispatch() {
-    dispatch();
+    lines.setData(lines.data.slice());
+    parts.setData(parts.data.slice());
     return this;
   }
 

@@ -1,9 +1,9 @@
 import { Direction } from '@circuit/math';
-import { createDynamicStyles } from 'src/lib/styles';
+import { createStyles } from 'src/lib/styles';
 import { MouseFocusClassName } from './parts/constant';
 import { Black, FontText, White, movePartCursor, drawLineCursor } from 'src/lib/styles';
 
-export const part = createDynamicStyles({
+export const partStyles = createStyles({
   part: {
     color: Black,
 
@@ -37,7 +37,7 @@ export const part = createDynamicStyles({
   },
 });
 
-export const point = createDynamicStyles({
+export const pointStyles = createStyles({
   point: {
     '& rect': {
       strokeWidth: 0,

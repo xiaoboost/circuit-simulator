@@ -85,7 +85,6 @@
     "mime": "^2.5.2",
     "mini-css-extract-plugin": "^1.6.0",
     "progress-bar-webpack-plugin": "^2.1.0",
-    "rimraf": "^3.0.2",
     "ts-loader": "^9.2.2",
     "ts-node": "^10.0.0",
     "tsconfig-paths": "^3.9.0",
