@@ -4,12 +4,13 @@ import { config } from './styles';
 import { Panel } from './components/panel';
 import { parts, ElectronicKind } from 'src/components/electronics';
 import { shortUnitList, NumberRank, SelectList } from '@circuit/math';
-import { InputNumber, Select, Input, Button, Row, Col } from 'antd';
+import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
 
 import { Watcher } from '@xiao-ai/utils';
-import { useWatcher } from '@xiao-ai/utils/use';
+import { useWatcher, useWatcherList } from '@xiao-ai/utils/use';
+import { CloseCircleOutlined } from '@ant-design/icons';
 
-import { PropsWithChildren, useState } from 'react';
+import { PropsWithChildren, useState, useMemo } from 'react';
 
 /** 结束时间单位选择 */
 const endTimeUnits = shortUnitList(['', 'm', 'u'], '秒', true);
@@ -35,10 +36,12 @@ interface TimeFormItemProps {
   onChangeUnit: (val: NumberRank) => any;
 }
 
-interface OscilloscopeFormProps {
-  index: number;
-  data: string[];
+interface OscFormProps {
+  value: string[];
+  currentMeters: string[];
+  voltageMeters: string[];
   onChange: (val: string[]) => any;
+  onRemove: () => any;
 }
 
 function ConfigSection(props: PropsWithChildren<SectionProps>) {
@@ -56,7 +59,7 @@ function TimeFormItem(props: TimeFormItemProps) {
   return (
     <Row className={config.formItem} gutter={4} align='middle' justify='center'>
       <Col className={config.formItemLabel} span={6}>{props.label}</Col>
-      <Col className={config.formItemContent} span={18}>
+      <Col span={18}>
         <Input.Group compact style={{ width: '100%' }}>
           <InputNumber
             min={0}
@@ -86,8 +89,44 @@ function TimeFormItem(props: TimeFormItemProps) {
   );
 }
 
-function OscilloscopeForm(props: OscilloscopeFormProps) {
-  return '';
+function OscForm(props: OscFormProps) {
+  const onRemove = () => {
+    Modal.warning({
+      title: '移除示波器',
+      content: '确定要移除该示波器吗？',
+      onOk() {
+        props.onRemove();
+      },
+    });
+  };
+
+  return <div className={config.oscilloscopesRow}>
+    <Select
+      mode='multiple'
+      value={props.value}
+      onChange={props.onChange}
+      className={config.oscilloscopesRowSelect}
+      placeholder='请选择要接入示波器的测量表'
+    >
+      {props.currentMeters.length > 0 && (
+        <Select.OptGroup label='电流表'>
+          {props.currentMeters.map((id) => (
+            <Select.Option key={id} value={id}>{id.replace('_', '-')}</Select.Option>
+          ))}
+        </Select.OptGroup>
+      )}
+      {props.voltageMeters.length > 0 && (
+        <Select.OptGroup label='电压表'>
+          {props.voltageMeters.map((id) => (
+            <Select.Option key={id} value={id}>{id.replace('_', '-')}</Select.Option>
+          ))}
+        </Select.OptGroup>
+      )}
+    </Select>
+    <span className={config.oscilloscopesRowDelete} onClick={onRemove}>
+      <CloseCircleOutlined />
+    </span>
+  </div>;
 }
 
 export function Config() {
@@ -96,12 +135,20 @@ export function Config() {
   const [endTimeUnit, setEndTimeUnit] = useState<NumberRank>('');
   const [stepTime, setStepTime] = useState(0);
   const [stepTimeUnit, setStepTimeUnit] = useState<NumberRank>('m');
-  const [oscillData, setOscillData] = useWatcher(oscilloscopes);
+  const [oscList, oscMethod] = useWatcherList<string[], string[][]>(oscilloscopes);
 
   /** 所有电流表 */
-  const currentMeters = partsList.filter((item) => item.kind === ElectronicKind.CurrentMeter);
+  const currentMeters = useMemo(() => {
+    return partsList
+      .filter((item) => item.kind === ElectronicKind.CurrentMeter)
+      .map((item) => item.id);
+  }, [partsList]);
   /** 所有电压表 */
-  const voltageMeters = partsList.filter((item) => item.kind === ElectronicKind.VoltageMeter);
+  const voltageMeters = useMemo(() => {
+    return partsList
+      .filter((item) => item.kind === ElectronicKind.VoltageMeter)
+      .map((item) => item.id);
+  }, [partsList]);
 
   return <Panel title='模拟设置' subtitle='Simulation Settings'>
     <ConfigSection title='时间设置'>
@@ -123,7 +170,23 @@ export function Config() {
       />
     </ConfigSection>
     <ConfigSection title='示波器设置'>
-      form
+      {oscList.map((list, i) => (
+        <OscForm
+          key={i}
+          value={list}
+          currentMeters={currentMeters}
+          voltageMeters={voltageMeters}
+          onChange={(val) => oscMethod.replace(i, val)}
+          onRemove={() => oscMethod.remove(i)}
+        />
+      ))}
+      <Button
+        type='dashed'
+        style={{ width: '100%' }}
+        onClick={() => oscMethod.push([])}
+      >
+        添加示波器
+      </Button>
     </ConfigSection>
   </Panel>;
 }

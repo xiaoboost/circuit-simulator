@@ -7,6 +7,7 @@ import {
   Gray,
   Shadow,
   White,
+  Red,
   LightBlue,
 } from 'src/lib/styles';
 
@@ -84,7 +85,7 @@ export const config = createStyles({
     color: Black,
   },
   sectionBody: {
-    margin: [0, 0, 0, 14],
+    margin: [0, 14],
   },
   formItem: {
     width: '100%',
@@ -95,7 +96,32 @@ export const config = createStyles({
     fontSize: 14,
     color: 'rgba(0, 0, 0, 0.85)',
   },
-  formItemContent: {
+  oscilloscopesRow: {
+    display: 'flex',
+    position: 'relative',
+    marginBottom: 14,
 
+    '&:hover $oscilloscopesRowDelete': {
+      opacity: 1,
+      transform: 'scale(1)',
+    },
+  },
+  oscilloscopesRowSelect: {
+    width: '100%',
+  },
+  oscilloscopesRowDelete: {
+    width: 16,
+    fontSize: 16,
+    color: Red,
+    position: 'absolute',
+    right: -24,
+    height: '100%',
+    display: 'inline-flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0,
+    transform: 'scale(0.4)',
+    transition: 'opacity .2s ease, transform .2s ease',
+    cursor: 'pointer',
   },
 });

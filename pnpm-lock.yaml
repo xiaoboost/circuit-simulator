@@ -18,7 +18,7 @@ importers:
     specifiers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
-      '@xiao-ai/utils': ^1.2.0
+      '@xiao-ai/utils': ^1.2.1
       ava: ^3.15.0
       bignumber.js: ^9.0.1
       eslint: ^7.27.0
@@ -26,7 +26,7 @@ importers:
       tslib: ^2.2.0
       typescript: ^4.3.2
     dependencies:
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.2.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.2.1
       bignumber.js: 9.0.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
@@ -70,7 +70,7 @@ importers:
       '@types/copy-webpack-plugin': ^8.0.0
       '@types/fs-extra': ^9.0.11
       '@types/html-webpack-plugin': ^3.2.5
-      '@types/koa': ^2.13.2
+      '@types/koa': ^2.13.3
       '@types/mime': ^2.0.3
       '@types/mini-css-extract-plugin': ^1.4.3
       '@types/node': ^15.6.1
@@ -78,13 +78,13 @@ importers:
       '@types/react': ^17.0.8
       '@types/react-dom': ^17.0.5
       '@types/webpack-bundle-analyzer': ^4.4.0
-      '@xiao-ai/utils': ^1.2.0
+      '@xiao-ai/utils': ^1.2.1
       antd: ^4.16.0
       ava: ^3.15.0
       browser-env: ^3.3.0
       chalk: ^4.1.1
       copy-webpack-plugin: ^9.0.0
-      core-js: ^3.13.0
+      core-js: ^3.13.1
       cross-env: ^7.0.3
       css-loader: ^5.2.6
       esbuild-loader: ^2.13.1
@@ -120,9 +120,9 @@ importers:
       '@antv/g2': registry.nlark.com/@antv/g2/4.1.17
       '@circuit/math': link:../math
       '@circuit/solver': link:../solver
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.2.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.2.1
       antd: registry.nlark.com/antd/4.16.0_react-dom@17.0.2+react@17.0.2
-      core-js: registry.nlark.com/core-js/3.13.0
+      core-js: registry.nlark.com/core-js/3.13.1
       jss: 10.6.0
       jss-plugin-camel-case: registry.nlark.com/jss-plugin-camel-case/10.6.0
       jss-plugin-default-unit: registry.nlark.com/jss-plugin-default-unit/10.6.0
@@ -139,7 +139,7 @@ importers:
       '@types/copy-webpack-plugin': registry.nlark.com/@types/copy-webpack-plugin/8.0.0
       '@types/fs-extra': registry.nlark.com/@types/fs-extra/9.0.11
       '@types/html-webpack-plugin': registry.nlark.com/@types/html-webpack-plugin/3.2.5
-      '@types/koa': registry.nlark.com/@types/koa/2.13.2
+      '@types/koa': registry.nlark.com/@types/koa/2.13.3
       '@types/mime': registry.nlark.com/@types/mime/2.0.3
       '@types/mini-css-extract-plugin': registry.nlark.com/@types/mini-css-extract-plugin/1.4.3
       '@types/node': registry.nlark.com/@types/node/15.6.1
@@ -561,6 +561,8 @@ packages:
     engines: {node: '>= 6.0.0'}
     dependencies:
       debug: 4.3.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /agentkeepalive/4.1.4:
@@ -570,6 +572,8 @@ packages:
       debug: 4.3.1
       depd: 1.1.2
       humanize-ms: 1.2.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /aggregate-error/3.1.0:
@@ -2039,6 +2043,8 @@ packages:
       '@tootallnate/once': 1.1.2
       agent-base: 6.0.2
       debug: 4.3.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /https-proxy-agent/5.0.0:
@@ -2047,6 +2053,8 @@ packages:
     dependencies:
       agent-base: 6.0.2
       debug: 4.3.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /humanize-ms/1.2.1:
@@ -2651,6 +2659,8 @@ packages:
       promise-retry: 2.0.1
       socks-proxy-agent: 5.0.0
       ssri: registry.nlark.com/ssri/8.0.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /map-age-cleaner/0.1.3:
@@ -3996,6 +4006,8 @@ packages:
       agent-base: 6.0.2
       debug: 4.3.1
       socks: registry.nlark.com/socks/2.6.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /source-list-map/2.0.1:
@@ -5015,13 +5027,13 @@ packages:
     name: '@types/koa-compose'
     version: 3.2.5
     dependencies:
-      '@types/koa': registry.nlark.com/@types/koa/2.13.2
+      '@types/koa': registry.nlark.com/@types/koa/2.13.3
     dev: true
 
-  registry.nlark.com/@types/koa/2.13.2:
-    resolution: {integrity: sha1-6AyVdI+x59fOAkCPF9LpF6b7chA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/koa/download/@types/koa-2.13.2.tgz}
+  registry.nlark.com/@types/koa/2.13.3:
+    resolution: {integrity: sha1-W0TAlW1/e/QfdMz7Uw/sYPvtRco=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/koa/download/@types/koa-2.13.3.tgz}
     name: '@types/koa'
-    version: 2.13.2
+    version: 2.13.3
     dependencies:
       '@types/accepts': registry.nlark.com/@types/accepts/1.3.5
       '@types/content-disposition': registry.nlark.com/@types/content-disposition/0.5.3
@@ -5302,10 +5314,10 @@ packages:
       eslint-visitor-keys: registry.nlark.com/eslint-visitor-keys/2.1.0
     dev: true
 
-  registry.nlark.com/@xiao-ai/utils/1.2.0:
-    resolution: {integrity: sha1-P8iO/Co5/qXlygga5LzIptZuWM8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.2.0.tgz}
+  registry.nlark.com/@xiao-ai/utils/1.2.1:
+    resolution: {integrity: sha1-9E1IX+CUKUiCXP2GAQHKoyiaq1Y=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.2.1.tgz}
     name: '@xiao-ai/utils'
-    version: 1.2.0
+    version: 1.2.1
     dev: false
 
   registry.nlark.com/acorn-walk/6.2.0:
@@ -5652,10 +5664,10 @@ packages:
       webpack: registry.nlark.com/webpack/5.38.1
     dev: true
 
-  registry.nlark.com/core-js/3.13.0:
-    resolution: {integrity: sha1-WMpDa/AdaQOu49NkCJho0Nif5Y0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/core-js/download/core-js-3.13.0.tgz}
+  registry.nlark.com/core-js/3.13.1:
+    resolution: {integrity: sha1-MDA/q9U2OIkgYti06ALKx1men7c=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/core-js/download/core-js-3.13.1.tgz}
     name: core-js
-    version: 3.13.0
+    version: 3.13.1
     requiresBuild: true
     dev: false
 
@@ -6319,6 +6331,8 @@ packages:
       semver-utils: registry.nlark.com/semver-utils/1.1.4
       spawn-please: registry.nlark.com/spawn-please/1.0.0
       update-notifier: 5.1.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/npm-packlist/2.2.2:
@@ -6347,6 +6361,8 @@ packages:
       minipass-json-stream: 1.0.1
       minizlib: 2.1.2
       npm-package-arg: 8.1.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/object-inspect/1.10.3:
@@ -6409,6 +6425,8 @@ packages:
       rimraf: 3.0.2
       ssri: registry.nlark.com/ssri/8.0.1
       tar: 6.1.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/path-parse/1.0.7:
@@ -6492,6 +6510,8 @@ packages:
       js-yaml: 4.1.0
       json5: 2.2.0
       require-from-string: 2.0.2
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/rc-field-form/1.20.1_react-dom@17.0.2+react@17.0.2:
