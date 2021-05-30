@@ -53,9 +53,6 @@ export class Part extends Electronic {
   /** 文本高度间隔 */
   readonly textSpaceHeight = 2;
 
-  /** 更新页面 */
-  private _update?: () => void;
-
   constructor(kind: ElectronicKind | PartData) {
     super(kind);
 
@@ -79,9 +76,12 @@ export class Part extends Electronic {
     return Electronics[this.kind];
   }
 
+  /** 更新页面 */
+  private update: () => void = () => void 0;
+
   /** 初始化 hook */
   private useInit() {
-    this._update = useForceUpdate();
+    this.update = useForceUpdate();
   }
 
   /** 更新引脚状态 */
@@ -198,11 +198,6 @@ export class Part extends Electronic {
 
     // 整体向上偏移 2 像素
     position[1] -= 2;
-  }
-
-  /** 更新页面 */
-  update() {
-    this._update?.();
   }
 
   /** 迭代器件当前覆盖的所有节点 */
@@ -370,6 +365,18 @@ export class Part extends Electronic {
 
     line.toBottom();
     line.drawing();
+  }
+  
+  /** 输出数据 */
+  toData(): Required<PartData> {
+    return {
+      id: this.id,
+      kind: ElectronicKind[this.kind] as keyof typeof ElectronicKind,
+      position: this.position.toData(),
+      rotate: this.rotate.toData(),
+      text: Direction[this.textPlacement] as keyof typeof Direction,
+      params: this.params.slice(),
+    };
   }
 
   /** 渲染函数 */

@@ -65,10 +65,11 @@ export type SelectList = Array<{
 }>;
 
 /** 简写数字对应的中文 */
-const unitMap = {
+const unitMap: Record<NumberRank, string> = {
   'p': '皮',
   'n': '纳',
   'u': '微',
+  'μ': '微',
   'm': '毫',
   '': '',
   'k': '千',

@@ -194,9 +194,9 @@ export interface ElectronicPrototype {
   /** 周围文字距离器件中心点的偏移量 */
   readonly txtLBias: number;
   /** 器件内边框范围（上、右、下、左） */
-  readonly padding: [number, number, number, number];
+  readonly padding: readonly [number, number, number, number];
   /** 器件外边框范围（上、右、下、左） */
-  readonly margin: [number, number, number, number];
+  readonly margin: readonly [number, number, number, number];
   /** 每项参数的描述 */
   readonly params: ParamsDescription[];
   /** 器件每个节点的描述 */

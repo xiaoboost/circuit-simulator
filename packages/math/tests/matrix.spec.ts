@@ -1,3 +1,5 @@
+/* eslint-disable no-multi-spaces */
+
 import test from 'ava';
 
 import { Matrix } from '../src';

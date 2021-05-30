@@ -489,6 +489,11 @@ export class Point {
   map<T>(callback: (value: number, index: number) => T): [T, T] {
     return [callback(this[0], 0), callback(this[1], 1)];
   }
+  
+  /** 输出数据 */
+  toData() {
+    return [this[0], this[1]];
+  }
 }
 
 export const Directions: Readonly<Record<Direction, Point>> = {

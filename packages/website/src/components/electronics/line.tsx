@@ -16,6 +16,7 @@ import {
   LinePinStatus,
   PointKind,
   PointStatus,
+  LineData,
 } from './constant';
 
 export class Line extends Electronic {
@@ -28,9 +29,6 @@ export class Line extends Electronic {
   /** 导线引脚状态 */
   points: LinePinStatus[] = [];
 
-  /** 更新页面 */
-  private _update?: () => void;
-
   constructor(paths: PointLike[] = []) {
     super(ElectronicKind.Line);
     this.path = LineWay.from(paths);
@@ -38,9 +36,12 @@ export class Line extends Electronic {
     this.updatePoints();
   }
 
+  /** 更新页面 */
+  private update: () => void = () => void 0;
+
   /** 初始化 hook */
   private useInit() {
-    this._update = useForceUpdate();
+    this.update = useForceUpdate();
   }
 
   /** 更新接触方块 */
@@ -94,11 +95,6 @@ export class Line extends Electronic {
       }
     }
   }
-  
-  /** 更新组件 */
-  update() {
-    this._update?.();
-  }
 
   /** 设置标志位 */
   setSign() {
@@ -114,6 +110,14 @@ export class Line extends Electronic {
   reverse() {
     this.path.reverse();
     this.connects.reverse();
+  }
+
+  /** 输出数据 */
+  toData(): Required<LineData> {
+    return {
+      kind: 'Line',
+      path: this.path.toData(),
+    };
   }
 
   /** 绘制导线 */

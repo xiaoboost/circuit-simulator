@@ -21,6 +21,11 @@ export class LineWay extends Array<Point> {
     return this.length === 0 ? '' : `M${this.map((n) => n.join(',')).join('L')}`;
   }
 
+  /** 输出数据 */
+  toData() {
+    return this.map((point) => point.toData());
+  }
+
   /** 获取节点 */
   get(index: number) {
     const sub = (index >= 0) ? index : this.length + index;

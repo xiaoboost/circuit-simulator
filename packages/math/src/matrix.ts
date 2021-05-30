@@ -306,19 +306,17 @@ export class Matrix {
     return this._data.join(str);
   }
   /**
-   * 以数组的 json 字符串输出
-   * @return {string}
+   * 输出数据
+   * @return {number[][]}
    */
-  toArrayContent() {
+  toData() {
     const arr: number[][] = [];
 
     for (let i = 0; i < this.row; i++) {
       arr.push(this.getRow(i));
     }
 
-    const arrStr = arr.map((item) => `  [${item.join(', ')}],`);
-
-    return `[\n${arrStr.join('\n')}\n]`;
+    return arr;
   }
   /**
    * 交换 from、to 所在的行
