@@ -1,18 +1,19 @@
-import { wait, def } from '@xiao-ai/utils';
+import { wait } from '@xiao-ai/utils';
 import { Point, PointLike } from '@circuit/math';
-import { SignNodeKind } from './map';
+import { MarkNodeKind } from './map';
+import { styles } from 'src/components/drawing-sheet/styles';
 
 // 全局常量
 const doc = document, NS = 'http://www.w3.org/2000/svg';
 
 // 点颜色
 const nodeColor = {
-  [SignNodeKind.Part]: 'black',
-  [SignNodeKind.PartPoint]: 'red',
-  [SignNodeKind.Line]: 'green',
-  [SignNodeKind.LinePoint]: 'orange',
-  [SignNodeKind.LineCrossPoint]: 'blue',
-  [SignNodeKind.LineCoverPoint]: 'yellow',
+  [MarkNodeKind.Part]: 'black',
+  [MarkNodeKind.PartPoint]: 'red',
+  [MarkNodeKind.Line]: 'green',
+  [MarkNodeKind.LinePoint]: 'orange',
+  [MarkNodeKind.LineCrossPoint]: 'blue',
+  [MarkNodeKind.LineCoverPoint]: 'yellow',
 };
 
 class MapDebug {
@@ -132,7 +133,9 @@ export const Debugger = new MapDebug();
 
 // 调试器初始化
 if (process.env.NODE_ENV === 'development') {
-  const selector = '#root svg';
+  const selector = `#root .${styles.sheet} svg`;
+
+  (window as any).$debug = Debugger;
 
   wait(() => Boolean(document.querySelector(selector)), 500).then(() => {
     const area = document.querySelector(selector)!;

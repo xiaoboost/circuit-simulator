@@ -2,7 +2,7 @@ import React from 'react';
 
 import { partStyles } from './styles';
 import { Electronic } from './base';
-import { SignNodeKind } from 'src/lib/map';
+import { MarkNodeKind } from 'src/lib/map';
 import { cursorStyles } from 'src/lib/styles';
 import { PartData } from './constant';
 import { DrawController } from 'src/lib/mouse';
@@ -225,12 +225,12 @@ export class Part extends Electronic {
   }
 
   /** 设置标志位 */
-  setSign() {
+  setMark() {
     for (const point of this.padding()) {
       this.map.set({
         label: this.id,
         point: point,
-        kind: SignNodeKind.Part,
+        kind: MarkNodeKind.Part,
       });
     }
 
@@ -238,13 +238,13 @@ export class Part extends Electronic {
       this.map.set({
         label: this.id,
         point: point.position.add(this.position),
-        kind: SignNodeKind.PartPoint,
+        kind: MarkNodeKind.PartPoint,
       });
     }
   }
 
   /** 删除标记 */
-  deleteSign() {
+  deleteMark() {
     for (const point of this.padding()) {
       this.map.delete(point);
     }
@@ -284,7 +284,7 @@ export class Part extends Electronic {
             ),
         );
 
-        this.setSign();
+        this.setMark();
         this.update();
       });
   }

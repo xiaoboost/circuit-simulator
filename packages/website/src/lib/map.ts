@@ -2,7 +2,7 @@ import { Point, PointLike } from '@circuit/math';
 import { remove, PartPartial } from '@xiao-ai/utils';
 
 /** 节点类型常量 */
-export enum SignNodeKind {
+export enum MarkNodeKind {
   /** 导线 */
   Line = 10,
   /** 导线空节点 */
@@ -19,31 +19,31 @@ export enum SignNodeKind {
 }
 
 /** 节点数据 */
-export interface SignNodeData {
+export interface MarkNodeData {
   /** 当前点属于哪个器件 */
   label: string;
   /** 节点类型 */
-  kind: SignNodeKind;
+  kind: MarkNodeKind;
   /** 当前点的小坐标 */
   point: PointLike;
   /** 当前点在图纸中连接着另外哪些点 */
   connect: PointLike[];
 }
 
-export type NodeInputData = PartPartial<SignNodeData, 'connect'>;
-export type NodeUpdateData = Omit<PartPartial<SignNodeData, 'connect'>, 'point'>;
+export type NodeInputData = PartPartial<MarkNodeData, 'connect'>;
+export type NodeUpdateData = Omit<PartPartial<MarkNodeData, 'connect'>, 'point'>;
 
 /** 节点数据 */
-export class SignMapNode implements SignNodeData {
+export class MarkMapNode implements MarkNodeData {
   label: string;
-  kind: SignNodeKind;
+  kind: MarkNodeKind;
   point: Point;
   connect: Point[];
 
   /** 节点所在图纸 */
-  map: SignMap;
+  readonly map: MarkMap;
 
-  constructor(data: NodeInputData, map: SignMap) {
+  constructor(data: NodeInputData, map: MarkMap) {
     this.map = map;
     this.kind = data.kind;
     this.label = data.label;
@@ -79,7 +79,7 @@ export class SignMapNode implements SignNodeData {
   }
 
   /** 向着终点方向沿着导线前进 */
-  towardEnd(end: PointLike): SignMapNode {
+  towardEnd(end: PointLike): MarkMapNode {
     const { map } = this;
     const uVector = new Point(this.point, end).sign(20);
 
@@ -87,7 +87,7 @@ export class SignMapNode implements SignNodeData {
       return this;
     }
 
-    let current: SignMapNode = this;
+    let current: MarkMapNode = this;
     let next = map.get(this.point.add(uVector));
 
     // 当前点没有到达终点，还在导线所在直线内部，那就前进
@@ -104,8 +104,8 @@ export class SignMapNode implements SignNodeData {
     return current;
   }
 
-  /** 沿导线最远处的点 */
-  alongLine(vector: PointLike): SignMapNode {
+  /** 沿导线方向的最远点 */
+  alongLine(vector: PointLike): MarkMapNode {
     const { map } = this;
     const uVector = Point.from(vector).sign(20);
 
@@ -113,7 +113,7 @@ export class SignMapNode implements SignNodeData {
       return this;
     }
 
-    let current: SignMapNode = this;
+    let current: MarkMapNode = this;
     let next = map.get(this.point.add(uVector));
 
     // 当前点没有到达终点，还在导线所在直线内部，那就前进
@@ -132,27 +132,27 @@ export class SignMapNode implements SignNodeData {
 }
 
 /** 标记图纸 */
-export class SignMap {
+export class MarkMap {
   /** 节点转换为索引 key */
   static toKey(node: PointLike) {
     return node.join(',');
   }
 
   /** 数据储存 */
-  private _data: Record<string, SignMapNode> = {};
+  private _data: Record<string, MarkMapNode> = {};
 
   /** 设置节点数据 */
   set(data: NodeInputData) {
-    this._data[SignMap.toKey(data.point)] = new SignMapNode(data, this);
+    this._data[MarkMap.toKey(data.point)] = new MarkMapNode(data, this);
   }
 
   /** 获取节点数据 */
-  get(point: PointLike): SignMapNode | undefined {
-    return this._data[SignMap.toKey(point)];
+  get(point: PointLike): MarkMapNode | undefined {
+    return this._data[MarkMap.toKey(point)];
   }
 
   /** 移除节点信息 */
   delete(point: PointLike) {
-    delete this._data[SignMap.toKey(point)];
+    delete this._data[MarkMap.toKey(point)];
   }
 }

@@ -1,22 +1,21 @@
 import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher, isNumber } from '@xiao-ai/utils';
-import { SignMap } from 'src/lib/map';
+import { MarkMap } from 'src/lib/map';
 import { lines, parts } from 'src/store';
 
-/** 全局图纸 */
-const map = new SignMap();
+/** 全局记号图纸 */
+const map = new MarkMap();
 /** 被选中的器件 */
 export const selects = new Watcher<string[]>([]);
-/** 全局元件速查表 */
-const ElectronicHash: Record<number, Electronic | undefined> = {};
 
 function createId(id: string): string {
   const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
+  const all: Electronic[] = lines.data.concat(parts.data as any);
 
   let index = 1;
 
-  while (ElectronicHash[`${pre[1]}_${index}`]) {
+  while (all.find((item) => item.id === `${pre[1]}_${index}`)) {
     index++;
   }
 
@@ -31,13 +30,14 @@ interface ElectronicOption {
 
 export class Electronic {
   /** 元件编号 */
-  private _id: string;
+  id: string;
+
   /** 元件类型 */
   readonly kind: ElectronicKind;
   /** 图纸数据 */
   readonly map = map;
   /** 元件的连接表 */
-  connects: (Connect | undefined)[];
+  readonly connects: (Connect | undefined)[];
 
   constructor(opt: ElectronicKind | ElectronicOption) {
     const options = isNumber(opt)
@@ -55,13 +55,13 @@ export class Electronic {
     this.connects = options.connects ?? [];
 
     if (options.id) {
-      this._id = options.id;
+      this.id = options.id;
     }
     else if (options.kind === ElectronicKind.Line) {
-      this._id = createId('line');
+      this.id = createId('line');
     }
     else {
-      this._id = createId(Electronics[options.kind].pre);
+      this.id = createId(Electronics[options.kind].pre);
     }
 
     if (this.kind === ElectronicKind.Line) {
@@ -72,11 +72,6 @@ export class Electronic {
     }
   }
 
-  /** 元件编号 */
-  get id() {
-    return this._id;
-  }
-
   /** 强制刷新所有元件 */
   forceUpdate() {
     lines.setData(lines.data.slice());
@@ -85,22 +80,12 @@ export class Electronic {
 
   /** 删除自己 */
   delete() {
-    Reflect.deleteProperty(ElectronicHash, this.id);
+    // ..
   }
   
   /** 移动到最底层 */
   toBottom() {
     // ..
-  }
-
-  /** 变更器件编号 */
-  setId(newId: string) {
-    const old = this.id;
-
-    this._id = newId;
-
-    delete ElectronicHash[old];
-    ElectronicHash[this.id] = this;
   }
 
   /** 搜索导线 */
@@ -115,6 +100,6 @@ export class Electronic {
 
   /** 设置选中的器件 */
   setSelects(parts: string[]) {
-    selects.setData(parts.filter((id) => ElectronicHash[id]));
+    // selects.setData(parts.filter((id) => ElectronicHash[id]));
   }
 }

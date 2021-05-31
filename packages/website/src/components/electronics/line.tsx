@@ -97,12 +97,12 @@ export class Line extends Electronic {
   }
 
   /** 设置标志位 */
-  setSign() {
+  setMark() {
     // ..
   }
 
   /** 删除标记 */
-  deleteSign() {
+  deleteMark() {
     // ..
   }
 
@@ -126,7 +126,7 @@ export class Line extends Electronic {
       this.reverse();
     }
 
-    this.deleteSign();
+    this.deleteMark();
     this.rects = [];
     draw.init();
 
@@ -144,9 +144,7 @@ export class Line extends Electronic {
       throw new Error(`不存在的器件：${connect.id}`);
     }
 
-    const drawEvent = new DrawController();
-
-    await drawEvent
+    await new DrawController()
       .setClassName(cursorStyles.drawLine)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {

@@ -140,7 +140,6 @@ export function search(start: Point, direction: Point, event: DrawEvent, line: L
   //   end: new Point(0, 0),
   // };
 
-
   // 搜索路径
   for (const point of ends) {
     // if (cache.has(point, endBias)) {

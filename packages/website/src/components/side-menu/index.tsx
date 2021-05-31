@@ -13,7 +13,7 @@ import { useState } from 'react';
 export * from './types';
 
 export function SideMenu() {
-  const [status, setStatus] = useState(TabStatus.None);
+  const [status, setStatus] = useState(TabStatus.AddParts);
   const isRun = status === TabStatus.Run;
 
   return <aside className={aside.aside}>

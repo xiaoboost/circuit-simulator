@@ -28,8 +28,7 @@ export function loadSheet(data: ElectronicData) {
     }
     else {
       const part = new Part(item as PartData);
-
-      part.setSign();
+      part.setMark();
       parts.setData(parts.data.concat(part));
     }
   }
