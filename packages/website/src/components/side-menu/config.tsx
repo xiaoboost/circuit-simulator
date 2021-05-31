@@ -3,19 +3,59 @@ import React from 'react';
 import { config } from './styles';
 import { Panel } from './components/panel';
 import { ElectronicKind } from 'src/components/electronics';
-import { shortUnitList, NumberRank, SelectList } from '@circuit/math';
+import { shortUnitList, NumberRank, SelectList, splitNumber } from '@circuit/math';
 import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
-import { parts, endTime, stepTime, oscilloscopes } from 'src/store';
+import { parts, end, step, oscilloscopes } from 'src/store';
 
-import { useWatcher, useWatcherList } from '@xiao-ai/utils/use';
+import { Watcher } from '@xiao-ai/utils';
+import { useWatcher, useWatcherList, useForceUpdate } from '@xiao-ai/utils/use';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
-import { PropsWithChildren, useState, useMemo } from 'react';
+import { PropsWithChildren, useState, useMemo, useEffect, useRef } from 'react';
 
 /** 结束时间单位选择 */
-const endTimeUnits = shortUnitList(['', 'm', 'u'], '秒', true);
+const endTimeUnits = shortUnitList(['', 'm', 'μ'], '秒', true);
 /** 步长时间单位选择 */
-const stepTimeUnits = shortUnitList(['m', 'u', 'n', 'p'], '秒', true);
+const stepTimeUnits = shortUnitList(['m', 'μ', 'n', 'p'], '秒', true);
+
+function useWatcherTime(watcher: Watcher<string>) {
+  const update = useForceUpdate();
+  const { current: state } = useRef({
+    value: 0,
+    unit: '' as NumberRank,
+  });
+
+  function setValue(val: number) {
+    state.value = val;
+    watcher.setData(`${val}${state.unit}`);
+    update();
+  }
+
+  function setUnit(val: NumberRank) {
+    state.unit = val;
+    watcher.setData(`${state.value}${val}`);
+    update();
+  }
+  
+  function handleChange(val: string) {
+    const result = splitNumber(val);
+    setValue(Number.parseInt(result.number));
+    setUnit(result.rank);
+  }
+
+  useEffect(() => {
+    handleChange(watcher.data)
+    watcher.observe(handleChange);
+    return () => watcher.unObserve(handleChange);
+  }, []);
+
+  return {
+    value: state.value,
+    unit: state.unit,
+    setValue,
+    setUnit,
+  };
+}
 
 interface SectionProps {
   title: string;
@@ -125,11 +165,9 @@ function OscForm(props: OscFormProps) {
 
 export function Config() {
   const [partsList] = useWatcher(parts);
-  const [endTime, setEndTime] = useState(0);
-  const [endTimeUnit, setEndTimeUnit] = useState<NumberRank>('');
-  const [stepTime, setStepTime] = useState(0);
-  const [stepTimeUnit, setStepTimeUnit] = useState<NumberRank>('m');
   const [oscList, oscMethod] = useWatcherList<string[][]>(oscilloscopes);
+  const endTime = useWatcherTime(end);
+  const stepTime = useWatcherTime(step);
 
   /** 所有电流表 */
   const currentMeters = useMemo(() => {
@@ -148,19 +186,19 @@ export function Config() {
     <ConfigSection title='时间设置'>
       <TimeFormItem
         label='模拟时长'
-        value={endTime}
-        unit={endTimeUnit}
+        value={endTime.value}
+        unit={endTime.unit}
         unitList={endTimeUnits}
-        onChangeValue={setEndTime}
-        onChangeUnit={setEndTimeUnit}
+        onChangeValue={endTime.setValue}
+        onChangeUnit={endTime.setUnit}
       />
       <TimeFormItem
         label='步长时间'
-        value={stepTime}
-        unit={stepTimeUnit}
+        value={stepTime.value}
+        unit={stepTime.unit}
         unitList={stepTimeUnits}
-        onChangeValue={setStepTime}
-        onChangeUnit={setStepTimeUnit}
+        onChangeValue={stepTime.setValue}
+        onChangeUnit={stepTime.setUnit}
       />
     </ConfigSection>
     <ConfigSection title='示波器设置'>

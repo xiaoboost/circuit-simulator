@@ -30,7 +30,7 @@ export { BigNumber };
 export const numberMatcher = /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/;
 
 /** 简写数字编译 */
-export function numberParser(notation: string) {
+export function parseShortNumber(notation: string) {
   let bigNum: BigNumber;
 
   if (!numberMatcher.test(notation)) {
@@ -77,8 +77,8 @@ const unitMap: Record<NumberRank, string> = {
   'G': '吉',
 };
 
-// 所有数量级
-export const allRanks = ['G', 'M', 'k', '', 'm', 'μ', 'n', 'p'] as NumberRank[];
+/** 所有数量级 */
+export const allRanks = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'] as NumberRank[];
 
 /** 生成简写数字单位快捷选择列表选项 */
 export function shortUnitList(unit: string, isChinese?: boolean): SelectList;
@@ -105,16 +105,22 @@ export function shortUnitList(ranks: NumberRank[] | string, unit?: string | bool
 
 /** 解析输入数字 */
 export function splitNumber(str: string) {
-  const matcher = /^([\d.]+)([GMkmunp]?)$/;
+  const matcher = /^([\d.]+)([GMkmuμnp]?)$/;
   const match = matcher.exec(str);
 
   if (!match) {
     throw new Error(`(number) Cannot run splitNumber(${str})`);
   }
 
+  let rank = match[2] as NumberRank;
+
+  if (rank === 'μ') {
+    rank = 'u';
+  }
+
   return {
     number: match[1],
-    rank: (match[2] || '') as NumberRank,
+    rank,
   };
 }
 

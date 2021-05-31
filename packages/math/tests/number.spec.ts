@@ -4,7 +4,7 @@ import {
   getRank,
   toRound,
   splitNumber,
-  numberParser,
+  parseShortNumber,
   toScientific,
   shortUnitList,
 } from '../src';
@@ -45,13 +45,13 @@ test('splitNumber()', ({ deepEqual, throws }) => {
 });
 
 test('numberParser()', ({ is }) => {
-  is(numberParser('123x'), NaN);
-  is(numberParser('1234'), 1234);
-  is(numberParser('2e3'), 2000);
-  is(numberParser('2e-3'), 0.002);
-  is(numberParser('0.02M'), 2e4);
-  is(numberParser('0.02m'), 2e-5);
-  is(numberParser('200u'), 2e-4);
+  is(parseShortNumber('123x'), NaN);
+  is(parseShortNumber('1234'), 1234);
+  is(parseShortNumber('2e3'), 2000);
+  is(parseShortNumber('2e-3'), 0.002);
+  is(parseShortNumber('0.02M'), 2e4);
+  is(parseShortNumber('0.02m'), 2e-5);
+  is(parseShortNumber('200u'), 2e-4);
 });
 
 test('toScientific()', ({ is }) => {

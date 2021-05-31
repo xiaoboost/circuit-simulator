@@ -14,14 +14,14 @@ export const parts = new Watcher<Part[]>([]);
 /** 所有导线 */
 export const lines = new Watcher<Line[]>([]);
 /** 结束时间 */
-export const endTime = new Watcher('');
+export const end = new Watcher('10m');
 /** 步长时间 */
-export const stepTime = new Watcher('');
+export const step = new Watcher('10μ');
 /** 示波器参数 */
 export const oscilloscopes = new Watcher<string[][]>([]);
 
 /** 加载图纸数据 */
-export async function loadSheet(data: ElectronicData) {
+export function loadSheet(data: ElectronicData) {
   for (const item of (data)) {
     if (item.kind === 'Line') {
       // ..
@@ -36,17 +36,18 @@ export async function loadSheet(data: ElectronicData) {
 }
 
 /** 加载网站数据 */
-export async function loadApp(data: CircuitData) {
+export function loadApp(data: CircuitData) {
   if (data.electronics) {
-    await loadSheet(data.electronics);
+    loadSheet(data.electronics);
   }
 
   if (data.oscilloscopes) {
-    // ..
+    oscilloscopes.setData(data.oscilloscopes);
   }
 
   if (data.simulation) {
-    // ..
+    end.setData(data.simulation.end);
+    step.setData(data.simulation.step);
   }
 }
 
@@ -71,7 +72,7 @@ export async function appDataInit() {
 
   // 加载数据
   if (data) {
-    await loadApp(data);
-    await delay();
+    loadApp(data);
+    await delay(10);
   }
 }
