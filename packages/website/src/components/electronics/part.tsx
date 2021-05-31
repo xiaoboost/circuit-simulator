@@ -357,7 +357,6 @@ export class Part extends Electronic {
       this.connects[i] = { id: line.id, mark: 0 };
       line.connects[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
-      this.dispatch();
     }
     
     this.updatePoints();

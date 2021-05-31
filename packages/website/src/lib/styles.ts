@@ -22,7 +22,7 @@ jss
   .use(ruleValueFunction());
 
 function getCursorStyle(url: string, offset = 16) {
-  return `url("${url}") ${offset} ${offset}, crosshair`;
+  return `url("${url}") ${offset} ${offset}, crosshair !important`;
 }
 
 export const drawLineCursor = getCursorStyle(DrawLine);

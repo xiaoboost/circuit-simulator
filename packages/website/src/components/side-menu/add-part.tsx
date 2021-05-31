@@ -71,7 +71,7 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 
 export function AddPart() {
   const create = (kind: ElectronicKind) => {
-    new Part(kind).dispatch().create();
+    new Part(kind).create();
   };
 
   return (

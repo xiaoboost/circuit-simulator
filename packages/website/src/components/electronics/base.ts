@@ -64,7 +64,12 @@ export class Electronic {
       this._id = createId(Electronics[options.kind].pre);
     }
 
-    ElectronicHash[this.id] = this;
+    if (this.kind === ElectronicKind.Line) {
+      lines.setData(lines.data.concat(this as any));
+    }
+    else {
+      parts.setData(parts.data.concat(this as any));
+    }
   }
 
   /** 元件编号 */
@@ -73,17 +78,14 @@ export class Electronic {
   }
 
   /** 强制刷新所有元件 */
-  dispatch() {
+  forceUpdate() {
     lines.setData(lines.data.slice());
     parts.setData(parts.data.slice());
-    return this;
   }
 
   /** 删除自己 */
   delete() {
     Reflect.deleteProperty(ElectronicHash, this.id);
-    this.dispatch();
-    return this;
   }
   
   /** 移动到最底层 */
