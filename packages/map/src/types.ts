@@ -28,6 +28,12 @@ export interface MarkNodeData {
   point: Point;
   /** 当前点在图纸中连接着另外哪些点 */
   connect: Point[];
+  /** 所属元件的引脚编号 */
+  mark?: number;
+  /**
+   * 此节点为导线交叠节点时，导线的连接关系
+   */
+  
 }
 
 export type NodeInputData = PartPartial<MarkNodeData, 'connect'>;
