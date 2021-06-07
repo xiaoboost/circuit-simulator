@@ -7,7 +7,7 @@ import {
   Black,
   LightGray,
   DarkGreen,
-} from 'src/lib/styles';
+} from 'src/styles';
 
 import { tabWidth, panelWidth, animateTime } from '../constant';
 

@@ -1,4 +1,4 @@
-import { createStyles, FontDefaultSize, FontDefault, Black } from 'src/lib/styles';
+import { createStyles, FontDefaultSize, FontDefault, Black } from 'src/styles';
 
 export const styles = createStyles({
   container: {

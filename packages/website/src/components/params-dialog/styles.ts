@@ -1,5 +1,5 @@
-import { createDynamicStyles } from 'src/lib/styles';
-import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/lib/styles';
+import { createDynamicStyles } from 'src/styles';
+import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/styles';
 
 /** 动画持续时间 */
 export const transformTime = 400;

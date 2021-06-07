@@ -3,7 +3,7 @@ import React from 'react';
 import { partStyles } from './styles';
 import { Electronic } from './base';
 import { MarkNodeKind } from '@circuit/map';
-import { cursorStyles } from 'src/lib/styles';
+import { cursorStyles } from 'src/styles';
 import { PartData } from './constant';
 import { DrawController } from 'src/lib/mouse';
 import { editPartParams } from '../params-dialog';

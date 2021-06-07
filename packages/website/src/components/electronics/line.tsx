@@ -5,7 +5,7 @@ import { LineWay } from './line-way';
 import { PointLike } from '@circuit/math';
 import { useForceUpdate } from '@xiao-ai/utils/use';
 import { DrawController } from 'src/lib/mouse';
-import { cursorStyles } from 'src/lib/styles';
+import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 
 import { draw } from './line-way';

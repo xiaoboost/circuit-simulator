@@ -9,7 +9,7 @@ import {
   White,
   Red,
   LightBlue,
-} from 'src/lib/styles';
+} from 'src/styles';
 
 export const aside = createStyles({
   aside: {

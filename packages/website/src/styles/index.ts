@@ -1,3 +1,16 @@
+import './global.css';
+import './start-loading.css';
+
+import 'antd/es/style/index.css';
+import 'antd/es/input/style/index.css';
+import 'antd/es/input-number/style/index.css';
+import 'antd/es/select/style/index.css';
+import 'antd/es/tooltip/style/index.css';
+import 'antd/es/button/style/index.css';
+import 'antd/es/form/style/index.css';
+import 'antd/es/grid/style/index.css';
+import 'antd/es/modal/style/index.css';
+
 import jss from 'jss';
 import nested from 'jss-plugin-nested';
 import extend from 'jss-plugin-extend';

@@ -3,7 +3,7 @@ import { Watcher } from '@xiao-ai/utils';
 import { debug } from '@circuit/debug';
 import { MouseButtons } from '@xiao-ai/utils/web';
 import { DrawController } from 'src/lib/mouse';
-import { cursorStyles } from 'src/lib/styles';
+import { cursorStyles } from 'src/styles';
 
 import { useCallback, useEffect, MouseEvent, WheelEvent, RefObject } from 'react';
 

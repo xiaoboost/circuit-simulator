@@ -1,4 +1,4 @@
-import './styles';
+import '../styles';
 import 'core-js/stable';
 
 import { render } from 'react-dom';

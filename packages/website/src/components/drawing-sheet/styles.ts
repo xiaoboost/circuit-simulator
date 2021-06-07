@@ -1,4 +1,4 @@
-import { createStyles } from 'src/lib/styles';
+import { createStyles } from 'src/styles';
 
 import Grid from 'src/assets/img/circuit-grid.svg';
 

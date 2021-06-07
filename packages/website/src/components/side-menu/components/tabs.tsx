@@ -2,7 +2,7 @@ import React from 'react';
 
 import { tabStyle } from './styles';
 import { TabStatus } from '../constant';
-import { DarkGreen } from 'src/lib/styles';
+import { DarkGreen } from 'src/styles';
 import { isUndef, stringifyClass } from '@xiao-ai/utils';
 import { Tooltip as TooltipOrigin } from 'antd';
 
