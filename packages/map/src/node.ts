@@ -1,37 +1,8 @@
 import { Point, PointLike } from '@circuit/math';
-import { remove, PartPartial } from '@xiao-ai/utils';
+import { remove } from '@xiao-ai/utils';
+import { MarkNodeData, MarkNodeKind, NodeInputData } from './types';
 
-/** 节点类型常量 */
-export enum MarkNodeKind {
-  /** 导线 */
-  Line = 10,
-  /** 导线空节点 */
-  LinePoint,
-  /** 导线交叠节点（实际并不相交） */
-  LineCoverPoint,
-  /** 导线交错节点 */
-  LineCrossPoint,
-
-  /** 器件节点 */
-  Part = 20,
-  /** 器件引脚节点 */
-  PartPoint,
-}
-
-/** 节点数据 */
-export interface MarkNodeData {
-  /** 当前点属于哪个器件 */
-  label: string;
-  /** 节点类型 */
-  kind: MarkNodeKind;
-  /** 当前点的小坐标 */
-  point: PointLike;
-  /** 当前点在图纸中连接着另外哪些点 */
-  connect: PointLike[];
-}
-
-export type NodeInputData = PartPartial<MarkNodeData, 'connect'>;
-export type NodeUpdateData = Omit<PartPartial<MarkNodeData, 'connect'>, 'point'>;
+import type { MarkMap } from './map';
 
 /** 节点数据 */
 export class MarkMapNode implements MarkNodeData {
@@ -128,31 +99,5 @@ export class MarkMapNode implements MarkNodeData {
     }
 
     return current;
-  }
-}
-
-/** 标记图纸 */
-export class MarkMap {
-  /** 节点转换为索引 key */
-  static toKey(node: PointLike) {
-    return node.join(',');
-  }
-
-  /** 数据储存 */
-  private _data: Record<string, MarkMapNode> = {};
-
-  /** 设置节点数据 */
-  set(data: NodeInputData) {
-    this._data[MarkMap.toKey(data.point)] = new MarkMapNode(data, this);
-  }
-
-  /** 获取节点数据 */
-  get(point: PointLike): MarkMapNode | undefined {
-    return this._data[MarkMap.toKey(point)];
-  }
-
-  /** 移除节点信息 */
-  delete(point: PointLike) {
-    delete this._data[MarkMap.toKey(point)];
   }
 }

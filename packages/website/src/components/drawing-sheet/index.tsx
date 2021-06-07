@@ -7,11 +7,12 @@ import { styles } from './styles';
 import * as store from 'src/store';
 import * as utils from './utils';
 
-import { useMap, mapState } from './map';
+import { useMap, useDebugger, mapState } from './map';
 import { useMouseBusInit } from 'src/lib/mouse';
 
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
+  const SVGRef = useRef<SVGSVGElement>(null);
   const [lines] = useWatcher(store.lines);
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
@@ -26,6 +27,7 @@ export function DrawingSheet() {
   );
 
   useMouseBusInit(SheetRef);
+  useDebugger(SVGRef);
 
   return (
     <section
@@ -35,7 +37,7 @@ export function DrawingSheet() {
       onMouseDown={mapEvent.moveStartEvent}
       onWheel={mapEvent.sizeChangeEvent}
     >
-      <svg height='100%' width='100%'>
+      <svg ref={SVGRef} height='100%' width='100%'>
         <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
           {LinesList}
           {PartsList}

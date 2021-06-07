@@ -1,7 +1,7 @@
 import { ElectronicKind, Connect } from './constant';
 import { Electronics } from './parts';
 import { Watcher, isNumber } from '@xiao-ai/utils';
-import { MarkMap } from 'src/lib/map';
+import { MarkMap } from '@circuit/map';
 import { lines, parts } from 'src/store';
 
 /** 全局记号图纸 */

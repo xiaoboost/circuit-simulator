@@ -2,7 +2,7 @@ import React from 'react';
 
 import { partStyles } from './styles';
 import { Electronic } from './base';
-import { MarkNodeKind } from 'src/lib/map';
+import { MarkNodeKind } from '@circuit/map';
 import { cursorStyles } from 'src/lib/styles';
 import { PartData } from './constant';
 import { DrawController } from 'src/lib/mouse';

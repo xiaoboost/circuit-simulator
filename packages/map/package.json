@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/math",
-  "description": "circuit's math",
+  "name": "@circuit/map",
+  "description": "circuit's map",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
@@ -41,8 +41,8 @@
     ]
   },
   "dependencies": {
-    "@xiao-ai/utils": "^1.3.1",
-    "bignumber.js": "^9.0.1"
+    "@circuit/math": "workspace:*",
+    "@xiao-ai/utils": "^1.3.1"
   },
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",

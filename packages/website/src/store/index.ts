@@ -22,7 +22,9 @@ export const oscilloscopes = new Watcher<string[][]>([]);
 
 /** 加载图纸数据 */
 export function loadSheet(data: ElectronicData) {
+  console.log(data);
   for (const item of (data)) {
+    console.log(item);
     if (item.kind === 'Line') {
       // ..
     }

@@ -1,4 +1,5 @@
 declare module 'progress-bar-webpack-plugin';
+declare module 'browser-env';
 
 declare module '@antv/g2/lib/core' {
   import G2 from '@antv/g2/lib/index';

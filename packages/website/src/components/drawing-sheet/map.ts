@@ -1,10 +1,11 @@
 import { Point } from '@circuit/math';
 import { Watcher } from '@xiao-ai/utils';
+import { debug } from '@circuit/debug';
 import { MouseButtons } from '@xiao-ai/utils/web';
 import { DrawController } from 'src/lib/mouse';
 import { cursorStyles } from 'src/lib/styles';
 
-import { useCallback, MouseEvent, WheelEvent } from 'react';
+import { useCallback, useEffect, MouseEvent, WheelEvent, RefObject } from 'react';
 
 export interface MapState {
   zoom: number;
@@ -74,4 +75,16 @@ export function useMap() {
     sizeChangeEvent,
     moveStartEvent,
   };
+}
+
+export function useDebugger(ref: RefObject<Element>) {
+  let isInit = false
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && !isInit && ref.current) {
+      isInit = true;
+      ref.current.appendChild(debug.$el);
+      (window as any).debug = debug;
+    }
+  }, [ref.current]);
 }

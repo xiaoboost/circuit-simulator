@@ -4,6 +4,7 @@
     "sourceMap": true,
     "strict": true,
     "declaration": true,
+    "declarationMap": true,
     "moduleResolution": "node",
     "target": "ESNext",
     "module": "CommonJS",
