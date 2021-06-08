@@ -38,7 +38,7 @@ const baseConfig: Webpack.Configuration = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json', '.css'],
     mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.css'],
-    importsFields: ['source', 'module', 'main'],
+    mainFields: ['source', 'module', 'main'],
     alias: {
       src: utils.resolve('src'),
       '@xiao-ai/utils/web': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/web/index.js'),

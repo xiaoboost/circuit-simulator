@@ -1,154 +1,41 @@
 import React from 'react';
 
 import { partStyles } from './styles';
-import { Electronic } from './base';
-import { MarkNodeKind } from '@circuit/map';
 import { cursorStyles } from 'src/styles';
-import { PartData } from './constant';
-import { DrawController } from 'src/lib/mouse';
+import { drawEventInit } from 'src/lib/mouse';
 import { editPartParams } from '../params-dialog';
 import { mapState } from '../drawing-sheet/map';
-import { ElectronicPrototype, Electronics, MarginDirection } from './parts';
-import { Matrix, Point, PointInput, Direction, Directions } from '@circuit/math';
+import { Point, Direction, Directions } from '@circuit/math';
 import { useForceUpdate } from '@xiao-ai/utils/use';
 import { MouseButtons } from '@xiao-ai/utils/web';
-import { isNumber, stringifyClass } from '@xiao-ai/utils';
+import { stringifyClass } from '@xiao-ai/utils';
 import { ElectronicPoint } from './point';
-import { Line } from './line';
+import { LineComponent } from './line';
+import { ElectronicKind, Part, PartData } from '@circuit/electronics';
+import { PointKind, PointStatus, textHeight, textSpaceHeight } from './constant';
 
-import {
-  ElectronicKind,
-  PartPinStatus,
-  PointKind,
-  PointStatus,
-} from './constant';
-
-export class Part extends Electronic {
-  /** 旋转坐标 */
-  rotate: Matrix;
-  /** 位置坐标 */
-  position: Point;
-  /** 参数描述 */
-  params: string[];
-  /** 参数文本 */
-  texts: string[] = [];
+export class PartComponent extends Part {
   /** 文本位置 */
   textPosition = new Point(0, 0);
-  /** 说明文本方向 */
-  textPlacement = Direction.Bottom;
-  /** 引脚状态 */
-  points: PartPinStatus[] = [];
-  /** 旋转逆矩阵 */
-  invRotate = new Matrix(2, 'E');
-  /** 器件边距 */
-  margin = {
-    margin: [0, 0, 0, 0] as const,
-    padding: [0, 0, 0, 0] as const,
-  };
-
-  visible = false;
-
-  /** 文本高度 */
-  readonly textHeight = 14;
-  /** 文本高度间隔 */
-  readonly textSpaceHeight = 2;
 
   constructor(kind: ElectronicKind | PartData) {
     super(kind);
-
-    const { prototype } = this;
-    const data: Partial<Omit<PartData, 'kind'>> = !isNumber(kind) ? kind : {};
-
-    this.params = data.params ?? prototype.params.map((n) => n.default);
-    this.rotate = data.rotate ? Matrix.from(data.rotate) : new Matrix(2, 'E');
-    this.position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
-    this.textPlacement = data.text ? Direction[data.text] : Direction.Bottom;
     this.textPosition = Directions[this.textPlacement].mul(100);
-
-    this.updatePoints();
-    this.updateRotate();
-    this.updateMargin();
     this.updateTextPosition();
-  }
-
-  /** 器件原型数据 */
-  get prototype(): ElectronicPrototype {
-    return Electronics[this.kind];
   }
 
   /** 更新页面 */
   private update: () => void = () => void 0;
-
   /** 初始化 hook */
   private useInit() {
     this.update = useForceUpdate();
   }
 
-  /** 更新引脚状态 */
-  private updatePoints() {
-    const { prototype, rotate } = this;
-
-    for (let i = 0; i < prototype.points.length; i++) {
-      const point = prototype.points[i];
-      const current = this.points[i];
-
-      this.points[i] = {
-        label: `${this.id}_${i}`,
-        isConnected: Boolean(this.connects[i]),
-        origin: Point.from(point.position as PointInput),
-        position: Point.prototype.rotate.call(point.position, rotate),
-        direction: Point.prototype.rotate.call(Directions[point.direction], rotate),
-      };
-
-      if (current?.size) {
-        this.points[i].size = current.size;
-      }
-
-      if (current?.className) {
-        this.points[i].className = current.className;
-      }
-    }
-  }
-
-  /** 更新参数文本 */
-  private updateTexts() {
-    this.texts = this.params
-      .map((v, i) => ({ ...Electronics[this.kind].params[i], value: v }))
-      .filter((txt) => txt.vision)
-      .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'));
-  }
-
-  /** 获取器件当前内外边界 */
-  private updateMargin() {
-    const { prototype, rotate } = this;
-
-    [Direction.Top, Direction.Right, Direction.Bottom, Direction.Left]
-      .map((item) => Directions[item].rotate(rotate))
-      .forEach((vector, i) => {
-        const index = MarginDirection[vector.toDirection()];
-        const paddingLen = Math.abs(vector.product([1, 1])) * 20 * prototype.padding[i];
-        const marginLen = Math.abs(vector.product([1, 1])) * 20 * prototype.margin[i];
-        (this.margin.margin as any)[index] = marginLen;
-        (this.margin.padding as any)[index] = paddingLen;
-      });
-  }
-
-  /** 更新矩阵 */
-  private updateRotate() {
-    this.invRotate = this.rotate.inverse();
-    this.updateMargin();
-  }
-
   /** 更新文本位置 */
   private updateTextPosition() {
-    this.updateTexts();
-
     const {
       texts,
       points,
-      margin,
-      textHeight,
-      textSpaceHeight,
       prototype,
       textPosition: position,
     } = this;
@@ -200,60 +87,6 @@ export class Part extends Electronic {
     position[1] -= 2;
   }
 
-  /** 迭代器件当前覆盖的所有节点 */
-  *padding() {
-    const { prototype, position, rotate } = this;
-    const boxSize = prototype.padding;
-    const endpoint = [[-boxSize[3], -boxSize[0]], [boxSize[1], boxSize[2]]];
-    const data = endpoint.map((point) => Point.prototype.rotate.call(point, rotate));
-    const padding = [
-      [
-        Math.min(data[0][0], data[1][0]),
-        Math.min(data[0][1], data[1][1]),
-      ],
-      [
-        Math.max(data[0][0], data[1][0]),
-        Math.max(data[0][1], data[1][1]),
-      ],
-    ];
-
-    for (let x = position[0] + padding[0][0]; x <= position[0] + padding[1][0]; x++) {
-      for (let y = position[1] + padding[0][1]; y <= position[1] + padding[1][1]; y++) {
-        yield new Point(x, y);
-      }
-    }
-  }
-
-  /** 设置标志位 */
-  setMark() {
-    for (const point of this.padding()) {
-      this.map.set({
-        label: this.id,
-        point: point,
-        kind: MarkNodeKind.Part,
-      });
-    }
-
-    for (const point of this.points) {
-      this.map.set({
-        label: this.id,
-        point: point.position.add(this.position),
-        kind: MarkNodeKind.PartPoint,
-      });
-    }
-  }
-
-  /** 删除标记 */
-  deleteMark() {
-    for (const point of this.padding()) {
-      this.map.delete(point);
-    }
-
-    for (const point of this.points) {
-      this.map.delete(point.position.add(this.position));
-    }
-  }
-
   /** 是否被占用 */
   isOccupied(location = this.position) {
     return false;
@@ -264,7 +97,7 @@ export class Part extends Electronic {
     // 选中自己
     this.setSelects([this.id]);
 
-    new DrawController()
+    drawEventInit()
       // .setCursor('move_part')
       .setStopEvent({ type: 'click', which: 'Left' })
       .setMoveEvent((e) => {
@@ -310,7 +143,7 @@ export class Part extends Electronic {
     ev.stopPropagation();
     this.setSelects([this.id]);
 
-    new DrawController()
+    drawEventInit()
       .setClassName(cursorStyles.movePart)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((e) => {
@@ -332,7 +165,7 @@ export class Part extends Electronic {
 
     ev.stopPropagation();
 
-    let line: Line;
+    let line: LineComponent;
 
     const startPoint = this.position.add(this.points[i].position);
     const connect = this.connects[i];
@@ -341,7 +174,7 @@ export class Part extends Electronic {
     if (connect) {
       const { id: lineId, mark } = connect;
 
-      line = this.findLine(lineId)!;
+      line = this.find<LineComponent>(lineId)!;
 
       if (mark === 0) {
         line.reverse();
@@ -353,29 +186,14 @@ export class Part extends Electronic {
     }
     // 该引脚为空
     else {
-      line = new Line([startPoint]);
+      line = new LineComponent([startPoint]);
       this.connects[i] = { id: line.id, mark: 0 };
       line.connects[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
     }
-    
-    this.updatePoints();
-    this.update();
 
-    line.toBottom();
+    this.update();
     line.drawing();
-  }
-  
-  /** 输出数据 */
-  toData(): Required<PartData> {
-    return {
-      id: this.id,
-      kind: ElectronicKind[this.kind] as keyof typeof ElectronicKind,
-      position: this.position.toData(),
-      rotate: this.rotate.toData(),
-      text: Direction[this.textPlacement] as keyof typeof Direction,
-      params: this.params.slice(),
-    };
   }
 
   /** 渲染函数 */
@@ -390,9 +208,7 @@ export class Part extends Electronic {
       texts,
       points,
       textPosition,
-      textHeight,
       textPlacement,
-      textSpaceHeight,
     } = this;
 
     const [label, subId] = this.id.split('_');
@@ -415,7 +231,7 @@ export class Part extends Electronic {
           ))}
           {points.map((point, i) => (
             <ElectronicPoint
-              key={point.label}
+              key={point.index}
               size={point.size}
               kind={PointKind.Part}
               status={point.isConnected ? PointStatus.Close : PointStatus.Open}

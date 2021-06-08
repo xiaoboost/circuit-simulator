@@ -17,8 +17,8 @@ export interface PartPinStatus {
   size?: number;
   /** 节点样式名称 */
   className?: string;
-  /** 引脚标记 */
-  label: string;
+  /** 引脚下标 */
+  index: number;
   /** 节点是否连接着导线 */
   isConnected: boolean;
   /** 原本节点相对器件原点位置 */

@@ -12,8 +12,6 @@ export * from './prototype';
 export class Part extends Electronic {
   /** 位置坐标 */
   position: Point;
-  /** 参数描述 */
-  params: string[];
   /** 说明文本方向 */
   textPlacement = Direction.Bottom;
 
@@ -32,6 +30,8 @@ export class Part extends Electronic {
   private _rotate = new Matrix(2, 'E');
   private _invRotate = new Matrix(2, 'E');
   private _points: PartPinStatus[] = [];
+  private _params: string[] = [];
+  private _texts: string[] = [];
   private _margin = {
     margin: [0, 0, 0, 0] as const,
     padding: [0, 0, 0, 0] as const,
@@ -64,6 +64,19 @@ export class Part extends Electronic {
   get points() {
     return this._points;
   }
+  /** 参数描述 */
+  get params() {
+    return this._params;
+  }
+  set params(val: string[]) {
+    this._params = val;
+    this.updateTexts();
+  }
+  /** 参数文本 */
+  get texts() {
+    return this._texts;
+  }
+
 
   private updateMargin() {
     const { prototype, rotate } = this;
@@ -89,7 +102,7 @@ export class Part extends Electronic {
       const current = this.points[i];
 
       this.points[i] = {
-        label: `${this.id}_${i}`,
+        index: i,
         isConnected: Boolean(this.connects[i]),
         origin: Point.from(point.position),
         position: Point.prototype.rotate.call(point.position, rotate),
@@ -104,6 +117,12 @@ export class Part extends Electronic {
         this.points[i].className = current.className;
       }
     }
+  }
+  private updateTexts() {
+    this._texts = this.params
+      .map((v, i) => ({ ...Electronics[this.kind].params[i], value: v }))
+      .filter((txt) => txt.vision)
+      .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'));
   }
 
   /** 迭代器件当前覆盖的所有节点 */

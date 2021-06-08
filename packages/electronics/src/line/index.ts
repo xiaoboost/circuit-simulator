@@ -39,7 +39,7 @@ export class Line extends Electronic {
       const oldData = this.points[i];
 
       this.points[i] = {
-        label: `${this.id}_${i}`,
+        index: i,
         isConnected: Boolean(this.connects[i]),
         position,
       };

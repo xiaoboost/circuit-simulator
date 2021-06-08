@@ -1,6 +1,6 @@
 import { Direction } from '@circuit/math';
 import { createStyles } from 'src/styles';
-import { MouseFocusClassName } from './parts/constant';
+import { MouseFocusClassName } from '@circuit/electronics';
 import { Black, FontText, White, movePartCursor, drawLineCursor } from 'src/styles';
 
 export const partStyles = createStyles({
@@ -12,7 +12,7 @@ export const partStyles = createStyles({
       fill: 'transparent',
       stroke: 'transparent',
     },
-    
+
     '&:hover': {
       cursor: movePartCursor,
     },

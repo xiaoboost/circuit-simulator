@@ -4,14 +4,14 @@ importers:
 
   .:
     specifiers:
-      '@typescript-eslint/eslint-plugin': ^4.26.0
-      '@typescript-eslint/parser': ^4.26.0
+      '@typescript-eslint/eslint-plugin': ^4.26.1
+      '@typescript-eslint/parser': ^4.26.1
       eslint: ^7.28.0
       eslint-plugin-react: ^7.24.0
       npm-check-updates: ^11.6.0
     devDependencies:
-      '@typescript-eslint/eslint-plugin': registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.0_9cc2990492c52d117ab474c4d27a2a87
-      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.0_eslint@7.28.0
+      '@typescript-eslint/eslint-plugin': registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1_ab05164168c44753f23ef96ba1d198fc
+      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0
       eslint: registry.nlark.com/eslint/7.28.0
       eslint-plugin-react: registry.nlark.com/eslint-plugin-react/7.24.0_eslint@7.28.0
       npm-check-updates: registry.nlark.com/npm-check-updates/11.6.0
@@ -147,8 +147,9 @@ importers:
   packages/website:
     specifiers:
       '@ant-design/icons': ^4.6.2
-      '@antv/g2': ^4.1.17
+      '@antv/g2': ^4.1.18
       '@circuit/debug': workspace:*
+      '@circuit/electronics': workspace:*
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/solver': workspace:*
@@ -160,7 +161,7 @@ importers:
       '@types/koa': ^2.13.3
       '@types/mime': ^2.0.3
       '@types/mini-css-extract-plugin': ^1.4.3
-      '@types/node': ^15.12.1
+      '@types/node': ^15.12.2
       '@types/qs': ^6.9.6
       '@types/react': ^17.0.9
       '@types/react-dom': ^17.0.6
@@ -204,8 +205,9 @@ importers:
       webpack-bundle-analyzer: ^4.4.2
     dependencies:
       '@ant-design/icons': 4.6.2_react-dom@17.0.2+react@17.0.2
-      '@antv/g2': registry.nlark.com/@antv/g2/4.1.17
+      '@antv/g2': registry.nlark.com/@antv/g2/4.1.18
       '@circuit/debug': link:../debug
+      '@circuit/electronics': link:../electronics
       '@circuit/map': link:../map
       '@circuit/math': link:../math
       '@circuit/solver': link:../solver
@@ -231,7 +233,7 @@ importers:
       '@types/koa': registry.nlark.com/@types/koa/2.13.3
       '@types/mime': registry.nlark.com/@types/mime/2.0.3
       '@types/mini-css-extract-plugin': registry.nlark.com/@types/mini-css-extract-plugin/1.4.3
-      '@types/node': registry.nlark.com/@types/node/15.12.1
+      '@types/node': registry.nlark.com/@types/node/15.12.2
       '@types/qs': registry.nlark.com/@types/qs/6.9.6
       '@types/react': registry.nlark.com/@types/react/17.0.9
       '@types/react-dom': registry.nlark.com/@types/react-dom/17.0.6
@@ -253,7 +255,7 @@ importers:
       mini-css-extract-plugin: registry.nlark.com/mini-css-extract-plugin/1.6.0_webpack@5.38.1
       progress-bar-webpack-plugin: 2.1.0_webpack@5.38.1
       ts-loader: registry.nlark.com/ts-loader/9.2.3_typescript@4.3.2+webpack@5.38.1
-      ts-node: registry.nlark.com/ts-node/10.0.0_10b86ec3e0ae69831b5d57b396c86e38
+      ts-node: registry.nlark.com/ts-node/10.0.0_e3fb3700f8b176f300f1b7e599dc9c29
       tsconfig-paths: 3.9.0
       tslib: 2.2.0
       typescript: registry.nlark.com/typescript/4.3.2
@@ -321,27 +323,6 @@ packages:
       tslib: 2.2.0
     dev: false
 
-  /@antv/component/0.8.11:
-    resolution: {integrity: sha1-Qnb89t+HzcvL7VYMHZrazPgNXH4=, tarball: '@antv/component/download/@antv/component-0.8.11.tgz'}
-    dependencies:
-      '@antv/dom-util': 2.0.3
-      '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.6
-      '@antv/matrix-util': 3.1.0-beta.2
-      '@antv/path-util': 2.0.9
-      '@antv/scale': registry.nlark.com/@antv/scale/0.3.10
-      '@antv/util': 2.0.13
-      fecha: 4.2.1
-      tslib: 2.2.0
-    dev: false
-
-  /@antv/coord/0.3.1:
-    resolution: {integrity: sha1-mC4mHYoeBqGY61GOp6zCDth1oBk=, tarball: '@antv/coord/download/@antv/coord-0.3.1.tgz'}
-    dependencies:
-      '@antv/matrix-util': 3.1.0-beta.2
-      '@antv/util': 2.0.13
-      tslib: 2.2.0
-    dev: false
-
   /@antv/dom-util/2.0.3:
     resolution: {integrity: sha1-y9FYsciODopNhlhxpZabEZBVT/U=, tarball: '@antv/dom-util/download/@antv/dom-util-2.0.3.tgz'}
     dependencies:
@@ -350,23 +331,6 @@ packages:
 
   /@antv/event-emitter/0.1.2:
     resolution: {integrity: sha1-oXt8uG5tBxiA3Gv7IydW+IYk7Lw=, tarball: '@antv/event-emitter/download/@antv/event-emitter-0.1.2.tgz'}
-    dev: false
-
-  /@antv/g-math/0.1.7:
-    resolution: {integrity: sha1-bsJ2kmn3zLZ+WBQNVznfdARswE4=, tarball: '@antv/g-math/download/@antv/g-math-0.1.7.tgz'}
-    dependencies:
-      '@antv/util': 2.0.13
-      gl-matrix: 3.3.0
-    dev: false
-
-  /@antv/g-svg/0.5.6:
-    resolution: {integrity: sha1-cLL6mAxDGzmtPFtLU+NqHWCVfWU=, tarball: '@antv/g-svg/download/@antv/g-svg-0.5.6.tgz'}
-    dependencies:
-      '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.9
-      '@antv/g-math': 0.1.7
-      '@antv/util': 2.0.13
-      detect-browser: 5.2.0
-      tslib: 2.2.0
     dev: false
 
   /@antv/matrix-util/3.1.0-beta.2:
@@ -1268,24 +1232,6 @@ packages:
     dependencies:
       array-find-index: 1.0.2
     dev: true
-
-  /d3-color/1.4.1:
-    resolution: {integrity: sha1-xSACv4hGraRCTVXZeYL+8m6zvIo=, tarball: d3-color/download/d3-color-1.4.1.tgz}
-    dev: false
-
-  /d3-ease/1.0.7:
-    resolution: {integrity: sha1-moNIkO+LiujFWLL+Vb1X9Zk7heI=, tarball: d3-ease/download/d3-ease-1.0.7.tgz}
-    dev: false
-
-  /d3-interpolate/1.4.0:
-    resolution: {integrity: sha1-Um554tgNqjg/ngwcHH3MDwWD6Yc=, tarball: d3-interpolate/download/d3-interpolate-1.4.0.tgz}
-    dependencies:
-      d3-color: 1.4.1
-    dev: false
-
-  /d3-timer/1.0.10:
-    resolution: {integrity: sha1-3+dripF0iDGxO22ceT/71QjdneU=, tarball: d3-timer/download/d3-timer-1.0.10.tgz}
-    dev: false
 
   /dashdash/1.14.1:
     resolution: {integrity: sha1-hTz6D3y+L+1d4gMmuN1YEDX24vA=, tarball: dashdash/download/dashdash-1.14.1.tgz}
@@ -4657,20 +4603,45 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
+  registry.nlark.com/@antv/component/0.8.11:
+    resolution: {integrity: sha1-Qnb89t+HzcvL7VYMHZrazPgNXH4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/component/download/@antv/component-0.8.11.tgz}
+    name: '@antv/component'
+    version: 0.8.11
+    dependencies:
+      '@antv/dom-util': 2.0.3
+      '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.6
+      '@antv/matrix-util': 3.1.0-beta.2
+      '@antv/path-util': 2.0.9
+      '@antv/scale': registry.nlark.com/@antv/scale/0.3.10
+      '@antv/util': 2.0.13
+      fecha: 4.2.1
+      tslib: 2.2.0
+    dev: false
+
+  registry.nlark.com/@antv/coord/0.3.1:
+    resolution: {integrity: sha1-mC4mHYoeBqGY61GOp6zCDth1oBk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/coord/download/@antv/coord-0.3.1.tgz}
+    name: '@antv/coord'
+    version: 0.3.1
+    dependencies:
+      '@antv/matrix-util': 3.1.0-beta.2
+      '@antv/util': 2.0.13
+      tslib: 2.2.0
+    dev: false
+
   registry.nlark.com/@antv/g-base/0.5.6:
     resolution: {integrity: sha1-2W2l+/bF+LBzBydR4V5e7HCzk/w=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/g-base/download/@antv/g-base-0.5.6.tgz}
     name: '@antv/g-base'
     version: 0.5.6
     dependencies:
       '@antv/event-emitter': 0.1.2
-      '@antv/g-math': 0.1.7
+      '@antv/g-math': registry.nlark.com/@antv/g-math/0.1.7
       '@antv/matrix-util': 3.1.0-beta.2
       '@antv/path-util': 2.0.9
       '@antv/util': 2.0.13
       '@types/d3-timer': registry.nlark.com/@types/d3-timer/2.0.0
-      d3-ease: 1.0.7
-      d3-interpolate: 1.4.0
-      d3-timer: 1.0.10
+      d3-ease: registry.nlark.com/d3-ease/1.0.7
+      d3-interpolate: registry.nlark.com/d3-interpolate/1.4.0
+      d3-timer: registry.nlark.com/d3-timer/1.0.10
       detect-browser: 5.2.0
       tslib: 2.2.0
     dev: false
@@ -4681,14 +4652,14 @@ packages:
     version: 0.5.9
     dependencies:
       '@antv/event-emitter': 0.1.2
-      '@antv/g-math': 0.1.7
+      '@antv/g-math': registry.nlark.com/@antv/g-math/0.1.7
       '@antv/matrix-util': 3.1.0-beta.2
       '@antv/path-util': 2.0.9
       '@antv/util': 2.0.13
       '@types/d3-timer': registry.nlark.com/@types/d3-timer/2.0.0
-      d3-ease: 1.0.7
-      d3-interpolate: 1.4.0
-      d3-timer: 1.0.10
+      d3-ease: registry.nlark.com/d3-ease/1.0.7
+      d3-interpolate: registry.nlark.com/d3-interpolate/1.4.0
+      d3-timer: registry.nlark.com/d3-timer/1.0.10
       detect-browser: 5.2.0
       tslib: 2.2.0
     dev: false
@@ -4699,7 +4670,7 @@ packages:
     version: 0.5.10
     dependencies:
       '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.9
-      '@antv/g-math': 0.1.7
+      '@antv/g-math': registry.nlark.com/@antv/g-math/0.1.7
       '@antv/matrix-util': 3.1.0-beta.2
       '@antv/path-util': 2.0.9
       '@antv/util': 2.0.13
@@ -4707,21 +4678,42 @@ packages:
       tslib: 2.2.0
     dev: false
 
-  registry.nlark.com/@antv/g2/4.1.17:
-    resolution: {integrity: sha1-1axAXDfym83r/sqdDwTkclONsEk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/g2/download/@antv/g2-4.1.17.tgz}
+  registry.nlark.com/@antv/g-math/0.1.7:
+    resolution: {integrity: sha1-bsJ2kmn3zLZ+WBQNVznfdARswE4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/g-math/download/@antv/g-math-0.1.7.tgz}
+    name: '@antv/g-math'
+    version: 0.1.7
+    dependencies:
+      '@antv/util': 2.0.13
+      gl-matrix: 3.3.0
+    dev: false
+
+  registry.nlark.com/@antv/g-svg/0.5.6:
+    resolution: {integrity: sha1-cLL6mAxDGzmtPFtLU+NqHWCVfWU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/g-svg/download/@antv/g-svg-0.5.6.tgz}
+    name: '@antv/g-svg'
+    version: 0.5.6
+    dependencies:
+      '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.9
+      '@antv/g-math': registry.nlark.com/@antv/g-math/0.1.7
+      '@antv/util': 2.0.13
+      detect-browser: 5.2.0
+      tslib: 2.2.0
+    dev: false
+
+  registry.nlark.com/@antv/g2/4.1.18:
+    resolution: {integrity: sha1-gPd/f/QL0AgiGtipQtSXbAnzGds=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@antv/g2/download/@antv/g2-4.1.18.tgz}
     name: '@antv/g2'
-    version: 4.1.17
+    version: 4.1.18
     dependencies:
       '@antv/adjust': 0.2.3
       '@antv/attr': 0.3.2
       '@antv/color-util': 2.0.6
-      '@antv/component': 0.8.11
-      '@antv/coord': 0.3.1
+      '@antv/component': registry.nlark.com/@antv/component/0.8.11
+      '@antv/coord': registry.nlark.com/@antv/coord/0.3.1
       '@antv/dom-util': 2.0.3
       '@antv/event-emitter': 0.1.2
       '@antv/g-base': registry.nlark.com/@antv/g-base/0.5.9
       '@antv/g-canvas': registry.nlark.com/@antv/g-canvas/0.5.10
-      '@antv/g-svg': 0.5.6
+      '@antv/g-svg': registry.nlark.com/@antv/g-svg/0.5.6
       '@antv/matrix-util': 3.1.0-beta.2
       '@antv/path-util': 2.0.9
       '@antv/scale': registry.nlark.com/@antv/scale/0.3.10
@@ -5104,10 +5096,10 @@ packages:
     version: 15.0.1
     dev: true
 
-  registry.nlark.com/@types/node/15.12.1:
-    resolution: {integrity: sha1-m2B5fe4YlTg6cl+CioachsbKpcI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/node/download/@types/node-15.12.1.tgz?cache=0&sync_timestamp=1622824686151&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Fnode%2Fdownload%2F%40types%2Fnode-15.12.1.tgz}
+  registry.nlark.com/@types/node/15.12.2:
+    resolution: {integrity: sha1-HytCxL5xVv9Kb5FLL7A9BfqE440=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@types/node/download/@types/node-15.12.2.tgz}
     name: '@types/node'
-    version: 15.12.1
+    version: 15.12.2
     dev: true
 
   registry.nlark.com/@types/node/15.6.1:
@@ -5234,23 +5226,19 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.0_9cc2990492c52d117ab474c4d27a2a87:
-    resolution: {integrity: sha1-ErvW69Xn+r0y5I4eYO+h81VKMkI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-4.26.0.tgz}
-    id: registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.0
+  registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1_ab05164168c44753f23ef96ba1d198fc:
+    resolution: {integrity: sha1-uccxMyHLg34r+L6+eswiIGWeZ9M=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-4.26.1.tgz}
+    id: registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1
     name: '@typescript-eslint/eslint-plugin'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       '@typescript-eslint/parser': ^4.0.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.26.0_eslint@7.28.0
-      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.0_eslint@7.28.0
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.0
+      '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0
+      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
       debug: 4.3.1
       eslint: registry.nlark.com/eslint/7.28.0
       functional-red-black-tree: 1.0.1
@@ -5260,21 +5248,22 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/experimental-utils/4.26.0_eslint@7.28.0:
-    resolution: {integrity: sha1-unhIs/CIZZzfcbziJFR5X8Vb6Zo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-4.26.0.tgz}
-    id: registry.nlark.com/@typescript-eslint/experimental-utils/4.26.0
+  registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0:
+    resolution: {integrity: sha1-o1mAojkNqSMqogayf2IOq2bpQUI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-4.26.1.tgz?cache=0&sync_timestamp=1623137635617&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fexperimental-utils%2Fdownload%2F%40typescript-eslint%2Fexperimental-utils-4.26.1.tgz}
+    id: registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1
     name: '@typescript-eslint/experimental-utils'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: '*'
     dependencies:
       '@types/json-schema': registry.nlark.com/@types/json-schema/7.0.7
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.0
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.0
-      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.0
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
+      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1
       eslint: registry.nlark.com/eslint/7.28.0
       eslint-scope: 5.1.1
       eslint-utils: registry.nlark.com/eslint-utils/3.0.0_eslint@7.28.0
@@ -5283,58 +5272,50 @@ packages:
       - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/parser/4.26.0_eslint@7.28.0:
-    resolution: {integrity: sha1-Mba3MslFT3V7Ag2rm2dUESql7q8=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/parser/download/@typescript-eslint/parser-4.26.0.tgz}
-    id: registry.nlark.com/@typescript-eslint/parser/4.26.0
+  registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0:
+    resolution: {integrity: sha1-zs/dXrelwTqrzhwc/X+6+1oPHo4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/parser/download/@typescript-eslint/parser-4.26.1.tgz?cache=0&sync_timestamp=1623135434884&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fparser%2Fdownload%2F%40typescript-eslint%2Fparser-4.26.1.tgz}
+    id: registry.nlark.com/@typescript-eslint/parser/4.26.1
     name: '@typescript-eslint/parser'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.0
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.0
-      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.0
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
+      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1
       debug: 4.3.1
       eslint: registry.nlark.com/eslint/7.28.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/scope-manager/4.26.0:
-    resolution: {integrity: sha1-YNGnHfFiQE6VS50cY0P/O+5JYZQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/scope-manager/download/@typescript-eslint/scope-manager-4.26.0.tgz}
+  registry.nlark.com/@typescript-eslint/scope-manager/4.26.1:
+    resolution: {integrity: sha1-B1p0oV/zPuOn7TPl/OFu6GaJ9mI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/scope-manager/download/@typescript-eslint/scope-manager-4.26.1.tgz?cache=0&sync_timestamp=1623135439152&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fscope-manager%2Fdownload%2F%40typescript-eslint%2Fscope-manager-4.26.1.tgz}
     name: '@typescript-eslint/scope-manager'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.0
-      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.0
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
+      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1
     dev: true
 
-  registry.nlark.com/@typescript-eslint/types/4.26.0:
-    resolution: {integrity: sha1-fGcywEFPCmlZX0+Ebr4SYWJD1UY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/types/download/@typescript-eslint/types-4.26.0.tgz}
+  registry.nlark.com/@typescript-eslint/types/4.26.1:
+    resolution: {integrity: sha1-nnxSP3PDSwSnZeQWfKVlBDbvHTg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/types/download/@typescript-eslint/types-4.26.1.tgz?cache=0&sync_timestamp=1623135445624&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Ftypes%2Fdownload%2F%40typescript-eslint%2Ftypes-4.26.1.tgz}
     name: '@typescript-eslint/types'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dev: true
 
-  registry.nlark.com/@typescript-eslint/typescript-estree/4.26.0:
-    resolution: {integrity: sha1-rqF6QOYtwxxj1bG76adXg/LOcQk=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-4.26.0.tgz}
+  registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1:
+    resolution: {integrity: sha1-ss4ueJIz1iKD+uLBa6q9Tx28ljM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-4.26.1.tgz?cache=0&sync_timestamp=1623135434075&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Ftypescript-estree%2Fdownload%2F%40typescript-eslint%2Ftypescript-estree-4.26.1.tgz}
     name: '@typescript-eslint/typescript-estree'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^10.12.0 || >=12.0.0}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.0
-      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.0
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
+      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1
       debug: 4.3.1
       globby: 11.0.3
       is-glob: 4.0.1
@@ -5342,15 +5323,16 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/visitor-keys/4.26.0:
-    resolution: {integrity: sha1-JtJYMWkiKBW+Tc0dpP5UWbw7zCM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/visitor-keys/download/@typescript-eslint/visitor-keys-4.26.0.tgz}
+  registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1:
+    resolution: {integrity: sha1-DVXqc1yw2JA7GYAX1tT1GP2qxUY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/visitor-keys/download/@typescript-eslint/visitor-keys-4.26.1.tgz?cache=0&sync_timestamp=1623135446979&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fvisitor-keys%2Fdownload%2F%40typescript-eslint%2Fvisitor-keys-4.26.1.tgz}
     name: '@typescript-eslint/visitor-keys'
-    version: 4.26.0
+    version: 4.26.1
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.0
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
       eslint-visitor-keys: registry.nlark.com/eslint-visitor-keys/2.1.0
     dev: true
 
@@ -5756,6 +5738,32 @@ packages:
     resolution: {integrity: sha1-0iZqeScp+yJ80hb7Vy9Dco4a00A=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/csstype/download/csstype-3.0.8.tgz}
     name: csstype
     version: 3.0.8
+
+  registry.nlark.com/d3-color/1.4.1:
+    resolution: {integrity: sha1-xSACv4hGraRCTVXZeYL+8m6zvIo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/d3-color/download/d3-color-1.4.1.tgz}
+    name: d3-color
+    version: 1.4.1
+    dev: false
+
+  registry.nlark.com/d3-ease/1.0.7:
+    resolution: {integrity: sha1-moNIkO+LiujFWLL+Vb1X9Zk7heI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/d3-ease/download/d3-ease-1.0.7.tgz?cache=0&sync_timestamp=1623039339565&other_urls=https%3A%2F%2Fregistry.nlark.com%2Fd3-ease%2Fdownload%2Fd3-ease-1.0.7.tgz}
+    name: d3-ease
+    version: 1.0.7
+    dev: false
+
+  registry.nlark.com/d3-interpolate/1.4.0:
+    resolution: {integrity: sha1-Um554tgNqjg/ngwcHH3MDwWD6Yc=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/d3-interpolate/download/d3-interpolate-1.4.0.tgz}
+    name: d3-interpolate
+    version: 1.4.0
+    dependencies:
+      d3-color: registry.nlark.com/d3-color/1.4.1
+    dev: false
+
+  registry.nlark.com/d3-timer/1.0.10:
+    resolution: {integrity: sha1-3+dripF0iDGxO22ceT/71QjdneU=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/d3-timer/download/d3-timer-1.0.10.tgz}
+    name: d3-timer
+    version: 1.0.10
+    dev: false
 
   registry.nlark.com/date-fns/2.21.3:
     resolution: {integrity: sha1-j19oidepa7zB8OpQI5s5eoM1f5s=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/date-fns/download/date-fns-2.21.3.tgz}
@@ -7166,7 +7174,7 @@ packages:
       webpack: registry.nlark.com/webpack/5.38.1
     dev: true
 
-  registry.nlark.com/ts-node/10.0.0_10b86ec3e0ae69831b5d57b396c86e38:
+  registry.nlark.com/ts-node/10.0.0_e3fb3700f8b176f300f1b7e599dc9c29:
     resolution: {integrity: sha1-BfELmnFrC2JBKa1E8OoF2shLo74=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/ts-node/download/ts-node-10.0.0.tgz}
     id: registry.nlark.com/ts-node/10.0.0
     name: ts-node
@@ -7188,7 +7196,7 @@ packages:
       '@tsconfig/node12': registry.nlark.com/@tsconfig/node12/1.0.7
       '@tsconfig/node14': registry.nlark.com/@tsconfig/node14/1.0.0
       '@tsconfig/node16': registry.nlark.com/@tsconfig/node16/1.0.1
-      '@types/node': registry.nlark.com/@types/node/15.12.1
+      '@types/node': registry.nlark.com/@types/node/15.12.2
       arg: 4.1.3
       create-require: 1.1.1
       diff: 4.0.2

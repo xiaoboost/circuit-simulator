@@ -81,14 +81,9 @@ export class Electronic {
     // ..
   }
 
-  /** 搜索导线 */
-  findLine(id: string) {
-    return lines.find((line) => line.id === id);
-  }
-
-  /** 搜索器件 */
-  findPart(id: string) {
-    return parts.find((part) => part.id === id);
+  /** 搜索元件 */
+  find<E extends Electronic = Electronic>(id: string): E | undefined {
+    return parts.concat(lines as any[]).find((item) => item.id === id) as E | undefined;
   }
 
   /** 设置选中的器件 */

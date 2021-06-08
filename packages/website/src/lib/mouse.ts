@@ -127,6 +127,11 @@ export class DrawController {
   }
 }
 
+/** 创建事件控制器 */
+export function drawEventInit() {
+  return new DrawController();
+}
+
 /** 事件总线初始化 */
 export function useMouseBusInit(ref: RefObject<HTMLElement>) {
   useEffect(() => {
