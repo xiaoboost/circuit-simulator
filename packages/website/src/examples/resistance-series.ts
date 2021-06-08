@@ -12,6 +12,7 @@ export const data: CircuitData = {
   electronics: [
     {
       kind: 'Resistance',
+      id: 'R_1',
       position: [1100, 160],
       rotate: [[0, 1], [-1, 0]],
       text: 'Right',
@@ -19,6 +20,7 @@ export const data: CircuitData = {
     },
     {
       kind: 'Resistance',
+      id: 'R_2',
       position: [1100, 320],
       rotate: [[0, 1], [-1, 0]],
       text: 'Right',
@@ -26,27 +28,32 @@ export const data: CircuitData = {
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_1',
       position: [900, 420],
     },
     {
       kind: 'VoltageMeter',
+      id: 'V_R1',
       position: [1180, 160],
       text: 'Right',
     },
     {
       kind: 'DcCurrentSource',
+      id: 'V_1',
       position: [900, 180],
       text: 'Right',
       params: ['10m'],
     },
     {
       kind: 'DcVoltageSource',
+      id: 'V_2',
       position: [900, 300],
       text: 'Right',
       params: ['12'],
     },
     {
       kind: 'CurrentMeter',
+      id: 'I_in',
       position: [1000, 100],
       text: 'Top',
     },

@@ -12,30 +12,35 @@ export const data: CircuitData = {
   electronics: [
     {
       kind: 'Diode',
+      id: 'VD_1',
       position: [700, 200],
       rotate: [[1, 0], [0, 1]],
       params: ['1', '0.5', '0.2G'],
     },
     {
       kind: 'Diode',
+      id: 'VD_2',
       position: [780, 200],
       rotate: [[1, 0], [0, 1]],
       params: ['1', '0.5', '0.2G'],
     },
     {
       kind: 'Diode',
+      id: 'VD_3',
       position: [700, 440],
       rotate: [[1, 0], [0, 1]],
       params: ['1', '0.5', '0.2G'],
     },
     {
       kind: 'Diode',
+      id: 'VD_4',
       position: [780, 440],
       rotate: [[1, 0], [0, 1]],
       params: ['1', '0.5', '0.2G'],
     },
     {
       kind: 'AcVoltageSource',
+      id: 'V_1',
       position: [580, 320],
       rotate: [[1, 0], [0, 1]],
       params: ['220', '200', '0', '0'],
@@ -43,6 +48,7 @@ export const data: CircuitData = {
     },
     {
       kind: 'Capacitor',
+      id: 'C_1',
       position: [900, 320],
       rotate: [[0, 1], [-1, 0]],
       params: ['100u'],
@@ -50,6 +56,7 @@ export const data: CircuitData = {
     },
     {
       kind: 'Resistance',
+      id: 'R_1',
       position: [960, 320],
       rotate: [[0, 1], [-1, 0]],
       params: ['2k'],
@@ -57,23 +64,27 @@ export const data: CircuitData = {
     },
     {
       kind: 'CurrentMeter',
+      id: 'I_out',
       position: [840, 140],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'VoltageMeter',
+      id: 'V_out',
       position: [1040, 320],
       rotate: [[1, 0], [0, 1]],
       text: 'Right',
     },
     {
       kind: 'VoltageMeter',
+      id: 'V_in',
       position: [640, 320],
       rotate: [[1, 0], [0, 1]],
       text: 'Right',
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_1',
       position: [700, 540],
       rotate: [[1, 0], [0, 1]],
     },

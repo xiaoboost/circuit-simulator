@@ -1,21 +1,31 @@
 import type { CircuitData } from 'src/store';
 
 export const data: CircuitData = {
+  simulation: {
+    end: '20m',
+    step: '2u',
+  },
+  oscilloscopes: [
+    ['V_in', 'V_out'],
+  ],
   electronics: [
     {
       kind: 'AcVoltageSource',
+      id: 'V_1',
       position: [660, 240],
       rotate: [[0, 1], [-1, 0]],
       params: ['10', '200', '0', '0'],
     },
     {
       kind: 'OperationalAmplifier',
+      id: 'OP_1',
       position: [900, 220],
       rotate: [[1, 0], [0, 1]],
       params: ['120', '80M', '40'],
     },
     {
       kind: 'Resistance',
+      id: 'R_1',
       position: [780, 240],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
@@ -23,44 +33,52 @@ export const data: CircuitData = {
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_1',
       position: [560, 240],
       rotate: [[0, 1], [-1, 0]],
     },
     {
       kind: 'VoltageMeter',
+      id: 'V_in',
       position: [720, 320],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_2',
       position: [720, 420],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'Resistance',
+      id: 'R_2',
       position: [900, 140],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
     },
     {
       kind: 'Resistance',
+      id: 'R_3',
       position: [780, 200],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_3',
       position: [700, 200],
       rotate: [[0, 1], [-1, 0]],
     },
     {
       kind: 'Resistance',
+      id: 'R_4',
       position: [960, 320],
       rotate: [[0, 1], [-1, 0]],
       params: ['10k'],
     },
     {
       kind: 'VoltageMeter',
+      id: 'V_out',
       position: [1020, 320],
       rotate: [[1, 0], [0, 1]],
       text: 'Right',

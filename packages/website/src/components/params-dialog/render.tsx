@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Point, SelectList, NumberRank } from '@circuit/math';
 import { Form, Input, Button, Select } from 'antd';
 import { delay } from '@xiao-ai/utils';
-import { UnitType } from '../electronics';
+import { UnitType } from '@circuit/electronics';
 import { styles, StyleProps, transformTime } from './styles';
 
 export interface Params {
@@ -77,7 +77,7 @@ export function ParamsDialog(props: Props) {
   });
   const classNames = styles(styleStatus);
   const onCancel = () => props.onCancel?.();
-  
+
   useEffect(() => {
     setFormData(toFormData(props));
     setFormStatus(Array(props.params.length + 1).fill(''));
@@ -119,7 +119,7 @@ export function ParamsDialog(props: Props) {
           left: props.position[0],
           top: props.position[1],
         });
-        
+
         await delay();
 
         setStyleStatus({

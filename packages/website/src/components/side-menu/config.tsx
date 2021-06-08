@@ -2,7 +2,7 @@ import React from 'react';
 
 import { config } from './styles';
 import { Panel } from './components/panel';
-import { ElectronicKind } from 'src/components/electronics';
+import { ElectronicKind } from '@circuit/electronics';
 import { shortUnitList, NumberRank, SelectList, splitNumber } from '@circuit/math';
 import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
 import { parts, end, step, oscilloscopes } from 'src/store';
@@ -36,7 +36,7 @@ function useWatcherTime(watcher: Watcher<string>) {
     watcher.setData(`${state.value}${val}`);
     update();
   }
-  
+
   function handleChange(val: string) {
     const result = splitNumber(val);
     setValue(Number.parseInt(result.number));

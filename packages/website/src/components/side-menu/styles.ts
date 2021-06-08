@@ -1,4 +1,4 @@
-import { MouseFocusClassName } from '../electronics/parts';
+import { MouseFocusClassName } from '@circuit/electronics';
 
 import {
   createStyles,

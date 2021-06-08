@@ -4,45 +4,53 @@ export const data: CircuitData = {
   electronics: [
     {
       kind: 'DcVoltageSource',
+      id: 'V_1',
       position: [580, 280],
       rotate: [[0, 1], [-1, 0]],
       params: ['10'],
     },
     {
       kind: 'Resistance',
+      id: 'R_1',
       position: [700, 280],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
     },
     {
       kind: 'TransistorNPN',
+      id: 'Q_1',
       position: [880, 280],
       rotate: [[1, 0], [0, 1]],
       params: ['40', '26', '0.6', '1'],
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_1',
       position: [500, 280],
       rotate: [[0, 1], [-1, 0]],
     },
     {
       kind: 'Resistance',
+      id: 'R_2',
       position: [900, 400],
       rotate: [[0, 1], [-1, 0]],
       params: ['100'],
     },
     {
       kind: 'CurrentMeter',
+      id: 'I_in',
       position: [800, 280],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'CurrentMeter',
+      id: 'I_ap',
       position: [740, 200],
       rotate: [[1, 0], [0, 1]],
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_2',
       position: [900, 480],
       rotate: [[1, 0], [0, 1]],
     },

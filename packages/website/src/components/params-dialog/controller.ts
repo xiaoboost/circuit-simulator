@@ -3,7 +3,7 @@ import { render, unmountComponentAtNode } from 'react-dom';
 
 import { Point, splitNumber, shortUnitList, allRanks } from '@circuit/math';
 import { ParamsDialog } from './render';
-import { ElectronicPrototype } from '../electronics';
+import { ElectronicPrototype } from '@circuit/electronics';
 import { transformTime } from './styles';
 
 export interface ParamsOption {

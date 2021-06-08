@@ -3,7 +3,8 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import { part } from './styles';
 import { Panel } from './components/panel';
-import { Electronics, ElectronicPrototype, ElectronicKind, Part } from '../electronics';
+import { PartComponent } from 'src/components/electronics';
+import { Electronics, ElectronicPrototype, ElectronicKind } from '@circuit/electronics';
 
 interface Category {
   name: string;
@@ -71,7 +72,7 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 
 export function AddPart() {
   const create = (kind: ElectronicKind) => {
-    new Part(kind).create();
+    new PartComponent(kind).create();
   };
 
   return (

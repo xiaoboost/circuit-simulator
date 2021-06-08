@@ -11,25 +11,41 @@ export const data: CircuitData = {
   electronics: [
     {
       kind: 'DcVoltageSource',
+      id: 'V_1',
       position: [580, 280],
       rotate: [[1, 0], [0, 1]],
       params: ['10'],
     },
     {
       kind: 'Resistance',
+      id: 'R_1',
       position: [740, 200],
       rotate: [[1, 0], [0, 1]],
       params: ['1k'],
     },
     {
       kind: 'Capacitor',
+      id: 'C_1',
       position: [820, 280],
       rotate: [[0, 1], [-1, 0]],
       params: ['1u'],
     },
     {
       kind: 'ReferenceGround',
+      id: 'GND_1',
       position: [740, 400],
+      rotate: [[1, 0], [0, 1]],
+    },
+    {
+      kind: 'VoltageMeter',
+      id: 'V_in',
+      position: [660, 280],
+      rotate: [[1, 0], [0, 1]],
+    },
+    {
+      kind: 'VoltageMeter',
+      id: 'V_C1',
+      position: [920, 280],
       rotate: [[1, 0], [0, 1]],
     },
     {
@@ -83,16 +99,6 @@ export const data: CircuitData = {
     {
       kind: 'Line',
       path: [[660, 360], [740, 360]],
-    },
-    {
-      kind: 'VoltageMeter',
-      position: [660, 280],
-      rotate: [[1, 0], [0, 1]],
-    },
-    {
-      kind: 'VoltageMeter',
-      position: [920, 280],
-      rotate: [[1, 0], [0, 1]],
     },
   ],
 };
