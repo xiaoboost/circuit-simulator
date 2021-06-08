@@ -1,5 +1,4 @@
-import { Point } from '@circuit/math';
-import { PartPartial } from '@xiao-ai/utils';
+import { Point, PointLike } from '@circuit/math';
 
 /** 节点类型常量 */
 export enum MarkNodeKind {
@@ -25,15 +24,25 @@ export interface MarkNodeData {
   /** 节点类型 */
   kind: MarkNodeKind;
   /** 当前点的坐标 */
-  point: Point;
+  position: Point;
   /** 当前点在图纸中连接着另外哪些点 */
   connect: Point[];
-  /** 所属元件的引脚编号 */
-  mark?: number;
+  /**
+   * 所属元件的引脚编号
+   *  - 是`-1`时表示不是引脚
+   */
+  mark: number;
   /**
    * 此节点为导线交叠节点时，导线的连接关系
    */
-  
+
 }
 
-export type NodeInputData = PartPartial<MarkNodeData, 'connect'>;
+/** 节点输入数据 */
+export interface NodeInputData {
+  label: string;
+  kind: MarkNodeKind;
+  position: PointLike;
+  connect?: PointLike[];
+  mark?: number;
+}

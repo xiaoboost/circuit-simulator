@@ -4,6 +4,7 @@
   "description": "电路仿真代码仓库",
   "scripts": {
     "update": "ncu -u --packageFile ./{packages/*/package.json,package.json}",
+    "build": "pnpm run build --filter=!@circuit/website",
     "test": "pnpm run -r test --parallel --filter .",
     "lint": "pnpm run -r lint --parallel --filter .",
     "lint:fix": "pnpm run -r lint:fix --parallel --filter .",

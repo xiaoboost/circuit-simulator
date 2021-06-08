@@ -34,8 +34,8 @@ function getSegment(map: MarkMap, node: Point) {
       data.alongLine(directors[i * 2 + 1]),
     ];
 
-    if (!limit[0].point.isEqual(limit[1].point)) {
-      ans.push(limit.map(({ point }) => point));
+    if (!limit[0].position.isEqual(limit[1].position)) {
+      ans.push(limit.map(({ position }) => position));
     }
   }
   return ans;

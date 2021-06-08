@@ -154,7 +154,7 @@ export class Part extends Electronic {
     for (const point of this.padding()) {
       this.map.set({
         label: this.id,
-        point: point,
+        position: point,
         kind: MarkNodeKind.Part,
       });
     }
@@ -162,7 +162,7 @@ export class Part extends Electronic {
     for (const point of this.points) {
       this.map.set({
         label: this.id,
-        point: point.position.add(this.position),
+        position: point.position.add(this.position),
         kind: MarkNodeKind.PartPoint,
       });
     }

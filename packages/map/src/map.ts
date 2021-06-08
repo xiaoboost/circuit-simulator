@@ -6,15 +6,22 @@ import { NodeInputData } from './types';
 export class MarkMap {
   /** 节点转换为索引 key */
   static toKey(node: PointLike) {
-    return node.join(',');
+    return `${node[0]},${node[1]}`;
   }
 
   /** 数据储存 */
   private _data: Record<string, MarkMapNode> = {};
 
+  /** 是否含有此节点 */
+  has(point: PointLike): boolean {
+    return Boolean(this._data[MarkMap.toKey(point)]);
+  }
+
   /** 设置节点数据 */
   set(data: NodeInputData) {
-    this._data[MarkMap.toKey(data.point)] = new MarkMapNode(data, this);
+    const node = new MarkMapNode(data, this);
+    this._data[MarkMap.toKey(data.position)] = node;
+    return node;
   }
 
   /** 获取节点数据 */

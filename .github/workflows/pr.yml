@@ -34,11 +34,27 @@ jobs:
           npm install --g pnpm
           pnpm --version
 
+      - name: Get Cache Directory
+        id: pnpm-cache-dir
+        run: echo "::set-output name=dir::$(pnpm config get cache)"
+
+      - name: Restore Cache Data
+        uses: actions/cache@v2
+        id: pnpm-cache
+        with:
+          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Dependencies
         run: pnpm install
 
       - name: Check Code Style
         run: pnpm run lint
+
+      - name: Build All Packages
+        run: pnpm run build
 
       - name: Run Tests
         run: pnpm run test

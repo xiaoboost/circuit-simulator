@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
+    "test": "ava --no-cache",
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
     "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
     "build": "pnpm run clear && pnpm run build:cjs && pnpm run build:esm",

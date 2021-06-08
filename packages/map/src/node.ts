@@ -1,5 +1,5 @@
 import { Point, PointLike } from '@circuit/math';
-import { remove } from '@xiao-ai/utils';
+import { remove, isDef } from '@xiao-ai/utils';
 import { MarkNodeData, MarkNodeKind, NodeInputData } from './types';
 
 import type { MarkMap } from './map';
@@ -8,8 +8,9 @@ import type { MarkMap } from './map';
 export class MarkMapNode implements MarkNodeData {
   label: string;
   kind: MarkNodeKind;
-  point: Point;
+  position: Point;
   connect: Point[];
+  mark = -1;
 
   /** 节点所在图纸 */
   readonly map: MarkMap;
@@ -18,13 +19,28 @@ export class MarkMapNode implements MarkNodeData {
     this.map = map;
     this.kind = data.kind;
     this.label = data.label;
-    this.point = Point.from(data.point);
+    this.position = Point.from(data.position);
     this.connect = (data.connect ?? []).map(Point.from);
+
+    if (isDef(data.mark)) {
+      this.mark = data.mark;
+    }
   }
 
   /** 是否是导线节点 */
   get isLine() {
     return this.kind < 20;
+  }
+
+  /** 输出数据 */
+  toData(): MarkNodeData {
+    return {
+      label: this.label,
+      kind: this.kind,
+      position: this.position,
+      connect: this.connect,
+      mark: this.mark,
+    };
   }
 
   /** 是否含有此连接点 */
@@ -52,20 +68,20 @@ export class MarkMapNode implements MarkNodeData {
   /** 向着终点方向沿着导线前进 */
   towardEnd(end: PointLike): MarkMapNode {
     const { map } = this;
-    const uVector = new Point(this.point, end).sign(20);
+    const uVector = new Point(this.position, end).sign(20);
 
-    if (!this.isLine || this.point.isEqual(end)) {
+    if (!this.isLine || this.position.isEqual(end)) {
       return this;
     }
 
     let current: MarkMapNode = this;
-    let next = map.get(this.point.add(uVector));
+    let next = map.get(this.position.add(uVector));
 
     // 当前点没有到达终点，还在导线所在直线内部，那就前进
-    while (next?.isLine && !current.point.isEqual(end)) {
-      if (current.hasConnect(next.point)) {
+    while (next?.isLine && !current.position.isEqual(end)) {
+      if (current.hasConnect(next.position)) {
         current = next;
-        next = map.get(current.point.add(uVector));
+        next = map.get(current.position.add(uVector));
       }
       else {
         break;
@@ -85,13 +101,13 @@ export class MarkMapNode implements MarkNodeData {
     }
 
     let current: MarkMapNode = this;
-    let next = map.get(this.point.add(uVector));
+    let next = map.get(this.position.add(uVector));
 
     // 当前点没有到达终点，还在导线所在直线内部，那就前进
     while (next?.isLine) {
-      if (current.hasConnect(next.point)) {
+      if (current.hasConnect(next.position)) {
         current = next;
-        next = map.get(current.point.add(uVector));
+        next = map.get(current.position.add(uVector));
       }
       else {
         break;
