@@ -1,5 +1,5 @@
 import { SimulationConfig } from 'src/components/side-menu';
-import { PartData, LineData } from 'src/components/electronics';
+import { PartData, LineData } from '@circuit/electronics';
 
 /** 器件数据 */
 export type ElectronicData = (PartData | LineData)[];

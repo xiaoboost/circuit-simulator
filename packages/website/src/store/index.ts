@@ -2,17 +2,18 @@ import { parse } from 'qs';
 import { local } from '@xiao-ai/utils/web';
 import { Watcher, delay } from '@xiao-ai/utils';
 import { CircuitDataKey } from './constant';
-import { Part, PartData, Line, LineData } from 'src/components/electronics';
 import { CircuitData, ElectronicData } from './types';
+import { PartComponent, LineComponent } from 'src/components/electronics';
+import { PartData, LineData } from '@circuit/electronics';
 
 export * from './types';
 
 /** 图纸历史数据 */
 export const sheetHistory = new Watcher<ElectronicData[]>([]);
 /** 所有器件 */
-export const parts = new Watcher<Part[]>([]);
+export const parts = new Watcher<PartComponent[]>([]);
 /** 所有导线 */
-export const lines = new Watcher<Line[]>([]);
+export const lines = new Watcher<LineComponent[]>([]);
 /** 结束时间 */
 export const end = new Watcher('10m');
 /** 步长时间 */
@@ -29,7 +30,7 @@ export function loadSheet(data: ElectronicData) {
       // ..
     }
     else {
-      const part = new Part(item as PartData);
+      const part = new PartComponent(item as PartData);
       part.setMark();
       parts.setData(parts.data.concat(part));
     }
