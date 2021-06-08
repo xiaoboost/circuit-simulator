@@ -1,4 +1,5 @@
 import '../styles';
+import './native';
 import 'core-js/stable';
 
 import { render } from 'react-dom';

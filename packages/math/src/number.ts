@@ -93,11 +93,12 @@ export function shortUnitList(ranks: NumberRank[] | string, unit?: string | bool
 
   return ranks.map((origin) => {
     const rank = origin === 'μ' ? 'u' : origin;
+    const label = origin === 'u' ? 'μ': origin;
 
     return {
       label: isChinese
         ? `${unitMap[rank]}${unit}`
-        : `${origin}${unit}`,
+        : `${label}${unit}`,
       value: rank,
     };
   });

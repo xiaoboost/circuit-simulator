@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "ts-node": "ts-node -P ./build/tsconfig.json --transpile-only",
-    "test": "cross-env NODE_ENV=test ava --no-cache",
+    "build:dep": "pnpm run build --filter @circuit/website^...",
     "dev": "cross-env NODE_ENV=development npm run ts-node ./build/webpack.dev.ts",
     "build": "cross-env NODE_ENV=production npm run ts-node ./build/webpack.prod.ts",
     "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",

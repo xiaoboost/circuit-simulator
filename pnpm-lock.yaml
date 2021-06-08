@@ -23,10 +23,8 @@ importers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.3.1
-      ava: ^3.15.0
       eslint: ^7.28.0
       rimraf: ^3.0.2
-      ts-node: ^10.0.0
       tslib: ^2.2.0
       typescript: ^4.3.2
     dependencies:
@@ -36,10 +34,8 @@ importers:
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
-      ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.28.0
       rimraf: 3.0.2
-      ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.2
       tslib: 2.2.0
       typescript: registry.nlark.com/typescript/4.3.2
 
@@ -5235,6 +5231,10 @@ packages:
     peerDependencies:
       '@typescript-eslint/parser': ^4.0.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0
       '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0
@@ -5248,7 +5248,6 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0:
@@ -5280,6 +5279,10 @@ packages:
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
       '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
@@ -5288,7 +5291,6 @@ packages:
       eslint: registry.nlark.com/eslint/7.28.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/scope-manager/4.26.1:
@@ -5313,6 +5315,11 @@ packages:
     name: '@typescript-eslint/typescript-estree'
     version: 4.26.1
     engines: {node: ^10.12.0 || >=12.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
       '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1
@@ -5323,7 +5330,6 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1:
