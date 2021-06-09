@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point, Direction, Directions } from '@circuit/math';
 import { isDef } from '@xiao-ai/utils';
 import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
@@ -47,9 +47,9 @@ export function init() {
 }
 
 /** 单点绘制 */
-export function search(start: Point, direction: Point, context: SearchContext, line: Line) {
+export function search(start: Point, direction: Direction, context: SearchContext, line: Line) {
   /** 终点 */
-  const end = context.position;
+  const end = context.end;
   /** 终点所在方块左上角坐标 */
   const vertex = end.floor();
   /** 四方格坐标 */
@@ -153,7 +153,7 @@ export function search(start: Point, direction: Point, context: SearchContext, l
     const tempWay = pointSearch(
       start,
       point,
-      direction,
+      Directions[direction],
       new Rules(start, point, status, line.map),
     );
 

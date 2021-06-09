@@ -12,5 +12,6 @@ export enum SearchStatus {
 }
 
 export interface SearchContext {
-  position: Point;
+  /** 搜索终点 */
+  end: Point;
 }

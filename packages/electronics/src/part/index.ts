@@ -129,8 +129,8 @@ export class Part extends Electronic {
   *padding() {
     const { prototype, position, rotate } = this;
     const boxSize = prototype.padding;
-    const endpoint = [[-boxSize[3], -boxSize[0]], [boxSize[1], boxSize[2]]];
-    const data = endpoint.map((point) => Point.prototype.rotate.call(point, rotate));
+    const endPoint = [[-boxSize[3], -boxSize[0]], [boxSize[1], boxSize[2]]];
+    const data = endPoint.map((point) => Point.prototype.rotate.call(point, rotate).mul(20));
     const padding = [
       [
         Math.min(data[0][0], data[1][0]),
@@ -142,8 +142,8 @@ export class Part extends Electronic {
       ],
     ];
 
-    for (let x = position[0] + padding[0][0]; x <= position[0] + padding[1][0]; x++) {
-      for (let y = position[1] + padding[0][1]; y <= position[1] + padding[1][1]; y++) {
+    for (let x = position[0] + padding[0][0]; x <= position[0] + padding[1][0]; x+=20) {
+      for (let y = position[1] + padding[0][1]; y <= position[1] + padding[1][1]; y+=20) {
         yield new Point(x, y);
       }
     }
@@ -159,11 +159,12 @@ export class Part extends Electronic {
       });
     }
 
-    for (const point of this.points) {
+    for (let i = 0; i < this.points.length; i++) {
       this.map.set({
         label: this.id,
-        position: point.position.add(this.position),
+        position: this.points[i].position.add(this.position),
         kind: MarkNodeKind.PartPoint,
+        mark: i,
       });
     }
   }

@@ -33,12 +33,12 @@ export class MarkMapNode implements MarkNodeData {
   }
 
   /** 输出数据 */
-  toData(): MarkNodeData {
+  toData() {
     return {
       label: this.label,
       kind: this.kind,
-      position: this.position,
-      connect: this.connect,
+      position: this.position.toData(),
+      connect: this.connect.map((node) => node.toData()),
       mark: this.mark,
     };
   }

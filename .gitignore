@@ -3,6 +3,7 @@ _文档/
 .deploy_git
 .nyc_output
 
+dev
 dist
 draft
 coverage

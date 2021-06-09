@@ -23,7 +23,18 @@ export class LinePath extends Array<Point> {
 
   /** 输出数据 */
   toData() {
-    return this.map((point) => point.toData());
+    const result: [number, number][] = [];
+
+    /**
+     * 这里不直接用 this.map 主要是因为 this.map 出来还是 LinePath 类，
+     * 但是这里我们需要的是个纯数组
+     */
+
+    for (let i = 0; i < this.length; i++) {
+      result.push(this[i].toData());
+    }
+
+    return result;
   }
 
   /** 获取节点 */

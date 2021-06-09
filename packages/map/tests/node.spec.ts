@@ -1,11 +1,10 @@
 import test from 'ava';
 
-import { Point } from '@circuit/math';
 import { MarkMap, MarkNodeKind, NodeInputData } from '../src';
 
 test('data normalization', ({ deepEqual }) => {
   const map = new MarkMap();
-  const position = [100, 100];
+  const position = [100, 100] as [number, number];
   const label = 'test-1';
   const inputData: NodeInputData = {
     label,
@@ -18,7 +17,7 @@ test('data normalization', ({ deepEqual }) => {
   deepEqual(map.get(position)!.toData(), {
     label,
     kind: MarkNodeKind.Part,
-    position: Point.from(position),
+    position,
     connect: [],
     mark: -1,
   });
