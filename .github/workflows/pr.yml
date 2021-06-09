@@ -10,6 +10,8 @@ jobs:
           - '14'
         platform:
           - windows-latest
+        storeDir:
+         - '\.pnpm-store'
 
     name: '${{ matrix.platform }} / Node.js v${{ matrix.node }}'
     runs-on: ${{ matrix.platform }}
@@ -34,15 +36,14 @@ jobs:
           npm install --g pnpm
           pnpm --version
 
-      - name: Get Cache Directory
-        id: pnpm-cache-dir
-        run: echo "::set-output name=dir::$(pnpm config get cache)"
+      - name: Set Cache Directory
+        run: 'pnpm config set store-dir ${{ matrix.storeDir }}'
 
       - name: Restore Cache Data
         uses: actions/cache@v2
         id: pnpm-cache
         with:
-          path: ${{ steps.pnpm-cache-dir.outputs.dir }}
+          path: ${{ matrix.storeDir }}
           key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-node-
