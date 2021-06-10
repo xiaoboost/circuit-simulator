@@ -3,7 +3,14 @@ import { LinePath } from './line-path';
 import { SearchStatus } from './types';
 import { debug } from '@circuit/debug';
 import { remove, AnyObject } from '@xiao-ai/utils';
-import { Point, Rotates, RotateMatrix } from '@circuit/math';
+import { Point, Rotate, RotateMatrix } from '@circuit/math';
+
+/** 扩展方向矩阵 */
+const rotateList = [
+  Rotate.Same,
+  Rotate.Clockwise,
+  Rotate.AntiClockwise,
+];
 
 /** 搜索用节点数据 */
 export interface SearchNodeData {
@@ -127,16 +134,16 @@ export class SearchStack {
 }
 
 /** 生成新节点 */
-function newNode(node: SearchNodeData, index: RotateMatrix): SearchNodeData {
-  const direction = node.direction.rotate(Rotates[index]);
+function newNode(node: SearchNodeData, index: Rotate): SearchNodeData {
+  const direction = node.direction.rotate(RotateMatrix[index]);
 
   return {
     direction,
     value: 0,
     parent: node,
-    cornerParent: (index > 0 ? node : node.cornerParent),
-    junction: node.junction + (index > 0 ? 1 : 0),
-    position: node.position.add(direction),
+    cornerParent: (index === Rotate.Same ? node.cornerParent : node),
+    junction: index === Rotate.Same ? node.junction : node.junction + 1,
+    position: node.position.add(direction.mul(20)),
   };
 }
 
@@ -158,7 +165,7 @@ export function pointSearch(
 
   // 生成初始节点
   const first: SearchNodeData = {
-    position: start.mul(0.05),
+    position: start,
     direction,
     junction: 0,
     value: 0,
@@ -171,7 +178,6 @@ export function pointSearch(
   stack.push(first);
 
   // 调试用时，指示终点
-  /* istanbul ignore if */
   if (process.env.NODE_ENV === 'development') {
     debug.point(first.position, 'red', 20);
   }
@@ -195,18 +201,18 @@ export function pointSearch(
     }
 
     if (process.env.NODE_ENV === 'development') {
-      debug.point(nodeNow.position, 'blue', 20);
+      debug.point(nodeNow.position, 'blue');
     }
 
     // 按方向扩展
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < rotateList.length; i++) {
       // 生成扩展节点
-      const nodeExpand = newNode(nodeNow, i);
+      const nodeExpand = newNode(nodeNow, rotateList[i]);
 
       nodeExpand.value = rules.calValue(nodeExpand);
 
       if (process.env.NODE_ENV === 'development') {
-        debug.point(nodeExpand.position, 'black', 20);
+        debug.point(nodeExpand.position, 'black');
       }
 
       // 判断是否是终点
@@ -239,7 +245,7 @@ export function pointSearch(
   const way = new LinePath();
 
   while (endStatus.parent && endStatus !== endStatus.cornerParent) {
-    way.push(endStatus.position.mul(20));
+    way.push(endStatus.position);
     endStatus = endStatus.cornerParent;
   }
 

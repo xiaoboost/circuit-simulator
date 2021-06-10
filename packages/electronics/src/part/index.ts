@@ -77,7 +77,6 @@ export class Part extends Electronic {
     return this._texts;
   }
 
-
   private updateMargin() {
     const { prototype, rotate } = this;
 
@@ -178,6 +177,11 @@ export class Part extends Electronic {
     for (const point of this.points) {
       this.map.delete(point.position.add(this.position));
     }
+  }
+
+  /** 是否被占用 */
+  isOccupied(location = this.position) {
+    return false;
   }
 
   /** 输出数据 */

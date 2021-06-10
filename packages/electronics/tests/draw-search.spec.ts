@@ -1,16 +1,24 @@
 import test from 'ava';
 
-import { Part, Line, draw, SearchContext } from '../src';
-import { Point, Direction } from '@circuit/math';
+import { Part, Line, DrawPathSearcher } from '../src';
+import { Point, Direction, Directions } from '@circuit/math';
 
-function loadSingle(position: [number, number]) {
-  const start = Point.from([position[0] + 40, position[1]]);
-  const line = new Line([start]);
+function loadPart(position: [number, number]) {
   const part = new Part({
     id: 'R_1',
     kind: 'Resistance',
     position,
   });
+
+  part.setMark();
+
+  return part;
+}
+
+function loadSingle(position: [number, number]) {
+  const start = Point.from([position[0] + 40, position[1]]);
+  const line = new Line([start]);
+  const part = loadPart(position);
 
   part.connects[1] = {
     id: line.id,
@@ -22,22 +30,16 @@ function loadSingle(position: [number, number]) {
     mark: 0,
   };
 
-  part.setMark();
-
-  return [part, line, start, Direction.Right] as const;
+  return [part, line, start, Directions[Direction.Right]] as const;
 }
 
 test('绘制导线，终点为空白', ({ deepEqual }) => {
   const [, line, start, direction] = loadSingle([100, 100]);
-
-  draw.init();
-
   const end = Point.from([150, 110]);
-  const context: SearchContext = {
-    end,
-  };
+  const bias = Point.from([0, 0]);
+  const searcher = new DrawPathSearcher(start, direction, line);
 
-  let path = draw.search(start, direction, context, line);
+  let path = searcher.search(end, bias);
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -45,8 +47,7 @@ test('绘制导线，终点为空白', ({ deepEqual }) => {
     [150, 110],
   ]);
 
-  context.end = Point.from([500, 400]);
-  path = draw.search(start, direction, context, line);
+  path = searcher.search(Point.from([500, 400]), bias);
 
   deepEqual(path.toData(), [
     [140, 100],

@@ -182,8 +182,8 @@ export class Rules {
    * @param {SearchStatus} status 当前状态
    */
   constructor(start: Point, end: Point, status: SearchStatus, map: MarkMap) {
-    this.start = start.mul(0.05);
-    this.end = end.mul(0.05);
+    this.start = start;
+    this.end = end;
     this.status = status;
     this.map = map;
 

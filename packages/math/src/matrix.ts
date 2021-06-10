@@ -704,7 +704,7 @@ function calMatrixSize(ma: number[][]): { row: number; column: number } {
 }
 
 /** 旋转方向定义 */
-export enum RotateMatrix {
+export enum Rotate {
   /** 同向 */
   Same,
   /** 反向 */
@@ -715,9 +715,9 @@ export enum RotateMatrix {
   AntiClockwise,
 }
 
-export const Rotates: Readonly<Record<RotateMatrix, Matrix>> = {
-  [RotateMatrix.Same]: Matrix.from([[1, 0], [0, 1]]),
-  [RotateMatrix.Reverse]: Matrix.from([[0, 1], [-1, 0]]),
-  [RotateMatrix.Clockwise]: Matrix.from([[0, -1], [1, 0]]),
-  [RotateMatrix.AntiClockwise]: Matrix.from([[-1, 0], [0, -1]]),
+export const RotateMatrix: Readonly<Record<Rotate, Matrix>> = {
+  [Rotate.Same]: Matrix.from([[1, 0], [0, 1]]),
+  [Rotate.Reverse]: Matrix.from([[-1, 0], [0, -1]]),
+  [Rotate.Clockwise]: Matrix.from([[0, 1], [-1, 0]]),
+  [Rotate.AntiClockwise]: Matrix.from([[0, -1], [1, 0]]),
 };

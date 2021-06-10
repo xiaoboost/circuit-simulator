@@ -2,7 +2,7 @@
 
 import test from 'ava';
 
-import { Matrix } from '../src';
+import { Matrix, Point, Rotate, RotateMatrix } from '../src';
 
 test('创建 0 矩阵', ({ deepEqual, is }) => {
   deepEqual(Matrix.from([[0, 0, 0], [0, 0, 0]]), new Matrix(2, 3, 0));
@@ -320,4 +320,28 @@ test('concatRight/concatBottom()', ({ deepEqual }) => {
     [5,  6,  6,  7,  8],
     [9, 10, 10, 11, 12],
   ]));
+});
+
+test('四个方向矩阵', ({ deepEqual }) => {
+  const origin = Point.from([20, 0]);
+
+  deepEqual(
+    origin.rotate(RotateMatrix[Rotate.Same]).toData(),
+    [20, 0],
+  );
+
+  deepEqual(
+    origin.rotate(RotateMatrix[Rotate.Reverse]).toData(),
+    [-20, 0],
+  );
+
+  deepEqual(
+    origin.rotate(RotateMatrix[Rotate.Clockwise]).toData(),
+    [0, 20],
+  );
+
+  deepEqual(
+    origin.rotate(RotateMatrix[Rotate.AntiClockwise]).toData(),
+    [0, -20],
+  );
 });
