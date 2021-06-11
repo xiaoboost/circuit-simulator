@@ -32,7 +32,7 @@ interface ElectronicOption {
   connects?: (Connect | undefined)[];
 }
 
-export class Electronic {
+export abstract class Electronic {
   /** 元件编号 */
   id: string;
 

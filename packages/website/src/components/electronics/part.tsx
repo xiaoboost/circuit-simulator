@@ -2,7 +2,6 @@ import React from 'react';
 
 import { partStyles } from './styles';
 import { cursorStyles } from 'src/styles';
-import { drawEventInit } from 'src/lib/mouse';
 import { editPartParams } from '../params-dialog';
 import { mapState } from '../drawing-sheet/map';
 import { Point, Direction, Directions } from '@circuit/math';
@@ -11,6 +10,8 @@ import { MouseButtons } from '@xiao-ai/utils/web';
 import { stringifyClass } from '@xiao-ai/utils';
 import { ElectronicPoint } from './point';
 import { LineComponent } from './line';
+import { newLine } from 'src/store';
+import { DrawEventController } from '@circuit/event';
 import { ElectronicKind, Part, PartData } from '@circuit/electronics';
 import { PointKind, PointStatus, textHeight, textSpaceHeight } from './constant';
 
@@ -87,17 +88,12 @@ export class PartComponent extends Part {
     position[1] -= 2;
   }
 
-  /** 是否被占用 */
-  isOccupied(location = this.position) {
-    return false;
-  }
-
   /** 创建器件 */
   create() {
     // 选中自己
     this.setSelects([this.id]);
 
-    drawEventInit()
+    new DrawEventController()
       // .setCursor('move_part')
       .setStopEvent({ type: 'click', which: 'Left' })
       .setMoveEvent((e) => {
@@ -143,7 +139,7 @@ export class PartComponent extends Part {
     ev.stopPropagation();
     this.setSelects([this.id]);
 
-    drawEventInit()
+    new DrawEventController()
       .setClassName(cursorStyles.movePart)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((e) => {
@@ -186,7 +182,7 @@ export class PartComponent extends Part {
     }
     // 该引脚为空
     else {
-      line = new LineComponent([startPoint]);
+      line = newLine([startPoint]);
       this.connects[i] = { id: line.id, mark: 0 };
       line.connects[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);

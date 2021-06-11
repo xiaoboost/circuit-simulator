@@ -55,3 +55,19 @@ test('绘制导线，终点为空白', ({ deepEqual }) => {
     [500, 400],
   ]);
 });
+
+test('绘制导线，终点为空白，有器件挡道', ({ deepEqual }) => {
+  const [, line, start, direction] = loadSingle([100, 100]);
+  const searcher = new DrawPathSearcher(start, direction, line);
+
+  loadPart([300, 300]);
+
+  const path = searcher.search(Point.from([310, 360]), Point.from([0, 0]));
+
+  deepEqual(path.toData(), [
+    [140, 100],
+    [360, 100],
+    [360, 360],
+    [310, 360],
+  ]);
+});

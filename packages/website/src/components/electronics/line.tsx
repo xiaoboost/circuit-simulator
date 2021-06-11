@@ -2,12 +2,12 @@ import React from 'react';
 
 import { PointLike } from '@circuit/math';
 import { useForceUpdate } from '@xiao-ai/utils/use';
-import { DrawController } from 'src/lib/mouse';
 import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
+import { DrawEventController } from '@circuit/event';
+import { Line, DrawPathSearcher } from '@circuit/electronics';
 import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
-import { Line, draw } from '@circuit/electronics';
 
 export class LineComponent extends Line {
   constructor(paths: PointLike[] = []) {
@@ -57,7 +57,6 @@ export class LineComponent extends Line {
 
     this.deleteMark();
     this._rects = [];
-    draw.init();
 
     const start = this.path[0];
     const connect = this.connects[0];
@@ -73,11 +72,14 @@ export class LineComponent extends Line {
       throw new Error(`不存在的器件：${connect.id}`);
     }
 
-    await new DrawController()
+    const draw = new DrawPathSearcher(start, direction, this);
+    const drawEvent = new DrawEventController();
+
+    await drawEvent
       .setClassName(cursorStyles.drawLine)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {
-        this.path = draw.search(start, direction, ev, this);
+        this.path = draw.search(ev.position, ev.movement);
         this.update();
       })
       .start();

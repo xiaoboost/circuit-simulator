@@ -3,22 +3,11 @@ import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
 import { Cache } from './cache';
 import { Rules } from './search-rules';
+import { SearchStatus } from './constant';
 import { ElectronicKind } from '../../types';
 
 import type { Line } from '../';
 import type { Part } from '../../part';
-
-/** 搜索状态 */
-const enum DrawStatus {
-  /** 普通状态 */
-  Space = 10,
-  /** 对齐引脚 */
-  AlignPoint,
-  /** 对齐导线 */
-  AlignLine,
-  /** 导线修饰 */
-  Modification,
-}
 
 export class DrawPathSearcher {
   /** 起点 */
@@ -38,7 +27,7 @@ export class DrawPathSearcher {
   });
 
   /** 搜索状态 */
-  private status = DrawStatus.Space;
+  private status = SearchStatus.DrawSpace;
   /** 待搜索的终点列表 */
   private endList: Point[] = [];
 

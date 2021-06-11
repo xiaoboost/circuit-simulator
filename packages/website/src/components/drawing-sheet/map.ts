@@ -2,7 +2,7 @@ import { Point } from '@circuit/math';
 import { Watcher } from '@xiao-ai/utils';
 import { debug } from '@circuit/debug';
 import { MouseButtons } from '@xiao-ai/utils/web';
-import { DrawController } from 'src/lib/mouse';
+import { DrawEventController } from '@circuit/event';
 import { cursorStyles } from 'src/styles';
 
 import { useCallback, useEffect, MouseEvent, WheelEvent, RefObject } from 'react';
@@ -57,7 +57,7 @@ export function useMap() {
       return;
     }
 
-    new DrawController()
+    new DrawEventController()
       .setClassName(cursorStyles.moveMap)
       .setStopEvent({ type: 'mouseup', which: 'Right' })
       .setMoveEvent((ev) => {

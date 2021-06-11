@@ -2,5 +2,8 @@
   "name": "@circuit/tsconfig",
   "description": "circuit's TypeScript configuration",
   "version": "1.0.0",
-  "main": "tsconfig.json"
+  "main": "tsconfig.json",
+  "devDependencies": {
+    "@xiao-ai/utils": "^1.3.1"
+  }
 }

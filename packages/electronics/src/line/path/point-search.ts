@@ -1,6 +1,6 @@
 import { Rules } from './search-rules';
 import { LinePath } from './line-path';
-import { SearchStatus } from './types';
+import { SearchStatus } from './constant';
 import { debug } from '@circuit/debug';
 import { remove, AnyObject } from '@xiao-ai/utils';
 import { Point, Rotate, RotateMatrix } from '@circuit/math';
@@ -179,7 +179,7 @@ export function pointSearch(
 
   // 调试用时，指示终点
   if (process.env.NODE_ENV === 'development') {
-    debug.point(first.position, 'red', 20);
+    debug.point(first.position, 'red');
   }
 
   // 终点状态

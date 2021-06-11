@@ -3,9 +3,6 @@
   "include": ["src", "typings", "tests"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@xiao-ai/utils/*": ["./node_modules/@xiao-ai/utils/dist/types/*"]
-    }
+    "baseUrl": "."
   }
 }

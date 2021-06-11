@@ -8,7 +8,7 @@ import * as store from 'src/store';
 import * as utils from './utils';
 
 import { useMap, useDebugger, mapState } from './map';
-import { useMouseBusInit } from 'src/lib/mouse';
+import { useMouseBusInit } from '@circuit/event';
 
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
@@ -26,8 +26,8 @@ export function DrawingSheet() {
     [parts],
   );
 
-  useMouseBusInit(SheetRef);
   useDebugger(SVGRef);
+  useMouseBusInit(SheetRef, () => mapState.data);
 
   return (
     <section

@@ -42,6 +42,7 @@
     "@antv/g2": "^4.1.18",
     "@circuit/debug": "workspace:*",
     "@circuit/electronics": "workspace:*",
+    "@circuit/event": "workspace:*",
     "@circuit/map": "workspace:*",
     "@circuit/math": "workspace:*",
     "@circuit/solver": "workspace:*",
