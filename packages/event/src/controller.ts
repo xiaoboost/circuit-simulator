@@ -1,15 +1,22 @@
 
-import { delay, isFunc } from '@xiao-ai/utils';
-import { MouseButtons, supportsPassive } from '@xiao-ai/utils/web';
+import { delay, isFunc, ChannelData } from '@xiao-ai/utils';
+import { MouseButtons, supportsPassive, addClassName } from '@xiao-ai/utils/web';
 import { current, sheetEl, setCurrent } from './store';
-import { Callback, StopEventInput, ClassNameEventInput } from './types';
+
+import {
+  Callback,
+  StopEventInput,
+  ClassNameEventInput,
+  DrawEventData,
+  DrawEvent,
+} from './types';
 
 /** 绘图事件控制器 */
 export class DrawEventController {
   /** 是否开始 */
   isStart = false;
   /** 事件数据 */
-  events: Callback[] = [];
+  events = new ChannelData<DrawEventData>();
   /** 记录当前 className */
   className = '';
   /** 记录当前 cursor */
@@ -54,22 +61,44 @@ export class DrawEventController {
   }
 
   setClassName(input: ClassNameEventInput) {
-    if (isFunc(input)) {
-      this.events.push((ev) => {
-        sheetEl?.classList.add(input(ev));
-      });
-    }
-    else {
-      this.events.push(() => {
-        sheetEl?.classList.add(input);
-      });
-    }
+    const name = 'mousemove';
+    const handler: DrawEventData = isFunc(input)
+      ? {
+        type: name,
+        selector: '',
+        callback: (ev: DrawEvent) => {
+          if (sheetEl) {
+            addClassName(sheetEl, input(ev));
+          }
+        },
+      }
+      : {
+        type: name,
+        selector: '',
+        callback: () => {
+          if (sheetEl) {
+            addClassName(sheetEl, input);
+          }
+        },
+      };
+
+    this.events.push(name, handler);
 
     return this;
   }
 
   setMoveEvent(cb: Callback) {
-    this.events.push(cb);
+    const name = 'mousemove';
+    this.events.push(name, {
+      type: name,
+      selector: '',
+      callback: cb,
+    });
+    return this;
+  }
+
+  setEvent(opt: DrawEventData) {
+    this.events.push(opt.type, opt);
     return this;
   }
 

@@ -197,6 +197,7 @@ export class PartComponent extends Part {
     this.useInit();
 
     const {
+      id,
       prototype,
       rotate,
       position,
@@ -207,18 +208,19 @@ export class PartComponent extends Part {
       textPlacement,
     } = this;
 
-    const [label, subId] = this.id.split('_');
+    const [label, subId] = id.split('_');
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
     const editParam = React.useCallback(this.editParams.bind(this), []);
 
     return (
       <g
+        data-id={id}
         className={partStyles.part}
         onDoubleClick={editParam}
         transform={`matrix(${rotate.join()},${position.join()})`}
       >
-        <g className="part-focus">
+        <g className={partStyles.partFocus}>
           {prototype.shape.map((item, i) => (
             React.createElement(item.name, {
               ...item.attribute,

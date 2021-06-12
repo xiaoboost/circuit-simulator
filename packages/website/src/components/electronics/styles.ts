@@ -23,6 +23,9 @@ export const partStyles = createStyles({
     fill: 'currentColor',
     strokeWidth: 0,
   },
+  partFocus: {
+    position: 'relative',
+  },
   [Direction[Direction.Top]]: {
     textAnchor: 'middle',
   },
@@ -34,6 +37,21 @@ export const partStyles = createStyles({
   },
   [Direction[Direction.Right]]: {
     textAnchor: 'start',
+  },
+});
+
+export const lineStyles = createStyles({
+  line: {
+    color: Black,
+
+    [`& .${MouseFocusClassName}`]: {
+      strokeWidth: 0,
+      fill: 'transparent',
+      stroke: 'transparent',
+    },
+  },
+  lineFocus: {
+    position: 'relative',
   },
 });
 

@@ -25,3 +25,10 @@ export interface MapState {
   zoom: number;
   position: Point;
 }
+
+/** 事件保存 */
+export interface DrawEventData {
+  type: 'mousemove' | 'mouseenter' | 'mouseleave';
+  selector: string;
+  callback(ev: DrawEvent): any;
+}

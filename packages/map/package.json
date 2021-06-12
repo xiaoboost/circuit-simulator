@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@circuit/math": "workspace:*",
-    "@xiao-ai/utils": "^1.3.1"
+    "@xiao-ai/utils": "^1.4.0"
   },
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
@@ -51,7 +51,7 @@
     "eslint": "^7.28.0",
     "rimraf": "^3.0.2",
     "ts-node": "^10.0.0",
-    "tslib": "^2.2.0",
+    "tslib": "^2.3.0",
     "typescript": "^4.3.2"
   }
 }

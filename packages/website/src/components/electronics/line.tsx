@@ -5,6 +5,7 @@ import { useForceUpdate } from '@xiao-ai/utils/use';
 import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
+import { lineStyles, partStyles, pointStyles } from './styles';
 import { DrawEventController } from '@circuit/event';
 import { Line, DrawPathSearcher } from '@circuit/electronics';
 import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
@@ -72,15 +73,47 @@ export class LineComponent extends Line {
       throw new Error(`不存在的器件：${connect.id}`);
     }
 
-    const draw = new DrawPathSearcher(start, direction, this);
+    const pathSearcher = new DrawPathSearcher(start, direction, this);
     const drawEvent = new DrawEventController();
+    const overSelector = [
+      `.${partStyles.part} .${partStyles.partFocus}`,
+      `.${lineStyles.line} .${lineStyles.lineFocus}`,
+    ].join(', ');
 
     await drawEvent
       .setClassName(cursorStyles.drawLine)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {
-        this.path = draw.search(ev.position, ev.movement);
+        this.path = pathSearcher.search(ev.position, ev.movement);
         this.update();
+      })
+      .setEvent({
+        type: 'mouseenter',
+        selector: overSelector,
+        callback: (ev) => {
+          const element = ev.target.parentElement!;
+          const currentId = element.dataset.id as string;
+
+          if (currentId && currentId !== this.id) {
+            const el = this.find<LineComponent | PartComponent>(currentId);
+
+            if (el) {
+              pathSearcher.setMouseOver(el);
+            }
+          }
+        },
+      })
+      .setEvent({
+        type: 'mouseleave',
+        selector: overSelector,
+        callback: (ev) => {
+          const element = ev.target.parentElement!;
+          const currentId = element.dataset.id as string;
+
+          if (currentId && currentId !== this.id) {
+            pathSearcher.freeMouse();
+          }
+        },
       })
       .start();
 
@@ -91,21 +124,25 @@ export class LineComponent extends Line {
   Render = () => {
     this.useInit();
 
-    const { path, rects, points } = this;
+    const { path, rects, points, id } = this;
 
     return (
-      <g>
+      <g className={lineStyles.line} data-id={id}>
         <path d={path.stringify()} />
-        {rects.map((rect, i) => <rect key={i} {...rect} />)}
-        {points.map((point) => (
-          <ElectronicPoint
-            key={point.index}
-            size={point.size}
-            kind={PointKind.Line}
-            status={point.isConnected ? PointStatus.Close : PointStatus.Open}
-            transform={`translate(${point.position.join()})`}
-          />
-        ))}
+        <g className={lineStyles.lineFocus}>
+          {rects.map((rect, i) => (
+            <rect key={i} {...rect} />
+          ))}
+          {points.map((point) => (
+            <ElectronicPoint
+              key={point.index}
+              size={point.size}
+              kind={PointKind.Line}
+              status={point.isConnected ? PointStatus.Close : PointStatus.Open}
+              transform={`translate(${point.position.join()})`}
+            />
+          ))}
+        </g>
       </g>
     );
   }

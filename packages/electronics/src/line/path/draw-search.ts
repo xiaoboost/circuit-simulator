@@ -43,7 +43,7 @@ export class DrawPathSearcher {
     /** 四方格坐标 */
     const endGrid = vertex.toGrid();
 
-    debugger;
+    // debugger;
 
     // 导线终点默认最大半径
     this.line.points[1].size = 8;
