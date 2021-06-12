@@ -125,12 +125,12 @@ export class DrawPathSearcher {
         continue;
       }
 
-      const tempWay = pointSearch(
+      const tempWay = this.removeExcess(pointSearch(
         start,
         end,
         direction,
         new Rules(start, end, status, line.map),
-      );
+      ));
 
       cache.set(end, tempWay);
     }
@@ -189,8 +189,55 @@ export class DrawPathSearcher {
     return path;
   }
 
-  private removeExcess() {
-    // ..
+  private removeExcess(path: LinePath) {
+    const newPath = LinePath.from(path);
+
+    if (newPath.length <= 3) {
+      return newPath;
+    }
+
+    for (let i = 0; i < newPath.length - 3; i++) {
+      const vector = [
+        (new Point(newPath[i], newPath[i + 1])).toUnit(),
+        (new Point(newPath[i + 2], newPath[i + 3])).toUnit(),
+      ];
+
+      let tempWay, tempVector;
+
+      // 同向修饰
+      if (vector[0].isEqual(vector[1])) {
+        const start = newPath[i + 1];
+        const end = newPath[i + 3];
+        const direction = vector[0];
+        const rules = new Rules(start, end, SearchStatus.DrawModification, this.line.map);
+
+        tempWay = pointSearch(start, end, direction, rules);
+        tempVector = new Point(tempWay[0], tempWay[1]);
+
+        if (tempWay.length < 4 && tempVector.isSameDirection(vector[0])) {
+          newPath.splice(i + 1, 3, ...tempWay);
+          newPath.removeRepeat();
+          i--;
+        }
+      }
+      // 反向修饰
+      else if (newPath.length > 4) {
+        const start = newPath[i];
+        const end = newPath[i + 3];
+        const direction = vector[0];
+        const rules = new Rules(start, end, SearchStatus.DrawModification, this.line.map);
+
+        tempWay = pointSearch(start, end, direction, rules);
+
+        if (tempWay.length < 4) {
+          newPath.splice(i, 4, ...tempWay);
+          newPath.removeRepeat();
+          i--;
+        }
+      }
+    }
+
+    return newPath.removeRepeat();
   }
 
   /** 释放鼠标 */

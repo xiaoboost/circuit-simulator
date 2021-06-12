@@ -151,18 +151,18 @@ test('isSameDirection()', (it) => {
   it.true(Point.from(0).isSameDirection([0, 0]));
 });
 
-test('isOppoDirection()', (it) => {
-  it.false(new Point(1, -2).isOppoDirection([2, -4]));
-  it.true(new Point(1, -2).isOppoDirection([-2, 4]));
+test('isOppositeDirection()', (it) => {
+  it.false(new Point(1, -2).isOppositeDirection([2, -4]));
+  it.true(new Point(1, -2).isOppositeDirection([-2, 4]));
 
-  it.false(new Point(0, -2).isOppoDirection([0, -1]));
-  it.false(new Point(1, 0).isOppoDirection([2, 0]));
-  it.true(new Point(0, -2).isOppoDirection([0, 1]));
-  it.true(new Point(1, 0).isOppoDirection([-2, 0]));
+  it.false(new Point(0, -2).isOppositeDirection([0, -1]));
+  it.false(new Point(1, 0).isOppositeDirection([2, 0]));
+  it.true(new Point(0, -2).isOppositeDirection([0, 1]));
+  it.true(new Point(1, 0).isOppositeDirection([-2, 0]));
 
   // 零向量和任何向量都反向
-  it.true(Point.from(0).isOppoDirection([-1, 0]));
-  it.true(Point.from(0).isOppoDirection([0, 0]));
+  it.true(Point.from(0).isOppositeDirection([-1, 0]));
+  it.true(Point.from(0).isOppositeDirection([0, 0]));
 });
 
 test('isInLine()', (it) => {

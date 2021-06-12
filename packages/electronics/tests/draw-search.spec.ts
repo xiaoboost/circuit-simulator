@@ -15,7 +15,7 @@ function loadPart(position: [number, number]) {
   return part;
 }
 
-function loadSingle(position: [number, number]) {
+function loadBase(position: [number, number]) {
   const start = Point.from([position[0] + 40, position[1]]);
   const line = new Line([start]);
   const part = loadPart(position);
@@ -33,8 +33,8 @@ function loadSingle(position: [number, number]) {
   return [part, line, start, Directions[Direction.Right]] as const;
 }
 
-test('绘制导线，终点为空白', ({ deepEqual }) => {
-  const [, line, start, direction] = loadSingle([100, 100]);
+test('终点为空白', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
   const end = Point.from([150, 110]);
   const bias = Point.from([0, 0]);
   const searcher = new DrawPathSearcher(start, direction, line);
@@ -56,8 +56,8 @@ test('绘制导线，终点为空白', ({ deepEqual }) => {
   ]);
 });
 
-test('绘制导线，终点为空白，有器件挡道', ({ deepEqual }) => {
-  const [, line, start, direction] = loadSingle([100, 100]);
+test('终点为空白，有器件挡道', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
   const searcher = new DrawPathSearcher(start, direction, line);
 
   loadPart([300, 300]);
@@ -70,4 +70,12 @@ test('绘制导线，终点为空白，有器件挡道', ({ deepEqual }) => {
     [360, 360],
     [310, 360],
   ]);
+});
+
+test('终点为器件，器件有空置引脚', ({ pass }) => {
+  pass();
+});
+
+test('终点为器件，器件没有空置引脚', ({ pass }) => {
+  pass();
 });

@@ -16,7 +16,7 @@ test('器件的图纸标记', ({ deepEqual }) => {
 
   for (let i = 0; i < 2; i++) {
     const add = [-40, 40][i];
-    const pointPosition = [position[0] + add, position[1]];
+    const pointPosition = [position[0] + add, position[1]] as [number, number];
     deepEqual(part.map.get(pointPosition)?.toData(), {
       label: partId,
       kind: MarkNodeKind.PartPoint,
@@ -28,7 +28,7 @@ test('器件的图纸标记', ({ deepEqual }) => {
 
   for (let i = 0; i < 3; i++) {
     const add = [-20, 0, 20][i];
-    const pointPosition = [position[0] + add, position[1]];
+    const pointPosition = [position[0] + add, position[1]] as [number, number];
     deepEqual(part.map.get(pointPosition)?.toData(), {
       label: partId,
       kind: MarkNodeKind.Part,

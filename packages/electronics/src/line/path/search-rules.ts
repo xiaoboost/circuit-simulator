@@ -108,7 +108,7 @@ function checkNodeInLineWhenDraw(this: Rules, node: SearchNodeData) {
     const junction = node.cornerParent.direction;
     const node2End = this.end.add(node.position, -1);
 
-    return (node2End.isOppoDirection(junction));
+    return (node2End.isOppositeDirection(junction));
   }
 }
 

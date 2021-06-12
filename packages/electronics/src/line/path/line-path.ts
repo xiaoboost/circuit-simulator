@@ -71,15 +71,13 @@ export class LinePath extends Array<Point> {
    *  - 相邻三点共线或者相邻两点相等
    */
   removeRepeat() {
-    const path = this.slice() as LinePath;
-
-    for (let i = 0; i < path.length - 2; i++) {
+    for (let i = 0; i < this.length - 2; i++) {
       if (
-        ((path[i][0] === path[i + 1][0]) && (path[i + 1][0] === path[i + 2][0])) ||
-        ((path[i][1] === path[i + 1][1]) && (path[i + 1][1] === path[i + 2][1])) ||
-        ((path[i][0] === path[i + 1][0]) && (path[i][1] === path[i + 1][1]))
+        ((this[i][0] === this[i + 1][0]) && (this[i + 1][0] === this[i + 2][0])) ||
+        ((this[i][1] === this[i + 1][1]) && (this[i + 1][1] === this[i + 2][1])) ||
+        ((this[i][0] === this[i + 1][0]) && (this[i][1] === this[i + 1][1]))
       ) {
-        path.splice(i + 1, 1);
+        this.splice(i + 1, 1);
         i -= 2;
 
         if (i < -1) {
@@ -88,7 +86,7 @@ export class LinePath extends Array<Point> {
       }
     }
 
-    return path;
+    return this;
   }
 
   /**

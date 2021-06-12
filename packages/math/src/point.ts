@@ -360,7 +360,7 @@ export class Point {
    * @param {PointLike} vector
    * @returns {boolean}
    */
-  isOppoDirection(vector: PointLike): boolean {
+  isOppositeDirection(vector: PointLike): boolean {
     return (
       // 0 向量与任意向量的方向都相反
       this.isZero() || (this.isZero.call(vector) as boolean) ||
@@ -385,7 +385,7 @@ export class Point {
     return (
       toEnd.isZero() ||
       toStart.isZero() ||
-      toStart.isOppoDirection(toEnd)
+      toStart.isOppositeDirection(toEnd)
     );
   }
   /**
