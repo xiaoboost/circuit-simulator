@@ -1,6 +1,6 @@
 import { PointLike } from '@circuit/math';
 import { MarkMapNode } from './node';
-import { NodeInputData } from './types';
+import { NodeInputData, MarkNodeStructuredData } from './types';
 
 /** 标记图纸 */
 export class MarkMap {
@@ -32,5 +32,16 @@ export class MarkMap {
   /** 移除节点信息 */
   delete(point: PointLike) {
     delete this._data[MarkMap.toKey(point)];
+  }
+
+  /** 数据格式化 */
+  toData() {
+    const data: Record<string, MarkNodeStructuredData> = {};
+
+    for (const key of Object.keys(this._data)) {
+      data[key] = this._data[key].toData();
+    }
+
+    return data;
   }
 }

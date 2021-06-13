@@ -50,6 +50,7 @@
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
+    "@types/node": "^15.12.2",
     "ava": "^3.15.0",
     "eslint": "^7.28.0",
     "rimraf": "^3.0.2",

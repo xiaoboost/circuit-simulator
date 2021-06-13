@@ -1,0 +1,52 @@
+{
+  "80,100": {
+    "label": "R_1",
+    "kind": "Part",
+    "position": [
+      80,
+      100
+    ],
+    "connect": [],
+    "mark": -1
+  },
+  "100,100": {
+    "label": "R_1",
+    "kind": "Part",
+    "position": [
+      100,
+      100
+    ],
+    "connect": [],
+    "mark": -1
+  },
+  "120,100": {
+    "label": "R_1",
+    "kind": "Part",
+    "position": [
+      120,
+      100
+    ],
+    "connect": [],
+    "mark": -1
+  },
+  "60,100": {
+    "label": "R_1",
+    "kind": "PartPoint",
+    "position": [
+      60,
+      100
+    ],
+    "connect": [],
+    "mark": 0
+  },
+  "140,100": {
+    "label": "R_1",
+    "kind": "PartPoint",
+    "position": [
+      140,
+      100
+    ],
+    "connect": [],
+    "mark": 1
+  }
+}

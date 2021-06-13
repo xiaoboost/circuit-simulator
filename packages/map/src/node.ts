@@ -1,6 +1,6 @@
 import { Point, PointLike } from '@circuit/math';
 import { remove, isDef } from '@xiao-ai/utils';
-import { MarkNodeData, MarkNodeKind, NodeInputData } from './types';
+import { MarkNodeData, MarkNodeKind, NodeInputData, MarkNodeStructuredData } from './types';
 
 import type { MarkMap } from './map';
 
@@ -33,10 +33,10 @@ export class MarkMapNode implements MarkNodeData {
   }
 
   /** 输出数据 */
-  toData() {
+  toData(): MarkNodeStructuredData {
     return {
       label: this.label,
-      kind: this.kind,
+      kind: MarkNodeKind[this.kind] as any,
       position: this.position.toData(),
       connect: this.connect.map((node) => node.toData()),
       mark: this.mark,

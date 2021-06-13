@@ -46,3 +46,12 @@ export interface NodeInputData {
   connect?: PointLike[];
   mark?: number;
 }
+
+/** 结构化数据 */
+export interface MarkNodeStructuredData {
+  label: string;
+  kind: keyof typeof MarkNodeKind;
+  position: [number, number];
+  connect: [number, number][];
+  mark: number;
+}
