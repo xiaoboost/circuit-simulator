@@ -5,7 +5,7 @@ export enum MarkNodeKind {
   /** 导线 */
   Line = 10,
   /** 导线空节点 */
-  LinePoint,
+  LineSpacePoint,
   /** 导线交叠节点（实际并不相交） */
   LineCoverPoint,
   /** 导线交错节点 */
@@ -14,7 +14,10 @@ export enum MarkNodeKind {
   /** 器件节点 */
   Part = 20,
   /** 器件引脚节点 */
-  PartPoint,
+  PartPin,
+
+  /** 空白 */
+  Space = 30,
 }
 
 /** 节点标志数据 */
@@ -37,8 +40,8 @@ export interface MarkNodeData {
 
 /** 节点输入数据 */
 export interface NodeInputData {
-  label: string;
-  kind: MarkNodeKind;
+  id: string;
+  mark?: number;
   position: PointLike;
   connections?: PointLike[];
 }
