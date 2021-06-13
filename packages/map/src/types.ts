@@ -17,25 +17,22 @@ export enum MarkNodeKind {
   PartPoint,
 }
 
+/** 节点标志数据 */
+export interface MarkNodeLabel {
+  id: string;
+  mark: number;
+}
+
 /** 节点数据 */
 export interface MarkNodeData {
-  /** 当前点属于哪个元件 */
-  label: string;
   /** 节点类型 */
   kind: MarkNodeKind;
   /** 当前点的坐标 */
   position: Point;
   /** 当前点在图纸中连接着另外哪些点 */
-  connect: Point[];
-  /**
-   * 所属元件的引脚编号
-   *  - 是`-1`时表示不是引脚
-   */
-  mark: number;
-  /**
-   * 此节点为导线交叠节点时，导线的连接关系
-   */
-
+  connections: Point[];
+  /** 节点属于的元件 */
+  labels: MarkNodeLabel[];
 }
 
 /** 节点输入数据 */
@@ -43,15 +40,13 @@ export interface NodeInputData {
   label: string;
   kind: MarkNodeKind;
   position: PointLike;
-  connect?: PointLike[];
-  mark?: number;
+  connections?: PointLike[];
 }
 
 /** 结构化数据 */
 export interface MarkNodeStructuredData {
-  label: string;
+  labels: MarkNodeLabel[];
   kind: keyof typeof MarkNodeKind;
   position: [number, number];
-  connect: [number, number][];
-  mark: number;
+  connections: [number, number][];
 }

@@ -15,15 +15,17 @@ test('data normalization', ({ deepEqual }) => {
   map.set(inputData);
 
   deepEqual(map.get(position)!.toData(), {
-    label,
-    kind: MarkNodeKind.Part,
+    labels: [{
+      id: label,
+      mark: -1,
+    }],
+    kind: 'Part',
     position,
-    connect: [],
-    mark: -1,
+    connections: [],
   });
 });
 
-test('connect', ({ deepEqual, true: isTrue, false: isFalse }) => {
+test('connections', ({ deepEqual, true: isTrue, false: isFalse }) => {
   const map = new MarkMap();
   const position = [100, 100];
   const node = map.set({
@@ -32,7 +34,7 @@ test('connect', ({ deepEqual, true: isTrue, false: isFalse }) => {
     kind: MarkNodeKind.Part,
   });
 
-  deepEqual(node.connect, []);
+  deepEqual(node.connections, []);
   node.addConnect([100, 200]);
   isTrue(node.hasConnect([100, 200]));
   isFalse(node.hasConnect([100, 300]));

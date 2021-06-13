@@ -1,16 +1,22 @@
 import { Point, PointLike } from '@circuit/math';
-import { remove, isDef } from '@xiao-ai/utils';
-import { MarkNodeData, MarkNodeKind, NodeInputData, MarkNodeStructuredData } from './types';
+import { remove } from '@xiao-ai/utils';
+
+import {
+  MarkNodeData,
+  MarkNodeKind,
+  NodeInputData,
+  MarkNodeLabel,
+  MarkNodeStructuredData,
+} from './types';
 
 import type { MarkMap } from './map';
 
 /** 节点数据 */
 export class MarkMapNode implements MarkNodeData {
-  label: string;
   kind: MarkNodeKind;
   position: Point;
-  connect: Point[];
-  mark = -1;
+  connections: Point[];
+  labels: MarkNodeLabel[] = [];
 
   /** 节点所在图纸 */
   readonly map: MarkMap;
@@ -18,13 +24,12 @@ export class MarkMapNode implements MarkNodeData {
   constructor(data: NodeInputData, map: MarkMap) {
     this.map = map;
     this.kind = data.kind;
-    this.label = data.label;
     this.position = Point.from(data.position);
-    this.connect = (data.connect ?? []).map(Point.from);
-
-    if (isDef(data.mark)) {
-      this.mark = data.mark;
-    }
+    this.connections = (data.connections ?? []).map(Point.from);
+    this.labels = [{
+      id: data.label,
+      mark: -1,
+    }];
   }
 
   /** 是否是导线节点 */
@@ -35,34 +40,55 @@ export class MarkMapNode implements MarkNodeData {
   /** 输出数据 */
   toData(): MarkNodeStructuredData {
     return {
-      label: this.label,
+      labels: this.labels,
       kind: MarkNodeKind[this.kind] as any,
       position: this.position.toData(),
-      connect: this.connect.map((node) => node.toData()),
-      mark: this.mark,
+      connections: this.connections.map((node) => node.toData()),
     };
+  }
+
+  /** 搜索标签 */
+  findLabel(id: string) {
+    return this.labels.filter((label) => label.id === id);
+  }
+
+  /** 是否含有标签 */
+  hasLabel(id: string, mark = -1) {
+    return this.labels.some((label) => label.id === id && label.mark === mark);
+  }
+
+  /** 新增标签 */
+  addLabel(id: string, mark = -1) {
+    if (!this.hasLabel(id, mark)) {
+      this.labels.push({ id, mark });
+    }
+  }
+
+  /** 删除标签 */
+  deleteLabel(id: string, mark = -1) {
+    return remove(this.labels, (label) => label.id === id && label.mark === mark);
   }
 
   /** 是否含有此连接点 */
   hasConnect(point: PointLike) {
-    return this.connect.some((node) => node.isEqual(point));
+    return this.connections.some((node) => node.isEqual(point));
   }
 
   /** 新增连接点 */
   addConnect(point: PointLike) {
-    const connectPoint = Point.from(point);
+    const connectionsPoint = Point.from(point);
 
-    if (!this.connect) {
-      this.connect = [connectPoint];
+    if (!this.connections) {
+      this.connections = [connectionsPoint];
     }
     else if (!this.hasConnect(point)) {
-      this.connect.push(connectPoint);
+      this.connections.push(connectionsPoint);
     }
   }
 
   /** 移除连接点 */
   deleteConnect(point: PointLike) {
-    remove(this.connect, (node) => node.isEqual(point), false);
+    remove(this.connections, (node) => node.isEqual(point), false);
   }
 
   /** 向着终点方向沿着导线前进 */
