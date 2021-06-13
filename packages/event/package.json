@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@circuit/math": "workspace:*",
-    "@xiao-ai/utils": "^1.4.0",
+    "@xiao-ai/utils": "^1.4.1",
     "react": "^17.0.2"
   },
   "devDependencies": {

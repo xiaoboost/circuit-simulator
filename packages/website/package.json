@@ -46,7 +46,7 @@
     "@circuit/map": "workspace:*",
     "@circuit/math": "workspace:*",
     "@circuit/solver": "workspace:*",
-    "@xiao-ai/utils": "^1.4.0",
+    "@xiao-ai/utils": "^1.4.1",
     "antd": "^4.16.2",
     "core-js": "^3.14.0",
     "jss": "^10.6.0",

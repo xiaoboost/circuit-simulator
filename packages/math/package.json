@@ -41,7 +41,7 @@
     ]
   },
   "dependencies": {
-    "@xiao-ai/utils": "^1.4.0",
+    "@xiao-ai/utils": "^1.4.1",
     "bignumber.js": "^9.0.1"
   },
   "devDependencies": {

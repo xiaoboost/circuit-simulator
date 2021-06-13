@@ -22,7 +22,7 @@ importers:
       '@circuit/math': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       eslint: ^7.28.0
       rimraf: ^3.0.2
       tslib: ^2.3.0
@@ -30,7 +30,7 @@ importers:
     dependencies:
       '@circuit/map': link:../map
       '@circuit/math': link:../math
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
@@ -47,7 +47,7 @@ importers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@types/node': ^15.12.2
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       ava: ^3.15.0
       eslint: ^7.28.0
       rimraf: ^3.0.2
@@ -58,7 +58,7 @@ importers:
       '@circuit/debug': link:../debug
       '@circuit/map': link:../map
       '@circuit/math': link:../math
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
@@ -76,7 +76,7 @@ importers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@types/react': ^17.0.11
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       ava: ^3.15.0
       eslint: ^7.28.0
       react: ^17.0.2
@@ -86,7 +86,7 @@ importers:
       typescript: ^4.3.2
     dependencies:
       '@circuit/math': link:../math
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
       react: registry.nlark.com/react/17.0.2
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
@@ -104,7 +104,7 @@ importers:
       '@circuit/math': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       ava: ^3.15.0
       eslint: ^7.28.0
       rimraf: ^3.0.2
@@ -113,7 +113,7 @@ importers:
       typescript: ^4.3.2
     dependencies:
       '@circuit/math': link:../math
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
@@ -128,7 +128,7 @@ importers:
     specifiers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       ava: ^3.15.0
       bignumber.js: ^9.0.1
       eslint: ^7.28.0
@@ -137,7 +137,7 @@ importers:
       tslib: ^2.3.0
       typescript: ^4.3.2
     dependencies:
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
       bignumber.js: 9.0.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
@@ -167,9 +167,9 @@ importers:
 
   packages/tsconfig:
     specifiers:
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
     devDependencies:
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
 
   packages/typings:
     specifiers: {}
@@ -197,7 +197,7 @@ importers:
       '@types/react': ^17.0.11
       '@types/react-dom': ^17.0.7
       '@types/webpack-bundle-analyzer': ^4.4.0
-      '@xiao-ai/utils': ^1.4.0
+      '@xiao-ai/utils': ^1.4.1
       antd: ^4.16.2
       ava: ^3.15.0
       browser-env: ^3.3.0
@@ -243,7 +243,7 @@ importers:
       '@circuit/map': link:../map
       '@circuit/math': link:../math
       '@circuit/solver': link:../solver
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.0
+      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
       antd: registry.nlark.com/antd/4.16.2_react-dom@17.0.2+react@17.0.2
       core-js: registry.nlark.com/core-js/3.14.0
       jss: 10.6.0
@@ -5378,10 +5378,10 @@ packages:
       eslint-visitor-keys: registry.nlark.com/eslint-visitor-keys/2.1.0
     dev: true
 
-  registry.nlark.com/@xiao-ai/utils/1.4.0:
-    resolution: {integrity: sha1-sd7ALa/uRRTFZJBELhetjCqxxek=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.4.0.tgz?cache=0&sync_timestamp=1623473416604&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40xiao-ai%2Futils%2Fdownload%2F%40xiao-ai%2Futils-1.4.0.tgz}
+  registry.nlark.com/@xiao-ai/utils/1.4.1:
+    resolution: {integrity: sha1-AcL3fz1F8HmjYInG3Gr/xnmz5Qw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@xiao-ai/utils/download/@xiao-ai/utils-1.4.1.tgz?cache=0&sync_timestamp=1623579617687&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40xiao-ai%2Futils%2Fdownload%2F%40xiao-ai%2Futils-1.4.1.tgz}
     name: '@xiao-ai/utils'
-    version: 1.4.0
+    version: 1.4.1
 
   registry.nlark.com/acorn-walk/6.2.0:
     resolution: {integrity: sha1-Ejy487hMIXHx9/slJhWxx4prGow=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/acorn-walk/download/acorn-walk-6.2.0.tgz}
