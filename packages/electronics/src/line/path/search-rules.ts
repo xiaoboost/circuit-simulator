@@ -68,7 +68,7 @@ function isNodeVerticalLine(map: MarkMap, node: SearchNodeData) {
 // 价值估算
 // node 到终点距离 + 拐弯数量
 function calToPoint(this: Rules, node: SearchNodeData) {
-  return (nodesDistance(this.end, node.position) + node.junction);
+  return (nodesDistance(this.end, node.position) + node.junction * 20);
 }
 
 // 终点判定
@@ -187,17 +187,6 @@ export class Rules {
     this.status = status;
     this.map = map;
 
-    // // 指定规则
-    // if (status === DrawSearch.Status.Modification) {
-    //   this.excludeParts.push(getPart(this.end));
-    //   this.excludeLines.push(...getSegment(this.end));
-
-    //   this.checkPoint = isLegalPointAlign;
-    //   this.isEnd = isEndPoint;
-    //   this.calValue = calToPoint;
-    // }
-    // else
-
     // 单点绘制
     if (status < 20) {
       // 节点估值
@@ -215,12 +204,10 @@ export class Rules {
         this.isEnd = checkNodeInLineWhenDraw;
         this.checkPoint = isLegalPointAlign;
       }
-      // 终点是器件引脚
       else if (endData.kind === MarkNodeKind.PartPoint) {
         this.isEnd = isEndPoint;
         this.checkPoint = isLegalPointAlign;
       }
-      // 终点在器件上
       else if (endData.kind === MarkNodeKind.Part) {
         this.excludeParts.push(getPart(this.map, this.end));
         this.isEnd = isEndPoint;

@@ -2,7 +2,7 @@
 export const enum SearchStatus {
   // 绘制搜索
   /** 普通状态 */
-  DrawSpace,
+  DrawSpace = 10,
   /** 对齐引脚 */
   DrawAlignPoint,
   /** 对齐导线 */

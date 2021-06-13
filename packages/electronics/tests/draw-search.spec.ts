@@ -122,6 +122,40 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
   ]);
 });
 
-test('终点为器件，器件没有空置引脚', ({ pass }) => {
-  pass();
+test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
+  const part = loadPart([300, 300]);
+  const searcher = new DrawPathSearcher(start, direction, line);
+
+  part.connects[0] = part.connects[1] = {
+    id: 'test',
+    mark: 0,
+  };
+
+  searcher.setMouseOver(part);
+
+  /**
+   * 器件右半靠上的坐标，这里只有三个节点
+   */
+
+  let path = searcher.search(Point.from([310, 290]), Point.from([0, 0]));
+
+  deepEqual(path.toData(), [
+    [140, 100],
+    [310, 100],
+    [310, 290],
+  ]);
+
+  /**
+   * 器件右半靠下的坐标，路径会在这里绕一下，所以有4个节点
+   */
+
+  path = searcher.search(Point.from([310, 310]), Point.from([0, 0]));
+
+  deepEqual(path.toData(), [
+    [140, 100],
+    [360, 100],
+    [360, 310],
+    [310, 310],
+  ]);
 });
