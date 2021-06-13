@@ -11,7 +11,7 @@ import { Watcher } from '@xiao-ai/utils';
 import { useWatcher, useWatcherList, useForceUpdate } from '@xiao-ai/utils/use';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
-import { PropsWithChildren, useState, useMemo, useEffect, useRef } from 'react';
+import { PropsWithChildren, useMemo, useEffect, useRef } from 'react';
 
 /** 结束时间单位选择 */
 const endTimeUnits = shortUnitList(['', 'm', 'μ'], '秒', true);

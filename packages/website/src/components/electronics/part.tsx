@@ -25,8 +25,6 @@ export class PartComponent extends Part {
     this.updateTextPosition();
   }
 
-  /** 更新页面 */
-  private update: () => void = () => void 0;
   /** 初始化 hook */
   private useInit() {
     this.update = useForceUpdate();

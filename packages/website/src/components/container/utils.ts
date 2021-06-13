@@ -12,6 +12,6 @@ function removeLoading() {
 }
 
 /** 初始化 */
-export function useInitMap() {
+export function useInit() {
   useEffect(() => void appDataInit().then(removeLoading), []);
 }

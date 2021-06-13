@@ -5,7 +5,7 @@ import { useForceUpdate } from '@xiao-ai/utils/use';
 import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
-import { lineStyles, partStyles, pointStyles } from './styles';
+import { lineStyles, partStyles } from './styles';
 import { DrawEventController } from '@circuit/event';
 import { Line, DrawPathSearcher } from '@circuit/electronics';
 import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
@@ -23,8 +23,6 @@ export class LineComponent extends Line {
     return this._rects;
   }
 
-  /** 更新页面 */
-  private update: () => void = () => void 0;
   /** 初始化 hook */
   private useInit() {
     this.update = useForceUpdate();

@@ -38,6 +38,7 @@ export class DrawPathSearcher {
   }
 
   private getSearchStatus(end: Point, bias: Point) {
+    const { mouseOver, line } = this;
     /** 终点所在方块左上角坐标 */
     const vertex = end.floor();
     /** 四方格坐标 */
@@ -49,17 +50,18 @@ export class DrawPathSearcher {
     this.line.points[1].size = 8;
 
     // 引脚复位
-    // if (mouseOver.recover) {
-    //   mouseOver.recover();
-    //   mouseOver.recover = undefined;
-    // }
+    if (this.mouseOverRecover) {
+      this.mouseOverRecover();
+      this.mouseOverRecover = undefined;
+    }
 
     // 终点在空白
-    if (!this.mouseOver) {
+    if (!mouseOver) {
       this.endList = endGrid;
+      this.status = SearchStatus.DrawSpace;
     }
     // 终点在导线
-    else if (this.mouseOver.kind === ElectronicKind.Line) {
+    else if (mouseOver.kind === ElectronicKind.Line) {
       // const mouseRound = end.round();
       // const mouseStatus = map.get(mouseRound)!;
 
@@ -79,33 +81,40 @@ export class DrawPathSearcher {
     }
     // 终点在器件
     else {
-      // const points = mouseOver.part.points.map((point) => point.position);
-      // const mouseToPart = new Point(mouseOver.part.position, end.add(mouseBias));
-      // const idlePoint = points.filter((_, i) => !mouseOver.part.connect[i]);
+      const overPart = mouseOver as Part;
+      const points = overPart.points.map((point) => point.position);
+      const mouseToPart = new Point(overPart.position, end.add(bias));
+      const idlePoint = points.filter((_, i) => !overPart.connects[i]);
 
-      // // 允许直接对齐
-      // if (idlePoint.length > 0) {
-      //   // 导线终点缩小
-      //   pointSize.$set(1, 2);
+      // 允许直接对齐
+      if (idlePoint.length > 0) {
+        // 导线终点缩小
+        line.points[1].size = 2;
 
-      //   // 优先对齐的引脚
-      //   const allowPoint = mouseToPart.minAngle(idlePoint);
-      //   const index = points.findIndex((node) => node.isEqual(allowPoint));
+        // 优先对齐的引脚
+        const allowPoint = mouseToPart.minAngle(idlePoint);
+        const index = points.findIndex((node) => node.isEqual(allowPoint));
 
-      //   // 该引脚缩放
-      //   mouseOver.part.pointSize.$set(index, 2);
-      //   // 缩放状态复位函数
-      //   mouseOver.recover = () => mouseOver.part.pointSize.$set(index, -1);
+        // 该引脚缩放
+        overPart.points[index].size = 2;
+        // 缩放状态复位函数
+        this.mouseOverRecover = () => {
+          overPart.points[index].size = -1;
+          overPart.update();
+        };
 
-      //   // 点对齐状态
-      //   status = Status.AlignPoint;
-      //   // 终点只有需要对齐的点
-      //   ends = [allowPoint.add(mouseOver.part.position)];
-      // }
-      // // 不允许直接对齐
-      // else {
-      //   ends = endGrid;
-      // }
+        // 点对齐状态
+        this.status = SearchStatus.DrawAlignPoint;
+        // 终点只有需要对齐的点
+        this.endList = [allowPoint.add(overPart.position)];
+
+        // 器件更新视图
+        overPart.update();
+      }
+      // 不允许直接对齐
+      else {
+        this.endList = endGrid;
+      }
     }
 
     // 按照到起点的距离，由大到小排序
@@ -137,54 +146,54 @@ export class DrawPathSearcher {
   }
 
   private getLinePath(end: Point) {
-    const { cache, endList } = this;
+    const { cache, endList, status } = this;
 
     let path = new LinePath();
 
-    // if (status === Status.AlignPoint) {
-    //   way = LinePath.from(cache.get(ends[0], endBias)!);
-    // }
-    // else if (status === Status.AlignLine) {
-    //   const endRound = end.round();
-    //   const endRoundWay = cache.get(endRound, endBias)!;
-    //   // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
-    //   const roundSet = ends.filter((node) => {
-    //     if (map.hasConnect(endRound, node, true)) {
-    //       const endStatus = map.getPoint(node, true);
-    //       return endStatus && endStatus.type !== map.NodeType.PartPoint;
-    //     }
-    //     else {
-    //       return false;
-    //     }
-    //   });
+    if (status === SearchStatus.DrawAlignPoint) {
+      path = LinePath.from(cache.get(endList[0])!);
+    }
+    else if (status === SearchStatus.DrawAlignLine) {
+      // const endRound = end.round();
+      // const endRoundWay = cache.get(endRound, endBias)!;
+      // // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+      // const roundSet = ends.filter((node) => {
+      //   if (map.hasConnect(endRound, node, true)) {
+      //     const endStatus = map.getPoint(node, true);
+      //     return endStatus && endStatus.type !== map.NodeType.PartPoint;
+      //   }
+      //   else {
+      //     return false;
+      //   }
+      // });
 
-    //   if (roundSet.length > 0) {
-    //     // 交集中离鼠标最近的点
-    //     const closest = end.closest(roundSet);
-    //     // 导线形状相似
-    //     if (endRoundWay.isSimilar(cache.get(closest, endBias)!)) {
-    //       way = LinePath.from(cache.get(closest, endBias)!);
-    //       way.endToLine([endRound, closest], end);
-    //       // pointSize.$set(1, 3);
-    //     }
-    //     else {
-    //       way = LinePath.from(endRoundWay);
-    //     }
-    //   }
-    //   else {
-    //     way = LinePath.from(endRoundWay);
-    //   }
-    // }
-    // else {
-    // 选取终点中节点最多的路径
-    const key = endList.filter((node) => cache.has(node)).reduce(
-      (pre, next) =>
-        (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
-    );
+      // if (roundSet.length > 0) {
+      //   // 交集中离鼠标最近的点
+      //   const closest = end.closest(roundSet);
+      //   // 导线形状相似
+      //   if (endRoundWay.isSimilar(cache.get(closest, endBias)!)) {
+      //     way = LinePath.from(cache.get(closest, endBias)!);
+      //     way.endToLine([endRound, closest], end);
+      //     // pointSize.$set(1, 3);
+      //   }
+      //   else {
+      //     way = LinePath.from(endRoundWay);
+      //   }
+      // }
+      // else {
+      //   way = LinePath.from(endRoundWay);
+      // }
+    }
+    else {
+      // 选取终点中节点最多的路径
+      const key = endList.filter((node) => cache.has(node)).reduce(
+        (pre, next) =>
+          (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
+      );
 
-    path = LinePath.from(cache.get(key)!);
-    path.endToPoint(end);
-    // }
+      path = LinePath.from(cache.get(key)!);
+      path.endToPoint(end);
+    }
 
     return path;
   }
