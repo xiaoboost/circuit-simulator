@@ -6,12 +6,13 @@ import { pointStyles } from './styles';
 import { PointKind, PointStatus } from './constant';
 import { useState, useRef, useEffect } from 'react';
 import { MouseFocusClassName } from '@circuit/electronics';
+import { Point } from '@circuit/math';
 
 interface Props {
   kind: PointKind;
   status: PointStatus;
+  position: Point;
   size?: number;
-  transform?: string;
   onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
@@ -79,7 +80,7 @@ export function ElectronicPoint(props: Props) {
         : 2;
     }
     else if (props.kind === PointKind.Line) {
-      return props.status === PointStatus.Close
+      return props.status === PointStatus.Open
         ? hover ? 8 : 4
         : 2;
     }
@@ -96,7 +97,7 @@ export function ElectronicPoint(props: Props) {
 
   return (
     <g
-      transform={props.transform}
+      transform={`translate(${props.position.join()})`}
       className={pointStyles.point}
     >
       <circle

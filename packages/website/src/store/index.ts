@@ -2,10 +2,9 @@ import { parse } from 'qs';
 import { local } from '@xiao-ai/utils/web';
 import { Watcher, delay } from '@xiao-ai/utils';
 import { CircuitDataKey } from './constant';
-import { PointLike } from '@circuit/math';
 import { CircuitData, ElectronicData } from './types';
 import { PartComponent, LineComponent } from 'src/components/electronics';
-import { PartData, LineData, ElectronicKind, LinePath } from '@circuit/electronics';
+import { PartData, LineData } from '@circuit/electronics';
 
 export * from './types';
 
@@ -78,18 +77,4 @@ export async function appDataInit() {
     loadApp(data);
     await delay(10);
   }
-}
-
-/** 创建器件 */
-export function newPart(kind: ElectronicKind) {
-  const part = new PartComponent(kind);
-  parts.setData(parts.data.concat(part));
-  return part;
-}
-
-/** 创建导线 */
-export function newLine(paths?: LinePath | PointLike[]) {
-  const line = new LineComponent(paths);
-  lines.setData(lines.data.concat(line));
-  return line;
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { PointLike } from '@circuit/math';
+import { ConstructorParameters } from '@xiao-ai/utils';
 import { useForceUpdate } from '@xiao-ai/utils/use';
 import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
@@ -8,6 +9,7 @@ import { PartComponent } from './part';
 import { lineStyles, partStyles } from './styles';
 import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
+import { lines } from 'src/store';
 import { Line, DrawPathSearcher, LinePin, MouseFocusClassName } from '@circuit/electronics';
 import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
 
@@ -15,6 +17,7 @@ export class LineComponent extends Line {
   constructor(paths: PointLike[] = []) {
     super(paths);
     this.updateRects();
+    lines.setData(lines.data.concat(this));
   }
 
   private _rects: RectSize[] = [];
@@ -24,9 +27,14 @@ export class LineComponent extends Line {
     return this._rects;
   }
 
+  /** 创建新导线 */
+  create(...args: ConstructorParameters<typeof LineComponent>) {
+    return new LineComponent(...args);
+  }
+
   /** 初始化 hook */
   private useInit() {
-    this.update = useForceUpdate();
+    this.updateView = useForceUpdate();
   }
   /** 更新接触方块 */
   private updateRects() {
@@ -55,6 +63,8 @@ export class LineComponent extends Line {
     }
 
     this.deleteMark();
+    this.updatePoints();
+    this.updateView();
     this._rects = [];
 
     const start = this.path[0];
@@ -83,7 +93,7 @@ export class LineComponent extends Line {
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {
         this.path = pathSearcher.search(ev.position, ev.movement);
-        this.update();
+        this.updateView();
       })
       .setEvent({
         type: 'mouseenter',
@@ -140,12 +150,12 @@ export class LineComponent extends Line {
     }
 
     this.points[1].size = -1;
-    this.path.endToPoint(finalEnd);
+    this.path = this.path.endToPoint(finalEnd);
 
     this.setConnectByWay(LinePin.End);
-    this.updateRects();
     this.setMark();
-    this.update();
+    this.updateRects();
+    this.updateView();
   }
 
   /** 渲染函数 */
@@ -166,8 +176,8 @@ export class LineComponent extends Line {
               key={point.index}
               size={point.size}
               kind={PointKind.Line}
+              position={point.position}
               status={point.isConnected ? PointStatus.Close : PointStatus.Open}
-              transform={`translate(${point.position.join()})`}
             />
           ))}
         </g>

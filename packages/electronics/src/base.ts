@@ -42,7 +42,7 @@ export abstract class Electronic {
   /** 元件编号 */
   id: string;
   /** 更新视图 */
-  update: () => void = () => void 0;
+  updateView: () => void = () => void 0;
 
   /** 元件类型 */
   readonly kind: ElectronicKind;

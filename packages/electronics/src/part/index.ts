@@ -1,5 +1,4 @@
 import { Electronic } from '../base';
-import { MarkNodeKind } from '@circuit/map';
 import { Electronics } from './prototype';
 import { ElectronicKind } from '../types';
 import { PartData, MarginDirection, ElectronicPrototype, PartPinStatus } from './types';
@@ -77,7 +76,7 @@ export class Part extends Electronic {
     return this._texts;
   }
 
-  private updateMargin() {
+  protected updateMargin() {
     const { prototype, rotate } = this;
 
     [Direction.Top, Direction.Right, Direction.Bottom, Direction.Left]
@@ -90,10 +89,10 @@ export class Part extends Electronic {
         (this._margin.padding as any)[index] = paddingLen;
       });
   }
-  private updateRotate() {
+  protected updateRotate() {
     this._invRotate = this._rotate.inverse();
   }
-  private updatePoints() {
+  protected updatePoints() {
     const { prototype, rotate } = this;
 
     for (let i = 0; i < prototype.points.length; i++) {
@@ -117,7 +116,7 @@ export class Part extends Electronic {
       }
     }
   }
-  private updateTexts() {
+  protected updateTexts() {
     this._texts = this.params
       .map((v, i) => ({ ...Electronics[this.kind].params[i], value: v }))
       .filter((txt) => txt.vision)

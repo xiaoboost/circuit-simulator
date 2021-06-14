@@ -10,7 +10,7 @@ import { MouseButtons } from '@xiao-ai/utils/web';
 import { stringifyClass } from '@xiao-ai/utils';
 import { ElectronicPoint } from './point';
 import { LineComponent } from './line';
-import { newLine } from 'src/store';
+import { parts } from 'src/store';
 import { DrawEventController } from '@circuit/event';
 import { ElectronicKind, Part, PartData } from '@circuit/electronics';
 import { PointKind, PointStatus, textHeight, textSpaceHeight } from './constant';
@@ -23,11 +23,12 @@ export class PartComponent extends Part {
     super(kind);
     this.textPosition = Directions[this.textPlacement].mul(100);
     this.updateTextPosition();
+    parts.setData(parts.data.concat(this));
   }
 
   /** 初始化 hook */
   private useInit() {
-    this.update = useForceUpdate();
+    this.updateView = useForceUpdate();
   }
 
   /** 更新文本位置 */
@@ -96,7 +97,7 @@ export class PartComponent extends Part {
       .setStopEvent({ type: 'click', which: 'Left' })
       .setMoveEvent((e) => {
         this.position = e.position;
-        this.update();
+        this.updateView();
       })
       .start()
       .then(() => {
@@ -112,7 +113,7 @@ export class PartComponent extends Part {
         );
 
         this.setMark();
-        this.update();
+        this.updateView();
       });
   }
 
@@ -142,12 +143,12 @@ export class PartComponent extends Part {
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((e) => {
         this.textPosition = this.textPosition.add(e.movement);
-        this.update();
+        this.updateView();
       })
       .start()
       .then(() => {
         this.updateTextPosition();
-        this.update();
+        this.updateView();
       });
   }
 
@@ -180,13 +181,14 @@ export class PartComponent extends Part {
     }
     // 该引脚为空
     else {
-      line = newLine([startPoint]);
+      line = new LineComponent([startPoint]);
       this.connections[i] = { id: line.id, mark: 0 };
       line.connections[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
     }
 
-    this.update();
+    this.updatePoints();
+    this.updateView();
     line.drawing();
   }
 
@@ -230,8 +232,8 @@ export class PartComponent extends Part {
               key={point.index}
               size={point.size}
               kind={PointKind.Part}
+              position={point.origin}
               status={point.isConnected ? PointStatus.Close : PointStatus.Open}
-              transform={`translate(${point.origin.join()})`}
               onMouseDown={(ev) => this.startDraw(ev, i)}
             />
           ))}

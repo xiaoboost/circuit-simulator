@@ -1,4 +1,5 @@
 import { Point } from '@circuit/math';
+import { MarkNodeKind } from '@circuit/map';
 import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
 import { Cache } from './cache';
@@ -44,8 +45,6 @@ export class DrawPathSearcher {
     /** 四方格坐标 */
     const endGrid = vertex.toGrid();
 
-    // debugger;
-
     // 导线终点默认最大半径
     this.line.points[1].size = 8;
 
@@ -62,22 +61,23 @@ export class DrawPathSearcher {
     }
     // 终点在导线
     else if (mouseOver.kind === ElectronicKind.Line) {
-      // const mouseRound = end.round();
-      // const mouseStatus = map.get(mouseRound)!;
+      debugger;
+      const mouseRound = end.round();
+      const mouseStatus = line.map.get(mouseRound)!;
 
-      // // 导线交错节点或者是空闲节点，则直接对齐
-      // if (
-      //   mouseStatus.type === map.NodeType.LinePoint ||
-      //   mouseStatus.type === map.NodeType.LineCrossPoint
-      // ) {
-      //   status = Status.AlignPoint;
-      //   ends = [mouseRound];
-      // }
-      // // 否则选取四方格中在导线上的点
-      // else {
-      //   status = Status.AlignLine;
-      //   ends = endGrid.filter((node) => map.isLine(node, true));
-      // }
+      // 导线交错节点或者是空闲节点，则直接对齐
+      if (
+        mouseStatus.kind === MarkNodeKind.LineSpacePoint ||
+        mouseStatus.kind === MarkNodeKind.LineCrossPoint
+      ) {
+        this.status = SearchStatus.DrawAlignPoint;
+        this.endList = [mouseRound];
+      }
+      // 否则选取四方格中在导线上的点
+      else {
+        this.status = SearchStatus.DrawAlignLine;
+        this.endList = endGrid.filter((node) => line.map.get(node)?.isLine);
+      }
     }
     // 终点在器件
     else {
@@ -100,7 +100,7 @@ export class DrawPathSearcher {
         // 缩放状态复位函数
         this.mouseOverRecover = () => {
           overPart.points[index].size = -1;
-          overPart.update();
+          overPart.updateView();
         };
 
         // 点对齐状态
@@ -109,7 +109,7 @@ export class DrawPathSearcher {
         this.endList = [allowPoint.add(overPart.position)];
 
         // 器件更新视图
-        overPart.update();
+        overPart.updateView();
       }
       // 不允许直接对齐
       else {
@@ -146,7 +146,7 @@ export class DrawPathSearcher {
   }
 
   private getLinePath(end: Point) {
-    const { cache, endList, status } = this;
+    const { cache, endList, status, line } = this;
 
     let path = new LinePath();
 
@@ -154,35 +154,35 @@ export class DrawPathSearcher {
       path = LinePath.from(cache.get(endList[0])!);
     }
     else if (status === SearchStatus.DrawAlignLine) {
-      // const endRound = end.round();
-      // const endRoundWay = cache.get(endRound, endBias)!;
-      // // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
-      // const roundSet = ends.filter((node) => {
-      //   if (map.hasConnect(endRound, node, true)) {
-      //     const endStatus = map.getPoint(node, true);
-      //     return endStatus && endStatus.type !== map.NodeType.PartPoint;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      // });
+      const endRound = end.round();
+      const endMapData = line.map.get(endRound)!;
+      const endRoundWay = cache.get(endRound)!;
+      // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+      const roundSet = this.endList.filter((node) => {
+        if (endMapData.hasConnect(node)) {
+          return line.map.get(node)?.kind !== MarkNodeKind.PartPin;
+        }
+        else {
+          return false;
+        }
+      });
 
-      // if (roundSet.length > 0) {
-      //   // 交集中离鼠标最近的点
-      //   const closest = end.closest(roundSet);
-      //   // 导线形状相似
-      //   if (endRoundWay.isSimilar(cache.get(closest, endBias)!)) {
-      //     way = LinePath.from(cache.get(closest, endBias)!);
-      //     way.endToLine([endRound, closest], end);
-      //     // pointSize.$set(1, 3);
-      //   }
-      //   else {
-      //     way = LinePath.from(endRoundWay);
-      //   }
-      // }
-      // else {
-      //   way = LinePath.from(endRoundWay);
-      // }
+      if (roundSet.length > 0) {
+        // 交集中离鼠标最近的点
+        const closest = end.closest(roundSet);
+        // 导线形状相似
+        if (endRoundWay.isSimilar(cache.get(closest)!)) {
+          path = LinePath.from(cache.get(closest)!);
+          path.endToLine([endRound, closest], end);
+          line.points[1].size = 3;
+        }
+        else {
+          path = LinePath.from(endRoundWay);
+        }
+      }
+      else {
+        path = LinePath.from(endRoundWay);
+      }
     }
     else {
       // 选取终点中节点最多的路径

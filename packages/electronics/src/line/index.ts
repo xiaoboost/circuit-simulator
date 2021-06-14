@@ -34,7 +34,7 @@ export class Line extends Electronic {
     return this._points;
   }
 
-  private updatePoints() {
+  protected updatePoints() {
     if (this.path.length === 0) {
       this._points = [];
     }
@@ -179,7 +179,6 @@ export class Line extends Electronic {
   setMark() {
     const { path, map } = this;
 
-    debugger;
     let last: MarkMapNode | undefined;
     let current: MarkMapNode | undefined;
 
@@ -276,8 +275,8 @@ export class Line extends Electronic {
       };
 
       status.addLabel(this.id, index);
-      part.update();
-      this.update();
+      part.updateView();
+      this.updateView();
     }
     // 端点在导线上
     else if (status.kind === MarkNodeKind.Line) {
