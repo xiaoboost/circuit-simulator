@@ -1,6 +1,6 @@
 import { ElectronicKind, Connect } from './types';
-import { isNumber } from '@xiao-ai/utils';
 import { Electronics } from './part';
+import { isNumber } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
 
 import type { Part } from './part';
@@ -12,6 +12,12 @@ const map = new MarkMap();
 const lines: Line[] = [];
 /** 全局所有器件 */
 const parts: Part[] = [];
+
+// 调试模式下数据储存在全局
+if (process.env.NODE_ENV === 'development') {
+  (window as any)._lines = lines;
+  (window as any)._parts = parts;
+}
 
 function createId(id: string): string {
   const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;

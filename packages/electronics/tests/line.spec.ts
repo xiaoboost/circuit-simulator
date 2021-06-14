@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { writeSnapshot, loadPart, loadLine } from './utils';
+import { snapshot, loadPart, loadLine } from './utils';
 
 test('导线图纸标记，两端器件', ({ deepEqual }) => {
   const part1 = loadPart('R_1', [100, 100]);
@@ -13,5 +13,5 @@ test('导线图纸标记，两端器件', ({ deepEqual }) => {
   line.setConnectByWay();
   line.setMark();
 
-  writeSnapshot('line-two-part', line.map.toData(), deepEqual);
+  snapshot('line-two-part', line.map.toData(), deepEqual);
 });

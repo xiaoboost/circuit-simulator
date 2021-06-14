@@ -26,6 +26,7 @@
     "url": "https://github.com/xiaoboost/circuit-simulator.git"
   },
   "dependencies": {
+    "@circuit/electronics": "workspace:*",
     "@circuit/map": "workspace:*",
     "@circuit/math": "workspace:*",
     "@xiao-ai/utils": "^1.4.1"
