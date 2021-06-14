@@ -3,7 +3,7 @@ import test from 'ava';
 import { Part } from '../src';
 import { snapshot } from './utils';
 
-test('器件的图纸标记', ({ deepEqual }) => {
+test('器件图纸标记', ({ deepEqual }) => {
   const position = [100, 100];
   const partId = 'R_1';
   const part = new Part({

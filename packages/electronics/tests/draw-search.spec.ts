@@ -1,37 +1,9 @@
 import test from 'ava';
 
-import { Part, Line, DrawPathSearcher } from '../src';
-import { Point, Direction, Directions } from '@circuit/math';
+import { DrawPathSearcher } from '../src';
+import { Point } from '@circuit/math';
 
-function loadPart(position: [number, number]) {
-  const part = new Part({
-    id: 'R_1',
-    kind: 'Resistance',
-    position,
-  });
-
-  part.setMark();
-
-  return part;
-}
-
-function loadBase(position: [number, number]) {
-  const start = Point.from([position[0] + 40, position[1]]);
-  const line = new Line([start]);
-  const part = loadPart(position);
-
-  part.connects[1] = {
-    id: line.id,
-    mark: 1,
-  };
-
-  line.connects[0] = {
-    id: part.id,
-    mark: 0,
-  };
-
-  return [part, line, start, Directions[Direction.Right]] as const;
-}
+import { loadBase, loadPart } from './utils';
 
 test('终点为空白', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
@@ -60,7 +32,7 @@ test('终点为空白，有器件挡道', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
   const searcher = new DrawPathSearcher(start, direction, line);
 
-  loadPart([300, 300]);
+  loadPart('R_2', [300, 300]);
 
   const path = searcher.search(Point.from([310, 360]), Point.from([0, 0]));
 
@@ -74,7 +46,7 @@ test('终点为空白，有器件挡道', ({ deepEqual }) => {
 
 test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
-  const part = loadPart([300, 300]);
+  const part = loadPart('R_2', [300, 300]);
   const searcher = new DrawPathSearcher(start, direction, line);
 
   let path = searcher.search(Point.from([200, 150]), Point.from([0, 0]));
@@ -124,10 +96,10 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
 
 test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
-  const part = loadPart([300, 300]);
+  const part = loadPart('R_2', [300, 300]);
   const searcher = new DrawPathSearcher(start, direction, line);
 
-  part.connects[0] = part.connects[1] = {
+  part.connections[0] = part.connections[1] = {
     id: 'test',
     mark: 0,
   };

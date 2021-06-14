@@ -5,17 +5,11 @@ import { MarkMap, MarkNodeKind } from '@circuit/map';
 
 // 工具函数
 // 返回 node 所在器件
-function getPart(map: MarkMap, node: Point): string {
+function getPart(map: MarkMap, node: Point) {
   const status = map.get(node);
 
-  if (status && status.kind === MarkNodeKind.Part) {
-    return status.label;
-  }
-  else if (status && status.kind === MarkNodeKind.PartPoint) {
-    return status.label.split('-')[0];
-  }
-  else {
-    return '';
+  if (status?.kind === MarkNodeKind.Part || status?.kind === MarkNodeKind.PartPin) {
+    return status.label.id;
   }
 }
 // 返回 node 所在线段
@@ -55,11 +49,11 @@ function nodesDistance(a: Point, b: Point) {
 function isNodeVerticalLine(map: MarkMap, node: SearchNodeData) {
   const status = map.get(node.position);
 
-  if (!status || !status.connect) {
+  if (!status || !status.connections) {
     return false;
   }
 
-  return status.connect.every(
+  return status.connections.every(
     (connect) =>
       connect.add(node.position, -1).isVertical(node.direction),
   );
@@ -123,19 +117,19 @@ function isLegalPointGeneral(this: Rules, node: SearchNodeData, pointLimit = 2):
   }
   // 器件节点
   else if (status.kind === MarkNodeKind.Part) {
-    return this.excludeParts.includes(status.label);
+    return this.excludeParts.includes(status.label.id);
   }
   // 器件节点
-  else if (status.kind === MarkNodeKind.PartPoint) {
+  else if (status.kind === MarkNodeKind.PartPin) {
     // 距离等于 1 的范围内都可以
-    const [part] = status.label.split('-');
+    const part = status.label.id;
     return (
       this.excludeParts.includes(part) ||
       nodesDistance(node.position, this.end) < pointLimit
     );
   }
   // 导线结点
-  else if (status.kind === MarkNodeKind.LinePoint) {
+  else if (status.kind === MarkNodeKind.LineSpacePoint) {
     // 排除、或者距离在 1 以内
     return (
       this.excludeLines.some((line) => isNodeInLine(node.position, line)) ||
@@ -204,12 +198,15 @@ export class Rules {
         this.isEnd = checkNodeInLineWhenDraw;
         this.checkPoint = isLegalPointAlign;
       }
-      else if (endData.kind === MarkNodeKind.PartPoint) {
+      else if (endData.kind === MarkNodeKind.PartPin) {
         this.isEnd = isEndPoint;
         this.checkPoint = isLegalPointAlign;
       }
       else if (endData.kind === MarkNodeKind.Part) {
-        this.excludeParts.push(getPart(this.map, this.end));
+        const partId = getPart(this.map, this.end);
+
+        partId && this.excludeParts.push[partId];
+
         this.isEnd = isEndPoint;
         this.checkPoint = isLegalPointGeneral;
       }

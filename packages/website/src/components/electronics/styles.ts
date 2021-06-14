@@ -57,8 +57,10 @@ export const lineStyles = createStyles({
 
 export const pointStyles = createStyles({
   point: {
-    '& rect': {
+    [`& .${MouseFocusClassName}`]: {
       strokeWidth: 0,
+      fill: 'transparent',
+      stroke: 'transparent',
     },
     '&:hover': {
       cursor: drawLineCursor,

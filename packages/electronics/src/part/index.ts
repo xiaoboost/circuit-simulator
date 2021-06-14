@@ -102,7 +102,7 @@ export class Part extends Electronic {
 
       this.points[i] = {
         index: i,
-        isConnected: Boolean(this.connects[i]),
+        isConnected: Boolean(this.connections[i]),
         origin: Point.from(point.position),
         position: Point.prototype.rotate.call(point.position, rotate),
         direction: Point.prototype.rotate.call(Directions[point.direction], rotate),
@@ -152,18 +152,16 @@ export class Part extends Electronic {
   setMark() {
     for (const point of this.padding()) {
       this.map.set({
-        label: this.id,
+        id: this.id,
         position: point,
-        kind: MarkNodeKind.Part,
       });
     }
 
     for (let i = 0; i < this.points.length; i++) {
       this.map.set({
-        label: this.id,
-        position: this.points[i].position.add(this.position),
-        kind: MarkNodeKind.PartPoint,
+        id: this.id,
         mark: i,
+        position: this.points[i].position.add(this.position),
       });
     }
   }

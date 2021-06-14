@@ -3,8 +3,9 @@ import React from 'react';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { mapState } from '../drawing-sheet/map';
 import { pointStyles } from './styles';
-import { useState, useRef, useEffect } from 'react';
 import { PointKind, PointStatus } from './constant';
+import { useState, useRef, useEffect } from 'react';
+import { MouseFocusClassName } from '@circuit/electronics';
 
 interface Props {
   kind: PointKind;
@@ -47,7 +48,7 @@ export function ElectronicPoint(props: Props) {
   function onMouseLeave() {
     setInner(getSize(false));
   }
-  
+
   function getCircleStyle() {
     const data: React.SVGProps<SVGCircleElement> = {};
 
@@ -122,6 +123,7 @@ export function ElectronicPoint(props: Props) {
         y='-8.5'
         height='17'
         width='17'
+        className={MouseFocusClassName}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onMouseDown={props.onMouseDown}

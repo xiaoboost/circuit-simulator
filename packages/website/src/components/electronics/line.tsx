@@ -6,8 +6,9 @@ import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
 import { lineStyles, partStyles } from './styles';
+import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
-import { Line, DrawPathSearcher } from '@circuit/electronics';
+import { Line, DrawPathSearcher, LinePin, MouseFocusClassName } from '@circuit/electronics';
 import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
 
 export class LineComponent extends Line {
@@ -27,7 +28,6 @@ export class LineComponent extends Line {
   private useInit() {
     this.update = useForceUpdate();
   }
-
   /** 更新接触方块 */
   private updateRects() {
     this._rects = [];
@@ -58,7 +58,7 @@ export class LineComponent extends Line {
     this._rects = [];
 
     const start = this.path[0];
-    const connect = this.connects[0];
+    const connect = this.connections[0];
 
     if (!connect) {
       throw new Error(`空连接导线`);
@@ -115,7 +115,37 @@ export class LineComponent extends Line {
       })
       .start();
 
-    debugger;
+    /** 格式化终点坐标 */
+    let finalEnd = this.path.get(-1).round();
+    /** 终点信息 */
+    const endData = this.map.get(finalEnd);
+    /** 终点坐标 */
+    const endNode = this.path.get(-1);
+
+    // 起点和终点相等或者只有一个点，则删除当前导线
+    if (this.path.length < 2 || finalEnd.isEqual(this.path[0])) {
+      this.delete();
+      return;
+    }
+
+    // 终点被占用
+    if (endData && endData.kind === MarkNodeKind.Part) {
+      finalEnd = (
+        finalEnd
+          .around((node) => !this.map.has(node))
+          .reduce((pre, next) =>
+            endNode.distance(pre) < endNode.distance(next) ? pre : next,
+          )
+      );
+    }
+
+    this.points[1].size = -1;
+    this.path.endToPoint(finalEnd);
+
+    this.setConnectByWay(LinePin.End);
+    this.updateRects();
+    this.setMark();
+    this.update();
   }
 
   /** 渲染函数 */
@@ -125,11 +155,11 @@ export class LineComponent extends Line {
     const { path, rects, points, id } = this;
 
     return (
-      <g className={lineStyles.line} data-id={id}>
+      <g data-id={id} className={lineStyles.line}>
         <path d={path.stringify()} />
         <g className={lineStyles.lineFocus}>
           {rects.map((rect, i) => (
-            <rect key={i} {...rect} />
+            <rect key={i} className={MouseFocusClassName} {...rect} />
           ))}
           {points.map((point) => (
             <ElectronicPoint

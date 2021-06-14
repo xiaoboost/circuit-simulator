@@ -39,6 +39,11 @@ export class MarkMapNode implements MarkNodeData {
     return this.kind < 20;
   }
 
+  /** 首个标签 */
+  get label(): Readonly<MarkNodeLabel> {
+    return this.labels[0];
+  }
+
   private updateKind() {
     if (this.labels.length === 0) {
       throw new Error('没有标签');

@@ -1,4 +1,5 @@
 import { Point, PointLike } from '@circuit/math';
+import { LinePin } from '../types';
 
 /** 导线路径类 */
 export class LinePath extends Array<Point> {
@@ -117,7 +118,7 @@ export class LinePath extends Array<Point> {
   }
 
   /** 获取当前线段的方向 */
-  getSubWayVector(index: number) {
+  getSubVector(index: number) {
     return new Point(this[index], this[index + 1]).sign().mul(20);
   }
 
@@ -125,17 +126,17 @@ export class LinePath extends Array<Point> {
    * 终点（起点）指向某点
    *  - 导线节点数量少于`1`则忽略
    */
-  endToPoint(node: Point, mode: 'start' | 'end' = 'end'): this {
+  endToPoint(node: Point, pin: LinePin = LinePin.End): this {
     if (this.length <= 1) {
       return this;
     }
 
     let last, prev;
-    if (mode === 'end') {
+    if (pin === LinePin.End) {
       last = this.length - 1;
       prev = this.length - 2;
     }
-    else if (mode === 'start') {
+    else if (pin === LinePin.Start) {
       last = 0;
       prev = 1;
     }
@@ -170,5 +171,28 @@ export class LinePath extends Array<Point> {
     this.get(-1)[byMouse] = mouse[byMouse];
 
     return this;
+  }
+
+  /** 迭代每个节点 */
+  *forEachPoint() {
+    let index = 0;
+    let node = Point.from(this[0]);
+    let vector = this.getSubVector(0);
+
+    while (!node.isEqual(this.get(-1))) {
+      yield node;
+
+      node = node.add(vector);
+
+      if (
+        index < this.length - 2 &&
+        node.isEqual(this[index + 1])
+      ) {
+        index++;
+        vector = this.getSubVector(index);
+      }
+    }
+
+    yield node;
   }
 }

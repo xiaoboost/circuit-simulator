@@ -162,7 +162,7 @@ export class PartComponent extends Part {
     let line: LineComponent;
 
     const startPoint = this.position.add(this.points[i].position);
-    const connect = this.connects[i];
+    const connect = this.connections[i];
 
     // 该引脚已有连接
     if (connect) {
@@ -174,15 +174,15 @@ export class PartComponent extends Part {
         line.reverse();
       }
 
-      this.connects[i] = undefined;
-      line.connects[mark] = undefined;
+      this.connections[i] = undefined;
+      line.connections[mark] = undefined;
       this.setSelects([line.id]);
     }
     // 该引脚为空
     else {
       line = newLine([startPoint]);
-      this.connects[i] = { id: line.id, mark: 0 };
-      line.connects[0] = { id: this.id, mark: i };
+      this.connections[i] = { id: line.id, mark: 0 };
+      line.connections[0] = { id: this.id, mark: i };
       this.setSelects([this.id]);
     }
 

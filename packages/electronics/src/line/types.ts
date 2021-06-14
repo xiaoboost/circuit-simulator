@@ -20,3 +20,11 @@ export interface LinePinStatus {
   /** 现在节点相对图纸原点位置 */
   position: Point;
 }
+
+/** 导线断点 */
+export const enum LinePin {
+  Start,
+  End,
+  Middle,
+  None,
+}

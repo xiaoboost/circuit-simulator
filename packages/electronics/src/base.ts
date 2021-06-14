@@ -27,9 +27,9 @@ function createId(id: string): string {
 }
 
 interface ElectronicOption {
-  kind: ElectronicKind | keyof typeof ElectronicKind;
   id?: string;
-  connects?: (Connect | undefined)[];
+  kind: ElectronicKind | keyof typeof ElectronicKind;
+  connections?: (Connect | undefined)[];
 }
 
 export abstract class Electronic {
@@ -43,7 +43,7 @@ export abstract class Electronic {
   /** 图纸数据 */
   readonly map = map;
   /** 元件的连接表 */
-  readonly connects: (Connect | undefined)[];
+  readonly connections: (Connect | undefined)[];
 
   constructor(opt: ElectronicKind | ElectronicOption) {
     const options = isNumber(opt)
@@ -58,7 +58,7 @@ export abstract class Electronic {
       };
 
     this.kind = options.kind;
-    this.connects = options.connects ?? [];
+    this.connections = options.connections ?? [];
 
     if (options.id) {
       this.id = options.id;
@@ -81,6 +81,25 @@ export abstract class Electronic {
   /** 删除自己 */
   delete() {
     // ..
+  }
+
+  /** 是否存在连接 */
+  hasConnect(id: string, mark?: number) {
+    return this.connections.some((item) => {
+      if (!item) {
+        return false;
+      }
+
+      if (item.id !== id) {
+        return false;
+      }
+
+      if (mark && item.mark !== mark) {
+        return false;
+      }
+
+      return true;
+    });
   }
 
   /** 搜索元件 */

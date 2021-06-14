@@ -43,7 +43,7 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>, getMapState: () => 
          */
         if (current && current.isStart) {
           delay().then(() => {
-            if (current?.isStart) {
+            if (current && current.isStart) {
               current.events.forEachInChannel(channel, (handle) => {
                 if (!handle.selector) {
                   handle.callback(drawEvent);

@@ -1,52 +1,72 @@
 {
   "80,100": {
-    "label": "R_1",
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
     "kind": "Part",
     "position": [
       80,
       100
     ],
-    "connect": [],
-    "mark": -1
+    "connections": []
   },
   "100,100": {
-    "label": "R_1",
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
     "kind": "Part",
     "position": [
       100,
       100
     ],
-    "connect": [],
-    "mark": -1
+    "connections": []
   },
   "120,100": {
-    "label": "R_1",
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
     "kind": "Part",
     "position": [
       120,
       100
     ],
-    "connect": [],
-    "mark": -1
+    "connections": []
   },
   "60,100": {
-    "label": "R_1",
-    "kind": "PartPoint",
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": 0
+      }
+    ],
+    "kind": "PartPin",
     "position": [
       60,
       100
     ],
-    "connect": [],
-    "mark": 0
+    "connections": []
   },
   "140,100": {
-    "label": "R_1",
-    "kind": "PartPoint",
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": 1
+      }
+    ],
+    "kind": "PartPin",
     "position": [
       140,
       100
     ],
-    "connect": [],
-    "mark": 1
+    "connections": []
   }
 }
