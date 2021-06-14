@@ -150,7 +150,7 @@ export class LineComponent extends Line {
     }
 
     this.points[1].size = -1;
-    this.path = this.path.endToPoint(finalEnd);
+    this.path.endToPoint(finalEnd);
 
     this.setConnectByWay(LinePin.End);
     this.setMark();

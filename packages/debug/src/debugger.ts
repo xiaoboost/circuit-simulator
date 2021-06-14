@@ -2,7 +2,6 @@ import { NS, elIdName, nodeColor } from './constant';
 
 import type { PointLike } from '@circuit/math';
 import type { MarkNodeLabel } from '@circuit/map';
-import type { Line, Part, Connect } from '@circuit/electronics';
 
 class Debugger {
   /**
@@ -65,9 +64,9 @@ class Debugger {
   whole() {
     let count = 0;
 
-    const lines: Line[] = (window as any)._lines ?? [];
-    const parts: Part[] = (window as any)._parts ?? [];
-    const getConnect = (data: Connect | undefined) => data ? `${data.id}-${data.mark}` : '';
+    const lines: any[] = (window as any)._lines ?? [];
+    const parts: any[] = (window as any)._parts ?? [];
+    const getConnect = (data: any) => data ? `${data.id}-${data.mark}` : '';
 
     for (const line of lines) {
       this.text(
@@ -91,7 +90,8 @@ class Debugger {
       }).join(', ');
     };
 
-    for (const status of Object.values(map.toData())) {
+    for (const data of Object.values(map.toData())) {
+      const status = data as any;
       const point = status.position;
       // 点本身
       this.point(point, nodeColor[status.kind]);
@@ -116,7 +116,7 @@ class Debugger {
       }
 
       // 点的连接关系
-      (status.connections || []).forEach(([tx, ty]) => {
+      (status.connections || []).forEach(([tx, ty]: [number, number]) => {
         const [x, y] = point;
 
         if (x - tx < 0) {

@@ -4,21 +4,20 @@ importers:
 
   .:
     specifiers:
-      '@typescript-eslint/eslint-plugin': ^4.26.1
-      '@typescript-eslint/parser': ^4.26.1
+      '@typescript-eslint/eslint-plugin': ^4.27.0
+      '@typescript-eslint/parser': ^4.27.0
       eslint: ^7.28.0
       eslint-plugin-react: ^7.24.0
       npm-check-updates: ^11.6.0
     devDependencies:
-      '@typescript-eslint/eslint-plugin': registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1_ab05164168c44753f23ef96ba1d198fc
-      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0
+      '@typescript-eslint/eslint-plugin': registry.nlark.com/@typescript-eslint/eslint-plugin/4.27.0_b68dfa9489396dca939622e90706ff8d
+      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.27.0_eslint@7.28.0
       eslint: registry.nlark.com/eslint/7.28.0
       eslint-plugin-react: registry.nlark.com/eslint-plugin-react/7.24.0_eslint@7.28.0
       npm-check-updates: registry.nlark.com/npm-check-updates/11.6.0
 
   packages/debug:
     specifiers:
-      '@circuit/electronics': workspace:*
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/tsconfig': workspace:*
@@ -29,7 +28,6 @@ importers:
       tslib: ^2.3.0
       typescript: ^4.3.2
     dependencies:
-      '@circuit/electronics': link:../electronics
       '@circuit/map': link:../map
       '@circuit/math': link:../math
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
@@ -4290,6 +4288,7 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha1-zy04vcNKE0vK8QkcQfZhni9nLQA=, tarball: tslib/download/tslib-1.14.1.tgz?cache=0&sync_timestamp=1617678228590&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-1.14.1.tgz}
+    dev: false
 
   /tslib/2.2.0:
     resolution: {integrity: sha1-+yxHWXfjXiQTEe3iaTzuHsZpj1w=, tarball: tslib/download/tslib-2.2.0.tgz?cache=0&sync_timestamp=1617678228590&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Ftslib%2Fdownload%2Ftslib-2.2.0.tgz}
@@ -4305,7 +4304,7 @@ packages:
     peerDependencies:
       typescript: '>=2.8.0 || >= 3.2.0-dev || >= 3.3.0-dev || >= 3.4.0-dev || >= 3.5.0-dev || >= 3.6.0-dev || >= 3.6.0-beta || >= 3.7.0-dev || >= 3.7.0-beta'
     dependencies:
-      tslib: 1.14.1
+      tslib: registry.nlark.com/tslib/1.14.1
     dev: true
 
   /tunnel-agent/0.6.0:
@@ -5260,47 +5259,44 @@ packages:
       source-map: 0.6.1
     dev: true
 
-  registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1_ab05164168c44753f23ef96ba1d198fc:
-    resolution: {integrity: sha1-uccxMyHLg34r+L6+eswiIGWeZ9M=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-4.26.1.tgz}
-    id: registry.nlark.com/@typescript-eslint/eslint-plugin/4.26.1
+  registry.nlark.com/@typescript-eslint/eslint-plugin/4.27.0_b68dfa9489396dca939622e90706ff8d:
+    resolution: {integrity: sha1-C3/JdOi8myteuY7VFCewvlKbStA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/eslint-plugin/download/@typescript-eslint/eslint-plugin-4.27.0.tgz}
+    id: registry.nlark.com/@typescript-eslint/eslint-plugin/4.27.0
     name: '@typescript-eslint/eslint-plugin'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       '@typescript-eslint/parser': ^4.0.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0
-      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
+      '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.27.0_eslint@7.28.0
+      '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.27.0_eslint@7.28.0
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.27.0
       debug: 4.3.1
       eslint: registry.nlark.com/eslint/7.28.0
       functional-red-black-tree: 1.0.1
       lodash: 4.17.21
-      regexpp: 3.1.0
+      regexpp: registry.nlark.com/regexpp/3.1.0
       semver: 7.3.5
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1_eslint@7.28.0:
-    resolution: {integrity: sha1-o1mAojkNqSMqogayf2IOq2bpQUI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-4.26.1.tgz?cache=0&sync_timestamp=1623137635617&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fexperimental-utils%2Fdownload%2F%40typescript-eslint%2Fexperimental-utils-4.26.1.tgz}
-    id: registry.nlark.com/@typescript-eslint/experimental-utils/4.26.1
+  registry.nlark.com/@typescript-eslint/experimental-utils/4.27.0_eslint@7.28.0:
+    resolution: {integrity: sha1-eBkqYWRy0ZnwhOq48Q+WLAdXzRw=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/experimental-utils/download/@typescript-eslint/experimental-utils-4.27.0.tgz}
+    id: registry.nlark.com/@typescript-eslint/experimental-utils/4.27.0
     name: '@typescript-eslint/experimental-utils'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: '*'
     dependencies:
       '@types/json-schema': registry.nlark.com/@types/json-schema/7.0.7
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
-      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.27.0
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.27.0
+      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.27.0
       eslint: registry.nlark.com/eslint/7.28.0
       eslint-scope: 5.1.1
       eslint-utils: registry.nlark.com/eslint-utils/3.0.0_eslint@7.28.0
@@ -5309,58 +5305,50 @@ packages:
       - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/parser/4.26.1_eslint@7.28.0:
-    resolution: {integrity: sha1-zs/dXrelwTqrzhwc/X+6+1oPHo4=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/parser/download/@typescript-eslint/parser-4.26.1.tgz?cache=0&sync_timestamp=1623135434884&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fparser%2Fdownload%2F%40typescript-eslint%2Fparser-4.26.1.tgz}
-    id: registry.nlark.com/@typescript-eslint/parser/4.26.1
+  registry.nlark.com/@typescript-eslint/parser/4.27.0_eslint@7.28.0:
+    resolution: {integrity: sha1-hUR+VzNkvOTEbH9kq6pJharfWpQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/parser/download/@typescript-eslint/parser-4.27.0.tgz}
+    id: registry.nlark.com/@typescript-eslint/parser/4.27.0
     name: '@typescript-eslint/parser'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.26.1
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
-      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1
+      '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.27.0
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.27.0
+      '@typescript-eslint/typescript-estree': registry.nlark.com/@typescript-eslint/typescript-estree/4.27.0
       debug: 4.3.1
       eslint: registry.nlark.com/eslint/7.28.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/scope-manager/4.26.1:
-    resolution: {integrity: sha1-B1p0oV/zPuOn7TPl/OFu6GaJ9mI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/scope-manager/download/@typescript-eslint/scope-manager-4.26.1.tgz?cache=0&sync_timestamp=1623135439152&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fscope-manager%2Fdownload%2F%40typescript-eslint%2Fscope-manager-4.26.1.tgz}
+  registry.nlark.com/@typescript-eslint/scope-manager/4.27.0:
+    resolution: {integrity: sha1-sLHeKzWq9/Uy6JyOgdD6KYyuMn0=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/scope-manager/download/@typescript-eslint/scope-manager-4.27.0.tgz}
     name: '@typescript-eslint/scope-manager'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
-      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.27.0
+      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.27.0
     dev: true
 
-  registry.nlark.com/@typescript-eslint/types/4.26.1:
-    resolution: {integrity: sha1-nnxSP3PDSwSnZeQWfKVlBDbvHTg=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/types/download/@typescript-eslint/types-4.26.1.tgz?cache=0&sync_timestamp=1623135445624&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Ftypes%2Fdownload%2F%40typescript-eslint%2Ftypes-4.26.1.tgz}
+  registry.nlark.com/@typescript-eslint/types/4.27.0:
+    resolution: {integrity: sha1-cStAhRntaZuv9pCGvFnNL8E9+Ng=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/types/download/@typescript-eslint/types-4.27.0.tgz}
     name: '@typescript-eslint/types'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dev: true
 
-  registry.nlark.com/@typescript-eslint/typescript-estree/4.26.1:
-    resolution: {integrity: sha1-ss4ueJIz1iKD+uLBa6q9Tx28ljM=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-4.26.1.tgz?cache=0&sync_timestamp=1623135434075&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Ftypescript-estree%2Fdownload%2F%40typescript-eslint%2Ftypescript-estree-4.26.1.tgz}
+  registry.nlark.com/@typescript-eslint/typescript-estree/4.27.0:
+    resolution: {integrity: sha1-GJp7nx0HF9XMzcwXJHaS3t96Cdo=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/typescript-estree/download/@typescript-eslint/typescript-estree-4.27.0.tgz}
     name: '@typescript-eslint/typescript-estree'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^10.12.0 || >=12.0.0}
-    peerDependencies:
-      typescript: '*'
-    peerDependenciesMeta:
-      typescript:
-        optional: true
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
-      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.27.0
+      '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.27.0
       debug: 4.3.1
       globby: 11.0.3
       is-glob: 4.0.1
@@ -5368,15 +5356,16 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
+      - typescript
     dev: true
 
-  registry.nlark.com/@typescript-eslint/visitor-keys/4.26.1:
-    resolution: {integrity: sha1-DVXqc1yw2JA7GYAX1tT1GP2qxUY=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/visitor-keys/download/@typescript-eslint/visitor-keys-4.26.1.tgz?cache=0&sync_timestamp=1623135446979&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40typescript-eslint%2Fvisitor-keys%2Fdownload%2F%40typescript-eslint%2Fvisitor-keys-4.26.1.tgz}
+  registry.nlark.com/@typescript-eslint/visitor-keys/4.27.0:
+    resolution: {integrity: sha1-9WE4uZPsgieT5+vPrG/9zgpgy4E=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/@typescript-eslint/visitor-keys/download/@typescript-eslint/visitor-keys-4.27.0.tgz}
     name: '@typescript-eslint/visitor-keys'
-    version: 4.26.1
+    version: 4.27.0
     engines: {node: ^8.10.0 || ^10.13.0 || >=11.10.1}
     dependencies:
-      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.26.1
+      '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.27.0
       eslint-visitor-keys: registry.nlark.com/eslint-visitor-keys/2.1.0
     dev: true
 
@@ -6980,6 +6969,13 @@ packages:
       object-assign: 4.1.1
     dev: false
 
+  registry.nlark.com/regexpp/3.1.0:
+    resolution: {integrity: sha1-IG0K0KVkjP+9uK5GQ489xRyfeOI=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/regexpp/download/regexpp-3.1.0.tgz}
+    name: regexpp
+    version: 3.1.0
+    engines: {node: '>=8'}
+    dev: true
+
   registry.nlark.com/remote-git-tags/3.0.0:
     resolution: {integrity: sha1-Qk+Ows3qALta8XhKSRkPJeFpg8M=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/remote-git-tags/download/remote-git-tags-3.0.0.tgz}
     name: remote-git-tags
@@ -7278,6 +7274,12 @@ packages:
       source-map-support: 0.5.19
       typescript: registry.nlark.com/typescript/4.3.2
       yn: 3.1.1
+    dev: true
+
+  registry.nlark.com/tslib/1.14.1:
+    resolution: {integrity: sha1-zy04vcNKE0vK8QkcQfZhni9nLQA=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/tslib/download/tslib-1.14.1.tgz}
+    name: tslib
+    version: 1.14.1
     dev: true
 
   registry.nlark.com/tslib/2.3.0:
