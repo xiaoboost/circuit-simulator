@@ -49,6 +49,9 @@ export abstract class Electronic {
   /** 元件的连接表 */
   readonly connections: (Connect | undefined)[];
 
+  /** 排序下标 */
+  sortIndex?: number;
+
   constructor(opt: ElectronicKind | ElectronicOption) {
     const options = isNumber(opt)
       ? {

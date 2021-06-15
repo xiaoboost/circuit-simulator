@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useRef, useMemo } from 'react';
 import { useWatcher } from '@xiao-ai/utils/use';
+import { isNumber } from '@xiao-ai/utils';
 import { styles } from './styles';
 
 import * as store from 'src/store';
@@ -10,6 +11,39 @@ import * as utils from './utils';
 import { useMap, useDebugger, mapState } from './map';
 import { useMouseBusInit } from '@circuit/event';
 
+interface Component {
+  id: string;
+  sortIndex?: number;
+  Render(): JSX.Element;
+}
+
+function renderComponent(list: readonly Component[]) {
+  return list
+    .slice()
+    .sort((pre, next) => {
+      if (isNumber(pre.sortIndex)) {
+        if (isNumber(next.sortIndex)) {
+          return pre.sortIndex < next.sortIndex ? -1 : 1;
+        }
+        else {
+          return -1;
+        }
+      }
+      else {
+        if (isNumber(next.sortIndex)) {
+          return 1;
+        }
+        else {
+          return pre.id < next.id ? -1 : 1;
+        }
+      }
+    })
+    .map(({ Render, id }) => (
+      <Render key={id} />
+    ));
+}
+
+
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
   const SVGRef = useRef<SVGSVGElement>(null);
@@ -17,14 +51,8 @@ export function DrawingSheet() {
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
-  const LinesList = useMemo(
-    () => lines.map(({ Render, id }) => <Render key={id} />),
-    [lines],
-  );
-  const PartsList = useMemo(
-    () => parts.map(({ Render, id }) => <Render key={id} />),
-    [parts],
-  );
+  const LinesList = useMemo(() => renderComponent(lines), [lines]);
+  const PartsList = useMemo(() => renderComponent(parts), [parts]);
 
   useDebugger(SVGRef);
   useMouseBusInit(SheetRef, () => mapState.data);

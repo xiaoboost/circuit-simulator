@@ -32,6 +32,11 @@ export class LineComponent extends Line {
     return new LineComponent(...args);
   }
 
+  /** 更新所有导线 */
+  updateListView() {
+    lines.setData(lines.data.slice());
+  }
+
   /** 初始化 hook */
   private useInit() {
     this.updateView = useForceUpdate();
@@ -87,6 +92,9 @@ export class LineComponent extends Line {
       `.${partStyles.part} .${partStyles.partFocus}`,
       `.${lineStyles.line} .${lineStyles.lineFocus}`,
     ].join(', ');
+
+    this.sortIndex = 0;
+    this.updateListView();
 
     await drawEvent
       .setClassName(cursorStyles.drawLine)
@@ -148,12 +156,14 @@ export class LineComponent extends Line {
       );
     }
 
+    this.sortIndex = undefined;
     this.points[1].size = -1;
     this.path.endToPoint(finalEnd);
 
     this.setConnectByWay(LinePin.End);
     this.setMark();
     this.updateRects();
+    this.updateListView();
   }
 
   /** 渲染函数 */
