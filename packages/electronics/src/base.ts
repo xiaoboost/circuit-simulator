@@ -41,8 +41,6 @@ interface ElectronicOption {
 export abstract class Electronic {
   /** 元件编号 */
   id: string;
-  /** 更新视图 */
-  updateView: () => void = () => void 0;
 
   /** 元件类型 */
   readonly kind: ElectronicKind;
@@ -84,13 +82,30 @@ export abstract class Electronic {
     }
   }
 
+  /** 更新视图 */
+  updateView() { void 0 }
+  /** 更新节点 */
+  protected updatePoints() { void 0 }
+
   /** 删除自己 */
   delete() {
     // ..
   }
 
+  /** 设置连接点 */
+  setConnection(index: number, data?: Connect) {
+    this.connections[index] = data
+      ? {
+        id: data.id,
+        mark: data.mark,
+      }
+      : undefined;
+
+    this.updatePoints();
+  }
+
   /** 是否存在连接 */
-  hasConnect(id: string, mark?: number) {
+  hasConnection(id: string, mark?: number) {
     return this.connections.some((item) => {
       if (!item) {
         return false;

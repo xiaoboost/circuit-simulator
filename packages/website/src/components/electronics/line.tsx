@@ -93,7 +93,6 @@ export class LineComponent extends Line {
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((ev) => {
         this.path = pathSearcher.search(ev.position, ev.movement);
-        this.updateView();
       })
       .setEvent({
         type: 'mouseenter',
@@ -155,7 +154,6 @@ export class LineComponent extends Line {
     this.setConnectByWay(LinePin.End);
     this.setMark();
     this.updateRects();
-    this.updateView();
   }
 
   /** 渲染函数 */

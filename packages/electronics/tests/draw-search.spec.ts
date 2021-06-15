@@ -28,6 +28,11 @@ test('终点为空白', ({ deepEqual }) => {
   ]);
 });
 
+/**
+ * xxxxx --------┐
+ *         xxxxx |
+ *            ---┘
+ */
 test('终点为空白，有器件挡道', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
   const searcher = new DrawPathSearcher(start, direction, line);
@@ -41,6 +46,28 @@ test('终点为空白，有器件挡道', ({ deepEqual }) => {
     [360, 100],
     [360, 360],
     [310, 360],
+  ]);
+});
+
+/**
+ * xxxxx┐
+ *      |
+ * xxxxx|
+ *      ┘
+ */
+test('两个器件，器件在同一列，终点在下面器件右边引脚的右下角', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
+  const searcher = new DrawPathSearcher(start, direction, line);
+
+  loadPart('R_2', [100, 300]);
+
+  const path = searcher.search(Point.from([150, 310]), Point.from([0, 0]));
+
+  deepEqual(path.toData(), [
+    [140, 100],
+    [160, 100],
+    [160, 310],
+    [150, 310],
   ]);
 });
 

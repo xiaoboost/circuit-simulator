@@ -93,7 +93,7 @@ export function ElectronicPoint(props: Props) {
   }, [size, inner]);
 
   useEffect(() => setAnimate(), [actual]);
-  useEffect(() => onMouseLeave(), []);
+  useEffect(() => onMouseLeave(), [props.status, props.kind]);
 
   return (
     <g

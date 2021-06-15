@@ -1,7 +1,7 @@
 import { Electronic } from '../base';
 import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus } from './types';
-import { ElectronicKind } from '../types';
+import { Connect, ElectronicKind } from '../types';
 import { debug } from '@circuit/debug';
 import { MarkNodeKind, MarkMapNode } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';
@@ -41,22 +41,17 @@ export class Line extends Electronic {
 
     for (let i = 0; i < 2; i++) {
       const position = this.path[i * (this.path.length - 1)];
-      const oldData = this.points[i];
+      const oldData = this._points[i];
 
-      this.points[i] = {
+      this._points[i] = {
+        ...oldData,
         index: i,
-        isConnected: Boolean(this.connections[i]),
         position,
+        isConnected: Boolean(this.connections[i]),
       };
-
-      if (oldData?.size) {
-        this.points[i].size = oldData.size;
-      }
-
-      if (oldData?.className) {
-        this.points[i].className = oldData.className;
-      }
     }
+
+    this.updateView();
   }
 
   /** 创建新导线 */
@@ -256,7 +251,7 @@ export class Line extends Electronic {
 
     // 端点为空
     if (!status) {
-      this.connections[index] = undefined;
+      this.setConnection(index);
     }
     // 端点为器件引脚
     else if (status.kind === MarkNodeKind.PartPin) {
@@ -264,23 +259,21 @@ export class Line extends Electronic {
       const part = this.find<Part>(label.id)!;
       const mark = label.mark!;
 
-      part.connections[mark] = {
+      status.addLabel(this.id, index);
+
+      part.setConnection(mark, {
         id: this.id,
         mark: index,
-      };
+      });
 
-      this.connections[index] = {
+      this.setConnection(index, {
         id: part.id,
         mark: mark,
-      };
-
-      status.addLabel(this.id, index);
-      part.updateView();
-      this.updateView();
+      });
     }
     // 端点在导线上
     else if (status.kind === MarkNodeKind.Line) {
-      if (this.hasConnect(status.label.id)) {
+      if (this.hasConnection(status.label.id)) {
         /**
          * 因为`setConnectByWay`函数运行之后可能还有后续动作
          * 所以这里需要等待一个更新周期

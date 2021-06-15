@@ -88,9 +88,12 @@ export class Part extends Electronic {
         (this._margin.margin as any)[index] = marginLen;
         (this._margin.padding as any)[index] = paddingLen;
       });
+
+    this.updateView();
   }
   protected updateRotate() {
     this._invRotate = this._rotate.inverse();
+    this.updateView();
   }
   protected updatePoints() {
     const { prototype, rotate } = this;
@@ -115,12 +118,16 @@ export class Part extends Electronic {
         this.points[i].className = current.className;
       }
     }
+
+    this.updateView();
   }
   protected updateTexts() {
     this._texts = this.params
       .map((v, i) => ({ ...Electronics[this.kind].params[i], value: v }))
       .filter((txt) => txt.vision)
       .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'));
+
+    this.updateView();
   }
 
   /** 迭代器件当前覆盖的所有节点 */

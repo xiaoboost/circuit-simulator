@@ -205,13 +205,22 @@ export class DrawPathSearcher {
       return newPath;
     }
 
+    // 如果初始方向和第二个线段方向相同，说明此处需要修正
+    if (this.direction.isSameDirection(new Point(newPath[1], newPath[2]))) {
+      const start = newPath[0];
+      const end = newPath[2];
+      const rules = new Rules(start, end, SearchStatus.DrawModification, this.line.map);
+      const temp = pointSearch(start, end, this.direction, rules);
+
+      newPath.splice(0, 3, ...temp);
+      newPath.removeRepeat();
+    }
+
     for (let i = 0; i < newPath.length - 3; i++) {
       const vector = [
         (new Point(newPath[i], newPath[i + 1])).toUnit(),
         (new Point(newPath[i + 2], newPath[i + 3])).toUnit(),
       ];
-
-      let tempWay, tempVector;
 
       // 同向修饰
       if (vector[0].isEqual(vector[1])) {
@@ -219,9 +228,8 @@ export class DrawPathSearcher {
         const end = newPath[i + 3];
         const direction = vector[0];
         const rules = new Rules(start, end, SearchStatus.DrawModification, this.line.map);
-
-        tempWay = pointSearch(start, end, direction, rules);
-        tempVector = new Point(tempWay[0], tempWay[1]);
+        const tempWay = pointSearch(start, end, direction, rules);
+        const tempVector = new Point(tempWay[0], tempWay[1]);
 
         if (tempWay.length < 4 && tempVector.isSameDirection(vector[0])) {
           newPath.splice(i + 1, 3, ...tempWay);
@@ -235,8 +243,7 @@ export class DrawPathSearcher {
         const end = newPath[i + 3];
         const direction = vector[0];
         const rules = new Rules(start, end, SearchStatus.DrawModification, this.line.map);
-
-        tempWay = pointSearch(start, end, direction, rules);
+        const tempWay = pointSearch(start, end, direction, rules);
 
         if (tempWay.length < 4) {
           newPath.splice(i, 4, ...tempWay);
