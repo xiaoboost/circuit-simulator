@@ -13,11 +13,11 @@ import type { Part } from '../../part';
 
 export class DrawPathSearcher {
   /** 起点 */
-  readonly start: Point;
+  private readonly start: Point;
   /** 起始方向 */
-  readonly startDirection: Point;
+  private readonly startDirection: Point;
   /** 当前导线 */
-  readonly line: Line;
+  private readonly line: Line;
 
   /** 鼠标的覆盖的状态 */
   private mouseOver?: Part | Line;
@@ -75,7 +75,6 @@ export class DrawPathSearcher {
     }
     // 终点在导线
     else if (mouseOver.kind === ElectronicKind.Line) {
-      debugger;
       const mouseRound = end.round();
       const mouseStatus = line.map.get(mouseRound)!;
 
@@ -173,20 +172,18 @@ export class DrawPathSearcher {
       const endRoundWay = cache.get(endRound, direction)!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
       const roundSet = this.endList.filter((node) => {
-        if (endMapData.hasConnect(node)) {
-          return line.map.get(node)?.kind !== MarkNodeKind.PartPin;
-        }
-        else {
-          return false;
-        }
+        return endMapData.hasConnect(node)
+          ? line.map.get(node)?.kind !== MarkNodeKind.PartPin
+          : false;
       });
 
       if (roundSet.length > 0) {
         // 交集中离鼠标最近的点
         const closest = end.closest(roundSet);
+        const similarPath = cache.get(closest, direction);
         // 导线形状相似
-        if (endRoundWay.isSimilar(cache.get(closest)!)) {
-          path = LinePath.from(cache.get(closest)!);
+        if (similarPath && endRoundWay.isSimilar(similarPath)) {
+          path = LinePath.from(similarPath);
           path.endToLine([endRound, closest], end);
           line.points[1].size = 3;
         }

@@ -30,6 +30,16 @@ export function loadLine(id: string, position: [number, number][]) {
   const line = new Line(position);
 
   line.id = id;
+  line.setConnectByWay();
+  line.setMark();
+
+  return line;
+}
+
+export function loadStartLine(id: string, start: [number, number]) {
+  const line = new Line([start]);
+
+  line.id = id;
 
   return line;
 }

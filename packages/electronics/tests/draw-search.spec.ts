@@ -2,7 +2,7 @@ import test from 'ava';
 
 import { Point } from '@circuit/math';
 import { DrawPathSearcher } from '../src';
-import { loadBase, loadPart } from './utils';
+import { loadBase, loadPart, loadLine, loadStartLine } from './utils';
 
 test('终点为空白', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
@@ -211,5 +211,72 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
     [360, 100],
     [360, 310],
     [310, 310],
+  ]);
+});
+
+/**
+ * xxxxx-┐
+ *       |---xxxxx
+ * xxxxx-┘
+ */
+test('终点为导线，当前导线是直线，且不会跟随鼠标', ({ deepEqual }) => {
+  loadPart('R_1', [100, 100]);
+  loadPart('R_2', [100, 320]);
+  loadPart('R_2', [340, 160]);
+  loadLine('line_1', [[140, 100], [140, 320]]);
+
+  const start = new Point(300, 160);
+  const line = loadStartLine('line_2', start.toData());
+  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line);
+
+  searcher.setMouseOver(line);
+
+  deepEqual(searcher.search(Point.from([145, 160])).toData(), [
+    [300, 160],
+    [140, 160],
+  ]);
+
+  deepEqual(searcher.search(Point.from([135, 200])).toData(), [
+    [300, 160],
+    [140, 160],
+  ]);
+
+  deepEqual(searcher.search(Point.from([135, 280])).toData(), [
+    [300, 160],
+    [140, 160],
+  ]);
+
+  deepEqual(searcher.search(Point.from([140, 160])).toData(), [
+    [300, 160],
+    [140, 160],
+  ]);
+});
+
+/**
+ * xxxxx---┐
+ * xxxxx------xxxxx
+ */
+test('终点为导线，当前导线是曲线，跟随鼠标', ({ deepEqual }) => {
+  loadPart('R_1', [100, 100]);
+  loadPart('R_2', [300, 100]);
+  loadPart('R_2', [100, 180]);
+  loadLine('line_1', [[140, 100], [260, 100]]);
+
+  const start = new Point(140, 180);
+  const line = loadStartLine('line_2', start.toData());
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
+
+  searcher.setMouseOver(line);
+
+  deepEqual(searcher.search(Point.from([215, 105])).toData(), [
+    [140, 180],
+    [215, 180],
+    [215, 100],
+  ]);
+
+  deepEqual(searcher.search(Point.from([180, 95])).toData(), [
+    [140, 180],
+    [180, 180],
+    [180, 100],
   ]);
 });
