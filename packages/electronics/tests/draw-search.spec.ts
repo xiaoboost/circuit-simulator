@@ -1,8 +1,7 @@
 import test from 'ava';
 
-import { DrawPathSearcher } from '../src';
 import { Point } from '@circuit/math';
-
+import { DrawPathSearcher } from '../src';
 import { loadBase, loadPart } from './utils';
 
 test('终点为空白', ({ deepEqual }) => {
@@ -39,7 +38,7 @@ test('终点为空白，有器件挡道', ({ deepEqual }) => {
 
   loadPart('R_2', [300, 300]);
 
-  const path = searcher.search(Point.from([310, 360]), Point.from([0, 0]));
+  const path = searcher.search(Point.from([310, 360]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -61,7 +60,7 @@ test('两个器件，器件在同一列，终点在下面器件右边引脚的�
 
   loadPart('R_2', [100, 300]);
 
-  const path = searcher.search(Point.from([150, 310]), Point.from([0, 0]));
+  const path = searcher.search(Point.from([150, 310]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -71,12 +70,68 @@ test('两个器件，器件在同一列，终点在下面器件右边引脚的�
   ]);
 });
 
+test('引脚所在，且和出线方向相反的位置', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
+  const searcher = new DrawPathSearcher(start, direction, line);
+
+  // 右引脚右下角
+  deepEqual(searcher.search(Point.from([130, 110])).toData(), [
+    [140, 100],
+    [140, 110],
+    [130, 110],
+  ]);
+
+  // 右引脚右上角
+  deepEqual(searcher.search(Point.from([130, 90])).toData(), [
+    [140, 100],
+    [140, 90],
+    [130, 90],
+  ]);
+});
+
+test('出线方向相反的位置', ({ deepEqual }) => {
+  const [, line, start, direction] = loadBase([100, 100]);
+  const searcher = new DrawPathSearcher(start, direction, line);
+
+  // 器件中部往下
+  deepEqual(searcher.search(Point.from([100, 110])).toData(), [
+    [140, 100],
+    [140, 120],
+    [100, 120],
+    [100, 110],
+  ]);
+
+  // 器件中部往上
+  deepEqual(searcher.search(Point.from([100, 90])).toData(), [
+    [140, 100],
+    [140, 80],
+    [100, 80],
+    [100, 90],
+  ]);
+
+  // 远离器件往下
+  deepEqual(searcher.search(Point.from([40, 110])).toData(), [
+    [140, 100],
+    [140, 120],
+    [40, 120],
+    [40, 110],
+  ]);
+
+  // 远离器件往上
+  deepEqual(searcher.search(Point.from([40, 90])).toData(), [
+    [140, 100],
+    [140, 80],
+    [40, 80],
+    [40, 90],
+  ]);
+});
+
 test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
   const part = loadPart('R_2', [300, 300]);
   const searcher = new DrawPathSearcher(start, direction, line);
 
-  let path = searcher.search(Point.from([200, 150]), Point.from([0, 0]));
+  let path = searcher.search(Point.from([200, 150]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -86,7 +141,7 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
 
   searcher.setMouseOver(part);
 
-  path = searcher.search(Point.from([310, 300]), Point.from([0, 0]));
+  path = searcher.search(Point.from([310, 300]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -94,7 +149,7 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
     [340, 300],
   ]);
 
-  path = searcher.search(Point.from([290, 300]), Point.from([0, 0]));
+  path = searcher.search(Point.from([290, 300]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -137,7 +192,7 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
    * 器件右半靠上的坐标，这里只有三个节点
    */
 
-  let path = searcher.search(Point.from([310, 290]), Point.from([0, 0]));
+  let path = searcher.search(Point.from([310, 290]));
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -149,7 +204,7 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
    * 器件右半靠下的坐标，路径会在这里绕一下，所以有4个节点
    */
 
-  path = searcher.search(Point.from([310, 310]), Point.from([0, 0]));
+  path = searcher.search(Point.from([310, 310]));
 
   deepEqual(path.toData(), [
     [140, 100],

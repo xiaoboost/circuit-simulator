@@ -1,5 +1,6 @@
 import { Point } from '@circuit/math';
 import { MarkNodeKind } from '@circuit/map';
+import { isDef } from '@xiao-ai/utils';
 import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
 import { Cache } from './cache';
@@ -14,7 +15,7 @@ export class DrawPathSearcher {
   /** 起点 */
   readonly start: Point;
   /** 起始方向 */
-  readonly direction: Point;
+  readonly startDirection: Point;
   /** 当前导线 */
   readonly line: Line;
 
@@ -23,18 +24,22 @@ export class DrawPathSearcher {
   /** 释放鼠标覆盖状态 */
   private mouseOverRecover?: () => void;
   /** 搜索缓存 */
-  private cache = new Cache<Point>((point) => {
-    return point.join(',');
+  private cache = new Cache<Point, Point>((point, direction) => {
+    return direction
+      ? `${point[0]}:${point[1]}-${direction[0]}:${direction[1]}`
+      : `${point[0]}:${point[1]}`;
   });
 
   /** 搜索状态 */
   private status = SearchStatus.DrawSpace;
   /** 待搜索的终点列表 */
   private endList: Point[] = [];
+  /** 优先出线方向 */
+  private direction = Point.from([0, 0]);
 
   constructor(start: Point, direction: Point, line: Line) {
     this.start = start;
-    this.direction = direction;
+    this.startDirection = direction;
     this.line = line;
   }
 
@@ -44,8 +49,17 @@ export class DrawPathSearcher {
     const vertex = end.floor();
     /** 四方格坐标 */
     const endGrid = vertex.toGrid();
+    /** 四方格中心坐标 */
+    const endCenter = vertex.add(10);
+    /** 至四方格中心坐标的偏移量 */
+    const directionBias = endCenter.add(this.start, -1).sign().add(this.startDirection);
 
-    // 导线终点默认最大半径
+    /** 优先出线方向 */
+    this.direction = Math.abs(directionBias[0]) > Math.abs(directionBias[1])
+      ? new Point(directionBias[0], 0).sign()
+      : new Point(0, directionBias[1]).sign();
+
+    /** 导线空节点半径默认最大 */
     this.line.points[1].size = 8;
 
     // 引脚复位
@@ -141,22 +155,22 @@ export class DrawPathSearcher {
         new Rules(start, end, status, line.map),
       ));
 
-      cache.set(end, tempWay);
+      cache.set(end, direction, tempWay);
     }
   }
 
   private getLinePath(end: Point) {
-    const { cache, endList, status, line } = this;
+    const { cache, endList, status, line, direction } = this;
 
     let path = new LinePath();
 
     if (status === SearchStatus.DrawAlignPoint) {
-      path = LinePath.from(cache.get(endList[0])!);
+      path = LinePath.from(cache.get(endList[0], direction)!);
     }
     else if (status === SearchStatus.DrawAlignLine) {
       const endRound = end.round();
       const endMapData = line.map.get(endRound)!;
-      const endRoundWay = cache.get(endRound)!;
+      const endRoundWay = cache.get(endRound, direction)!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
       const roundSet = this.endList.filter((node) => {
         if (endMapData.hasConnect(node)) {
@@ -186,12 +200,14 @@ export class DrawPathSearcher {
     }
     else {
       // 选取终点中节点最多的路径
-      const key = endList.filter((node) => cache.has(node)).reduce(
-        (pre, next) =>
-          (cache.get(pre)!.length >= cache.get(next)!.length) ? pre : next,
-      );
+      const paths = endList
+        .map((node) => cache.get(node, direction))
+        .filter(isDef)
+        .reduce(
+          (pre, next) => pre.length >= next.length ? pre : next,
+        );
 
-      path = LinePath.from(cache.get(key)!);
+      path = LinePath.from(paths);
       path.endToPoint(end);
     }
 
@@ -269,7 +285,7 @@ export class DrawPathSearcher {
   }
 
   /** 搜索路径 */
-  search(end: Point, bias: Point) {
+  search(end: Point, bias: Point = Point.from([0, 0])) {
     this.getSearchStatus(end, bias);
     this.getSearchPath();
     return this.getLinePath(end);
