@@ -2,11 +2,10 @@ import test from 'ava';
 
 import { Point } from '@circuit/math';
 import { DrawPathSearcher } from '../src';
-import { globalMap } from '../src/base';
 import { loadBase, loadPart, loadLine, loadStartLine } from './utils';
 
 test.beforeEach(() => {
-  globalMap.clear();
+  (globalThis as any)._map.clear();
 });
 
 test('终点为空白', ({ deepEqual }) => {

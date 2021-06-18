@@ -1,4 +1,4 @@
-import { ElectronicKind, Connect, BasePinStatus } from './types';
+import { ElectronicKind, Connect } from './types';
 import { Electronics } from './part';
 import { isNumber, remove } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
@@ -7,16 +7,19 @@ import type { Part } from './part';
 import type { Line } from './line';
 
 /** 全局记号图纸 */
-export const globalMap = new MarkMap();
+const globalMap = new MarkMap();
 /** 全局所有导线 */
 const lines: Line[] = [];
 /** 全局所有器件 */
 const parts: Part[] = [];
 
-// 调试模式下数据储存在全局
 if (process.env.NODE_ENV === 'development') {
   (window as any)._lines = lines;
   (window as any)._parts = parts;
+}
+
+if (process.env.NODE_ENV === 'test') {
+  (globalThis as any)._map = globalMap;
 }
 
 function createId(id: string): string {
@@ -92,10 +95,6 @@ export abstract class Electronic {
   protected updatePoints() { void 0 }
   /** 删除标记 */
   deleteMark() { void 0 }
-  /** 引脚状态 */
-  get points(): BasePinStatus[] {
-    return [] as any;
-  }
 
   /** 删除自己 */
   delete() {
@@ -124,7 +123,7 @@ export abstract class Electronic {
 
   /**
    * 设置连接点
-   *  - 将会变更 map 和所连接元件的数据
+   *  - 所连接元件的连接数据也会变更
    */
   setDeepConnection(index: number, data?: Connect) {
     const oldConnection = this.connections[index];
@@ -142,20 +141,6 @@ export abstract class Electronic {
         id: this.id,
         mark: index,
       });
-    }
-
-    // 变更图纸记录
-    const position = this.points[index].position;
-    const mapData = this.map.get(position);
-
-    if (mapData) {
-      if (oldConnection) {
-        mapData.deleteLabel(oldConnection.id, oldConnection.mark);
-      }
-
-      if (data) {
-        mapData.addLabel(data.id, data.mark);
-      }
     }
   }
 

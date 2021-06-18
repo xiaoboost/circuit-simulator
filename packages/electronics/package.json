@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --no-cache -s",
+    "test": "ava --no-cache -s -T 1m",
     "dev": "tsc -p ./tsconfig.build.json --sourceMap -w --outDir dev --declarationDir ./dev --module CommonJs",
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
     "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
@@ -35,7 +35,9 @@
       "ts-node/register/transpile-only"
     ],
     "environmentVariables": {
-      "TS_NODE_PROJECT": "tsconfig.json"
+      "TS_NODE_PROJECT": "tsconfig.json",
+      "NODE_ENV": "test",
+      "NODE_ENV2": "testing"
     },
     "files": [
       "tests/**/*.spec.ts"

@@ -141,7 +141,6 @@ export class Line extends Electronic {
       throw new Error(`导线合并失败，未发现编号：'${id}'的导线。`);
     }
 
-    debugger;
     /** 连接点 */
     let crossIndex: 0 | 1 = 0;
 
@@ -245,13 +244,17 @@ export class Line extends Electronic {
       }
 
       // 普通点
-      if (current.kind === MarkNodeKind.Line || current.kind === MarkNodeKind.LineSpacePoint) {
+      if (
+        current.kind === MarkNodeKind.Line ||
+        current.kind === MarkNodeKind.LineSpacePoint
+      ) {
         map.delete(point);
       }
       // 交错/覆盖节点
       else if (
         current.kind === MarkNodeKind.LineCoverPoint ||
-        current.kind === MarkNodeKind.LineCrossPoint
+        current.kind === MarkNodeKind.LineCrossPoint ||
+        current.kind === MarkNodeKind.PartPin
       ) {
         current.deleteLabel(id, index);
 
@@ -331,7 +334,6 @@ export class Line extends Electronic {
     else if (status.kind === MarkNodeKind.LineSpacePoint) {
       const { id, mark } = status.label;
 
-      debugger;
       // 允许合并
       if (concat) {
         this.concat(id);
@@ -389,6 +391,25 @@ export class Line extends Electronic {
     this.setDeepConnection(0, oldConnections[1]);
     this.setDeepConnection(1, oldConnections[0]);
     this.path.reverse();
+
+    const points = [this.path[0], this.path.get(-1)];
+
+    // 变更端点的数据记录
+    for (let i = 0; i < 2; i++) {
+      const data = this.map.get(points[i]);
+
+      if (data) {
+        data.changeLabel(
+          {
+            id: this.id,
+            mark: i,
+          }, {
+            id: this.id,
+            mark: 1 - i,
+          },
+        );
+      }
+    }
   }
 
   /** 输出数据 */

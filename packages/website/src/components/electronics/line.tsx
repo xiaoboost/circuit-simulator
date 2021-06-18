@@ -68,8 +68,8 @@ export class LineComponent extends Line {
   }
 
   /** 绘制导线 */
-  async drawing(isEnd = true) {
-    if (isEnd) {
+  async drawing(pin: LinePin.Start | LinePin.End = LinePin.End) {
+    if (pin === LinePin.Start) {
       this.reverse();
     }
 

@@ -177,6 +177,14 @@ export class LinePath extends Array<Point> {
   *forEachPoint() {
     let index = 0;
     let node = Point.from(this[0]);
+
+    if (this.length < 2) {
+      if (this.length === 1) {
+        yield node;
+      }
+      return;
+    }
+
     let vector = this.getSubVector(0);
 
     while (!node.isEqual(this.get(-1))) {

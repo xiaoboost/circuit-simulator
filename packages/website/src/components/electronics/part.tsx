@@ -188,12 +188,11 @@ export class PartComponent extends Part {
     // 该引脚为空
     else {
       line = new LineComponent([startPoint]);
-      this.connections[i] = { id: line.id, mark: 0 };
-      line.connections[0] = { id: this.id, mark: i };
+      this.setConnection(i, { id: line.id, mark: 0 });
+      line.setConnection(0, { id: this.id, mark: i });
       this.setSelects([this.id]);
     }
 
-    this.updatePoints();
     this.updateView();
     line.drawing();
   }
