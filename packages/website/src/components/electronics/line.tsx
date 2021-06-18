@@ -61,6 +61,12 @@ export class LineComponent extends Line {
     }
   }
 
+  /** 删除自己 */
+  delete() {
+    super.delete();
+    lines.setData(lines.data.filter((item) => item !== this));
+  }
+
   /** 绘制导线 */
   async drawing(isEnd = true) {
     if (isEnd) {

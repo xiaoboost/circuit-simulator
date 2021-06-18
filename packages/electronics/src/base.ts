@@ -1,13 +1,13 @@
-import { ElectronicKind, Connect } from './types';
+import { ElectronicKind, Connect, BasePinStatus } from './types';
 import { Electronics } from './part';
-import { isNumber } from '@xiao-ai/utils';
+import { isNumber, remove } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
 
 import type { Part } from './part';
 import type { Line } from './line';
 
 /** 全局记号图纸 */
-const map = new MarkMap();
+export const globalMap = new MarkMap();
 /** 全局所有导线 */
 const lines: Line[] = [];
 /** 全局所有器件 */
@@ -45,7 +45,7 @@ export abstract class Electronic {
   /** 元件类型 */
   readonly kind: ElectronicKind;
   /** 图纸数据 */
-  readonly map = map;
+  readonly map = globalMap;
   /** 元件的连接表 */
   readonly connections: (Connect | undefined)[];
 
@@ -85,14 +85,29 @@ export abstract class Electronic {
     }
   }
 
+  // 下列属性均为空声明
   /** 更新视图 */
   updateView() { void 0 }
   /** 更新节点 */
   protected updatePoints() { void 0 }
+  /** 删除标记 */
+  deleteMark() { void 0 }
+  /** 引脚状态 */
+  get points(): BasePinStatus[] {
+    return [] as any;
+  }
 
   /** 删除自己 */
   delete() {
-    // ..
+    this.deleteMark();
+
+    for (let i = 0; i < this.connections.length; i++) {
+      this.setDeepConnection(i);
+    }
+
+    this.kind === ElectronicKind.Line
+      ? remove(lines, (({ id }) => id === this.id))
+      : remove(parts, (({ id }) => id === this.id));
   }
 
   /** 设置连接点 */
@@ -105,6 +120,43 @@ export abstract class Electronic {
       : undefined;
 
     this.updatePoints();
+  }
+
+  /**
+   * 设置连接点
+   *  - 将会变更 map 和所连接元件的数据
+   */
+  setDeepConnection(index: number, data?: Connect) {
+    const oldConnection = this.connections[index];
+
+    this.setConnection(index, data);
+
+    // 取消旧元件的连接
+    if (oldConnection) {
+      this.find(oldConnection.id)?.setConnection(oldConnection.mark);
+    }
+
+    // 设置新元件的连接
+    if (data) {
+      this.find(data.id)?.setConnection(data.mark, {
+        id: this.id,
+        mark: index,
+      });
+    }
+
+    // 变更图纸记录
+    const position = this.points[index].position;
+    const mapData = this.map.get(position);
+
+    if (mapData) {
+      if (oldConnection) {
+        mapData.deleteLabel(oldConnection.id, oldConnection.mark);
+      }
+
+      if (data) {
+        mapData.addLabel(data.id, data.mark);
+      }
+    }
   }
 
   /** 是否存在连接 */

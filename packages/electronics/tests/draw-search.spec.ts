@@ -2,7 +2,12 @@ import test from 'ava';
 
 import { Point } from '@circuit/math';
 import { DrawPathSearcher } from '../src';
+import { globalMap } from '../src/base';
 import { loadBase, loadPart, loadLine, loadStartLine } from './utils';
+
+test.beforeEach(() => {
+  globalMap.clear();
+});
 
 test('终点为空白', ({ deepEqual }) => {
   const [, line, start, direction] = loadBase([100, 100]);
@@ -222,14 +227,14 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
 test('终点为导线，当前导线是直线，且不会跟随鼠标', ({ deepEqual }) => {
   loadPart('R_1', [100, 100]);
   loadPart('R_2', [100, 320]);
-  loadPart('R_2', [340, 160]);
-  loadLine('line_1', [[140, 100], [140, 320]]);
+  loadPart('R_3', [340, 160]);
 
   const start = new Point(300, 160);
+  const coverLine = loadLine('line_1', [[140, 100], [140, 320]]);
   const line = loadStartLine('line_2', start.toData());
   const searcher = new DrawPathSearcher(start, new Point(-1, 0), line);
 
-  searcher.setMouseOver(line);
+  searcher.setMouseOver(coverLine);
 
   deepEqual(searcher.search(Point.from([145, 160])).toData(), [
     [300, 160],
@@ -259,14 +264,14 @@ test('终点为导线，当前导线是直线，且不会跟随鼠标', ({ deepE
 test('终点为导线，当前导线是曲线，跟随鼠标', ({ deepEqual }) => {
   loadPart('R_1', [100, 100]);
   loadPart('R_2', [300, 100]);
-  loadPart('R_2', [100, 180]);
-  loadLine('line_1', [[140, 100], [260, 100]]);
+  loadPart('R_3', [100, 180]);
 
   const start = new Point(140, 180);
+  const coverLine = loadLine('line_1', [[140, 100], [260, 100]]);
   const line = loadStartLine('line_2', start.toData());
   const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
-  searcher.setMouseOver(line);
+  searcher.setMouseOver(coverLine);
 
   deepEqual(searcher.search(Point.from([215, 105])).toData(), [
     [140, 180],
@@ -278,5 +283,27 @@ test('终点为导线，当前导线是曲线，跟随鼠标', ({ deepEqual }) =
     [140, 180],
     [180, 180],
     [180, 100],
+  ]);
+});
+
+/**
+ * xxxxx---┐
+ *          ---xxxxx
+ */
+test('终点是空置导线节点', ({ deepEqual }) => {
+  loadPart('R_1', [100, 100]);
+  loadPart('R_2', [300, 140]);
+
+  const start = new Point(260, 140);
+  const coverLine = loadLine('line_1', [[140, 100], [200, 100], [200, 120]]);
+  const line = loadStartLine('line_2', start.toData());
+  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line);
+
+  searcher.setMouseOver(coverLine);
+
+  deepEqual(searcher.search(new Point(202, 115)).toData(), [
+    [260, 140],
+    [200, 140],
+    [200, 120],
   ]);
 });

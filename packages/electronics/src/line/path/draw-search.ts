@@ -24,7 +24,7 @@ export class DrawPathSearcher {
   /** 释放鼠标覆盖状态 */
   private mouseOverRecover?: () => void;
   /** 搜索缓存 */
-  private cache = new Cache<Point, Point>((point, direction) => {
+  private cache = new Cache<Point, Point, LinePath>((point, direction) => {
     return direction
       ? `${point[0]}:${point[1]}-${direction[0]}:${direction[1]}`
       : `${point[0]}:${point[1]}`;
@@ -143,7 +143,7 @@ export class DrawPathSearcher {
     const { cache, line, endList, start, status, direction } = this;
 
     for (const end of endList) {
-      if (cache.has(end)) {
+      if (cache.has(end, direction)) {
         continue;
       }
 
@@ -154,7 +154,7 @@ export class DrawPathSearcher {
         new Rules(start, end, status, line.map),
       ));
 
-      cache.set(end, direction, tempWay);
+      cache.set(end, tempWay, direction);
     }
   }
 

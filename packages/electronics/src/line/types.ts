@@ -1,5 +1,4 @@
-import type { ElectronicKind } from '../types';
-import type { Point } from '@circuit/math';
+import type { ElectronicKind, BasePinStatus } from '../types';
 
 /** 导线原始数据 */
 export interface LineData {
@@ -8,23 +7,14 @@ export interface LineData {
 }
 
 /** 导线引脚状态 */
-export interface LinePinStatus {
-  /** 节点半径 */
-  size?: number;
-  /** 节点样式名称 */
-  className?: string;
-  /** 引脚下标 */
-  index: number;
-  /** 节点是否连接着器件 */
-  isConnected: boolean;
-  /** 现在节点相对图纸原点位置 */
-  position: Point;
+export interface LinePinStatus extends BasePinStatus {
+  // ..
 }
 
-/** 导线断点 */
+/** 导线端点 */
 export const enum LinePin {
-  Start,
-  End,
+  Start = 0,
+  End = 1,
   Middle,
   None,
 }

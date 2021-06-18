@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --no-cache",
+    "test": "ava --no-cache -s",
     "dev": "tsc -p ./tsconfig.build.json --sourceMap -w --outDir dev --declarationDir ./dev --module CommonJs",
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
     "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
@@ -50,12 +50,12 @@
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
-    "@types/node": "^15.12.2",
+    "@types/node": "^15.12.3",
     "ava": "^3.15.0",
     "eslint": "^7.28.0",
     "rimraf": "^3.0.2",
     "ts-node": "^10.0.0",
     "tslib": "^2.3.0",
-    "typescript": "^4.3.2"
+    "typescript": "^4.3.4"
   }
 }

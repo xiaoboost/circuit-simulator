@@ -65,43 +65,6 @@ export class Line extends Electronic {
    * @param {LinePin} index 当前导线的起点/终点作为分割点
    */
   split(id: string, pin: LinePin) {
-    // const line = findLineComponent(id);
-
-    // /** 交错节点 */
-    // let crossIndex: 0 | 1;
-
-    // // 连接导线的路径
-    // if (this.way[0].isEqual(line.way[0])) {
-    //     line.reverse();
-    //     crossIndex = 0;
-    // }
-    // else if (this.way[0].isEqual(line.way.get(-1))) {
-    //     crossIndex = 0;
-    // }
-    // else if (this.way.get(-1).isEqual(line.way.get(-1))) {
-    //     line.reverse();
-    //     crossIndex = 1;
-    // }
-    // else {
-    //     crossIndex = 1;
-    // }
-
-    // line.replaceConnect(crossIndex, this.id);
-    // this.connect[crossIndex] = line.connect[crossIndex];
-
-    // this.way = LineWay.prototype.checkWayRepeat.call(
-    //     crossIndex === 0
-    //         ? line.way.concat(this.way)
-    //         : this.way.concat(line.way),
-    // );
-
-    // // 更新及删除
-    // this.dispatch();
-    // this.deleteSelf();
-  }
-
-  /** 合并导线 */
-  concat(id: string) {
     // const splited = findLineComponent(id);
     // const crossPoint = Point.from(this.way.get(-1 * index));
 
@@ -170,6 +133,45 @@ export class Line extends Electronic {
     // devices.$destroy();
   }
 
+  /** 合并导线 */
+  concat(id: string) {
+    const line = this.find<Line>(id);
+
+    if (!line) {
+      throw new Error(`导线合并失败，未发现编号：'${id}'的导线。`);
+    }
+
+    debugger;
+    /** 连接点 */
+    let crossIndex: 0 | 1 = 0;
+
+    // 连接导线的路径
+    if (this.path[0].isEqual(line.path[0])) {
+      line.reverse();
+      crossIndex = 0;
+    }
+    else if (this.path[0].isEqual(line.path.get(-1))) {
+      crossIndex = 0;
+    }
+    else if (this.path.get(-1).isEqual(line.path.get(-1))) {
+      line.reverse();
+      crossIndex = 1;
+    }
+    else {
+      crossIndex = 1;
+    }
+
+    this.setConnection(crossIndex, line.connections[crossIndex]);
+    this.path = LinePath.from(
+      crossIndex === 0
+        ? line.path.concat(this.path)
+        : this.path.concat(line.path)
+    ).removeRepeat();
+
+    this.updateView();
+    line.delete();
+  }
+
   /** 设置标志位 */
   setMark() {
     const { path, map } = this;
@@ -219,7 +221,48 @@ export class Line extends Electronic {
 
   /** 删除标记 */
   deleteMark() {
-    // ..
+    const { id, path, map } = this;
+
+    let lastPoint: Point | undefined;
+    let lastNode: MarkMapNode | undefined;
+    let current: MarkMapNode | undefined;
+
+    for (const point of path.forEachPoint()) {
+      current = map.get(point);
+
+      const index = this.points.findIndex((item) => item.position.isEqual(point));
+
+      if (lastNode) {
+        lastNode.deleteConnect(point);
+      }
+
+      if (current && lastPoint) {
+        current.deleteConnect(lastPoint);
+      }
+
+      if (!current) {
+        continue;
+      }
+
+      // 普通点
+      if (current.kind === MarkNodeKind.Line || current.kind === MarkNodeKind.LineSpacePoint) {
+        map.delete(point);
+      }
+      // 交错/覆盖节点
+      else if (
+        current.kind === MarkNodeKind.LineCoverPoint ||
+        current.kind === MarkNodeKind.LineCrossPoint
+      ) {
+        current.deleteLabel(id, index);
+
+        if (!current.label) {
+          map.delete(point);
+        }
+      }
+
+      lastPoint = point;
+      lastNode = current;
+    }
   }
 
   /**
@@ -284,29 +327,33 @@ export class Line extends Electronic {
         this.split(status.label.id, pin);
       }
     }
-    // // 端点为导线空引脚
-    // else if (status.kind === MarkNodeKind.LinePoint) {
-    //   // 允许合并
-    //   if (concat) {
-    //     debugger;
-    //     this.concat(status.label);
-    //   }
-    //   // 不允许合并，则该点变更为交错节点
-    //   else {
-    //     const line = this.find<Line>(status.label)!;
-    //     const mark = line.findConnectIndex(node);
+    // 端点为导线空引脚
+    else if (status.kind === MarkNodeKind.LineSpacePoint) {
+      const { id, mark } = status.label;
 
-    //     status.type = Map.NodeType.LineCrossPoint;
-    //     status.id = mergeMark(this.id, line.id);
-    //     Map.mergePoint(status);
+      debugger;
+      // 允许合并
+      if (concat) {
+        this.concat(id);
+      }
+      // 不允许合并，则该点变更为交错节点
+      else {
+        const line = this.find<Line>(id)!;
 
-    //     line.connect[mark] = this.id;
-    //     this.connect[index] = line.id;
+        status.addLabel(this.id, index);
+        line.setConnection(mark, {
+          id: this.id,
+          mark: index,
+        });
+        this.setConnection(index, {
+          id: line.id,
+          mark: mark,
+        });
 
-    //     line.update();
-    //     this.update();
-    //   }
-    // }
+        line.updateView();
+        this.updateView();
+      }
+    }
     // // 端点在交错节点
     // else if (status.kind === MarkNodeKind.LineCrossPoint) {
     //   const lines = deleteMark(status.label, this.id);
@@ -337,8 +384,11 @@ export class Line extends Electronic {
 
   /** 导线反转 */
   reverse() {
+    const oldConnections = this.connections.slice();
+
+    this.setDeepConnection(0, oldConnections[1]);
+    this.setDeepConnection(1, oldConnections[0]);
     this.path.reverse();
-    this.connections.reverse();
   }
 
   /** 输出数据 */

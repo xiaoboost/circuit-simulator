@@ -1,9 +1,7 @@
-import { LinePath } from './line-path';
-
 /** 搜索缓存 */
-export class Cache<Key, Meta = any> {
+export class Cache<Key, Meta, Value> {
   /** 缓存数据 */
-  private _data: Record<string, LinePath | undefined> = {};
+  private _data: Record<string, Value | undefined> = {};
   /** 计算 key */
   private _mapping: (param: Key, meta?: Meta) => string;
 
@@ -15,8 +13,8 @@ export class Cache<Key, Meta = any> {
     return Boolean(this._data[this._mapping(param, meta)]);
   }
 
-  set(param: Key, meta: Meta, way: LinePath) {
-    this._data[this._mapping(param, meta)] = way;
+  set(param: Key, data: Value, meta?: Meta) {
+    this._data[this._mapping(param, meta)] = data;
   }
 
   get(param: Key, meta?: Meta) {

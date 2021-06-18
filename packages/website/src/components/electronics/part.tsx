@@ -87,6 +87,12 @@ export class PartComponent extends Part {
     position[1] -= 2;
   }
 
+  /** 删除自己 */
+  delete() {
+    super.delete();
+    parts.setData(parts.data.filter((item) => item !== this));
+  }
+
   /** 创建器件 */
   create() {
     // 选中自己

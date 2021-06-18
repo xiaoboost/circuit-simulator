@@ -1,5 +1,6 @@
 import { Rules } from './search-rules';
 import { LinePath } from './line-path';
+import { Cache } from './cache';
 import { SearchStatus } from './constant';
 import { debug } from '@circuit/debug';
 import { remove, AnyObject } from '@xiao-ai/utils';
@@ -37,23 +38,6 @@ export interface PointSearchOption {
   status: SearchStatus;
 }
 
-/** 搜索用的临时图纸模块 */
-export class SearchMap {
-  /** 数据记录 */
-  private map: AnyObject<SearchNodeData> = {};
-
-  static toKey(node: Point) {
-    return node.join(',');
-  }
-
-  get(node: Point): undefined | SearchNodeData {
-    return this.map[SearchMap.toKey(node)];
-  }
-  set(value: SearchNodeData) {
-    this.map[SearchMap.toKey(value.position)] = value;
-  }
-}
-
 /** 搜索树 */
 export class SearchStack {
   /** 搜索堆栈数据 */
@@ -61,7 +45,9 @@ export class SearchStack {
   /** 数据堆栈估值顺序记录表 */
   private hash: number[] = [];
   /** 搜索图数据 */
-  private map = new SearchMap();
+  private map = new Cache<Point, undefined, SearchNodeData>((key: Point) => {
+    return `${key[0]}:${key[1]}`;
+  });
 
   /** 未处理数据大小 */
   openSize = 0;
@@ -128,7 +114,7 @@ export class SearchStack {
 
     // 当前数据加入堆栈
     this.stack[value].push(node);
-    this.map.set(node);
+    this.map.set(node.position, node);
     this.openSize++;
   }
 }
@@ -155,15 +141,6 @@ export function pointSearch(
   rules: Rules,
 ): LinePath {
   const stack = new SearchStack();
-  // const rules = new Rules(start, end, status);
-
-  // // 方向偏移
-  // const sumDirection = endBias.add(start, -1).sign().add(originDirection);
-  // const direction = Math.abs(sumDirection[0]) > Math.abs(sumDirection[1])
-  //   ? new Point(sumDirection[0], 0).sign()
-  //   : new Point(0, sumDirection[1]).sign();
-
-  // 生成初始节点
   const first: SearchNodeData = {
     position: start,
     direction,

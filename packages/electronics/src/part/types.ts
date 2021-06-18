@@ -1,4 +1,4 @@
-import { ElectronicKind } from '../types';
+import type { ElectronicKind, BasePinStatus } from '../types';
 import { Point, Direction, NumberRank, Matrix } from '@circuit/math';
 
 /** 器件原始数据 */
@@ -12,19 +12,9 @@ export interface PartData {
 }
 
 /** 器件引脚状态 */
-export interface PartPinStatus {
-  /** 节点半径 */
-  size?: number;
-  /** 节点样式名称 */
-  className?: string;
-  /** 引脚下标 */
-  index: number;
-  /** 节点是否连接着导线 */
-  isConnected: boolean;
+export interface PartPinStatus extends BasePinStatus {
   /** 原本节点相对器件原点位置 */
   origin: Point;
-  /** 现在节点相对器件原点位置 */
-  position: Point;
   /** 节点向外的延申方向 */
   direction: Point;
 }

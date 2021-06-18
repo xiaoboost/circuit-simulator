@@ -12,6 +12,11 @@ export class MarkMap {
   /** 数据储存 */
   private _data: Record<string, MarkMapNode> = {};
 
+  /** 清除所有数据 */
+  clear() {
+    this._data = {};
+  }
+
   /** 是否含有此节点 */
   has(point: PointLike): boolean {
     return Boolean(this._data[MarkMap.toKey(point)]);

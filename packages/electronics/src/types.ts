@@ -1,3 +1,5 @@
+import type { Point } from '@circuit/math';
+
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
   /** 导线 */
@@ -33,6 +35,20 @@ export enum ElectronicKind {
 export interface Connect {
   id: string;
   mark: number;
+}
+
+/** 引脚状态 */
+export interface BasePinStatus {
+  /** 节点半径 */
+  size?: number;
+  /** 节点样式名称 */
+  className?: string;
+  /** 引脚下标 */
+  index: number;
+  /** 节点是否连接着器件 */
+  isConnected: boolean;
+  /** 现在节点相对图纸原点位置 */
+  position: Point;
 }
 
 /** 鼠标控制元素类名称 */
