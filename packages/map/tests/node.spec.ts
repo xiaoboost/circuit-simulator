@@ -32,14 +32,14 @@ test('connections', ({ deepEqual, true: isTrue, false: isFalse }) => {
     position,
   });
 
-  deepEqual(node.connections, []);
-  node.addConnect([100, 200]);
-  isTrue(node.hasConnect([100, 200]));
-  isFalse(node.hasConnect([100, 300]));
-  node.addConnect([100, 300]);
-  node.deleteConnect([100, 200]);
-  isFalse(node.hasConnect([100, 200]));
-  isTrue(node.hasConnect([100, 300]));
+  deepEqual(node.connections.length, 0);
+  node.connections.add([100, 200]);
+  isTrue(node.connections.has([100, 200]));
+  isFalse(node.connections.has([100, 300]));
+  node.connections.add([100, 300]);
+  node.connections.delete([100, 200]);
+  isFalse(node.connections.has([100, 200]));
+  isTrue(node.connections.has([100, 300]));
 });
 
 test('标签默认行为', ({ is }) => {
@@ -59,15 +59,11 @@ test('变更标签为器件引脚', ({ is, deepEqual }) => {
     position: [100, 100],
   });
 
-  node.changeLabel({
-    id: 'test-1',
-  }, {
-    id: 'test-1',
-    mark: 2,
-  });
+  node.labels.delete('test-1');
+  node.labels.add('test-1', 2);
 
   is(node.kind, MarkNodeKind.PartPin);
-  deepEqual(node.labels, [{
+  deepEqual(node.labels.toData(), [{
     id: 'test-1',
     mark: 2,
   }]);
@@ -81,9 +77,9 @@ test('节点是器件占据时，优先级高', ({ is, deepEqual }) => {
   });
 
   is(node.kind, MarkNodeKind.Line);
-  node.addLabel('R_1', 2);
+  node.labels.add('R_1', 2);
   is(node.kind, MarkNodeKind.PartPin);
-  deepEqual(node.labels, [
+  deepEqual(node.labels.toData(), [
     {
       id: 'line_1',
       mark: -1,
@@ -103,10 +99,8 @@ test('单个导线', ({ is }) => {
   });
 
   is(node.kind, MarkNodeKind.Line);
-  node.changeLabel(
-    { id: 'line_1' },
-    { id: 'line_1', mark: 0 },
-  );
+  node.labels.delete('line_1');
+  node.labels.add('line_1', 0);
   is(node.kind, MarkNodeKind.LineSpacePoint);
 });
 
@@ -119,8 +113,8 @@ test('交错节点', ({ is }) => {
   });
 
   is(node.kind, MarkNodeKind.LineSpacePoint);
-  node.addLabel('line_2', 1);
-  node.addLabel('line_3', 1);
+  node.labels.add('line_2', 1);
+  node.labels.add('line_3', 1);
   is(node.kind, MarkNodeKind.LineCrossPoint);
 });
 
@@ -132,6 +126,6 @@ test('交叠节点', ({ is }) => {
   });
 
   is(node.kind, MarkNodeKind.Line);
-  node.addLabel('line_2');
+  node.labels.add('line_2');
   is(node.kind, MarkNodeKind.LineCoverPoint);
 });

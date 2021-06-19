@@ -1,4 +1,4 @@
-import { Point, PointLike } from '@circuit/math';
+import { PointLike } from '@circuit/math';
 
 /** 节点类型常量 */
 export enum MarkNodeKind {
@@ -24,18 +24,6 @@ export enum MarkNodeKind {
 export interface MarkNodeLabel {
   id: string;
   mark: number;
-}
-
-/** 节点数据 */
-export interface MarkNodeData {
-  /** 节点类型 */
-  kind: MarkNodeKind;
-  /** 当前点的坐标 */
-  position: Point;
-  /** 当前点在图纸中连接着另外哪些点 */
-  connections: Point[];
-  /** 节点属于的元件 */
-  labels: MarkNodeLabel[];
 }
 
 /** 节点输入数据 */

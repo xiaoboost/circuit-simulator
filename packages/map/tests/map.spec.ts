@@ -1,13 +1,12 @@
 import test from 'ava';
-import { MarkMap, MarkNodeKind } from '../src';
+import { MarkMap } from '../src';
 
 test('basic', ({ true: isTrue, false: isFalse }) => {
   const map = new MarkMap();
   const position = [100, 100];
 
   map.set({
-    label: 'test-1',
-    kind: MarkNodeKind.Part,
+    id: 'test-1',
     position,
   });
 

@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "@circuit/math": "workspace:*",
+    "@circuit/shared": "workspace:*",
     "@xiao-ai/utils": "^1.4.1"
   },
   "devDependencies": {
