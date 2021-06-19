@@ -44,6 +44,7 @@ importers:
       '@circuit/debug': workspace:*
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
+      '@circuit/shared': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@types/node': ^15.12.3
@@ -58,6 +59,7 @@ importers:
       '@circuit/debug': link:../debug
       '@circuit/map': link:../map
       '@circuit/math': link:../math
+      '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig

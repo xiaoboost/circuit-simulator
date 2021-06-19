@@ -192,7 +192,7 @@ export class Line extends Electronic {
         });
       }
       else if (current.isLine || current.kind === MarkNodeKind.PartPin) {
-        current.addLabel(this.id, index);
+        current.labels.add(this.id, index);
       }
       else {
         const info = `Illegal point(${point.join(',')}): ${MarkNodeKind[current.kind]}`;
@@ -208,8 +208,8 @@ export class Line extends Electronic {
       }
 
       if (last && current) {
-        last.addConnect(current.position);
-        current.addConnect(last.position);
+        last.connections.add(current.position);
+        current.connections.add(last.position);
       }
 
       last = current;
@@ -230,11 +230,11 @@ export class Line extends Electronic {
       const index = this.points.findIndex((item) => item.position.isEqual(point));
 
       if (lastNode) {
-        lastNode.deleteConnect(point);
+        lastNode.connections.delete(point);
       }
 
       if (current && lastPoint) {
-        current.deleteConnect(lastPoint);
+        current.connections.delete(lastPoint);
       }
 
       if (!current) {
@@ -254,9 +254,9 @@ export class Line extends Electronic {
         current.kind === MarkNodeKind.LineCrossPoint ||
         current.kind === MarkNodeKind.PartPin
       ) {
-        current.deleteLabel(id, index);
+        current.labels.delete(id, index);
 
-        if (!current.label) {
+        if (!current.labels.value) {
           map.delete(point);
         }
       }
@@ -299,11 +299,11 @@ export class Line extends Electronic {
     }
     // 端点为器件引脚
     else if (status.kind === MarkNodeKind.PartPin) {
-      const label = status.label;
+      const label = status.labels.value!;
       const part = this.find<Part>(label.id)!;
       const mark = label.mark!;
 
-      status.addLabel(this.id, index);
+      status.labels.add(this.id, index);
 
       this.setDeepConnection(index, {
         id: part.id,
@@ -312,7 +312,7 @@ export class Line extends Electronic {
     }
     // 端点在导线上
     else if (status.kind === MarkNodeKind.Line) {
-      if (this.hasConnection(status.label.id)) {
+      if (this.hasConnection(status.labels.value!.id)) {
         /**
          * 因为`setConnectByPin`函数运行之后可能还有后续动作
          * 所以这里需要等待一个更新周期
@@ -320,12 +320,12 @@ export class Line extends Electronic {
         delay().then(() => this.delete());
       }
       else {
-        this.split(status.label.id, pin);
+        this.split(status.labels.value!.id, pin);
       }
     }
     // 端点为导线空引脚
     else if (status.kind === MarkNodeKind.LineSpacePoint) {
-      const { id, mark } = status.label;
+      const { id, mark } = status.labels.value!;
 
       // 允许合并
       if (concat) {
@@ -335,7 +335,7 @@ export class Line extends Electronic {
       else {
         const line = this.find<Line>(id)!;
 
-        status.addLabel(this.id, index);
+        status.labels.add(this.id, index);
         line.setConnection(mark, {
           id: this.id,
           mark: index,
@@ -392,15 +392,8 @@ export class Line extends Electronic {
       const data = this.map.get(points[i]);
 
       if (data) {
-        data.changeLabel(
-          {
-            id: this.id,
-            mark: i,
-          }, {
-            id: this.id,
-            mark: 1 - i,
-          },
-        );
+        data.labels.delete(this.id, i);
+        data.labels.add(this.id, 1 - i);
       }
     }
   }

@@ -9,7 +9,7 @@ function getPart(map: MarkMap, node: Point) {
   const status = map.get(node);
 
   if (status?.kind === MarkNodeKind.Part || status?.kind === MarkNodeKind.PartPin) {
-    return status.label.id;
+    return status.labels.value!.id;
   }
 }
 // 返回 node 所在线段
@@ -117,12 +117,12 @@ function isLegalPointGeneral(this: Rules, node: SearchNodeData, pointLimit = 2):
   }
   // 器件节点
   else if (status.kind === MarkNodeKind.Part) {
-    return this.excludeParts.includes(status.label.id);
+    return this.excludeParts.includes(status.labels.value!.id);
   }
   // 器件节点
   else if (status.kind === MarkNodeKind.PartPin) {
     // 距离等于 1 的范围内都可以
-    const part = status.label.id;
+    const part = status.labels.value!.id;
     return (
       this.excludeParts.includes(part) ||
       nodesDistance(node.position, this.end) < pointLimit

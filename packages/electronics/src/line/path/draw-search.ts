@@ -172,7 +172,7 @@ export class DrawPathSearcher {
       const endRoundWay = cache.get(endRound, direction)!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
       const roundSet = this.endList.filter((node) => {
-        return endMapData.hasConnect(node)
+        return endMapData.connections.has(node)
           ? line.map.get(node)?.kind !== MarkNodeKind.PartPin
           : false;
       });
