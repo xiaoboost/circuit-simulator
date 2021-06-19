@@ -172,8 +172,8 @@ export class PartComponent extends Part {
     const connect = this.connections[i];
 
     // 该引脚已有连接
-    if (connect) {
-      const { id: lineId, mark } = connect;
+    if (connect.value) {
+      const { id: lineId, mark } = connect.value;
 
       line = this.find<LineComponent>(lineId)!;
 
@@ -181,8 +181,8 @@ export class PartComponent extends Part {
         line.reverse();
       }
 
-      this.connections[i] = undefined;
-      line.connections[mark] = undefined;
+      this.connections[i].clear();
+      line.connections[mark].clear();
       this.setSelects([line.id]);
     }
     // 该引脚为空

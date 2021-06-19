@@ -57,7 +57,9 @@ export function ElectronicPoint(props: Props) {
       data.className = pointStyles.solidCircle;
     }
     else if (props.kind === PointKind.Line) {
-      data.className = pointStyles.hollowCircle;
+      data.className = props.status === PointStatus.Open
+        ? pointStyles.hollowCircle
+        : pointStyles.solidCircle;
 
       if (props.status === PointStatus.Open) {
         data.strokeDasharray = '1.5 4';

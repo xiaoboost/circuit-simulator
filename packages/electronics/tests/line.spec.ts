@@ -57,7 +57,7 @@ test('连接悬空导线', ({ deepEqual }) => {
 
   (line2 as any).map = map;
 
-  line2.setConnectByPin();
+  line2.setConnectionByPath();
   line2.setMark();
 
   // deepEqual(line2.connections.map((item) => item.toData()), [

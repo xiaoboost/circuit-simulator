@@ -55,7 +55,7 @@ export function loadLines(data: Partial<LineData>[], map: MarkMap, space: boolea
 
     if (!space) {
       line.setMark();
-      line.setConnectByPin(false);
+      line.setConnectionByPath(false);
     }
   });
 

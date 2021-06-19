@@ -27,7 +27,7 @@ export function loadSheet(data: ElectronicData) {
     if (item.kind === 'Line') {
       const line = new LineComponent((item as LineData).path);
       line.setMark();
-      line.setConnectByPin(false);
+      line.setConnectionByPath(false);
     }
     else {
       const part = new PartComponent(item as PartData);

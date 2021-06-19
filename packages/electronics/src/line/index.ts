@@ -47,7 +47,7 @@ export class Line extends Electronic {
         ...oldData,
         index: i,
         position,
-        isConnected: Boolean(this.connections[i]),
+        isConnected: Boolean(this.connections[i].value),
       };
     }
 
@@ -64,73 +64,79 @@ export class Line extends Electronic {
    * @param {string} id 被拆分导线的 id
    * @param {LinePin} index 当前导线的起点/终点作为分割点
    */
-  split(id: string, pin: LinePin) {
-    // const splited = findLineComponent(id);
-    // const crossPoint = Point.from(this.way.get(-1 * index));
+  split(id: string, pin: LinePin.Start | LinePin.End) {
+    /** 被切分的导线 */
+    const splitLine = this.find<Line>(id)!;
+    /** 分割点坐标 */
+    const crossPoint = Point.from(this.path.get(-1 * pin));
+    /** 分割点在被分割导线的第几个线段 */
+    const crossSub = (() => {
+      for (let i = 0; i < splitLine.path.length - 1; i++) {
+        if (crossPoint.isInLine([splitLine.path[i], splitLine.path[i + 1]])) {
+          return i;
+        }
+      }
+    })();
 
-    // // 验证拆分点是否在拆分路径上
-    // let crossSub = -1;
-    // for (let i = 0; i < splited.way.length - 1; i++) {
-    //     if (crossPoint.isInLine([splited.way[i], splited.way[i + 1]])) {
-    //         crossSub = i;
-    //         break;
-    //     }
-    // }
+    if (isUndef(crossSub)) {
+      throw new Error(`分割导线失败`);
+    }
 
-    // if (crossSub < -1) {
-    //     throw new Error('(line) split line failed.');
-    // }
+    // 删除被分割导线的所有标记
+    splitLine.deleteMark();
 
-    // // 先删除被分割导线的所有标记
-    // splited.deleteSign();
+    // 生成新导线
+    const newLine = this.create([[1e6, 1e6]]);
 
-    // // 生成临时导线
-    // const Comp = Vue.extend(LineComponent);
-    // const devices = new Comp<LineComponent>();
+    // 新导线终点连接替代被分割导线终点连接
+    newLine.setDeepConnection(1, splitLine.connections[1]);
+    // 新导线起点由被分割导线终点和分割旧导线的导线组成
+    newLine.setDeepConnection(0, [
+      {
+        id: splitLine.id,
+        mark: 1,
+      },
+      {
+        id: this.id,
+        mark: pin,
+      },
+    ]);
+    // 被分割导线终点连接变更
+    splitLine.setDeepConnection(1, [
+      {
+        id: newLine.id,
+        mark: 0,
+      },
+      {
+        id: this.id,
+        mark: pin,
+      },
+    ]);
 
-    // // devices 连接关系设定
-    // splited.replaceConnect(1, devices.id);                  // splited 原终点器件连接替换为 devices
-    // devices.connect[1] = splited.connect[1];                // 原导线起点不变，新导线的终点等于原导线的终点
-    // devices.connect[0] = `${splited.id} ${this.id}`;        // 新导线起点由旧导线 ID 和分割旧导线的导线 ID 组成
+    // 新导线路径为交错点至被分割导线终点
+    newLine.path = LinePath.from(splitLine.path.slice(crossSub + 1));
+    newLine.path.unshift(crossPoint);
+    newLine.path.removeRepeat();
 
-    // // devices 路径为交错点至原 splited 终点
-    // devices.way = LineWay.from(splited.way.slice(crossSub + 1));
-    // devices.way.unshift(crossPoint);
-    // LineWay.prototype.checkWayRepeat.call(devices.way);
+    // 被分割导线路径变更为起点至交错点部分
+    splitLine.path = LinePath.from(splitLine.path.slice(0, crossSub + 1));
+    splitLine.path.push(crossPoint);
+    splitLine.path.removeRepeat();
 
-    // // splited 的终点连接变更
-    // splited.connect[1] = `${devices.id} ${this.id}`;
+    // 更新节点
+    this.updatePoints();
+    splitLine.updatePoints();
+    newLine.updatePoints();
 
-    // // splited 路径变更为起点至交错点部分
-    // splited.way = LineWay.from(splited.way.slice(0, crossSub + 1));
-    // splited.way.push(crossPoint);
-    // LineWay.prototype.checkWayRepeat.call(splited.way);
+    // 标记图纸
+    this.setMark();
+    splitLine.setMark();
+    newLine.setMark();
 
-    // // 当前导线端点连接为拆分而成的两个导线
-    // this.connect[index] = `${splited.id} ${devices.id}`;    // 分割旧导线的导线终点由新旧导线 ID 组成
-
-    // // 交错节点设定
-    // Map.setPoint({
-    //     type: Map.NodeType.LineCrossPoint,
-    //     point: crossPoint.floorToSmall(),
-    //     id: `${this.id} ${splited.id} ${devices.id}`,
-    //     connect: [],
-    // });
-
-    // // 标记图纸
-    // this.markSign();
-    // splited.markSign();
-    // devices.markSign();
-
-    // // 更新数据
-    // this.dispatch();
-    // splited.dispatch();
-
-    // // 加载临时导线
-    // this.$store.commit(Mutation.PUSH_LINE, copyProperties(devices, disptchKeys));
-
-    // // 销毁临时导线
-    // devices.$destroy();
+    // 更新视图
+    this.updateView();
+    splitLine.updateView();
+    newLine.updateView();
   }
 
   /** 合并导线 */
@@ -270,22 +276,22 @@ export class Line extends Electronic {
    * 由引脚信息设置导线两端连接
    * @param {boolean} [concat=true] 是否合并浮动导线
    */
-  setConnectByPin(concat?: boolean): void;
+  setConnectionByPath(concat?: boolean): void;
   /**
   * 由引脚信息设置导线端点连接
   * @param {LinePin} [index] 需要设定的引脚
   * @param {boolean} [concat=true] 是否合并浮动导线
   */
-  setConnectByPin(pin?: LinePin, concat?: boolean): void;
-  setConnectByPin(pin?: LinePin | boolean, concat = true) {
+  setConnectionByPath(pin?: LinePin.Start | LinePin.End, concat?: boolean): void;
+  setConnectionByPath(pin?: LinePin.Start | LinePin.End | boolean, concat = true) {
     if (isBoolean(pin)) {
-      this.setConnectByPin(LinePin.Start, pin);
-      this.setConnectByPin(LinePin.End, pin);
+      this.setConnectionByPath(LinePin.Start, pin);
+      this.setConnectionByPath(LinePin.End, pin);
       return;
     }
     else if (isUndef(pin)) {
-      this.setConnectByPin(0);
-      this.setConnectByPin(1);
+      this.setConnectionByPath(0);
+      this.setConnectionByPath(1);
       return;
     }
 
@@ -303,7 +309,7 @@ export class Line extends Electronic {
       const part = this.find<Part>(label.id)!;
       const mark = label.mark!;
 
-      status.labels.add(this.id, index);
+      // status.labels.add(this.id, index);
 
       this.setDeepConnection(index, {
         id: part.id,
@@ -335,12 +341,8 @@ export class Line extends Electronic {
       else {
         const line = this.find<Line>(id)!;
 
-        status.labels.add(this.id, index);
-        line.setConnection(mark, {
-          id: this.id,
-          mark: index,
-        });
-        this.setConnection(index, {
+        // status.labels.add(this.id, index);
+        this.setDeepConnection(index, {
           id: line.id,
           mark: mark,
         });
@@ -349,37 +351,37 @@ export class Line extends Electronic {
         this.updateView();
       }
     }
-    // // 端点在交错节点
-    // else if (status.kind === MarkNodeKind.LineCrossPoint) {
-    //   status.deleteLabel(this.id, index);
+    // 端点在交错节点
+    else if (status.kind === MarkNodeKind.LineCrossPoint) {
+      // status.labels.delete(this.id, index);
 
-    //   // 只有一个导线
-    //   if (status.labels.length === 1 && concat) {
-    //     this.concat(status.label.id);
-    //   }
-    //   else {
-    //     this.connections[index] = lines;
+      // 只有一个导线
+      if (concat && status.labels.length === 1) {
+        this.concat(status.labels.value!.id);
+      }
+      else {
+        const allLabels = status.labels.toData().concat({
+          id: this.id,
+          mark: pin,
+        });
 
-    //     lines.split(' ').forEach((id) => {
-    //       const line = findLineComponent(id);
-    //       const mark = line.findConnectIndex(node);
-    //       const connect = deleteMark(lines, line.id);
+        status.labels.forEach(({ id, mark }) => {
+          const line = this.find<Line>(id);
 
-    //       if (mark !== -1) {
-    //         line.connect[mark] = mergeMark(connect, this.id);
-    //         line.dispatch();
-    //       }
-    //     });
+          if (!line) {
+            throw new Error(`导线不存在：${id}`);
+          }
 
-    //     status.id = mergeMark(status.id, this.id);
-    //     Map.mergePoint(status);
-    //   }
-    // }
+          const lineConnection = allLabels.filter((item) => item.id !== id && item.mark !== mark);
+          line.setConnection(mark, lineConnection);
+        });
+      }
+    }
   }
 
   /** 导线反转 */
   reverse() {
-    const oldConnections = this.connections.slice();
+    const oldConnections = this.connections.map((item) => item.toData());
 
     this.setDeepConnection(0, oldConnections[1]);
     this.setDeepConnection(1, oldConnections[0]);

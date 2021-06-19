@@ -66,12 +66,16 @@ class Debugger {
 
     const lines: any[] = (window as any)._lines ?? [];
     const parts: any[] = (window as any)._parts ?? [];
-    const getConnect = (data: any) => data ? `${data.id}-${data.mark}` : '';
+    const getLabels = (labels: MarkNodeLabel[]) => {
+      return labels.map((label) => {
+        return `${label.id}-${label.mark}`;
+      }).join(', ');
+    };
 
     for (const line of lines) {
       this.text(
         [1000, count * 25 + 50],
-        `${getConnect(line.connections[0])} ---> ${line.id} ---> ${getConnect(line.connections[1])}`,
+        `${getLabels(line.connections[0])} ---> ${line.id} ---> ${getLabels(line.connections[1])}`,
       );
       count++;
     }
@@ -83,12 +87,6 @@ class Debugger {
     if (!map) {
       return;
     }
-
-    const getLabels = (labels: MarkNodeLabel[]) => {
-      return labels.map((label) => {
-        return `${label.id}-${label.mark}`;
-      }).join(', ');
-    };
 
     for (const data of Object.values(map.toData())) {
       const status = data as any;

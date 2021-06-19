@@ -81,15 +81,15 @@ export class LineComponent extends Line {
     const start = this.path[0];
     const connect = this.connections[0];
 
-    if (!connect) {
+    if (!connect.value) {
       throw new Error(`空连接导线`);
     }
 
-    const startPart = this.find<PartComponent>(connect.id);
-    const direction = startPart?.points[connect.mark]?.direction;
+    const startPart = this.find<PartComponent>(connect.value.id);
+    const direction = startPart?.points[connect.value.mark]?.direction;
 
     if (!startPart || !direction) {
-      throw new Error(`不存在的器件：${connect.id}`);
+      throw new Error(`不存在的器件：${connect.value.id}`);
     }
 
     const pathSearcher = new DrawPathSearcher(start, direction, this);
@@ -166,7 +166,7 @@ export class LineComponent extends Line {
     this.points[1].size = -1;
     this.path.endToPoint(finalEnd);
 
-    this.setConnectByPin(LinePin.End);
+    this.setConnectionByPath(LinePin.End);
     this.setMark();
     this.updateRects();
     this.updateListView();
