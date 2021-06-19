@@ -1,7 +1,7 @@
 import { Electronic } from '../base';
 import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus } from './types';
-import { Connect, ElectronicKind } from '../types';
+import { ElectronicKind } from '../types';
 import { debug } from '@circuit/debug';
 import { MarkNodeKind, MarkMapNode } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';
@@ -312,7 +312,7 @@ export class Line extends Electronic {
     }
     // 端点在导线上
     else if (status.kind === MarkNodeKind.Line) {
-      if (this.hasConnection(status.labels.value!.id)) {
+      if (this.hasConnection(status.labels.value!.id, status.labels.value!.mark)) {
         /**
          * 因为`setConnectByPin`函数运行之后可能还有后续动作
          * 所以这里需要等待一个更新周期

@@ -97,7 +97,7 @@ export class DrawPathSearcher {
       const overPart = mouseOver as Part;
       const points = overPart.points.map((point) => point.position);
       const mouseToPart = new Point(overPart.position, end.add(bias));
-      const idlePoint = points.filter((_, i) => !overPart.connections[i]);
+      const idlePoint = points.filter((_, i) => !overPart.connections[i].value);
 
       // 允许直接对齐
       if (idlePoint.length > 0) {

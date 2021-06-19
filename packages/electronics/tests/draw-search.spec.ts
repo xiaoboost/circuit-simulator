@@ -310,10 +310,8 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
 
   const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
-  part2.connections[0] = part2.connections[1] = {
-    id: 'test',
-    mark: 0,
-  };
+  part2.connections[0].add('test', 0);
+  part2.connections[1].add('test', 0);
 
   searcher.setMouseOver(part2);
 

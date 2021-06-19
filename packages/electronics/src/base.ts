@@ -1,5 +1,6 @@
-import { ElectronicKind, Connect } from './types';
+import { ElectronicKind } from './types';
 import { Electronics } from './part';
+import { Connection, ConnectionData } from './utils/connection';
 import { isNumber, remove } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
 
@@ -34,7 +35,6 @@ function createId(id: string): string {
 interface ElectronicOption {
   id?: string;
   kind: ElectronicKind | keyof typeof ElectronicKind;
-  connections?: (Connect | undefined)[];
 }
 
 export abstract class Electronic {
@@ -46,7 +46,7 @@ export abstract class Electronic {
   /** 图纸数据 */
   readonly map = globalMap;
   /** 元件的连接表 */
-  readonly connections: (Connect | undefined)[];
+  readonly connections: Connection[] = [];
 
   /** 排序下标 */
   sortIndex?: number;
@@ -64,7 +64,6 @@ export abstract class Electronic {
       };
 
     this.kind = options.kind;
-    this.connections = options.connections ?? [];
 
     if (options.id) {
       this.id = options.id;
@@ -78,9 +77,14 @@ export abstract class Electronic {
 
     if (this.kind === ElectronicKind.Line) {
       lines.push(this as any);
+      this.connections = [new Connection(), new Connection()];
     }
     else {
       parts.push(this as any);
+
+      this.connections = Array(Electronics[this.kind].points.length)
+        .fill(0)
+        .map(() => new Connection());
     }
   }
 
@@ -106,14 +110,14 @@ export abstract class Electronic {
   }
 
   /** 设置连接点 */
-  setConnection(index: number, data?: Connect) {
-    this.connections[index] = data
-      ? {
-        id: data.id,
-        mark: data.mark,
-      }
-      : undefined;
+  setConnection(index: number, data?: ConnectionData | ConnectionData[]) {
+    const connection = this.connections[index];
 
+    if (!connection) {
+      throw new Error(`引脚下标错误：${index}`);
+    }
+
+    connection.set(data)
     this.updatePoints();
   }
 
@@ -121,42 +125,24 @@ export abstract class Electronic {
    * 设置连接点
    *  - 所连接元件的连接数据也会变更
    */
-  setDeepConnection(index: number, data?: Connect) {
-    const oldConnection = this.connections[index];
-
-    this.setConnection(index, data);
-
-    // 取消旧元件的连接
-    if (oldConnection) {
-      this.find(oldConnection.id)?.setConnection(oldConnection.mark);
+  setDeepConnection(index: number, data?: ConnectionData | ConnectionData[]) {
+    // 取消旧元件连接
+    for (const { id, mark } of this.connections[index].toData()) {
+      this.find(id)?.connections[mark].delete(this.id, index);
     }
 
-    // 设置新元件的连接
-    if (data) {
-      this.find(data.id)?.setConnection(data.mark, {
-        id: this.id,
-        mark: index,
-      });
+    // 设置当前元件连接
+    this.setConnection(index, data);
+
+    // 设置新元件连接
+    for (const { id, mark } of this.connections[index].toData()) {
+      this.find(id)?.connections[mark].add(this.id, index);
     }
   }
 
   /** 是否存在连接 */
-  hasConnection(id: string, mark?: number) {
-    return this.connections.some((item) => {
-      if (!item) {
-        return false;
-      }
-
-      if (item.id !== id) {
-        return false;
-      }
-
-      if (mark && item.mark !== mark) {
-        return false;
-      }
-
-      return true;
-    });
+  hasConnection(id: string, mark: number) {
+    return this.connections.some((item) => item.has(id, mark));
   }
 
   /** 搜索元件 */

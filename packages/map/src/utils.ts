@@ -11,9 +11,6 @@ export class Label extends ArrayLike<MarkNodeLabel, [string] | [string, number |
   protected _packaged(id: string, mark?: number): MarkNodeLabel {
     return { id, mark: mark ?? -1 };
   }
-  protected _toData(a: MarkNodeLabel): MarkNodeLabel {
-    return a;
-  }
 
   static from(data: PartPartial<MarkNodeLabel, 'mark'>[]): Label {
     const label = new Label();

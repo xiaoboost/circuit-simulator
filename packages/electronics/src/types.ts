@@ -31,12 +31,6 @@ export enum ElectronicKind {
   ReferenceGround,
 }
 
-/** 连接点数据 */
-export interface Connect {
-  id: string;
-  mark: number;
-}
-
 /** 引脚状态 */
 export interface BasePinStatus {
   /** 节点半径 */

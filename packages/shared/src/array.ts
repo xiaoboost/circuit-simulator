@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import { isArray, isDef } from '@xiao-ai/utils';
+
 export abstract class ArrayLike<Data, Input extends any[], Structure = Data> extends Array<Data> {
   protected _isEqual(a1: Data, a2: Data) {
     return void 0 as any;
@@ -8,7 +10,7 @@ export abstract class ArrayLike<Data, Input extends any[], Structure = Data> ext
     return void 0 as any;
   }
   protected _toData(a: Data): Structure {
-    return void 0 as any;
+    return a as any;
   }
   protected _findIndex(data: Data) {
     return this.findIndex((item) => this._isEqual(item, data));
@@ -47,6 +49,12 @@ export abstract class ArrayLike<Data, Input extends any[], Structure = Data> ext
       this.push(this._packaged(...args));
       this.emit();
     }
+  }
+
+  set(data: Data | undefined | (Data | undefined)[]): void {
+    const list = (isArray(data) ? data : [data]).filter(isDef);
+    this.splice(0, this.length, ...list);
+    this.emit();
   }
 
   delete(...args: Input): boolean {
