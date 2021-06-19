@@ -1,16 +1,17 @@
 import test from 'ava';
 
-import { Part } from '../src';
-import { snapshot } from './utils';
+import { MarkMap } from '@circuit/map';
+import { snapshot, loadParts } from './utils';
 
 test('器件图纸标记', ({ deepEqual }) => {
-  const position = [100, 100];
-  const partId = 'R_1';
-  const part = new Part({
-    id: partId,
-    kind: 'Resistance',
-    position,
-  });
+  const map = new MarkMap();
+  const [part] = loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    }
+  ], map, false);
 
   part.setMark();
 

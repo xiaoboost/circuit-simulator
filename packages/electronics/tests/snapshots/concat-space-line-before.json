@@ -1,0 +1,239 @@
+{
+  "80,100": {
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      80,
+      100
+    ],
+    "connections": []
+  },
+  "100,100": {
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      100,
+      100
+    ],
+    "connections": []
+  },
+  "120,100": {
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      120,
+      100
+    ],
+    "connections": []
+  },
+  "60,100": {
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": 0
+      }
+    ],
+    "kind": "PartPin",
+    "position": [
+      60,
+      100
+    ],
+    "connections": []
+  },
+  "140,100": {
+    "labels": [
+      {
+        "id": "R_1",
+        "mark": 1
+      },
+      {
+        "id": "line_2",
+        "mark": 0
+      }
+    ],
+    "kind": "PartPin",
+    "position": [
+      140,
+      100
+    ],
+    "connections": [
+      [
+        160,
+        100
+      ]
+    ]
+  },
+  "280,140": {
+    "labels": [
+      {
+        "id": "R_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      280,
+      140
+    ],
+    "connections": []
+  },
+  "300,140": {
+    "labels": [
+      {
+        "id": "R_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      300,
+      140
+    ],
+    "connections": []
+  },
+  "320,140": {
+    "labels": [
+      {
+        "id": "R_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Part",
+    "position": [
+      320,
+      140
+    ],
+    "connections": []
+  },
+  "260,140": {
+    "labels": [
+      {
+        "id": "R_2",
+        "mark": 0
+      }
+    ],
+    "kind": "PartPin",
+    "position": [
+      260,
+      140
+    ],
+    "connections": []
+  },
+  "340,140": {
+    "labels": [
+      {
+        "id": "R_2",
+        "mark": 1
+      }
+    ],
+    "kind": "PartPin",
+    "position": [
+      340,
+      140
+    ],
+    "connections": []
+  },
+  "160,100": {
+    "labels": [
+      {
+        "id": "line_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Line",
+    "position": [
+      160,
+      100
+    ],
+    "connections": [
+      [
+        140,
+        100
+      ],
+      [
+        180,
+        100
+      ]
+    ]
+  },
+  "180,100": {
+    "labels": [
+      {
+        "id": "line_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Line",
+    "position": [
+      180,
+      100
+    ],
+    "connections": [
+      [
+        160,
+        100
+      ],
+      [
+        200,
+        100
+      ]
+    ]
+  },
+  "200,100": {
+    "labels": [
+      {
+        "id": "line_2",
+        "mark": -1
+      }
+    ],
+    "kind": "Line",
+    "position": [
+      200,
+      100
+    ],
+    "connections": [
+      [
+        180,
+        100
+      ],
+      [
+        200,
+        120
+      ]
+    ]
+  },
+  "200,120": {
+    "labels": [
+      {
+        "id": "line_2",
+        "mark": 1
+      }
+    ],
+    "kind": "LineSpacePoint",
+    "position": [
+      200,
+      120
+    ],
+    "connections": [
+      [
+        200,
+        100
+      ]
+    ]
+  }
+}

@@ -167,8 +167,9 @@ export class Line extends Electronic {
         : this.path.concat(line.path)
     ).removeRepeat();
 
-    this.updateView();
     line.delete();
+    this.updateView();
+    this.setMark();
   }
 
   /** 设置标志位 */
@@ -183,7 +184,6 @@ export class Line extends Electronic {
 
       const index = this.points.findIndex((item) => item.position.isEqual(point));
 
-      // 为空
       if (!current) {
         current = map.set({
           position: point,
@@ -191,12 +191,10 @@ export class Line extends Electronic {
           mark: index,
         });
       }
-      // 导线点
-      else if (current.isLine) {
+      else if (current.isLine || current.kind === MarkNodeKind.PartPin) {
         current.addLabel(this.id, index);
       }
-      // 器件引脚不处理，其他类型全部抛出错误
-      else if (current.kind !== MarkNodeKind.PartPin) {
+      else {
         const info = `Illegal point(${point.join(',')}): ${MarkNodeKind[current.kind]}`;
 
         if (process.env.NODE_ENV === 'development') {
@@ -269,25 +267,25 @@ export class Line extends Electronic {
   }
 
   /**
-   * 由路径信息设置导线两端连接
+   * 由引脚信息设置导线两端连接
    * @param {boolean} [concat=true] 是否合并浮动导线
    */
-  setConnectByWay(concat?: boolean): void;
+  setConnectByPin(concat?: boolean): void;
   /**
-  * 由路径信息设置导线端点连接
-  * @param {LinePin} [index] 需要设定的端点
+  * 由引脚信息设置导线端点连接
+  * @param {LinePin} [index] 需要设定的引脚
   * @param {boolean} [concat=true] 是否合并浮动导线
   */
-  setConnectByWay(pin?: LinePin, concat?: boolean): void;
-  setConnectByWay(pin?: LinePin | boolean, concat = true) {
+  setConnectByPin(pin?: LinePin, concat?: boolean): void;
+  setConnectByPin(pin?: LinePin | boolean, concat = true) {
     if (isBoolean(pin)) {
-      this.setConnectByWay(LinePin.Start, pin);
-      this.setConnectByWay(LinePin.End, pin);
+      this.setConnectByPin(LinePin.Start, pin);
+      this.setConnectByPin(LinePin.End, pin);
       return;
     }
     else if (isUndef(pin)) {
-      this.setConnectByWay(0);
-      this.setConnectByWay(1);
+      this.setConnectByPin(0);
+      this.setConnectByPin(1);
       return;
     }
 
@@ -307,12 +305,7 @@ export class Line extends Electronic {
 
       status.addLabel(this.id, index);
 
-      part.setConnection(mark, {
-        id: this.id,
-        mark: index,
-      });
-
-      this.setConnection(index, {
+      this.setDeepConnection(index, {
         id: part.id,
         mark: mark,
       });
@@ -321,7 +314,7 @@ export class Line extends Electronic {
     else if (status.kind === MarkNodeKind.Line) {
       if (this.hasConnection(status.label.id)) {
         /**
-         * 因为`setConnectByWay`函数运行之后可能还有后续动作
+         * 因为`setConnectByPin`函数运行之后可能还有后续动作
          * 所以这里需要等待一个更新周期
          */
         delay().then(() => this.delete());
@@ -358,11 +351,11 @@ export class Line extends Electronic {
     }
     // // 端点在交错节点
     // else if (status.kind === MarkNodeKind.LineCrossPoint) {
-    //   const lines = deleteMark(status.label, this.id);
+    //   status.deleteLabel(this.id, index);
 
     //   // 只有一个导线
-    //   if (lines.length === 1 && concat) {
-    //     this.concat(lines[0]);
+    //   if (status.labels.length === 1 && concat) {
+    //     this.concat(status.label.id);
     //   }
     //   else {
     //     this.connections[index] = lines;

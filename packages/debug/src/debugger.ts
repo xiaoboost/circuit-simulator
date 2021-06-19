@@ -98,10 +98,11 @@ class Debugger {
 
       // 点的 ID
       if (status.kind === 'Line') {
-        this.text(point, status.labels[0].mark);
+        const id = status.labels[0].id.replace('line_', '');
+        this.text([point[0] + 6, point[1] - 6], id);
       }
       else if (status.kind === 'PartPin') {
-        this.text(point, getLabels(status.labels));
+        this.text([point[0] + 6, point[1] - 20], getLabels(status.labels));
       }
       else if (
         status.kind === 'LineCoverPoint' ||

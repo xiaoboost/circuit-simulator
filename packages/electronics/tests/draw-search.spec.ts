@@ -1,20 +1,33 @@
 import test from 'ava';
 
 import { Point } from '@circuit/math';
+import { MarkMap } from '@circuit/map';
 import { DrawPathSearcher } from '../src';
-import { loadBase, loadPart, loadLine, loadStartLine } from './utils';
-
-test.beforeEach(() => {
-  (globalThis as any)._map.clear();
-});
+import { loadParts, loadLines } from './utils';
 
 test('终点为空白', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const end = Point.from([150, 110]);
-  const bias = Point.from([0, 0]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
 
-  let path = searcher.search(end, bias);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    }
+  ], map, false);
+
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const bias = new Point(0, 0);
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
+
+  let path = searcher.search(new Point(150, 110), bias);
 
   deepEqual(path.toData(), [
     [140, 100],
@@ -37,11 +50,30 @@ test('终点为空白', ({ deepEqual }) => {
  *            ---┘
  */
 test('终点为空白，有器件挡道', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
 
-  loadPart('R_2', [300, 300]);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [300, 300],
+    }
+  ], map, false);
 
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
   const path = searcher.search(Point.from([310, 360]));
 
   deepEqual(path.toData(), [
@@ -59,11 +91,30 @@ test('终点为空白，有器件挡道', ({ deepEqual }) => {
  *      ┘
  */
 test('两个器件，器件在同一列，终点在下面器件右边引脚的右下角', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
 
-  loadPart('R_2', [100, 300]);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [100, 300],
+    }
+  ], map, false);
 
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
   const path = searcher.search(Point.from([150, 310]));
 
   deepEqual(path.toData(), [
@@ -75,8 +126,25 @@ test('两个器件，器件在同一列，终点在下面器件右边引脚的�
 });
 
 test('引脚所在，且和出线方向相反的位置', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
+
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    }
+  ], map, false);
+
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
   // 右引脚右下角
   deepEqual(searcher.search(Point.from([130, 110])).toData(), [
@@ -94,8 +162,25 @@ test('引脚所在，且和出线方向相反的位置', ({ deepEqual }) => {
 });
 
 test('出线方向相反的位置', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
+
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    }
+  ], map, false);
+
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
   // 器件中部往下
   deepEqual(searcher.search(Point.from([100, 110])).toData(), [
@@ -131,9 +216,29 @@ test('出线方向相反的位置', ({ deepEqual }) => {
 });
 
 test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const part = loadPart('R_2', [300, 300]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
+  const [, part2] = loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [300, 300],
+    }
+  ], map, false);
+
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
   let path = searcher.search(Point.from([200, 150]));
 
@@ -143,7 +248,7 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
     [200, 150],
   ]);
 
-  searcher.setMouseOver(part);
+  searcher.setMouseOver(part2);
 
   path = searcher.search(Point.from([310, 300]));
 
@@ -181,16 +286,36 @@ test('终点为器件，器件有空置引脚', ({ deepEqual }) => {
 });
 
 test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
-  const [, line, start, direction] = loadBase([100, 100]);
-  const part = loadPart('R_2', [300, 300]);
-  const searcher = new DrawPathSearcher(start, direction, line);
+  const map = new MarkMap();
+  const start = new Point(140, 100);
+  const [, part2] = loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [300, 300],
+    }
+  ], map, false);
 
-  part.connections[0] = part.connections[1] = {
+  const [line] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100]],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
+
+  part2.connections[0] = part2.connections[1] = {
     id: 'test',
     mark: 0,
   };
 
-  searcher.setMouseOver(part);
+  searcher.setMouseOver(part2);
 
   /**
    * 器件右半靠上的坐标，这里只有三个节点
@@ -224,16 +349,44 @@ test('终点为器件，器件没有空置引脚', ({ deepEqual }) => {
  * xxxxx-┘
  */
 test('终点为导线，当前导线是直线，且不会跟随鼠标', ({ deepEqual }) => {
-  loadPart('R_1', [100, 100]);
-  loadPart('R_2', [100, 320]);
-  loadPart('R_3', [340, 160]);
-
+  const map = new MarkMap();
   const start = new Point(300, 160);
-  const coverLine = loadLine('line_1', [[140, 100], [140, 320]]);
-  const line = loadStartLine('line_2', start.toData());
-  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line);
 
-  searcher.setMouseOver(coverLine);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [100, 320],
+    },
+    {
+      id: 'R_3',
+      kind: 'Resistance',
+      position: [340, 160],
+    }
+  ], map, false);
+
+  const [line1] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100], [140, 320]],
+    }
+  ], map, false);
+
+  const [line2] = loadLines([
+    {
+      kind: 'Line',
+      path: [start.toData()],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line2);
+
+  searcher.setMouseOver(line1);
 
   deepEqual(searcher.search(Point.from([145, 160])).toData(), [
     [300, 160],
@@ -261,16 +414,44 @@ test('终点为导线，当前导线是直线，且不会跟随鼠标', ({ deepE
  * xxxxx------xxxxx
  */
 test('终点为导线，当前导线是曲线，跟随鼠标', ({ deepEqual }) => {
-  loadPart('R_1', [100, 100]);
-  loadPart('R_2', [300, 100]);
-  loadPart('R_3', [100, 180]);
-
+  const map = new MarkMap();
   const start = new Point(140, 180);
-  const coverLine = loadLine('line_1', [[140, 100], [260, 100]]);
-  const line = loadStartLine('line_2', start.toData());
-  const searcher = new DrawPathSearcher(start, new Point(1, 0), line);
 
-  searcher.setMouseOver(coverLine);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [100, 180],
+    },
+    {
+      id: 'R_3',
+      kind: 'Resistance',
+      position: [300, 100],
+    }
+  ], map, false);
+
+  const [line1] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100], [260, 100]],
+    }
+  ], map, false);
+
+  const [line2] = loadLines([
+    {
+      kind: 'Line',
+      path: [start.toData()],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(1, 0), line2);
+
+  searcher.setMouseOver(line1);
 
   deepEqual(searcher.search(Point.from([215, 105])).toData(), [
     [140, 180],
@@ -290,15 +471,39 @@ test('终点为导线，当前导线是曲线，跟随鼠标', ({ deepEqual }) =
  *          ---xxxxx
  */
 test('终点是空置导线节点', ({ deepEqual }) => {
-  loadPart('R_1', [100, 100]);
-  loadPart('R_2', [300, 140]);
-
+  const map = new MarkMap();
   const start = new Point(260, 140);
-  const coverLine = loadLine('line_1', [[140, 100], [200, 100], [200, 120]]);
-  const line = loadStartLine('line_2', start.toData());
-  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line);
 
-  searcher.setMouseOver(coverLine);
+  loadParts([
+    {
+      id: 'R_1',
+      kind: 'Resistance',
+      position: [100, 100],
+    },
+    {
+      id: 'R_2',
+      kind: 'Resistance',
+      position: [300, 140],
+    }
+  ], map, false);
+
+  const [line1] = loadLines([
+    {
+      kind: 'Line',
+      path: [[140, 100], [200, 100], [200, 120]],
+    }
+  ], map, false);
+
+  const [line2] = loadLines([
+    {
+      kind: 'Line',
+      path: [start.toData()],
+    }
+  ], map, true);
+
+  const searcher = new DrawPathSearcher(start, new Point(-1, 0), line2);
+
+  searcher.setMouseOver(line1);
 
   deepEqual(searcher.search(new Point(202, 115)).toData(), [
     [260, 140],

@@ -23,11 +23,11 @@ export const oscilloscopes = new Watcher<string[][]>([]);
 
 /** 加载图纸数据 */
 export function loadSheet(data: ElectronicData) {
-  for (const item of (data)) {
+  for (const item of data) {
     if (item.kind === 'Line') {
       const line = new LineComponent((item as LineData).path);
       line.setMark();
-      line.setConnectByWay(false);
+      line.setConnectByPin(false);
     }
     else {
       const part = new PartComponent(item as PartData);

@@ -18,10 +18,6 @@ if (process.env.NODE_ENV === 'development') {
   (window as any)._parts = parts;
 }
 
-if (process.env.NODE_ENV === 'test') {
-  (globalThis as any)._map = globalMap;
-}
-
 function createId(id: string): string {
   const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
   const all = ([] as Electronic[]).concat(lines, parts);

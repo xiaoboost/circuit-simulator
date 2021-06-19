@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --no-cache -s -T 1m",
+    "test": "ava --no-cache",
     "dev": "tsc -p ./tsconfig.build.json --sourceMap -w --outDir dev --declarationDir ./dev --module CommonJs",
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
     "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
