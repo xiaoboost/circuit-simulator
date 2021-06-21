@@ -114,7 +114,7 @@ test('交错节点', ({ is }) => {
 
   is(node.kind, MarkNodeKind.LineSpacePoint);
   node.labels.add('line_2', 1);
-  node.labels.add('line_3', 1);
+  node.labels.add('line_3', 0);
   is(node.kind, MarkNodeKind.LineCrossPoint);
 });
 

@@ -13,7 +13,7 @@ import { LineComponent } from './line';
 import { parts } from 'src/store';
 import { DrawEventController } from '@circuit/event';
 import { ElectronicKind, Part, PartData } from '@circuit/electronics';
-import { PointKind, PointStatus, textHeight, textSpaceHeight } from './constant';
+import { PointKind, textHeight, textSpaceHeight } from './constant';
 
 export class PartComponent extends Part {
   /** 文本位置 */
@@ -238,7 +238,7 @@ export class PartComponent extends Part {
               size={point.size}
               kind={PointKind.Part}
               position={point.origin}
-              status={point.isConnected ? PointStatus.Close : PointStatus.Open}
+              status={point.status}
               onMouseDown={(ev) => this.startDraw(ev, i)}
             />
           ))}

@@ -3,6 +3,7 @@ import type { PartPartial } from '@xiao-ai/utils';
 import { MarkNodeLabel, MarkNodeKind } from './types';
 import { Point, PointLike } from '@circuit/math';
 import { ArrayLike } from '@circuit/shared';
+import { isLine } from '@circuit/shared';
 
 export class Label extends ArrayLike<MarkNodeLabel, [string] | [string, number | undefined]> {
   protected _isEqual(a1: MarkNodeLabel, a2: MarkNodeLabel) {
@@ -26,8 +27,8 @@ export class Label extends ArrayLike<MarkNodeLabel, [string] | [string, number |
       return;
     }
 
-    const lineLabels = this.filter((item) => /^line_\d+$/.test(item.id));
-    const partLabels = this.filter((item) => !/^line_\d+$/.test(item.id));
+    const lineLabels = this.filter((item) => isLine(item.id));
+    const partLabels = this.filter((item) => !isLine(item.id));
 
     // 多个器件标签必定是错误
     if (partLabels.length > 1) {
@@ -44,7 +45,7 @@ export class Label extends ArrayLike<MarkNodeLabel, [string] | [string, number |
       this._kind = lineLabels[0].mark >= 0 ? MarkNodeKind.LineSpacePoint : MarkNodeKind.Line;
     }
     else if (lineLabels.length > 1) {
-      this._kind = lineLabels.every((item) => item.mark > 0)
+      this._kind = lineLabels.every((item) => item.mark >= 0)
         ? MarkNodeKind.LineCrossPoint
         : MarkNodeKind.LineCoverPoint;
     }

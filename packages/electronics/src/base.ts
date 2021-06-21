@@ -128,7 +128,12 @@ export abstract class Electronic {
   setDeepConnection(index: number, data?: ConnectionData | ConnectionData[]) {
     // 取消旧元件连接
     for (const { id, mark } of this.connections[index].toData()) {
-      this.find(id)?.connections[mark].delete(this.id, index);
+      const el = this.find(id);
+
+      if (el) {
+        el.connections[mark].delete(this.id, index);
+        el.updatePoints();
+      }
     }
 
     // 设置当前元件连接
@@ -136,7 +141,12 @@ export abstract class Electronic {
 
     // 设置新元件连接
     for (const { id, mark } of this.connections[index].toData()) {
-      this.find(id)?.connections[mark].add(this.id, index);
+      const el = this.find(id);
+
+      if (el) {
+        el.connections[mark].add(this.id, index);
+        el.updatePoints();
+      }
     }
   }
 

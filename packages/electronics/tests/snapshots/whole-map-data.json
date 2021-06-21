@@ -1,0 +1,4197 @@
+{
+  "map": {
+    "700,180": {
+      "labels": [
+        {
+          "id": "VD_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        180
+      ],
+      "connections": []
+    },
+    "700,200": {
+      "labels": [
+        {
+          "id": "VD_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        200
+      ],
+      "connections": []
+    },
+    "700,220": {
+      "labels": [
+        {
+          "id": "VD_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        220
+      ],
+      "connections": []
+    },
+    "700,160": {
+      "labels": [
+        {
+          "id": "VD_1",
+          "mark": 0
+        },
+        {
+          "id": "line_5",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        700,
+        160
+      ],
+      "connections": [
+        [
+          700,
+          140
+        ]
+      ]
+    },
+    "700,240": {
+      "labels": [
+        {
+          "id": "VD_1",
+          "mark": 1
+        },
+        {
+          "id": "line_11",
+          "mark": 1
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        700,
+        240
+      ],
+      "connections": [
+        [
+          700,
+          260
+        ]
+      ]
+    },
+    "780,180": {
+      "labels": [
+        {
+          "id": "VD_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        180
+      ],
+      "connections": []
+    },
+    "780,200": {
+      "labels": [
+        {
+          "id": "VD_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        200
+      ],
+      "connections": []
+    },
+    "780,220": {
+      "labels": [
+        {
+          "id": "VD_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        220
+      ],
+      "connections": []
+    },
+    "780,160": {
+      "labels": [
+        {
+          "id": "VD_2",
+          "mark": 0
+        },
+        {
+          "id": "line_21",
+          "mark": 1
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        780,
+        160
+      ],
+      "connections": [
+        [
+          780,
+          140
+        ]
+      ]
+    },
+    "780,240": {
+      "labels": [
+        {
+          "id": "VD_2",
+          "mark": 1
+        },
+        {
+          "id": "line_8",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        780,
+        240
+      ],
+      "connections": [
+        [
+          780,
+          260
+        ]
+      ]
+    },
+    "700,420": {
+      "labels": [
+        {
+          "id": "VD_3",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        420
+      ],
+      "connections": []
+    },
+    "700,440": {
+      "labels": [
+        {
+          "id": "VD_3",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        440
+      ],
+      "connections": []
+    },
+    "700,460": {
+      "labels": [
+        {
+          "id": "VD_3",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        460
+      ],
+      "connections": []
+    },
+    "700,400": {
+      "labels": [
+        {
+          "id": "VD_3",
+          "mark": 0
+        },
+        {
+          "id": "line_10",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        700,
+        400
+      ],
+      "connections": [
+        [
+          700,
+          380
+        ]
+      ]
+    },
+    "700,480": {
+      "labels": [
+        {
+          "id": "VD_3",
+          "mark": 1
+        },
+        {
+          "id": "line_14",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        700,
+        480
+      ],
+      "connections": [
+        [
+          700,
+          500
+        ]
+      ]
+    },
+    "780,420": {
+      "labels": [
+        {
+          "id": "VD_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        420
+      ],
+      "connections": []
+    },
+    "780,440": {
+      "labels": [
+        {
+          "id": "VD_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        440
+      ],
+      "connections": []
+    },
+    "780,460": {
+      "labels": [
+        {
+          "id": "VD_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        780,
+        460
+      ],
+      "connections": []
+    },
+    "780,400": {
+      "labels": [
+        {
+          "id": "VD_4",
+          "mark": 0
+        },
+        {
+          "id": "line_9",
+          "mark": 1
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        780,
+        400
+      ],
+      "connections": [
+        [
+          780,
+          380
+        ]
+      ]
+    },
+    "780,480": {
+      "labels": [
+        {
+          "id": "VD_4",
+          "mark": 1
+        },
+        {
+          "id": "line_13",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        780,
+        480
+      ],
+      "connections": [
+        [
+          780,
+          500
+        ]
+      ]
+    },
+    "560,300": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        560,
+        300
+      ],
+      "connections": []
+    },
+    "560,320": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        560,
+        320
+      ],
+      "connections": []
+    },
+    "560,340": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        560,
+        340
+      ],
+      "connections": []
+    },
+    "580,300": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        580,
+        300
+      ],
+      "connections": []
+    },
+    "580,320": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        580,
+        320
+      ],
+      "connections": []
+    },
+    "580,340": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        580,
+        340
+      ],
+      "connections": []
+    },
+    "600,300": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        600,
+        300
+      ],
+      "connections": []
+    },
+    "600,320": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        600,
+        320
+      ],
+      "connections": []
+    },
+    "600,340": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        600,
+        340
+      ],
+      "connections": []
+    },
+    "580,280": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": 0
+        },
+        {
+          "id": "line_2",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        580,
+        280
+      ],
+      "connections": [
+        [
+          580,
+          260
+        ]
+      ]
+    },
+    "580,360": {
+      "labels": [
+        {
+          "id": "V_1",
+          "mark": 1
+        },
+        {
+          "id": "line_4",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        580,
+        360
+      ],
+      "connections": [
+        [
+          580,
+          380
+        ]
+      ]
+    },
+    "900,300": {
+      "labels": [
+        {
+          "id": "C_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        900,
+        300
+      ],
+      "connections": []
+    },
+    "900,320": {
+      "labels": [
+        {
+          "id": "C_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        900,
+        320
+      ],
+      "connections": []
+    },
+    "900,340": {
+      "labels": [
+        {
+          "id": "C_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        900,
+        340
+      ],
+      "connections": []
+    },
+    "900,280": {
+      "labels": [
+        {
+          "id": "C_1",
+          "mark": 0
+        },
+        {
+          "id": "line_19",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        900,
+        280
+      ],
+      "connections": [
+        [
+          900,
+          260
+        ]
+      ]
+    },
+    "900,360": {
+      "labels": [
+        {
+          "id": "C_1",
+          "mark": 1
+        },
+        {
+          "id": "line_17",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        900,
+        360
+      ],
+      "connections": [
+        [
+          900,
+          380
+        ]
+      ]
+    },
+    "960,300": {
+      "labels": [
+        {
+          "id": "R_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        960,
+        300
+      ],
+      "connections": []
+    },
+    "960,320": {
+      "labels": [
+        {
+          "id": "R_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        960,
+        320
+      ],
+      "connections": []
+    },
+    "960,340": {
+      "labels": [
+        {
+          "id": "R_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        960,
+        340
+      ],
+      "connections": []
+    },
+    "960,280": {
+      "labels": [
+        {
+          "id": "R_1",
+          "mark": 0
+        },
+        {
+          "id": "line_12",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        960,
+        280
+      ],
+      "connections": [
+        [
+          960,
+          260
+        ]
+      ]
+    },
+    "960,360": {
+      "labels": [
+        {
+          "id": "R_1",
+          "mark": 1
+        },
+        {
+          "id": "line_16",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        960,
+        360
+      ],
+      "connections": [
+        [
+          960,
+          380
+        ]
+      ]
+    },
+    "840,140": {
+      "labels": [
+        {
+          "id": "I_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        840,
+        140
+      ],
+      "connections": []
+    },
+    "820,140": {
+      "labels": [
+        {
+          "id": "I_out",
+          "mark": 0
+        },
+        {
+          "id": "line_20",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        820,
+        140
+      ],
+      "connections": [
+        [
+          800,
+          140
+        ]
+      ]
+    },
+    "860,140": {
+      "labels": [
+        {
+          "id": "I_out",
+          "mark": 1
+        },
+        {
+          "id": "line_18",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        860,
+        140
+      ],
+      "connections": [
+        [
+          880,
+          140
+        ]
+      ]
+    },
+    "1020,300": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1020,
+        300
+      ],
+      "connections": []
+    },
+    "1020,320": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1020,
+        320
+      ],
+      "connections": []
+    },
+    "1020,340": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1020,
+        340
+      ],
+      "connections": []
+    },
+    "1040,300": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1040,
+        300
+      ],
+      "connections": []
+    },
+    "1040,320": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1040,
+        320
+      ],
+      "connections": []
+    },
+    "1040,340": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1040,
+        340
+      ],
+      "connections": []
+    },
+    "1060,300": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1060,
+        300
+      ],
+      "connections": []
+    },
+    "1060,320": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1060,
+        320
+      ],
+      "connections": []
+    },
+    "1060,340": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        1060,
+        340
+      ],
+      "connections": []
+    },
+    "1040,280": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": 0
+        },
+        {
+          "id": "line_6",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        1040,
+        280
+      ],
+      "connections": [
+        [
+          1040,
+          260
+        ]
+      ]
+    },
+    "1040,360": {
+      "labels": [
+        {
+          "id": "V_out",
+          "mark": 1
+        },
+        {
+          "id": "line_7",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        1040,
+        360
+      ],
+      "connections": [
+        [
+          1040,
+          380
+        ]
+      ]
+    },
+    "620,300": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        620,
+        300
+      ],
+      "connections": []
+    },
+    "620,320": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        620,
+        320
+      ],
+      "connections": []
+    },
+    "620,340": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        620,
+        340
+      ],
+      "connections": []
+    },
+    "640,300": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        640,
+        300
+      ],
+      "connections": []
+    },
+    "640,320": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        640,
+        320
+      ],
+      "connections": []
+    },
+    "640,340": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        640,
+        340
+      ],
+      "connections": []
+    },
+    "660,300": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        660,
+        300
+      ],
+      "connections": []
+    },
+    "660,320": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        660,
+        320
+      ],
+      "connections": []
+    },
+    "660,340": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        660,
+        340
+      ],
+      "connections": []
+    },
+    "640,280": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": 0
+        },
+        {
+          "id": "line_24",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        640,
+        280
+      ],
+      "connections": [
+        [
+          640,
+          260
+        ]
+      ]
+    },
+    "640,360": {
+      "labels": [
+        {
+          "id": "V_in",
+          "mark": 1
+        },
+        {
+          "id": "line_26",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        640,
+        360
+      ],
+      "connections": [
+        [
+          640,
+          380
+        ]
+      ]
+    },
+    "700,540": {
+      "labels": [
+        {
+          "id": "GND_1",
+          "mark": -1
+        }
+      ],
+      "kind": "Part",
+      "position": [
+        700,
+        540
+      ],
+      "connections": []
+    },
+    "700,520": {
+      "labels": [
+        {
+          "id": "GND_1",
+          "mark": 0
+        },
+        {
+          "id": "line_28",
+          "mark": 0
+        }
+      ],
+      "kind": "PartPin",
+      "position": [
+        700,
+        520
+      ],
+      "connections": [
+        [
+          700,
+          500
+        ]
+      ]
+    },
+    "580,260": {
+      "labels": [
+        {
+          "id": "line_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        580,
+        260
+      ],
+      "connections": [
+        [
+          580,
+          280
+        ],
+        [
+          600,
+          260
+        ]
+      ]
+    },
+    "600,260": {
+      "labels": [
+        {
+          "id": "line_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        600,
+        260
+      ],
+      "connections": [
+        [
+          580,
+          260
+        ],
+        [
+          620,
+          260
+        ]
+      ]
+    },
+    "620,260": {
+      "labels": [
+        {
+          "id": "line_2",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        620,
+        260
+      ],
+      "connections": [
+        [
+          600,
+          260
+        ],
+        [
+          640,
+          260
+        ]
+      ]
+    },
+    "640,260": {
+      "labels": [
+        {
+          "id": "line_2",
+          "mark": 1
+        },
+        {
+          "id": "line_24",
+          "mark": 1
+        },
+        {
+          "id": "line_25",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        640,
+        260
+      ],
+      "connections": [
+        [
+          620,
+          260
+        ],
+        [
+          640,
+          280
+        ],
+        [
+          660,
+          260
+        ]
+      ]
+    },
+    "580,380": {
+      "labels": [
+        {
+          "id": "line_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        580,
+        380
+      ],
+      "connections": [
+        [
+          580,
+          360
+        ],
+        [
+          600,
+          380
+        ]
+      ]
+    },
+    "600,380": {
+      "labels": [
+        {
+          "id": "line_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        600,
+        380
+      ],
+      "connections": [
+        [
+          580,
+          380
+        ],
+        [
+          620,
+          380
+        ]
+      ]
+    },
+    "620,380": {
+      "labels": [
+        {
+          "id": "line_4",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        620,
+        380
+      ],
+      "connections": [
+        [
+          600,
+          380
+        ],
+        [
+          640,
+          380
+        ]
+      ]
+    },
+    "640,380": {
+      "labels": [
+        {
+          "id": "line_4",
+          "mark": 1
+        },
+        {
+          "id": "line_26",
+          "mark": 1
+        },
+        {
+          "id": "line_27",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        640,
+        380
+      ],
+      "connections": [
+        [
+          620,
+          380
+        ],
+        [
+          640,
+          360
+        ],
+        [
+          660,
+          380
+        ]
+      ]
+    },
+    "700,140": {
+      "labels": [
+        {
+          "id": "line_5",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        140
+      ],
+      "connections": [
+        [
+          700,
+          160
+        ],
+        [
+          720,
+          140
+        ]
+      ]
+    },
+    "720,140": {
+      "labels": [
+        {
+          "id": "line_5",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        720,
+        140
+      ],
+      "connections": [
+        [
+          700,
+          140
+        ],
+        [
+          740,
+          140
+        ]
+      ]
+    },
+    "740,140": {
+      "labels": [
+        {
+          "id": "line_5",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        740,
+        140
+      ],
+      "connections": [
+        [
+          720,
+          140
+        ],
+        [
+          760,
+          140
+        ]
+      ]
+    },
+    "760,140": {
+      "labels": [
+        {
+          "id": "line_5",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        760,
+        140
+      ],
+      "connections": [
+        [
+          740,
+          140
+        ],
+        [
+          780,
+          140
+        ]
+      ]
+    },
+    "780,140": {
+      "labels": [
+        {
+          "id": "line_5",
+          "mark": 1
+        },
+        {
+          "id": "line_20",
+          "mark": 1
+        },
+        {
+          "id": "line_21",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        780,
+        140
+      ],
+      "connections": [
+        [
+          760,
+          140
+        ],
+        [
+          800,
+          140
+        ],
+        [
+          780,
+          160
+        ]
+      ]
+    },
+    "1040,260": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        260
+      ],
+      "connections": [
+        [
+          1040,
+          280
+        ],
+        [
+          1040,
+          240
+        ]
+      ]
+    },
+    "1040,240": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        240
+      ],
+      "connections": [
+        [
+          1040,
+          260
+        ],
+        [
+          1040,
+          220
+        ]
+      ]
+    },
+    "1040,220": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        220
+      ],
+      "connections": [
+        [
+          1040,
+          240
+        ],
+        [
+          1040,
+          200
+        ]
+      ]
+    },
+    "1040,200": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        200
+      ],
+      "connections": [
+        [
+          1040,
+          220
+        ],
+        [
+          1040,
+          180
+        ]
+      ]
+    },
+    "1040,180": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        180
+      ],
+      "connections": [
+        [
+          1040,
+          200
+        ],
+        [
+          1040,
+          160
+        ]
+      ]
+    },
+    "1040,160": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        160
+      ],
+      "connections": [
+        [
+          1040,
+          180
+        ],
+        [
+          1040,
+          140
+        ]
+      ]
+    },
+    "1040,140": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        140
+      ],
+      "connections": [
+        [
+          1040,
+          160
+        ],
+        [
+          1020,
+          140
+        ]
+      ]
+    },
+    "1020,140": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1020,
+        140
+      ],
+      "connections": [
+        [
+          1040,
+          140
+        ],
+        [
+          1000,
+          140
+        ]
+      ]
+    },
+    "1000,140": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1000,
+        140
+      ],
+      "connections": [
+        [
+          1020,
+          140
+        ],
+        [
+          980,
+          140
+        ]
+      ]
+    },
+    "980,140": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        980,
+        140
+      ],
+      "connections": [
+        [
+          1000,
+          140
+        ],
+        [
+          960,
+          140
+        ]
+      ]
+    },
+    "960,140": {
+      "labels": [
+        {
+          "id": "line_6",
+          "mark": 1
+        },
+        {
+          "id": "line_12",
+          "mark": 1
+        },
+        {
+          "id": "line_22",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        960,
+        140
+      ],
+      "connections": [
+        [
+          980,
+          140
+        ],
+        [
+          960,
+          160
+        ],
+        [
+          940,
+          140
+        ]
+      ]
+    },
+    "1040,380": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        380
+      ],
+      "connections": [
+        [
+          1040,
+          360
+        ],
+        [
+          1040,
+          400
+        ]
+      ]
+    },
+    "1040,400": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        400
+      ],
+      "connections": [
+        [
+          1040,
+          380
+        ],
+        [
+          1040,
+          420
+        ]
+      ]
+    },
+    "1040,420": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        420
+      ],
+      "connections": [
+        [
+          1040,
+          400
+        ],
+        [
+          1040,
+          440
+        ]
+      ]
+    },
+    "1040,440": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        440
+      ],
+      "connections": [
+        [
+          1040,
+          420
+        ],
+        [
+          1040,
+          460
+        ]
+      ]
+    },
+    "1040,460": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        460
+      ],
+      "connections": [
+        [
+          1040,
+          440
+        ],
+        [
+          1040,
+          480
+        ]
+      ]
+    },
+    "1040,480": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        480
+      ],
+      "connections": [
+        [
+          1040,
+          460
+        ],
+        [
+          1040,
+          500
+        ]
+      ]
+    },
+    "1040,500": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1040,
+        500
+      ],
+      "connections": [
+        [
+          1040,
+          480
+        ],
+        [
+          1020,
+          500
+        ]
+      ]
+    },
+    "1020,500": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1020,
+        500
+      ],
+      "connections": [
+        [
+          1040,
+          500
+        ],
+        [
+          1000,
+          500
+        ]
+      ]
+    },
+    "1000,500": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        1000,
+        500
+      ],
+      "connections": [
+        [
+          1020,
+          500
+        ],
+        [
+          980,
+          500
+        ]
+      ]
+    },
+    "980,500": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        980,
+        500
+      ],
+      "connections": [
+        [
+          1000,
+          500
+        ],
+        [
+          960,
+          500
+        ]
+      ]
+    },
+    "960,500": {
+      "labels": [
+        {
+          "id": "line_7",
+          "mark": 1
+        },
+        {
+          "id": "line_16",
+          "mark": 1
+        },
+        {
+          "id": "line_23",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        960,
+        500
+      ],
+      "connections": [
+        [
+          980,
+          500
+        ],
+        [
+          960,
+          480
+        ],
+        [
+          940,
+          500
+        ]
+      ]
+    },
+    "780,260": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        260
+      ],
+      "connections": [
+        [
+          780,
+          240
+        ],
+        [
+          780,
+          280
+        ]
+      ]
+    },
+    "780,280": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        280
+      ],
+      "connections": [
+        [
+          780,
+          260
+        ],
+        [
+          780,
+          300
+        ]
+      ]
+    },
+    "780,300": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        300
+      ],
+      "connections": [
+        [
+          780,
+          280
+        ],
+        [
+          780,
+          320
+        ]
+      ]
+    },
+    "780,320": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        320
+      ],
+      "connections": [
+        [
+          780,
+          300
+        ],
+        [
+          780,
+          340
+        ]
+      ]
+    },
+    "780,340": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        340
+      ],
+      "connections": [
+        [
+          780,
+          320
+        ],
+        [
+          780,
+          360
+        ]
+      ]
+    },
+    "780,360": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        780,
+        360
+      ],
+      "connections": [
+        [
+          780,
+          340
+        ],
+        [
+          780,
+          380
+        ]
+      ]
+    },
+    "780,380": {
+      "labels": [
+        {
+          "id": "line_8",
+          "mark": 1
+        },
+        {
+          "id": "line_9",
+          "mark": 0
+        },
+        {
+          "id": "line_27",
+          "mark": 1
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        780,
+        380
+      ],
+      "connections": [
+        [
+          780,
+          360
+        ],
+        [
+          780,
+          400
+        ],
+        [
+          760,
+          380
+        ]
+      ]
+    },
+    "700,380": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        },
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "LineCoverPoint",
+      "position": [
+        700,
+        380
+      ],
+      "connections": [
+        [
+          700,
+          400
+        ],
+        [
+          700,
+          360
+        ],
+        [
+          680,
+          380
+        ],
+        [
+          720,
+          380
+        ]
+      ]
+    },
+    "700,360": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        360
+      ],
+      "connections": [
+        [
+          700,
+          380
+        ],
+        [
+          700,
+          340
+        ]
+      ]
+    },
+    "700,340": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        340
+      ],
+      "connections": [
+        [
+          700,
+          360
+        ],
+        [
+          700,
+          320
+        ]
+      ]
+    },
+    "700,320": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        320
+      ],
+      "connections": [
+        [
+          700,
+          340
+        ],
+        [
+          700,
+          300
+        ]
+      ]
+    },
+    "700,300": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        300
+      ],
+      "connections": [
+        [
+          700,
+          320
+        ],
+        [
+          700,
+          280
+        ]
+      ]
+    },
+    "700,280": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        700,
+        280
+      ],
+      "connections": [
+        [
+          700,
+          300
+        ],
+        [
+          700,
+          260
+        ]
+      ]
+    },
+    "700,260": {
+      "labels": [
+        {
+          "id": "line_10",
+          "mark": 1
+        },
+        {
+          "id": "line_11",
+          "mark": 0
+        },
+        {
+          "id": "line_25",
+          "mark": 1
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        700,
+        260
+      ],
+      "connections": [
+        [
+          700,
+          280
+        ],
+        [
+          700,
+          240
+        ],
+        [
+          680,
+          260
+        ]
+      ]
+    },
+    "960,260": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        260
+      ],
+      "connections": [
+        [
+          960,
+          280
+        ],
+        [
+          960,
+          240
+        ]
+      ]
+    },
+    "960,240": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        240
+      ],
+      "connections": [
+        [
+          960,
+          260
+        ],
+        [
+          960,
+          220
+        ]
+      ]
+    },
+    "960,220": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        220
+      ],
+      "connections": [
+        [
+          960,
+          240
+        ],
+        [
+          960,
+          200
+        ]
+      ]
+    },
+    "960,200": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        200
+      ],
+      "connections": [
+        [
+          960,
+          220
+        ],
+        [
+          960,
+          180
+        ]
+      ]
+    },
+    "960,180": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        180
+      ],
+      "connections": [
+        [
+          960,
+          200
+        ],
+        [
+          960,
+          160
+        ]
+      ]
+    },
+    "960,160": {
+      "labels": [
+        {
+          "id": "line_12",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        160
+      ],
+      "connections": [
+        [
+          960,
+          180
+        ],
+        [
+          960,
+          140
+        ]
+      ]
+    },
+    "780,500": {
+      "labels": [
+        {
+          "id": "line_13",
+          "mark": 1
+        },
+        {
+          "id": "line_15",
+          "mark": 0
+        },
+        {
+          "id": "line_29",
+          "mark": 1
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        780,
+        500
+      ],
+      "connections": [
+        [
+          780,
+          480
+        ],
+        [
+          800,
+          500
+        ],
+        [
+          760,
+          500
+        ]
+      ]
+    },
+    "700,500": {
+      "labels": [
+        {
+          "id": "line_14",
+          "mark": 1
+        },
+        {
+          "id": "line_28",
+          "mark": 1
+        },
+        {
+          "id": "line_29",
+          "mark": 0
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        700,
+        500
+      ],
+      "connections": [
+        [
+          700,
+          480
+        ],
+        [
+          700,
+          520
+        ],
+        [
+          720,
+          500
+        ]
+      ]
+    },
+    "800,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        800,
+        500
+      ],
+      "connections": [
+        [
+          780,
+          500
+        ],
+        [
+          820,
+          500
+        ]
+      ]
+    },
+    "820,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        820,
+        500
+      ],
+      "connections": [
+        [
+          800,
+          500
+        ],
+        [
+          840,
+          500
+        ]
+      ]
+    },
+    "840,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        840,
+        500
+      ],
+      "connections": [
+        [
+          820,
+          500
+        ],
+        [
+          860,
+          500
+        ]
+      ]
+    },
+    "860,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        860,
+        500
+      ],
+      "connections": [
+        [
+          840,
+          500
+        ],
+        [
+          880,
+          500
+        ]
+      ]
+    },
+    "880,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        880,
+        500
+      ],
+      "connections": [
+        [
+          860,
+          500
+        ],
+        [
+          900,
+          500
+        ]
+      ]
+    },
+    "900,500": {
+      "labels": [
+        {
+          "id": "line_15",
+          "mark": 1
+        },
+        {
+          "id": "line_17",
+          "mark": 1
+        },
+        {
+          "id": "line_23",
+          "mark": 1
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        900,
+        500
+      ],
+      "connections": [
+        [
+          880,
+          500
+        ],
+        [
+          900,
+          480
+        ],
+        [
+          920,
+          500
+        ]
+      ]
+    },
+    "960,380": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        380
+      ],
+      "connections": [
+        [
+          960,
+          360
+        ],
+        [
+          960,
+          400
+        ]
+      ]
+    },
+    "960,400": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        400
+      ],
+      "connections": [
+        [
+          960,
+          380
+        ],
+        [
+          960,
+          420
+        ]
+      ]
+    },
+    "960,420": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        420
+      ],
+      "connections": [
+        [
+          960,
+          400
+        ],
+        [
+          960,
+          440
+        ]
+      ]
+    },
+    "960,440": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        440
+      ],
+      "connections": [
+        [
+          960,
+          420
+        ],
+        [
+          960,
+          460
+        ]
+      ]
+    },
+    "960,460": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        460
+      ],
+      "connections": [
+        [
+          960,
+          440
+        ],
+        [
+          960,
+          480
+        ]
+      ]
+    },
+    "960,480": {
+      "labels": [
+        {
+          "id": "line_16",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        960,
+        480
+      ],
+      "connections": [
+        [
+          960,
+          460
+        ],
+        [
+          960,
+          500
+        ]
+      ]
+    },
+    "900,380": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        380
+      ],
+      "connections": [
+        [
+          900,
+          360
+        ],
+        [
+          900,
+          400
+        ]
+      ]
+    },
+    "900,400": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        400
+      ],
+      "connections": [
+        [
+          900,
+          380
+        ],
+        [
+          900,
+          420
+        ]
+      ]
+    },
+    "900,420": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        420
+      ],
+      "connections": [
+        [
+          900,
+          400
+        ],
+        [
+          900,
+          440
+        ]
+      ]
+    },
+    "900,440": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        440
+      ],
+      "connections": [
+        [
+          900,
+          420
+        ],
+        [
+          900,
+          460
+        ]
+      ]
+    },
+    "900,460": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        460
+      ],
+      "connections": [
+        [
+          900,
+          440
+        ],
+        [
+          900,
+          480
+        ]
+      ]
+    },
+    "900,480": {
+      "labels": [
+        {
+          "id": "line_17",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        480
+      ],
+      "connections": [
+        [
+          900,
+          460
+        ],
+        [
+          900,
+          500
+        ]
+      ]
+    },
+    "880,140": {
+      "labels": [
+        {
+          "id": "line_18",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        880,
+        140
+      ],
+      "connections": [
+        [
+          860,
+          140
+        ],
+        [
+          900,
+          140
+        ]
+      ]
+    },
+    "900,140": {
+      "labels": [
+        {
+          "id": "line_18",
+          "mark": 1
+        },
+        {
+          "id": "line_19",
+          "mark": 1
+        },
+        {
+          "id": "line_22",
+          "mark": 1
+        }
+      ],
+      "kind": "LineCrossPoint",
+      "position": [
+        900,
+        140
+      ],
+      "connections": [
+        [
+          880,
+          140
+        ],
+        [
+          900,
+          160
+        ],
+        [
+          920,
+          140
+        ]
+      ]
+    },
+    "900,260": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        260
+      ],
+      "connections": [
+        [
+          900,
+          280
+        ],
+        [
+          900,
+          240
+        ]
+      ]
+    },
+    "900,240": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        240
+      ],
+      "connections": [
+        [
+          900,
+          260
+        ],
+        [
+          900,
+          220
+        ]
+      ]
+    },
+    "900,220": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        220
+      ],
+      "connections": [
+        [
+          900,
+          240
+        ],
+        [
+          900,
+          200
+        ]
+      ]
+    },
+    "900,200": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        200
+      ],
+      "connections": [
+        [
+          900,
+          220
+        ],
+        [
+          900,
+          180
+        ]
+      ]
+    },
+    "900,180": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        180
+      ],
+      "connections": [
+        [
+          900,
+          200
+        ],
+        [
+          900,
+          160
+        ]
+      ]
+    },
+    "900,160": {
+      "labels": [
+        {
+          "id": "line_19",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        900,
+        160
+      ],
+      "connections": [
+        [
+          900,
+          180
+        ],
+        [
+          900,
+          140
+        ]
+      ]
+    },
+    "800,140": {
+      "labels": [
+        {
+          "id": "line_20",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        800,
+        140
+      ],
+      "connections": [
+        [
+          820,
+          140
+        ],
+        [
+          780,
+          140
+        ]
+      ]
+    },
+    "940,140": {
+      "labels": [
+        {
+          "id": "line_22",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        940,
+        140
+      ],
+      "connections": [
+        [
+          960,
+          140
+        ],
+        [
+          920,
+          140
+        ]
+      ]
+    },
+    "920,140": {
+      "labels": [
+        {
+          "id": "line_22",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        920,
+        140
+      ],
+      "connections": [
+        [
+          940,
+          140
+        ],
+        [
+          900,
+          140
+        ]
+      ]
+    },
+    "940,500": {
+      "labels": [
+        {
+          "id": "line_23",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        940,
+        500
+      ],
+      "connections": [
+        [
+          960,
+          500
+        ],
+        [
+          920,
+          500
+        ]
+      ]
+    },
+    "920,500": {
+      "labels": [
+        {
+          "id": "line_23",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        920,
+        500
+      ],
+      "connections": [
+        [
+          940,
+          500
+        ],
+        [
+          900,
+          500
+        ]
+      ]
+    },
+    "660,260": {
+      "labels": [
+        {
+          "id": "line_25",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        660,
+        260
+      ],
+      "connections": [
+        [
+          640,
+          260
+        ],
+        [
+          680,
+          260
+        ]
+      ]
+    },
+    "680,260": {
+      "labels": [
+        {
+          "id": "line_25",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        680,
+        260
+      ],
+      "connections": [
+        [
+          660,
+          260
+        ],
+        [
+          700,
+          260
+        ]
+      ]
+    },
+    "660,380": {
+      "labels": [
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        660,
+        380
+      ],
+      "connections": [
+        [
+          640,
+          380
+        ],
+        [
+          680,
+          380
+        ]
+      ]
+    },
+    "680,380": {
+      "labels": [
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        680,
+        380
+      ],
+      "connections": [
+        [
+          660,
+          380
+        ],
+        [
+          700,
+          380
+        ]
+      ]
+    },
+    "720,380": {
+      "labels": [
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        720,
+        380
+      ],
+      "connections": [
+        [
+          700,
+          380
+        ],
+        [
+          740,
+          380
+        ]
+      ]
+    },
+    "740,380": {
+      "labels": [
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        740,
+        380
+      ],
+      "connections": [
+        [
+          720,
+          380
+        ],
+        [
+          760,
+          380
+        ]
+      ]
+    },
+    "760,380": {
+      "labels": [
+        {
+          "id": "line_27",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        760,
+        380
+      ],
+      "connections": [
+        [
+          740,
+          380
+        ],
+        [
+          780,
+          380
+        ]
+      ]
+    },
+    "720,500": {
+      "labels": [
+        {
+          "id": "line_29",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        720,
+        500
+      ],
+      "connections": [
+        [
+          700,
+          500
+        ],
+        [
+          740,
+          500
+        ]
+      ]
+    },
+    "740,500": {
+      "labels": [
+        {
+          "id": "line_29",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        740,
+        500
+      ],
+      "connections": [
+        [
+          720,
+          500
+        ],
+        [
+          760,
+          500
+        ]
+      ]
+    },
+    "760,500": {
+      "labels": [
+        {
+          "id": "line_29",
+          "mark": -1
+        }
+      ],
+      "kind": "Line",
+      "position": [
+        760,
+        500
+      ],
+      "connections": [
+        [
+          740,
+          500
+        ],
+        [
+          780,
+          500
+        ]
+      ]
+    }
+  },
+  "connection": {
+    "parts": [
+      [
+        [
+          {
+            "id": "line_5",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_11",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_21",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_8",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_10",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_14",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_9",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_13",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_2",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_4",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_19",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_17",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [],
+        []
+      ],
+      [
+        [
+          {
+            "id": "line_20",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_18",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_6",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_7",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_24",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_26",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_28",
+            "mark": 0
+          }
+        ]
+      ]
+    ],
+    "lines": [
+      [
+        [
+          {
+            "id": "V_1",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_25",
+            "mark": 0
+          },
+          {
+            "id": "line_24",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "V_1",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_27",
+            "mark": 0
+          },
+          {
+            "id": "line_26",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "VD_1",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_21",
+            "mark": 0
+          },
+          {
+            "id": "line_20",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "V_out",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_22",
+            "mark": 0
+          },
+          {
+            "id": "line_12",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "V_out",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_23",
+            "mark": 0
+          },
+          {
+            "id": "line_16",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "VD_2",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_27",
+            "mark": 1
+          },
+          {
+            "id": "line_9",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_8",
+            "mark": 1
+          },
+          {
+            "id": "line_27",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "VD_4",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "VD_3",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_25",
+            "mark": 1
+          },
+          {
+            "id": "line_11",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_10",
+            "mark": 1
+          },
+          {
+            "id": "line_25",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "VD_1",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "R_1",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_6",
+            "mark": 1
+          },
+          {
+            "id": "line_22",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "VD_4",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_29",
+            "mark": 1
+          },
+          {
+            "id": "line_15",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "VD_3",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_29",
+            "mark": 0
+          },
+          {
+            "id": "line_28",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_13",
+            "mark": 1
+          },
+          {
+            "id": "line_29",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_23",
+            "mark": 1
+          },
+          {
+            "id": "line_17",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "R_1",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_7",
+            "mark": 1
+          },
+          {
+            "id": "line_23",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "C_1",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_15",
+            "mark": 1
+          },
+          {
+            "id": "line_23",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "I_out",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_22",
+            "mark": 1
+          },
+          {
+            "id": "line_19",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "C_1",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_18",
+            "mark": 1
+          },
+          {
+            "id": "line_22",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "I_out",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_5",
+            "mark": 1
+          },
+          {
+            "id": "line_21",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_5",
+            "mark": 1
+          },
+          {
+            "id": "line_20",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "VD_2",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_6",
+            "mark": 1
+          },
+          {
+            "id": "line_12",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_18",
+            "mark": 1
+          },
+          {
+            "id": "line_19",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_7",
+            "mark": 1
+          },
+          {
+            "id": "line_16",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_15",
+            "mark": 1
+          },
+          {
+            "id": "line_17",
+            "mark": 1
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "V_in",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_2",
+            "mark": 1
+          },
+          {
+            "id": "line_25",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_2",
+            "mark": 1
+          },
+          {
+            "id": "line_24",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_10",
+            "mark": 1
+          },
+          {
+            "id": "line_11",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "V_in",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_4",
+            "mark": 1
+          },
+          {
+            "id": "line_27",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_4",
+            "mark": 1
+          },
+          {
+            "id": "line_26",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_8",
+            "mark": 1
+          },
+          {
+            "id": "line_9",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "GND_1",
+            "mark": 0
+          }
+        ],
+        [
+          {
+            "id": "line_14",
+            "mark": 1
+          },
+          {
+            "id": "line_29",
+            "mark": 0
+          }
+        ]
+      ],
+      [
+        [
+          {
+            "id": "line_14",
+            "mark": 1
+          },
+          {
+            "id": "line_28",
+            "mark": 1
+          }
+        ],
+        [
+          {
+            "id": "line_13",
+            "mark": 1
+          },
+          {
+            "id": "line_15",
+            "mark": 0
+          }
+        ]
+      ]
+    ]
+  }
+}

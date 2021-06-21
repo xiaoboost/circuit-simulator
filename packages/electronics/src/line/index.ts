@@ -47,7 +47,7 @@ export class Line extends Electronic {
         ...oldData,
         index: i,
         position,
-        isConnected: Boolean(this.connections[i].value),
+        status: this.connections[i].getStatus(),
       };
     }
 
@@ -309,8 +309,6 @@ export class Line extends Electronic {
       const part = this.find<Part>(label.id)!;
       const mark = label.mark!;
 
-      // status.labels.add(this.id, index);
-
       this.setDeepConnection(index, {
         id: part.id,
         mark: mark,
@@ -341,7 +339,6 @@ export class Line extends Electronic {
       else {
         const line = this.find<Line>(id)!;
 
-        // status.labels.add(this.id, index);
         this.setDeepConnection(index, {
           id: line.id,
           mark: mark,
@@ -372,8 +369,8 @@ export class Line extends Electronic {
             throw new Error(`导线不存在：${id}`);
           }
 
-          const lineConnection = allLabels.filter((item) => item.id !== id && item.mark !== mark);
-          line.setConnection(mark, lineConnection);
+          const lineConnection = allLabels.filter((item) => item.id !== id || item.mark !== mark);
+          line.setDeepConnection(mark, lineConnection);
         });
       }
     }

@@ -11,7 +11,7 @@ import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
 import { lines } from 'src/store';
 import { Line, DrawPathSearcher, LinePin, MouseFocusClassName } from '@circuit/electronics';
-import { RectSize, PointKind, PointStatus, rectWidth } from './constant';
+import { RectSize, PointKind, rectWidth } from './constant';
 
 export class LineComponent extends Line {
   constructor(paths: PointLike[] = []) {
@@ -191,7 +191,7 @@ export class LineComponent extends Line {
               size={point.size}
               kind={PointKind.Line}
               position={point.position}
-              status={point.isConnected ? PointStatus.Close : PointStatus.Open}
+              status={point.status}
             />
           ))}
         </g>

@@ -2,13 +2,6 @@
 export enum PointKind {
   Part,
   Line,
-  LineCross,
-}
-
-/** 节点状态 */
-export enum PointStatus {
-  Open,
-  Close,
 }
 
 /** 导线接触方块大小 */

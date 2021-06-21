@@ -46,7 +46,7 @@ function renderComponent(list: readonly Component[]) {
 
 export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
-  const SVGRef = useRef<SVGSVGElement>(null);
+  const DebugRef = useRef<SVGGElement>(null);
   const [lines] = useWatcher(store.lines);
   const [parts] = useWatcher(store.parts);
   const [map] = useWatcher(mapState);
@@ -54,7 +54,7 @@ export function DrawingSheet() {
   const LinesList = useMemo(() => renderComponent(lines), [lines]);
   const PartsList = useMemo(() => renderComponent(parts), [parts]);
 
-  useDebugger(SVGRef);
+  useDebugger(DebugRef);
   useMouseBusInit(SheetRef, () => mapState.data);
 
   return (
@@ -65,8 +65,8 @@ export function DrawingSheet() {
       onMouseDown={mapEvent.moveStartEvent}
       onWheel={mapEvent.sizeChangeEvent}
     >
-      <svg ref={SVGRef} height='100%' width='100%'>
-        <g transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
+      <svg height='100%' width='100%'>
+        <g ref={DebugRef} transform={`translate(${map.position.join(',')}) scale(${map.zoom})`}>
           {LinesList}
           {PartsList}
         </g>

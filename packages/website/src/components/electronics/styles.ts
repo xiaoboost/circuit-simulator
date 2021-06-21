@@ -74,4 +74,9 @@ export const pointStyles = createStyles({
     fill: White,
     stroke: 'currentColor',
   },
+  dashCircle: {
+    fill: White,
+    stroke: 'currentColor',
+    strokeDasharray: '1.5 4',
+  },
 });

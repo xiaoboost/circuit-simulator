@@ -103,6 +103,7 @@ importers:
 
   packages/map:
     specifiers:
+      '@circuit/electronics': workspace:*
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
       '@circuit/tsconfig': workspace:*
@@ -115,6 +116,7 @@ importers:
       tslib: ^2.3.0
       typescript: ^4.3.4
     dependencies:
+      '@circuit/electronics': link:../electronics
       '@circuit/math': link:../math
       '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1

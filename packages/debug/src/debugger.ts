@@ -74,7 +74,7 @@ class Debugger {
 
     for (const line of lines) {
       this.text(
-        [1000, count * 25 + 50],
+        [1400, count * 25 + 50],
         `${getLabels(line.connections[0])} ---> ${line.id} ---> ${getLabels(line.connections[1])}`,
       );
       count++;

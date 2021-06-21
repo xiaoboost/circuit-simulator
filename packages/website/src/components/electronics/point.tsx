@@ -3,14 +3,14 @@ import React from 'react';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { mapState } from '../drawing-sheet/map';
 import { pointStyles } from './styles';
-import { PointKind, PointStatus } from './constant';
+import { PointKind } from './constant';
 import { useState, useRef, useEffect } from 'react';
-import { MouseFocusClassName } from '@circuit/electronics';
+import { MouseFocusClassName, ConnectionStatus } from '@circuit/electronics';
 import { Point } from '@circuit/math';
 
 interface Props {
   kind: PointKind;
-  status: PointStatus;
+  status: ConnectionStatus;
   position: Point;
   size?: number;
   onMouseDown?: (ev: React.MouseEvent) => any;
@@ -56,38 +56,32 @@ export function ElectronicPoint(props: Props) {
     if (props.kind === PointKind.Part) {
       data.className = pointStyles.solidCircle;
     }
-    else if (props.kind === PointKind.Line) {
-      data.className = props.status === PointStatus.Open
-        ? pointStyles.hollowCircle
+    else {
+      data.className = props.status === ConnectionStatus.Space
+        ? pointStyles.dashCircle
         : pointStyles.solidCircle;
-
-      if (props.status === PointStatus.Open) {
-        data.strokeDasharray = '1.5 4';
-      }
-    }
-    else if (props.kind === PointKind.LineCross) {
-      data.className = pointStyles.solidCircle;
     }
 
     return data;
   }
 
   function getSize(hover: boolean) {
-    if (props.kind === PointKind.LineCross) {
-      return hover ? 6 : 2;
-    }
-    else if (props.kind === PointKind.Part) {
-      return props.status === PointStatus.Open
+    if (props.kind === PointKind.Part) {
+      return props.status === ConnectionStatus.Space
         ? hover ? 5 : 0
         : 2;
     }
-    else if (props.kind === PointKind.Line) {
-      return props.status === PointStatus.Open
-        ? hover ? 8 : 4
-        : 2;
+    else {
+      if (props.status === ConnectionStatus.Space) {
+        return hover ? 8 : 4;
+      }
+      else if (props.status === ConnectionStatus.Line) {
+        return hover ? 6 : 2;
+      }
+      else {
+        return 2;
+      }
     }
-
-    return 0;
   }
 
   useEffect(() => {

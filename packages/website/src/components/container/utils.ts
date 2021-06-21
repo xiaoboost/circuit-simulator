@@ -3,7 +3,11 @@ import { appDataInit } from 'src/store';
 
 /** 移除 loading 界面 */
 function removeLoading() {
-  const loading = document.getElementById('start-loading')!;
+  const loading = document.getElementById('start-loading');
+
+  if (!loading) {
+    return;
+  }
 
   loading.style.opacity = '0';
   loading.style.transition = 'opacity .5s';

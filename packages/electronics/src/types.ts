@@ -1,4 +1,5 @@
 import type { Point } from '@circuit/math';
+import type { ConnectionStatus } from './utils';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
@@ -31,7 +32,7 @@ export enum ElectronicKind {
   ReferenceGround,
 }
 
-/** 引脚状态 */
+/** 引脚数据 */
 export interface BasePinStatus {
   /** 节点半径 */
   size?: number;
@@ -39,8 +40,8 @@ export interface BasePinStatus {
   className?: string;
   /** 引脚下标 */
   index: number;
-  /** 节点是否连接着器件 */
-  isConnected: boolean;
+  /** 连接状态 */
+  status: ConnectionStatus;
   /** 现在节点相对图纸原点位置 */
   position: Point;
 }

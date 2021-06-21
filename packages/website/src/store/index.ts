@@ -23,18 +23,20 @@ export const oscilloscopes = new Watcher<string[][]>([]);
 
 /** 加载图纸数据 */
 export function loadSheet(data: ElectronicData) {
-  for (const item of data) {
-    if (item.kind === 'Line') {
-      const line = new LineComponent((item as LineData).path);
-      line.setMark();
-      line.setConnectionByPath(false);
-    }
-    else {
+  data
+    .filter((item) => item.kind !== 'Line')
+    .forEach((item) => {
       const part = new PartComponent(item as PartData);
       part.setMark();
-      parts.setData(parts.data.concat(part));
-    }
-  }
+    });
+
+  data
+    .filter((item) => item.kind === 'Line')
+    .forEach((item) => {
+      const line = new LineComponent((item as LineData).path);
+      line.setConnectionByPath(false);
+      line.setMark();
+    });
 }
 
 /** 加载网站数据 */

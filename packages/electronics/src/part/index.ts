@@ -104,7 +104,7 @@ export class Part extends Electronic {
 
       this.points[i] = {
         index: i,
-        isConnected: Boolean(this.connections[i].value),
+        status: this.connections[i].getStatus(),
         origin: Point.from(point.position),
         position: Point.prototype.rotate.call(point.position, rotate),
         direction: Point.prototype.rotate.call(Directions[point.direction], rotate),
