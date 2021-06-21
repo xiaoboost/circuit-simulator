@@ -34,6 +34,11 @@
       "tests/**/*.spec.ts"
     ]
   },
+  "dependencies": {
+    "@circuit/electronics": "workspace:*",
+    "@circuit/math": "workspace:*",
+    "@xiao-ai/utils": "^1.4.1"
+  },
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",

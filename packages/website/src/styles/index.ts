@@ -53,7 +53,9 @@ export function createDynamicStyles<
   C extends string = string,
   Props = unknown,
 >(styles: Styles<C, Props>): (data?: Props) => Classes<C> {
-  const styleData = jss.createStyleSheet(styles as any);
+  const styleData = jss.createStyleSheet(styles as any, {
+    link: true,
+  });
 
   let lastProps: Props | undefined = undefined;
   let lastClasses: Classes<C> = {} as any;
@@ -110,7 +112,7 @@ export const Shadow = '#A1A1A1';
  */
 export const FontDefault = "'Helvetica', 'Arial', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', sans-serif";
 
-/** 
+/**
  * 衬线字体
  *  - 主要是用在标题等醒目位置
  */

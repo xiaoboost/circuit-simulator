@@ -1,7 +1,7 @@
-import { isNumber } from '@utils/assert';
+import { isNumber, AnyObject } from '@xiao-ai/utils';
 
-/** 多对一的数据映射 */
-export default class HashMap {
+/** 节点映射表 */
+export class NodeMapping {
   /** hash 表数据 */
   private _map: AnyObject<number> = {};
 
@@ -63,4 +63,19 @@ export default class HashMap {
     // 旧节点赋值为新的
     oldKeys.forEach((key) => (map[key] = newVal));
   }
+}
+
+/** 获取管脚到支路的映射表 */
+function getPinToBranchMapping() {
+  // ..
+}
+
+/** 获取管脚到节点的映射表 */
+function getPinToNodeMapping() {
+  // ..
+}
+
+/** 获取映射表 */
+export function getMapping() {
+  // ..
 }

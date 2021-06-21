@@ -1,7 +1,6 @@
 import { ElectronicPrototype, UnitType } from '../types';
-import { parseShortNumber, Direction } from '@circuit/math';
 import { ElectronicKind, MouseFocusClassName } from '../../types';
-import { isNumber } from '@xiao-ai/utils';
+import { Direction } from '@circuit/math';
 
 export const data: ElectronicPrototype = {
   pre: 'I',
@@ -67,11 +66,4 @@ export const data: ElectronicPrototype = {
       },
     },
   ],
-  constant({ H, S }, params, branch) {
-    const param = params[0];
-    const val = isNumber(param) ? param : parseShortNumber(param);
-
-    H.set(branch, branch, 1);
-    S.set(branch, 0, val);
-  },
 };

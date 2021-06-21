@@ -1,5 +1,5 @@
 import type { ElectronicKind, BasePinStatus } from '../types';
-import { Point, Direction, NumberRank, Matrix } from '@circuit/math';
+import { Point, Direction, NumberRank } from '@circuit/math';
 
 /** 器件原始数据 */
 export interface PartData {
@@ -81,128 +81,6 @@ export interface ShapeDescription {
   readonly nonRotate?: true;
 }
 
-/** 描述电路的四个矩阵 */
-interface CircuitBaseMatrix {
-  /** 关联矩阵 */
-  A: Matrix;
-  /** 电导电容矩阵 */
-  F: Matrix;
-  /** 电阻电感矩阵 */
-  H: Matrix;
-  /** 独立电压电流源列向量 */
-  S: Matrix;
-}
-
-/** 描述电路求解器的两个矩阵 */
-interface CircuitSolverMatrix {
-  /** 系数矩阵 */
-  Factor: Matrix;
-  /** 电源列向量 */
-  Source: Matrix;
-  /** 由管脚到节点电压计算矩阵 */
-  getVoltageMatrixByPin(pin: string): Matrix;
-  /** 由支路器件到支路电流计算矩阵 */
-  getCurrentMatrixByBranch(branch: string): Matrix;
-}
-
-/** 迭代方程的运行参数 */
-interface IterativeParameters {
-  /** 电压列向量 */
-  Voltage: Matrix;
-  /** 电流列向量 */
-  Current: Matrix;
-  /** 当前时间 */
-  time: number;
-  /** 模拟步长 */
-  interval: number;
-}
-
-/** 器件在运算时需要的数据 */
-export interface PartRunData extends Pick<any, 'id' | 'kind'> {
-  /**
-   * 运算时参数联合类型
-   *  - 字符串为常量数字
-   *  - 数字为标记数字
-   */
-  params: (string | number)[];
-}
-
-/** 运行时的器件参数列表 */
-type PartRunParams = PartRunData['params'];
-/** 迭代方程 */
-export type IterativeEquation = (circuit: IterativeParameters) => void;
-
-/** 器件迭代方程数据 */
-export interface IteratorData {
-  /**
-   * 标记迭代方程输出值的位置
-   * @param {CircuitBaseMatrix} circuit 电路矩阵
-   * @param {number} branch 当前器件所在支路编号
-   * @param {number} mark 当前器件的标记编号
-   */
-  markInMatrix?(circuit: CircuitBaseMatrix, mark: number, branch: number): void;
-  /**
-   * 迭代方程生成器
-   * @param {CircuitSolverMatrix} solver 求解器矩阵
-   * @param {PartData | PartRunData} part 器件数据
-   * @param {number} mark 当前器件的标记编号
-   * @return {IterativeEquation} 迭代方程
-   * TODO: 现在，有迭代方程的器件还没有需要运行时计算参数的
-   */
-  // createIterator(solver: CircuitSolverMatrix, part: PartData | PartRunData, mark: number): IterativeEquation;
-  createIterator(
-    solver: CircuitSolverMatrix,
-    part: any | PartRunData, mark: number,
-  ): IterativeEquation;
-}
-
-/**
- * 常量参数填充函数
- * @param {CircuitBaseMatrix} circuit 电路矩阵
- * @param {number} branch 当前器件所在支路编号
- * @param {number} params 当前器件的参数值们
- */
-export type ConstantCreation = (
-  circuit: CircuitBaseMatrix,
-  params: PartRunParams,
-  branch: number,
-) => void;
-
-/** 可拆分器件的内部器件接口 */
-interface PartInside {
-  /** 器件内部编号 */
-  id: string;
-  /** 器件类型 */
-  kind: ElectronicKind;
-  /**
-   * 生成当前器件参数
-   * @param {PartRunData} part 完整器件数据
-   * @param {number} mark 完整器件的标记编号
-   * @return {PartRunParams} 可运行的器件参数
-   */
-  params(part: PartRunData, mark: number): PartRunParams;
-}
-
-/**
- * 复杂器件的内部拆分
- *  - 拆分出来的器件必须是只有两个引脚的简单器件
- */
-export interface ElectronicApart {
-  /** 内部器件列表 */
-  parts: PartInside[];
-  /**
-   * 拆分器件的连接
-   *  - 每个元组即表示内部的一个节点
-   */
-  connect: string[][];
-  /**
-   * 外部引脚对内的映射
-   *  - 数组下标表示是当前器件的第几个引脚
-   *  - 子数组表示连接至此引脚的内部器件引脚
-   */
-  interface: string[][];
-}
-
 /** 器件原型数据类型 */
 export interface ElectronicPrototype {
   /** 器件编号的默认前置标记 */
@@ -223,10 +101,4 @@ export interface ElectronicPrototype {
   readonly points: PointDescription[];
   /** 器件外形元素的描述 */
   readonly shape: ShapeDescription[];
-  /** 迭代方程数据 */
-  readonly iterative?: IteratorData;
-  /** 常量参数生成器 */
-  readonly constant?: ConstantCreation;
-  /** 器件内部拆分描述 */
-  readonly apart?: ElectronicApart;
 }
