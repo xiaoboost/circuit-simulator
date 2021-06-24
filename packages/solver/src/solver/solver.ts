@@ -1,7 +1,7 @@
-import { isDef, concat, AnyObject } from '@xiao-ai/utils';
-import { parseShortNumber, Matrix } from '@circuit/math';
+import { concat, AnyObject } from '@xiao-ai/utils';
+import { Matrix } from '@circuit/math';
 import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
-import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from './connection';
+import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
 import { UpdateWrapper, Observer, SolveOption } from './types';
 import { PartRunData, Electronics } from '../parts';
 import { Mapping } from './map';
@@ -450,7 +450,7 @@ export class Solver {
 
       // 都不存在则报错
       if (!constant && !iterative) {
-        throw new Error('该器件不存在 参数/常量 生成器');
+        throw new Error('该器件不存在 参数/常量/生成器');
       }
       // 常量参数
       else if (constant) {

@@ -1,14 +1,15 @@
 import { PartSolverData } from './types';
 import { parseShortNumber } from '@circuit/math';
 import { ElectronicKind } from '@circuit/electronics';
+import { getMark } from '../utils/mark';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Capacitor,
   iterative: () => {
-    const mark = 0;
+    const mark = getMark();
 
     return {
-      markMatrix({ F, S }, branch) {
+      mark({ F, S }, branch) {
         F.set(branch, branch, 1);
         S.set(branch, 0, mark);
       },

@@ -56,7 +56,7 @@ export interface IteratorData {
    * @param {CircuitBaseMatrix} circuit 电路矩阵
    * @param {number} branch 当前器件所在支路编号
    */
-  markMatrix?(circuit: CircuitBaseMatrix, branch: number): void;
+  mark?(circuit: CircuitBaseMatrix, branch: number): void;
   /**
    * 迭代方程生成器
    * @param {CircuitSolverMatrix} solver 求解器矩阵
