@@ -1,8 +1,8 @@
 import type { Matrix } from '@circuit/math';
-import type { ElectronicKind } from '@circuit/electronics';
+import type { ElectronicKind, ConnectionData } from '@circuit/electronics';
 
 /** 描述电路的四个矩阵 */
-interface CircuitBaseMatrix {
+export interface CircuitBaseMatrix {
   /** 关联矩阵 */
   A: Matrix;
   /** 电导电容矩阵 */
@@ -14,7 +14,7 @@ interface CircuitBaseMatrix {
 }
 
 /** 描述电路求解器的两个矩阵 */
-interface CircuitSolverMatrix {
+export interface CircuitSolverMatrix {
   /** 系数矩阵 */
   Factor: Matrix;
   /** 电源列向量 */
@@ -38,13 +38,10 @@ interface IterativeParameters {
 }
 
 /** 器件在运算时需要的数据 */
-export interface PartRunData extends Pick<any, 'id' | 'kind'> {
-  /**
-   * 运算时参数联合类型
-   *  - 字符串为常量数字
-   *  - 数字为标记数字
-   */
-  params: (string | number)[];
+export interface PartRunData {
+  id: string;
+  kind: ElectronicKind;
+  params: string[];
 }
 
 /** 运行时的器件参数列表 */
@@ -58,29 +55,25 @@ export interface IteratorData {
    * 标记迭代方程输出值的位置
    * @param {CircuitBaseMatrix} circuit 电路矩阵
    * @param {number} branch 当前器件所在支路编号
-   * @param {number} mark 当前器件的标记编号
    */
-  markInMatrix?(circuit: CircuitBaseMatrix, mark: number, branch: number): void;
+  markMatrix?(circuit: CircuitBaseMatrix, branch: number): void;
   /**
    * 迭代方程生成器
    * @param {CircuitSolverMatrix} solver 求解器矩阵
    * @param {PartData | PartRunData} part 器件数据
-   * @param {number} mark 当前器件的标记编号
    * @return {IterativeEquation} 迭代方程
-   * TODO: 现在，有迭代方程的器件还没有需要运行时计算参数的
    */
-  // createIterator(solver: CircuitSolverMatrix, part: PartData | PartRunData, mark: number): IterativeEquation;
-  createIterator(
-    solver: CircuitSolverMatrix,
-    part: any | PartRunData, mark: number,
-  ): IterativeEquation;
+  create(solver: CircuitSolverMatrix, part: PartRunData): IterativeEquation;
 }
+
+/** 器件迭代方程生成器 */
+export type IteratorCreation = () => IteratorData;
 
 /**
  * 常量参数填充函数
  * @param {CircuitBaseMatrix} circuit 电路矩阵
  * @param {number} branch 当前器件所在支路编号
- * @param {number} params 当前器件的参数值们
+ * @param {number} params 当前器件的参数值
  */
 export type ConstantCreation = (
   circuit: CircuitBaseMatrix,
@@ -97,10 +90,9 @@ interface PartInside {
   /**
    * 生成当前器件参数
    * @param {PartRunData} part 完整器件数据
-   * @param {number} mark 完整器件的标记编号
    * @return {PartRunParams} 可运行的器件参数
    */
-  params(part: PartRunData, mark: number): PartRunParams;
+  params(part: PartRunData): PartRunParams;
 }
 
 /**
@@ -114,13 +106,13 @@ export interface ElectronicApart {
    * 拆分器件的连接
    *  - 每个元组即表示内部的一个节点
    */
-  connect: string[][];
+  internal: ConnectionData[][];
   /**
    * 外部引脚对内的映射
    *  - 数组下标表示是当前器件的第几个引脚
    *  - 子数组表示连接至此引脚的内部器件引脚
    */
-  interface: string[][];
+  external: ConnectionData[][];
 }
 
 /** 器件求解参数 */
@@ -128,7 +120,7 @@ export interface PartSolverData {
   /** 器件种类 */
   readonly kind: ElectronicKind;
   /** 迭代方程数据 */
-  readonly iterative?: IteratorData;
+  readonly iterative?: IteratorCreation;
   /** 常量参数生成器 */
   readonly constant?: ConstantCreation;
   /** 器件内部拆分描述 */

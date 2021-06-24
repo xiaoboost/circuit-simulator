@@ -8,24 +8,41 @@ export const data: PartSolverData = {
       {
         kind: ElectronicKind.Resistance,
         id: 'R1',
-        params(_, mark) {
-          return [mark];
+        params(_) {
+          return [];
+          // return [mark];
         },
       },
       {
         kind: ElectronicKind.DcVoltageSource,
         id: 'VD1',
-        params(_, mark) {
-          return [mark + 1];
+        params(_) {
+          return [];
+          // return [mark + 1];
         },
       },
     ],
-    connect: [
-      ['R1-1', 'VD1-1'],
+    internal: [
+      [
+        {
+          id: 'R1',
+          mark: 1,
+        },
+        {
+          id: 'VD1',
+          mark: 1,
+        },
+      ],
     ],
-    interface: [
-      ['R1-0'],
-      ['VD1-0'],
+    external: [
+      [{
+        id: 'R1',
+        mark: 0,
+      }],
+      [{
+        id: 'VD1',
+        mark: 0,
+      }],
     ],
   },
   iterative: {

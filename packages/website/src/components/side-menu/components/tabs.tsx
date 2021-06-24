@@ -36,7 +36,7 @@ const buttons = [
   {
     type: 'text' as const,
     icon: <LineChartOutlined />,
-    status: TabStatus.Result,
+    status: TabStatus.Osc,
   },
 ];
 
@@ -66,7 +66,10 @@ export function Tabs(props: Props) {
       destroyTooltipOnHide
       visible={isRun ? false : undefined}
     >
-      <div className={stringifyClass(tabStyle.btn, tabStyle.runBtn)}>
+      <div
+        className={stringifyClass(tabStyle.btn, tabStyle.runBtn)}
+        onClick={() => clickBtn(TabStatus.Run)}
+      >
         {isRun
           ? <LoadingOutlined style={{ color: DarkGreen, fontSize: 18 }} />
           : <CaretRightOutlined style={{ color: DarkGreen, fontSize: 36 }} />

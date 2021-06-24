@@ -1,7 +1,7 @@
 import { isNumber, AnyObject } from '@xiao-ai/utils';
 
-/** 节点映射表 */
-export class NodeMapping {
+/** 映射表 */
+export class Mapping {
   /** hash 表数据 */
   private _map: AnyObject<number> = {};
 
@@ -65,17 +65,4 @@ export class NodeMapping {
   }
 }
 
-/** 获取管脚到支路的映射表 */
-function getPinToBranchMapping() {
-  // ..
-}
-
-/** 获取管脚到节点的映射表 */
-function getPinToNodeMapping() {
-  // ..
-}
-
-/** 获取映射表 */
-export function getMapping() {
-  // ..
-}
+/**  */

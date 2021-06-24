@@ -1,5 +1,6 @@
 import type { Matrix } from '@circuit/math';
 import type { Part, Line } from '@circuit/electronics';
+import type { CircuitSolverMatrix, IterativeEquation } from '../parts';
 
 /** 观测器 */
 export interface Observer {
@@ -20,12 +21,17 @@ export interface SimulationConfig {
 /** 求解输入 */
 export interface SolveOption {
   /** 所有器件和导线 */
-  electronics: (Part | Line)[];
+  parts: Part[];
+  /** 所有导线 */
+  lines: Line[];
   /** 时域模拟设置 */
   simulation: SimulationConfig;
   /**
    * 提示进度回调函数
    *  - 参数`progress`是`0`到`1`之间的数字
    */
-  onProgress(progress: number): any;
+  onProgress?(progress: number): any;
 }
+
+/** 器件更新包装函数 */
+export type UpdateWrapper = (solver: CircuitSolverMatrix) => IterativeEquation;
