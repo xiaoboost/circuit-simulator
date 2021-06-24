@@ -26,12 +26,15 @@ export interface SolveOption {
   lines: Line[];
   /** 时域模拟设置 */
   simulation: SimulationConfig;
-  /**
-   * 提示进度回调函数
-   *  - 参数`progress`是`0`到`1`之间的数字
-   */
-  onProgress?(progress: number): any;
+  /** 进度回调 */
+  onProgress?: ProgressEvent;
 }
 
 /** 器件更新包装函数 */
 export type UpdateWrapper = (solver: CircuitSolverMatrix) => IterativeEquation;
+
+/**
+ * 进度回调函数
+ *  - 参数`progress`是`0`到`1`之间的数字
+ */
+export type ProgressEvent = (progress: number) => any;

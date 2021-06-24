@@ -20,7 +20,7 @@ export interface CircuitSolverMatrix {
   /** 电源列向量 */
   Source: Matrix;
   /** 由管脚到节点电压计算矩阵 */
-  getVoltageMatrixByPin(pin: string): Matrix;
+  getVoltageMatrixByPin(id: string, mark: number): Matrix;
   /** 由支路器件到支路电流计算矩阵 */
   getCurrentMatrixByBranch(branch: string): Matrix;
 }

@@ -1,8 +1,7 @@
 import { PartSolverData } from './types';
 import { parseShortNumber } from '@circuit/math';
-import { ElectronicKind } from '@circuit/electronics';
+import { ElectronicKind, Part } from '@circuit/electronics';
 import { getMark } from '../utils/mark';
-import { stringifyPin } from '../utils/connection';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Diode,
@@ -53,7 +52,7 @@ export const data: PartSolverData = {
     const volMark = getMark();
 
     return {
-      create({ Factor, Source, getVoltageMatrixByPin }, part: any) {
+      create({ Factor, Source, getVoltageMatrixByPin }, part: Part) {
         /** 导通电压 */
         const onVol = parseShortNumber(part.params[0]);
         /** 导通电阻 */
@@ -66,8 +65,8 @@ export const data: PartSolverData = {
         const volPosition = Source.filterPosition(volMark);
         /** 电压计算矩阵 */
         const volMatrix = (
-          getVoltageMatrixByPin(stringifyPin(part.id, 0))
-            .add(getVoltageMatrixByPin(stringifyPin(part.id, 1)).factor(-1))
+          getVoltageMatrixByPin(part.id, 0)
+            .add(getVoltageMatrixByPin(part.id, 1).factor(-1))
         );
 
         // 缓存上一次的计算值

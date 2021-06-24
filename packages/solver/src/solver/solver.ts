@@ -1,9 +1,9 @@
 import { concat, AnyObject } from '@xiao-ai/utils';
-import { Matrix } from '@circuit/math';
+import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
 import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
 import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
-import { UpdateWrapper, Observer, SolveOption } from './types';
-import { PartRunData, Electronics } from '../parts';
+import { UpdateWrapper, Observer, SolveOption, SimulationConfig, ProgressEvent } from './types';
+import { PartRunData, Electronics, IterativeEquation } from '../parts';
 import { Mapping } from './map';
 
 /** 求解器 */
@@ -12,8 +12,10 @@ export class Solver {
   private parts: Part[] = [];
   /** 导线数据 */
   private lines: Line[] = [];
+  /** 时域模拟 */
+  private simulation: SimulationConfig;
   /** 事件函数 */
-  private onProgress?: (progress: number) => any;
+  private onProgress?: ProgressEvent;
 
   /**
    * 处理之后的所有器件合集
@@ -21,11 +23,6 @@ export class Solver {
    *  - 没有可以继续拆分的器件
    */
   private partsAll: PartRunData[] = [];
-  /**
-   * 器件标记
-   *  - 包含所有器件（拆分的和未拆分的）
-   */
-  private partMarks = new Mapping();
 
   /** 系数矩阵 */
   private factor!: Matrix;
@@ -54,12 +51,12 @@ export class Solver {
   }: SolveOption) {
     this.parts = parts;
     this.lines = lines;
+    this.simulation = simulation;
+    this.onProgress = onProgress;
 
-    debugger;
     this.getMapping();
     this.getObserveMatrix();
-    this.setCircuitMatrix();
-    this.onProgress = onProgress;
+    this.getCircuitMatrix();
   }
 
   /** 用 id 搜索器件或导线 */
@@ -174,9 +171,13 @@ export class Solver {
       if (
         part.kind === ElectronicKind.ReferenceGround ||
         part.kind === ElectronicKind.CurrentMeter ||
-        part.kind === ElectronicKind.VoltageMeter ||
-        !Electronics[part.kind].apart
+        part.kind === ElectronicKind.VoltageMeter
       ) {
+        continue;
+      }
+
+      if (!Electronics[part.kind].apart) {
+        this.partsAll.push(part);
         continue;
       }
 
@@ -261,22 +262,17 @@ export class Solver {
     }
   }
 
-  /** getVoltageMatrixByPin */
-  private getVoltageMatrixByPin(part: Part, mark: number) {
+  /** 由管脚到节点电压计算矩阵 */
+  private getVoltageMatrixByPin(id: string, mark: number) {
     /** 电压矩阵 */
     const matrix = new Matrix(1, this.pinToNode.max, 0);
     /** 实际的器件管脚编号 */
-    let realPin = stringifyPin(part.id, mark);
+    let realPin = stringifyPin(id, mark);
 
     // 未找到节点记录
     if (!this.pinToNode.has(realPin)) {
       /** 引脚器件 */
-      const pinPart = this.find(part.id);
-
-      if (!pinPart) {
-        throw new Error(`未找到器件：${part.id}`);
-      }
-
+      const pinPart = this.find(id);
       /** 器件拆分原型 */
       const { apart } = Electronics[pinPart.kind];
 
@@ -294,11 +290,13 @@ export class Solver {
   }
 
   /** 由支路器件到支路电流计算矩阵 */
-  private getCurrentMatrixByBranch(part: Part) {
+  private getCurrentMatrixByBranch(id: string) {
     const { pinToBranch } = this;
 
     /** 电流矩阵 */
     const matrix = new Matrix(1, pinToBranch.max, 0);
+    /** 支路器件 */
+    const part = this.find(id);
 
     // 电流表
     // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
@@ -354,13 +352,13 @@ export class Solver {
         current.push({
           id: meter.id,
           data: [],
-          matrix: this.getCurrentMatrixByBranch(meter),
+          matrix: this.getCurrentMatrixByBranch(meter.id),
         });
       }
       // 电压表
       else if (meter.kind === ElectronicKind.VoltageMeter) {
-        const negativeVoltage = this.getVoltageMatrixByPin(meter, 0);
-        const positiveVoltage = this.getVoltageMatrixByPin(meter, 1);
+        const negativeVoltage = this.getVoltageMatrixByPin(meter.id, 0);
+        const positiveVoltage = this.getVoltageMatrixByPin(meter.id, 1);
 
         // 正电极减去负电极，即为测量电压
         const matrix = positiveVoltage.add(negativeVoltage.factor(-1));
@@ -380,8 +378,8 @@ export class Solver {
   }
 
   /** 创建电路系数矩阵 */
-  setCircuitMatrix() {
-    const { pinToNode, pinToBranch, partMarks, updateWrappers } = this;
+  getCircuitMatrix() {
+    const { pinToNode, pinToBranch, updateWrappers } = this;
     const nodeNumber = pinToNode.max;
     const branchNumber = pinToBranch.max;
 
@@ -402,7 +400,7 @@ export class Solver {
     /** 迭代方程生成器的矩阵数据 */
     const updateMatrix = { A, F, H, S };
 
-    // 扫描所有器件，建立关联矩阵
+    // 建立关联矩阵
     for (const part of this.partsAll) {
       for (let i = 0; i < 2; i++) {
         const node = pinToNode.get(stringifyPin(part.id, i));
@@ -422,26 +420,6 @@ export class Solver {
     }
 
     // 建立器件矩阵
-    // 还未拆分并且有迭代方程的器件
-    for (const part of this.parts) {
-      // const { apart, iterative } = Electronics[part.kind];
-
-      // // 跳过无法拆分或者没有迭代方程的器件
-      // if (!apart || !iterative) {
-      //   continue;
-      // }
-
-      // const mark = Mark.getMark(partMarks.get(part.id));
-
-      // // 此时标记的支路编号是无效的
-      // if (iterative.markInMatrix) {
-      //   iterative.markInMatrix(updateMatrix, mark, -1);
-      // }
-
-      // updateWrappers.push((solver) => iterative.createIterator(solver, part, mark));
-    }
-
-    // 拆分后的所有器件
     for (const part of this.partsAll) {
       /** 当前器件所在支路 */
       const branch = this.pinToBranch.get(part.id);
@@ -458,16 +436,13 @@ export class Solver {
       }
       // 标记迭代参数
       else if (iterative) {
-        // const mark = Mark.getMark(this.partMarks.get(part.id));
+        const iterator = iterative();
 
-        // if (iterative.markInMatrix) {
-        //   iterative.markInMatrix(updateMatrix, mark, branch);
-        // }
+        if (iterator.mark) {
+          iterator.mark(updateMatrix, branch);
+        }
 
-        // updateWrappers.push(
-        //   (solver) =>
-        //     iterative.createIterator(solver, part, mark),
-        // );
+        updateWrappers.push((solver) => iterator.create(solver, part));
       }
     }
 
@@ -493,125 +468,121 @@ export class Solver {
 
   /** 求解电路 */
   async startSolve() {
-  //   // 终止和步长时间
-  //   const { state: { time }} = store;
-  //   const end = numberParser(time.end);
-  //   const step = numberParser(time.step);
+    // 终止和步长时间
+    const end = parseShortNumber(this.simulation.end);
+    const step = parseShortNumber(this.simulation.step);
 
-    //   /** 电路常量属性展开 */
-    //   const {
-    //     events,
-    //     factor,
-    //     source,
-    //     observeVoltage,
-    //     observeCurrent,
-    //     pinToNode: {
-    //       max: nodeNumber,
-    //     },
-    //     pinToBranch: {
-    //       max: branchNumber,
-    //     },
-    //   } = this;
+    /** 电路常量 */
+    const {
+      onProgress,
+      factor,
+      source,
+      voltageObservers,
+      currentObservers,
+      pinToNode: {
+        max: nodeNumber,
+      },
+      pinToBranch: {
+        max: branchNumber,
+      },
+    } = this;
 
-    //   /** 结点电压列向量 */
-    //   let nodeVoltage = new Matrix(nodeNumber, 1, 0);
-    //   /** 支路电流列向量 */
-    //   let branchCurrent = new Matrix(branchNumber, 1, 0);
-    //   /** 当前模拟器的精确时间 */
-    //   let current = new BigNumber(0);
-    //   /** 当前模拟器的精确时间的缓存 */
-    //   let currentCache = 0;
-    //   /** 系数方程是否被更改 */
-    //   let factorChange = false;
-    //   /** 系数逆矩阵 */
-    //   let factorInverse!: Matrix;
+    /** 结点电压列向量 */
+    let nodeVoltage = new Matrix(nodeNumber, 1, 0);
+    /** 支路电流列向量 */
+    let branchCurrent = new Matrix(branchNumber, 1, 0);
+    /** 当前模拟器的精确时间 */
+    let current = new BigNumber(0);
+    /** 当前模拟器的精确时间的缓存 */
+    let currentCache = 0;
+    /** 系数方程是否被更改 */
+    let factorChange = false;
+    /** 系数逆矩阵 */
+    let factorInverse!: Matrix;
 
-    //   /** 时间坐标数组 */
-    //   const times = [currentCache];
-    //   /** 系数矩阵代理 */
-    //   const factorProxy = new Proxy(factor, {
-    //     get(target, property) {
-    //       // 代理 set 方法
-    //       if (property === 'set') {
-    //         return (...args: Parameters<Matrix['set']>) => {
-    //           factorChange = true;
-    //           target.set(...args);
-    //         };
-    //       }
-    //       else {
-    //         return target[property];
-    //       }
-    //     },
-    //   });
-    //   /** 迭代方程堆栈 */
-    //   const updates = this.updateWarppers.map((func) => func({
-    //     Factor: factorProxy,
-    //     Source: this.source,
-    //     getVoltageMatrixByPin: this.getVoltageMatrixByPin.bind(this),
-    //     getCurrentMatrixByBranch: this.getCurrentMatrixByBranch.bind(this),
-    //   }));
-    //   /** 参数迭代方程包装 */
-    //   const update: IterativeEquation = (arg) => updates.forEach((cb) => cb(arg));
+    /** 时间坐标数组 */
+    const times = [currentCache];
+    /** 系数矩阵代理 */
+    const factorProxy = new Proxy(factor, {
+      get(target, property) {
+        // 代理 set 方法
+        if (property === 'set') {
+          return (...args: Parameters<Matrix['set']>) => {
+            factorChange = true;
+            target.set(...args);
+          };
+        }
+        else {
+          return target[property];
+        }
+      },
+    });
+    /** 迭代方程堆栈 */
+    const updates = this.updateWrappers.map((func) => func({
+      Factor: factorProxy,
+      Source: this.source,
+      getVoltageMatrixByPin: this.getVoltageMatrixByPin.bind(this),
+      getCurrentMatrixByBranch: this.getCurrentMatrixByBranch.bind(this),
+    }));
+    /** 参数迭代方程包装 */
+    const update: IterativeEquation = (arg) => updates.forEach((cb) => cb(arg));
 
-    //   // 迭代求解
-    //   while (currentCache <= end) {
-    //     // 标志位初始化
-    //     factorChange = false;
+    // 迭代求解
+    while (currentCache <= end) {
+      // 标志位初始化
+      factorChange = false;
 
-    //     // 器件迭代
-    //     update({
-    //       Voltage: nodeVoltage,
-    //       Current: branchCurrent,
-    //       time: currentCache,
-    //       interval: step,
-    //     });
+      // 器件迭代
+      update({
+        Voltage: nodeVoltage,
+        Current: branchCurrent,
+        time: currentCache,
+        interval: step,
+      });
 
-    //     // 若系数矩阵改变，就需要重新求逆
-    //     if (!factorInverse || factorChange) {
-    //       factorInverse = factor.inverse();
-    //     }
+      // 若系数矩阵改变，就需要重新求逆
+      if (!factorInverse || factorChange) {
+        factorInverse = factor.inverse();
+      }
 
-    //     // 求解电路
-    //     const result = factorInverse.mul(source);
+      // 求解电路
+      const result = factorInverse.mul(source);
 
-    //     // 更新列向量
-    //     nodeVoltage = result.slice([0, 0], [nodeNumber - 1, 0]);
-    //     branchCurrent = result.slice([nodeNumber + branchNumber, 0], [result.row - 1, 0]);
+      // 更新列向量
+      nodeVoltage = result.slice([0, 0], [nodeNumber - 1, 0]);
+      branchCurrent = result.slice([nodeNumber + branchNumber, 0], [result.row - 1, 0]);
 
-    //     // 记录观测电压值
-    //     for (const ob of observeVoltage) {
-    //       ob.data.push(ob.matrix.mul(nodeVoltage).get(0, 0));
-    //     }
+      // 记录观测电压值
+      for (const ob of voltageObservers) {
+        ob.data.push(ob.matrix.mul(nodeVoltage).get(0, 0));
+      }
 
-    //     // 记录观测电流值
-    //     for (const ob of observeCurrent) {
-    //       ob.data.push(ob.matrix.mul(branchCurrent).get(0, 0));
-    //     }
+      // 记录观测电流值
+      for (const ob of currentObservers) {
+        ob.data.push(ob.matrix.mul(branchCurrent).get(0, 0));
+      }
 
-    //     // 更新当前时间
-    //     current = current.plus(step);
-    //     currentCache = current.toNumber();
+      // 更新当前时间
+      current = current.plus(step);
+      currentCache = current.toNumber();
 
-    //     // 时间坐标增加
-    //     times.push(currentCache);
+      // 时间坐标增加
+      times.push(currentCache);
 
-    //     // 当前进度
-    //     const progress = Math.round(currentCache / end * 100);
+      // 运行进度事件回调
+      if (onProgress) {
+        onProgress(Math.round(currentCache / end * 100) / 100);
+      }
+    }
 
-    //     // 运行进度事件回调
-    //     for (const ev of events) {
-    //       await ev(progress);
-    //     }
-    //   }
+    // 最后的时间元素无效
+    times.pop();
 
-    //   // 最后的时间元素无效
-    //   times.pop();
-
-  //   return {
-  //     times,
-  //     meters: this.observeVoltage
-  //       .concat(this.observeCurrent)
-  //       .map(({ id, data }) => ({ id, data })),
-  //   };
+    return {
+      times,
+      meters: this.voltageObservers
+        .concat(this.currentObservers)
+        .map(({ id, data }) => ({ id, data })),
+    };
   }
 }

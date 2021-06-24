@@ -1,6 +1,6 @@
 import { PartSolverData } from './types';
 import { parseShortNumber } from '@circuit/math';
-import { ElectronicKind } from '@circuit/electronics';
+import { ElectronicKind, Part } from '@circuit/electronics';
 import { getMark } from '../utils/mark';
 
 export const data: PartSolverData = {
@@ -12,7 +12,7 @@ export const data: PartSolverData = {
         F.set(branch, branch, 1);
         S.set(branch, 0, mark);
       },
-      create({ Source }, data: any) {
+      create({ Source }, data: Part) {
         /** 峰值电压 */
         const factor = parseShortNumber(data.params[0]);
         /** 频率 */
