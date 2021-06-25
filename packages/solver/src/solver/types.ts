@@ -24,8 +24,10 @@ export interface SolveOption {
   parts: Part[];
   /** 所有导线 */
   lines: Line[];
-  /** 时域模拟设置 */
-  simulation: SimulationConfig;
+  /** 终止时间 */
+  end: string;
+  /** 步进时间 */
+  step: string;
   /** 进度回调 */
   onProgress?: ProgressEvent;
 }
@@ -35,6 +37,15 @@ export type UpdateWrapper = (solver: CircuitSolverMatrix) => IterativeEquation;
 
 /**
  * 进度回调函数
- *  - 参数`progress`是`0`到`1`之间的数字
+ *  - 参数`progress`是`0`到`100`之间的数字
  */
-export type ProgressEvent = (progress: number) => any;
+export type ProgressEvent = (progress: number) => Promise<any>;
+
+/** 解算结果 */
+export interface SolverResult {
+  times: number[];
+  meters: {
+    id: string;
+    data: number[];
+  }[];
+}

@@ -2,9 +2,17 @@ import { concat, AnyObject } from '@xiao-ai/utils';
 import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
 import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
 import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
-import { UpdateWrapper, Observer, SolveOption, SimulationConfig, ProgressEvent } from './types';
 import { PartRunData, Electronics, IterativeEquation } from '../parts';
 import { Mapping } from './map';
+
+import {
+  UpdateWrapper,
+  Observer,
+  SolveOption,
+  SimulationConfig,
+  ProgressEvent,
+  SolverResult,
+} from './types';
 
 /** 求解器 */
 export class Solver {
@@ -12,8 +20,10 @@ export class Solver {
   private parts: Part[] = [];
   /** 导线数据 */
   private lines: Line[] = [];
-  /** 时域模拟 */
-  private simulation: SimulationConfig;
+  /** 终止时间 */
+  private end: string;
+  /** 步进时间 */
+  private step: string;
   /** 事件函数 */
   private onProgress?: ProgressEvent;
 
@@ -46,12 +56,14 @@ export class Solver {
   constructor({
     parts,
     lines,
-    simulation,
+    end,
+    step,
     onProgress,
   }: SolveOption) {
     this.parts = parts;
     this.lines = lines;
-    this.simulation = simulation;
+    this.end = end;
+    this.step = step;
     this.onProgress = onProgress;
 
     this.getMapping();
@@ -467,10 +479,10 @@ export class Solver {
   }
 
   /** 求解电路 */
-  async startSolve() {
+  async startSolve(): Promise<SolverResult> {
     // 终止和步长时间
-    const end = parseShortNumber(this.simulation.end);
-    const step = parseShortNumber(this.simulation.step);
+    const end = parseShortNumber(this.end);
+    const step = parseShortNumber(this.step);
 
     /** 电路常量 */
     const {
@@ -527,6 +539,9 @@ export class Solver {
     /** 参数迭代方程包装 */
     const update: IterativeEquation = (arg) => updates.forEach((cb) => cb(arg));
 
+    /** 上次时间 */
+    let last = Date.now();
+
     // 迭代求解
     while (currentCache <= end) {
       // 标志位初始化
@@ -569,9 +584,13 @@ export class Solver {
       // 时间坐标增加
       times.push(currentCache);
 
+      /** 当前时间 */
+      const now = Date.now();
+
       // 运行进度事件回调
-      if (onProgress) {
-        onProgress(Math.round(currentCache / end * 100) / 100);
+      if (onProgress && now - last > 1000) {
+        await onProgress(Math.round(currentCache / end * 10000) / 100);
+        last = now;
       }
     }
 

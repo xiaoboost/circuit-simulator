@@ -6,17 +6,29 @@ import { Config } from './config';
 import { TabStatus } from './constant';
 import { Move } from './components/move';
 import { Tabs } from './components/tabs';
-import { parts, lines, end, step } from 'src/store';
-// import { GraphViewer } from 'src/components/graph-viewer';
+import { GraphViewer } from 'src/components/oscilloscope';
 
 import { solve } from '@circuit/solver';
+import { delay } from '@xiao-ai/utils';
+import { useWatcher } from '@xiao-ai/utils/use';
 import { useState } from 'react';
+
+import {
+  parts,
+  lines,
+  end,
+  step,
+  oscilloscopes,
+  solverData,
+} from 'src/store';
 
 export * from './types';
 
 export function SideMenu() {
   const [status, setStatus] = useState(TabStatus.AddParts);
-  const [isRun, setRun] = useState(false);
+  const [result, setResult] = useWatcher(solverData);
+  const [progress, setProgress] = useState(0);
+  const isRun = status === TabStatus.Run;
   const onStatusChange = (status: TabStatus) => {
     // 运行状态不允许改变
     if (isRun) {
@@ -24,21 +36,23 @@ export function SideMenu() {
     }
 
     if (status === TabStatus.Run) {
-      setRun(true);
       solve({
         parts: parts.data.slice(),
         lines: lines.data.slice(),
-        simulation: {
-          end: end.data,
-          step: step.data,
+        end: end.data,
+        step: step.data,
+        onProgress: (progress) => {
+          setProgress(progress);
+          console.log(progress);
+          return delay();
         },
-        onProgress: (process) => {
-          console.log(process);
-          debugger;
-        },
-      }).then(() => {
-        setRun(false);
+      }).then((data) => {
+        setProgress(0);
         setStatus(TabStatus.Osc);
+        setResult({
+          oscilloscopes: oscilloscopes.data.slice(),
+          ...data,
+        });
       });
     }
 
@@ -52,6 +66,16 @@ export function SideMenu() {
     <Move visible={status === TabStatus.Config} key={1}>
       <Config />
     </Move>
-    <Tabs isRun={isRun} status={status} onChange={onStatusChange} />
+    <Move visible={status === TabStatus.Osc} key={2}>
+      <GraphViewer
+        {...result}
+        onClose={() => setStatus(TabStatus.None)}
+      />
+    </Move>
+    <Tabs
+      status={status}
+      runProgress={progress}
+      onChange={onStatusChange}
+    />
   </aside>;
 }

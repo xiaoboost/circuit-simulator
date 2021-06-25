@@ -2,7 +2,7 @@ import { parse } from 'qs';
 import { local } from '@xiao-ai/utils/web';
 import { Watcher, delay } from '@xiao-ai/utils';
 import { CircuitDataKey } from './constant';
-import { CircuitData, ElectronicData } from './types';
+import { CircuitData, ElectronicData, SolverData } from './types';
 import { PartComponent, LineComponent } from 'src/components/electronics';
 import { PartData, LineData } from '@circuit/electronics';
 
@@ -20,6 +20,12 @@ export const end = new Watcher('10m');
 export const step = new Watcher('10μ');
 /** 示波器参数 */
 export const oscilloscopes = new Watcher<string[][]>([]);
+/** 上次模拟结果 */
+export const solverData = new Watcher<SolverData>({
+  meters: [],
+  times: [],
+  oscilloscopes: [],
+});
 
 /** 加载图纸数据 */
 export function loadSheet(data: ElectronicData) {

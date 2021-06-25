@@ -38,7 +38,7 @@ export const panelStyle = createStyles({
       color: White,
       margin: 0,
     },
-    
+
     '& h1': {
       fontSize: 24,
     },
@@ -90,6 +90,12 @@ export const tabStyle = createStyles({
     '& .anticon': {
       color: DarkGreen,
       fontSize: 36,
+    },
+
+    '& [disabled]': {
+      margin: 0,
+      padding: 0,
+      width: '100%',
     },
   },
   tabIcon: {

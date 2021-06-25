@@ -3,8 +3,10 @@ import React from 'react';
 import { tabStyle } from './styles';
 import { TabStatus } from '../constant';
 import { DarkGreen } from 'src/styles';
+import { solverData } from 'src/store';
+import { useWatcher } from '@xiao-ai/utils/use';
 import { isUndef, stringifyClass } from '@xiao-ai/utils';
-import { Tooltip as TooltipOrigin } from 'antd';
+import { Tooltip as TooltipOrigin, Button } from 'antd';
 import { TooltipProps } from 'antd/es/tooltip';
 
 import {
@@ -16,11 +18,13 @@ import {
 } from '@ant-design/icons';
 
 interface Props {
-  isRun: boolean;
-  runPercentage?: number;
-  status?: TabStatus;
+  status: TabStatus;
+  runProgress?: number;
   onChange?(val: TabStatus): void;
 }
+
+/** 是否保存上次仿真结果 */
+const hasSolverResult = solverData.computed((data) => data.times.length > 0);
 
 const buttons = [
   {
@@ -51,8 +55,10 @@ function Tooltip(props: TooltipProps) {
 }
 
 export function Tabs(props: Props) {
+  const progress = props.runProgress ?? 0;
   const status = props.status ?? TabStatus.None;
-  const isRun = status === TabStatus.Run;
+  const isRun = progress > 0 && status === TabStatus.Run;
+  const [hasLast] = useWatcher(hasSolverResult);
   const clickBtn = (val: TabStatus) => {
     if (props.onChange) {
       props.onChange(val);
@@ -61,12 +67,14 @@ export function Tabs(props: Props) {
 
   return <section className={tabStyle.tabs}>
     <Tooltip
-      title='运行'
-      placement='right'
+      title={progress > 0 ? `${progress}%` : '运行'}
+      placement='left'
       destroyTooltipOnHide
-      visible={isRun ? false : undefined}
+      visible={isRun ? true : undefined}
     >
-      <div
+      <Button
+        type='text'
+        disabled={isRun}
         className={stringifyClass(tabStyle.btn, tabStyle.runBtn)}
         onClick={() => clickBtn(TabStatus.Run)}
       >
@@ -74,19 +82,21 @@ export function Tabs(props: Props) {
           ? <LoadingOutlined style={{ color: DarkGreen, fontSize: 18 }} />
           : <CaretRightOutlined style={{ color: DarkGreen, fontSize: 36 }} />
         }
-      </div>
+      </Button>
     </Tooltip>
 
     {buttons.map((btn, i) => (
-      <div
+      <Button
         key={i}
+        type='text'
+        disabled={isRun || (btn.status === TabStatus.Osc && !hasLast)}
         className={stringifyClass(tabStyle.btn, {
           [tabStyle.highlight]: status === btn.status,
         })}
         onClick={() => clickBtn(btn.status)}
       >
         {btn.icon}
-      </div>
+      </Button>
     ))}
   </section>
 }

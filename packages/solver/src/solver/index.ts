@@ -1,9 +1,9 @@
 import { Solver } from './solver';
-import { SolveOption } from './types';
+import { SolveOption, SolverResult } from './types';
 
 export * from './types';
 
-/** 求解电路 */
-export function solve(option: SolveOption) {
+/** 解算电路 */
+export function solve(option: SolveOption): Promise<SolverResult> {
   return new Solver(option).startSolve();
 }
