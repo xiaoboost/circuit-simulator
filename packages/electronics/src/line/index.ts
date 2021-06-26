@@ -1,10 +1,11 @@
-import { Electronic } from '../base';
+import { Electronic, Context } from '../base';
 import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus } from './types';
 import { ElectronicKind } from '../types';
 import { debug } from '@circuit/debug';
-import { MarkNodeKind, MarkMapNode } from '@circuit/map';
+import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';
+import { isLine } from '@circuit/shared';
 import { isBoolean, isUndef, delay, ConstructorParameters } from '@xiao-ai/utils';
 
 import type { Part } from '../part';
@@ -13,8 +14,8 @@ export * from './types';
 export * from './path';
 
 export class Line extends Electronic {
-  constructor(paths: PointLike[] = []) {
-    super(ElectronicKind.Line);
+  constructor(paths: PointLike[] = [], context?: Context) {
+    super(ElectronicKind.Line, context);
     this.path = LinePath.from(paths);
   }
 
@@ -197,7 +198,14 @@ export class Line extends Electronic {
           mark: index,
         });
       }
-      else if (current.isLine || current.kind === MarkNodeKind.PartPin) {
+      else if (current.kind === MarkNodeKind.PartPin) {
+        // 过滤掉所有非器件连接
+        current.labels = current.labels.filter((item) => !isLine(item.id)) as Label;
+        current.labels.add(this.id, index);
+      }
+      else if (current.isLine) {
+        // 过滤掉所有当前器件已经标记的点
+        current.labels = current.labels.filter((item) => item.id !== this.id) as Label;
         current.labels.add(this.id, index);
       }
       else {
@@ -350,11 +358,14 @@ export class Line extends Electronic {
     }
     // 端点在交错节点
     else if (status.kind === MarkNodeKind.LineCrossPoint) {
-      // status.labels.delete(this.id, index);
+      // 排除当前导线节点
+      const restLabels = status.labels.filter((label) => {
+        return label.id !== this.id || label.mark !== index;
+      });
 
       // 只有一个导线
-      if (concat && status.labels.length === 1) {
-        this.concat(status.labels.value!.id);
+      if (concat && restLabels.length === 1) {
+        this.concat(restLabels[0].id);
       }
       else {
         const allLabels = status.labels.toData().concat({
@@ -384,6 +395,7 @@ export class Line extends Electronic {
     this.setDeepConnection(1, oldConnections[0]);
     this.path.reverse();
 
+    // [原终点, 原起点]
     const points = [this.path[0], this.path.get(-1)];
 
     // 变更端点的数据记录
@@ -391,10 +403,12 @@ export class Line extends Electronic {
       const data = this.map.get(points[i]);
 
       if (data) {
-        data.labels.delete(this.id, i);
-        data.labels.add(this.id, 1 - i);
+        data.labels.delete(this.id, 1 - i);
+        data.labels.add(this.id, i);
       }
     }
+
+    this.updatePoints();
   }
 
   /** 输出数据 */

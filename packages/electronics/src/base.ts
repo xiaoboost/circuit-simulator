@@ -19,22 +19,15 @@ if (process.env.NODE_ENV === 'development') {
   (window as any)._parts = parts;
 }
 
-function createId(id: string): string {
-  const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
-  const all = ([] as Electronic[]).concat(lines, parts);
-
-  let index = 1;
-
-  while (all.find((item) => item.id === `${pre[1]}_${index}`)) {
-    index++;
-  }
-
-  return `${pre[1]}_${index}`;
-}
-
-interface ElectronicOption {
+export interface ElectronicOption {
   id?: string;
   kind: ElectronicKind | keyof typeof ElectronicKind;
+}
+
+export interface Context {
+  map: MarkMap;
+  lines: Line[];
+  parts: Part[];
 }
 
 export abstract class Electronic {
@@ -47,11 +40,15 @@ export abstract class Electronic {
   readonly map = globalMap;
   /** 元件的连接表 */
   readonly connections: Connection[] = [];
+  /** 导线储存 */
+  private readonly _lines = lines;
+  /** 器件储存 */
+  private readonly _parts = parts;
 
   /** 排序下标 */
   sortIndex?: number;
 
-  constructor(opt: ElectronicKind | ElectronicOption) {
+  constructor(opt: ElectronicKind | ElectronicOption, context?: Context) {
     const options = isNumber(opt)
       ? {
         kind: opt,
@@ -65,27 +62,47 @@ export abstract class Electronic {
 
     this.kind = options.kind;
 
+    // 设置当前环境变量
+    if (context) {
+      this.map = context.map;
+      this._lines = context.lines;
+      this._parts = context.parts;
+    }
+
     if (options.id) {
       this.id = options.id;
     }
     else if (options.kind === ElectronicKind.Line) {
-      this.id = createId('line');
+      this.id = this.createId('line');
     }
     else {
-      this.id = createId(Electronics[options.kind].pre);
+      this.id = this.createId(Electronics[options.kind].pre);
     }
 
     if (this.kind === ElectronicKind.Line) {
-      lines.push(this as any);
+      this._lines.push(this as any);
       this.connections = [new Connection(), new Connection()];
     }
     else {
-      parts.push(this as any);
-
+      this._parts.push(this as any);
       this.connections = Array(Electronics[this.kind].points.length)
         .fill(0)
         .map(() => new Connection());
     }
+  }
+
+  /** 创建编号 */
+  private createId(id: string): string {
+    const pre = id.match(/^([^_]+)(_[^_]+)?$/)!;
+    const all = ([] as Electronic[]).concat(this._lines, this._parts);
+
+    let index = 1;
+
+    while (all.find((item) => item.id === `${pre[1]}_${index}`)) {
+      index++;
+    }
+
+    return `${pre[1]}_${index}`;
   }
 
   // 下列属性均为空声明
@@ -157,7 +174,7 @@ export abstract class Electronic {
 
   /** 搜索元件 */
   find<E extends Electronic = Electronic>(id: string): E | undefined {
-    return parts.concat(lines as any[]).find((item) => item.id === id) as E | undefined;
+    return this._parts.concat(this._lines as any[]).find((item) => item.id === id) as E | undefined;
   }
 
   /** 设置选中的器件 */

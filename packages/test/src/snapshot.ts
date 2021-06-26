@@ -1,9 +1,11 @@
 import type { DeepEqualAssertion } from 'ava';
 
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import { existsSync, readFileSync, writeFileSync, mkdirpSync } from 'fs-extra';
 
-export function snapshot(fsPath: string, actual: any, deep: DeepEqualAssertion) {
+export function snapshot(dir: string, name: string, actual: any, deep: DeepEqualAssertion) {
+  const fsPath = join(dir, 'snapshots', `${name}.json`);
+
   if (existsSync(fsPath)) {
     const content = readFileSync(fsPath, 'utf-8');
     const data = JSON.parse(content);

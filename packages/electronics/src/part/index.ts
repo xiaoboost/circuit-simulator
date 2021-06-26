@@ -1,4 +1,4 @@
-import { Electronic } from '../base';
+import { Electronic, Context } from '../base';
 import { Electronics } from './prototype';
 import { ElectronicKind } from '../types';
 import { PartData, MarginDirection, ElectronicPrototype, PartPinStatus } from './types';
@@ -14,8 +14,8 @@ export class Part extends Electronic {
   /** 说明文本方向 */
   textPlacement = Direction.Bottom;
 
-  constructor(kind: ElectronicKind | PartData) {
-    super(kind);
+  constructor(kind: ElectronicKind | PartData, context?: Context) {
+    super(kind, context);
 
     const { prototype } = this;
     const data: Partial<Omit<PartData, 'kind'>> = !isNumber(kind) ? kind : {};
