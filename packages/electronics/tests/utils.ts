@@ -1,10 +1,9 @@
 import type { DeepEqualAssertion } from 'ava';
 import type { MarkMap } from '@circuit/map';
 
+import { snapshot as snapshot2 } from '@circuit/test';
 import { Line, Part, LineData, PartData } from '../src';
-import { Point, Direction, Directions } from '@circuit/math';
 
-import * as fs from 'fs';
 import * as path from 'path';
 
 function resolve(...paths: string[]) {
@@ -16,15 +15,7 @@ function resolveSnapshot(name: string) {
 }
 
 export function snapshot(name: string, actual: any, deep: DeepEqualAssertion) {
-  const content = fs.readFileSync(resolveSnapshot(name), 'utf-8');
-  const data = JSON.parse(content);
-  deep(actual, data);
-}
-
-export function writeSnapshot(name: string, actual: any, deep: DeepEqualAssertion) {
-  const fsPath = resolveSnapshot(name);
-  fs.writeFileSync(fsPath, JSON.stringify(actual, null, 2) + '\n');
-  deep(1, 1);
+  snapshot2(resolveSnapshot(name), actual, deep);
 }
 
 /** 放置器件 */
