@@ -1,4 +1,4 @@
-import { ElectronicKind } from './types';
+import { ElectronicKind, Context } from './types';
 import { Electronics } from './part';
 import { Connection, ConnectionData } from './utils/connection';
 import { isNumber, remove } from '@xiao-ai/utils';
@@ -22,12 +22,6 @@ if (process.env.NODE_ENV === 'development') {
 export interface ElectronicOption {
   id?: string;
   kind: ElectronicKind | keyof typeof ElectronicKind;
-}
-
-export interface Context {
-  map: MarkMap;
-  lines: Line[];
-  parts: Part[];
 }
 
 export abstract class Electronic {

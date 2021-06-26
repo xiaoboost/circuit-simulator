@@ -1,9 +1,8 @@
 import type { DeepEqualAssertion } from 'ava';
-import type { Context } from '../src/base';
 
 import { MarkMap } from '@circuit/map';
 import { snapshot as snapshot2 } from '@circuit/test';
-import { Line, Part, LineData, PartData } from '../src';
+import { Line, Part, LineData, PartData, Context } from '../src';
 
 export function snapshot(name: string, actual: any, deep: DeepEqualAssertion) {
   snapshot2(__dirname, name, actual, deep);

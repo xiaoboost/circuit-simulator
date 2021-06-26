@@ -41,7 +41,7 @@ interface IterativeParameters {
 export interface PartRunData {
   id: string;
   kind: ElectronicKind;
-  params: string[];
+  params: (string | number)[];
 }
 
 /** 运行时的器件参数列表 */
@@ -57,6 +57,12 @@ export interface IteratorData {
    * @param {number} branch 当前器件所在支路编号
    */
   mark?(circuit: CircuitBaseMatrix, branch: number): void;
+  /**
+   * 生成拆分器件的运行参数
+   * @param {CircuitBaseMatrix} circuit 电路矩阵
+   * @param {number} branch 当前器件所在支路编号
+   */
+  params?(part: PartRunData): Record<string, PartRunParams>;
   /**
    * 迭代方程生成器
    * @param {CircuitSolverMatrix} solver 求解器矩阵
@@ -119,7 +125,7 @@ export interface ElectronicApart {
 export interface PartSolverData {
   /** 器件种类 */
   readonly kind: ElectronicKind;
-  /** 迭代方程数据 */
+  /** 迭代方程生成器 */
   readonly iterative?: IteratorCreation;
   /** 常量参数生成器 */
   readonly constant?: ConstantCreation;

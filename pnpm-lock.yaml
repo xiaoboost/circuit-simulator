@@ -48,7 +48,6 @@ importers:
       '@circuit/test': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
-      '@types/node': ^15.12.4
       '@xiao-ai/utils': ^1.4.1
       ava: ^3.15.0
       eslint: ^7.29.0
@@ -66,11 +65,10 @@ importers:
       '@circuit/test': link:../test
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
-      '@types/node': registry.nlark.com/@types/node/15.12.4
       ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.29.0
       rimraf: 3.0.2
-      ts-node: registry.nlark.com/ts-node/10.0.0_83f53b0a0c5616d3fa00ed4e30b9ce1b
+      ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.4
       tslib: registry.nlark.com/tslib/2.3.0
       typescript: registry.nlark.com/typescript/4.3.4
 
@@ -160,7 +158,6 @@ importers:
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.4.1
-      ava: ^3.15.0
       eslint: ^7.29.0
       rimraf: ^3.0.2
       tslib: ^2.3.0
@@ -170,7 +167,6 @@ importers:
     devDependencies:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
-      ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.29.0
       rimraf: 3.0.2
       tslib: registry.nlark.com/tslib/2.3.0
@@ -179,10 +175,13 @@ importers:
   packages/solver:
     specifiers:
       '@circuit/electronics': workspace:*
+      '@circuit/map': workspace:*
       '@circuit/math': workspace:*
+      '@circuit/test': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.4.1
+      ava: ^3.15.0
       eslint: ^7.29.0
       rimraf: ^3.0.2
       ts-node: ^10.0.0
@@ -193,8 +192,11 @@ importers:
       '@circuit/math': link:../math
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
+      '@circuit/map': link:../map
+      '@circuit/test': link:../test
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.29.0
       rimraf: 3.0.2
       ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.4
@@ -219,29 +221,6 @@ importers:
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       '@types/fs-extra': registry.nlark.com/@types/fs-extra/9.0.11
-      '@types/node': registry.nlark.com/@types/node/15.12.4
-      ava: 3.15.0
-      eslint: registry.nlark.com/eslint/7.29.0
-      rimraf: 3.0.2
-      tslib: registry.nlark.com/tslib/2.3.0
-      typescript: registry.nlark.com/typescript/4.3.4
-
-  packages/testing:
-    specifiers:
-      '@circuit/tsconfig': workspace:*
-      '@types/circuit': workspace:*
-      '@types/node': ^15.12.4
-      '@xiao-ai/utils': ^1.4.1
-      ava: ^3.15.0
-      eslint: ^7.29.0
-      rimraf: ^3.0.2
-      tslib: ^2.3.0
-      typescript: ^4.3.4
-    dependencies:
-      '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
-    devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
-      '@types/circuit': link:../typings
       '@types/node': registry.nlark.com/@types/node/15.12.4
       ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.29.0
@@ -889,6 +868,8 @@ packages:
       update-notifier: 5.1.0
       write-file-atomic: 3.0.3
       yargs: registry.nlark.com/yargs/16.2.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /aws-sign2/0.7.0:
@@ -1304,6 +1285,11 @@ packages:
   /debug/4.3.1:
     resolution: {integrity: sha1-8NIpxQXgxtjEmsVT0bE9wYP2su4=, tarball: debug/download/debug-4.3.1.tgz}
     engines: {node: '>=6.0'}
+    peerDependencies:
+      supports-color: '*'
+    peerDependenciesMeta:
+      supports-color:
+        optional: true
     dependencies:
       ms: 2.1.2
     dev: true
@@ -4657,6 +4643,8 @@ packages:
       js-yaml: 3.14.1
       minimatch: 3.0.4
       strip-json-comments: 3.1.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/@nodelib/fs.scandir/2.1.5:
@@ -5965,6 +5953,8 @@ packages:
       table: registry.nlark.com/table/6.7.1
       text-table: 0.2.0
       v8-compile-cache: 2.3.0
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   registry.nlark.com/espree/7.3.1:

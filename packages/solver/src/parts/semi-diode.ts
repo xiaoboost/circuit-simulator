@@ -1,7 +1,7 @@
-import { PartSolverData } from './types';
-import { parseShortNumber } from '@circuit/math';
-import { ElectronicKind, Part } from '@circuit/electronics';
+import { PartSolverData, PartRunData } from './types';
+import { ElectronicKind } from '@circuit/electronics';
 import { getMark } from '../utils/mark';
+import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Diode,
@@ -52,13 +52,13 @@ export const data: PartSolverData = {
     const volMark = getMark();
 
     return {
-      create({ Factor, Source, getVoltageMatrixByPin }, part: Part) {
+      create({ Factor, Source, getVoltageMatrixByPin }, part: PartRunData) {
         /** 导通电压 */
-        const onVol = parseShortNumber(part.params[0]);
+        const onVol = parseNumber(part.params[0]);
         /** 导通电阻 */
-        const onRes = parseShortNumber(part.params[1]);
+        const onRes = parseNumber(part.params[1]);
         /** 关断电阻 */
-        const offRes = parseShortNumber(part.params[2]);
+        const offRes = parseNumber(part.params[2]);
         /** 电阻值标记位置 */
         const resPosition = Factor.filterPosition(resMark);
         /** 导通电压标记位置 */

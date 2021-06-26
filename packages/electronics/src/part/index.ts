@@ -1,6 +1,6 @@
-import { Electronic, Context } from '../base';
+import { Electronic } from '../base';
 import { Electronics } from './prototype';
-import { ElectronicKind } from '../types';
+import { ElectronicKind, Context } from '../types';
 import { PartData, MarginDirection, ElectronicPrototype, PartPinStatus } from './types';
 import { Matrix, Point, Direction, Directions } from '@circuit/math';
 import { isNumber } from '@xiao-ai/utils';

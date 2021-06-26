@@ -1,7 +1,7 @@
-import { Electronic, Context } from '../base';
+import { Electronic } from '../base';
 import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus } from './types';
-import { ElectronicKind } from '../types';
+import { ElectronicKind, Context } from '../types';
 import { debug } from '@circuit/debug';
 import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';

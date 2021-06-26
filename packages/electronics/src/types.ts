@@ -1,5 +1,8 @@
 import type { Point } from '@circuit/math';
 import type { ConnectionStatus } from './utils';
+import type { MarkMap } from '@circuit/map';
+import type { Part } from './part';
+import type { Line } from './line';
 
 /** 器件类型枚举常量 */
 export enum ElectronicKind {
@@ -44,6 +47,13 @@ export interface BasePinStatus {
   status: ConnectionStatus;
   /** 现在节点相对图纸原点位置 */
   position: Point;
+}
+
+/** 器件上下文 */
+export interface Context {
+  map: MarkMap;
+  lines: Line[];
+  parts: Part[];
 }
 
 /** 鼠标控制元素类名称 */

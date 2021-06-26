@@ -63,6 +63,9 @@ export class Mapping {
     // 旧节点赋值为新的
     oldKeys.forEach((key) => (map[key] = newVal));
   }
-}
 
-/**  */
+  /** 输出数据 */
+  toData() {
+    return { ...this._map };
+  }
+}

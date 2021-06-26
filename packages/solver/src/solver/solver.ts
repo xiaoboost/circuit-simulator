@@ -9,7 +9,6 @@ import {
   UpdateWrapper,
   Observer,
   SolveOption,
-  SimulationConfig,
   ProgressEvent,
   SolverResult,
 } from './types';
@@ -40,18 +39,18 @@ export class Solver {
   private source!: Matrix;
   /** 迭代方程包装器堆栈 */
   private updateWrappers: UpdateWrapper[] = [];
-  /** 电流观测器 */
-  private currentObservers: Observer[] = [];
-  /** 电压观测器 */
-  private voltageObservers: Observer[] = [];
 
+  /** 电流观测器 */
+  currentObservers: Observer[] = [];
+  /** 电压观测器 */
+  voltageObservers: Observer[] = [];
   /** [管脚->节点号] 对应表 */
-  private pinToNode = new Mapping();
+  pinToNode = new Mapping();
   /**
    * [管脚->支路号] 对应表
    *  - 在拆分器件之前，可能会有拥有三个或以上管脚的器件，经过拆分之后就没有这种器件存在的
    */
-  private pinToBranch = new Mapping();
+  pinToBranch = new Mapping();
 
   constructor({
     parts,
