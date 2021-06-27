@@ -6,6 +6,7 @@ import { SolverResult } from '@circuit/solver';
 import { ElectronicKind } from '@circuit/electronics';
 import { useEffect, useRef } from 'react';
 import { parts } from 'src/store';
+import { isDef } from '@xiao-ai/utils';
 import { container as styles, headerHeight } from './styles';
 
 import type { AnyObject } from '@xiao-ai/utils';
@@ -51,16 +52,24 @@ export function Oscilloscope(props: Props) {
   }, [containerRef.current]);
 
   function getSourceData() {
-    const metersData = props.meters.map((meter) => {
-      const part = find(meter.id)!;
-      const prop = part.kind === ElectronicKind.VoltageMeter ? voltageKey : currentKey;
+    const metersData = props.oscilloscopes
+      .map((id) => {
+        const meter = props.meters.find((meter) => meter.id === id);
 
-      return props.times.map((time, index) => ({
-        [timeKey]: time,
-        [nameKey]: meter.id,
-        [prop]: meter.data[index],
-      }));
-    });
+        if (!meter) {
+          return;
+        }
+
+        const part = find(meter.id)!;
+        const prop = part.kind === ElectronicKind.VoltageMeter ? voltageKey : currentKey;
+
+        return props.times.map((time, index) => ({
+          [timeKey]: time,
+          [nameKey]: meter.id,
+          [prop]: meter.data[index],
+        }));
+      })
+      .filter(isDef);
 
     return metersData.reduce((ans, data) => ans.concat(data), []);
   }
@@ -71,7 +80,7 @@ export function Oscilloscope(props: Props) {
       grid: {
         line: {
           style: {
-            // fill: '#efefef',
+            fill: '#efefef',
             stroke: '#aaa',
             lineDash: [3, 4],
           },
@@ -82,18 +91,9 @@ export function Oscilloscope(props: Props) {
           fill: '#888',
         },
       },
-      // title: {
-      //   offset: 50,
-      //   style: {
-      //     fill: '#444',
-      //   },
-      // },
     };
 
-    option.push([timeKey, {
-      ...baseCfg,
-      title: undefined,
-    }]);
+    option.push([timeKey, baseCfg]);
 
     if (hasCurrent) {
       option.push([voltageKey, baseCfg]);
@@ -154,15 +154,18 @@ export function Oscilloscope(props: Props) {
     axiosCfg.forEach((item) => chart.axis(...item));
 
     chart.tooltip({
+      follow: true,
+      offset: 18,
+      shared: true,
       showCrosshairs: true,
-      crosshairs: {
-        type: 'xy',
-      },
     });
 
     chart.legend(nameKey, {
-      position: 'top',
+      layout: 'horizontal',
+      position: 'left-top',
       offsetY: 4,
+      offsetX: 20,
+      animate: true,
     });
 
     if (hasVoltage) {

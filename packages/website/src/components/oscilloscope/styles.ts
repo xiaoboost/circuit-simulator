@@ -4,7 +4,7 @@ export const headerHeight = 32;
 
 export const panel = createStyles({
   main: {
-    width: '60vw',
+    width: '70vw',
     height: '100%',
     overflowY: 'auto',
     borderRight: `1px solid ${ExtraLightGray}`,
