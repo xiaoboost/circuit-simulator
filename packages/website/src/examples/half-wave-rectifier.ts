@@ -16,6 +16,7 @@ export const data: CircuitData = {
       position: [540, 220],
       rotate: [[1, 0], [0, 1]],
       params: ['25', '50', '0', '0'],
+      text: 'Left',
     },
     {
       kind: 'Diode',
@@ -30,6 +31,7 @@ export const data: CircuitData = {
       position: [860, 220],
       rotate: [[0, 1], [-1, 0]],
       params: ['100'],
+      text: 'Left',
     },
     {
       kind: 'ReferenceGround',

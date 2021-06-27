@@ -250,7 +250,7 @@ export class Solver {
       // 根据器件内部结构追加 pinToBranch
       for (const insidePart of insideParts) {
         const newId = stringifyInsidePart(part.id, insidePart.id);
-        const { iterative } = Electronics[part.kind];
+        const { iterative } = Electronics[insidePart.kind];
 
         if (!iterative) {
           throw new Error('非法器件');
@@ -478,13 +478,7 @@ export class Solver {
 
     // 建立器件矩阵
     for (const part of this.partsAll) {
-      /** 当前器件所在支路 */
-      const branch = this.pinToBranch.get(part.id);
       const { constant, create } = part.iterative;
-
-      if (!isNumber(branch)) {
-        continue;
-      }
 
       if (constant) {
         constant(updateMatrix);
