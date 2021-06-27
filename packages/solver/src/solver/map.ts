@@ -11,7 +11,7 @@ export class Mapping {
   }
 
   /** 获取某个键值 */
-  get(key: string) {
+  get(key: string): number | undefined {
     return this._map[key];
   }
 

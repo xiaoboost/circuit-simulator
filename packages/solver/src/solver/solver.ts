@@ -1,8 +1,7 @@
-import { concat, AnyObject } from '@xiao-ai/utils';
+import { concat, isNumber, AnyObject } from '@xiao-ai/utils';
 import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
 import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
 import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
-import { PartRunData, Electronics, IterativeEquation } from '../parts';
 import { Mapping } from './map';
 
 import {
@@ -12,6 +11,14 @@ import {
   ProgressEvent,
   SolverResult,
 } from './types';
+
+import {
+  PartRunData,
+  Electronics,
+  IterativeEquation,
+  PartRunDataWithIterator,
+  CircuitBaseMatrix,
+} from '../parts';
 
 /** 求解器 */
 export class Solver {
@@ -31,15 +38,14 @@ export class Solver {
    *  - 没有辅助器件
    *  - 没有可以继续拆分的器件
    */
-  private partsAll: PartRunData[] = [];
-
-  /** 系数矩阵 */
-  private factor!: Matrix;
-  /** 电源列向量 */
-  private source!: Matrix;
+  private partsAll: PartRunDataWithIterator[] = [];
   /** 迭代方程包装器堆栈 */
   private updateWrappers: UpdateWrapper[] = [];
 
+  /** 系数矩阵 */
+  factor!: Matrix;
+  /** 电源列向量 */
+  source!: Matrix;
   /** 电流观测器 */
   currentObservers: Observer[] = [];
   /** 电压观测器 */
@@ -73,6 +79,17 @@ export class Solver {
   /** 用 id 搜索器件或导线 */
   private find<T extends Part | Line>(id: string): T {
     const result = (this.parts as T[]).concat(this.lines as T[]).find((item) => item.id === id);
+
+    if (!result) {
+      throw new Error(`未能找到该器件：${id}`);
+    }
+
+    return result;
+  }
+
+  /** 用 id 搜索运行时器件 */
+  private findRunPart(id: string) {
+    const result = this.partsAll.find((item) => item.id === id);
 
     if (!result) {
       throw new Error(`未能找到该器件：${id}`);
@@ -176,8 +193,8 @@ export class Solver {
     return pinToBranch;
   }
 
-  /** 拆分所有能拆分的器件 */
-  private splitParts() {
+  /** 生成运行参数 */
+  private getPartParams() {
     for (const part of this.parts) {
       if (
         part.kind === ElectronicKind.ReferenceGround ||
@@ -187,13 +204,27 @@ export class Solver {
         continue;
       }
 
-      if (!Electronics[part.kind].apart) {
-        this.partsAll.push(part);
+      const { iterative } = Electronics[part.kind];
+
+      if (!iterative) {
+        throw new Error('非法器件')
+      }
+
+      const data = iterative(part);
+
+      this.partsAll.push({
+        id: part.id,
+        params: part.params,
+        kind: part.kind,
+        iterative: data,
+      });
+
+      if (!data.apart) {
         continue;
       }
 
       const { pinToNode, pinToBranch, partsAll } = this;
-      const { external, internal, parts: insideParts } = Electronics[part.kind].apart!;
+      const { external, internal, parts: insideParts } = data.apart;
 
       // 对外管脚号转换为内部标号
       for (let i = 0; i < external.length; i++) {
@@ -218,15 +249,23 @@ export class Solver {
 
       // 根据器件内部结构追加 pinToBranch
       for (const insidePart of insideParts) {
-        // 新器件编号
         const newId = stringifyInsidePart(part.id, insidePart.id);
+        const { iterative } = Electronics[part.kind];
+
+        if (!iterative) {
+          throw new Error('非法器件');
+        }
+
+        const insidePartData: PartRunData = {
+          id: newId,
+          kind: insidePart.kind,
+          params: insidePart.params,
+        };
 
         // 新器件入栈
         partsAll.push({
-          id: newId,
-          kind: insidePart.kind,
-          // 拆分器件的标记值是原器件的标记值
-          params: insidePart.params(part),
+          ...insidePartData,
+          iterative: iterative(insidePartData),
         });
 
         // 标记当前器件
@@ -234,7 +273,7 @@ export class Solver {
       }
 
       // 支路对应表中删除原器件
-      pinToBranch.deleteValue(pinToBranch.get(part.id));
+      pinToBranch.deleteValue(pinToBranch.get(part.id)!);
     }
   }
 
@@ -252,7 +291,7 @@ export class Solver {
       if (part.kind === ElectronicKind.ReferenceGround) {
         const groundPin = stringifyPin(part.id, 0);
 
-        pinToNode.changeValue(pinToNode.get(groundPin), -1);
+        pinToNode.changeValue(pinToNode.get(groundPin)!, -1);
         pinToNode.delete(groundPin);
       }
       // 电流表
@@ -260,8 +299,8 @@ export class Solver {
         // 电流表两端节点编号
         const meterInput = stringifyPin(part.id, 0);
         const meterOutput = stringifyPin(part.id, 1);
-        const nodeMin = Math.min(pinToNode.get(meterInput), pinToNode.get(meterOutput));
-        const nodeMax = Math.max(pinToNode.get(meterInput), pinToNode.get(meterOutput));
+        const nodeMin = Math.min(pinToNode.get(meterInput)!, pinToNode.get(meterOutput)!);
+        const nodeMax = Math.max(pinToNode.get(meterInput)!, pinToNode.get(meterOutput)!);
 
         // 合并电流表两端节点（删除大的）
         pinToNode.changeValue(nodeMax, nodeMin);
@@ -283,9 +322,9 @@ export class Solver {
     // 未找到节点记录
     if (!this.pinToNode.has(realPin)) {
       /** 引脚器件 */
-      const pinPart = this.find(id);
+      const pinPart = this.findRunPart(id);
       /** 器件拆分原型 */
-      const { apart } = Electronics[pinPart.kind];
+      const { apart } = pinPart.iterative;
 
       // 器件不可拆分，则抛出错误
       if (!apart) {
@@ -295,7 +334,7 @@ export class Solver {
       realPin = stringifyInsidePin(pinPart.id, apart.external[mark][0]);
     }
 
-    matrix.set(0, this.pinToNode.get(realPin), 1);
+    matrix.set(0, this.pinToNode.get(realPin)!, 1);
 
     return matrix;
   }
@@ -325,12 +364,12 @@ export class Solver {
             pinToBranch.has(branchName),
         );
 
-      branch.forEach((branchName) => matrix.set(0, pinToBranch.get(branchName), 1));
+      branch.forEach((branchName) => matrix.set(0, pinToBranch.get(branchName)!, 1));
     }
     // 非电流表器件
     // 直接取支路电流即可
     else {
-      matrix.set(0, pinToBranch.get(part.id), 1);
+      matrix.set(0, pinToBranch.get(part.id)!, 1);
     }
 
     return matrix;
@@ -340,7 +379,7 @@ export class Solver {
   getMapping() {
     this.getPinToBranch();
     this.getPinToNode();
-    this.splitParts();
+    this.getPartParams();
     this.deleteAuxiliary();
 
     return {
@@ -409,7 +448,14 @@ export class Solver {
     /** 独立电压电流源列向量 */
     const S = new Matrix(branchNumber, 1, 0);
     /** 迭代方程生成器的矩阵数据 */
-    const updateMatrix = { A, F, H, S };
+    const updateMatrix: CircuitBaseMatrix = {
+      A,
+      F,
+      H,
+      S,
+      getBranchById: (id: string) => this.pinToBranch.get(id),
+      getNodeById: (id: string) => this.pinToNode.get(id),
+    };
 
     // 建立关联矩阵
     for (const part of this.partsAll) {
@@ -418,7 +464,7 @@ export class Solver {
         const branch = pinToBranch.get(part.id);
 
         // 跳过参考节点
-        if (node === -1) {
+        if (!isNumber(node) || !isNumber(branch) || node < 0 || branch < 0) {
           continue;
         }
 
@@ -434,26 +480,18 @@ export class Solver {
     for (const part of this.partsAll) {
       /** 当前器件所在支路 */
       const branch = this.pinToBranch.get(part.id);
-      /** 当前的器件参数生成器 */
-      const { constant, iterative } = Electronics[part.kind];
+      const { constant, create } = part.iterative;
 
-      // 都不存在则报错
-      if (!constant && !iterative) {
-        throw new Error('该器件不存在 参数/常量/生成器');
+      if (!isNumber(branch)) {
+        continue;
       }
-      // 常量参数
-      else if (constant) {
-        constant(updateMatrix, part.params, branch);
+
+      if (constant) {
+        constant(updateMatrix);
       }
-      // 标记迭代参数
-      else if (iterative) {
-        const iterator = iterative();
 
-        if (iterator.mark) {
-          iterator.mark(updateMatrix, branch);
-        }
-
-        updateWrappers.push((solver) => iterator.create(solver, part));
+      if (create) {
+        updateWrappers.push((solver) => create(solver));
       }
     }
 

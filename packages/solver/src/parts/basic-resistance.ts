@@ -1,15 +1,16 @@
 import { PartSolverData } from './types';
-import { isNumber } from '@xiao-ai/utils';
-import { parseShortNumber } from '@circuit/math';
 import { ElectronicKind } from '@circuit/electronics';
+import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Resistance,
-  constant: ({ F, H }, params, branch) => {
-    const param = params[0];
-    const val = isNumber(param) ? param : parseShortNumber(param);
+  iterative: ({ id, params }) => ({
+    constant: ({ F, H, getBranchById }) => {
+      const val = parseNumber(params[0]);
+      const branch = getBranchById(id)!;
 
-    F.set(branch, branch, -1);
-    H.set(branch, branch, val);
-  },
+      F.set(branch, branch, -1);
+      H.set(branch, branch, val);
+    },
+  }),
 };

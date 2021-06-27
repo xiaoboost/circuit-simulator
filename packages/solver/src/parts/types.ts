@@ -11,6 +11,10 @@ export interface CircuitBaseMatrix {
   H: Matrix;
   /** 独立电压电流源列向量 */
   S: Matrix;
+  /** 获取支路编号 */
+  getBranchById(id: string): number | undefined;
+  /** 获取节点编号 */
+  getNodeById(id: string): number | undefined;
 }
 
 /** 描述电路求解器的两个矩阵 */
@@ -41,51 +45,13 @@ interface IterativeParameters {
 export interface PartRunData {
   id: string;
   kind: ElectronicKind;
-  params: (string | number)[];
+  params: PartRunParams;
 }
 
-/** 运行时的器件参数列表 */
-type PartRunParams = PartRunData['params'];
-/** 迭代方程 */
-export type IterativeEquation = (circuit: IterativeParameters) => void;
-
-/** 器件迭代方程数据 */
-export interface IteratorData {
-  /**
-   * 标记迭代方程输出值的位置
-   * @param {CircuitBaseMatrix} circuit 电路矩阵
-   * @param {number} branch 当前器件所在支路编号
-   */
-  mark?(circuit: CircuitBaseMatrix, branch: number): void;
-  /**
-   * 生成拆分器件的运行参数
-   * @param {CircuitBaseMatrix} circuit 电路矩阵
-   * @param {number} branch 当前器件所在支路编号
-   */
-  params?(part: PartRunData): Record<string, PartRunParams>;
-  /**
-   * 迭代方程生成器
-   * @param {CircuitSolverMatrix} solver 求解器矩阵
-   * @param {PartData | PartRunData} part 器件数据
-   * @return {IterativeEquation} 迭代方程
-   */
-  create(solver: CircuitSolverMatrix, part: PartRunData): IterativeEquation;
+/** 附带迭代器的运算时数据 */
+export interface PartRunDataWithIterator extends PartRunData {
+  iterative: IteratorData;
 }
-
-/** 器件迭代方程生成器 */
-export type IteratorCreation = () => IteratorData;
-
-/**
- * 常量参数填充函数
- * @param {CircuitBaseMatrix} circuit 电路矩阵
- * @param {number} branch 当前器件所在支路编号
- * @param {number} params 当前器件的参数值
- */
-export type ConstantCreation = (
-  circuit: CircuitBaseMatrix,
-  params: PartRunParams,
-  branch: number,
-) => void;
 
 /** 可拆分器件的内部器件接口 */
 interface PartInside {
@@ -93,18 +59,11 @@ interface PartInside {
   id: string;
   /** 器件类型 */
   kind: ElectronicKind;
-  /**
-   * 生成当前器件参数
-   * @param {PartRunData} part 完整器件数据
-   * @return {PartRunParams} 可运行的器件参数
-   */
-  params(part: PartRunData): PartRunParams;
+  /** 当前器件参数 */
+  params: PartRunParams;
 }
 
-/**
- * 复杂器件的内部拆分
- *  - 拆分出来的器件必须是只有两个引脚的简单器件
- */
+/** 器件内部拆分 */
 export interface ElectronicApart {
   /** 内部器件列表 */
   parts: PartInside[];
@@ -121,14 +80,25 @@ export interface ElectronicApart {
   external: ConnectionData[][];
 }
 
+/** 运行时的器件参数列表 */
+export type PartRunParams = (string | number)[];
+/** 迭代方程 */
+export type IterativeEquation = (circuit: IterativeParameters) => void;
+
+/** 器件迭代方程数据 */
+export interface IteratorData {
+  /** 生成拆分器件 */
+  apart?: ElectronicApart;
+  /** 标记迭代方程输出值的位置 */
+  constant?(circuit: CircuitBaseMatrix): void;
+  /** 迭代方程生成器 */
+  create?(solver: CircuitSolverMatrix): IterativeEquation;
+}
+
 /** 器件求解参数 */
 export interface PartSolverData {
   /** 器件种类 */
   readonly kind: ElectronicKind;
   /** 迭代方程生成器 */
-  readonly iterative?: IteratorCreation;
-  /** 常量参数生成器 */
-  readonly constant?: ConstantCreation;
-  /** 器件内部拆分描述 */
-  readonly apart?: ElectronicApart;
+  iterative?(part: PartRunData): IteratorData;
 }

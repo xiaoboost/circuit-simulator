@@ -1,26 +1,28 @@
 import { PartSolverData } from './types';
-import { parseShortNumber } from '@circuit/math';
-import { ElectronicKind, Part } from '@circuit/electronics';
+import { ElectronicKind } from '@circuit/electronics';
 import { getMark } from '../utils/mark';
+import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.AcVoltageSource,
-  iterative: () => {
+  iterative: ({ id, params }) => {
     const mark = getMark();
+
     return {
-      mark({ F, S }, branch) {
+      constant({ F, S, getBranchById }) {
+        const branch = getBranchById(id)!;
         F.set(branch, branch, 1);
         S.set(branch, 0, mark);
       },
-      create({ Source }, data: Part) {
+      create({ Source }) {
         /** 峰值电压 */
-        const factor = parseShortNumber(data.params[0]);
+        const factor = parseNumber(params[0]);
         /** 频率 */
-        const frequency = parseShortNumber(data.params[1]);
+        const frequency = parseNumber(params[1]);
         /** 偏置电压 */
-        const bias = parseShortNumber(data.params[2]);
+        const bias = parseNumber(params[2]);
         /** 初始相角 */
-        const phase = parseShortNumber(data.params[3]);
+        const phase = parseNumber(params[3]);
         /** 需要更新的数值位置 */
         const position = Source.filterPosition(mark);
 

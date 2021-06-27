@@ -1,64 +1,23 @@
-import { PartSolverData, PartRunData } from './types';
 import { ElectronicKind } from '@circuit/electronics';
+import { PartSolverData } from './types';
 import { getMark } from '../utils/mark';
 import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Diode,
-  apart: {
-    parts: [
-      {
-        kind: ElectronicKind.Resistance,
-        id: 'R1',
-        params(_) {
-          return [];
-          // return [mark];
-        },
-      },
-      {
-        kind: ElectronicKind.DcVoltageSource,
-        id: 'VD1',
-        params(_) {
-          return [];
-          // return [mark + 1];
-        },
-      },
-    ],
-    internal: [
-      [
-        {
-          id: 'R1',
-          mark: 1,
-        },
-        {
-          id: 'VD1',
-          mark: 1,
-        },
-      ],
-    ],
-    external: [
-      [{
-        id: 'R1',
-        mark: 0,
-      }],
-      [{
-        id: 'VD1',
-        mark: 0,
-      }],
-    ],
-  },
-  iterative: () => {
+  iterative(part) {
     const resMark = getMark();
     const volMark = getMark();
+    const params = part.params.slice();
 
     return {
-      create({ Factor, Source, getVoltageMatrixByPin }, part: PartRunData) {
+      create({ Factor, Source, getVoltageMatrixByPin }) {
         /** 导通电压 */
-        const onVol = parseNumber(part.params[0]);
+        const onVol = parseNumber(params[0]);
         /** 导通电阻 */
-        const onRes = parseNumber(part.params[1]);
+        const onRes = parseNumber(params[1]);
         /** 关断电阻 */
-        const offRes = parseNumber(part.params[2]);
+        const offRes = parseNumber(params[2]);
         /** 电阻值标记位置 */
         const resPosition = Factor.filterPosition(resMark);
         /** 导通电压标记位置 */
@@ -92,6 +51,42 @@ export const data: PartSolverData = {
             lastInsideVol = insideVol;
           }
         };
+      },
+      apart: {
+        parts: [
+          {
+            kind: ElectronicKind.Resistance,
+            id: 'R1',
+            params: [resMark],
+          },
+          {
+            kind: ElectronicKind.DcVoltageSource,
+            id: 'VD1',
+            params: [volMark],
+          },
+        ],
+        internal: [
+          [
+            {
+              id: 'R1',
+              mark: 1,
+            },
+            {
+              id: 'VD1',
+              mark: 1,
+            },
+          ],
+        ],
+        external: [
+          [{
+            id: 'R1',
+            mark: 0,
+          }],
+          [{
+            id: 'VD1',
+            mark: 0,
+          }],
+        ],
       },
     };
   },

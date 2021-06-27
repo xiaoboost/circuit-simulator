@@ -1,21 +1,23 @@
-import { PartRunData, PartSolverData } from './types';
+import { PartSolverData } from './types';
 import { ElectronicKind } from '@circuit/electronics';
 import { getMark } from '../utils/mark';
 import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.Capacitor,
-  iterative: () => {
+  iterative: (part) => {
     const mark = getMark();
+    const params = part.params.slice();
 
     return {
-      mark({ F, S }, branch) {
+      constant({ F, S, getBranchById }) {
+        const branch = getBranchById(part.id)!;
         F.set(branch, branch, 1);
         S.set(branch, 0, mark);
       },
-      create({ Source, getCurrentMatrixByBranch }, part: PartRunData) {
+      create({ Source, getCurrentMatrixByBranch }) {
         /** 电容值 */
-        const valueCap = parseNumber(part.params[0]);
+        const valueCap = parseNumber(params[0]);
         /** 需要更新的数值位置 */
         const position = Source.filterPosition(mark);
         /** 当前器件的电流计算矩阵 */

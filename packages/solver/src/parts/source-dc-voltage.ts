@@ -1,15 +1,16 @@
 import { PartSolverData } from './types';
-import { isNumber } from '@xiao-ai/utils';
-import { parseShortNumber } from '@circuit/math';
 import { ElectronicKind } from '@circuit/electronics';
+import { parseNumber } from '../utils/number';
 
 export const data: PartSolverData = {
   kind: ElectronicKind.DcVoltageSource,
-  constant({ F, S }, params, branch) {
-    const param = params[0];
-    const val = isNumber(param) ? param : parseShortNumber(param);
+  iterative: ({ id, params }) => ({
+    constant: ({ F, S, getBranchById }) => {
+      const val = parseNumber(params[0]);
+      const branch = getBranchById(id)!;
 
-    F.set(branch, branch, 1);
-    S.set(branch, 0, val);
-  },
+      F.set(branch, branch, 1);
+      S.set(branch, 0, val);
+    },
+  }),
 };
