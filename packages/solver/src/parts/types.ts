@@ -80,11 +80,6 @@ export interface ElectronicApart {
   external: ConnectionData[][];
 }
 
-/** 运行时的器件参数列表 */
-export type PartRunParams = (string | number)[];
-/** 迭代方程 */
-export type IterativeEquation = (circuit: IterativeParameters) => void;
-
 /** 器件迭代方程数据 */
 export interface IteratorData {
   /** 生成拆分器件 */
@@ -95,10 +90,9 @@ export interface IteratorData {
   create?(solver: CircuitSolverMatrix): IterativeEquation;
 }
 
-/** 器件求解参数 */
-export interface PartSolverData {
-  /** 器件种类 */
-  readonly kind: ElectronicKind;
-  /** 迭代方程生成器 */
-  iterative?(part: PartRunData): IteratorData;
-}
+/** 运行时的器件参数列表 */
+export type PartRunParams = (string | number)[];
+/** 迭代方程 */
+export type IterativeEquation = (circuit: IterativeParameters) => void;
+/** 器件迭代方程生成器 */
+export type IterativeCreation = (part: PartRunData) => IteratorData;

@@ -43,7 +43,6 @@ export function SideMenu() {
         step: step.data,
         onProgress: (progress) => {
           setProgress(progress);
-          console.log(progress);
           return delay();
         },
       }).then((data) => {

@@ -1,8 +1,5 @@
 import { ElectronicKind } from '@circuit/electronics';
-import { PartSolverData } from './types';
-
-// 虚拟器件
-import { data as ReferenceGround } from './virtual-ref-ground';
+import { IterativeCreation } from './types';
 
 // 无源器件
 import { data as Resistance } from './basic-resistance';
@@ -14,21 +11,20 @@ import { data as DcVoltageSource } from './source-dc-voltage';
 import { data as AcVoltageSource } from './source-ac-voltage';
 import { data as DcCurrentSource } from './source-dc-current';
 
-// 测量器件
-import { data as VoltageMeter } from './meter-voltage';
-import { data as CurrentMeter } from './meter-current';
-
 // 半导体器件
 import { data as Diode } from './semi-diode';
 import { data as TransistorNpn } from './semi-transistor-npn';
 import { data as OperationalAmplifier } from './semi-amplifier';
 
-type Electronics = { [key in ElectronicKind]: PartSolverData };
+type Electronics = { [key in ElectronicKind]: IterativeCreation };
 
 export * from './types';
 
 export const Electronics: Electronics = {
-  [ElectronicKind.Line]: {} as any,
+  [ElectronicKind.Line]: () => void 0 as any,
+  [ElectronicKind.ReferenceGround]: () => void 0 as any,
+  [ElectronicKind.VoltageMeter]: () => void 0 as any,
+  [ElectronicKind.CurrentMeter]: () => void 0 as any,
 
   [ElectronicKind.Resistance]: Resistance,
   [ElectronicKind.Capacitor]: Capacitor,
@@ -36,9 +32,6 @@ export const Electronics: Electronics = {
   [ElectronicKind.DcVoltageSource]: DcVoltageSource,
   [ElectronicKind.AcVoltageSource]: AcVoltageSource,
   [ElectronicKind.DcCurrentSource]: DcCurrentSource,
-  [ElectronicKind.ReferenceGround]: ReferenceGround,
-  [ElectronicKind.VoltageMeter]: VoltageMeter,
-  [ElectronicKind.CurrentMeter]: CurrentMeter,
   [ElectronicKind.Diode]: Diode,
   [ElectronicKind.TransistorNPN]: TransistorNpn,
   [ElectronicKind.OperationalAmplifier]: OperationalAmplifier,

@@ -1,6 +1,5 @@
-import { PartSolverData } from './types';
-import { ElectronicKind } from '@circuit/electronics';
+import { IterativeCreation } from './types';
 
-export const data: PartSolverData = {
-  kind: ElectronicKind.Inductance,
-};
+export const data: IterativeCreation = (() => {
+  // ..
+}) as any;

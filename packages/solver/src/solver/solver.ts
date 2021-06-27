@@ -204,7 +204,7 @@ export class Solver {
         continue;
       }
 
-      const { iterative } = Electronics[part.kind];
+      const iterative = Electronics[part.kind];
 
       if (!iterative) {
         throw new Error('非法器件')
@@ -250,7 +250,7 @@ export class Solver {
       // 根据器件内部结构追加 pinToBranch
       for (const insidePart of insideParts) {
         const newId = stringifyInsidePart(part.id, insidePart.id);
-        const { iterative } = Electronics[insidePart.kind];
+        const iterative = Electronics[insidePart.kind];
 
         if (!iterative) {
           throw new Error('非法器件');

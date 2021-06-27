@@ -1,16 +1,12 @@
-import { PartSolverData } from './types';
-import { ElectronicKind } from '@circuit/electronics';
+import { IterativeCreation } from './types';
 import { parseNumber } from '../utils/number';
 
-export const data: PartSolverData = {
-  kind: ElectronicKind.DcCurrentSource,
-  iterative: ({ id, params }) => ({
-    constant: ({ S, H, getBranchById }) => {
-      const val = parseNumber(params[0]);
-      const branch = getBranchById(id)!;
+export const data: IterativeCreation = ({ id, params }) => ({
+  constant: ({ S, H, getBranchById }) => {
+    const val = parseNumber(params[0]);
+    const branch = getBranchById(id)!;
 
-      H.set(branch, branch, 1);
-      S.set(branch, 0, val);
-    },
-  }),
-};
+    H.set(branch, branch, 1);
+    S.set(branch, 0, val);
+  },
+});
