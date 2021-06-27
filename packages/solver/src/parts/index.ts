@@ -10,6 +10,8 @@ import { data as Inductance } from './basic-inductance';
 import { data as DcVoltageSource } from './source-dc-voltage';
 import { data as AcVoltageSource } from './source-ac-voltage';
 import { data as DcCurrentSource } from './source-dc-current';
+import { data as CurrentControlledCurrentSource } from './source-cccs';
+import { data as VoltageControlledVoltageSource } from './source-vcvs';
 
 // 半导体器件
 import { data as Diode } from './semi-diode';
@@ -35,4 +37,6 @@ export const Electronics: Electronics = {
   [ElectronicKind.Diode]: Diode,
   [ElectronicKind.TransistorNPN]: TransistorNpn,
   [ElectronicKind.OperationalAmplifier]: OperationalAmplifier,
+  [ElectronicKind.CurrentControlledCurrentSource]: CurrentControlledCurrentSource,
+  [ElectronicKind.VoltageControlledVoltageSource]: VoltageControlledVoltageSource,
 };

@@ -27,6 +27,8 @@ type Electronics = { [key in ElectronicKind]: ElectronicPrototype };
 
 export const Electronics: Electronics = {
   [ElectronicKind.Line]: {} as any,
+  [ElectronicKind.VoltageControlledVoltageSource]: {} as any,
+  [ElectronicKind.CurrentControlledCurrentSource]: {} as any,
 
   [ElectronicKind.Resistance]: Resistance,
   [ElectronicKind.Capacitor]: Capacitor,

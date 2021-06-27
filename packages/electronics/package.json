@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --no-cache",
+    "test": "ava --no-cache -T=1m",
     "test:update": "rimraf ./tests/snapshots && ava --no-cache",
     "dev": "tsc -p ./tsconfig.build.json --sourceMap -w --outDir dev --declarationDir ./dev --module CommonJs",
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",

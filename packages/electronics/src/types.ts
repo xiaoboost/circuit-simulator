@@ -9,6 +9,7 @@ export enum ElectronicKind {
   /** 导线 */
   Line = 1,
 
+  // 实际器件
   /** 电阻 */
   Resistance = 10,
   /** 电感 */
@@ -31,8 +32,14 @@ export enum ElectronicKind {
   DcCurrentSource,
   /** 直流电压源 */
   DcVoltageSource,
+
+  // 虚拟器件
   /** 参考地 */
   ReferenceGround,
+  /** 压控压源 */
+  VoltageControlledVoltageSource,
+  /** 流控流源 */
+  CurrentControlledCurrentSource,
 }
 
 /** 引脚数据 */

@@ -2,9 +2,12 @@ import type { CircuitData } from 'src/store';
 
 export const data: CircuitData = {
   simulation: {
-    end: '20m',
-    step: '2u',
+    end: '10m',
+    step: '5u',
   },
+  oscilloscopes: [
+    ['V_in', 'V_out'],
+  ],
   electronics: [
     {
       kind: 'DcVoltageSource',
@@ -53,6 +56,7 @@ export const data: CircuitData = {
       position: [1000, 400],
       rotate: [[0, 1], [-1, 0]],
       params: ['100k'],
+      text: 'Left',
     },
     {
       kind: 'Capacitor',
@@ -74,6 +78,7 @@ export const data: CircuitData = {
       position: [520, 360],
       rotate: [[1, 0], [0, 1]],
       params: ['3', '1k', '0', '0'],
+      text: 'Left',
     },
     {
       kind: 'VoltageMeter',

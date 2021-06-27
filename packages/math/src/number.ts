@@ -197,3 +197,8 @@ export function toScientific(num: number) {
 
   return `${base.toNumber()} ${RankEnum[thirdRank]}`;
 }
+
+/** 解析对数增益 */
+export function parseGainNumber(db: number) {
+  return Math.pow(10, (db / 20));
+}

@@ -1,12 +1,14 @@
 import { ElectronicKind } from '@circuit/electronics';
 import { IterativeCreation } from './types';
-import { getMark } from '../utils/mark';
+import { getMark, getSetMethod } from '../utils/mark';
 import { parseNumber } from '../utils/number';
 
 export const data: IterativeCreation = (part) => {
   const resMark = getMark();
   const volMark = getMark();
   const params = part.params.slice();
+  const inputRes = 'InputR';
+  const VDVol = 'VD';
 
   return {
     create({ Factor, Source, getVoltageMatrixByPin }) {
@@ -17,9 +19,9 @@ export const data: IterativeCreation = (part) => {
       /** 关断电阻 */
       const offRes = parseNumber(params[2]);
       /** 电阻值标记位置 */
-      const resPosition = Factor.filterPosition(resMark);
+      const setRes = getSetMethod(Factor, resMark);
       /** 导通电压标记位置 */
-      const volPosition = Source.filterPosition(volMark);
+      const setVol = getSetMethod(Source, volMark);
       /** 电压计算矩阵 */
       const volMatrix = (
         getVoltageMatrixByPin(part.id, 0)
@@ -40,12 +42,12 @@ export const data: IterativeCreation = (part) => {
         const insideVol = (vol >= onVol) ? onVol : 0;
 
         if (insideRes !== lastInsideRes) {
-          resPosition.forEach(([i, j]) => Factor.set(i, j, insideRes));
+          setRes(insideRes);
           lastInsideRes = insideRes;
         }
 
         if (insideVol !== lastInsideVol) {
-          volPosition.forEach(([i, j]) => Source.set(i, j, insideVol));
+          setVol(insideVol);
           lastInsideVol = insideVol;
         }
       };
@@ -54,34 +56,34 @@ export const data: IterativeCreation = (part) => {
       parts: [
         {
           kind: ElectronicKind.Resistance,
-          id: 'R1',
+          id: inputRes,
           params: [resMark],
         },
         {
           kind: ElectronicKind.DcVoltageSource,
-          id: 'VD1',
+          id: VDVol,
           params: [volMark],
         },
       ],
       internal: [
         [
           {
-            id: 'R1',
+            id: inputRes,
             mark: 1,
           },
           {
-            id: 'VD1',
+            id: VDVol,
             mark: 1,
           },
         ],
       ],
       external: [
         [{
-          id: 'R1',
+          id: inputRes,
           mark: 0,
         }],
         [{
-          id: 'VD1',
+          id: VDVol,
           mark: 0,
         }],
       ],

@@ -55,6 +55,7 @@ export const data: CircuitData = {
       position: [900, 140],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
+      text: 'Top',
     },
     {
       kind: 'Resistance',
@@ -62,6 +63,7 @@ export const data: CircuitData = {
       position: [780, 200],
       rotate: [[1, 0], [0, 1]],
       params: ['10k'],
+      text: 'Top',
     },
     {
       kind: 'ReferenceGround',
@@ -75,6 +77,7 @@ export const data: CircuitData = {
       position: [960, 320],
       rotate: [[0, 1], [-1, 0]],
       params: ['10k'],
+      text: 'Left',
     },
     {
       kind: 'VoltageMeter',

@@ -1,3 +1,5 @@
+import type { Matrix } from '@circuit/math';
+
 /**
  * 数字标记
  *  - 高 16 位为标志位
@@ -18,4 +20,13 @@ export function getMark() {
 /** 从标记数字中得到原来的数字 */
 export function getOrigin(mark: number) {
   return SignOrigin & mark;
+}
+
+/** 获取矩阵的设置函数包装 */
+export function getSetMethod(ma: Matrix, mark: number) {
+  const positions = ma.filterPosition(mark);
+
+  return function set(val: number) {
+    positions.forEach(([i, j]) => ma.set(i, j, val));
+  };
 }
