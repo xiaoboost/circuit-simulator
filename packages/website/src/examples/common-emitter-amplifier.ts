@@ -5,6 +5,9 @@ export const data: CircuitData = {
     end: '50m',
     step: '10u',
   },
+  oscilloscopes: [
+    ['V_in', 'V_out'],
+  ],
   electronics: [
     {
       kind: 'DcVoltageSource',
@@ -60,6 +63,7 @@ export const data: CircuitData = {
       position: [1000, 340],
       rotate: [[0, 1], [-1, 0]],
       params: ['1M'],
+      text: 'Left',
     },
     {
       kind: 'Capacitor',
@@ -81,6 +85,7 @@ export const data: CircuitData = {
       position: [520, 360],
       rotate: [[1, 0], [0, 1]],
       params: ['3', '300', '0', '0'],
+      text: 'Left',
     },
     {
       kind: 'VoltageMeter',

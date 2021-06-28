@@ -1,6 +1,13 @@
 import type { CircuitData } from 'src/store';
 
 export const data: CircuitData = {
+  simulation: {
+    end: '10m',
+    step: '10u',
+  },
+  oscilloscopes: [
+    ['I_in', 'I_ap'],
+  ],
   electronics: [
     {
       kind: 'DcVoltageSource',

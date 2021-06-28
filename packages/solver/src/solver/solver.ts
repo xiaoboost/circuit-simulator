@@ -1,8 +1,9 @@
-import { concat, isNumber, AnyObject } from '@xiao-ai/utils';
+import { concat, isNumber, isDef, AnyObject } from '@xiao-ai/utils';
 import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
 import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
 import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
 import { Mapping } from './map';
+import { isMeterGnd } from '../utils/part';
 
 import {
   UpdateWrapper,
@@ -77,25 +78,13 @@ export class Solver {
   }
 
   /** 用 id 搜索器件或导线 */
-  private find<T extends Part | Line>(id: string): T {
-    const result = (this.parts as T[]).concat(this.lines as T[]).find((item) => item.id === id);
-
-    if (!result) {
-      throw new Error(`未能找到该器件：${id}`);
-    }
-
-    return result;
+  private find<T extends Part | Line>(id: string) {
+    return (this.parts as T[]).concat(this.lines as T[]).find((item) => item.id === id);
   }
 
   /** 用 id 搜索运行时器件 */
   private findRunPart(id: string) {
-    const result = this.partsAll.find((item) => item.id === id);
-
-    if (!result) {
-      throw new Error(`未能找到该器件：${id}`);
-    }
-
-    return result;
+    return this.partsAll.find((item) => item.id === id);
   }
 
   /** 获取输入导线所在节点的所有导线和连接着的所有引脚 */
@@ -178,11 +167,7 @@ export class Solver {
 
     for (const part of parts) {
       // 辅助器件，不建立支路
-      if (
-        part.kind === ElectronicKind.CurrentMeter ||
-        part.kind === ElectronicKind.VoltageMeter ||
-        part.kind === ElectronicKind.ReferenceGround
-      ) {
+      if (isMeterGnd(part)) {
         continue;
       }
 
@@ -196,11 +181,7 @@ export class Solver {
   /** 生成运行参数 */
   private getPartParams() {
     for (const part of this.parts) {
-      if (
-        part.kind === ElectronicKind.ReferenceGround ||
-        part.kind === ElectronicKind.CurrentMeter ||
-        part.kind === ElectronicKind.VoltageMeter
-      ) {
+      if (isMeterGnd(part)) {
         continue;
       }
 
@@ -324,11 +305,11 @@ export class Solver {
       /** 引脚器件 */
       const pinPart = this.findRunPart(id);
       /** 器件拆分原型 */
-      const { apart } = pinPart.iterative;
+      const apart = pinPart?.iterative?.apart;
 
       // 器件不可拆分，则抛出错误
-      if (!apart) {
-        throw new Error(`(Solver) 非法器件: ${pinPart.id}`);
+      if (!apart || !pinPart) {
+        throw new Error('(Solver) 非法器件');
       }
 
       realPin = stringifyInsidePin(pinPart.id, apart.external[mark][0]);
@@ -340,36 +321,61 @@ export class Solver {
   }
 
   /** 由支路器件到支路电流计算矩阵 */
-  private getCurrentMatrixByBranch(id: string) {
+  private getCurrentMatrixByBranch(id: string, mark = 1) {
     const { pinToBranch } = this;
 
     /** 电流矩阵 */
     const matrix = new Matrix(1, pinToBranch.max, 0);
     /** 支路器件 */
     const part = this.find(id);
+    /** 获取支路编号 */
+    const findBranch = (id: string, mark = 0) => {
+      const branch = this.pinToBranch.get(id);
+
+      if (isDef(branch)) {
+        return [branch];
+      }
+      else {
+        debugger;
+        /** 引脚器件 */
+        const pinPart = this.findRunPart(id);
+        /** 器件拆分原型 */
+        const apart = pinPart?.iterative?.apart;
+
+        // 器件不可拆分，则抛出错误
+        if (!apart) {
+          return [];
+        }
+
+        return apart.external[mark]
+          .map((data) => stringifyInsidePart(id, data.id))
+          .map((pin) => this.pinToBranch.get(pin))
+          .filter(isDef);
+      }
+    };
 
     // 电流表
     // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
     if (part && part.kind === ElectronicKind.CurrentMeter) {
       // 支路器件连接的导线
-      const connectionLine = this.find<Line>(part.connections[1].value!.id);
+      const connectionLine = this.find<Line>(part.connections[mark].value!.id)!;
       // 搜索电流表出口所连的所有器件
       const { connections } = this.getConnectionByLine(connectionLine);
       // 解析为器件（支路）编号，并排除掉其本身以及无效支路
-      const branch = connections
-        .map((pin) => pin.id)
-        .filter(
-          (branchName) =>
-            branchName !== part.id &&
-            pinToBranch.has(branchName),
-        );
+      const numbers = connections
+        .filter((pin) => pin.id !== id || pin.mark !== mark)
+        .map((pin) => findBranch(pin.id, pin.mark))
+        .reduce((ans, item) => ans.concat(item), []);
 
-      branch.forEach((branchName) => matrix.set(0, pinToBranch.get(branchName)!, 1));
+      for (const branch of numbers) {
+        matrix.set(0, branch, 1);
+      }
     }
-    // 非电流表器件
-    // 直接取支路电流即可
+    // 非电流表器件直接取其本身
     else {
-      matrix.set(0, pinToBranch.get(part.id)!, 1);
+      for (const branch of findBranch(id, mark)) {
+        matrix.set(0, branch, 1);
+      }
     }
 
     return matrix;
@@ -402,7 +408,7 @@ export class Solver {
         current.push({
           id: meter.id,
           data: [],
-          matrix: this.getCurrentMatrixByBranch(meter.id),
+          matrix: this.getCurrentMatrixByBranch(meter.id, 1),
         });
       }
       // 电压表
@@ -548,11 +554,13 @@ export class Solver {
     /** 系数矩阵代理 */
     const factorProxy = new Proxy(factor, {
       get(target, property) {
-        // 代理 set 方法
         if (property === 'set') {
-          return (...args: Parameters<Matrix['set']>) => {
-            factorChange = true;
-            target.set(...args);
+          return (i: number, j: number, val: number) => {
+            const oldVal = target.get(i, j);
+            if (oldVal !== val) {
+              factorChange = true;
+              target.set(i, j, val);
+            }
           };
         }
         else {
@@ -571,7 +579,7 @@ export class Solver {
     const update: IterativeEquation = (arg) => updates.forEach((cb) => cb(arg));
 
     /** 上次时间 */
-    let last = Date.now();
+    let last = 0;
 
     // 迭代求解
     while (currentCache <= end) {
