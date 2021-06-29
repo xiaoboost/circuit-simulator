@@ -336,7 +336,6 @@ export class Solver {
         return [branch];
       }
       else {
-        debugger;
         /** 引脚器件 */
         const pinPart = this.findRunPart(id);
         /** 器件拆分原型 */
@@ -413,8 +412,8 @@ export class Solver {
       }
       // 电压表
       else if (meter.kind === ElectronicKind.VoltageMeter) {
-        const negativeVoltage = this.getVoltageMatrixByPin(meter.id, 0);
-        const positiveVoltage = this.getVoltageMatrixByPin(meter.id, 1);
+        const positiveVoltage = this.getVoltageMatrixByPin(meter.id, 0);
+        const negativeVoltage = this.getVoltageMatrixByPin(meter.id, 1);
 
         // 正电极减去负电极，即为测量电压
         const matrix = positiveVoltage.add(negativeVoltage.factor(-1));
@@ -498,7 +497,7 @@ export class Solver {
     // 系数矩阵
     this.factor = Matrix.merge([
       [0, 0, A],
-      [A.transpose(), 'E', 0],
+      [A.transpose().factor(-1), 'E', 0],
       [0, F, H],
     ]);
 

@@ -24,8 +24,8 @@ export const data: IterativeCreation = (part) => {
       const setVol = getSetMethod(Source, volMark);
       /** 电压计算矩阵 */
       const volMatrix = (
-        getVoltageMatrixByPin(part.id, 0)
-          .add(getVoltageMatrixByPin(part.id, 1).factor(-1))
+        getVoltageMatrixByPin(part.id, 1)
+          .add(getVoltageMatrixByPin(part.id, 0).factor(-1))
       );
 
       // 缓存上一次的计算值

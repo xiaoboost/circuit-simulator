@@ -4,6 +4,7 @@ import { getMark, getSetMethod } from '../utils/mark';
 import { parseNumber } from '../utils/number';
 import { stringifyInsidePart } from '../utils/connection';
 
+// TODO: example 中的 common-emitter-amplifier、emitter-follower 两个样例
 export const data: IterativeCreation = (part) => {
   const VolBEMark = getMark();
   const VolCEMark = getMark();
@@ -34,13 +35,13 @@ export const data: IterativeCreation = (part) => {
       const setRatio = getSetMethod(Factor, ratioMark);
       /** BE 当前电压计算矩阵 */
       const volBEMatrix = (
-        getVoltageMatrixByPin(part.id, 2)
-          .add(getVoltageMatrixByPin(part.id, 0).factor(-1))
+        getVoltageMatrixByPin(part.id, 0)
+          .add(getVoltageMatrixByPin(part.id, 2).factor(-1))
       );
       /** CE 当前电压 */
       const volCEMatrix = (
-        getVoltageMatrixByPin(part.id, 2)
-          .add(getVoltageMatrixByPin(part.id, 1).factor(-1))
+        getVoltageMatrixByPin(part.id, 1)
+          .add(getVoltageMatrixByPin(part.id, 2).factor(-1))
       );
 
       return ({ Voltage }) => {
