@@ -66,6 +66,7 @@ export const data: ElectronicPrototype = {
       attribute: {
         fill: 'currentColor',
         stroke: 'currentColor',
+        strokeWidth: '0',
         points: '0,0 -11,-6 -7,0 -11,6',
         transform: 'translate(18, 26.4) rotate(38.7)',
       },

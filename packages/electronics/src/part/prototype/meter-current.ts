@@ -34,7 +34,7 @@ export const data: ElectronicPrototype = {
         points: '12,0 2,-6 6,0 2,6',
         fill: 'currentColor',
         stroke: 'currentColor',
-        strokeWidth: '0.5',
+        strokeWidth: '0',
         strokeLinecap: 'square',
       },
     },
