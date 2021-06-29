@@ -8,7 +8,7 @@ import { Move } from './components/move';
 import { Tabs } from './components/tabs';
 import { GraphViewer } from 'src/components/oscilloscope';
 
-import { solve } from '@circuit/solver';
+// import { solve } from '@circuit/solver';
 import { delay } from '@xiao-ai/utils';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { useState } from 'react';
@@ -36,23 +36,23 @@ export function SideMenu() {
     }
 
     if (status === TabStatus.Run) {
-      solve({
-        parts: parts.data.slice(),
-        lines: lines.data.slice(),
-        end: end.data,
-        step: step.data,
-        onProgress: (progress) => {
-          setProgress(progress);
-          return delay();
-        },
-      }).then((data) => {
-        setProgress(0);
-        setStatus(TabStatus.Osc);
-        setResult({
-          oscilloscopes: oscilloscopes.data.slice(),
-          ...data,
-        });
-      });
+      // solve({
+      //   parts: parts.data.slice(),
+      //   lines: lines.data.slice(),
+      //   end: end.data,
+      //   step: step.data,
+      //   onProgress: (progress) => {
+      //     setProgress(progress);
+      //     return delay();
+      //   },
+      // }).then((data) => {
+      //   setProgress(0);
+      //   setStatus(TabStatus.Osc);
+      //   setResult({
+      //     oscilloscopes: oscilloscopes.data.slice(),
+      //     ...data,
+      //   });
+      // });
     }
 
     setStatus(status);

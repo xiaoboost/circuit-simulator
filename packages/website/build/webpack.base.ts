@@ -24,6 +24,26 @@ Released under the MIT License.`;
 
 console.log('\x1Bc');
 
+const tsLoaderConfig = isDevelopment
+  ? {
+    loader: 'ts-loader',
+    options: {
+      configFile: utils.resolve('tsconfig.json'),
+      compilerOptions: {
+        module: 'ESNext',
+        target: 'ESNext',
+      },
+    },
+  }
+  : {
+    loader: 'esbuild-loader',
+    options: {
+      loader: 'tsx',
+      target: 'es2015',
+      tsconfigRaw: require(utils.resolve('tsconfig.json')),
+    },
+  };
+
 const baseConfig: Webpack.Configuration = {
   mode: process.env.NODE_ENV as Webpack.Configuration['mode'],
   entry: {
@@ -47,31 +67,17 @@ const baseConfig: Webpack.Configuration = {
   },
   module: {
     rules: [
-      (
-        isDevelopment
-          ? {
-            test: /\.tsx?$/,
-            exclude: /node_modules/,
-            loader: 'ts-loader',
-            options: {
-              configFile: utils.resolve('tsconfig.json'),
-              compilerOptions: {
-                module: 'ESNext',
-                target: 'ESNext',
-              },
-            },
-          }
-          : {
-            test: /\.tsx?$/,
-            exclude: /node_modules/,
-            loader: 'esbuild-loader',
-            options: {
-              loader: 'tsx',
-              target: 'es2015',
-              tsconfigRaw: require(utils.resolve('tsconfig.json')),
-            },
-          }
-      ),
+      {
+        test: /\.worker\.tsx?$/,
+        use: [
+          'worker-loader',
+          tsLoaderConfig,
+        ],
+      },
+      {
+        test: /\.tsx?$/,
+        ...tsLoaderConfig,
+      },
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],

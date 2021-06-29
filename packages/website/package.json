@@ -46,6 +46,7 @@
     "@circuit/map": "workspace:*",
     "@circuit/math": "workspace:*",
     "@circuit/solver": "workspace:*",
+    "@circuit/worker": "workspace:*",
     "@xiao-ai/utils": "^1.4.1",
     "antd": "^4.16.5",
     "core-js": "^3.15.1",
@@ -97,6 +98,7 @@
     "typescript": "^4.3.4",
     "url-loader": "^4.1.1",
     "webpack": "^5.40.0",
-    "webpack-bundle-analyzer": "^4.4.2"
+    "webpack-bundle-analyzer": "^4.4.2",
+    "worker-loader": "^3.0.8"
   }
 }

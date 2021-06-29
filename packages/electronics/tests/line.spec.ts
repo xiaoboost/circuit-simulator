@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { snapshot, createContext, loadData, loadSpace } from './utils';
+import { snapshot, createContext, loadData } from './utils';
 
 test('导线图纸标记，两端器件', ({ deepEqual }) => {
   const context = createContext();

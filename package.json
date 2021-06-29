@@ -6,6 +6,7 @@
     "update": "ncu -u --packageFile ./{packages/*/package.json,package.json}",
     "build": "pnpm run build --filter=!@circuit/website",
     "test": "pnpm run -r test --parallel --filter .",
+    "test:update": "pnpm run -r test:update --parallel --filter .",
     "lint": "pnpm run -r lint --parallel --filter .",
     "lint:fix": "pnpm run -r lint:fix --parallel --filter .",
     "dev:website": "pnpm run dev --filter @circuit/website",

@@ -1,0 +1,39 @@
+{
+  "name": "@circuit/worker",
+  "description": "circuit's worker controller",
+  "version": "1.0.0",
+  "author": "xiaoboost",
+  "license": "MIT",
+  "source": "src/index.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "clear": "rimraf ./dist",
+    "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
+    "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
+    "build": "pnpm run clear && pnpm run build:cjs && pnpm run build:esm",
+    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
+    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaoboost/circuit-simulator.git"
+  },
+  "dependencies": {
+    "@xiao-ai/utils": "^1.4.1"
+  },
+  "devDependencies": {
+    "@circuit/tsconfig": "workspace:*",
+    "@types/circuit": "workspace:*",
+    "eslint": "^7.29.0",
+    "rimraf": "^3.0.2",
+    "tslib": "^2.3.0",
+    "typescript": "^4.3.4"
+  }
+}
