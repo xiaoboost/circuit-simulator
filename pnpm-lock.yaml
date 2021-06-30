@@ -45,7 +45,6 @@ importers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
-      '@circuit/test': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.4.1
@@ -62,7 +61,6 @@ importers:
       '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/test': link:../test
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       ava: 3.15.0
@@ -178,7 +176,6 @@ importers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
-      '@circuit/test': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@xiao-ai/utils': ^1.4.1
@@ -195,38 +192,12 @@ importers:
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/map': link:../map
-      '@circuit/test': link:../test
       '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       ava: 3.15.0
       eslint: registry.nlark.com/eslint/7.29.0
       rimraf: 3.0.2
       ts-node: registry.nlark.com/ts-node/10.0.0_typescript@4.3.4
-      tslib: registry.nlark.com/tslib/2.3.0
-      typescript: registry.nlark.com/typescript/4.3.4
-
-  packages/test:
-    specifiers:
-      '@circuit/tsconfig': workspace:*
-      '@types/circuit': workspace:*
-      '@types/fs-extra': ^9.0.11
-      '@types/node': ^15.12.5
-      ava: ^3.15.0
-      eslint: ^7.29.0
-      fs-extra: ^10.0.0
-      rimraf: ^3.0.2
-      tslib: ^2.3.0
-      typescript: ^4.3.4
-    dependencies:
-      fs-extra: registry.nlark.com/fs-extra/10.0.0
-    devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
-      '@types/circuit': link:../typings
-      '@types/fs-extra': registry.nlark.com/@types/fs-extra/9.0.11
-      '@types/node': registry.nlark.com/@types/node/15.12.5
-      ava: 3.15.0
-      eslint: registry.nlark.com/eslint/7.29.0
-      rimraf: 3.0.2
       tslib: registry.nlark.com/tslib/2.3.0
       typescript: registry.nlark.com/typescript/4.3.4
 
@@ -1950,6 +1921,7 @@ packages:
 
   /graceful-fs/4.2.6:
     resolution: {integrity: sha1-/wQLKwhTsjw9MQJ1I3BvGIXXa+4=, tarball: graceful-fs/download/graceful-fs-4.2.6.tgz}
+    dev: true
 
   /gzip-size/6.0.0:
     resolution: {integrity: sha1-BlNn/VDCOcBnHLy61b4+LusQ5GI=, tarball: gzip-size/download/gzip-size-6.0.0.tgz?cache=0&sync_timestamp=1605576633114&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fgzip-size%2Fdownload%2Fgzip-size-6.0.0.tgz}
@@ -2454,6 +2426,7 @@ packages:
       universalify: 2.0.0
     optionalDependencies:
       graceful-fs: 4.2.6
+    dev: true
 
   /jsonparse/1.3.1:
     resolution: {integrity: sha1-P02uSpH6wxX3EGL4UhzCOfE2YoA=, tarball: jsonparse/download/jsonparse-1.3.1.tgz}
@@ -4313,6 +4286,7 @@ packages:
   /universalify/2.0.0:
     resolution: {integrity: sha1-daSYTv7cSwiXXFrrc/Uw0C3yVxc=, tarball: universalify/download/universalify-2.0.0.tgz}
     engines: {node: '>= 10.0.0'}
+    dev: true
 
   /update-notifier/5.1.0:
     resolution: {integrity: sha1-SrDXx/NqIx3XMWz3cpMT8CFNmtk=, tarball: update-notifier/download/update-notifier-5.1.0.tgz}
@@ -5290,6 +5264,10 @@ packages:
     peerDependencies:
       '@typescript-eslint/parser': ^4.0.0
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/experimental-utils': registry.nlark.com/@typescript-eslint/experimental-utils/4.28.1_eslint@7.29.0
       '@typescript-eslint/parser': registry.nlark.com/@typescript-eslint/parser/4.28.1_eslint@7.29.0
@@ -5302,7 +5280,6 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/experimental-utils/4.28.1_eslint@7.29.0:
@@ -5334,6 +5311,10 @@ packages:
     engines: {node: ^10.12.0 || >=12.0.0}
     peerDependencies:
       eslint: ^5.0.0 || ^6.0.0 || ^7.0.0
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/scope-manager': registry.nlark.com/@typescript-eslint/scope-manager/4.28.1
       '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.28.1
@@ -5342,7 +5323,6 @@ packages:
       eslint: registry.nlark.com/eslint/7.29.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/scope-manager/4.28.1:
@@ -5367,6 +5347,11 @@ packages:
     name: '@typescript-eslint/typescript-estree'
     version: 4.28.1
     engines: {node: ^10.12.0 || >=12.0.0}
+    peerDependencies:
+      typescript: '*'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
     dependencies:
       '@typescript-eslint/types': registry.nlark.com/@typescript-eslint/types/4.28.1
       '@typescript-eslint/visitor-keys': registry.nlark.com/@typescript-eslint/visitor-keys/4.28.1
@@ -5377,7 +5362,6 @@ packages:
       tsutils: 3.21.0
     transitivePeerDependencies:
       - supports-color
-      - typescript
     dev: true
 
   registry.nlark.com/@typescript-eslint/visitor-keys/4.28.1:
@@ -6280,6 +6264,7 @@ packages:
       graceful-fs: 4.2.6
       jsonfile: 6.1.0
       universalify: 2.0.0
+    dev: true
 
   registry.nlark.com/glob-parent/5.1.2:
     resolution: {integrity: sha1-hpgyxYA0/mikCTwX3BXoNA2EAcQ=, registry: https://registry.npm.taobao.org/, tarball: https://registry.nlark.com/glob-parent/download/glob-parent-5.1.2.tgz}

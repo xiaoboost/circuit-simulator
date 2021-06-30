@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { snapshot, loadData, createContext } from './utils';
+import { loadData, createContext } from './utils';
 
-test('器件图纸标记', ({ deepEqual }) => {
+test('器件图纸标记', ({ snapshot }) => {
   const context = createContext();
 
   loadData([
@@ -13,5 +13,5 @@ test('器件图纸标记', ({ deepEqual }) => {
     }
   ], context);
 
-  snapshot('part-single-mark', context.map.toData(), deepEqual);
+  snapshot(context.map.toData());
 });

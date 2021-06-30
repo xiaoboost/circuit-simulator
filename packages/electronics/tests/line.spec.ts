@@ -1,8 +1,8 @@
 import test from 'ava';
 
-import { snapshot, createContext, loadData } from './utils';
+import { createContext, loadData } from './utils';
 
-test('导线图纸标记，两端器件', ({ deepEqual }) => {
+test('导线图纸标记，两端器件', ({ snapshot }) => {
   const context = createContext();
 
   loadData([
@@ -22,10 +22,10 @@ test('导线图纸标记，两端器件', ({ deepEqual }) => {
     },
   ], context);
 
-  snapshot('line-two-part', context.map.toData(), deepEqual);
+  snapshot(context.map.toData());
 });
 
-test('连接悬空导线', ({ deepEqual }) => {
+test('连接悬空导线', ({ snapshot, deepEqual }) => {
   const context = createContext();
 
   loadData([
@@ -45,7 +45,7 @@ test('连接悬空导线', ({ deepEqual }) => {
     }
   ], context);
 
-  snapshot('concat-space-line-before', context.map.toData(), deepEqual);
+  snapshot(context.map.toData());
 
   const { lines } = loadData([{
     kind: 'Line',
@@ -64,30 +64,10 @@ test('连接悬空导线', ({ deepEqual }) => {
     }],
   ]);
 
-  snapshot('concat-space-line-after', context.map.toData(), deepEqual);
-
-  // const line2 = new Line([[260, 140], [200, 140], [200, 120]]);
-
-  // (line2 as any).map = map;
-
-  // line2.setConnectionByPath();
-  // line2.setMark();
-
-  // deepEqual(line2.connections.map((item) => item.toData()), [
-  //   [{
-  //     id: 'R_2',
-  //     mark: 0,
-  //   }],
-  //   [{
-  //     id: 'R_1',
-  //     mark: 1,
-  //   }],
-  // ]);
-
-  // snapshot('concat-space-line-after', map.toData(), deepEqual);
+  snapshot(context.map.toData());
 });
 
-test('加载完整图纸', ({ deepEqual }) => {
+test('加载完整图纸', ({ snapshot }) => {
   const context = createContext();
   const { parts, lines } = loadData([
     {
@@ -276,5 +256,5 @@ test('加载完整图纸', ({ deepEqual }) => {
     },
   };
 
-  snapshot('whole-map-data', data, deepEqual);
+  snapshot(data);
 });

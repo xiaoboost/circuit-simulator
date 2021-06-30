@@ -1,13 +1,12 @@
-import type { DeepEqualAssertion } from 'ava';
-
 import { MarkMap } from '@circuit/map';
 import { Solver } from '../src/solver/solver';
-import { snapshot as snapshot2 } from '@circuit/test';
-import { Part, Line, PartData, LineData, Context } from '@circuit/electronics';
-
-export function snapshot(name: string, actual: any, deep: DeepEqualAssertion) {
-  snapshot2(__dirname, name, actual, deep);
-}
+import {
+  Part,
+  Line,
+  PartData,
+  LineData,
+  Context,
+} from '@circuit/electronics';
 
 export function load(data: (PartData | LineData)[]) {
   const context: Context = {
@@ -37,7 +36,8 @@ export function load(data: (PartData | LineData)[]) {
 export function loadToData(data: (PartData | LineData)[]) {
   const context = load(data);
   const solver = new Solver({
-    ...context,
+    parts: context.parts.map((item) => item.toStructuredData()),
+    lines: context.lines.map((item) => item.toStructuredData()),
     end: '10m',
     step: '10u',
   });

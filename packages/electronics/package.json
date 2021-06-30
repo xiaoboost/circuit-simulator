@@ -51,7 +51,6 @@
     "@xiao-ai/utils": "^1.4.1"
   },
   "devDependencies": {
-    "@circuit/test": "workspace:*",
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
     "ava": "^3.15.0",

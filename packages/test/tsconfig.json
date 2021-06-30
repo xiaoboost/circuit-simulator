@@ -1,9 +1,0 @@
-{
-  "extends": "@circuit/tsconfig",
-  "include": ["src"],
-  "exclude": ["node_modules", "tests", "dist"],
-  "compilerOptions": {
-    "declarationDir": "dist/types",
-    "sourceMap": false,
-  }
-}
