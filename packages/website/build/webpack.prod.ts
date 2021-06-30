@@ -4,8 +4,9 @@ import * as config from './config';
 import chalk from 'chalk';
 import webpack from 'webpack';
 import baseConfig from './webpack.base';
+import TerserPlugin from 'terser-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import { ESBuildMinifyPlugin } from 'esbuild-loader';
 
 if (!baseConfig.optimization) {
   baseConfig.optimization = {
@@ -18,9 +19,16 @@ if (!baseConfig.optimization.minimizer) {
 }
 
 baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
-  new ESBuildMinifyPlugin({
-    target: 'es2015',
-    css: true,
+  new CssMinimizerPlugin(),
+  new TerserPlugin({
+    terserOptions: {
+      ecma: 'es6',
+      module: false,
+      format: null,
+      nameCache: null,
+      ie8: false,
+      safari10: false,
+    },
   }),
 ]);
 
@@ -56,7 +64,7 @@ webpack(baseConfig, (err, stats) => {
       modules: false,
       children: false,
     }));
-  
+
     console.log(chalk.cyan('\n  Build complete.\n'));
   }
 });
