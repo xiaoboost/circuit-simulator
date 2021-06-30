@@ -8,16 +8,11 @@ import { Move } from './components/move';
 import { Tabs } from './components/tabs';
 import { GraphViewer } from 'src/components/oscilloscope';
 
-// import { solve } from '@circuit/solver';
-import { delay } from '@xiao-ai/utils';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { useState } from 'react';
 
 import {
-  parts,
-  lines,
-  end,
-  step,
+  solve,
   oscilloscopes,
   solverData,
 } from 'src/store';
@@ -25,8 +20,8 @@ import {
 export * from './types';
 
 export function SideMenu() {
+  const [result] = useWatcher(solverData);
   const [status, setStatus] = useState(TabStatus.AddParts);
-  const [result, setResult] = useWatcher(solverData);
   const [progress, setProgress] = useState(0);
   const isRun = status === TabStatus.Run;
   const onStatusChange = (status: TabStatus) => {
@@ -36,23 +31,10 @@ export function SideMenu() {
     }
 
     if (status === TabStatus.Run) {
-      // solve({
-      //   parts: parts.data.slice(),
-      //   lines: lines.data.slice(),
-      //   end: end.data,
-      //   step: step.data,
-      //   onProgress: (progress) => {
-      //     setProgress(progress);
-      //     return delay();
-      //   },
-      // }).then((data) => {
-      //   setProgress(0);
-      //   setStatus(TabStatus.Osc);
-      //   setResult({
-      //     oscilloscopes: oscilloscopes.data.slice(),
-      //     ...data,
-      //   });
-      // });
+      solve((progress) => setProgress(progress)).then(() => {
+        setProgress(0);
+        setStatus(TabStatus.Osc);
+      });
     }
 
     setStatus(status);
@@ -68,6 +50,7 @@ export function SideMenu() {
     <Move visible={status === TabStatus.Osc} key={2}>
       <GraphViewer
         {...result}
+        oscilloscopes={oscilloscopes.data as string[][]}
         onClose={() => setStatus(TabStatus.None)}
       />
     </Move>

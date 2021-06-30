@@ -1,5 +1,5 @@
 import type { Matrix } from '@circuit/math';
-import type { Part, Line } from '@circuit/electronics';
+import type { PartStructuredData, LineStructuredData } from '@circuit/electronics';
 import type { CircuitSolverMatrix, IterativeEquation } from '../parts';
 
 /** 观测器 */
@@ -21,9 +21,9 @@ export interface SimulationConfig {
 /** 求解输入 */
 export interface SolveOption {
   /** 所有器件和导线 */
-  parts: Part[];
+  parts: PartStructuredData[];
   /** 所有导线 */
-  lines: Line[];
+  lines: LineStructuredData[];
   /** 终止时间 */
   end: string;
   /** 步进时间 */
@@ -39,7 +39,7 @@ export type UpdateWrapper = (solver: CircuitSolverMatrix) => IterativeEquation;
  * 进度回调函数
  *  - 参数`progress`是`0`到`100`之间的数字
  */
-export type ProgressEvent = (progress: number) => Promise<any>;
+export type ProgressEvent = (progress: number) => any;
 
 /** 解算结果 */
 export interface SolverResult {

@@ -7,6 +7,7 @@ import { Oscilloscope } from './chart';
 
 export interface Props extends SolverData {
   onClose(): any;
+  oscilloscopes: string[][];
 }
 
 export function GraphViewer(props: Props) {

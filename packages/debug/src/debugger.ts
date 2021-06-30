@@ -11,7 +11,7 @@ class Debugger {
   $el!: SVGGElement;
 
   constructor() {
-    if (process.env.NODE_ENV === 'development') {
+    if (process.env.NODE_ENV === 'development' && typeof document !== 'undefined') {
       this.$el = document.createElementNS(NS, 'g');
       this.$el.setAttribute('id', elIdName);
     }

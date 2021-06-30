@@ -1,9 +1,18 @@
 import type { ElectronicKind, BasePinStatus } from '../types';
+import type { ConnectionData } from '../utils/connection';
 
 /** 导线原始数据 */
 export interface LineData {
   kind: keyof typeof ElectronicKind;
   path: number[][];
+}
+
+/** 导线结构化数据 */
+export interface LineStructuredData {
+  id: string;
+  path: [number, number][];
+  kind: ElectronicKind.Line;
+  connections: ConnectionData[][];
 }
 
 /** 导线引脚状态 */

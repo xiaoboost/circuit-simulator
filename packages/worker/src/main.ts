@@ -4,10 +4,9 @@ import {
   WorkerMessageToChild,
   WorkerMessageToMain,
   WorkerMessageStore,
-  WorkerCalledStore,
 } from './types';
 
-import { remove } from '@xiao-ai/utils';
+import { remove, ChannelData, AnyFunction } from '@xiao-ai/utils';
 
 const mainId = -1;
 
@@ -18,11 +17,13 @@ export class WorkerMainServer {
   /** 子进程数据 */
   private worker!: Worker;
   /** 消息事件数据 */
-  private messages: WorkerMessageStore[] = [];
+  private messageStore: WorkerMessageStore[] = [];
   /** 接收事件数据暂存 */
-  private called: WorkerCalledStore[] = [];
+  private calledStore = new ChannelData<(data: any) => any>();
   /** 事件编号 */
   private eventId = 0;
+  /** 当前最大子进程编号 */
+  private childId = 1;
 
   constructor(creator: WorkerConstruction) {
     this.createWorker = creator;
@@ -33,6 +34,10 @@ export class WorkerMainServer {
   private create() {
     this.worker = this.createWorker();
     this.worker.addEventListener('message', this.workerEvent.bind(this));
+    this.worker.postMessage({
+      kind: EventKind.Init,
+      data: this.childId,
+    });
   }
 
   /** 子进程事件 */
@@ -42,7 +47,7 @@ export class WorkerMainServer {
     }
 
     if (data.kind === EventKind.Message) {
-      const event = this.messages.find((item) => {
+      const event = this.messageStore.find((item) => {
         return item.to === data.from && item.name === item.name && item.eventId === data.eventId;
       });
 
@@ -57,11 +62,12 @@ export class WorkerMainServer {
         event.resolve(data.data);
       }
 
-      remove(this.messages, event);
+      remove(this.messageStore, event);
     }
     else if (data.kind === EventKind.Called) {
-      const event = this.called.find((item) => item.name === item.name);
-      event?.handler(data.data);
+      this.calledStore.forEachInChannel(data.name, (handler) => {
+        handler(data.data);
+      });
     }
   }
 
@@ -72,13 +78,13 @@ export class WorkerMainServer {
         kind: EventKind.Message,
         eventId: this.eventId++,
         from: mainId,
-        to: 1,
+        to: this.childId,
         name,
         data,
       };
 
       this.worker.postMessage(message);
-      this.messages.push({
+      this.messageStore.push({
         ...message,
         resolve,
         reject,
@@ -88,12 +94,16 @@ export class WorkerMainServer {
 
   /** 监听消息 */
   on<T = any>(name: string, handler: (data: T) => any) {
-    this.called.push({
-      kind: EventKind.Called,
-      from: mainId,
-      to: 1,
-      name,
-      handler,
-    });
+    this.calledStore.push(name, handler);
+  }
+
+  /** 移除监听 */
+  unOn(name: string, handler?: AnyFunction) {
+    if (handler) {
+      this.calledStore.remove(name, handler);
+    }
+    else {
+      this.calledStore.remove(name);
+    }
   }
 }

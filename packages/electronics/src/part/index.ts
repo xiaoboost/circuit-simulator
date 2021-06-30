@@ -1,9 +1,16 @@
 import { Electronic } from '../base';
 import { Electronics } from './prototype';
 import { ElectronicKind, Context } from '../types';
-import { PartData, MarginDirection, ElectronicPrototype, PartPinStatus } from './types';
-import { Matrix, Point, Direction, Directions } from '@circuit/math';
 import { isNumber } from '@xiao-ai/utils';
+import { Matrix, Point, Direction, Directions } from '@circuit/math';
+
+import {
+  PartData,
+  MarginDirection,
+  ElectronicPrototype,
+  PartPinStatus,
+  PartStructuredData,
+} from './types';
 
 export * from './types';
 export * from './prototype';
@@ -188,6 +195,7 @@ export class Part extends Electronic {
     return false;
   }
 
+
   /** 输出数据 */
   toData(): Required<PartData> {
     return {
@@ -197,6 +205,18 @@ export class Part extends Electronic {
       rotate: this.rotate.toData(),
       text: Direction[this.textPlacement] as keyof typeof Direction,
       params: this.params.slice(),
+    };
+  }
+
+  /** 输出数据 */
+  toStructuredData(): PartStructuredData {
+    return {
+      id: this.id,
+      kind: this.kind,
+      position: this.position.toData(),
+      rotate: this.rotate.toData(),
+      params: this.params.slice(),
+      connections: this.connections.map((item) => item.value),
     };
   }
 }

@@ -53,11 +53,6 @@ export interface WorkerMessageToMain extends WorkerEventBaseData {
   eventId: number;
 }
 
-/** 被呼叫事件数据 */
-export interface WorkerCalledStore extends WorkerEventBaseData {
-  handler(data: any): any;
-}
-
 /** 被呼叫事件数据给主进程 */
 export interface WorkerCalledToMain extends WorkerEventBaseData {
   data: any;

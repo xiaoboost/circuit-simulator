@@ -18,6 +18,11 @@ export class WorkerChildServer {
 
   /** 绑定事件 */
   private async workerEvent({ data }: MessageEvent<WorkerMessageToChild>) {
+    if (data.kind === EventKind.Init) {
+      this.id = data.data;
+      return;
+    }
+
     if (data.to !== this.id) {
       return;
     }
@@ -49,13 +54,10 @@ export class WorkerChildServer {
 
       (self as any).postMessage(returnVal);
     }
-    else if (data.kind === EventKind.Init) {
-      this.id = data.data;
-    }
   }
 
   /** 监听事件 */
-  on<R = undefined, S = undefined>(name: string, handler: (data: R) => S | Promise<S>) {
+  on<R = any, S = any>(name: string, handler: (data: R) => S | Promise<S>) {
     this.events.push({
       name,
       handler,

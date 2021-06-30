@@ -1,19 +1,38 @@
-import { SolverData } from './types';
 import { Watcher } from '@xiao-ai/utils';
+import { SolveOption, SolverResult } from '@circuit/solver';
 import { WorkerMainServer } from '@circuit/worker';
 
-import Solver from './solver.worker.ts';
+import { parts, lines } from './sheet';
+import { end, step } from './config';
+import { SolveEvent } from './constant';
+
+import SolverWorker from './solver.worker.ts';
+
+/** 电路数据 */
+export type SolverData = SolverResult;
 
 /** 上次模拟结果 */
-export const solverData = new Watcher<SolverData>({
+export const solverData = new Watcher<SolverResult>({
   meters: [],
   times: [],
-  oscilloscopes: [],
 });
 
 /** 求解子进程 */
-const server = new WorkerMainServer(Solver);
+const server = new WorkerMainServer(SolverWorker);
 
-server.on('setTimeout', (data) => {
-  console.log(data);
-});
+/** 求解 */
+export async function solve(onProgress: (progress: number) => any) {
+  server.on(SolveEvent.Progress, onProgress);
+
+  const result = await server.send<SolverResult, SolveOption>(SolveEvent.Solve, {
+    parts: parts.data.map((item) => item.toStructuredData()),
+    lines: lines.data.map((item) => item.toStructuredData()),
+    end: end.data,
+    step: step.data,
+  });
+
+  server.unOn(SolveEvent.Progress, onProgress);
+  solverData.setData(result);
+
+  return result;
+}

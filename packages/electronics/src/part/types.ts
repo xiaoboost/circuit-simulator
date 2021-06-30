@@ -1,4 +1,5 @@
 import type { ElectronicKind, BasePinStatus } from '../types';
+import type { ConnectionData } from '../utils/connection';
 import { Point, Direction, NumberRank } from '@circuit/math';
 
 /** 器件原始数据 */
@@ -9,6 +10,16 @@ export interface PartData {
   rotate?: number[][];
   text?: keyof typeof Direction;
   params?: string[];
+}
+
+/** 器件结构化数据 */
+export interface PartStructuredData {
+  id: string;
+  kind: ElectronicKind;
+  connections: (ConnectionData | undefined)[];
+  position: [number, number];
+  rotate: number[][];
+  params: string[];
 }
 
 /** 器件引脚状态 */

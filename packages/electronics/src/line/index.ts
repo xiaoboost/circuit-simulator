@@ -1,6 +1,6 @@
 import { Electronic } from '../base';
 import { LinePath } from './path';
-import { LineData, LinePin, LinePinStatus } from './types';
+import { LineData, LinePin, LinePinStatus, LineStructuredData } from './types';
 import { ElectronicKind, Context } from '../types';
 import { debug } from '@circuit/debug';
 import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
@@ -416,6 +416,16 @@ export class Line extends Electronic {
     return {
       kind: 'Line',
       path: this.path.toData(),
+    };
+  }
+
+  /** 输出数据 */
+  toStructuredData(): LineStructuredData {
+    return {
+      id: this.id,
+      kind: ElectronicKind.Line,
+      path: this.path.toData(),
+      connections: this.connections.map((item) => item.toData()),
     };
   }
 }

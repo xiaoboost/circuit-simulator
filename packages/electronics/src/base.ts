@@ -14,7 +14,7 @@ const lines: Line[] = [];
 /** 全局所有器件 */
 const parts: Part[] = [];
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
   (window as any)._lines = lines;
   (window as any)._parts = parts;
 }

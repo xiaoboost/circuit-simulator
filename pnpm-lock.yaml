@@ -177,6 +177,7 @@ importers:
       '@circuit/electronics': workspace:*
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
+      '@circuit/shared': workspace:*
       '@circuit/test': workspace:*
       '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
@@ -190,6 +191,7 @@ importers:
     dependencies:
       '@circuit/electronics': link:../electronics
       '@circuit/math': link:../math
+      '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.nlark.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/map': link:../map

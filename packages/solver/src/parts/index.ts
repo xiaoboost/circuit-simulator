@@ -1,4 +1,4 @@
-import { ElectronicKind } from '@circuit/electronics';
+import { ElectronicKind } from '@circuit/shared';
 import { IterativeCreation } from './types';
 
 // 无源器件

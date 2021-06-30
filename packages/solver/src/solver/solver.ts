@@ -1,9 +1,16 @@
 import { concat, isNumber, isDef, AnyObject } from '@xiao-ai/utils';
 import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
-import { Part, Line, ElectronicKind, ConnectionData } from '@circuit/electronics';
 import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
 import { Mapping } from './map';
 import { isMeterGnd } from '../utils/part';
+
+import { ElectronicKind } from '@circuit/shared';
+
+import type {
+  PartStructuredData as Part,
+  LineStructuredData as Line,
+  ConnectionData,
+} from '@circuit/electronics';
 
 import {
   UpdateWrapper,
@@ -100,10 +107,7 @@ export class Solver {
     // 搜索节点
     while (temp.length > 0) {
       const current = temp.pop()!;
-      const currentConnections = concat(
-        current.connections.map((item) => item.toData()),
-        (item) => item,
-      );
+      const currentConnections = concat(current.connections, (item) => item);
 
       // 记录当前导线
       lines.push(current);
@@ -357,7 +361,7 @@ export class Solver {
     // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
     if (part && part.kind === ElectronicKind.CurrentMeter) {
       // 支路器件连接的导线
-      const connectionLine = this.find<Line>(part.connections[mark].value!.id)!;
+      const connectionLine = this.find<Line>(part.connections[mark]!.id)!;
       // 搜索电流表出口所连的所有器件
       const { connections } = this.getConnectionByLine(connectionLine);
       // 解析为器件（支路）编号，并排除掉其本身以及无效支路
@@ -515,7 +519,7 @@ export class Solver {
   }
 
   /** 求解电路 */
-  async startSolve(): Promise<SolverResult> {
+  startSolve(): SolverResult {
     // 终止和步长时间
     const end = parseShortNumber(this.end);
     const step = parseShortNumber(this.step);
@@ -627,7 +631,7 @@ export class Solver {
 
       // 运行进度事件回调
       if (onProgress && now - last > 1000) {
-        await onProgress(Math.round(currentCache / end * 10000) / 100);
+        onProgress(Math.round(currentCache / end * 10000) / 100);
         last = now;
       }
     }

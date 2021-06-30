@@ -21,6 +21,7 @@ if (!baseConfig.optimization.minimizer) {
 baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
   new CssMinimizerPlugin(),
   new TerserPlugin({
+    extractComments: false,
     terserOptions: {
       ecma: 'es6',
       module: false,

@@ -1,4 +1,4 @@
-import { ElectronicKind } from '@circuit/electronics';
+import { ElectronicKind } from '@circuit/shared';
 
 interface Part {
   kind: ElectronicKind
