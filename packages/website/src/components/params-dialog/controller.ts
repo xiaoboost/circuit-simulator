@@ -29,7 +29,7 @@ function mountComponent(comp: React.FunctionComponentElement<any>) {
 function unMountComponent() {
   setTimeout(() => {
     currentContainer && unmountComponentAtNode(currentContainer);
-  }, transformTime);
+  }, transformTime + 50);
 }
 
 /** 编辑器件参数 */
@@ -40,13 +40,12 @@ export async function editPartParams(opt: ParamsOption) {
     root.appendChild(currentContainer);
   }
 
-  const component = createElement(ParamsDialog, {
+  const baseProps = {
     visible: true,
     id: opt.id,
     position: opt.position,
     params: opt.prototype.params.map((param, i) => {
       const value = splitNumber(opt.params[i]);
-
       return {
         label: param.label,
         value: value.number,
@@ -55,7 +54,15 @@ export async function editPartParams(opt: ParamsOption) {
         units: shortUnitList(param.ranks ?? allRanks, param.unit, false),
       };
     }),
+  };
+
+  const component = createElement(ParamsDialog, {
+    ...baseProps,
     onCancel() {
+      mountComponent(createElement(ParamsDialog, {
+        ...baseProps,
+        visible: false,
+      }));
       unMountComponent();
     },
   });

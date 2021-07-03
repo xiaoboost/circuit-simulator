@@ -5,7 +5,7 @@ import { Point, SelectList, NumberRank } from '@circuit/math';
 import { Form, Input, Button, Select } from 'antd';
 import { delay } from '@xiao-ai/utils';
 import { UnitType } from '@circuit/electronics';
-import { styles, StyleProps, transformTime } from './styles';
+import { styles, StyleProps, transformTime, AnimationStatus } from './styles';
 
 export interface Params {
   /** 该参数的文字说明 */
@@ -68,12 +68,13 @@ export function ParamsDialog(props: Props) {
     params: [],
   });
   const [styleStatus, setStyleStatus] = useState<StyleProps>({
-    isStart: false,
-    isPending: true,
-    left: 1e6,
-    top: 1e6,
-    height: 0,
-    width: 0,
+    isEnter: true,
+    status: AnimationStatus.End,
+    partPosition: new Point(1e6, 1e6),
+    dialogRect: {
+      height: 0,
+      width: 0,
+    },
   });
   const classNames = styles(styleStatus);
   const onCancel = () => props.onCancel?.();
@@ -86,61 +87,78 @@ export function ParamsDialog(props: Props) {
   useEffect(() => {
     (async () => {
       if (props.visible) {
+        const getStyle = (rect?: DOMRect) => ({
+          isEnter: true,
+          partPosition: props.position,
+          dialogRect: rect ?? {
+            height: 0,
+            width: 0,
+          },
+        });
+
         setStyleStatus({
-          isStart: true,
-          isPending: false,
-          left: props.position[0],
-          top: props.position[1],
-          height: 0,
-          width: 0,
+          ...getStyle(),
+          status: AnimationStatus.Before,
         });
 
         await delay();
 
         const rect = dialogEl.current!.getBoundingClientRect();
 
-        debugger;
         setStyleStatus({
-          isStart: true,
-          isPending: false,
-          height: rect.height,
-          width: rect.width,
-          left: props.position[0],
-          top: props.position[1],
+          ...getStyle(rect),
+          status: AnimationStatus.Start,
+        });
+
+        await delay(20);
+
+        setStyleStatus({
+          ...getStyle(rect),
+          status: AnimationStatus.Active,
         });
 
         await delay(transformTime);
 
         setStyleStatus({
-          isStart: false,
-          isPending: false,
-          height: rect.height,
-          width: rect.width,
-          left: props.position[0],
-          top: props.position[1],
+          ...getStyle(rect),
+          status: AnimationStatus.After,
         });
 
         await delay();
 
         setStyleStatus({
-          isStart: false,
-          isPending: true,
-          height: rect.height,
-          width: rect.width,
-          left: props.position[0],
-          top: props.position[1],
+          ...getStyle(rect),
+          status: AnimationStatus.End,
         });
       }
       else {
         setStyleStatus({
           ...styleStatus,
-          isStart: false,
+          isEnter: false,
+          status: AnimationStatus.Before,
+        });
+
+        await delay();
+
+        setStyleStatus({
+          ...styleStatus,
+          isEnter: false,
+          status: AnimationStatus.Active,
+        });
+
+        await delay(transformTime);
+
+        setStyleStatus({
+          ...styleStatus,
+          isEnter: false,
+          status: AnimationStatus.End,
         });
       }
     })();
   }, [props.visible]);
 
   return <div className={classNames.boxWrapper}>
+    <div className={classNames.boxMask} />
     <div
       ref={dialogEl}
       className={classNames.box}

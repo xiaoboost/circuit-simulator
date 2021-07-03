@@ -1,16 +1,26 @@
+import { Point } from '@circuit/math';
 import { createDynamicStyles } from 'src/styles';
 import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/styles';
 
 /** 动画持续时间 */
 export const transformTime = 400;
 
+export const enum AnimationStatus {
+  Before,
+  Start,
+  Active,
+  After,
+  End,
+}
+
 export interface StyleProps {
-  isStart: boolean;
-  isPending: boolean;
-  left: number;
-  top: number;
-  height: number;
-  width: number;
+  isEnter: boolean;
+  status: AnimationStatus;
+  partPosition: Point;
+  dialogRect: {
+    width: number;
+    height: number;
+  };
 }
 
 export const styles = createDynamicStyles({
@@ -20,10 +30,29 @@ export const styles = createDynamicStyles({
     width: '100%',
     top: 0,
     left: 0,
-    transition: ['opacity', `${transformTime}ms`, 'ease'],
+  },
+  boxMask: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
+    top: 0,
+    left: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.2)',
-    opacity: (props: StyleProps) => {
-      return props.isPending ? '' : props.isStart ? '0' : '1';
+    transition: ({ status }) => {
+      return status === AnimationStatus.Active
+        ? `opacity ${transformTime}ms ease`
+        : '';
+    },
+    opacity: ({ status, isEnter }: StyleProps) => {
+      if (status === AnimationStatus.End) {
+        return;
+      }
+      else if (status === AnimationStatus.Before || status === AnimationStatus.Start) {
+        return isEnter ? '0' : '1';
+      }
+      else {
+        return isEnter ? '1' : '0';
+      }
     },
   },
   box: {
@@ -32,24 +61,69 @@ export const styles = createDynamicStyles({
     flexDirection: 'column',
     minWidth: 180,
     boxShadow: `0 1px 8px ${Silver}`,
-    transition: `all ${transformTime}ms ease`,
-    transform: (props: StyleProps) => {
-      return props.isPending ? '' : props.isStart ? 'scale(0,0)' : 'scale(1,1)';
+    transformOrigin: '0 0',
+    opacity: ({ status, isEnter }) => {
+      if (status === AnimationStatus.End) {
+        return;
+      }
+      else if (status === AnimationStatus.Before || status === AnimationStatus.Start) {
+        return isEnter ? '0' : '1';
+      }
+      else {
+        return isEnter ? '1' : '0';
+      }
     },
-    left: ({ isStart, left, width }: StyleProps) => {
-      const start = left;
-      const pend = left - width / 2;
-      return isStart ? start : pend;
+    transition: ({ status }) => {
+      return status === AnimationStatus.Active
+        ? `all ${transformTime}ms ease`
+        : '';
     },
-    top: ({ isStart, top, height }: StyleProps) => {
-      const start = top;
-      const pend = top - height - 20;
-      return isStart ? start : pend;
+    transform: ({ status, isEnter }: StyleProps) => {
+      if (status === AnimationStatus.End) {
+        return;
+      }
+
+      if (status === AnimationStatus.Before) {
+        return 'scale(1,1)';
+      }
+
+      const start = 'scale(0,0)';
+      const end = 'scale(1,1)';
+
+      if (status === AnimationStatus.Start) {
+        return isEnter ? start : end;
+      }
+      else {
+        return isEnter ? end : start;
+      }
+    },
+    left: (props: StyleProps) => {
+      const start = props.partPosition[0];
+      const end = props.partPosition[0] - props.dialogRect.width / 2;
+
+      if (props.status === AnimationStatus.Start || props.status === AnimationStatus.Before) {
+        return props.isEnter ? start : end;
+      }
+      else {
+        return props.isEnter ? end : start;
+      }
+    },
+    top: (props: StyleProps) => {
+      const start = props.partPosition[1];
+      const end = props.partPosition[1] - props.dialogRect.height - 20;
+
+      if (props.status === AnimationStatus.Start || props.status === AnimationStatus.Before) {
+        return props.isEnter ? start : end;
+      }
+      else {
+        return props.isEnter ? end : start;
+      }
     },
   },
   boxHeader: {
     fontFamily: FontSerif,
     fontSize: 20,
+    height: 35,
     lineHeight: '35px',
     color: White,
     backgroundColor: Blue,
@@ -117,7 +191,15 @@ export const styles = createDynamicStyles({
     },
   },
   dialogTriangle: {
-
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderTop: '10px solid #fff',
+    transform: 'translateX(-6px)',
+    bottom: -10,
+    left: '50%',
   },
 });
 
@@ -141,44 +223,3 @@ export interface TransformProps {
   height: number;
   width: number;
 }
-
-export const animation = createDynamicStyles({
-  boxAnimate: {
-    opacity: ({ status, name }: TransformProps) => {
-      if (status === TransformStatus.None) {
-        return '1';
-      }
-
-      if (name === TransformName.Open) {
-        return status === TransformStatus.Start ? '0' : '1';
-      }
-      else {
-        return status === TransformStatus.Start ? '1' : '0';
-      }
-    },
-    transform: ({ status, name }: TransformProps) => {
-      const small = 'scale(0,0)';
-      const normal = 'scale(1,1)';
-
-      if (status === TransformStatus.None) {
-        return normal;
-      }
-
-      if (name === TransformName.Open) {
-        return status === TransformStatus.Start ? small : normal;
-      }
-      else {
-        return status === TransformStatus.Start ? normal : small;
-      }
-    },
-    left: ({ left, width }: TransformProps) => {
-      const start = 0;
-      const normal = left - width / 2;
-
-      return left;
-    },
-    top: ({ top }: TransformProps) => {
-      return top;
-    },
-  },
-});
