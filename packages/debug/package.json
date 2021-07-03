@@ -33,9 +33,9 @@
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
-    "eslint": "^7.29.0",
+    "eslint": "^7.30.0",
     "rimraf": "^3.0.2",
     "tslib": "^2.3.0",
-    "typescript": "^4.3.4"
+    "typescript": "^4.3.5"
   }
 }

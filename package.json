@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "电路仿真代码仓库",
   "scripts": {
-    "update": "ncu -u --packageFile ./{packages/*/package.json,package.json}",
+    "update": "pnpm update -r",
+    "update:last": "pnpm update -r -L",
     "build": "pnpm run build --filter=!@circuit/website",
     "test": "pnpm run -r test --parallel --filter .",
     "test:update": "pnpm run -r test:update --parallel --filter .",
@@ -23,8 +24,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.28.1",
     "@typescript-eslint/parser": "^4.28.1",
-    "eslint": "^7.29.0",
-    "eslint-plugin-react": "^7.24.0",
-    "npm-check-updates": "^11.7.1"
+    "eslint": "^7.30.0",
+    "eslint-plugin-react": "^7.24.0"
   }
 }
