@@ -134,9 +134,9 @@ export class PartComponent extends Part {
         .add(mapState.data.position),
     });
 
-    this.id = result.id;
     this.params = result.params;
 
+    this.changeId(result.id);
     this.updateTexts();
     this.updateTextPosition();
     this.updateView();

@@ -100,12 +100,10 @@ export abstract class Electronic {
   }
 
   // 下列属性均为空声明
-  /** 更新视图 */
-  updateView() { void 0 }
-  /** 更新节点 */
   protected updatePoints() { void 0 }
-  /** 删除标记 */
+  updateView() { void 0 }
   deleteMark() { void 0 }
+  setMark() { void 0 }
 
   /** 删除自己 */
   delete() {
@@ -164,6 +162,35 @@ export abstract class Electronic {
   /** 是否存在连接 */
   hasConnection(id: string, mark: number) {
     return this.connections.some((item) => item.has(id, mark));
+  }
+
+  /** 变更编号 */
+  changeId(newId: string) {
+    if (newId === this.id) {
+      return;
+    }
+
+    this.deleteMark();
+
+    const oldId = this.id;
+
+    this.id = newId;
+
+    for (let i = 0; i < this.connections.length; i++) {
+      for (const { id, mark } of this.connections[i]) {
+        const connectEl = this.find(id);
+
+        if (!connectEl) {
+          this.connections[i].delete(id, mark);
+          continue;
+        }
+
+        connectEl.connections[mark].delete(oldId, i);
+        connectEl.connections[mark].add(this.id, i);
+      }
+    }
+
+    this.setMark();
   }
 
   /** 搜索元件 */
