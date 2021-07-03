@@ -16,18 +16,32 @@ enum RankEnum {
 export { BigNumber };
 
 /**
- * 简写数字正则匹配
- *
- * @example
- *   1G = 1e9
- *   1M = 1e6
- *   1k = 1e3
- *   1m = 1e-3
- *   1u = 1e-6
- *   1n = 1e-9
- *   1p = 1e-12
+ * 普通数字匹配
+ *  - 10
+ *  - 12.5
  */
-export const numberMatcher = /^\d+(?:\.\d+)?$|^\d+?(?:\.\d+)?[eE]-?\d+$|^\d+(?:\.\d+)?[puμnmkMG]$/;
+export const normalNumberMatcher = /^\d+(?:\.\d+)?$/;
+/**
+ * 对数数字匹配
+ *  - 10e4
+ *  - 2e-5
+ *  - 1.5e6
+ */
+export const expNumberMatcher = /^\d+?(?:\.\d+)?[eE]-?\d+$/;
+/**
+ * 简写数字匹配
+ *  - 10u
+ *  - 20M
+ *  - 1.5k
+ */
+export const shortNumberMatcher = /^\d+(?:\.\d+)?[puμnmkMG]$/;
+
+/** 所有数字匹配 */
+export const numberMatcher = new RegExp(
+  `${normalNumberMatcher.source}|` +
+  `${expNumberMatcher.source}|` +
+  `${shortNumberMatcher.source}`
+);
 
 /** 简写数字编译 */
 export function parseShortNumber(notation: string) {

@@ -124,8 +124,8 @@ export class PartComponent extends Part {
   }
 
   /** 编辑参数 */
-  editParams() {
-    editPartParams({
+  async editParams() {
+    const result = await editPartParams({
       id: this.id,
       params: this.params,
       prototype: this.prototype,
@@ -133,6 +133,13 @@ export class PartComponent extends Part {
         .mul(mapState.data.zoom)
         .add(mapState.data.position),
     });
+
+    this.id = result.id;
+    this.params = result.params;
+
+    this.updateTexts();
+    this.updateTextPosition();
+    this.updateView();
   }
 
   /** 移动文本 */
@@ -255,7 +262,7 @@ export class PartComponent extends Part {
           >
             <text>
               <tspan>{label}</tspan>
-              <tspan fontSize="60%">{subId}</tspan>
+              <tspan fontSize="70%">{subId}</tspan>
             </text>
             {texts.map((text, i) => (
               <text key={i} dy={(textHeight + textSpaceHeight) * (i + 1)}>{text}</text>

@@ -1,9 +1,11 @@
 import { Point } from '@circuit/math';
-import { createDynamicStyles } from 'src/styles';
+import { createDynamicStyles, createStyles } from 'src/styles';
 import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/styles';
 
 /** 动画持续时间 */
 export const transformTime = 400;
+/** 表格宽度 */
+export const formWidth = 160;
 
 export const enum AnimationStatus {
   Before,
@@ -23,7 +25,7 @@ export interface StyleProps {
   };
 }
 
-export const styles = createDynamicStyles({
+export const modalStyles = createDynamicStyles({
   boxWrapper: {
     position: 'fixed',
     height: '100%',
@@ -120,6 +122,9 @@ export const styles = createDynamicStyles({
       }
     },
   },
+});
+
+export const formStyles = createStyles({
   boxHeader: {
     fontFamily: FontSerif,
     fontSize: 20,
@@ -144,20 +149,31 @@ export const styles = createDynamicStyles({
     padding: [5, 10, 10, 10],
     textAlign: 'right',
   },
+  resetInputCompact: {
+    '& > *': {
+      marginRight: [0, '!important'],
+    },
+  },
   idInput: {
-    width: ['calc(50% - 10px)', '!important'],
-    borderRightWidth: 1,
+    width: [(formWidth / 2) - 10, '!important'],
     marginRight: [0, '!important'],
+    borderRightWidth: 1,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
   },
   idSplit: {
     width: [20, '!important'],
+    margin: [0, '!important'],
     borderLeft: 0,
     borderRight: 0,
+    borderRadius: 0,
     pointerEvents: 'none',
   },
   idSubInput: {
-    width: ['calc(50% - 10px)', '!important'],
+    width: [(formWidth / 2) - 10, '!important'],
     borderLeftWidth: 1,
+    borderTopLeftRadius: 0,
+    borderBottomLeftRadius: 0,
   },
   formLabelList: {
     display: 'inline-flex',
@@ -176,12 +192,20 @@ export const styles = createDynamicStyles({
       margin: [0, 8, 0, 2],
     },
   },
+  inlineFormItem: {
+    lineHeight: 1,
+  },
   form: {
-    width: 160,
+    width: formWidth,
+    lineHeight: 1,
 
     '& .ant-input-group': {
       display: 'flex',
     },
+
+    '& .ant-form-item-explain': {
+      display: 'none',
+    }
   },
   confirmBtn: {
     color: DarkBlue,
@@ -202,24 +226,3 @@ export const styles = createDynamicStyles({
     left: '50%',
   },
 });
-
-export const enum TransformStatus {
-  Start,
-  End,
-  None,
-}
-
-export const enum TransformName {
-  Open,
-  Close,
-}
-
-export interface TransformProps {
-  status: TransformStatus;
-  name: TransformName;
-  isStart: boolean;
-  left: number;
-  top: number;
-  height: number;
-  width: number;
-}

@@ -1,10 +1,11 @@
 import { createElement } from 'react';
 import { render, unmountComponentAtNode } from 'react-dom';
 
+import { ElectronicPrototype } from '@circuit/electronics';
 import { Point, splitNumber, shortUnitList, allRanks } from '@circuit/math';
 import { ParamsDialog } from './render';
-import { ElectronicPrototype } from '@circuit/electronics';
 import { transformTime } from './styles';
+import { FormData } from './form';
 
 export interface ParamsOption {
   id: string;
@@ -14,7 +15,8 @@ export interface ParamsOption {
 }
 
 export interface ParamsResult {
-  // ..
+  id: string;
+  params: string[];
 }
 
 /** 对话框容器 */
@@ -56,16 +58,25 @@ export async function editPartParams(opt: ParamsOption) {
     }),
   };
 
-  const component = createElement(ParamsDialog, {
-    ...baseProps,
-    onCancel() {
-      mountComponent(createElement(ParamsDialog, {
-        ...baseProps,
-        visible: false,
-      }));
-      unMountComponent();
-    },
-  });
+  const closeModal = () => {
+    mountComponent(createElement(ParamsDialog, {
+      ...baseProps,
+      visible: false,
+    }));
+    unMountComponent();
+  };
 
-  mountComponent(component);
+  return new Promise<ParamsResult>((resolve) => {
+    mountComponent(createElement(ParamsDialog, {
+      ...baseProps,
+      onCancel: closeModal,
+      onConfirm(data: FormData) {
+        closeModal();
+        resolve({
+          id: `${data.label}_${data.suffix}`,
+          params: data.params.map((param) => `${param.value}${param.rank}`),
+        });
+      },
+    }));
+  });
 }
