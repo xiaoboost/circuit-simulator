@@ -135,4 +135,4 @@ class Debugger {
   }
 }
 
-export const debug = new Debugger();
+export const debug = /* @__PURE__ */ new Debugger();

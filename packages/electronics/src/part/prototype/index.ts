@@ -43,6 +43,3 @@ export const Electronics: Electronics = {
   [ElectronicKind.TransistorNPN]: TransistorNpn,
   [ElectronicKind.OperationalAmplifier]: OperationalAmplifier,
 };
-
-// 强制冻结所有原型属性
-Object.values(Electronics).forEach(Object.freeze);
