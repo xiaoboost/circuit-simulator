@@ -20,7 +20,7 @@ export const mapStateDefault: MapState = {
 export const mapState = new Watcher(mapStateDefault);
 
 export function useMap() {
-  const sizeChangeEvent = useCallback((e: WheelEvent<HTMLElement>) => {
+  const sizeChangeEvent = useCallback((e: WheelEvent<Element>) => {
     const mousePosition = new Point(e.pageX, e.pageY);
     let size = mapState.data.zoom * 20;
 
@@ -52,7 +52,7 @@ export function useMap() {
     });
   }, []);
 
-  const moveStartEvent = useCallback((ev: MouseEvent<HTMLElement>) => {
+  const moveStartEvent = useCallback((ev: MouseEvent<Element>) => {
     if (ev.button !== MouseButtons.Right) {
       return;
     }

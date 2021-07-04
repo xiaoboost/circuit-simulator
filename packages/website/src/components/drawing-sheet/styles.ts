@@ -1,4 +1,4 @@
-import { createStyles } from 'src/styles';
+import { createStyles, Blue, ExtraLightBlue } from 'src/styles';
 
 import Grid from 'src/assets/img/circuit-grid.svg';
 
@@ -27,5 +27,10 @@ export const styles = createStyles({
       strokeLinecap: 'round',
       fill: 'transparent',
     },
+  },
+  selectionBox: {
+    stroke: Blue,
+    fill: ExtraLightBlue,
+    opacity: 0.3,
   },
 });

@@ -54,6 +54,8 @@ module.exports = {
     'no-implicit-coercion': 'error',
     'no-multi-spaces': 'error',
 
+    'react/prop-types': 'off',
+
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-non-null-assertion': 'off',
