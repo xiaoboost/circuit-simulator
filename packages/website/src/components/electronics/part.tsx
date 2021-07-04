@@ -5,12 +5,12 @@ import { cursorStyles } from 'src/styles';
 import { editPartParams } from '../params-dialog';
 import { mapState } from '../drawing-sheet/map';
 import { Point, Direction, Directions } from '@circuit/math';
-import { useForceUpdate } from '@xiao-ai/utils/use';
+import { useForceUpdate, useWatcher } from '@xiao-ai/utils/use';
 import { MouseButtons } from '@xiao-ai/utils/web';
 import { stringifyClass } from '@xiao-ai/utils';
 import { ElectronicPoint } from './point';
 import { LineComponent } from './line';
-import { parts } from 'src/store';
+import { Sheet, Selection } from 'src/store';
 import { DrawEventController } from '@circuit/event';
 import { ElectronicKind, Part, PartData } from '@circuit/electronics';
 import { PointKind, textHeight, textSpaceHeight } from './constant';
@@ -23,7 +23,7 @@ export class PartComponent extends Part {
     super(kind);
     this.textPosition = Directions[this.textPlacement].mul(100);
     this.updateTextPosition();
-    parts.setData(parts.data.concat(this));
+    Sheet.parts.setData(Sheet.parts.data.concat(this));
   }
 
   /** 初始化 hook */
@@ -90,7 +90,7 @@ export class PartComponent extends Part {
   /** 删除自己 */
   delete() {
     super.delete();
-    parts.setData(parts.data.filter((item) => item !== this));
+    Sheet.parts.setData(Sheet.parts.data.filter((item) => item !== this));
   }
 
   /** 创建器件 */
@@ -224,11 +224,14 @@ export class PartComponent extends Part {
     const showText = this.kind !== ElectronicKind.ReferenceGround;
     const moveText = React.useCallback(this.moveText.bind(this), []);
     const editParam = React.useCallback(this.editParams.bind(this), []);
+    const [selection] = useWatcher(Selection.data);
 
     return (
       <g
         data-id={id}
-        className={partStyles.part}
+        className={stringifyClass(partStyles.part, {
+          [partStyles.partSelected]: Boolean(selection[id]),
+        })}
         onDoubleClick={editParam}
         transform={`matrix(${rotate.join()},${position.join()})`}
       >

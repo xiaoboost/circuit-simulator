@@ -55,10 +55,10 @@ export const SelectionBox = forwardRef<Ref, Props>(function SelectionBox(props, 
       .then(() => {
         const { start, end, visible } = state.current;
 
-        setPoints('');
         state.current.start = undefined;
         state.current.end = undefined;
         state.current.visible = false;
+        setPoints('');
 
         if (visible) {
           props.onSelect(start!, end!);

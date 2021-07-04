@@ -7,8 +7,6 @@ import { PartData, LineData } from '@circuit/electronics';
 import { PartComponent, LineComponent } from 'src/components/electronics';
 import { end, step, oscilloscopes } from './config';
 
-/** 图纸历史数据 */
-export const sheetHistory = new Watcher<ElectronicData[]>([]);
 /** 所有器件 */
 export const parts = new Watcher<PartComponent[]>([]);
 /** 所有导线 */

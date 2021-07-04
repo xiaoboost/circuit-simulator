@@ -1,4 +1,7 @@
 export * from './types';
-export * from './solver';
-export * from './config';
-export * from './sheet';
+
+export * as Solver from './solver';
+export * as Config from './config';
+export * as Sheet from './sheet';
+export * as History from './history';
+export * as Selection from './selection';

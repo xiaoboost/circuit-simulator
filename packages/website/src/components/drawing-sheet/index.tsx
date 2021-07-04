@@ -6,8 +6,8 @@ import { MouseButtons } from '@xiao-ai/utils/web';
 import { isNumber } from '@xiao-ai/utils';
 import { Point } from '@circuit/math';
 import { styles } from './styles';
+import { Sheet, Selection } from 'src/store';
 
-import * as store from 'src/store';
 import * as utils from './utils';
 
 import { useMap, useDebugger, mapState } from './map';
@@ -50,8 +50,8 @@ export function DrawingSheet() {
   const SheetRef = useRef<HTMLElement>(null);
   const DebugRef = useRef<SVGGElement>(null);
   const BoxRef = useRef<SelectionBoxRef>(null);
-  const [lines] = useWatcher(store.lines);
-  const [parts] = useWatcher(store.parts);
+  const [lines] = useWatcher(Sheet.lines);
+  const [parts] = useWatcher(Sheet.parts);
   const [map] = useWatcher(mapState);
   const mapEvent = useMap();
   const LinesList = useMemo(() => renderComponent(lines), [lines]);
@@ -67,7 +67,18 @@ export function DrawingSheet() {
     }
   };
   const onSelect = (start: Point, end: Point) => {
-    debugger;
+    const minX = Math.min(start[0], end[0]);
+    const maxX = Math.max(start[0], end[0]);
+    const minY = Math.min(start[1], end[1]);
+    const maxY = Math.max(start[1], end[1]);
+
+    Selection.set(
+      parts
+        .filter(({ position: [x, y] }) => (
+          minX <= x && maxX >= x && minY <= y && maxY >= y
+        ))
+        .map(({ id }) => id),
+    )
   };
 
   useDebugger(DebugRef);

@@ -1,15 +1,15 @@
 import React from 'react';
 
 import { PointLike } from '@circuit/math';
-import { ConstructorParameters } from '@xiao-ai/utils';
-import { useForceUpdate } from '@xiao-ai/utils/use';
+import { useForceUpdate, useWatcher } from '@xiao-ai/utils/use';
 import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
 import { lineStyles, partStyles } from './styles';
 import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
-import { lines } from 'src/store';
+import { Sheet, Selection } from 'src/store';
+import { ConstructorParameters, stringifyClass } from '@xiao-ai/utils';
 import { Line, DrawPathSearcher, LinePin, MouseFocusClassName } from '@circuit/electronics';
 import { RectSize, PointKind, rectWidth } from './constant';
 
@@ -17,7 +17,7 @@ export class LineComponent extends Line {
   constructor(paths: PointLike[] = []) {
     super(paths);
     this.updateRects();
-    lines.setData(lines.data.concat(this));
+    Sheet.lines.setData(Sheet.lines.data.concat(this));
   }
 
   private _rects: RectSize[] = [];
@@ -34,7 +34,7 @@ export class LineComponent extends Line {
 
   /** 更新所有导线 */
   updateListView() {
-    lines.setData(lines.data.slice());
+    Sheet.lines.setData(Sheet.lines.data.slice());
   }
 
   /** 初始化 hook */
@@ -64,7 +64,7 @@ export class LineComponent extends Line {
   /** 删除自己 */
   delete() {
     super.delete();
-    lines.setData(lines.data.filter((item) => item !== this));
+    Sheet.lines.setData(Sheet.lines.data.filter((item) => item !== this));
   }
 
   /** 绘制导线 */
@@ -177,9 +177,15 @@ export class LineComponent extends Line {
     this.useInit();
 
     const { path, rects, points, id } = this;
+    const [selection] = useWatcher(Selection.data);
 
     return (
-      <g data-id={id} className={lineStyles.line}>
+      <g
+        data-id={id}
+        className={stringifyClass(lineStyles.line, {
+          [lineStyles.lineSelected]: Boolean(selection[id]),
+        })}
+      >
         <path d={path.stringify()} />
         <g className={lineStyles.lineFocus}>
           {rects.map((rect, i) => (

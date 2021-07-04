@@ -2,10 +2,10 @@ import React from 'react';
 
 import { panel } from './styles';
 import { Button } from 'antd';
-import { SolverData } from 'src/store';
+import { Solver } from 'src/store';
 import { Oscilloscope } from './chart';
 
-export interface Props extends SolverData {
+export interface Props extends Solver.SolverData {
   onClose(): any;
   oscilloscopes: string[][];
 }

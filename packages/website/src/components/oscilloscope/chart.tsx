@@ -5,7 +5,7 @@ import { toScientific } from '@circuit/math';
 import { SolverResult } from '@circuit/solver';
 import { ElectronicKind } from '@circuit/electronics';
 import { useEffect, useRef } from 'react';
-import { parts } from 'src/store';
+import { Sheet } from 'src/store';
 import { isDef } from '@xiao-ai/utils';
 import { container as styles, headerHeight } from './styles';
 
@@ -17,7 +17,7 @@ export interface Props extends SolverResult {
 }
 
 function find(id: string) {
-  return parts.data.find((item) => item.id === id);
+  return Sheet.parts.data.find((item) => item.id === id);
 }
 
 function hasKind(data: string[], kind: ElectronicKind) {

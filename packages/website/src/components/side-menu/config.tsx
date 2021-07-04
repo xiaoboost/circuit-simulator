@@ -5,7 +5,7 @@ import { Panel } from './components/panel';
 import { ElectronicKind } from '@circuit/electronics';
 import { shortUnitList, NumberRank, SelectList, splitNumber } from '@circuit/math';
 import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
-import { parts, end, step, oscilloscopes } from 'src/store';
+import { Sheet, Config as ConfigStore } from 'src/store';
 
 import { Watcher } from '@xiao-ai/utils';
 import { useWatcher, useWatcherList, useForceUpdate } from '@xiao-ai/utils/use';
@@ -164,10 +164,10 @@ function OscForm(props: OscFormProps) {
 }
 
 export function Config() {
-  const [partsList] = useWatcher(parts);
-  const [oscList, oscMethod] = useWatcherList<string[][]>(oscilloscopes);
-  const endTime = useWatcherTime(end);
-  const stepTime = useWatcherTime(step);
+  const [partsList] = useWatcher(Sheet.parts);
+  const [oscList, oscMethod] = useWatcherList<string[][]>(ConfigStore.oscilloscopes);
+  const endTime = useWatcherTime(ConfigStore.end);
+  const stepTime = useWatcherTime(ConfigStore.step);
 
   /** 所有电流表 */
   const currentMeters = useMemo(() => {

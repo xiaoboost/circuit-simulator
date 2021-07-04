@@ -7,20 +7,15 @@ import { TabStatus } from './constant';
 import { Move } from './components/move';
 import { Tabs } from './components/tabs';
 import { GraphViewer } from 'src/components/oscilloscope';
+import { Solver, Config as ConfigStore } from 'src/store';
 
 import { useWatcher } from '@xiao-ai/utils/use';
 import { useState } from 'react';
 
-import {
-  solve,
-  oscilloscopes,
-  solverData,
-} from 'src/store';
-
 export * from './types';
 
 export function SideMenu() {
-  const [result] = useWatcher(solverData);
+  const [result] = useWatcher(Solver.data);
   const [status, setStatus] = useState(TabStatus.AddParts);
   const [progress, setProgress] = useState(0);
   const isRun = status === TabStatus.Run;
@@ -31,7 +26,7 @@ export function SideMenu() {
     }
 
     if (status === TabStatus.Run) {
-      solve((progress) => setProgress(progress)).then(() => {
+      Solver.solve((progress) => setProgress(progress)).then(() => {
         setProgress(0);
         setStatus(TabStatus.Osc);
       });
@@ -50,7 +45,7 @@ export function SideMenu() {
     <Move visible={status === TabStatus.Osc} key={2}>
       <GraphViewer
         {...result}
-        oscilloscopes={oscilloscopes.data as string[][]}
+        oscilloscopes={ConfigStore.oscilloscopes.data as string[][]}
         onClose={() => setStatus(TabStatus.None)}
       />
     </Move>

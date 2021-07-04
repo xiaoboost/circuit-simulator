@@ -1,7 +1,7 @@
 import { ElectronicKind, Context } from './types';
 import { Electronics } from './part';
 import { Connection, ConnectionData } from './utils/connection';
-import { isNumber, remove } from '@xiao-ai/utils';
+import { isNumber, remove, concat } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
 
 import type { Part } from './part';
@@ -162,6 +162,11 @@ export abstract class Electronic {
   /** 是否存在连接 */
   hasConnection(id: string, mark: number) {
     return this.connections.some((item) => item.has(id, mark));
+  }
+
+  /** 获取所有连接 */
+  getAllConnection(): ConnectionData[] {
+    return concat(this.connections, (val) => Array.from(val));
   }
 
   /** 变更编号 */

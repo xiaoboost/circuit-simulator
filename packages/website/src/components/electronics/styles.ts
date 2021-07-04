@@ -1,7 +1,7 @@
 import { Direction } from '@circuit/math';
 import { createStyles } from 'src/styles';
 import { MouseFocusClassName } from '@circuit/electronics';
-import { Black, FontText, White, movePartCursor, drawLineCursor } from 'src/styles';
+import { Black, FontText, White, DarkGreen, movePartCursor, drawLineCursor } from 'src/styles';
 
 export const partStyles = createStyles({
   part: {
@@ -16,6 +16,9 @@ export const partStyles = createStyles({
     '&:hover': {
       cursor: movePartCursor,
     },
+  },
+  partSelected: {
+    color: DarkGreen,
   },
   partText: {
     whiteSpace: 'nowrap',
@@ -49,6 +52,14 @@ export const lineStyles = createStyles({
       fill: 'transparent',
       stroke: 'transparent',
     },
+
+    '& path': {
+      color: 'currentColor',
+      stroke: 'currentColor',
+    },
+  },
+  lineSelected: {
+    color: DarkGreen,
   },
   lineFocus: {
     position: 'relative',

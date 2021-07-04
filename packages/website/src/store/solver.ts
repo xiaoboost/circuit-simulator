@@ -12,7 +12,7 @@ import SolverWorker from './solver.worker.ts';
 export type SolverData = SolverResult;
 
 /** 上次模拟结果 */
-export const solverData = new Watcher<SolverResult>({
+export const data = new Watcher<SolverResult>({
   meters: [],
   times: [],
 });
@@ -32,7 +32,7 @@ export async function solve(onProgress: (progress: number) => any) {
   });
 
   server.unOn(SolveEvent.Progress, onProgress);
-  solverData.setData(result);
+  data.setData(result);
 
   return result;
 }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { appDataInit } from 'src/store';
+import { Sheet } from 'src/store';
 
 /** 移除 loading 界面 */
 function removeLoading() {
@@ -17,5 +17,5 @@ function removeLoading() {
 
 /** 初始化 */
 export function useInit() {
-  useEffect(() => void appDataInit().then(removeLoading), []);
+  useEffect(() => void Sheet.appDataInit().then(removeLoading), []);
 }

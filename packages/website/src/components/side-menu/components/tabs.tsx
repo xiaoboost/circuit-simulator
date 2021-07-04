@@ -3,7 +3,7 @@ import React from 'react';
 import { tabStyle } from './styles';
 import { TabStatus } from '../constant';
 import { DarkGreen } from 'src/styles';
-import { solverData } from 'src/store';
+import { Solver } from 'src/store';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { isUndef, stringifyClass } from '@xiao-ai/utils';
 import { Tooltip as TooltipOrigin, Button } from 'antd';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 /** 是否保存上次仿真结果 */
-const hasSolverResult = solverData.computed((data) => data.times.length > 0);
+const hasSolverResult = Solver.data.computed((data) => data.times.length > 0);
 
 const buttons = [
   {
