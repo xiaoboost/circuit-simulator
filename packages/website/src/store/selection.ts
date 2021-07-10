@@ -6,6 +6,7 @@ import type { PartComponent, LineComponent } from 'src/components/electronics';
 
 type Component = PartComponent | LineComponent;
 
+/** 器件选中状态 */
 export const enum SelectionStatus {
   /**
    * 全部选中

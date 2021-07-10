@@ -377,7 +377,7 @@ export class Point {
    * @param {PointLike[]} segment
    * @returns {boolean}
    */
-  isInLine(segment: PointLike[]): boolean {
+  isInSegment(segment: PointLike[]): boolean {
     // 点到线段两端的向量方向相反，即表示其在线段内
     const toStart = new Point(this, segment[0]);
     const toEnd = new Point(this, segment[1]);

@@ -166,14 +166,14 @@ test('isOppositeDirection()', (it) => {
 });
 
 test('isInLine()', (it) => {
-  it.true(new Point(1, 1).isInLine([[0, 0], [2, 2]]));
-  it.false(new Point(-1, -1).isInLine([[0, 0], [2, 2]]));
+  it.true(new Point(1, 1).isInSegment([[0, 0], [2, 2]]));
+  it.false(new Point(-1, -1).isInSegment([[0, 0], [2, 2]]));
 
-  it.true(new Point(0, 1).isInLine([[0, 0], [0, 2]]));
-  it.false(new Point(0, -1).isInLine([[0, 0], [0, 2]]));
+  it.true(new Point(0, 1).isInSegment([[0, 0], [0, 2]]));
+  it.false(new Point(0, -1).isInSegment([[0, 0], [0, 2]]));
 
-  it.true(new Point(1, 0).isInLine([[0, 0], [2, 0]]));
-  it.false(new Point(-1, 0).isInLine([[0, 0], [2, 0]]));
+  it.true(new Point(1, 0).isInSegment([[0, 0], [2, 0]]));
+  it.false(new Point(-1, 0).isInSegment([[0, 0], [2, 0]]));
 });
 
 test('join()', ({ deepEqual }) => {

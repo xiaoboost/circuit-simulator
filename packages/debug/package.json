@@ -28,7 +28,7 @@
   "dependencies": {
     "@circuit/map": "workspace:*",
     "@circuit/math": "workspace:*",
-    "@xiao-ai/utils": "^1.4.1"
+    "@xiao-ai/utils": "^1.4.2"
   },
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",

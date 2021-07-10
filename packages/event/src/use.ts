@@ -41,30 +41,39 @@ export function useMouseBusInit(ref: RefObject<HTMLElement>, getMapState: () => 
          * delay 内部的判断，主要是因为很有可能发生在 stop 函数已经运行，
          * 但是 move 回调在之后又运行的情况
          */
-        if (current && current.isStart) {
-          delay().then(() => {
-            if (current && current.isStart) {
-              current.events.forEachInChannel(channel, (handle) => {
-                if (!handle.selector) {
-                  handle.callback(drawEvent);
-                  return;
-                }
+        if (!current || !current.start) {
+          return;
+        }
 
-                if (!delegateMap[handle.selector]) {
-                  delegateMap[handle.selector] = new Map<Element, boolean>();
+        delay().then(() => {
+          if (!current || !current.start) {
+            return;
+          }
 
-                  Array.from(sheetEl!.querySelectorAll(handle.selector)).forEach((el) => {
-                    delegateMap[handle.selector].set(el, true);
-                  });
-                }
+          if (!current.initialized && current.initEvent) {
+            current.initEvent(drawEvent);
+            current.initialized = true;
+          }
 
-                if (delegateMap[handle.selector].has(drawEvent.target)) {
-                  handle.callback(drawEvent);
-                }
+          current.events.forEachInChannel(channel, (handle) => {
+            if (!handle.selector) {
+              handle.callback(drawEvent);
+              return;
+            }
+
+            if (!delegateMap[handle.selector]) {
+              delegateMap[handle.selector] = new Map<Element, boolean>();
+
+              Array.from(sheetEl!.querySelectorAll(handle.selector)).forEach((el) => {
+                delegateMap[handle.selector].set(el, true);
               });
             }
+
+            if (delegateMap[handle.selector].has(drawEvent.target)) {
+              handle.callback(drawEvent);
+            }
           });
-        }
+        });
       };
     }
 

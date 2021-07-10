@@ -15,12 +15,16 @@ import {
 export class DrawEventController {
   /** 是否开始 */
   isStart = false;
-  /** 事件数据 */
-  events = new ChannelData<DrawEventData>();
+  /** 初始化完成 */
+  initialized = false;
   /** 记录当前 className */
   className = '';
   /** 记录当前 cursor */
   cursor = '';
+  /** 初始事件 */
+  initEvent?: Callback;
+  /** 事件数据 */
+  events = new ChannelData<DrawEventData>();
   /** 停止事件数据 */
   stopEvent = () => Promise.resolve();
 
@@ -39,6 +43,7 @@ export class DrawEventController {
     await delay();
 
     this.isStart = true;
+    this.initialized = false;
     this.className = sheetEl?.getAttribute('class') ?? '';
 
     await this.stopEvent();
@@ -58,6 +63,11 @@ export class DrawEventController {
       sheetEl.setAttribute('class', className);
       sheetEl.style.cursor = '';
     }
+  }
+
+  setInitEvent(cb: Callback) {
+    this.initEvent = cb;
+    return this;
   }
 
   setClassName(input: ClassNameEventInput) {

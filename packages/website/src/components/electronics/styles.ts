@@ -47,15 +47,17 @@ export const lineStyles = createStyles({
   line: {
     color: Black,
 
+    '& path': {
+      color: 'currentColor',
+      stroke: 'currentColor',
+    },
     [`& .${MouseFocusClassName}`]: {
       strokeWidth: 0,
       fill: 'transparent',
       stroke: 'transparent',
     },
-
-    '& path': {
-      color: 'currentColor',
-      stroke: 'currentColor',
+    [`& .${MouseFocusClassName}:hover`]: {
+      cursor: movePartCursor,
     },
   },
   lineSelected: {

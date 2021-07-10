@@ -10,8 +10,15 @@ import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
 import { Sheet, Selection } from 'src/store';
 import { ConstructorParameters, stringifyClass } from '@xiao-ai/utils';
-import { Line, DrawPathSearcher, LinePin, MouseFocusClassName } from '@circuit/electronics';
 import { RectSize, PointKind, rectWidth } from './constant';
+
+import {
+  Line,
+  LinePin,
+  DrawPathSearcher,
+  TranslateSearcher,
+  MouseFocusClassName,
+} from '@circuit/electronics';
 
 export class LineComponent extends Line {
   constructor(paths: PointLike[] = []) {
@@ -172,6 +179,38 @@ export class LineComponent extends Line {
     this.updateListView();
   }
 
+  /** 变形导线 */
+  async translate(ev: React.MouseEvent<Element>, index: number) {
+    ev.stopPropagation();
+
+    const translateEvent = new DrawEventController();
+    let search: TranslateSearcher;
+
+    await translateEvent
+      .setInitEvent(({ position }) => {
+        search = new TranslateSearcher(position, index, this);
+        this._rects = [];
+        this.deleteMark();
+        this.updatePoints();
+        this.updateView();
+      })
+      .setStopEvent({ type: 'mouseup', which: 'Left' })
+      .setMoveEvent(({ position }) => {
+        this.path = search.search(position);
+      })
+      .start();
+
+    // TODO: 连接数据更新
+
+    // 运行过初始化
+    if (translateEvent.initialized) {
+      this.setMark();
+      this.updateRects();
+      this.updatePoints();
+      this.updateView();
+    }
+  }
+
   /** 渲染函数 */
   Render = () => {
     this.useInit();
@@ -189,7 +228,12 @@ export class LineComponent extends Line {
         <path d={path.stringify()} />
         <g className={lineStyles.lineFocus}>
           {rects.map((rect, i) => (
-            <rect key={i} className={MouseFocusClassName} {...rect} />
+            <rect
+              key={i}
+              {...rect}
+              className={MouseFocusClassName}
+              onMouseDown={(ev) => this.translate(ev, i)}
+            />
           ))}
           {points.map((point) => (
             <ElectronicPoint
