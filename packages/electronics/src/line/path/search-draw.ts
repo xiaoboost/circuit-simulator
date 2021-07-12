@@ -2,13 +2,13 @@ import { Point } from '@circuit/math';
 import { MarkNodeKind } from '@circuit/map';
 import { isDef } from '@xiao-ai/utils';
 import { LinePath } from './line-path';
-import { pointSearch } from './point-search';
+import { pointSearch } from './search-point';
 import { Cache } from './cache';
 import { Rules } from './search-rules';
 import { SearchStatus } from './constant';
 import { ElectronicKind } from '../../types';
 
-import type { Line } from '../';
+import type { Line } from '..';
 import type { Part } from '../../part';
 
 export class DrawPathSearcher {
@@ -24,7 +24,7 @@ export class DrawPathSearcher {
   /** 释放鼠标覆盖状态 */
   private mouseOverRecover?: () => void;
   /** 搜索缓存 */
-  private cache = new Cache<Point, Point, LinePath>((point, direction) => {
+  private readonly cache = new Cache<Point, Point, LinePath>((point, direction) => {
     return direction
       ? `${point[0]}:${point[1]}-${direction[0]}:${direction[1]}`
       : `${point[0]}:${point[1]}`;

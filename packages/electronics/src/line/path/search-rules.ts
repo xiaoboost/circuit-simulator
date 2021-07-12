@@ -1,6 +1,6 @@
 import { Point } from '@circuit/math';
 import { SearchStatus } from './constant';
-import { SearchNodeData } from './point-search';
+import { SearchNodeData } from './search-point';
 import { MarkMap, MarkNodeKind } from '@circuit/map';
 
 // 工具函数
@@ -36,7 +36,7 @@ function getSegment(map: MarkMap, node: Point) {
 }
 // node 是否在某线段内
 function isNodeInLine(node: Point, line: Point[]) {
-  return node.isInLine(line);
+  return node.isInSegment(line);
 }
 // 距离表征（非真实距离）
 function nodesDistance(a: Point, b: Point) {

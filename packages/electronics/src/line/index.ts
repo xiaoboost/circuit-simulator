@@ -73,7 +73,7 @@ export class Line extends Electronic {
     /** 分割点在被分割导线的第几个线段 */
     const crossSub = (() => {
       for (let i = 0; i < splitLine.path.length - 1; i++) {
-        if (crossPoint.isInLine([splitLine.path[i], splitLine.path[i + 1]])) {
+        if (crossPoint.isInSegment([splitLine.path[i], splitLine.path[i + 1]])) {
           return i;
         }
       }

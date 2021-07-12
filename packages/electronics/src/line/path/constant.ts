@@ -9,4 +9,7 @@ export const enum SearchStatus {
   DrawAlignLine,
   /** 导线修饰 */
   DrawModification,
+
+  // 变形搜索
+  TranslateSpace = 20,
 }

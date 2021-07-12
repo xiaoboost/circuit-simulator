@@ -43,10 +43,44 @@ export class LinePath extends Array<Point> {
     const sub = (index >= 0) ? index : this.length + index;
 
     if (sub < 0 || sub >= this.length) {
-      throw new Error('(lineway) index out of bounds.');
+      throw new Error('(LinePath) index out of bounds.');
     }
 
     return this[sub];
+  }
+
+  /** 获取子线段 */
+  getSegment(index: number): Point[] {
+    const sub = (index >= 0) ? index : this.length + index;
+
+    if (sub < 0 || sub >= this.length - 1) {
+      throw new Error('(LinePath) index out of bounds.');
+    }
+
+    return [this[index], this[index + 1]];
+  }
+
+  /** 输入线段在导线重叠部分的下标 */
+  getSegmentIndex(segment: Point[]) {
+    for (let i = 0; i < this.length - 1; i++) {
+      const subSegment = this.getSegment(i);
+      if (segment[0].isInSegment(subSegment) && segment[1].isInSegment(subSegment)) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  /**
+   * 获取当前线段的方向
+   *  - 为正数时，方向是从 i -> i + 1
+   *  - 为负数时，方向是从 i + 1 -> i
+   */
+  getSubVector(index: number) {
+    return index >= 0
+      ? new Point(this[index], this[index + 1]).sign()
+      : new Point(this[this.length + index], this[this.length + index - 1]).sign();
   }
 
   /** 导线节点坐标标准化 */
@@ -115,11 +149,6 @@ export class LinePath extends Array<Point> {
     const inputSegment = new Point(line.get(-1), line.get(-2));
 
     return selfSegment.isParallel(inputSegment);
-  }
-
-  /** 获取当前线段的方向 */
-  getSubVector(index: number) {
-    return new Point(this[index], this[index + 1]).sign().mul(20);
   }
 
   /**

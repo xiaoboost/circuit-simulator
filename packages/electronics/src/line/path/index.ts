@@ -1,2 +1,3 @@
 export * from './line-path';
-export * from './draw-search';
+export * from './search-draw';
+export * from './search-translate';
