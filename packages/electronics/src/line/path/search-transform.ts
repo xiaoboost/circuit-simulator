@@ -94,14 +94,30 @@ export class TranslateSearcher {
         let endSearch: LinePath;
 
         if (startSegment.length > 0) {
-          // ..
+          const start = startSegment[startSegment.length - 1];
+          const end = validSegment[0];
+          const vector = new Point(start, end).mul(moveV).toUnit();
+          startSearch = this.removeExcess(pointSearch(
+            start,
+            end,
+            vector,
+            new Rules(start, end, SearchStatus.TranslateSpace, line.map),
+          ));
         }
         else {
           startSearch = LinePath.from([newPath[0]]);
         }
 
         if (endSegment.length > 0) {
-          // ..
+          const start = endSegment[0];
+          const end = validSegment[1];
+          const vector = new Point(start, end).mul(moveV).toUnit();
+          endSearch = this.removeExcess(pointSearch(
+            start,
+            end,
+            vector,
+            new Rules(start, end, SearchStatus.TranslateSpace, line.map),
+          ));
         }
         else {
           endSearch = LinePath.from([newPath.get(-1)]);
@@ -111,7 +127,7 @@ export class TranslateSearcher {
           startSegment.concat(
             startSearch,
             validSegment,
-            endSearch,
+            endSearch.reverse(),
             endSegment,
           )
         ).removeRepeat();
@@ -127,6 +143,10 @@ export class TranslateSearcher {
 
   private getLinePath(end: Point) {
     return this.line.path;
+  }
+
+  private removeExcess(path: LinePath) {
+    return path;
   }
 
   /** 线段移动产生的新路径 */
