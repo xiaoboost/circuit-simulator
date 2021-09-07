@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "main": "tsconfig.json",
   "devDependencies": {
-    "@xiao-ai/utils": "^1.4.2"
+    "@xiao-ai/utils": "^1.4.3"
   }
 }
