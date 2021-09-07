@@ -214,7 +214,7 @@ export class LinePath extends Array<Point> {
       return;
     }
 
-    let vector = this.getSubVector(0);
+    let vector = this.getSubVector(0).mul(20);
 
     while (!node.isEqual(this.get(-1))) {
       yield node;
@@ -226,7 +226,7 @@ export class LinePath extends Array<Point> {
         node.isEqual(this[index + 1])
       ) {
         index++;
-        vector = this.getSubVector(index);
+        vector = this.getSubVector(index).mul(20);
       }
     }
 

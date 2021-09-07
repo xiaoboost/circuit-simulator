@@ -40,7 +40,7 @@ export class WorkerChildServer {
       try {
         result = await handle.handler(data.data);
       }
-      catch (e) {
+      catch (e: any) {
         err = e.message;
       }
 
