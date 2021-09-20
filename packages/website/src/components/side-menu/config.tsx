@@ -163,7 +163,11 @@ function OscForm(props: OscFormProps) {
   </div>;
 }
 
-export function Config() {
+export interface ConfigProps {
+  onClose(): void;
+}
+
+export function Config(props: ConfigProps) {
   const [partsList] = useWatcher(Sheet.parts);
   const [oscList, oscMethod] = useWatcherList<string[][]>(ConfigStore.oscilloscopes);
   const endTime = useWatcherTime(ConfigStore.end);
@@ -182,7 +186,11 @@ export function Config() {
       .map((item) => item.id);
   }, [partsList]);
 
-  return <Panel title='模拟设置' subtitle='Simulation Settings'>
+  return <Panel
+    title='模拟设置'
+    subtitle='Simulation Settings'
+    onClose={props.onClose}
+  >
     <ConfigSection title='时间设置'>
       <TimeFormItem
         label='模拟时长'

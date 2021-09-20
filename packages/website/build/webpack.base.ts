@@ -26,6 +26,14 @@ console.log('\x1Bc');
 
 const tsLoaderConfig = isDevelopment
   ? {
+    loader: 'esbuild-loader',
+    options: {
+      loader: 'tsx',
+      target: 'es2015',
+      tsconfigRaw: require(utils.resolve('tsconfig.json')),
+    },
+  }
+  : {
     loader: 'ts-loader',
     options: {
       configFile: utils.resolve('tsconfig.json'),
@@ -33,14 +41,6 @@ const tsLoaderConfig = isDevelopment
         module: 'ESNext',
         target: 'ESNext',
       },
-    },
-  }
-  : {
-    loader: 'esbuild-loader',
-    options: {
-      loader: 'tsx',
-      target: 'es2015',
-      tsconfigRaw: require(utils.resolve('tsconfig.json')),
     },
   };
 

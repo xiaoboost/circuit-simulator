@@ -247,6 +247,7 @@ export class TranslateSearcher {
   search(mouse: Point) {
     this.getSearchStatus(mouse);
     this.getSearchPath(mouse);
+    debugger;
     return this.getLinePath(mouse);
   }
 }

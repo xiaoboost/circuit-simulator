@@ -70,13 +70,21 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
   </g>;
 }
 
-export function AddPart() {
+export interface AddPartProps {
+  onClose(): void;
+}
+
+export function AddPart(props: AddPartProps) {
   const create = (kind: ElectronicKind) => {
     new PartComponent(kind).create();
   };
 
   return (
-    <Panel title='添加器件' subtitle='Add Parts'>
+    <Panel
+      title='添加器件'
+      subtitle='Add Parts'
+      onClose={props.onClose}
+    >
       {categories.map((item, i) => (
         <div key={i} className={part.list}>
           {item.parts.map((kind, i) => (

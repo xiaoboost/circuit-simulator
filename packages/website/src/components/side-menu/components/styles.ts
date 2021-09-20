@@ -20,6 +20,7 @@ export const moveStyle = createStyles({
 });
 
 export const panelStyle = createStyles({
+  headerClose: {},
   box: {
     width: panelWidth,
     display: 'flex',
@@ -44,6 +45,13 @@ export const panelStyle = createStyles({
     },
     '& h2': {
       fontSize: 18,
+    },
+    '& $headerClose': {
+      position: 'absolute',
+      left: 12,
+      top: 12,
+      fontSize: 20,
+      cursor: 'pointer',
     },
   },
   body: {

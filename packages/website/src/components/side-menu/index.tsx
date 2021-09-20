@@ -19,6 +19,7 @@ export function SideMenu() {
   const [status, setStatus] = useState(TabStatus.AddParts);
   const [progress, setProgress] = useState(0);
   const isRun = status === TabStatus.Run;
+  const closeAside = () => setStatus(TabStatus.None);
   const onStatusChange = (status: TabStatus) => {
     // 运行状态不允许改变
     if (isRun) {
@@ -37,10 +38,10 @@ export function SideMenu() {
 
   return <aside className={aside.aside}>
     <Move visible={status === TabStatus.AddParts} key={0}>
-      <AddPart />
+      <AddPart onClose={closeAside} />
     </Move>
     <Move visible={status === TabStatus.Config} key={1}>
-      <Config />
+      <Config onClose={closeAside} />
     </Move>
     <Move visible={status === TabStatus.Osc} key={2}>
       <GraphViewer
