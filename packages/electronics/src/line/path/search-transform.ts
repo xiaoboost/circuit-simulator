@@ -5,9 +5,13 @@ import { pointSearch } from './search-point';
 import { Cache } from './cache';
 import { Rules } from './search-rules';
 import { SearchStatus } from './constant';
-import { ElectronicKind } from '../../types';
 
 import type { Line } from '..';
+
+interface CacheData {
+  line: LinePath;
+  index: number;
+}
 
 export class TranslateSearcher {
   /** 当前导线 */
@@ -23,9 +27,12 @@ export class TranslateSearcher {
   /** 变形线段下标 */
   private readonly index: number;
   /** 搜索缓存 */
-  private readonly cache = new Cache<Point, undefined, LinePath>((point) => {
+  private readonly cache = new Cache<Point, undefined, CacheData>((point) => {
     return `${point[0]}:${point[1]}`;
   });
+
+  /** 待搜索的终点列表 */
+  private endList: Point[] = [];
 
   constructor(start: Point, index: number, line: Line) {
     this.line = line;
@@ -47,6 +54,8 @@ export class TranslateSearcher {
     const endFloor = end.floor();
     const endList = [endFloor, endFloor.add(vector.mul(20))];
 
+    this.endList = endList;
+
     for (const end of endList) {
       if (cache.has(end)) {
         continue;
@@ -56,8 +65,8 @@ export class TranslateSearcher {
     }
   }
 
-  private getSearchPath(end: Point): LinePath {
-    const { cache, line, index, origin, vector: moveV } = this;
+  private getSearchPath(end: Point): CacheData {
+    const { line, index, origin, vector: moveV } = this;
 
     /** 当前线段单位向量 */
     const moveH = moveV.toVertical().abs();
@@ -65,8 +74,6 @@ export class TranslateSearcher {
     const segment = origin.getSegment(index);
     /** 终点至线段起点在垂直方向上的投影长度 */
     const maxBias = Math.abs(new Point(end, origin[index]).product(moveV));
-
-    debugger;
 
     // 垂直方向从最大偏移量开始迭代
     for (let k = 0; k < maxBias; k += 20) {
@@ -123,14 +130,17 @@ export class TranslateSearcher {
           endSearch = LinePath.from([newPath.get(-1)]);
         }
 
-        return LinePath.from(
-          startSegment.concat(
-            startSearch,
-            validSegment,
-            endSearch.reverse(),
-            endSegment,
-          )
-        ).removeRepeat();
+        return {
+          index: newSubIndex,
+          line: LinePath.from(
+            startSegment.concat(
+              startSearch,
+              validSegment,
+              endSearch.reverse(),
+              endSegment,
+            )
+          ).removeRepeat(),
+        }
       }
 
       if (!k) {
@@ -138,11 +148,24 @@ export class TranslateSearcher {
       }
     }
 
-    return this.origin;
+    return {
+      line: origin,
+      index,
+    };
   }
 
-  private getLinePath(end: Point) {
-    return this.line.path;
+  private getLinePath(mouse: Point) {
+    const { cache, endList: list } = this;
+    // debugger;
+    const end = list.sort((pre, next) => {
+      const prePath = cache.get(pre)?.line.length ?? 0;
+      const nextPath = cache.get(next)?.line.length ?? 0;
+      return prePath > nextPath ? 1 : -1;
+    })[0];
+    const data = cache.get(end)!;
+    const way = LinePath.from(data.line.slice());
+    way.setSegmentToPoint(data.index, mouse);
+    return way;
   }
 
   private removeExcess(path: LinePath) {
@@ -152,12 +175,12 @@ export class TranslateSearcher {
   /** 线段移动产生的新路径 */
   private getMovedPath(moveSegment: Point[]) {
     const { index, origin } = this;
-    const newLine = LinePath.from(origin.splice(index, 2, ...moveSegment));
-
+    const newPath = origin.slice();
+    newPath.splice(index, 2, ...moveSegment);
+    const newLine = LinePath.from(newPath);
     newLine.unshift(Point.from(origin[0]));
     newLine.push(Point.from(origin.get(-1)));
     newLine.removeRepeat();
-
     return newLine;
   }
 
@@ -170,9 +193,9 @@ export class TranslateSearcher {
     const { line } = this;
     const pieces: Point[][] = [];
     const [start, end] = path.getSegment(index);
-    const vector = new Point(start, end);
+    const vector = new Point(start, end).toUnit().mul(20);
 
-    const strict = (node: Point) => line.map.has(node);
+    const strict = (node: Point) => !line.map.has(node);
     const standard = (node: Point) => {
       const data = line.map.get(node);
 
@@ -204,28 +227,35 @@ export class TranslateSearcher {
       return true;
     };
 
+    let isEnd = false;
     let currentPiece: Point | null = null;
 
-    for (let node = start; !node.isEqual(end); node = node.add(vector)) {
-      const isEnd = node.isEqual(end);
-      const checkResult = (node.isEqual(start) || isEnd)
-        ? strict(node)
-        : standard(node);
+    for (let node = start; !isEnd; node = node.add(vector)) {
+      const check = strict(node);
 
-      if (checkResult && !currentPiece) {
-        if (isEnd) {
-          pieces.push([node, node]);
+      isEnd = node.isEqual(end);
+      // (node.isEqual(start) || isEnd)
+      //   ? strict(node)
+      //   : standard(node);
+
+      if (check) {
+        if (currentPiece) {
+          if (isEnd) {
+            pieces.push([currentPiece, node]);
+          }
         }
         else {
-          currentPiece = node;
+          if (isEnd) {
+            pieces.push([node, node]);
+          }
+          else {
+            currentPiece = node;
+          }
         }
       }
-      else if (!checkResult && currentPiece) {
+      else if (currentPiece) {
         pieces.push([currentPiece, node.add(vector, -1)]);
         currentPiece = null;
-      }
-      else if (checkResult && currentPiece && isEnd) {
-        pieces.push([currentPiece, node]);
       }
     }
 
@@ -247,7 +277,6 @@ export class TranslateSearcher {
   search(mouse: Point) {
     this.getSearchStatus(mouse);
     this.getSearchPath(mouse);
-    debugger;
     return this.getLinePath(mouse);
   }
 }

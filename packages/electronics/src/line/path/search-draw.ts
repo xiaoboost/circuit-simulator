@@ -184,7 +184,7 @@ export class DrawPathSearcher {
         // 导线形状相似
         if (similarPath && endRoundWay.isSimilar(similarPath)) {
           path = LinePath.from(similarPath);
-          path.endToLine([endRound, closest], end);
+          path.setPinToLine([endRound, closest], end);
           line.points[1].size = 3;
         }
         else {
@@ -205,7 +205,7 @@ export class DrawPathSearcher {
         );
 
       path = LinePath.from(paths);
-      path.endToPoint(end);
+      path.setPinToPoint(end);
     }
 
     return path;

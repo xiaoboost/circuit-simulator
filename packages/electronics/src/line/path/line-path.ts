@@ -155,7 +155,7 @@ export class LinePath extends Array<Point> {
    * 终点（起点）指向某点
    *  - 导线节点数量少于`1`则忽略
    */
-  endToPoint(node: Point, pin: LinePin = LinePin.End): this {
+  setPinToPoint(node: Point, pin: LinePin = LinePin.End): this {
     if (this.length <= 1) {
       return this;
     }
@@ -189,7 +189,7 @@ export class LinePath extends Array<Point> {
    *  - 导线节点数量少于`3`则忽略
    *  - 输入线段必定与`this`平行
    */
-  endToLine(segment: Point[] | number[][], mouse: Point): this {
+  setPinToLine(segment: Point[] | number[][], mouse: Point): this {
     if (this.length < 3) {
       return this;
     }
@@ -198,6 +198,24 @@ export class LinePath extends Array<Point> {
 
     this.get(-2)[byMouse] = mouse[byMouse];
     this.get(-1)[byMouse] = mouse[byMouse];
+
+    return this;
+  }
+
+  /**
+   * 导线线段指向某点
+   */
+  setSegmentToPoint(i: number, point: Point): this {
+    // 竖着的
+    if (this[i][0] === this[i + 1][0]) {
+      this[i][0] = point[0];
+      this[i + 1][0] = point[0];
+    }
+    // 横着的
+    else {
+      this[i][1] = point[1];
+      this[i + 1][1] = point[1];
+    }
 
     return this;
   }
