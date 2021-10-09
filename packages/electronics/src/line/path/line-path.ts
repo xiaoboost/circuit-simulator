@@ -103,14 +103,19 @@ export class LinePath extends Array<Point> {
 
   /**
    * 去除节点冗余
+   *  - 重复的节点
    *  - 相邻三点共线或者相邻两点相等
    */
   removeRepeat() {
     for (let i = 0; i < this.length - 2; i++) {
+      const current = this[i];
+      const next = this[i + 1];
+      const next2 = this[i + 2];
+
       if (
-        ((this[i][0] === this[i + 1][0]) && (this[i + 1][0] === this[i + 2][0])) ||
-        ((this[i][1] === this[i + 1][1]) && (this[i + 1][1] === this[i + 2][1])) ||
-        ((this[i][0] === this[i + 1][0]) && (this[i][1] === this[i + 1][1]))
+        ((current[0] === next[0]) && (next[0] === next2[0])) ||
+        ((current[1] === next[1]) && (next[1] === next2[1])) ||
+        ((current[0] === next[0]) && (current[1] === next[1]))
       ) {
         this.splice(i + 1, 1);
         i -= 2;

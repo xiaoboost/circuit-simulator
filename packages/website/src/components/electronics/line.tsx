@@ -16,7 +16,7 @@ import {
   Line,
   LinePin,
   DrawPathSearcher,
-  TranslateSearcher,
+  TransformSearcher,
   MouseFocusClassName,
 } from '@circuit/electronics';
 
@@ -171,7 +171,7 @@ export class LineComponent extends Line {
 
     this.sortIndex = undefined;
     this.points[1].size = -1;
-    this.path.endToPoint(finalEnd);
+    this.path.setPinToPoint(finalEnd);
 
     this.setConnectionByPath(LinePin.End);
     this.setMark();
@@ -183,12 +183,12 @@ export class LineComponent extends Line {
   async translate(ev: React.MouseEvent<Element>, index: number) {
     ev.stopPropagation();
 
+    let search: TransformSearcher;
     const translateEvent = new DrawEventController();
-    let search: TranslateSearcher;
 
     await translateEvent
       .setInitEvent(({ position }) => {
-        search = new TranslateSearcher(position, index, this);
+        search = new TransformSearcher(position, index, this);
         this._rects = [];
         this.deleteMark();
         this.updatePoints();
@@ -200,15 +200,17 @@ export class LineComponent extends Line {
       })
       .start();
 
-    // TODO: 连接数据更新
-
-    // 运行过初始化
-    if (translateEvent.initialized) {
-      this.setMark();
-      this.updateRects();
-      this.updatePoints();
-      this.updateView();
+    if (!translateEvent.initialized) {
+      return;
     }
+
+    this.path = search!.searchRound();
+
+    this.setConnectionByPath();
+    this.setMark();
+    this.updateRects();
+    this.updatePoints();
+    this.updateView();
   }
 
   /** 渲染函数 */

@@ -13,7 +13,7 @@ interface CacheData {
   index: number;
 }
 
-export class TranslateSearcher {
+export class TransformSearcher {
   /** 当前导线 */
   private readonly line: Line;
   /** 初始鼠标位置 */
@@ -31,6 +31,8 @@ export class TranslateSearcher {
     return `${point[0]}:${point[1]}`;
   });
 
+  /** 当前搜索终点 */
+  private end = new Point(0, 0);
   /** 待搜索的终点列表 */
   private endList: Point[] = [];
 
@@ -47,13 +49,14 @@ export class TranslateSearcher {
   }
 
   private getSearchStatus(mouse: Point) {
-    const { cache, start, vector } = this;
+    const { cache, vector } = this;
 
     /** 沿着移动线段的垂直方向移动 */
-    const end = mouse.add(mouse.add(start, -1).mul(vector));
-    const endFloor = end.floor();
+    const end = mouse.mul(vector);
+    const endFloor = end.floor(20);
     const endList = [endFloor, endFloor.add(vector.mul(20))];
 
+    this.end = mouse;
     this.endList = endList;
 
     for (const end of endList) {
@@ -149,23 +152,22 @@ export class TranslateSearcher {
     }
 
     return {
-      line: origin,
+      line: origin.removeRepeat(),
       index,
     };
   }
 
   private getLinePath(mouse: Point) {
     const { cache, endList: list } = this;
-    // debugger;
     const end = list.sort((pre, next) => {
       const prePath = cache.get(pre)?.line.length ?? 0;
       const nextPath = cache.get(next)?.line.length ?? 0;
-      return prePath > nextPath ? 1 : -1;
+      return prePath > nextPath ? -1 : 1;
     })[0];
     const data = cache.get(end)!;
     const way = LinePath.from(data.line.slice());
     way.setSegmentToPoint(data.index, mouse);
-    return way;
+    return way.removeRepeat();
   }
 
   private removeExcess(path: LinePath) {
@@ -274,9 +276,15 @@ export class TranslateSearcher {
     return ans;
   }
 
+  searchRound() {
+    const end = this.end;
+    const result = this.search(end.round(20));
+    this.end = end;
+    return result;
+  }
+
   search(mouse: Point) {
     this.getSearchStatus(mouse);
-    this.getSearchPath(mouse);
     return this.getLinePath(mouse);
   }
 }
