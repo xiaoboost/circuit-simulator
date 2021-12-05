@@ -33,12 +33,12 @@
   "devDependencies": {
     "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
-    "@types/react": "^17.0.27",
+    "@types/react": "^17.0.37",
     "ava": "3.15.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.4.0",
     "rimraf": "^3.0.2",
     "ts-node": "9.1.1",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.5.2"
   }
 }
