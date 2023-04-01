@@ -14,7 +14,7 @@
     "build:website": "pnpm run --filter @circuit/website build"
   },
   "engines": {
-    "node": ">= 14.0.0",
+    "node": ">= 16.0.0",
     "pnpm": ">= 7.0.0"
   },
   "repository": {

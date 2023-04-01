@@ -18,9 +18,9 @@ importers:
     specifiers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@types/node': 16.0.0
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       eslint: 7.30.0
       rimraf: 3.0.2
@@ -31,9 +31,9 @@ importers:
       '@circuit/math': link:../math
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       '@types/node': registry.npmmirror.com/@types/node/16.0.0
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
       tslib: registry.npmmirror.com/tslib/2.3.0
@@ -45,9 +45,9 @@ importers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
       '@types/node': 16.0.0
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       ava: 3.15.0
       eslint: 7.30.0
@@ -62,9 +62,9 @@ importers:
       '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       '@types/node': registry.npmmirror.com/@types/node/16.0.0
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
@@ -75,9 +75,10 @@ importers:
   packages/event:
     specifiers:
       '@circuit/math': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@types/node': 16.0.0
       '@types/react': 17.0.13
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       ava: 3.15.0
       eslint: 7.30.0
@@ -91,13 +92,14 @@ importers:
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
       react: registry.npmmirror.com/react/17.0.2
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@types/node': registry.npmmirror.com/@types/node/16.0.0
       '@types/react': registry.npmmirror.com/@types/react/17.0.13
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
-      ts-node: registry.npmmirror.com/ts-node/10.0.0_typescript@4.3.5
+      ts-node: registry.npmmirror.com/ts-node/10.0.0_jcbxnvbtctrga26owkdsun6q54
       tslib: registry.npmmirror.com/tslib/2.3.0
       typescript: registry.npmmirror.com/typescript/4.3.5
 
@@ -105,8 +107,9 @@ importers:
     specifiers:
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@types/node': 16.0.0
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       ava: 3.15.0
       eslint: 7.30.0
@@ -119,19 +122,21 @@ importers:
       '@circuit/shared': link:../shared
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@types/node': registry.npmmirror.com/@types/node/16.0.0
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
-      ts-node: registry.npmmirror.com/ts-node/10.0.0_typescript@4.3.5
+      ts-node: registry.npmmirror.com/ts-node/10.0.0_jcbxnvbtctrga26owkdsun6q54
       tslib: registry.npmmirror.com/tslib/2.3.0
       typescript: registry.npmmirror.com/typescript/4.3.5
 
   packages/math:
     specifiers:
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@types/node': 16.0.0
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       ava: 3.15.0
       bignumber.js: 9.0.1
@@ -144,19 +149,20 @@ importers:
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
       bignumber.js: registry.npmmirror.com/bignumber.js/9.0.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@types/node': registry.npmmirror.com/@types/node/16.0.0
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
-      ts-node: registry.npmmirror.com/ts-node/10.0.0_typescript@4.3.5
+      ts-node: registry.npmmirror.com/ts-node/10.0.0_jcbxnvbtctrga26owkdsun6q54
       tslib: registry.npmmirror.com/tslib/2.3.0
       typescript: registry.npmmirror.com/typescript/4.3.5
 
   packages/shared:
     specifiers:
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       eslint: 7.30.0
       rimraf: 3.0.2
@@ -165,8 +171,8 @@ importers:
     dependencies:
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
       tslib: registry.npmmirror.com/tslib/2.3.0
@@ -178,8 +184,9 @@ importers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/shared': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@types/node': 16.0.0
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       ava: 3.15.0
       eslint: 7.30.0
@@ -194,20 +201,15 @@ importers:
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
       '@circuit/map': link:../map
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@types/node': registry.npmmirror.com/@types/node/16.0.0
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
-      ts-node: registry.npmmirror.com/ts-node/10.0.0_typescript@4.3.5
+      ts-node: registry.npmmirror.com/ts-node/10.0.0_jcbxnvbtctrga26owkdsun6q54
       tslib: registry.npmmirror.com/tslib/2.3.0
       typescript: registry.npmmirror.com/typescript/4.3.5
-
-  packages/tsconfig:
-    specifiers:
-      '@xiao-ai/utils': 1.4.1
-    devDependencies:
-      '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
 
   packages/typings:
     specifiers: {}
@@ -222,7 +224,6 @@ importers:
       '@circuit/map': workspace:*
       '@circuit/math': workspace:*
       '@circuit/solver': workspace:*
-      '@circuit/tsconfig': workspace:*
       '@circuit/worker': workspace:*
       '@types/circuit': workspace:*
       '@types/copy-webpack-plugin': 8.0.0
@@ -237,6 +238,7 @@ importers:
       '@types/react': 17.0.13
       '@types/react-dom': 17.0.8
       '@types/webpack-bundle-analyzer': 4.4.1
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       antd: 4.16.6
       ava: 3.15.0
@@ -301,7 +303,6 @@ importers:
       react: registry.npmmirror.com/react/17.0.2
       react-dom: registry.npmmirror.com/react-dom/17.0.2_react@17.0.2
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
       '@types/copy-webpack-plugin': registry.npmmirror.com/@types/copy-webpack-plugin/8.0.0
       '@types/css-minimizer-webpack-plugin': registry.npmmirror.com/@types/css-minimizer-webpack-plugin/3.0.1
@@ -315,6 +316,7 @@ importers:
       '@types/react': registry.npmmirror.com/@types/react/17.0.13
       '@types/react-dom': registry.npmmirror.com/@types/react-dom/17.0.8
       '@types/webpack-bundle-analyzer': registry.npmmirror.com/@types/webpack-bundle-analyzer/4.4.1
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       ava: registry.npmmirror.com/ava/3.15.0
       browser-env: registry.npmmirror.com/browser-env/3.3.0
       chalk: registry.npmmirror.com/chalk/4.1.1
@@ -345,8 +347,8 @@ importers:
 
   packages/worker:
     specifiers:
-      '@circuit/tsconfig': workspace:*
       '@types/circuit': workspace:*
+      '@xiao-ai/tsconfig': 1.0.1
       '@xiao-ai/utils': 1.4.1
       eslint: 7.30.0
       rimraf: 3.0.2
@@ -355,8 +357,8 @@ importers:
     dependencies:
       '@xiao-ai/utils': registry.npmmirror.com/@xiao-ai/utils/1.4.1
     devDependencies:
-      '@circuit/tsconfig': link:../tsconfig
       '@types/circuit': link:../typings
+      '@xiao-ai/tsconfig': registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1
       eslint: registry.npmmirror.com/eslint/7.30.0
       rimraf: registry.npmmirror.com/rimraf/3.0.2
       tslib: registry.npmmirror.com/tslib/2.3.0
@@ -1435,10 +1437,17 @@ packages:
       '@xtuc/long': registry.npmmirror.com/@xtuc/long/4.2.2
     dev: true
 
+  registry.npmmirror.com/@xiao-ai/tsconfig/1.0.1:
+    resolution: {integrity: sha512-EG8u3CvbuDcZTOejH8CMyoKbNGd9zxJ3bwv0bCuA2r7HBrDVQ3N9rpKZg1xrdG8SYmYp0hdKTRM5pOBCwy4Ucg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@xiao-ai/tsconfig/-/tsconfig-1.0.1.tgz}
+    name: '@xiao-ai/tsconfig'
+    version: 1.0.1
+    dev: true
+
   registry.npmmirror.com/@xiao-ai/utils/1.4.1:
     resolution: {integrity: sha512-I09I3YNZsAoIl00EeIQbXyPXhOhnYCY3YjZ5fKwRxxUB/EDcyaz7mhyFh+Mdjhl4lrgQpiZ+jWKgf9fR8VZghw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@xiao-ai/utils/-/utils-1.4.1.tgz}
     name: '@xiao-ai/utils'
     version: 1.4.1
+    dev: false
 
   registry.npmmirror.com/@xtuc/ieee754/1.2.0:
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@xtuc/ieee754/-/ieee754-1.2.0.tgz}
@@ -7907,37 +7916,6 @@ packages:
       '@tsconfig/node14': registry.npmmirror.com/@tsconfig/node14/1.0.1
       '@tsconfig/node16': registry.npmmirror.com/@tsconfig/node16/1.0.1
       '@types/node': registry.npmmirror.com/@types/node/16.0.0
-      arg: registry.npmmirror.com/arg/4.1.3
-      create-require: registry.npmmirror.com/create-require/1.1.1
-      diff: registry.npmmirror.com/diff/4.0.2
-      make-error: registry.npmmirror.com/make-error/1.3.6
-      source-map-support: registry.npmmirror.com/source-map-support/0.5.19
-      typescript: registry.npmmirror.com/typescript/4.3.5
-      yn: registry.npmmirror.com/yn/3.1.1
-    dev: true
-
-  registry.npmmirror.com/ts-node/10.0.0_typescript@4.3.5:
-    resolution: {integrity: sha512-ROWeOIUvfFbPZkoDis0L/55Fk+6gFQNZwwKPLinacRl6tsxstTF1DbAcLKkovwnpKMVvOMHP1TIbnwXwtLg1gg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ts-node/-/ts-node-10.0.0.tgz}
-    id: registry.npmmirror.com/ts-node/10.0.0
-    name: ts-node
-    version: 10.0.0
-    engines: {node: '>=12.0.0'}
-    hasBin: true
-    peerDependencies:
-      '@swc/core': '>=1.2.45'
-      '@swc/wasm': '>=1.2.45'
-      '@types/node': '*'
-      typescript: '>=2.7'
-    peerDependenciesMeta:
-      '@swc/core':
-        optional: true
-      '@swc/wasm':
-        optional: true
-    dependencies:
-      '@tsconfig/node10': registry.npmmirror.com/@tsconfig/node10/1.0.8
-      '@tsconfig/node12': registry.npmmirror.com/@tsconfig/node12/1.0.9
-      '@tsconfig/node14': registry.npmmirror.com/@tsconfig/node14/1.0.1
-      '@tsconfig/node16': registry.npmmirror.com/@tsconfig/node16/1.0.1
       arg: registry.npmmirror.com/arg/4.1.3
       create-require: registry.npmmirror.com/create-require/1.1.1
       diff: registry.npmmirror.com/diff/4.0.2

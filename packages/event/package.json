@@ -31,9 +31,10 @@
     "react": "17.0.2"
   },
   "devDependencies": {
-    "@circuit/tsconfig": "workspace:*",
     "@types/circuit": "workspace:*",
+    "@types/node": "16.0.0",
     "@types/react": "17.0.13",
+    "@xiao-ai/tsconfig": "1.0.1",
     "ava": "3.15.0",
     "eslint": "7.30.0",
     "rimraf": "3.0.2",

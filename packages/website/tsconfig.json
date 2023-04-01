@@ -1,5 +1,5 @@
 {
-  "extends": "@circuit/tsconfig",
+  "extends": "@xiao-ai/tsconfig",
   "include": ["src", "typings", "tests"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
