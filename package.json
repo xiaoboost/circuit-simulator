@@ -5,26 +5,26 @@
   "scripts": {
     "update": "pnpm update -r",
     "update:last": "pnpm update -r -L",
-    "build": "pnpm run build --filter=!@circuit/website",
-    "test": "pnpm run -r test --parallel --filter .",
-    "test:update": "pnpm run -r test:update --parallel --filter .",
-    "lint": "pnpm run -r lint --parallel --filter .",
-    "lint:fix": "pnpm run -r lint:fix --parallel --filter .",
-    "dev:website": "pnpm run dev --filter @circuit/website",
-    "build:website": "pnpm run build --filter @circuit/website"
+    "build": "pnpm run --filter=!@circuit/website build",
+    "test": "pnpm run -r --parallel --filter . test",
+    "test:update": "pnpm run -r --parallel --filter . test:update",
+    "lint": "pnpm run -r --parallel --filter . lint",
+    "lint:fix": "pnpm run -r --parallel --filter . lint:fix",
+    "dev:website": "pnpm run --filter @circuit/website dev",
+    "build:website": "pnpm run --filter @circuit/website build"
   },
   "engines": {
     "node": ">= 14.0.0",
-    "pnpm": ">= 5.0.0"
+    "pnpm": ">= 7.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/xiaoboost/circuit-simulator.git"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.28.1",
-    "@typescript-eslint/parser": "^4.28.1",
-    "eslint": "^7.30.0",
-    "eslint-plugin-react": "^7.24.0"
+    "@typescript-eslint/eslint-plugin": "4.28.1",
+    "@typescript-eslint/parser": "4.28.1",
+    "eslint": "7.30.0",
+    "eslint-plugin-react": "7.24.0"
   }
 }
