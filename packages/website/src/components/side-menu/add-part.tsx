@@ -56,7 +56,7 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
   // 生成修正函数
   const fixElementShape = (type: ElectronicKind) => ({
     transform: transform.hasOwnProperty(type)
-      ? `translate(40,40) ${transform[type]}`
+      ? `translate(40,40) ${transform[type as keyof typeof transform]}`
       : 'translate(40,40)',
   });
 

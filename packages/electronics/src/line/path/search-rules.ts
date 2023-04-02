@@ -205,7 +205,9 @@ export class Rules {
       else if (endData.kind === MarkNodeKind.Part) {
         const partId = getPart(this.map, this.end);
 
-        partId && this.excludeParts.push[partId];
+        if (partId) {
+          this.excludeParts.push(partId);
+        };
 
         this.isEnd = isEndPoint;
         this.checkPoint = isLegalPointGeneral;

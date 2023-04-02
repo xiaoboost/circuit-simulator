@@ -1,4 +1,3 @@
-import chalk from 'chalk';
 import path from 'path';
 import Webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
@@ -6,63 +5,54 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
-import * as utils from './utils';
-import * as config from './config';
+import { resolve, version, build } from './utils';
 
+/** 是否是调试模式 */
 const isDevelopment = process.env.NODE_ENV === 'development';
+/** 构建输出的文件路径 */
+const output = resolve('dist/');
 
 const banner =
 `Project: Circuit Simulator
 Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
-Version: ${utils.version}
-Build: ${utils.build}
+Version: ${version}
+Build: ${build}
 filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
 Released under the MIT License.`;
 
-console.log('\x1Bc');
-
-const tsLoaderConfig = isDevelopment
-  ? {
-    loader: 'ts-loader',
-    options: {
-      configFile: utils.resolve('tsconfig.json'),
-      compilerOptions: {
-        module: 'ESNext',
-        target: 'ESNext',
-      },
+const tsLoaderConfig = {
+  loader: 'ts-loader',
+  options: {
+    configFile: resolve('tsconfig.json'),
+    compilerOptions: {
+      module: 'ESNext',
+      target: 'ES6',
     },
-  }
-  : {
-    loader: 'esbuild-loader',
-    options: {
-      loader: 'tsx',
-      target: 'es2015',
-      tsconfigRaw: require(utils.resolve('tsconfig.json')),
-    },
-  };
+  },
+};
 
 const baseConfig: Webpack.Configuration = {
-  mode: process.env.NODE_ENV as Webpack.Configuration['mode'],
+  mode: isDevelopment ? 'development' : 'production',
   entry: {
-    main: utils.resolve('src/init/index.ts'),
+    main: resolve('src/init/index.ts'),
   },
   output: {
-    path: config.output,
-    publicPath: config.publicPath,
+    path: output,
+    publicPath: '/',
     filename: isDevelopment ? 'js/[name].js' : 'js/[name].[chunkhash].js',
     chunkFilename: isDevelopment ? 'js/[name].js' : 'js/[name].[chunkhash].js',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json', '.css'],
     mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.css'],
-    mainFields: ['source', 'module', 'main'],
+    mainFields: ['source', 'browser', 'module', 'main'],
     alias: {
-      src: utils.resolve('src'),
-      '@xiao-ai/utils/web': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/web/index.js'),
-      '@xiao-ai/utils/use': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/use/index.js'),
+      src: resolve('src'),
+      // '@xiao-ai/utils/web': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/web/index.js'),
+      // '@xiao-ai/utils/use': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/use/index.js'),
     },
   },
   module: {
@@ -127,8 +117,8 @@ const baseConfig: Webpack.Configuration = {
     new CopyWebpackPlugin({
       patterns: [
         {
-          from: utils.resolve('src/assets/favicon.ico'),
-          to: path.join(config.output, 'images/favicon.ico')
+          from: resolve('src/assets/favicon.ico'),
+          to: path.join(output, 'images/favicon.ico')
         },
       ],
     }),
@@ -136,11 +126,11 @@ const baseConfig: Webpack.Configuration = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       data: {
-        version: utils.version,
-        build: utils.build,
+        version: version,
+        build: build,
         year: new Date().getFullYear(),
       },
-      template: utils.resolve('src/index.html'),
+      template: resolve('src/index.html'),
       inject: true,
       minify: {
         removeComments: !isDevelopment,
@@ -149,10 +139,11 @@ const baseConfig: Webpack.Configuration = {
       },
     }),
     new ProgressBarPlugin({
-      width: 40,
-      format: `${chalk.green('> building:')} [:bar] ${chalk.green(':percent')} (:elapsed seconds)`,
+      width: 50,
+      format: '> building: [:bar] :percent (:elapsed seconds)',
     }),
   ],
+  stats: 'normal',
 };
 
 export default baseConfig;

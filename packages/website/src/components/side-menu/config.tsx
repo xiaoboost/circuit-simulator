@@ -7,7 +7,7 @@ import { shortUnitList, NumberRank, SelectList, splitNumber } from '@circuit/mat
 import { InputNumber, Select, Input, Button, Row, Col, Modal } from 'antd';
 import { Sheet, Config as ConfigStore } from 'src/store';
 
-import { Watcher } from '@xiao-ai/utils';
+import { Watcher, isNumber } from '@xiao-ai/utils';
 import { useWatcher, useWatcherList, useForceUpdate } from '@xiao-ai/utils/use';
 import { CloseCircleOutlined } from '@ant-design/icons';
 
@@ -91,19 +91,19 @@ function ConfigSection(props: PropsWithChildren<SectionProps>) {
 
 function TimeFormItem(props: TimeFormItemProps) {
   return (
-    <Row className={config.formItem} gutter={4} align='middle' justify='center'>
+    <Row className={config.formItem} gutter={4} align="middle" justify="center">
       <Col className={config.formItemLabel} span={6}>{props.label}</Col>
       <Col span={18}>
         <Input.Group compact style={{ width: '100%' }}>
           <InputNumber
             min={0}
-            size='middle'
+            size="middle"
             style={{ width: 'calc(100% - 70px)' }}
             value={props.value}
-            onChange={props.onChangeValue}
+            onChange={(val) => isNumber(val) &&props.onChangeValue(val)}
           />
           <Select
-            size='middle'
+            size="middle"
             style={{ width: '70px' }}
             value={props.unit}
             onChange={props.onChangeUnit}
@@ -136,21 +136,21 @@ function OscForm(props: OscFormProps) {
 
   return <div className={config.oscilloscopesRow}>
     <Select
-      mode='multiple'
+      mode="multiple"
       value={props.value}
       onChange={props.onChange}
       className={config.oscilloscopesRowSelect}
-      placeholder='请选择要接入示波器的测量表'
+      placeholder="请选择要接入示波器的测量表"
     >
       {props.currentMeters.length > 0 && (
-        <Select.OptGroup label='电流表'>
+        <Select.OptGroup label="电流表">
           {props.currentMeters.map((id) => (
             <Select.Option key={id} value={id}>{id.replace('_', '-')}</Select.Option>
           ))}
         </Select.OptGroup>
       )}
       {props.voltageMeters.length > 0 && (
-        <Select.OptGroup label='电压表'>
+        <Select.OptGroup label="电压表">
           {props.voltageMeters.map((id) => (
             <Select.Option key={id} value={id}>{id.replace('_', '-')}</Select.Option>
           ))}
@@ -182,10 +182,10 @@ export function Config() {
       .map((item) => item.id);
   }, [partsList]);
 
-  return <Panel title='模拟设置' subtitle='Simulation Settings'>
-    <ConfigSection title='时间设置'>
+  return <Panel title="模拟设置" subtitle="Simulation Settings">
+    <ConfigSection title="时间设置">
       <TimeFormItem
-        label='模拟时长'
+        label="模拟时长"
         value={endTime.value}
         unit={endTime.unit}
         unitList={endTimeUnits}
@@ -193,7 +193,7 @@ export function Config() {
         onChangeUnit={endTime.setUnit}
       />
       <TimeFormItem
-        label='步长时间'
+        label="步长时间"
         value={stepTime.value}
         unit={stepTime.unit}
         unitList={stepTimeUnits}
@@ -201,7 +201,7 @@ export function Config() {
         onChangeUnit={stepTime.setUnit}
       />
     </ConfigSection>
-    <ConfigSection title='示波器设置'>
+    <ConfigSection title="示波器设置">
       {oscList.map((list, i) => (
         <OscForm
           key={i}
@@ -213,7 +213,7 @@ export function Config() {
         />
       ))}
       <Button
-        type='dashed'
+        type="dashed"
         style={{ width: '100%' }}
         onClick={() => oscMethod.push([])}
       >

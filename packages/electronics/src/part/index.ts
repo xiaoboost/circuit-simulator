@@ -89,7 +89,7 @@ export class Part extends Electronic {
     [Direction.Top, Direction.Right, Direction.Bottom, Direction.Left]
       .map((item) => Directions[item].rotate(rotate))
       .forEach((vector, i) => {
-        const index = MarginDirection[vector.toDirection()];
+        const index = MarginDirection[vector.toDirection() as keyof typeof MarginDirection];
         const paddingLen = Math.abs(vector.product([1, 1])) * 20 * prototype.padding[i];
         const marginLen = Math.abs(vector.product([1, 1])) * 20 * prototype.margin[i];
         (this._margin.margin as any)[index] = marginLen;

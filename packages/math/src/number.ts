@@ -58,7 +58,7 @@ export function parseShortNumber(notation: string) {
     const base = notation.substring(0, notation.length - 1);
     const rankOri = notation[notation.length - 1];
     const rank = rankOri === 'u' ? 'μ' : rankOri;
-    const power = RankEnum[rank];
+    const power = RankEnum[rank as keyof typeof RankEnum];
 
     bigNum = new BigNumber(base).multipliedBy(Math.pow(10, power));
   }

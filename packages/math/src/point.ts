@@ -38,8 +38,8 @@ export class Point {
     }
     // 输入两个点 -> 向量
     else {
-      this[0] = end[0] - start[0];
-      this[1] = end[1] - start[1];
+      this[0] = (end as PointLike)[0] - start[0];
+      this[1] = (end as PointLike)[1] - start[1];
     }
 
     Object.defineProperty(this, 'length', {

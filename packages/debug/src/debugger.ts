@@ -92,7 +92,7 @@ class Debugger {
       const status = data as any;
       const point = status.position;
       // 点本身
-      this.point(point, nodeColor[status.kind]);
+      this.point(point, nodeColor[status.kind as keyof typeof nodeColor]);
 
       // 点的 ID
       if (status.kind === 'Line') {

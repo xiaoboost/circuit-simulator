@@ -27,32 +27,3 @@ export const build = buildTag();
 export const resolve = (...dir: string[]) => {
   return path.join(__dirname, '..', ...dir).replace(/[\\/]/g, '/');
 };
-
-/** 运行脚本代码 */
-export function runScript<T = any>(script: string): T {
-  // 去除 pinyin 的依赖
-  const code = script.replace('require("pinyin")', '{}');
-
-  interface FakeModule {
-    exports: {
-      default: any;
-    }
-  }
-
-  const fake: FakeModule = {
-    exports: {},
-  } as any;
-
-  try {
-    (new Function(`
-      return function box(module, exports, require) {
-        ${code}
-      }
-    `))()(fake, fake.exports, require);
-  }
-  catch (e) {
-    throw new Error(e);
-  }
-
-  return (fake.exports.default ? fake.exports.default : fake.exports);
-}

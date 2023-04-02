@@ -26,13 +26,13 @@
     "url": "https://github.com/xiaoboost/circuit-simulator.git"
   },
   "dependencies": {
-    "@xiao-ai/utils": "1.4.1"
+    "@xiao-ai/utils": "1.6.6"
   },
   "devDependencies": {
     "@types/circuit": "workspace:*",
-    "@xiao-ai/tsconfig": "1.0.1",
-    "eslint": "7.30.0",
-    "rimraf": "3.0.2",
+    "@xiao-ai/tsconfig": "1.0.3",
+    "eslint": "8.37.0",
+    "rimraf": "4.4.1",
     "tslib": "2.5.0",
     "typescript": "5.0.3"
   }

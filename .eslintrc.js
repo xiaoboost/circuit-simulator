@@ -38,6 +38,8 @@ module.exports = {
     },
   },
   rules: {
+    'quotes': ['error', 'single'],
+    'jsx-quotes': ['error', 'prefer-double'],
     'no-prototype-builtins': 'off',
     'no-sparse-arrays': 'off',
     'indent': 'off',

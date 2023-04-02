@@ -567,7 +567,7 @@ export class Solver {
           };
         }
         else {
-          return target[property];
+          return target[property as keyof typeof target];
         }
       },
     });
