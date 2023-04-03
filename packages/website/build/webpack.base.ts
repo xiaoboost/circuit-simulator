@@ -2,16 +2,12 @@ import path from 'path';
 import Webpack from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 import { resolve, version, build } from './utils';
 
-/** 是否是调试模式 */
 const isDevelopment = process.env.NODE_ENV === 'development';
-/** 构建输出的文件路径 */
 const output = resolve('dist/');
-
 const banner =
 `Project: Circuit Simulator
 Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
@@ -36,9 +32,9 @@ const tsLoaderConfig = {
 
 const baseConfig: Webpack.Configuration = {
   mode: isDevelopment ? 'development' : 'production',
-  entry: {
-    main: resolve('src/init/index.ts'),
-  },
+  target: 'web',
+  stats: 'normal',
+  entry: resolve('src/init/index.ts'),
   output: {
     path: output,
     publicPath: '/',
@@ -51,8 +47,6 @@ const baseConfig: Webpack.Configuration = {
     mainFields: ['source', 'browser', 'module', 'main'],
     alias: {
       src: resolve('src'),
-      // '@xiao-ai/utils/web': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/web/index.js'),
-      // '@xiao-ai/utils/use': utils.resolve('node_modules/@xiao-ai/utils/dist/esm/use/index.js'),
     },
   },
   module: {
@@ -98,22 +92,18 @@ const baseConfig: Webpack.Configuration = {
     },
   },
   plugins: [
-    // 添加文件抬头信息
     new Webpack.BannerPlugin({
       banner,
       entryOnly: false,
     }),
-    // 定义全局注入变量
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
     }),
-    // 提取出来的所有 css 文件整合
     new MiniCssExtractPlugin({
       filename: isDevelopment
-        ? 'styles/main.css'
-        : 'styles/main.[contenthash:20].css',
+        ? 'styles/[name].css'
+        : 'styles/[name].[contenthash:20].css',
     }),
-    // 复制文件
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -122,7 +112,6 @@ const baseConfig: Webpack.Configuration = {
         },
       ],
     }),
-    // 打包后的文件插入 html 模板
     new HtmlWebpackPlugin({
       filename: 'index.html',
       data: {
@@ -138,12 +127,7 @@ const baseConfig: Webpack.Configuration = {
         ignoreCustomComments: [/^-/],
       },
     }),
-    new ProgressBarPlugin({
-      width: 50,
-      format: '> building: [:bar] :percent (:elapsed seconds)',
-    }),
   ],
-  stats: 'normal',
 };
 
 export default baseConfig;

@@ -1,5 +1,6 @@
 import baseConfig from './webpack.base';
 import TerserPlugin from 'terser-webpack-plugin';
+import ProgressBarPlugin from 'progress-bar-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 
@@ -16,6 +17,13 @@ if (!baseConfig.optimization.minimizer) {
 if (process.env.ANALYZE === 'true') {
   baseConfig.plugins!.push(new BundleAnalyzerPlugin());
 }
+
+baseConfig.plugins!.push(
+  new ProgressBarPlugin({
+    width: 50,
+    format: '> building: [:bar] :percent (:elapsed seconds)',
+  }),
+)
 
 baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
   new CssMinimizerPlugin(),
