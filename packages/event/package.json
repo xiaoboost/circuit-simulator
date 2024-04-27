@@ -18,8 +18,8 @@
     "build:cjs": "tsc -p ./tsconfig.build.json --outDir dist/cjs --module CommonJs",
     "build:esm": "tsc -p ./tsconfig.build.json --outDir dist/esm --module ESNext",
     "build": "pnpm run clear && pnpm run build:cjs && pnpm run build:esm",
-    "lint": "eslint --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}",
-    "lint:fix": "eslint --fix --quiet --no-error-on-unmatched-pattern --config ../../.eslintrc.js src/**/*.{ts,tsx,js,jsx}"
+    "lint": "eslint --quiet src/**/*.{ts,tsx,js,jsx}",
+    "lint:fix": "eslint --quiet --fix src/**/*.{ts,tsx,js,jsx}"
   },
   "repository": {
     "type": "git",
@@ -34,12 +34,13 @@
     "@types/circuit": "workspace:*",
     "@types/node": "16.0.0",
     "@types/react": "18.0.31",
-    "@xiao-ai/tsconfig": "1.0.3",
+    "@xiao-ai/eslint-config": "1.0.3",
+    "@xiao-ai/tsconfig": "1.0.4",
     "ava": "5.2.0",
-    "eslint": "8.37.0",
-    "rimraf": "4.4.1",
+    "eslint": "8.56.0",
+    "rimraf": "5.0.1",
     "ts-node": "10.9.1",
-    "tslib": "2.5.0",
-    "typescript": "5.0.3"
+    "tslib": "2.6.2",
+    "typescript": "5.2.2"
   }
 }

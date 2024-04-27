@@ -3,5 +3,8 @@
   "description": "circuit's common typings",
   "version": "1.0.0",
   "main": "",
-  "types": "index.d.ts"
+  "types": "index.d.ts",
+  "devDependencies": {
+    "@xiao-ai/eslint-config": "1.0.3"
+  }
 }
