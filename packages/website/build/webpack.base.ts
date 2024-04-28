@@ -24,7 +24,7 @@ const tsLoaderConfig = {
   options: {
     configFile: resolve('tsconfig.json'),
     compilerOptions: {
-      module: 'ESNext',
+      module: 'NodeNext',
       target: 'ES6',
     },
   },

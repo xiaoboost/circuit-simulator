@@ -3,6 +3,8 @@
   "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
-    "lib": ["DOM", "ESNext"]
+    "baseUrl": ".",
+    "outDir": "dist",
+    "lib": ["Dom", "ESNext"]
   }
 }

@@ -199,7 +199,7 @@ test('toGrid()', ({ deepEqual }) => {
 test('closest()', ({ deepEqual, throws }) => {
   throws(
     () => Point.from(0).closest([]),
-    null,
+    undefined,
     '(point) points can not be a empty array.',
   );
 
@@ -218,7 +218,7 @@ test('closest()', ({ deepEqual, throws }) => {
 test('minAngle()', ({ deepEqual, throws }) => {
   throws(
     () => Point.from(0).minAngle([]),
-    null,
+    undefined,
     '(point) vectors can not be a empty array.',
   );
 

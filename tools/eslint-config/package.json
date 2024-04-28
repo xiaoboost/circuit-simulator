@@ -1,0 +1,17 @@
+{
+  "name": "@circuit/eslint-config",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "files": [
+    "src",
+    "package.json"
+  ],
+  "dependencies": {
+    "@circuit/eslint-config": "workspace:*",
+    "eslint": "8.56.0",
+    "eslint-plugin-react": "7.34.1"
+  },
+  "devDependencies": {
+    "tsx": "4.7.3"
+  }
+}

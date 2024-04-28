@@ -1,5 +1,3 @@
-/* eslint-disable no-multi-spaces */
-
 import test from 'ava';
 
 import { Matrix, Point, Rotate, RotateMatrix } from '../src';
@@ -86,14 +84,14 @@ test('复制矩阵', (it) => {
   // 含有 NaN
   it.throws(
     () => Matrix.from([[0, NaN, 0], [0, 0, 0]]),
-    null,
+    undefined,
     '(matrix) this is not a matrix.',
   );
 
   // 列不连续
   it.throws(
     () => Matrix.from([[0, 0, 0], [0, 0]]),
-    null,
+    undefined,
     '(matrix) this is not a matrix.',
   );
 
@@ -102,7 +100,7 @@ test('复制矩阵', (it) => {
   Object.defineProperty(error, '1', { enumerable: false });
   it.throws(
     () => Matrix.from(error),
-    null,
+    undefined,
     '(matrix) this is not a matrix.',
   );
 });
@@ -128,11 +126,11 @@ test('getRow/getColumn()', ({ deepEqual, throws }) => {
 
   deepEqual(ma.getRow(0), [1, 2, 3, 4]);
   deepEqual(ma.getRow(-1), [13, 14, 15, 16]);
-  throws(() => ma.getRow(9), null, '(matrix) index of row out of bounds.');
+  throws(() => ma.getRow(9), undefined, '(matrix) index of row out of bounds.');
 
   deepEqual(ma.getColumn(0), [1, 5, 9, 13]);
   deepEqual(ma.getColumn(-1), [4, 8, 12, 16]);
-  throws(() => ma.getColumn(9), null, '(matrix) index of column out of bounds.');
+  throws(() => ma.getColumn(9), undefined, '(matrix) index of column out of bounds.');
 });
 
 test('exchangeRow/exchangeColumn()', ({ deepEqual }) => {
@@ -213,7 +211,7 @@ test('add()', ({ deepEqual, throws }) => {
   const ma4 = new Matrix(2, 2, 0);
 
   deepEqual(ma1.add(ma2), ma3);
-  throws(() => ma1.add(ma4), null, '(matrix) ma can not be add with this.');
+  throws(() => ma1.add(ma4), undefined, '(matrix) ma can not be add with this.');
 });
 
 test('mul/multo()', ({ deepEqual, throws }) => {
@@ -262,8 +260,8 @@ test('mul/multo()', ({ deepEqual, throws }) => {
     [13.3472, 15.3828, 17.4184,  19.454],
   ]));
 
-  throws(() => matrixA.mul([[0]]), null, '(matrix) this can not be multiplied with ma.');
-  throws(() => matrixA.multo([[0]]), null, '(matrix) ma can not be multiplied with this.');
+  throws(() => matrixA.mul([[0]]), undefined, '(matrix) this can not be multiplied with ma.');
+  throws(() => matrixA.multo([[0]]), undefined, '(matrix) ma can not be multiplied with this.');
 });
 
 test('inverse()', ({ deepEqual, throws }) => {
@@ -285,13 +283,13 @@ test('inverse()', ({ deepEqual, throws }) => {
 
   throws(
     () => new Matrix(3, 4, 0).inverse(),
-    null,
+    undefined,
     '(matrix) only the matrix can be decomposed.',
   );
 
   throws(
     () => new Matrix(3).inverse(),
-    null,
+    undefined,
     '(matrix) this matrix has no inverse.',
   );
 });

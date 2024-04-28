@@ -12,22 +12,19 @@
     "build:website": "pnpm run --filter @circuit/website build"
   },
   "engines": {
-    "node": ">= 16.0.0",
-    "pnpm": ">= 7.0.0"
+    "node": ">= 18.0.0",
+    "pnpm": ">= 9.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/xiaoboost/circuit-simulator.git"
   },
-  "updateConfig": {
-    "ignoreDependencies": [
-      "@types/node"
-    ]
-  },
-  "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "5.57.0",
-    "@typescript-eslint/parser": "5.57.0",
-    "eslint": "8.56.0",
-    "eslint-plugin-react": "7.32.2"
+  "pnpm": {
+    "updateConfig": {
+      "ignoreDependencies": [
+        "@types/node",
+        "eslint"
+      ]
+    }
   }
 }

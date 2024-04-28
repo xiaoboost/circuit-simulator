@@ -15,7 +15,7 @@ test('getRank()', ({ is, throws }) => {
   is(getRank(0.001), -3);
   is(getRank(12.34), 1);
   is(getRank(0.1234), -1);
-  throws(() => getRank(NaN), null, '(number) Cannot run getRank(NaN)');
+  throws(() => getRank(NaN), undefined, '(number) Cannot run getRank(NaN)');
 });
 
 test('toRound()', ({ is, throws }) => {
@@ -27,7 +27,7 @@ test('toRound()', ({ is, throws }) => {
   is(toRound(0.00123456789, 2), 0.0012);
   is(toRound(-0.00123456789, 2), -0.0012);
   is(toRound(0.00123456789, 8), 0.0012345679);
-  throws(() => toRound(NaN), null, '(number) Cannot run toRound(NaN)');
+  throws(() => toRound(NaN), undefined, '(number) Cannot run toRound(NaN)');
 });
 
 test('splitNumber()', ({ deepEqual, throws }) => {
@@ -41,7 +41,7 @@ test('splitNumber()', ({ deepEqual, throws }) => {
     rank: '',
   });
 
-  throws(() => splitNumber('123x'), null, '(number) Cannot run splitNumber(123x)');
+  throws(() => splitNumber('123x'), undefined, '(number) Cannot run splitNumber(123x)');
 });
 
 test('numberParser()', ({ is }) => {
