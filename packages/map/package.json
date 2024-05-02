@@ -18,6 +18,7 @@
     "test": "ava --no-cache",
     "build:cjs": "tsc -p ./tsconfig.build.json",
     "build": "pnpm run clear && pnpm run build:cjs",
+    "watch": "pnpm run build -w",
     "lint": "eslint --quiet src/**/*.{ts,tsx,js,jsx}",
     "lint:fix": "eslint --quiet --fix src/**/*.{ts,tsx,js,jsx}"
   },

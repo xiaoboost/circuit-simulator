@@ -1,0 +1,48 @@
+import { BaseMark } from './base';
+import type { MarkMap } from '../map';
+import { setClass, getMarkConstructor } from './utils';
+import { DataWithPosition, MarkKind, MarkStructureWrapper } from './types';
+
+export interface PartPinData {
+  /** 器件编号 */
+  part: string;
+  /** 引脚编号 */
+  pin: number;
+}
+
+export type PartPinStructureData = MarkStructureWrapper<PartPinData, MarkKind.PartPin>;
+
+@setClass('PartPinMark')
+export class PartPinMark extends BaseMark {
+  /** 导线节点类别 */
+  static MarkKind = MarkKind.PartPin;
+
+  // @ts-ignore
+  declare readonly kind!: MarkKind.PartPin;
+
+  readonly part: string;
+  readonly pin: number;
+
+
+  constructor(map: MarkMap, data: DataWithPosition<PartPinData>) {
+    super(map, data);
+    this.part = data.part;
+    this.pin = data.pin;
+  }
+
+  toData(): PartPinStructureData {
+    return {
+      ...super.toData(),
+      part: this.part,
+      pin: this.pin,
+    };
+  }
+
+  // /** 连接导线 */
+  // connectLine(line: string, kind: PartPinLineMarkKind) {
+  //   const PartPinLineMark = getMarkConstructor('PartPinLineMark');
+  //   const newMark = new PartPinLineMark(this.map, { ...this, line, kind });
+  //   this.map.set(this.position, newMark);
+  //   return newMark;
+  // }
+}

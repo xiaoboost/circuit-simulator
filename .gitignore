@@ -6,6 +6,7 @@ _文档/
 dev
 dist
 draft
+tmp
 coverage
 node_modules
 npm-debug.log*

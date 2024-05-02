@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.3.6",
-    "@antv/g2": "5.1.19",
+    "@antv/g2": "4.2.10",
     "@circuit/debug": "workspace:*",
     "@circuit/electronics": "workspace:*",
     "@circuit/event": "workspace:*",

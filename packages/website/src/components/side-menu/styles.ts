@@ -28,9 +28,17 @@ export const part = createStyles({
   panel: {
     width: 280,
   },
-  list: {
+  category: {
     display: 'flex',
-    margin: [16, 0],
+    flexDirection: 'column',
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: 'normal',
+  },
+  categoryList: {
+    display: 'flex',
+    margin: [10, -10, 20, -10],
   },
   item: {
     height: 60,

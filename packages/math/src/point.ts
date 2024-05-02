@@ -389,6 +389,15 @@ export class Point {
     );
   }
   /**
+   * 是轴向量
+   */
+  isAxis() {
+    return (
+      (this[0] === 0 && this[1] !== 0) ||
+      (this[0] !== 0 && this[1] === 0)
+    );
+  }
+  /**
    * 以 this 为中心点，过滤距离中心点距离为 factor 的所有点，返回使 predicate 输出 true 的点的集合
    *
    * @param {(point: Point) => boolean} predicate

@@ -78,18 +78,21 @@ export function AddPart() {
   return (
     <Panel title='添加器件' subtitle='Add Parts'>
       {categories.map((item, i) => (
-        <div key={i} className={part.list}>
-          {item.parts.map((kind, i) => (
-            <Tooltip key={i} placement='top' title={ Electronics[kind].introduction }>
-              <span
-                className={part.item}
-                onClick={() => create(kind)}>
-                <svg x="0px" y="0px" viewBox="0 0 80 80">
-                  <PartShape {...Electronics[kind]} />
-                </svg>
-              </span>
-            </Tooltip>
-          ))}
+        <div key={i} className={part.category}>
+          <div className={part.categoryName}>{item.name}</div>
+          <div className={part.categoryList}>
+            {item.parts.map((kind, i) => (
+              <Tooltip key={i} placement='top' title={ Electronics[kind].introduction } destroyTooltipOnHide>
+                <span
+                  className={part.item}
+                  onClick={() => create(kind)}>
+                  <svg x="0px" y="0px" viewBox="0 0 80 80">
+                    <PartShape {...Electronics[kind]} />
+                  </svg>
+                </span>
+              </Tooltip>
+            ))}
+          </div>
         </div>
       ))}
     </Panel>
