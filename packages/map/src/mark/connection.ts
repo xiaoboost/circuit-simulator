@@ -74,6 +74,28 @@ export class Connection {
     return Boolean(this[this.vectorToKey(vector)]);
   }
 
+  getPoints() {
+    return (['top', 'right', 'bottom', 'left'] as const)
+      .map((key) => ({ key, val: this[key] }))
+      .filter(({ val }) => Boolean(val))
+      .map(({ key }) => {
+        switch (key) {
+          case 'left': {
+            return this.point.add([-20, 0]);
+          }
+          case 'right': {
+            return this.point.add([20, 0]);
+          }
+          case 'top': {
+            return this.point.add([0, -20]);
+          }
+          case 'bottom': {
+            return this.point.add([0, 20]);
+          }
+        }
+      });
+  }
+
   fromData(data: number[] = []) {
     [this.top, this.right, this.bottom, this.left] = data.map((item) => item === 1);
   }

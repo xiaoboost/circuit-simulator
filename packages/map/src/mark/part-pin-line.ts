@@ -35,20 +35,24 @@ export class PartPinLineMark extends BaseLineMark {
     this.line = data.line;
   }
 
-  // removeLine() {
-  //   const PartPinMark = getMarkConstructor('PartPinMark');
-  //   const newMark = new PartPinMark(this.map, { ...this, kind: MarkKind.PartPin });
-  //   this.map.set(this.position, newMark);
-  //   return newMark;
-  // }
+  deleteLine() {
+    const { map, position } = this;
+    const PartPinMark = getMarkConstructor('PartPinMark');
+    const newMark = new PartPinMark(map, this);
+    this.map.set(position, newMark);
+    return newMark;
+  }
 
-  // removePin() {
-  //   const SingleLineMark = getMarkConstructor('SingleLineMark');
-  //   const kind = MarkKind[MarkKind[this.kind].replace('PartPinLine', 'LinePoint') as keyof typeof MarkKind] as SingleLineMarkKind;
-  //   const newMark = new SingleLineMark(this.map, { ...this, kind });
-  //   this.map.set(this.position, newMark);
-  //   return newMark;
-  // }
+  deletePin() {
+    const LinePointMark = getMarkConstructor('LinePointMark');
+    const newMark = new LinePointMark(this.map, {
+      line: this.line,
+      position: this.position.toData(),
+      connection: this.connection.toData(),
+    });
+    this.map.set(this.position, newMark);
+    return newMark;
+  }
 
   toData(): PartPinLineStructureData {
     return {

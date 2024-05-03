@@ -38,11 +38,11 @@ export class PartPinMark extends BaseMark {
     };
   }
 
-  // /** 连接导线 */
-  // connectLine(line: string, kind: PartPinLineMarkKind) {
-  //   const PartPinLineMark = getMarkConstructor('PartPinLineMark');
-  //   const newMark = new PartPinLineMark(this.map, { ...this, line, kind });
-  //   this.map.set(this.position, newMark);
-  //   return newMark;
-  // }
+  /** 连接导线 */
+  connectLine(line: string) {
+    const PartPinLineMark = getMarkConstructor('PartPinLineMark');
+    const newMark = new PartPinLineMark(this.map, { ...this, line });
+    this.map.set(this.position, newMark);
+    return newMark;
+  }
 }

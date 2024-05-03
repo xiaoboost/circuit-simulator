@@ -94,17 +94,6 @@ export class MarkMap extends Map {
 
   /** 移除节点信息 */
   delete(point: PointLike) {
-    const mark = this.get(point);
-
-    if (!mark) {
-      return false;
-    }
-
-    if (!mark.isLine()) {
-      return super.delete(this.toKey(point));
-    }
-
-    // TODO: 移除导线需要另外单独的流程
     return super.delete(this.toKey(point));
   }
 
@@ -154,8 +143,11 @@ export class MarkMap extends Map {
           else if (mark.isLineCross() && !mark.isFullCross) {
             mark.addLine(line);
           }
+          else if (mark.isPartPin()) {
+            mark.connectLine(line);
+          }
           else {
-            throw new Error('导线端点只能出现在其他导线端点和还有空位的交错节点处');
+            throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
           }
         }
         else {
@@ -171,7 +163,7 @@ export class MarkMap extends Map {
             mark.addCoverLine(line);
           }
           else {
-            throw new Error('导线非端点只能途径其余导线的非端点');
+            throw new Error('导线非端点只能途经其余导线的非端点');
           }
         }
         else {
@@ -194,13 +186,58 @@ export class MarkMap extends Map {
     }
   }
 
-  /** 设置器件数据 */
-  setPartMark(part: string, points: Point[]) {
-    for (const point of points) {
-      this.set(point, {
-        kind: MarkKind.Part,
-        part,
-      });
+  /** 移除导线数据 */
+  deleteLineMark(line: string, points: Point[]) {
+    for (let i = 0; i < points.length; i++) {
+      const point = points[i];
+      const lastPoint = points[i - 1];
+      const mark = this.get(point);
+
+      // 运行时距离检查
+      if (process.env.NODE_ENV === 'development' && lastPoint) {
+        if (Math.abs(lastPoint.add(point, -1).product([1, 1])) !== 20) {
+          throw new Error('导线节点距离必须是 20');
+        }
+
+        if (
+          mark &&
+          (
+            (('line' in mark) && mark.line !== line) ||
+            (('lines' in mark) && !mark.lines.includes(line))
+          )
+        ) {
+          throw new Error('删除节点并非指定导线编号');
+        }
+      }
+
+      if (mark) {
+        // 端点
+        if (i === 0 || i === points.length - 1) {
+          if (mark.isLinePoint()) {
+            this.delete(mark.position);
+          }
+          else if (mark.isLineCross()) {
+            mark.deleteLine(line);
+          }
+          else if (mark.isPartPinLine()) {
+            mark.deleteLine();
+          }
+          else {
+            throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
+          }
+        }
+        else {
+          if (mark.isLine()) {
+            this.delete(mark.position);
+          }
+          else if (mark.isLineCover()) {
+            mark.deleteLine(line);
+          }
+          else {
+            throw new Error('删除导线时，非端点只可能有导线本身和交叠节点');
+          }
+        }
+      }
     }
   }
 
@@ -209,13 +246,7 @@ export class MarkMap extends Map {
     const oldMark = this.get(position);
 
     if (oldMark) {
-      if (oldMark.isLinePoint()) {
-        // TODO:
-        oldMark;
-      }
-      else {
-        throw new Error('器件引脚必须放置在`导线端点`上');
-      }
+      throw new Error('器件引脚必须放置在`空位`上');
     }
     else {
       return this.set(position, {
@@ -224,6 +255,23 @@ export class MarkMap extends Map {
         pin,
       });
     }
+  }
+
+  /** 删除器件引脚数据 */
+  deletePartPinMark(point: Point) {
+    const mark = this.get(point);
+
+    if (!mark || (!mark.isPartPinLine() && !mark.isPartPin())) {
+      throw new Error(`当前位置不是器件引脚：[${point[0]}, ${point[1]}]`);
+    }
+
+    if (mark.isPartPin()) {
+      this.delete(point);
+      return;
+    }
+
+    // 删除引脚
+    mark.deletePin();
   }
 
   /** 数据格式化 */

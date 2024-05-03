@@ -35,6 +35,10 @@ export abstract class BaseLineMark extends BaseMark {
     );
   }
 
+  hasLine(line: string) {
+    return this.line === line;
+  }
+
   isConnect(point: Point) {
     return this.connection.has(point);
   }
@@ -43,7 +47,7 @@ export abstract class BaseLineMark extends BaseMark {
     return this.connection.add(point);
   }
 
-  removeConnect(point: Point, line?: string) {
+  deleteConnect(point: Point, line?: string) {
     return this.connection.delete(point);
   }
 

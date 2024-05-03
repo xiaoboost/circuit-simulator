@@ -3,7 +3,7 @@ import { BaseMark } from './base';
 import { BaseLineMark } from './base-line';
 import { Connection } from './connection';
 import type { MarkMap } from '../map';
-import { setClass } from './utils';
+import { setClass, getMarkConstructor } from './utils';
 import { DataWithPosition, MarkKind, LineAndPointMark, MarkStructureWrapper } from './types';
 
 export interface LineCoverData {
@@ -43,6 +43,10 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
     return false;
   }
 
+  hasLine(line: string) {
+    return this.lines.includes(line);
+  }
+
   isConnect(next: Point) {
     return this.connections.some((con) => con.has(next));
   }
@@ -55,8 +59,19 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
     this.getConnection(line).add(point);
   }
 
-  removeConnect(point: Point, line: string) {
+  deleteConnect(point: Point, line: string) {
     this.getConnection(line).delete(point);
+  }
+
+  deleteLine(line: string) {
+    const LineMark = getMarkConstructor('LineMark');
+    const newMark = new LineMark(this.map, {
+      position: this.position,
+      line: this.lines.find((item) => item !== line)!,
+      connection: this.connections.find((item) => item.id !== line)!.toData(),
+    });
+    this.map.set(this.position, newMark);
+    return newMark;
   }
 
   alongLineAndVector(this: LineAndPointMark, vector: PointLike, end?: PointLike) {

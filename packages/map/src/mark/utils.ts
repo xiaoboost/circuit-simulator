@@ -28,10 +28,6 @@ export function getMarkConstructor<T extends keyof MarkConstructorMap>(name: T) 
   return ClassMap[name];
 }
 
-type DataWithKind<T extends MarkKind, Data> = Data & {
-  kind: T;
-};
-
 export function getMarkFromData(map: MarkMap, data: LineStructureData): LineMark;
 export function getMarkFromData(map: MarkMap, data: LinePointStructureData): LinePointMark;
 export function getMarkFromData(map: MarkMap, data: LineCoverStructureData): LineCoverMark;
