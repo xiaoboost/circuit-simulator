@@ -1,16 +1,16 @@
 import { Point } from '@circuit/math';
 import { SearchStatus } from './types';
 import { SearchNodeData } from './point-search';
-import { MarkMap, MarkNodeKind } from '@circuit/map';
+import { MarkMap } from '@circuit/map';
 
 // 工具函数
 // 返回 node 所在器件
 function getPart(map: MarkMap, node: Point) {
   const status = map.get(node);
 
-  if (status?.kind === MarkNodeKind.Part || status?.kind === MarkNodeKind.PartPin) {
-    return status.labels.value!.id;
-  }
+  // if (status?.kind === MarkNodeKind.Part || status?.kind === MarkNodeKind.PartPin) {
+  //   return status.labels.value!.id;
+  // }
 }
 // 返回 node 所在线段
 function getSegment(map: MarkMap, node: Point) {
@@ -20,18 +20,18 @@ function getSegment(map: MarkMap, node: Point) {
     return [];
   }
 
-  const ans = [];
-  for (let i = 0; i < 2; i++) {
-    const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
-    const limit = [
-      data.alongLine(directors[i * 2]),
-      data.alongLine(directors[i * 2 + 1]),
-    ];
+  const ans: number[][] = [];
+  // for (let i = 0; i < 2; i++) {
+  //   const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
+  //   const limit = [
+  //     data.alongLine(directors[i * 2]),
+  //     data.alongLine(directors[i * 2 + 1]),
+  //   ];
 
-    if (!limit[0].position.isEqual(limit[1].position)) {
-      ans.push(limit.map(({ position }) => position));
-    }
-  }
+  //   if (!limit[0].position.isEqual(limit[1].position)) {
+  //     ans.push(limit.map(({ position }) => position));
+  //   }
+  // }
   return ans;
 }
 // node 是否在某线段内
@@ -49,14 +49,14 @@ function nodesDistance(a: Point, b: Point) {
 function isNodeVerticalLine(map: MarkMap, node: SearchNodeData) {
   const status = map.get(node.position);
 
-  if (!status || !status.connections) {
-    return false;
-  }
+  // if (!status || !status.connections) {
+  //   return false;
+  // }
 
-  return status.connections.every(
-    (connect) =>
-      connect.add(node.position, -1).isVertical(node.direction),
-  );
+  // return status.connections.every(
+  //   (connect) =>
+  //     connect.add(node.position, -1).isVertical(node.direction),
+  // );
 }
 
 // 价值估算
@@ -109,41 +109,42 @@ function checkNodeInLineWhenDraw(this: Rules, node: SearchNodeData) {
 // 扩展判定
 // 通用状态
 function isLegalPointGeneral(this: Rules, node: SearchNodeData, pointLimit = 2): boolean {
+  return true;
   const status = this.map.get(node.position);
 
-  // 空节点
-  if (!status) {
-    return true;
-  }
-  // 器件节点
-  else if (status.kind === MarkNodeKind.Part) {
-    return this.excludeParts.includes(status.labels.value!.id);
-  }
-  // 器件节点
-  else if (status.kind === MarkNodeKind.PartPin) {
-    // 距离等于 1 的范围内都可以
-    const part = status.labels.value!.id;
-    return (
-      this.excludeParts.includes(part) ||
-      nodesDistance(node.position, this.end) < pointLimit
-    );
-  }
-  // 导线结点
-  else if (status.kind === MarkNodeKind.LineSpacePoint) {
-    // 排除、或者距离在 1 以内
-    return (
-      this.excludeLines.some((line) => isNodeInLine(node.position, line)) ||
-      nodesDistance(node.position, this.end) < pointLimit
-    );
-  }
-  // 导线
-  else if (this.map.get(node.position)?.isLine) {
-    // 当前节点方向必须和所在导线方向垂直
-    return (isNodeVerticalLine(this.map, node));
-  }
-  else {
-    return true;
-  }
+  // // 空节点
+  // if (!status) {
+  //   return true;
+  // }
+  // // 器件节点
+  // else if (status.kind === MarkNodeKind.Part) {
+  //   return this.excludeParts.includes(status.labels.value!.id);
+  // }
+  // // 器件节点
+  // else if (status.kind === MarkNodeKind.PartPin) {
+  //   // 距离等于 1 的范围内都可以
+  //   const part = status.labels.value!.id;
+  //   return (
+  //     this.excludeParts.includes(part) ||
+  //     nodesDistance(node.position, this.end) < pointLimit
+  //   );
+  // }
+  // // 导线结点
+  // else if (status.kind === MarkNodeKind.LineSpacePoint) {
+  //   // 排除、或者距离在 1 以内
+  //   return (
+  //     this.excludeLines.some((line) => isNodeInLine(node.position, line)) ||
+  //     nodesDistance(node.position, this.end) < pointLimit
+  //   );
+  // }
+  // // 导线
+  // else if (this.map.get(node.position)?.isLine) {
+  //   // 当前节点方向必须和所在导线方向垂直
+  //   return (isNodeVerticalLine(this.map, node));
+  // }
+  // else {
+  //   return true;
+  // }
 }
 // 强制对齐
 function isLegalPointAlign(this: Rules, node: SearchNodeData) {
@@ -181,37 +182,37 @@ export class Rules {
     this.status = status;
     this.map = map;
 
-    // 单点绘制
-    if (status < 20) {
-      // 节点估值
-      this.calValue = calToPoint;
+    // // 单点绘制
+    // if (status < 20) {
+    //   // 节点估值
+    //   this.calValue = calToPoint;
 
-      // 绘制情况下，end 只可能是点，根据终点属性来进一步分类
-      const endData = map.get(this.end);
+    //   // 绘制情况下，end 只可能是点，根据终点属性来进一步分类
+    //   const endData = map.get(this.end);
 
-      if (!endData) {
-        this.isEnd = isEndPoint;
-        this.checkPoint = isLegalPointGeneral;
-      }
-      else if (endData.isLine) {
-        this.endLines.push(...getSegment(this.map, this.end));
-        this.isEnd = checkNodeInLineWhenDraw;
-        this.checkPoint = isLegalPointAlign;
-      }
-      else if (endData.kind === MarkNodeKind.PartPin) {
-        this.isEnd = isEndPoint;
-        this.checkPoint = isLegalPointAlign;
-      }
-      else if (endData.kind === MarkNodeKind.Part) {
-        const partId = getPart(this.map, this.end);
+    //   if (!endData) {
+    //     this.isEnd = isEndPoint;
+    //     this.checkPoint = isLegalPointGeneral;
+    //   }
+    //   else if (endData.isLine) {
+    //     this.endLines.push(...getSegment(this.map, this.end));
+    //     this.isEnd = checkNodeInLineWhenDraw;
+    //     this.checkPoint = isLegalPointAlign;
+    //   }
+    //   else if (endData.kind === MarkNodeKind.PartPin) {
+    //     this.isEnd = isEndPoint;
+    //     this.checkPoint = isLegalPointAlign;
+    //   }
+    //   else if (endData.kind === MarkNodeKind.Part) {
+    //     const partId = getPart(this.map, this.end);
 
-        if (partId) {
-          this.excludeParts.push(partId);
-        };
+    //     if (partId) {
+    //       this.excludeParts.push(partId);
+    //     };
 
-        this.isEnd = isEndPoint;
-        this.checkPoint = isLegalPointGeneral;
-      }
-    }
+    //     this.isEnd = isEndPoint;
+    //     this.checkPoint = isLegalPointGeneral;
+    //   }
+    // }
   }
 }

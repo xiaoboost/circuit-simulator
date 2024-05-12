@@ -6,7 +6,7 @@ import { cursorStyles } from 'src/styles';
 import { ElectronicPoint } from './point';
 import { PartComponent } from './part';
 import { lineStyles, partStyles } from './styles';
-import { MarkNodeKind } from '@circuit/map';
+// import { MarkNodeKind } from '@circuit/map';
 import { DrawEventController } from '@circuit/event';
 import { Sheet, Selection } from 'src/store';
 import { ConstructorParameters, stringifyClass } from '@xiao-ai/utils';
@@ -151,16 +151,16 @@ export class LineComponent extends Line {
       return;
     }
 
-    // 终点被占用
-    if (endData && endData.kind === MarkNodeKind.Part) {
-      finalEnd = (
-        finalEnd
-          .around((node) => !this.map.has(node))
-          .reduce((pre, next) =>
-            endNode.distance(pre) < endNode.distance(next) ? pre : next,
-          )
-      );
-    }
+    // // 终点被占用
+    // if (endData && endData.kind === MarkNodeKind.Part) {
+    //   finalEnd = (
+    //     finalEnd
+    //       .around((node) => !this.map.has(node))
+    //       .reduce((pre, next) =>
+    //         endNode.distance(pre) < endNode.distance(next) ? pre : next,
+    //       )
+    //   );
+    // }
 
     this.sortIndex = undefined;
     this.points[1].size = -1;

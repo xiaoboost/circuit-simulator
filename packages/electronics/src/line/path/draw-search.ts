@@ -1,5 +1,5 @@
 import { Point } from '@circuit/math';
-import { MarkNodeKind } from '@circuit/map';
+// import { MarkNodeKind } from '@circuit/map';
 import { isDef } from '@xiao-ai/utils';
 import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
@@ -31,7 +31,7 @@ export class DrawPathSearcher {
   });
 
   /** 搜索状态 */
-  private status = SearchStatus.DrawSpace;
+  private status = SearchStatus.DrawNormal;
   /** 待搜索的终点列表 */
   private endList: Point[] = [];
   /** 优先出线方向 */
@@ -71,26 +71,26 @@ export class DrawPathSearcher {
     // 终点在空白
     if (!mouseOver) {
       this.endList = endGrid;
-      this.status = SearchStatus.DrawSpace;
+      this.status = SearchStatus.DrawNormal;
     }
     // 终点在导线
     else if (mouseOver.kind === ElectronicKind.Line) {
       const mouseRound = end.round();
       const mouseStatus = line.map.get(mouseRound)!;
 
-      // 导线交错节点或者是空闲节点，则直接对齐
-      if (
-        mouseStatus.kind === MarkNodeKind.LineSpacePoint ||
-        mouseStatus.kind === MarkNodeKind.LineCrossPoint
-      ) {
-        this.status = SearchStatus.DrawAlignPoint;
-        this.endList = [mouseRound];
-      }
-      // 否则选取四方格中在导线上的点
-      else {
-        this.status = SearchStatus.DrawAlignLine;
-        this.endList = endGrid.filter((node) => line.map.get(node)?.isLine);
-      }
+      // // 导线交错节点或者是空闲节点，则直接对齐
+      // if (
+      //   mouseStatus.kind === MarkNodeKind.LineSpacePoint ||
+      //   mouseStatus.kind === MarkNodeKind.LineCrossPoint
+      // ) {
+      //   this.status = SearchStatus.DrawAlignPoint;
+      //   this.endList = [mouseRound];
+      // }
+      // // 否则选取四方格中在导线上的点
+      // else {
+      //   this.status = SearchStatus.DrawAlignLine;
+      //   this.endList = endGrid.filter((node) => line.map.get(node)?.isLine);
+      // }
     }
     // 终点在器件
     else {
@@ -172,9 +172,9 @@ export class DrawPathSearcher {
       const endRoundWay = cache.get(endRound, direction)!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
       const roundSet = this.endList.filter((node) => {
-        return endMapData.connections.has(node)
-          ? line.map.get(node)?.kind !== MarkNodeKind.PartPin
-          : false;
+        // return endMapData.connections.has(node)
+        //   ? line.map.get(node)?.kind !== MarkNodeKind.PartPin
+        //   : false;
       });
 
       if (roundSet.length > 0) {

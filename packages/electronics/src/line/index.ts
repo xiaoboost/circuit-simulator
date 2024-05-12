@@ -3,7 +3,7 @@ import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus, LineStructuredData } from './types';
 import { ElectronicKind, Context } from '../types';
 import { debug } from '@circuit/debug';
-import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
+// import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';
 import { isLine } from '@circuit/shared';
 import { isBoolean, isUndef, delay, ConstructorParameters } from '@xiao-ai/utils';
@@ -181,104 +181,104 @@ export class Line extends Electronic {
 
   /** 设置标志位 */
   setMark() {
-    this.map.setLineMark();
-    const { path, map } = this;
+    // this.map.setLineMark();
+    // const { path, map } = this;
 
-    let last: MarkMapNode | undefined;
-    let current: MarkMapNode | undefined;
+    // let last: MarkMapNode | undefined;
+    // let current: MarkMapNode | undefined;
 
-    for (const point of path.forEachPoint()) {
-      current = map.get(point);
+    // for (const point of path.forEachPoint()) {
+    //   current = map.get(point);
 
-      const index = this.points.findIndex((item) => item.position.isEqual(point));
+    //   const index = this.points.findIndex((item) => item.position.isEqual(point));
 
-      if (!current) {
-        current = map.set({
-          position: point,
-          id: this.id,
-          mark: index,
-        });
-      }
-      else if (current.kind === MarkNodeKind.PartPin) {
-        // 过滤掉所有非器件连接
-        current.labels = current.labels.filter((item) => !isLine(item.id)) as Label;
-        current.labels.add(this.id, index);
-      }
-      else if (current.isLine) {
-        // 过滤掉所有当前器件已经标记的点
-        current.labels = current.labels.filter((item) => item.id !== this.id) as Label;
-        current.labels.add(this.id, index);
-      }
-      else {
-        const info = `Illegal point(${point.join(',')}): ${MarkNodeKind[current.kind]}`;
+    //   if (!current) {
+    //     current = map.set({
+    //       position: point,
+    //       id: this.id,
+    //       mark: index,
+    //     });
+    //   }
+    //   else if (current.kind === MarkNodeKind.PartPin) {
+    //     // 过滤掉所有非器件连接
+    //     current.labels = current.labels.filter((item) => !isLine(item.id)) as Label;
+    //     current.labels.add(this.id, index);
+    //   }
+    //   else if (current.isLine) {
+    //     // 过滤掉所有当前器件已经标记的点
+    //     current.labels = current.labels.filter((item) => item.id !== this.id) as Label;
+    //     current.labels.add(this.id, index);
+    //   }
+    //   else {
+    //     const info = `Illegal point(${point.join(',')}): ${MarkNodeKind[current.kind]}`;
 
-        if (process.env.NODE_ENV === 'development') {
-          debug.point(point, 'red');
-          throw new Error(info);
-        }
-        else {
-          console.error(info);
-          return;
-        }
-      }
+    //     if (process.env.NODE_ENV === 'development') {
+    //       debug.point(point, 'red');
+    //       throw new Error(info);
+    //     }
+    //     else {
+    //       console.error(info);
+    //       return;
+    //     }
+    //   }
 
-      if (last && current) {
-        last.connections.add(current.position);
-        current.connections.add(last.position);
-      }
+    //   if (last && current) {
+    //     last.connections.add(current.position);
+    //     current.connections.add(last.position);
+    //   }
 
-      last = current;
-    }
+    //   last = current;
+    // }
   }
 
   /** 删除标记 */
   deleteMark() {
-    const { id, path, map } = this;
+    // const { id, path, map } = this;
 
-    let lastPoint: Point | undefined;
-    let lastNode: MarkMapNode | undefined;
-    let current: MarkMapNode | undefined;
+    // let lastPoint: Point | undefined;
+    // let lastNode: MarkMapNode | undefined;
+    // let current: MarkMapNode | undefined;
 
-    for (const point of path.forEachPoint()) {
-      current = map.get(point);
+    // for (const point of path.forEachPoint()) {
+    //   current = map.get(point);
 
-      const index = this.points.findIndex((item) => item.position.isEqual(point));
+    //   const index = this.points.findIndex((item) => item.position.isEqual(point));
 
-      if (lastNode) {
-        lastNode.connections.delete(point);
-      }
+    //   if (lastNode) {
+    //     lastNode.connections.delete(point);
+    //   }
 
-      if (current && lastPoint) {
-        current.connections.delete(lastPoint);
-      }
+    //   if (current && lastPoint) {
+    //     current.connections.delete(lastPoint);
+    //   }
 
-      if (!current) {
-        continue;
-      }
+    //   if (!current) {
+    //     continue;
+    //   }
 
-      // 普通点
-      if (
-        current.kind === MarkNodeKind.Line ||
-        current.kind === MarkNodeKind.LineSpacePoint
-      ) {
-        map.delete(point);
-      }
-      // 交错/覆盖节点
-      else if (
-        current.kind === MarkNodeKind.LineCoverPoint ||
-        current.kind === MarkNodeKind.LineCrossPoint ||
-        current.kind === MarkNodeKind.PartPin
-      ) {
-        current.labels.delete(id, index);
+    //   // 普通点
+    //   if (
+    //     current.kind === MarkNodeKind.Line ||
+    //     current.kind === MarkNodeKind.LineSpacePoint
+    //   ) {
+    //     map.delete(point);
+    //   }
+    //   // 交错/覆盖节点
+    //   else if (
+    //     current.kind === MarkNodeKind.LineCoverPoint ||
+    //     current.kind === MarkNodeKind.LineCrossPoint ||
+    //     current.kind === MarkNodeKind.PartPin
+    //   ) {
+    //     current.labels.delete(id, index);
 
-        if (!current.labels.value) {
-          map.delete(point);
-        }
-      }
+    //     if (!current.labels.value) {
+    //       map.delete(point);
+    //     }
+    //   }
 
-      lastPoint = point;
-      lastNode = current;
-    }
+    //   lastPoint = point;
+    //   lastNode = current;
+    // }
   }
 
   /**
@@ -293,123 +293,123 @@ export class Line extends Electronic {
   */
   setConnectionByPath(pin?: LinePin.Start | LinePin.End, concat?: boolean): void;
   setConnectionByPath(pin?: LinePin.Start | LinePin.End | boolean, concat = true) {
-    if (isBoolean(pin)) {
-      this.setConnectionByPath(LinePin.Start, pin);
-      this.setConnectionByPath(LinePin.End, pin);
-      return;
-    }
-    else if (isUndef(pin)) {
-      this.setConnectionByPath(0);
-      this.setConnectionByPath(1);
-      return;
-    }
+    // if (isBoolean(pin)) {
+    //   this.setConnectionByPath(LinePin.Start, pin);
+    //   this.setConnectionByPath(LinePin.End, pin);
+    //   return;
+    // }
+    // else if (isUndef(pin)) {
+    //   this.setConnectionByPath(0);
+    //   this.setConnectionByPath(1);
+    //   return;
+    // }
 
-    const index = pin === LinePin.Start ? 0 : 1;
-    const node = this.path.get(-1 * index).round();
-    const status = this.map.get(node);
+    // const index = pin === LinePin.Start ? 0 : 1;
+    // const node = this.path.get(-1 * index).round();
+    // const status = this.map.get(node);
 
-    // 端点为空
-    if (!status) {
-      this.setConnection(index);
-    }
-    // 端点为器件引脚
-    else if (status.kind === MarkNodeKind.PartPin) {
-      const label = status.labels.value!;
-      const part = this.find<Part>(label.id)!;
-      const mark = label.mark!;
+    // // 端点为空
+    // if (!status) {
+    //   this.setConnection(index);
+    // }
+    // // 端点为器件引脚
+    // else if (status.kind === MarkNodeKind.PartPin) {
+    //   const label = status.labels.value!;
+    //   const part = this.find<Part>(label.id)!;
+    //   const mark = label.mark!;
 
-      this.setDeepConnection(index, {
-        id: part.id,
-        mark: mark,
-      });
-    }
-    // 端点在导线上
-    else if (status.kind === MarkNodeKind.Line) {
-      if (this.hasConnection(status.labels.value!.id, status.labels.value!.mark)) {
-        /**
-         * 因为`setConnectByPin`函数运行之后可能还有后续动作
-         * 所以这里需要等待一个更新周期
-         */
-        delay().then(() => this.delete());
-      }
-      else {
-        this.split(status.labels.value!.id, pin);
-      }
-    }
-    // 端点为导线空引脚
-    else if (status.kind === MarkNodeKind.LineSpacePoint) {
-      const { id, mark } = status.labels.value!;
+    //   this.setDeepConnection(index, {
+    //     id: part.id,
+    //     mark: mark,
+    //   });
+    // }
+    // // 端点在导线上
+    // else if (status.kind === MarkNodeKind.Line) {
+    //   if (this.hasConnection(status.labels.value!.id, status.labels.value!.mark)) {
+    //     /**
+    //      * 因为`setConnectByPin`函数运行之后可能还有后续动作
+    //      * 所以这里需要等待一个更新周期
+    //      */
+    //     delay().then(() => this.delete());
+    //   }
+    //   else {
+    //     this.split(status.labels.value!.id, pin);
+    //   }
+    // }
+    // // 端点为导线空引脚
+    // else if (status.kind === MarkNodeKind.LineSpacePoint) {
+    //   const { id, mark } = status.labels.value!;
 
-      // 允许合并
-      if (concat) {
-        this.concat(id);
-      }
-      // 不允许合并，则该点变更为交错节点
-      else {
-        const line = this.find<Line>(id)!;
+    //   // 允许合并
+    //   if (concat) {
+    //     this.concat(id);
+    //   }
+    //   // 不允许合并，则该点变更为交错节点
+    //   else {
+    //     const line = this.find<Line>(id)!;
 
-        this.setDeepConnection(index, {
-          id: line.id,
-          mark: mark,
-        });
+    //     this.setDeepConnection(index, {
+    //       id: line.id,
+    //       mark: mark,
+    //     });
 
-        line.updateView();
-        this.updateView();
-      }
-    }
-    // 端点在交错节点
-    else if (status.kind === MarkNodeKind.LineCrossPoint) {
-      // 排除当前导线节点
-      const restLabels = status.labels.filter((label) => {
-        return label.id !== this.id || label.mark !== index;
-      });
+    //     line.updateView();
+    //     this.updateView();
+    //   }
+    // }
+    // // 端点在交错节点
+    // else if (status.kind === MarkNodeKind.LineCrossPoint) {
+    //   // 排除当前导线节点
+    //   const restLabels = status.labels.filter((label) => {
+    //     return label.id !== this.id || label.mark !== index;
+    //   });
 
-      // 只有一个导线
-      if (concat && restLabels.length === 1) {
-        this.concat(restLabels[0].id);
-      }
-      else {
-        const allLabels = status.labels.toData().concat({
-          id: this.id,
-          mark: pin,
-        });
+    //   // 只有一个导线
+    //   if (concat && restLabels.length === 1) {
+    //     this.concat(restLabels[0].id);
+    //   }
+    //   else {
+    //     const allLabels = status.labels.toData().concat({
+    //       id: this.id,
+    //       mark: pin,
+    //     });
 
-        status.labels.forEach(({ id, mark }) => {
-          const line = this.find<Line>(id);
+    //     status.labels.forEach(({ id, mark }) => {
+    //       const line = this.find<Line>(id);
 
-          if (!line) {
-            throw new Error(`导线不存在：${id}`);
-          }
+    //       if (!line) {
+    //         throw new Error(`导线不存在：${id}`);
+    //       }
 
-          const lineConnection = allLabels.filter((item) => item.id !== id || item.mark !== mark);
-          line.setDeepConnection(mark, lineConnection);
-        });
-      }
-    }
+    //       const lineConnection = allLabels.filter((item) => item.id !== id || item.mark !== mark);
+    //       line.setDeepConnection(mark, lineConnection);
+    //     });
+    //   }
+    // }
   }
 
   /** 导线反转 */
   reverse() {
-    const oldConnections = this.connections.map((item) => item.toData());
+    // const oldConnections = this.connections.map((item) => item.toData());
 
-    this.setDeepConnection(0, oldConnections[1]);
-    this.setDeepConnection(1, oldConnections[0]);
-    this.path.reverse();
+    // this.setDeepConnection(0, oldConnections[1]);
+    // this.setDeepConnection(1, oldConnections[0]);
+    // this.path.reverse();
 
-    // [原终点, 原起点]
-    const points = [this.path[0], this.path.get(-1)];
+    // // [原终点, 原起点]
+    // const points = [this.path[0], this.path.get(-1)];
 
-    // 变更端点的数据记录
-    for (let i = 0; i < 2; i++) {
-      const data = this.map.get(points[i]);
+    // // 变更端点的数据记录
+    // for (let i = 0; i < 2; i++) {
+    //   const data = this.map.get(points[i]);
 
-      if (data) {
-        data.labels.delete(this.id, 1 - i);
-        data.labels.add(this.id, i);
-      }
-    }
+    //   if (data) {
+    //     data.labels.delete(this.id, 1 - i);
+    //     data.labels.add(this.id, i);
+    //   }
+    // }
 
-    this.updatePoints();
+    // this.updatePoints();
   }
 
   /** 输出数据 */
