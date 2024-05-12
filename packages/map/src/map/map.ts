@@ -241,37 +241,46 @@ export class MarkMap extends Map {
     }
   }
 
-  /** 设置器件引脚数据 */
-  setPartPinMark(part: string, pin: number, position: Point) {
+  /** 设置器件数据 */
+  setPartMark(position: Point, part: string, pin?: number, ) {
     const oldMark = this.get(position);
 
     if (oldMark) {
       throw new Error('器件引脚必须放置在`空位`上');
     }
-    else {
+    else if (typeof pin === 'number') {
       return this.set(position, {
         kind: MarkKind.PartPin,
         part,
         pin,
       });
     }
+    else {
+      return this.set(position, {
+        kind: MarkKind.Part,
+        part,
+      });
+    }
   }
 
   /** 删除器件引脚数据 */
-  deletePartPinMark(point: Point) {
+  deletePartMark(point: Point) {
     const mark = this.get(point);
 
-    if (!mark || (!mark.isPartPinLine() && !mark.isPartPin())) {
-      throw new Error(`当前位置不是器件引脚：[${point[0]}, ${point[1]}]`);
-    }
-
-    if (mark.isPartPin()) {
-      this.delete(point);
+    if (!mark) {
       return;
     }
 
-    // 删除引脚
-    mark.deletePin();
+    if (mark.isPartPin() || mark.isPart()) {
+      this.delete(point);
+      return;
+    }
+    else if (mark.isPartPinLine()) {
+      mark.deletePin();
+    }
+    else {
+      throw new Error(`当前位置不是器件：[${point[0]}, ${point[1]}]`);
+    }
   }
 
   /** 数据格式化 */

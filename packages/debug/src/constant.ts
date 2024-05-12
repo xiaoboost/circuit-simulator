@@ -1,13 +1,13 @@
-import type { MarkNodeKind } from '@circuit/map';
+import type { MarkKind } from '@circuit/map';
 
 export const NS = 'http://www.w3.org/2000/svg';
 export const elIdName = 'map-debugger';
-export const nodeColor: Record<keyof typeof MarkNodeKind, string> = {
+export const nodeColor: Record<keyof typeof MarkKind, string> = {
   Part: 'black',
   PartPin: 'red',
+  PartPinLine: 'pink',
   Line: 'green',
-  LineSpacePoint: 'orange',
-  LineCrossPoint: 'blue',
-  LineCoverPoint: 'yellow',
-  Space: '#fff',
+  LinePoint: 'orange',
+  LineCross: 'blue',
+  LineCover: 'yellow',
 };

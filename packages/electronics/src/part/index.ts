@@ -164,29 +164,22 @@ export class Part extends Electronic {
   /** 设置标志位 */
   setMark() {
     for (const point of this.padding()) {
-      this.map.set({
-        id: this.id,
-        position: point,
-      });
+      this.map.setPartMark(point, this.id);
     }
 
     for (let i = 0; i < this.points.length; i++) {
-      this.map.set({
-        id: this.id,
-        mark: i,
-        position: this.points[i].position.add(this.position),
-      });
+      this.map.setPartMark(this.points[i].position.add(this.position), this.id, i);
     }
   }
 
   /** 删除标记 */
   deleteMark() {
     for (const point of this.padding()) {
-      this.map.delete(point);
+      this.map.deletePartMark(point);
     }
 
     for (const point of this.points) {
-      this.map.delete(point.position.add(this.position));
+      this.map.deletePartMark(point.position);
     }
   }
 
@@ -194,7 +187,6 @@ export class Part extends Electronic {
   isOccupied(location = this.position) {
     return false;
   }
-
 
   /** 输出数据 */
   toData(): Required<PartData> {

@@ -181,6 +181,7 @@ export class Line extends Electronic {
 
   /** 设置标志位 */
   setMark() {
+    this.map.setLineMark();
     const { path, map } = this;
 
     let last: MarkMapNode | undefined;

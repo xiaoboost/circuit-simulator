@@ -359,7 +359,7 @@ test('器件引脚连接导线', ({ deepEqual }) => {
   const startNode = [100, 100];
   const linePath = [startNode, [120, 100], [140, 100], [140, 120]].map(Point.from);
 
-  map.setPartPinMark(part, pin, Point.from(startNode));
+  map.setPartMark(Point.from(startNode), part, pin);
   map.setLineMark(line, linePath);
 
   deepEqual(map.toData(), [
@@ -535,7 +535,7 @@ test('引脚连接导线，删除引脚', ({ deepEqual }) => {
   const startNode = [100, 100];
   const linePath = [startNode, [120, 100], [140, 100], [140, 120]].map(Point.from);
 
-  map.setPartPinMark(part, pin, Point.from(startNode));
+  map.setPartMark(Point.from(startNode), part, pin);
   map.setLineMark(line, linePath);
 
   deepEqual(map.toData(), [
@@ -567,7 +567,7 @@ test('引脚连接导线，删除引脚', ({ deepEqual }) => {
     },
   ]);
 
-  map.deletePartPinMark(Point.from(startNode));
+  map.deletePartMark(Point.from(startNode));
 
   deepEqual(map.toData(), [
     {

@@ -1,7 +1,7 @@
 import { Rules } from './search-rules';
 import { LinePath } from './line-path';
 import { Cache } from './cache';
-import { SearchStatus } from './constant';
+import { SearchStatus } from './types';
 import { debug } from '@circuit/debug';
 import { remove, AnyObject } from '@xiao-ai/utils';
 import { Point, Rotate, RotateMatrix } from '@circuit/math';

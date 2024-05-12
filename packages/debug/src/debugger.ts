@@ -1,7 +1,7 @@
 import { NS, elIdName, nodeColor } from './constant';
 
 import type { PointLike } from '@circuit/math';
-import type { MarkNodeLabel } from '@circuit/map';
+import type { Mark } from '@circuit/map';
 
 class Debugger {
   /**
@@ -66,7 +66,8 @@ class Debugger {
 
     const lines: any[] = (window as any)._lines ?? [];
     const parts: any[] = (window as any)._parts ?? [];
-    const getLabels = (labels: MarkNodeLabel[]) => {
+    const getLabels = (labels: any[]) => {
+      debugger;
       return labels.map((label) => {
         return `${label.id}-${label.mark}`;
       }).join(', ');

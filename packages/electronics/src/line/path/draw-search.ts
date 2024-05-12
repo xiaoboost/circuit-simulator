@@ -5,7 +5,7 @@ import { LinePath } from './line-path';
 import { pointSearch } from './point-search';
 import { Cache } from './cache';
 import { Rules } from './search-rules';
-import { SearchStatus } from './constant';
+import { SearchStatus } from './types';
 import { ElectronicKind } from '../../types';
 
 import type { Line } from '../';

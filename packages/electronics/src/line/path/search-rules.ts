@@ -1,5 +1,5 @@
 import { Point } from '@circuit/math';
-import { SearchStatus } from './constant';
+import { SearchStatus } from './types';
 import { SearchNodeData } from './point-search';
 import { MarkMap, MarkNodeKind } from '@circuit/map';
 
