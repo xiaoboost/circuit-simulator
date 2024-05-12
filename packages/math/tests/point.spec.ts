@@ -2,6 +2,8 @@ import test from 'ava';
 
 import { Point, Matrix, toRound } from '../src';
 
+const formatPointList = (points: Iterable<Point>) => Array.from(points).map((node) => node.join());
+
 test('创建节点', ({ deepEqual }) => {
   deepEqual(Point.from(5), new Point(5, 5));
   deepEqual(Point.from([0, 0]), new Point(0, 0));
@@ -244,15 +246,30 @@ test('around()', ({ deepEqual }) => {
         (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
   );
 
-  ans = point.around(distanceLimit(-1), 5).map((node) => node.join());
+  ans = formatPointList(point.around(distanceLimit(-1), 5));
   deepEqual(ans, ['5,-4']);
 
-  ans = point.around(distanceLimit(0), 5).map((node) => node.join());
+  ans = formatPointList(point.around(distanceLimit(0), 5));
   deepEqual(ans, ['5,1', '5,-9', '10,-4', '0,-4']);
 
-  ans = point.around(distanceLimit(10), 5).map((node) => node.join());
+  ans = formatPointList(point.around(distanceLimit(10), 5));
   deepEqual(ans, ['5,11', '5,-19', '20,-4', '-10,-4']);
 
-  ans = point.around(distanceLimit(10)).map((node) => node.join());
+  ans = formatPointList(point.around(distanceLimit(10)));
   deepEqual(ans, ['5,7', '5,-15', '16,-4', '-6,-4']);
+});
+
+test('toDestination()', ({ deepEqual }) => {
+  const start = new Point(5, 0);
+  const end = new Point(8, 0);
+
+  deepEqual(
+    formatPointList(start.toDestination(end, 1)),
+    ['6,0', '7,0', '8,0'],
+  );
+
+  deepEqual(
+    formatPointList(start.toDestination(end, 2)),
+    ['7,0', '9,0'],
+  );
 });

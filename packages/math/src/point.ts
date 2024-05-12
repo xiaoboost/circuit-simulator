@@ -1,7 +1,7 @@
 import { Matrix } from './matrix';
 import { isNumber } from '@xiao-ai/utils';
 
-export type PointLike = number[] | Point;
+export type PointLike = number[] | [number, number] | Point;
 export type PointInput = PointLike | number;
 
 /** 方向 */
@@ -396,6 +396,29 @@ export class Point {
       (this[0] === 0 && this[1] !== 0) ||
       (this[0] !== 0 && this[1] === 0)
     );
+  }
+  /**
+   * 向着终点生成所有沿途节点
+   *
+   * @description 不包含当前节点
+   * @description 若终点等于当前节点，则只迭代终点这一次
+   */
+  *toDestination(end: PointLike, factor: number): Generator<Point, void, void> {
+    if (this.isEqual(end)) {
+      yield this;
+      return;
+    }
+
+    const endPoint = Point.from(end);
+    const vector = Point.from(end).add(this, -1).toUnit(factor);
+    let current = this.add(vector);
+
+    while (!current.isEqual(end) && endPoint.add(current, -1).isSameDirection(vector)) {
+      yield current;
+      current = current.add(vector);
+    }
+
+    yield current;
   }
   /**
    * 以 this 为中心点，过滤距离中心点距离为 factor 的所有点，返回使 predicate 输出 true 的点的集合
