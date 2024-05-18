@@ -44,6 +44,10 @@ export class Connection extends Array<ConnectionData> {
     }
   }
 
+  get isSpace() {
+    return this.length === 0;
+  }
+
   has(data: ConnectionData) {
     return Boolean(this.find((item) => this.#isEqual(item, data)));
   }

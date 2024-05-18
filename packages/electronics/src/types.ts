@@ -2,7 +2,7 @@ import type { Point } from '@circuit/math';
 import type { ConnectionStatus } from './utils';
 import type { MarkMap } from '@circuit/map';
 import type { Part } from './part/part';
-import type { Line } from './line';
+import type { Line } from './line/line';
 
 export { ElectronicKind } from '@circuit/shared';
 

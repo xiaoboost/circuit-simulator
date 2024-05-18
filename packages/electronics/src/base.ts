@@ -5,7 +5,7 @@ import { isNumber, remove, concat } from '@xiao-ai/utils';
 import { MarkMap } from '@circuit/map';
 
 import type { Part } from './part/part';
-import type { Line } from './line';
+import type { Line } from './line/line';
 
 /** 全局记号图纸 */
 const globalMap = new MarkMap();

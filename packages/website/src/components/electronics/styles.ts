@@ -29,18 +29,6 @@ export const partStyles = createStyles({
   partFocus: {
     position: 'relative',
   },
-  [Direction[Direction.Top]]: {
-    textAnchor: 'middle',
-  },
-  [Direction[Direction.Bottom]]: {
-    textAnchor: 'middle',
-  },
-  [Direction[Direction.Left]]: {
-    textAnchor: 'end',
-  },
-  [Direction[Direction.Right]]: {
-    textAnchor: 'start',
-  },
 });
 
 export const lineStyles = createStyles({

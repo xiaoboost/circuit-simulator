@@ -3,7 +3,7 @@ import React from 'react';
 import { tabStyle } from './styles';
 import { TabStatus } from '../constant';
 import { DarkGreen } from 'src/styles';
-import { Solver } from 'src/store';
+// import { Solver } from 'src/store';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { isUndef, stringifyClass } from '@xiao-ai/utils';
 import { Tooltip as TooltipOrigin, Button } from 'antd';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 /** 是否保存上次仿真结果 */
-const hasSolverResult = Solver.data.computed((data) => data.times.length > 0);
+// const hasSolverResult = Solver.data.computed((data) => data.times.length > 0);
 
 const buttons = [
   {
@@ -58,7 +58,7 @@ export function Tabs(props: Props) {
   const progress = props.runProgress ?? 0;
   const status = props.status ?? TabStatus.None;
   const isRun = progress > 0 && status === TabStatus.Run;
-  const [hasLast] = useWatcher(hasSolverResult);
+  // const [hasLast] = useWatcher(hasSolverResult);
   const clickBtn = (val: TabStatus) => {
     if (props.onChange) {
       props.onChange(val);
@@ -85,7 +85,7 @@ export function Tabs(props: Props) {
       </Button>
     </Tooltip>
 
-    {buttons.map((btn, i) => (
+    {/* {buttons.map((btn, i) => (
       <Button
         key={i}
         type='text'
@@ -97,6 +97,6 @@ export function Tabs(props: Props) {
       >
         {btn.icon}
       </Button>
-    ))}
+    ))} */}
   </section>
 }

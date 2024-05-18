@@ -1,5 +1,5 @@
 import type { Matrix } from '@circuit/math';
-import type { PartStructuredData, LineStructuredData } from '@circuit/electronics';
+import type { PartStructuredData } from '@circuit/electronics';
 import type { CircuitSolverMatrix, IterativeEquation } from '../parts';
 
 /** 观测器 */
@@ -23,7 +23,8 @@ export interface SolveOption {
   /** 所有器件和导线 */
   parts: PartStructuredData[];
   /** 所有导线 */
-  lines: LineStructuredData[];
+  // lines: LineStructuredData[];
+  lines: any[];
   /** 终止时间 */
   end: string;
   /** 步进时间 */

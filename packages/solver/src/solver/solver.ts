@@ -8,9 +8,11 @@ import { ElectronicKind } from '@circuit/shared';
 
 import type {
   PartStructuredData as Part,
-  LineStructuredData as Line,
+  // LineStructuredData as Line,
   ConnectionData,
 } from '@circuit/electronics';
+
+type Line = any;
 
 import {
   UpdateWrapper,
@@ -86,7 +88,7 @@ export class Solver {
 
   /** 用 id 搜索器件或导线 */
   private find<T extends Part | Line>(id: string) {
-    return (this.parts as T[]).concat(this.lines as T[]).find((item) => item.id === id);
+    // return (this.parts as T[]).concat(this.lines as T[]).find((item) => item.id === id);
   }
 
   /** 用 id 搜索运行时器件 */
@@ -104,34 +106,34 @@ export class Solver {
     /** 当前节点连接的所有器件引脚 */
     const connections: ConnectionData[] = [];
 
-    // 搜索节点
-    while (temp.length > 0) {
-      const current = temp.pop()!;
-      const currentConnections = concat(current.connections, (item) => item);
+    // // 搜索节点
+    // while (temp.length > 0) {
+    //   const current = temp.pop()!;
+    //   const currentConnections = concat(current.connections, (item) => item);
 
-      // 记录当前导线
-      lines.push(current);
+    //   // 记录当前导线
+    //   lines.push(current);
 
-      // 循环迭代当前导线所有的连接
-      for (const pin of currentConnections) {
-        const item = this.find(pin.id);
+    //   // 循环迭代当前导线所有的连接
+    //   for (const pin of currentConnections) {
+    //     const item = this.find(pin.id);
 
-        if (!item) {
-          continue;
-        }
-        else if (item.kind === ElectronicKind.Line) {
-          if (
-            !temp.find((li) => li.id === item.id) &&
-            !lines.find((li) => li.id === item.id)
-          ) {
-            temp.push(item as Line);
-          }
-        }
-        else {
-          connections.push({ ...pin });
-        }
-      }
-    }
+    //     if (!item) {
+    //       continue;
+    //     }
+    //     else if (item.kind === ElectronicKind.Line) {
+    //       if (
+    //         !temp.find((li) => li.id === item.id) &&
+    //         !lines.find((li) => li.id === item.id)
+    //       ) {
+    //         temp.push(item as Line);
+    //       }
+    //     }
+    //     else {
+    //       connections.push({ ...pin });
+    //     }
+    //   }
+    // }
 
     return { lines, connections };
   }
@@ -357,29 +359,29 @@ export class Solver {
       }
     };
 
-    // 电流表
-    // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
-    if (part && part.kind === ElectronicKind.CurrentMeter) {
-      // 支路器件连接的导线
-      const connectionLine = this.find<Line>(part.connections[mark]!.id)!;
-      // 搜索电流表出口所连的所有器件
-      const { connections } = this.getConnectionByLine(connectionLine);
-      // 解析为器件（支路）编号，并排除掉其本身以及无效支路
-      const numbers = connections
-        .filter((pin) => pin.id !== id || pin.mark !== mark)
-        .map((pin) => findBranch(pin.id, pin.mark))
-        .reduce((ans, item) => ans.concat(item), []);
+    // // 电流表
+    // // 因为电流表在电路中实际体现出来是短路（引脚节点是同一个编号），所以必须从导线搜索原始连接
+    // if (part && part.kind === ElectronicKind.CurrentMeter) {
+    //   // 支路器件连接的导线
+    //   const connectionLine = this.find<Line>(part.connections[mark]!.id)!;
+    //   // 搜索电流表出口所连的所有器件
+    //   const { connections } = this.getConnectionByLine(connectionLine);
+    //   // 解析为器件（支路）编号，并排除掉其本身以及无效支路
+    //   const numbers = connections
+    //     .filter((pin) => pin.id !== id || pin.mark !== mark)
+    //     .map((pin) => findBranch(pin.id, pin.mark))
+    //     .reduce((ans, item) => ans.concat(item), []);
 
-      for (const branch of numbers) {
-        matrix.set(0, branch, 1);
-      }
-    }
-    // 非电流表器件直接取其本身
-    else {
-      for (const branch of findBranch(id, mark)) {
-        matrix.set(0, branch, 1);
-      }
-    }
+    //   for (const branch of numbers) {
+    //     matrix.set(0, branch, 1);
+    //   }
+    // }
+    // // 非电流表器件直接取其本身
+    // else {
+    //   for (const branch of findBranch(id, mark)) {
+    //     matrix.set(0, branch, 1);
+    //   }
+    // }
 
     return matrix;
   }

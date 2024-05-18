@@ -3,8 +3,8 @@ import React from 'react';
 import { Tooltip } from 'antd';
 import { part } from './styles';
 import { Panel } from './components/panel';
-import { PartComponent } from 'src/components/electronics';
-import { Electronics, ElectronicPrototype, ElectronicKind } from '@circuit/electronics';
+import { Sheet } from '../../store';
+import { Electronics, ElectronicPrototype, ElectronicKind, Part } from '@circuit/electronics';
 
 interface Category {
   name: string;
@@ -72,7 +72,7 @@ function PartShape({ shape, kind }: ElectronicPrototype) {
 
 export function AddPart() {
   const create = (kind: ElectronicKind) => {
-    new PartComponent(kind).create();
+    Sheet.parts.setData(Sheet.parts.data.concat(new Part(kind)));
   };
 
   return (
@@ -85,7 +85,7 @@ export function AddPart() {
               <Tooltip key={i} placement='top' title={ Electronics[kind].introduction } destroyTooltipOnHide>
                 <span
                   className={part.item}
-                  onClick={() => create(kind)}>
+                  onMouseDown={() => create(kind)}>
                   <svg x="0px" y="0px" viewBox="0 0 80 80">
                     <PartShape {...Electronics[kind]} />
                   </svg>

@@ -1,8 +1,8 @@
 import type { SimulationConfig } from 'src/components/side-menu';
-import type { PartData, LineData } from '@circuit/electronics';
+import type { PartData } from '@circuit/electronics';
 
 /** 器件数据 */
-export type ElectronicData = (PartData | LineData)[];
+export type ElectronicData = (PartData | any)[];
 
 /** 示波器设置 */
 export type OscilloscopeData = string[][];

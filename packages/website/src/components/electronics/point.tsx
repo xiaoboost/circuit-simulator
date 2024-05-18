@@ -3,20 +3,23 @@ import React from 'react';
 import { useWatcher } from '@xiao-ai/utils/use';
 import { mapState } from '../drawing-sheet/map';
 import { pointStyles } from './styles';
-import { PointKind } from './constant';
+import { ElectronicPointKind } from './types';
 import { useState, useRef, useEffect } from 'react';
-import { MouseFocusClassName, ConnectionStatus } from '@circuit/electronics';
+import { MouseFocusClassName } from '@circuit/electronics';
 import { Point } from '@circuit/math';
 
-interface Props {
-  kind: PointKind;
-  status: ConnectionStatus;
+export interface ElectronicPointProps {
+  /** 节点状态 */
+  kind: ElectronicPointKind;
+  /** 节点相对于图纸原点位置 */
   position: Point;
+  /** 节点半径 */
   size?: number;
+  /** 点击节点 */
   onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
-export function ElectronicPoint(props: Props) {
+export function ElectronicPoint(props: ElectronicPointProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
   const [{ zoom }] = useWatcher(mapState);
@@ -24,8 +27,12 @@ export function ElectronicPoint(props: Props) {
   const [actual, setActual] = useState(0);
   const [animateTo, setAnimateTo] = useState(0);
   const [animateFrom, setAnimateFrom] = useState(0);
-
-  const size = props.size ?? -1;
+  const {
+    kind,
+    position,
+    size = -1,
+    onMouseDown
+  } = props;
 
   function setAnimate() {
     if (!circle.current || !animate.current) {
@@ -53,34 +60,34 @@ export function ElectronicPoint(props: Props) {
   function getCircleStyle() {
     const data: React.SVGProps<SVGCircleElement> = {};
 
-    if (props.kind === PointKind.Part) {
+    if (kind === ElectronicPointKind.PartPin || kind === ElectronicPointKind.PartPinLine) {
       data.className = pointStyles.solidCircle;
     }
-    else {
-      data.className = props.status === ConnectionStatus.Space
-        ? pointStyles.dashCircle
-        : pointStyles.solidCircle;
-    }
+    // else {
+    //   data.className = kind === ConnectionStatus.Space
+    //     ? pointStyles.dashCircle
+    //     : pointStyles.solidCircle;
+    // }
 
     return data;
   }
 
   function getSize(hover: boolean) {
-    if (props.kind === PointKind.Part) {
-      return props.status === ConnectionStatus.Space
-        ? hover ? 5 : 0
-        : 2;
+    if (kind === ElectronicPointKind.PartPin) {
+      return hover ? 5: 0;
     }
+    else if (kind === ElectronicPointKind.PartPinLine) {
+      return 2;
+    }
+    else if (kind === ElectronicPointKind.Line) {
+      return hover ? 8 : 4;
+    }
+    else if (kind === ElectronicPointKind.LineCross) {
+      return hover ? 6 : 2;
+    }
+    // TODO: 交叠节点
     else {
-      if (props.status === ConnectionStatus.Space) {
-        return hover ? 8 : 4;
-      }
-      else if (props.status === ConnectionStatus.Line) {
-        return hover ? 6 : 2;
-      }
-      else {
-        return 2;
-      }
+      return 2;
     }
   }
 
@@ -89,11 +96,11 @@ export function ElectronicPoint(props: Props) {
   }, [size, inner]);
 
   useEffect(() => setAnimate(), [actual]);
-  useEffect(() => onMouseLeave(), [props.status, props.kind]);
+  useEffect(() => onMouseLeave(), [kind]);
 
   return (
     <g
-      transform={`translate(${props.position.join()})`}
+      transform={`translate(${position.join()})`}
       className={pointStyles.point}
     >
       <circle
@@ -123,7 +130,7 @@ export function ElectronicPoint(props: Props) {
         className={MouseFocusClassName}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
-        onMouseDown={props.onMouseDown}
+        onMouseDown={onMouseDown}
       />
     </g>
   );

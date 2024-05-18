@@ -3,31 +3,31 @@ import { local } from '@xiao-ai/utils/web';
 import { Watcher, delay } from '@xiao-ai/utils';
 import { CircuitDataKey } from './constant';
 import { CircuitData, ElectronicData } from './types';
-import { PartData, LineData } from '@circuit/electronics';
-import { PartComponent, LineComponent } from 'src/components/electronics';
+import { Part } from '@circuit/electronics';
+// import { PartComponent, LineComponent } from 'src/components/electronics';
 import { end, step, oscilloscopes } from './config';
 
 /** 所有器件 */
-export const parts = new Watcher<PartComponent[]>([]);
+export const parts = new Watcher<Part[]>([]);
 /** 所有导线 */
-export const lines = new Watcher<LineComponent[]>([]);
+export const lines = new Watcher<any[]>([]);
 
 /** 加载图纸数据 */
 export function loadSheet(data: ElectronicData) {
-  data
-    .filter((item) => item.kind !== 'Line')
-    .forEach((item) => {
-      const part = new PartComponent(item as PartData);
-      part.setMark();
-    });
+  // data
+  //   .filter((item) => item.kind !== 'Line')
+  //   .forEach((item) => {
+  //     const part = new PartComponent(item as PartData);
+  //     part.setMark();
+  //   });
 
-  data
-    .filter((item) => item.kind === 'Line')
-    .forEach((item) => {
-      const line = new LineComponent((item as LineData).path);
-      line.setConnectionByPath(false);
-      line.setMark();
-    });
+  // data
+  //   .filter((item) => item.kind === 'Line')
+  //   .forEach((item) => {
+  //     const line = new LineComponent((item as LineData).path);
+  //     line.setConnectionByPath(false);
+  //     line.setMark();
+  //   });
 }
 
 /** 加载网站数据 */

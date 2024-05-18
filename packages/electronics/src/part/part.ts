@@ -172,7 +172,7 @@ export class Part extends Electronic {
    * @param {Point} movement 当前元件坐标偏移量
    */
   isOccupied(movement = Point.from([0, 0])) {
-    const { id, map, points } = this;
+    const { map, points } = this;
 
     for (const point of this.#getPaddingPoint()) {
       if (map.has(point.add(movement))) {
@@ -180,7 +180,7 @@ export class Part extends Electronic {
       }
     }
 
-    for (const { position: point } of this.points) {
+    for (const { position: point } of points) {
       if (map.has(point.add(movement))) {
         return true;
       }

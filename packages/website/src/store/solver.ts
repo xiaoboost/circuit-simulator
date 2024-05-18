@@ -1,5 +1,5 @@
 import { Watcher } from '@xiao-ai/utils';
-import { SolveOption, SolverResult } from '@circuit/solver';
+// import { SolveOption, SolverResult } from '@circuit/solver';
 import { WorkerMainServer } from '@circuit/worker';
 
 import { parts, lines } from './sheet';
@@ -8,14 +8,14 @@ import { SolveEvent } from './constant';
 
 // import SolverWorker from './solver.worker.ts';
 
-/** 电路数据 */
-export type SolverData = SolverResult;
+// /** 电路数据 */
+// export type SolverData = SolverResult;
 
-/** 上次模拟结果 */
-export const data = new Watcher<SolverResult>({
-  meters: [],
-  times: [],
-});
+// /** 上次模拟结果 */
+// export const data = new Watcher<SolverResult>({
+//   meters: [],
+//   times: [],
+// });
 
 /** 求解子进程 */
 // const server = new WorkerMainServer(SolverWorker);

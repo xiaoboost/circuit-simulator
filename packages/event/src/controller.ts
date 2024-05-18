@@ -1,4 +1,3 @@
-
 import { delay, isFunc, ChannelData } from '@xiao-ai/utils';
 import { MouseButtons, supportsPassive, addClassName } from '@xiao-ai/utils/web';
 import { current, sheetEl, setCurrent } from './store';
@@ -13,6 +12,10 @@ import {
 
 /** 绘图事件控制器 */
 export class DrawEventController {
+  static create() {
+    return new DrawEventController();
+  }
+
   /** 是否开始 */
   isStart = false;
   /** 事件数据 */
@@ -56,8 +59,18 @@ export class DrawEventController {
 
     if (sheetEl) {
       sheetEl.setAttribute('class', className);
-      sheetEl.style.cursor = '';
+      this.setCursor('');
     }
+  }
+
+  setCursor(name: string) {
+    this.cursor = name;
+
+    if (sheetEl) {
+      sheetEl.style.cursor = name;
+    }
+
+    return this;
   }
 
   setClassName(input: ClassNameEventInput) {
