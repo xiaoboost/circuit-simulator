@@ -12,12 +12,31 @@ export interface PartData {
   params?: string[];
 }
 
+/**
+ * 边距
+ *
+ * @description 上右下左
+ */
+export type Margin = readonly [number, number, number, number];
+/**
+ * 边距顶点
+ *
+ * @description 左上角开始，顺时针
+ */
+export type MarginVertex = readonly [Point, Point, Point, Point];
+
 /** 器件结构化数据 */
 export interface PartStructuredData {
   id: string;
   kind: ElectronicKind;
   connections: (ConnectionData | undefined)[];
   position: [number, number];
+  /**
+   * 文本方向
+   *
+   * @description 这个方向是器件本身的视角
+   */
+  textPosition: Direction;
   rotate: number[][];
   params: string[];
 }
@@ -101,11 +120,11 @@ export interface ElectronicPrototype {
   /** 器件简述 */
   readonly introduction: string;
   /** 周围文字距离器件中心点的偏移量 */
-  readonly txtLBias: number;
+  readonly textPosition: [number, number][];
   /** 器件内边框范围（上、右、下、左） */
-  readonly padding: readonly [number, number, number, number];
+  readonly padding: Margin;
   /** 器件外边框范围（上、右、下、左） */
-  readonly margin: readonly [number, number, number, number];
+  readonly margin: Margin;
   /** 每项参数的描述 */
   readonly params: ParamsDescription[];
   /** 器件每个节点的描述 */

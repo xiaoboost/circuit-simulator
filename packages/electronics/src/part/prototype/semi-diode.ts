@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'VD',
   kind: ElectronicKind.Diode,
   introduction: '二极管',
-  txtLBias: 18,
+  textPosition: [
+    [0, -18],
+    [0, 18],
+  ],
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [

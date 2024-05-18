@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'R',
   kind: ElectronicKind.Resistance,
   introduction: '电阻器',
-  txtLBias: 14,
+  textPosition: [
+    [0, -14],
+    [0, 14],
+  ],
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [

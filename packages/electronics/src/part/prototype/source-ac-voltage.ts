@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'V',
   kind: ElectronicKind.AcVoltageSource,
   introduction: '交流电压源',
-  txtLBias: 24,
+  textPosition: [
+    [0, -24],
+    [0, 24],
+  ],
   padding: [1, 1, 1, 1],
   margin: [1, 0, 1, 0],
   params: [

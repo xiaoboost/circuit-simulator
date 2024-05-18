@@ -264,12 +264,17 @@ test('toDestination()', ({ deepEqual }) => {
   const end = new Point(8, 0);
 
   deepEqual(
+    formatPointList(start.toDestination(start, 1)),
+    ['5,0'],
+  );
+
+  deepEqual(
     formatPointList(start.toDestination(end, 1)),
-    ['6,0', '7,0', '8,0'],
+    ['5,0', '6,0', '7,0', '8,0'],
   );
 
   deepEqual(
     formatPointList(start.toDestination(end, 2)),
-    ['7,0', '9,0'],
+    ['5,0', '7,0', '9,0'],
   );
 });

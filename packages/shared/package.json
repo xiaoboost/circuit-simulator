@@ -14,8 +14,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "build:cjs": "tsc -p ./tsconfig.build.json",
-    "build": "pnpm run clear && pnpm run build:cjs",
+    "build": "pnpm run clear && tsc -p ./tsconfig.json",
     "lint": "eslint --quiet src/**/*.{ts,tsx,js,jsx}",
     "lint:fix": "eslint --quiet --fix src/**/*.{ts,tsx,js,jsx}"
   },

@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'IM',
   kind: ElectronicKind.CurrentMeter,
   introduction: '电流表',
-  txtLBias: 11,
+  textPosition: [
+    [0, -11],
+    [0, 11],
+  ],
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],
   params: [],

@@ -6,7 +6,11 @@ export const data: ElectronicPrototype = {
   pre: 'GND',
   kind: ElectronicKind.ReferenceGround,
   introduction: '参考地',
-  txtLBias: 12,
+  textPosition: [
+    [12, 0],
+    [-12, 0],
+    [0, 20],
+  ],
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],
   params: [],

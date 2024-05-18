@@ -413,6 +413,8 @@ export class Point {
     const vector = Point.from(end).add(this, -1).toUnit(factor);
     let current = this.add(vector);
 
+    yield this;
+
     while (!current.isEqual(end) && endPoint.add(current, -1).isSameDirection(vector)) {
       yield current;
       current = current.add(vector);

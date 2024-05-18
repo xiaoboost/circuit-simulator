@@ -6,8 +6,9 @@ export const data: ElectronicPrototype = {
   pre: 'OP',
   kind: ElectronicKind.OperationalAmplifier,
   introduction: '运算放大器',
-  // TODO: 文字需要位于器件中心
-  txtLBias: 0,
+  textPosition: [
+    [0, 0],
+  ],
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [

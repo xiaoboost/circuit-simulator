@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'C',
   kind: ElectronicKind.Capacitor,
   introduction: '电容器',
-  txtLBias: 22,
+  textPosition: [
+    [0, -22],
+    [0, 22],
+  ],
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [

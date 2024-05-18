@@ -6,7 +6,9 @@ export const data: ElectronicPrototype = {
   pre: 'Q',
   kind: ElectronicKind.TransistorNPN,
   introduction: 'NPN型三极管',
-  txtLBias: 25,
+  textPosition: [
+    [25, 0],
+  ],
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [

@@ -6,7 +6,10 @@ export const data: ElectronicPrototype = {
   pre: 'L',
   kind: ElectronicKind.Inductance,
   introduction: '电感器',
-  txtLBias: 13,
+  textPosition: [
+    [0, -13],
+    [0, 10],
+  ],
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [

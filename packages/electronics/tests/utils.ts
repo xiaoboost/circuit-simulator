@@ -13,7 +13,7 @@ export function createContext(): Context {
 }
 
 /** 放置悬空元件 */
-export function loadSpace(data: InputData, context: Context) {
+export function loadSpace(context: Context, data: InputData) {
   const parts: Part[] = [];
   const lines: Line[] = [];
 
@@ -24,12 +24,12 @@ export function loadSpace(data: InputData, context: Context) {
       parts.push(part);
     });
 
-  data
-    .filter((item) => item.kind === 'Line')
-    .forEach((item) => {
-      const line = new Line((item as LineData).path, context);
-      lines.push(line);
-    });
+  // data
+  //   .filter((item) => item.kind === 'Line')
+  //   .forEach((item) => {
+  //     const line = new Line((item as LineData).path, context);
+  //     lines.push(line);
+  //   });
 
   return {
     parts,
@@ -38,14 +38,14 @@ export function loadSpace(data: InputData, context: Context) {
 }
 
 /** 放置元件 */
-export function loadData(data: InputData, context: Context) {
-  const result = loadSpace(data, context);
+export function loadData(context: Context, data: InputData) {
+  const result = loadSpace(context, data);
 
   result.parts.forEach((part) => part.setMark());
-  result.lines.forEach((line) => {
-    line.setMark();
-    line.setConnectionByPath(false);
-  });
+  // result.lines.forEach((line) => {
+  //   line.setMark();
+  //   line.setConnectionByPath(false);
+  // });
 
   return result;
 }
