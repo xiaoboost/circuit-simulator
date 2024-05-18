@@ -3,11 +3,11 @@ import React from 'react';
 import { DrawEventController } from '@circuit/event';
 import { useState, useRef } from 'react';
 import { Point } from '@circuit/math';
-import { MapState } from './map';
+import { Map } from 'src/store';
 import { styles } from './styles';
 import { useImperativeHandle, forwardRef } from 'react';
 
-export interface Props extends MapState {
+export interface Props extends Map.State {
   onSelect(start: Point, end: Point): any;
 }
 

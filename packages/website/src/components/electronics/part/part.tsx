@@ -1,15 +1,14 @@
 import React from 'react';
 
-import { MouseEvent } from 'react';
+import { MouseEvent, useState, useRef } from 'react';
 import { stringifyClass } from '@xiao-ai/utils';
 import { useForceUpdate } from '@xiao-ai/utils/use';
-import { Matrix, Point } from '@circuit/math';
-import { Part as PartInstance, ElectronicKind } from '@circuit/electronics';
+import { Part as PartInstance } from '@circuit/electronics';
+import { editPartParams } from './editor';
 import { PartText } from './text';
-import { partStyles } from '../styles';
 import { usePartCreated } from './use';
-import { ElectronicPoint } from '../point';
-import { ElectronicPointKind } from '../types';
+import { styles as partStyles } from './styles';
+import { ElectronicPointKind, ElectronicPoint } from '../point';
 
 export interface PartProps {
   /** 器件实体 */
@@ -34,6 +33,7 @@ export interface PartProps {
 
 export function Part(props: PartProps) {
   const forceUpdate = useForceUpdate();
+  const [editorShow, setEditorShow] = useState(false);
   const {
     instance,
     selected,
@@ -51,11 +51,10 @@ export function Part(props: PartProps) {
 
   usePartCreated(props, forceUpdate);
 
-  const onPartMouseDown = () => {
-    debugger;
-  };
   const editParam = () => {
-
+    editPartParams({ id: '测试', position: position }).then((data) => {
+      console.log('返回结束');
+    });
   };
 
   return (
@@ -64,7 +63,7 @@ export function Part(props: PartProps) {
         [partStyles.partSelected]: selected,
       })}
       onDoubleClick={editParam}
-      onMouseDown={onPartMouseDown}
+      onMouseDown={onMouseDown}
       transform={`matrix(${rotate.join()},${position.join()})`}
     >
       <g className={partStyles.partFocus}>

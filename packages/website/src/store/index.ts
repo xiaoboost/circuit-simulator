@@ -5,3 +5,4 @@ export * as Config from './config';
 export * as Sheet from './sheet';
 export * as History from './history';
 export * as Selection from './selection';
+export * as Map from './map';

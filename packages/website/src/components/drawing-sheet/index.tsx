@@ -5,10 +5,10 @@ import { useWatcherList, useWatcher } from '@xiao-ai/utils/use';
 import { MouseButtons } from '@xiao-ai/utils/web';
 import { Point } from '@circuit/math';
 import { styles } from './styles';
-import { Sheet, Selection } from 'src/store';
+import { Sheet, Selection, Map } from 'src/store';
 
 import { getBackgroundStyle } from './utils';
-import { useMap, useDebugger, mapState } from './map';
+import { useMap, useDebugger } from './map';
 import { useMouseBusInit } from '@circuit/event';
 import { Part } from '../electronics';
 import { SelectionBox, Ref as SelectionBoxRef } from './selection-box';
@@ -19,12 +19,12 @@ export function DrawingSheet() {
   const BoxRef = useRef<SelectionBoxRef>(null);
   const [lines, setLines] = useWatcherList(Sheet.lines);
   const [parts, setParts] = useWatcherList(Sheet.parts);
-  const [map] = useWatcher(mapState);
+  const [map] = useWatcher(Map.state);
   const mapEvent = useMap();
   const [selected, setSelected] = useState<string[]>([]);
   const onSheetMouseDown = (ev: React.MouseEvent<Element, MouseEvent>) => {
     if (ev.target === ev.currentTarget) {
-      if (ev.button === MouseButtons.Right) {
+      if (ev.button === MouseButtons.Middle) {
         mapEvent.moveStartEvent(ev);
       }
       else if (ev.button === MouseButtons.Left) {
@@ -55,7 +55,7 @@ export function DrawingSheet() {
   };
 
   useDebugger(DebugRef);
-  useMouseBusInit(SheetRef, () => mapState.data);
+  useMouseBusInit(SheetRef, () => Map.state.data);
 
   return (
     <section

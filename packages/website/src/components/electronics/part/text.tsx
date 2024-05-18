@@ -7,8 +7,8 @@ import { Point, Direction } from '@circuit/math';
 import { DrawEventController } from '@circuit/event';
 import { useForceUpdate } from '@xiao-ai/utils/use';
 import { Part as PartInstance, ElectronicKind } from '@circuit/electronics';
-import { partStyles } from '../styles';
-import { textHeight, textSpaceHeight } from '../constant';
+import { styles as partStyles } from './styles';
+import { textHeight, textSpaceHeight } from './constant';
 
 export interface PartTextProps {
   /** 器件实例 */
@@ -140,5 +140,5 @@ export function PartText({ instance, onMouseDown }: PartTextProps) {
         <text key={i} dy={(textHeight + textSpaceHeight) * (i + 1)}>{text}</text>
       ))}
     </g>
-    );
+  );
 }

@@ -1,28 +1,15 @@
 import { Point } from '@circuit/math';
-import { Watcher } from '@xiao-ai/utils';
 import { debug } from '@circuit/debug';
 import { MouseButtons } from '@xiao-ai/utils/web';
 import { DrawEventController } from '@circuit/event';
 import { cursorStyles } from 'src/styles';
-
 import { useCallback, useEffect, MouseEvent, WheelEvent, RefObject } from 'react';
-
-export interface MapState {
-  zoom: number;
-  position: Point;
-}
-
-export const mapStateDefault: MapState = {
-  zoom: 1,
-  position: Point.from(0),
-};
-
-export const mapState = new Watcher(mapStateDefault);
+import { Map } from '../../store';
 
 export function useMap() {
   const sizeChangeEvent = useCallback((e: WheelEvent<Element>) => {
     const mousePosition = new Point(e.pageX, e.pageY);
-    let size = mapState.data.zoom * 20;
+    let size = Map.state.data.zoom * 20;
 
     if (e.deltaY > 0) {
       size -= 5;
@@ -42,28 +29,28 @@ export function useMap() {
 
     size = size / 20;
 
-    mapState.setData({
+    Map.state.setData({
       zoom: size,
-      position: mapState.data.position
+      position: Map.state.data.position
         .add(mousePosition, -1)
-        .mul(size / mapState.data.zoom)
+        .mul(size / Map.state.data.zoom)
         .add(mousePosition)
         .round(1),
     });
   }, []);
 
   const moveStartEvent = useCallback((ev: MouseEvent<Element>) => {
-    if (ev.button !== MouseButtons.Right) {
+    if (ev.button !== MouseButtons.Middle) {
       return;
     }
 
-    new DrawEventController()
+    DrawEventController.create()
       .setClassName(cursorStyles.moveMap)
-      .setStopEvent({ type: 'mouseup', which: 'Right' })
+      .setStopEvent({ type: 'mouseup', which: 'Middle' })
       .setMoveEvent((ev) => {
-        const { zoom, position } = mapState.data;
+        const { zoom, position } = Map.state.data;
 
-        mapState.setData({
+        Map.state.setData({
           zoom,
           position: position.add(ev.movement.mul(zoom)),
         });

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Matrix, Point } from '@circuit/math';
+import { Point } from '@circuit/math';
 import { DrawEventController } from '@circuit/event';
 import { PartProps } from './part';
 
