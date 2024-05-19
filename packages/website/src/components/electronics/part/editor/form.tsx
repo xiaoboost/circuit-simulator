@@ -194,7 +194,6 @@ export function PartParamEditorForm(props: PartParamEditorForm) {
           确定
         </Button>
       </footer>
-      <aside className={styles.dialogTriangle} />
     </div>
   );
 }

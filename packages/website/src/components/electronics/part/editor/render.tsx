@@ -20,7 +20,11 @@ export interface PartParamEditorProps {
 }
 
 export function PartParamEditor(props: PartParamEditorProps) {
-  return <PartParamEditorModal visible={props.visible} position={props.position}>
+  return <PartParamEditorModal
+    visible={props.visible}
+    position={props.position}
+    onForceClose={props.onCancel}
+  >
     <PartParamEditorForm
       id={props.id}
       params={props.params}

@@ -1,6 +1,6 @@
 import { createStyles } from 'src/styles';
 // import { MouseFocusClassName } from '@circuit/electronics';
-import { FontSerif, White, Blue, DarkBlue, Shadow } from 'src/styles';
+import { FontSerif, White, Blue, DarkBlue, Shadow, DarkWhite } from 'src/styles';
 
 /** 动画持续时间 */
 export const transformTime = 400;
@@ -17,12 +17,34 @@ export const styles = createStyles({
   paramEditorModal: {
     position: 'absolute',
   },
+  dialogTriangleTop: {
+
+  },
+  dialogTriangle: {
+    position: 'absolute',
+    width: 0,
+    height: 0,
+    borderLeft: '6px solid transparent',
+    borderRight: '6px solid transparent',
+    borderTop: `10px solid ${DarkWhite}`,
+    borderBottom: 'none',
+    bottom: -10,
+    left: 'calc(50% - 6px)',
+
+    '&$dialogTriangleTop': {
+      top: -10,
+      bottom: 'none',
+      borderTop: 'none',
+      borderBottom: `10px solid ${Blue}`,
+    },
+  },
 });
 
 export const formStyles = createStyles({
   editorForm: {
     position: 'relative',
     boxShadow: `0 0 3px ${Shadow}`,
+    backgroundColor: DarkWhite,
   },
   boxHeader: {
     fontFamily: FontSerif,
@@ -98,16 +120,5 @@ export const formStyles = createStyles({
     '&:hover': {
       color: Blue,
     },
-  },
-  dialogTriangle: {
-    position: 'absolute',
-    width: 0,
-    height: 0,
-    borderLeft: '6px solid transparent',
-    borderRight: '6px solid transparent',
-    borderTop: '10px solid #fff',
-    transform: 'translateX(-6px)',
-    bottom: -10,
-    left: '50%',
   },
 });
