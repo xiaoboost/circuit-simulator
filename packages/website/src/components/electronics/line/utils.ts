@@ -1,0 +1,28 @@
+import { LinePath } from '@circuit/electronics';
+import { RectSize } from './types';
+import { rectWidth } from './constant';
+
+export function getLineRect(path: LinePath) {
+  const rects: RectSize[] = [];
+
+  for (let i = 0; i < path.length - 1; i++) {
+    const start = path[i], end = path[i + 1];
+    const left = Math.min(start[0], end[0]);
+    const top = Math.min(start[1], end[1]);
+    const right = Math.max(start[0], end[0]);
+    const bottom = Math.max(start[1], end[1]);
+
+    rects.push({
+      x: left - rectWidth / 2,
+      y: top - rectWidth / 2,
+      height: (left === right) ? bottom - top + rectWidth : rectWidth,
+      width: (left === right) ? rectWidth : right - left + rectWidth,
+    });
+  }
+
+  return rects;
+}
+
+export function stringifyLinePath (line: LinePath) {
+  return line.length === 0 ? '' : `M${line.map((n) => n.join(',')).join('L')}`;
+}

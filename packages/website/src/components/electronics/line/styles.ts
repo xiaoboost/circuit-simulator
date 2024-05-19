@@ -2,7 +2,7 @@ import { createStyles } from 'src/styles';
 import { MouseFocusClassName } from '@circuit/electronics';
 import { Black, DarkGreen } from 'src/styles';
 
-export const lineStyles = createStyles({
+export const styles = createStyles({
   line: {
     color: Black,
 

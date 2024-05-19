@@ -1,4 +1,4 @@
 export * from './types';
 export * from './part';
-export * from './line/line';
+export * from './line';
 export * from './utils';

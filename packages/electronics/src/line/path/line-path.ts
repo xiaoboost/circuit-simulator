@@ -17,11 +17,6 @@ export class LinePath extends Array<Point> {
     super(len);
   }
 
-  /** 转换为 path 路径 */
-  stringify() {
-    return this.length === 0 ? '' : `M${this.map((n) => n.join(',')).join('L')}`;
-  }
-
   /** 输出数据 */
   toData() {
     const result: [number, number][] = [];
