@@ -6,7 +6,7 @@ import { Form, Input, Button, Select } from 'antd';
 import { UnitType } from '@circuit/electronics';
 import { formStyles as styles } from './styles';
 
-export interface Params {
+export interface Param {
   /** 该参数的文字说明 */
   label: string;
   /** 该参数的可选单位 */
@@ -32,7 +32,7 @@ export interface PartParamEditorForm {
   /** 器件编号 */
   id: string;
   /** 参数列表 */
-  params: Params[];
+  params: Param[];
   /** 点击取消按钮 */
   onCancel(): void;
   /** 点击确定按钮 */
@@ -53,6 +53,20 @@ function toFormData(props: PartParamEditorForm): FormData {
 
 export function PartParamEditorForm(props: PartParamEditorForm) {
   const [form] = Form.useForm<FormData>();
+  const unitLabelLen = props.params.map((param) => {
+    const maxLen = Math.max(
+      ...param.units
+        .map((item) => `${item.value}${item.label}`.length)
+    );
+    return maxLen * 13 + 34;
+  });
+  const maxLabelLen = Math.max(
+    ...['编号']
+      .concat(props.params.map((item) => item.label))
+      .map((item) => item.length)
+  );
+  const labelWidth = 15 * maxLabelLen + 16;
+  const formWith = labelWidth + 160;
   const submit = async () => {
     form.validateFields().then((data) => {
       props.onConfirm(data);
@@ -64,75 +78,67 @@ export function PartParamEditorForm(props: PartParamEditorForm) {
     form.setFieldsValue(toFormData(props));
   }, [props]);
 
-  return <div className={styles.editorForm}>
-    <header className={styles.boxHeader}>器件参数</header>
-    <article className={styles.boxBody}>
-      <section className={styles.formLabelList}>
-        <div className={styles.formLabelItem}>编号</div>
-        {props.params.map((param) => (
-          <div className={styles.formLabelItem} key={param.label}>{param.label}</div>
-        ))}
-      </section>
-      <Form
-        form={form}
-        layout='horizontal'
-        labelAlign='right'
-        className={styles.form}
-      >
-        <Input.Group compact className={styles.resetInputCompact}>
-          <Form.Item
-            name='label'
-            rules={[{
-              pattern: /^[A-Z]/,
-              required: true,
-            }]}
-          >
-            <Input
-              required
-              size='small'
-              placeholder='Label'
-              className={styles.idInput}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Input
-              disabled
-              size='small'
-              placeholder="-"
-              className={styles.idSplit}
-            />
-          </Form.Item>
-          <Form.Item
-            name='suffix'
-            rules={[{
-              pattern: /^\d+$/,
-              required: true,
-            }]}
-          >
-            <Input
-              required
-              size='small'
-              className={styles.idSubInput}
-              placeholder='Suffix'
-            />
-          </Form.Item>
-        </Input.Group>
-        {props.params.map((param, i) => (
-          <Input.Group compact key={param.label}>
-            {param.units.length === 0
-              ? <Form.Item
-                name={['params', i, 'value']}
+  return (
+    <div className={styles.editorForm}>
+      <header className={styles.boxHeader}>编辑器件参数</header>
+      <article className={styles.boxBody}>
+        <Form
+          form={form}
+          layout='horizontal'
+          className={styles.form}
+          style={{ width: formWith }}
+          labelAlign='right'
+          labelCol={{
+            span: Math.floor(labelWidth / formWith * 24),
+            // xs: { span: 24 },
+            // sm: { span: 6 },
+          }}
+        >
+          {/* 编号 */}
+          <Form.Item label='编号' labelAlign='right'>
+            <Input.Group compact className={styles.resetInputCompact}>
+              <Form.Item
+                name='label'
                 rules={[{
-                  pattern: normalNumberMatcher,
+                  pattern: /^[A-Za-z\d]+$/,
                   required: true,
                 }]}
               >
                 <Input
+                  required
                   size='small'
-                  addonAfter={param.unit}
+                  placeholder='Label'
+                  className={styles.idInput}
                 />
               </Form.Item>
-              : <>
+              <Form.Item>
+                <Input
+                  disabled
+                  size='small'
+                  placeholder="-"
+                  className={styles.idSplit}
+                />
+              </Form.Item>
+              <Form.Item
+                name='suffix'
+                rules={[{
+                  pattern: /^[A-Za-z\d]+$/,
+                  required: true,
+                }]}
+              >
+                <Input
+                  required
+                  size='small'
+                  className={styles.idSubInput}
+                  placeholder='Suffix'
+                />
+              </Form.Item>
+            </Input.Group>
+          </Form.Item>
+          {/* 参数列表 */}
+          {props.params.map((param, i) => (
+            <Form.Item label={param.label}>
+              <Input.Group compact key={param.label} size='small'>
                 <Form.Item
                   name={['params', i, 'value']}
                   rules={[{
@@ -142,44 +148,53 @@ export function PartParamEditorForm(props: PartParamEditorForm) {
                 >
                   <Input
                     size='small'
-                    placeholder='Param Value'
+                    className={styles.formParamUnit}
+                    addonAfter={param.units.length === 0
+                      ? param.unit
+                      : (
+                        <Form.Item noStyle name={['params', i, 'rank']}>
+                          <Select
+                            size='small'
+                            style={{ width: unitLabelLen[i] }}
+                          >
+                            {param.units.map((item) => (
+                              <Select.Option
+                                value={item.value}
+                                key={item.value}
+                              >
+                                {item.label}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      )
+                    }
                   />
                 </Form.Item>
-                <Form.Item name={['params', i, 'rank']}>
-                  <Select size='small'>
-                    {param.units.map((item) => (
-                      <Select.Option
-                        value={item.value}
-                        key={item.value}>
-                        {item.label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </>
-            }
-          </Input.Group>
-        ))}
-      </Form>
-    </article>
-    <footer className={styles.boxFooter}>
-      <Button
-        danger
-        type='text'
-        size='small'
-        onClick={props.onCancel}
-      >
-        取消
-      </Button>
-      <Button
-        type='text'
-        size='small'
-        className={styles.confirmBtn}
-        onClick={submit}
-      >
-        确定
-      </Button>
-    </footer>
-    <aside className={styles.dialogTriangle} />
-  </div>;
+              </Input.Group>
+            </Form.Item>
+          ))}
+        </Form>
+      </article>
+      <footer className={styles.boxFooter}>
+        <Button
+          danger
+          type='text'
+          size='small'
+          onClick={props.onCancel}
+        >
+          取消
+        </Button>
+        <Button
+          type='text'
+          size='small'
+          className={styles.confirmBtn}
+          onClick={submit}
+        >
+          确定
+        </Button>
+      </footer>
+      <aside className={styles.dialogTriangle} />
+    </div>
+  );
 }

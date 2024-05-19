@@ -1,11 +1,9 @@
 import { createStyles } from 'src/styles';
 // import { MouseFocusClassName } from '@circuit/electronics';
-import { FontSerif, White, Blue, DarkBlue, Silver } from 'src/styles';
+import { FontSerif, White, Blue, DarkBlue, Shadow } from 'src/styles';
 
 /** 动画持续时间 */
 export const transformTime = 400;
-/** 表格宽度 */
-export const formWidth = 160;
 
 export const styles = createStyles({
   paramEditorContainer: {
@@ -24,7 +22,7 @@ export const styles = createStyles({
 export const formStyles = createStyles({
   editorForm: {
     position: 'relative',
-    boxShadow: 'rgb(161, 161, 161) 0px 0px 3px',
+    boxShadow: `0 0 3px ${Shadow}`,
   },
   boxHeader: {
     fontFamily: FontSerif,
@@ -56,7 +54,6 @@ export const formStyles = createStyles({
     },
   },
   idInput: {
-    width: [(formWidth / 2) - 10, '!important'],
     marginRight: [0, '!important'],
     borderRightWidth: 1,
     borderTopRightRadius: 0,
@@ -71,33 +68,20 @@ export const formStyles = createStyles({
     pointerEvents: 'none',
   },
   idSubInput: {
-    width: [(formWidth / 2) - 10, '!important'],
     borderLeftWidth: 1,
     borderTopLeftRadius: 0,
     borderBottomLeftRadius: 0,
   },
-  formLabelList: {
-    display: 'inline-flex',
-    flexDirection: 'column',
-    alignItems: 'flex-end',
-    fontSize: 14,
-  },
-  formLabelItem: {
-    height: 32,
-    lineHeight: '32px',
-
-    '&::after': {
-      content: '":"',
-      position: 'relative',
-      top: -0.5,
-      margin: [0, 8, 0, 2],
+  formParamUnit: {
+    '& .ant-input-group-addon': {
+      width: 'auto',
+      alignContent: 'center',
     },
   },
   inlineFormItem: {
     lineHeight: 1,
   },
   form: {
-    width: formWidth,
     lineHeight: 1,
 
     '& .ant-input-group': {
@@ -106,7 +90,7 @@ export const formStyles = createStyles({
 
     '& .ant-form-item-explain': {
       display: 'none',
-    }
+    },
   },
   confirmBtn: {
     color: DarkBlue,

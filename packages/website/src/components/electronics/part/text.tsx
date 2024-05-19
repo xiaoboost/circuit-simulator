@@ -30,6 +30,9 @@ const DirectionStyle: Partial<Record<Direction, React.CSSProperties>> = {
   [Direction.Right]: {
     textAnchor: 'start',
   },
+  [Direction.Center]: {
+    textAnchor: 'middle',
+  },
 };
 
 export function PartText({ instance, onMouseDown }: PartTextProps) {
@@ -53,12 +56,6 @@ export function PartText({ instance, onMouseDown }: PartTextProps) {
         pre.distance(textPosition.current) < next.distance(textPosition.current) ? pre : next,
     );
     const direction = position.toDirection();
-
-    if (position.isZero()) {
-      forceUpdate();
-      return;
-    }
-
     const len = texts.length + 1;
     const bias = Math.max(...position.abs());
 
@@ -81,6 +78,11 @@ export function PartText({ instance, onMouseDown }: PartTextProps) {
       case Direction.Right: {
         position[0] = bias;
         position[1] = textHeight - (len * textHeight + (len - 1) * textSpaceHeight) / 2;
+        break;
+      }
+      case Direction.Center: {
+        position[0] = 0;
+        position[1] = textHeight / 2;
         break;
       }
       default: {

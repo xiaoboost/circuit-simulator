@@ -2,13 +2,13 @@ import React from 'react';
 
 import { Point } from '@circuit/math';
 import { PartParamEditorModal } from './modal';
-import { PartParamEditorForm, Params, FormData } from './form';
+import { PartParamEditorForm, Param, FormData } from './form';
 
 export interface PartParamEditorProps {
   /** 器件编号 */
   id: string;
   /** 参数列表 */
-  params: Params[];
+  params: Param[];
   /** 指向的中心位置 */
   position: Point;
   /** 是否显示 */

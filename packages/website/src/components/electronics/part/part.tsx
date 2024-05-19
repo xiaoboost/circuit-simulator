@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { MouseEvent, useState, useRef } from 'react';
+import { MouseEvent } from 'react';
 import { stringifyClass } from '@xiao-ai/utils';
 import { useForceUpdate } from '@xiao-ai/utils/use';
 import { Part as PartInstance } from '@circuit/electronics';
@@ -33,7 +33,6 @@ export interface PartProps {
 
 export function Part(props: PartProps) {
   const forceUpdate = useForceUpdate();
-  const [editorShow, setEditorShow] = useState(false);
   const {
     instance,
     selected,
@@ -42,6 +41,8 @@ export function Part(props: PartProps) {
     onTextMouseDown,
   } = props;
   const {
+    id,
+    params,
     rotate,
     position,
     prototype,
@@ -51,10 +52,16 @@ export function Part(props: PartProps) {
 
   usePartCreated(props, forceUpdate);
 
-  const editParam = () => {
-    editPartParams({ id: '测试', position: position }).then((data) => {
-      console.log('返回结束');
+  const editParam = async () => {
+    const result = await editPartParams({
+      id,
+      params,
+      prototype,
+      position,
     });
+
+    instance.changeId(result.id);
+    instance.params = result.params;
   };
 
   return (
