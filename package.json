@@ -6,8 +6,8 @@
     "build": "pnpm run --filter=!@circuit/website build",
     "test": "pnpm run -r --parallel --filter . test",
     "test:update": "pnpm run -r --parallel --filter . test:update",
-    "lint": "pnpm run -r --parallel --filter . lint",
-    "lint:fix": "pnpm run -r --parallel --filter . lint:fix",
+    "lint": "pnpm -r --parallel run lint",
+    "lint:fix": "pnpm -r --parallel run lint:fix",
     "dev:website": "pnpm run --filter @circuit/website dev",
     "build:website": "pnpm run --filter @circuit/website build"
   },

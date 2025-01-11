@@ -1,7 +1,7 @@
 import test from 'ava';
 
 import { Point } from '@circuit/math';
-import { MarkMap, MarkKind, getMarkFromData, LineAndPointMark } from '../src';
+import { MarkMap, MarkKind, LineAndPointMark } from '../src';
 
 test('器件节点', ({ deepEqual, pass }) => {
   const map = new MarkMap();
@@ -40,7 +40,7 @@ test('导线交错节点', ({ deepEqual, pass }) => {
 
 test('沿着导线方向的终点', ({ deepEqual }) => {
   const map = new MarkMap();
-  const linePath = [[100, 100], [120, 100], [140, 100], [160, 100], [180, 100], [180, 120], [180, 140]].map(Point.from);
+  const linePath = [[100, 100], [120, 100], [140, 100], [160, 100], [180, 100], [180, 120], [180, 140]].map(Point.from)
 
   map.setLineMark('line_1', linePath);
 

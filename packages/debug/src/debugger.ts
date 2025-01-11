@@ -1,7 +1,7 @@
+import type { Mark } from '@circuit/map';
+import type { PointLike } from '@circuit/math';
 import { NS, elIdName, nodeColor } from './constant';
 
-import type { PointLike } from '@circuit/math';
-import type { Mark } from '@circuit/map';
 
 class Debugger {
   /**

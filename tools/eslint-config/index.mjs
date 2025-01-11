@@ -4,7 +4,16 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
   tseslint.configs.recommended,
   {
-    files: ['{src,tests}/**/*.{js,ts,jsx,tsx'],
+    files: ['*/{src,tests}/**/*.{js,ts,jsx,tsx'],
+  },
+  {
+    ignores: [
+      '**/dist/',
+      '**/tmp/',
+      '**/draft/',
+      '**/node_modules/',
+      '**/ava.config.js',
+    ],
   },
   {
     extends: [importPlugin.flatConfigs.recommended],
@@ -24,6 +33,7 @@ export default tseslint.config(
       'import/no-unresolved': 'off',
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
+      'import/no-named-as-default': 'off',
       'max-len': ['warn', {
         code: 100,
       }],

@@ -1,9 +1,9 @@
-import { RefObject, useEffect } from 'react';
 import { Point } from '@circuit/math';
 import { delay } from '@xiao-ai/utils';
 import { supportsPassive } from '@xiao-ai/utils/web';
-import { MapState, DrawEvent, DrawEventData } from './types';
+import { RefObject, useEffect } from 'react';
 import { sheetEl, current, setSheetElement } from './store';
+import { MapState, DrawEvent, DrawEventData } from './types';
 
 /** 事件总线初始化 */
 export function useMouseBusInit(ref: RefObject<HTMLElement>, getMapState: () => MapState) {

@@ -40,7 +40,7 @@ export const shortNumberMatcher = /^\d+(?:\.\d+)?[puμnmkMG]$/;
 export const numberMatcher = new RegExp(
   `${normalNumberMatcher.source}|` +
   `${expNumberMatcher.source}|` +
-  `${shortNumberMatcher.source}`
+  `${shortNumberMatcher.source}`,
 );
 
 /** 简写数字编译 */
@@ -97,7 +97,11 @@ export const allRanks = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'] as NumberRank[];
 /** 生成简写数字单位快捷选择列表选项 */
 export function shortUnitList(unit: string, isChinese?: boolean): SelectList;
 export function shortUnitList(ranks: NumberRank[], unit: string, isChinese?: boolean): SelectList;
-export function shortUnitList(ranks: NumberRank[] | string, unit?: string | boolean, isChinese = false) {
+export function shortUnitList(
+  ranks: NumberRank[] | string,
+  unit?: string | boolean,
+  isChinese = false,
+) {
   // 未输入单位列表
   if (!isArray(ranks)) {
     isChinese = Boolean(unit);

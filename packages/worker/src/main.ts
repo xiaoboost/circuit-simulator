@@ -1,3 +1,4 @@
+import { remove, ChannelData, AnyFunction } from '@xiao-ai/utils';
 import {
   EventKind,
   WorkerConstruction,
@@ -6,7 +7,6 @@ import {
   WorkerMessageStore,
 } from './types';
 
-import { remove, ChannelData, AnyFunction } from '@xiao-ai/utils';
 
 const mainId = -1;
 

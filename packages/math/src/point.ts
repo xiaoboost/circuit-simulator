@@ -1,5 +1,5 @@
-import { Matrix } from './matrix';
 import { isNumber } from '@xiao-ai/utils';
+import { Matrix } from './matrix';
 
 export type PointLike = number[] | [number, number] | Point;
 export type PointInput = PointLike | number;

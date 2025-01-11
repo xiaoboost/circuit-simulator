@@ -1,5 +1,5 @@
-import { Point } from './point';
 import { isArray, isNumber, isString } from '@xiao-ai/utils';
+import { Point } from './point';
 
 type MatrixInput = number[][] | Matrix;
 
@@ -626,7 +626,7 @@ export class Matrix {
    * @param {(value: number, position: [number, number]) => number} callback
    * @returns {this}
    */
-  forEach(callback: (value: number, position: [number, number]) => any) {
+  forEach(callback: (value: number, position: [number, number]) => unknown) {
     for (let i = 0; i < this._data.length; i++) {
       const x = Math.floor(i / this.column);
       const y = i % this.column;
