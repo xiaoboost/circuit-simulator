@@ -78,7 +78,6 @@ test('沿着导线方向，途经十字交叠节点', ({ deepEqual }) => {
   deepEqual(startNode.alongLineAndVector([1, 0]).position.toData(), [180, 100]);
 });
 
-
 test('沿着导线方向，途经直角交叠节点', ({ deepEqual }) => {
   const map = new MarkMap();
   const line1Path = [[100, 100], [120, 100], [140, 100], [140, 120], [140, 140]].map(Point.from);

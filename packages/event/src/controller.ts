@@ -59,18 +59,8 @@ export class DrawEventController {
 
     if (sheetEl) {
       sheetEl.setAttribute('class', className);
-      this.setCursor('');
+      sheetEl.style.cursor = '';
     }
-  }
-
-  setCursor(name: string) {
-    this.cursor = name;
-
-    if (sheetEl) {
-      sheetEl.style.cursor = name;
-    }
-
-    return this;
   }
 
   setClassName(input: ClassNameEventInput) {

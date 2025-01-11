@@ -30,10 +30,13 @@ export interface BasePinStatus {
   ui: PinUIStatus;
 }
 
-/** 器件上下文 */
-export interface Context {
-  map: MarkMap;
+/** 图纸上下文 */
+export interface SheetContext {
+  /** 标记图纸 */
+  markMap: MarkMap;
+  /** 全局导线 */
   lines?: Line[];
+  /** 全局器件 */
   parts?: Part[];
 }
 

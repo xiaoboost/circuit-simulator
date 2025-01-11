@@ -1,5 +1,5 @@
 import { Point, PointLike } from '@circuit/math';
-import { LinePin } from '../types';
+import { LinePin } from './types';
 
 /** 导线路径类 */
 export class LinePath extends Array<Point> {

@@ -17,8 +17,8 @@
     "clear": "rimraf ./dist",
     "build:cjs": "tsc -p ./tsconfig.build.json",
     "build": "pnpm run clear && pnpm run build:cjs",
-    "lint": "eslint --quiet src/**/*.{ts,tsx,js,jsx}",
-    "lint:fix": "eslint --quiet --fix src/**/*.{ts,tsx,js,jsx}"
+    "lint": "eslint -c eslint.config.mjs",
+    "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
     "@circuit/math": "workspace:*",
@@ -27,15 +27,15 @@
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
+    "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
-    "@types/node": "18.11.9",
+    "@types/node": "20.12.8",
     "@types/react": "18.3.1",
     "@xiao-ai/tsconfig": "1.0.4",
-    "ava": "6.1.2",
-    "eslint": "8.56.0",
+    "ava": "6.2.0",
+    "eslint": "9.17.0",
     "rimraf": "5.0.5",
-    "tslib": "2.6.2",
-    "tsx": "4.7.3",
-    "typescript": "5.4.5"
+    "tslib": "2.8.1",
+    "typescript": "5.7.2"
   }
 }

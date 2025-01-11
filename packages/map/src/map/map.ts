@@ -49,7 +49,7 @@ export class MarkMap extends Map {
   /**
    * 获取所有节点
    *
-   *  - 从上到下，从左往右
+   * @description 从上到下，从左往右
    */
   private getPoints() {
     return Array.from(super.keys())
@@ -97,9 +97,8 @@ export class MarkMap extends Map {
     return super.delete(this.toKey(point));
   }
 
-  entries(): IterableIterator<[Point, Mark]> {
-    return this.getPoints()
-      .map((point) => [point, this.get(point)!] as [Point, Mark])[Symbol.iterator]();
+  entries() {
+    return this.getPoints().map((point) => [point, this.get(point)!] as [Point, Mark])[Symbol.iterator]();
   }
 
   forEach(callbackfn: (value: Mark, key: Point, map: MarkMap) => void): void {
@@ -108,137 +107,16 @@ export class MarkMap extends Map {
     }
   }
 
-  keys(): IterableIterator<Point> {
+  keys() {
     return this.getPoints()[Symbol.iterator]();
   }
 
-  values(): IterableIterator<Mark> {
+  values() {
     return this.getPoints().map((point) => this.get(point)!)[Symbol.iterator]();
   }
 
-  [Symbol.iterator](): IterableIterator<[Point, Mark]> {
+  [Symbol.iterator]() {
     return this.entries();
-  }
-
-  /** 设置导线数据 */
-  setLineMark(line: string, points: Point[]) {
-    for (let i = 0; i < points.length; i++) {
-      const point = points[i];
-      const lastPoint = points[i - 1];
-      const mark = this.get(point);
-
-      // 运行时距离检查
-      if (process.env.NODE_ENV === 'development' && lastPoint) {
-        if (Math.abs(lastPoint.add(point, -1).product([1, 1])) !== 20) {
-          throw new Error('导线节点距离必须是 20');
-        }
-      }
-
-      // 端点
-      if (i === 0 || i === points.length - 1) {
-        if (mark) {
-          if (mark.isLinePoint()) {
-            mark.toCrossMark(line);
-          }
-          else if (mark.isLineCross() && !mark.isFullCross) {
-            mark.addLine(line);
-          }
-          else if (mark.isPartPin()) {
-            mark.connectLine(line);
-          }
-          else {
-            throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
-          }
-        }
-        else {
-          this.set(point, {
-            kind: MarkKind.LinePoint,
-            line,
-          });
-        }
-      }
-      else {
-        if (mark) {
-          if (mark.isLine()) {
-            mark.addCoverLine(line);
-          }
-          else {
-            throw new Error('导线非端点只能途经其余导线的非端点');
-          }
-        }
-        else {
-          this.set(point, {
-            kind: MarkKind.Line,
-            line,
-          });
-        }
-      }
-
-      if (!lastPoint) {
-        continue;
-      }
-
-      const lastMark = this.get<LineAndPointMark>(lastPoint)!;
-      const currentMark = this.get<LineAndPointMark>(point)!;
-
-      lastMark.addConnect(currentMark.position, line);
-      currentMark.addConnect(lastMark.position, line);
-    }
-  }
-
-  /** 移除导线数据 */
-  deleteLineMark(line: string, points: Point[]) {
-    for (let i = 0; i < points.length; i++) {
-      const point = points[i];
-      const lastPoint = points[i - 1];
-      const mark = this.get(point);
-
-      // 运行时距离检查
-      if (process.env.NODE_ENV === 'development' && lastPoint) {
-        if (Math.abs(lastPoint.add(point, -1).product([1, 1])) !== 20) {
-          throw new Error('导线节点距离必须是 20');
-        }
-
-        if (
-          mark &&
-          (
-            (('line' in mark) && mark.line !== line) ||
-            (('lines' in mark) && !mark.lines.includes(line))
-          )
-        ) {
-          throw new Error('删除节点并非指定导线编号');
-        }
-      }
-
-      if (mark) {
-        // 端点
-        if (i === 0 || i === points.length - 1) {
-          if (mark.isLinePoint()) {
-            this.delete(mark.position);
-          }
-          else if (mark.isLineCross()) {
-            mark.deleteLine(line);
-          }
-          else if (mark.isPartPinLine()) {
-            mark.deleteLine();
-          }
-          else {
-            throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
-          }
-        }
-        else {
-          if (mark.isLine()) {
-            this.delete(mark.position);
-          }
-          else if (mark.isLineCover()) {
-            mark.deleteLine(line);
-          }
-          else {
-            throw new Error('删除导线时，非端点只可能有导线本身和交叠节点');
-          }
-        }
-      }
-    }
   }
 
   /** 设置器件数据 */

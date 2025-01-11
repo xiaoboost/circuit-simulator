@@ -1,0 +1,9 @@
+{
+  "name": "@circuit/test-toolkit",
+  "version": "1.0.0",
+  "main": "index.js",
+  "dependencies": {
+    "ava": "6.2.0",
+    "tsx": "4.7.3"
+  }
+}

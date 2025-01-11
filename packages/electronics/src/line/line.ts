@@ -1,18 +1,20 @@
 import { Electronic } from '../base';
 import { LinePath } from './path';
 import { LineData, LinePin, LinePinStatus, LineStructuredData } from './types';
-import { ElectronicKind, Context } from '../types';
+import { ElectronicKind } from '../types';
 // import { debug } from '@circuit/debug';
 // import { MarkNodeKind, MarkMapNode, Label } from '@circuit/map';
 import { PointLike, Point } from '@circuit/math';
-import { isLine } from '@circuit/shared';
-import { isBoolean, isUndef, delay, ConstructorParameters } from '@xiao-ai/utils';
+// import { isLine } from '@circuit/shared';
+import { SheetContext } from '../base';
+import { LineMarker } from './mark';
+// import { isBoolean, isUndef, delay, ConstructorParameters } from '@xiao-ai/utils';
 
-import type { Part } from '../part/part';
+// import type { Part } from '../part/part';
 
-export class Line extends Electronic {
-  constructor(paths: PointLike[] = [], context?: Context) {
-    super(ElectronicKind.Line, context);
+export class Line extends LineMarker {
+  constructor(paths: PointLike[] = [], context?: SheetContext) {
+    super(context);
     this.#path = LinePath.from(paths);
   }
 
@@ -176,16 +178,6 @@ export class Line extends Electronic {
   //   this.updateView();
   //   this.setMark();
   // }
-
-  /** 设置标志位 */
-  setMark() {
-    this.map.setLineMark(this.id, Array.from(this.#path.forEachPoint()));
-  }
-
-  /** 删除标记 */
-  deleteMark() {
-    this.map.deleteLineMark(this.id, Array.from(this.#path.forEachPoint()));
-  }
 
   // /**
   //  * 由引脚信息设置导线两端连接
