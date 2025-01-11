@@ -127,7 +127,11 @@ export abstract class Electronic {
   deleteConnection(index: number, deep?: boolean): void;
   /** 移除指定连接 */
   deleteConnection(index: number, data?: ConnectionData | ConnectionData[], deep?: boolean): void;
-  deleteConnection(index: number, data?: ConnectionData | ConnectionData[] | boolean, deep = false) {
+  deleteConnection(
+    index: number,
+    data?: ConnectionData | ConnectionData[] | boolean,
+    deep = false,
+  ) {
     const connection = this.connections[index];
 
     if (!connection) {

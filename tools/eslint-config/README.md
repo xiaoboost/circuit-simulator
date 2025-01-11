@@ -4,7 +4,7 @@
 
 ## 用法
 
-在项目的`.eslintrc.js`文件中设置：
+在项目的`eslint.config.mjs`文件中设置：
 
 ```js
 export { default } from '@circuit/eslint-config';

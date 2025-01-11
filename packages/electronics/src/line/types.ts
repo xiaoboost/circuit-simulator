@@ -1,5 +1,5 @@
+import type { ConnectionData } from '../base';
 import type { ElectronicKind, BasePinStatus } from '../types';
-import type { ConnectionData } from '../utils/connection';
 
 /** 导线原始数据 */
 export interface LineData {
@@ -16,14 +16,15 @@ export interface LineStructuredData {
 }
 
 /** 导线引脚状态 */
+// eslint-disable-next-line
 export interface LinePinStatus extends BasePinStatus {
   // ..
 }
 
 /** 导线端点 */
 export const enum LinePin {
-  Start = 0,
-  End = 1,
+  Start,
+  End,
   Middle,
   None,
 }

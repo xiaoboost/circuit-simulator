@@ -75,4 +75,8 @@ export class Connection extends Array<ConnectionData> {
   clear() {
     this.length = 0;
   }
+
+  toData() {
+    return Array.from(this);
+  }
 }

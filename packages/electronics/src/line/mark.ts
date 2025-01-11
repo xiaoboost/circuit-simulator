@@ -1,17 +1,12 @@
 import { MarkKind, LineAndPointMark } from '@circuit/map';
 import { PointLike } from '@circuit/math';
-import { SheetContext, Electronic } from '../base';
-import { ElectronicKind } from '../types';
-import { LinePath } from './path';
+import { SheetContext } from '../base';
+import { LineProps } from './props';
 
-export class LineMarker extends Electronic {
+export class LineMarker extends LineProps {
   constructor(paths: PointLike[] = [], context?: SheetContext) {
-    super(ElectronicKind.Line, context);
-    this.path = LinePath.from(paths);
+    super(paths, context);
   }
-
-  /** 导线路径 */
-  protected path = new LinePath();
 
   /** 设置图纸数据 */
   setMark() {
