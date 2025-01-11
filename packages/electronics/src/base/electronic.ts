@@ -1,11 +1,12 @@
-import { ElectronicKind } from '../types';
+import { isNumber, concat } from '@xiao-ai/utils';
+
 import { Electronics } from '../part/prototype';
+import { ElectronicKind } from '../types';
 import { Connection, ConnectionData } from './connection';
-import { isNumber, remove, concat } from '@xiao-ai/utils';
 import { SheetContext } from './sheet';
 
-import type { Part } from '../part/part';
-import type { Line } from '../line/line';
+// import type { Part } from '../part/part';
+// import type { Line } from '../../tmp/line';
 
 export interface ElectronicOption {
   id?: string;
@@ -68,7 +69,7 @@ export abstract class Electronic {
     throw new Error('方法未实现');
   }
 
-  isLine(): this is Line {
+  isLine(): this is any {
     return this.kind === ElectronicKind.Line;
   }
 
@@ -91,7 +92,7 @@ export abstract class Electronic {
     }
 
     if (Array.isArray(data)) {
-      connection.push(...data)
+      connection.push(...data);
     }
     else {
       connection.push(data);

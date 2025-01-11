@@ -1,16 +1,16 @@
-import { ElectronicKind } from '../types';
+
 import { MarkMap } from '@circuit/map';
 import { remove } from '@xiao-ai/utils';
-
 import type { Part } from '../part/part';
-import type { Line } from '../line/line';
+import { ElectronicKind } from '../types';
+// import type { Line } from '../line/line';
 import type { Electronic } from './electronic';
 
 export class SheetContext {
   /** 图纸数据 */
   readonly markMap = new MarkMap();
   /** 导线储存 */
-  readonly #lines: Line[] = [];
+  readonly #lines: Part[] = [];
   /** 器件储存 */
   readonly #parts: Part[] = [];
 
@@ -22,7 +22,7 @@ export class SheetContext {
   /** 添加器件 */
   add(item: Electronic) {
     if (item.kind === ElectronicKind.Line) {
-      this.#lines.push(item as Line);
+      this.#lines.push(item as Part);
     }
     else {
       this.#parts.push(item as Part);

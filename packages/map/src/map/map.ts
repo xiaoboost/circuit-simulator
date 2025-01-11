@@ -123,48 +123,6 @@ export class MarkMap extends Map {
     return this.entries();
   }
 
-  /** 设置器件数据 */
-  setPartMark(position: Point, part: string, pin?: number ) {
-    const oldMark = this.get(position);
-
-    if (oldMark) {
-      throw new Error('器件引脚必须放置在`空位`上');
-    }
-    else if (typeof pin === 'number') {
-      return this.set(position, {
-        kind: MarkKind.PartPin,
-        part,
-        pin,
-      });
-    }
-    else {
-      return this.set(position, {
-        kind: MarkKind.Part,
-        part,
-      });
-    }
-  }
-
-  /** 删除器件引脚数据 */
-  deletePartMark(point: Point) {
-    const mark = this.get(point);
-
-    if (!mark) {
-      return;
-    }
-
-    if (mark.isPartPin() || mark.isPart()) {
-      this.delete(point);
-      return;
-    }
-    else if (mark.isPartPinLine()) {
-      mark.deletePin();
-    }
-    else {
-      throw new Error(`当前位置不是器件：[${point[0]}, ${point[1]}]`);
-    }
-  }
-
   /** 数据格式化 */
   toData() {
     const data: MarkMapStructuredData = [];

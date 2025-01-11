@@ -1,17 +1,21 @@
 import { MarkKind, LineAndPointMark } from '@circuit/map';
-import { Point } from '@circuit/math';
-import { Electronic } from '../base';
+import { PointLike } from '@circuit/math';
+import { SheetContext, Electronic } from '../base';
 import { ElectronicKind } from '../types';
-import { SheetContext } from '../base';
+import { LinePath } from './path';
 
 export class LineMarker extends Electronic {
-  constructor(context?: SheetContext) {
+  constructor(paths: PointLike[] = [], context?: SheetContext) {
     super(ElectronicKind.Line, context);
+    this.path = LinePath.from(paths);
   }
 
-  /** 设置导线数据 */
-  setLineMark(line: string, points: Point[]) {
-    const { sheet: { markMap: map } } = this;
+  /** 导线路径 */
+  protected path = new LinePath();
+
+  /** 设置图纸数据 */
+  setMark() {
+    const { sheet: { markMap: map }, id: line, path: points } = this;
 
     for (let i = 0; i < points.length; i++) {
       const point = points[i];
@@ -77,9 +81,9 @@ export class LineMarker extends Electronic {
     }
   }
 
-  /** 移除导线数据 */
-  deleteLineMark(line: string, points: Point[]) {
-    const { sheet: { markMap: map } } = this;
+  /** 移除图纸数据 */
+  deleteMark() {
+    const { sheet: { markMap: map }, id: line, path: points } = this;
 
     for (let i = 0; i < points.length; i++) {
       const point = points[i];

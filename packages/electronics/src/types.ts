@@ -1,8 +1,5 @@
 import type { Point } from '@circuit/math';
-import type { ConnectionStatus } from './utils';
-import type { MarkMap } from '@circuit/map';
-import type { Part } from './part/part';
-import type { Line } from './line/line';
+import type { ConnectionStatus } from './base';
 
 export { ElectronicKind } from '@circuit/shared';
 
@@ -28,16 +25,6 @@ export interface BasePinStatus {
   position: Point;
   /** UI 状态 */
   ui: PinUIStatus;
-}
-
-/** 图纸上下文 */
-export interface SheetContext {
-  /** 标记图纸 */
-  markMap: MarkMap;
-  /** 全局导线 */
-  lines?: Line[];
-  /** 全局器件 */
-  parts?: Part[];
 }
 
 /** 鼠标控制元素类名称 */

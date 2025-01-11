@@ -1,6 +1,6 @@
-import type { ElectronicKind, BasePinStatus } from '../types';
-import type { ConnectionData } from '../utils/connection';
 import { Point, Direction, NumberRank } from '@circuit/math';
+import type { ConnectionData } from '../base';
+import type { ElectronicKind, BasePinStatus } from '../types';
 
 /** 器件原始数据 */
 export interface PartData {
@@ -107,7 +107,7 @@ export interface ShapeDescription {
   readonly name: string;
   /** DOM 元素的所有属性 */
   readonly attribute: { [x: string]: string };
-  /** 某些元素不可旋转 */
+  /** 不可旋转元素 */
   readonly nonRotate?: true;
 }
 

@@ -1,5 +1,5 @@
-import { Margin, MarginVertex } from './types';
 import { Matrix, Point } from '@circuit/math';
+import { Margin, MarginVertex } from './types';
 
 export function getMarginVertex(position: Point, margin: Margin, rotate: Matrix): MarginVertex {
   const endPoint = [[-margin[3], -margin[0]], [margin[1], margin[2]]];
