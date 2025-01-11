@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { Point } from '@circuit/math';
 import { DrawEventController } from '@circuit/event';
+import { cursorStyles } from 'src/styles';
 import { PartProps } from './part';
 
 /** 器件创建时 */
-export function usePartCreated(props: PartProps, forceUpdate: () => void) {
+export function usePartCreate(props: PartProps, forceUpdate: () => void) {
   const {
     instance,
     onBeforeCreate,
@@ -22,7 +23,7 @@ export function usePartCreated(props: PartProps, forceUpdate: () => void) {
     onBeforeCreate?.(instance.id);
 
     DrawEventController.create()
-      .setCursor('move_part')
+      .setClassName(cursorStyles.movePart)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent((e) => {
         instance.position = e.position;

@@ -7,14 +7,20 @@ import { Line as LineInstance, LinePath, MouseFocusClassName } from '@circuit/el
 import { styles as lineStyles } from './styles';
 import { getLineRect, stringifyLinePath } from './utils';
 
-export interface PartProps {
+export interface LineProps {
   /** 导线实体 */
   instance: LineInstance;
   /** 元件是否被选中 */
   selected?: boolean;
-  /** 元件样式 */
-  className?: string;
-  /** 删除器件 */
+  /** 鼠标进入 */
+  onMouseEnter?(id: string): void;
+  /** 鼠标离开 */
+  onMouseLeave?(id: string): void;
+  /** 创建导线前 */
+  onBeforeCreate?(id: string): void;
+  /** 创建导线后 */
+  onCreated?(id: string): void;
+  /** 删除导线后 */
   onDeleted?(id: string): void;
   /** 点击器件 */
   onMouseDown?(ev: MouseEvent): void;
@@ -22,11 +28,13 @@ export interface PartProps {
   onPointMouseDown?(ev: MouseEvent, index: number): void;
 }
 
-export function Part(props: PartProps) {
+export function Line(props: LineProps) {
   const forceUpdate = useForceUpdate();
   const {
     instance,
     selected,
+    onMouseEnter,
+    onMouseLeave,
     onDeleted,
     onMouseDown,
     onPointMouseDown,
@@ -45,7 +53,11 @@ export function Part(props: PartProps) {
       })}
     >
       <path d={stringifyLinePath(path)} />
-      <g className={lineStyles.lineFocus}>
+      <g
+        className={lineStyles.lineFocus}
+        onMouseEnter={() => onMouseEnter?.(id)}
+        onMouseLeave={() => onMouseLeave?.(id)}
+      >
         {getLineRect(path).map((rect, i) => (
           <rect key={i} className={MouseFocusClassName} {...rect} />
         ))}

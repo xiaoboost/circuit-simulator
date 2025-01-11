@@ -6,6 +6,7 @@ import { MouseButtons } from '@xiao-ai/utils/web';
 import { Point, Direction } from '@circuit/math';
 import { DrawEventController } from '@circuit/event';
 import { useForceUpdate } from '@xiao-ai/utils/use';
+import { cursorStyles } from 'src/styles';
 import { Part as PartInstance, ElectronicKind } from '@circuit/electronics';
 import { styles as partStyles } from './styles';
 import { textHeight, textSpaceHeight } from './constant';
@@ -103,7 +104,7 @@ export function PartText({ instance, onMouseDown }: PartTextProps) {
     onMouseDown?.(ev);
 
     DrawEventController.create()
-      .setCursor('move_part')
+      .setClassName(cursorStyles.movePart)
       .setStopEvent({ type: 'mouseup', which: 'Left' })
       .setMoveEvent(({ movement }) => {
         textPosition.current = textPosition.current.add(movement);

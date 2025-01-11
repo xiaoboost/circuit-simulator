@@ -6,7 +6,7 @@ import { useForceUpdate } from '@xiao-ai/utils/use';
 import { Part as PartInstance } from '@circuit/electronics';
 import { editPartParams } from './editor';
 import { PartText } from './text';
-import { usePartCreated } from './use';
+import { usePartCreate } from './use';
 import { styles as partStyles } from './styles';
 import { ElectronicPointKind, ElectronicPoint } from '../point';
 
@@ -15,18 +15,20 @@ export interface PartProps {
   instance: PartInstance;
   /** 元件是否被选中 */
   selected?: boolean;
-  /** 元件样式 */
-  className?: string;
+  /** 鼠标进入 */
+  onMouseEnter?(id: string): void;
+  /** 鼠标离开 */
+  onMouseLeave?(id: string): void;
   /** 创建器件前 */
   onBeforeCreate?(id: string): void;
   /** 创建器件后 */
   onCreated?(id: string): void;
-  /** 删除器件 */
+  /** 删除器件后 */
   onDeleted?(id: string): void;
   /** 点击器件 */
   onMouseDown?(ev: MouseEvent): void;
   /** 点击引脚 */
-  onPinMouseDown?(ev: MouseEvent, index: number): void;
+  onPinMouseDown?(ev: MouseEvent, part: PartInstance, index: number): void;
   /** 点击文本 */
   onTextMouseDown?(ev: MouseEvent): void;
 }
@@ -37,6 +39,8 @@ export function Part(props: PartProps) {
     instance,
     selected,
     onMouseDown,
+    onMouseEnter,
+    onMouseLeave,
     onPinMouseDown,
     onTextMouseDown,
   } = props;
@@ -50,7 +54,7 @@ export function Part(props: PartProps) {
     connections,
   } = instance;
 
-  usePartCreated(props, forceUpdate);
+  usePartCreate(props, forceUpdate);
 
   const editParam = async () => {
     const result = await editPartParams({
@@ -73,7 +77,11 @@ export function Part(props: PartProps) {
       onMouseDown={onMouseDown}
       transform={`matrix(${rotate.join()},${position.join()})`}
     >
-      <g className={partStyles.partFocus}>
+      <g
+        className={partStyles.partFocus}
+        onMouseEnter={() => onMouseEnter?.(id)}
+        onMouseLeave={() => onMouseLeave?.(id)}
+      >
         {prototype.shape.map((item, i) => (
           React.createElement(item.name, {
             ...item.attribute,
@@ -86,7 +94,7 @@ export function Part(props: PartProps) {
             size={point.ui.size}
             kind={connections[i].isSpace ? ElectronicPointKind.PartPin : ElectronicPointKind.PartPinLine}
             position={point.origin}
-            onMouseDown={(ev) => onPinMouseDown?.(ev, i)}
+            onMouseDown={(ev) => onPinMouseDown?.(ev, instance, i)}
           />
         ))}
       </g>

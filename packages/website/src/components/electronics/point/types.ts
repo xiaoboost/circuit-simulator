@@ -11,11 +11,3 @@ export enum ElectronicPointKind {
   /** 导线交叠节点 */
   LineCover,
 }
-
-/** 导线接触方块大小 */
-export interface RectSize {
-  x: number;
-  y: number;
-  height: number;
-  width: number;
-}

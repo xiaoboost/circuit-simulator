@@ -64,7 +64,7 @@ export class Connection extends Array<ConnectionData> {
 
   delete(...data: ConnectionData[]) {
     for (const item of data) {
-      const index = this.findIndex((item) => this.#isEqual(item, item));
+      const index = this.findIndex((d) => this.#isEqual(d, item));
 
       if (index > -1) {
         this.splice(index, 1);
