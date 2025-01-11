@@ -1,5 +1,5 @@
-import test from 'ava';
 import { Point } from '@circuit/math';
+import test from 'ava';
 import { MarkMap, MarkKind } from '../src';
 
 test('基础功能', ({ true: isTrue, false: isFalse }) => {
@@ -54,7 +54,7 @@ test('设置空导线', ({ deepEqual }) => {
       position: [140, 140],
       line,
       connection: [1, 0, 0, 0],
-    }
+    },
   ]);
 
   map.deleteLineMark(line, linePath);
@@ -172,7 +172,7 @@ test('三条空导线合并为交错节点', ({ deepEqual }) => {
       position: [140, 120],
       line: line2,
       connection: [1, 0, 0, 0],
-    }
+    },
   ]);
 
   map.deleteLineMark(line1, line1Path);
@@ -195,7 +195,7 @@ test('三条空导线合并为交错节点', ({ deepEqual }) => {
       position: [140, 120],
       line: line2,
       connection: [1, 0, 0, 0],
-    }
+    },
   ]);
 });
 
@@ -388,7 +388,7 @@ test('器件引脚连接导线', ({ deepEqual }) => {
       position: [140, 120],
       line,
       connection: [1, 0, 0, 0],
-    }
+    },
   ]);
 
   map.deleteLineMark(line, linePath);

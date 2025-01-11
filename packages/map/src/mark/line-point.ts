@@ -1,7 +1,7 @@
-import { BaseLineMark } from './base-line';
 import type { MarkMap } from '../map';
-import { setClass, getMarkConstructor } from './utils';
+import { BaseLineMark } from './base-line';
 import { DataWithPosition, MarkKind, MarkStructureWrapper } from './types';
+import { setClass, getMarkConstructor } from './utils';
 
 export interface LinePointData {
   /** 导线编号 */
@@ -17,7 +17,7 @@ export class LinePointMark extends BaseLineMark {
   /** 导线节点类别 */
   static MarkKind = MarkKind.LinePoint;
 
-  // @ts-ignore
+  // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.LinePoint;
 
   constructor(map: MarkMap, data: DataWithPosition<LinePointData>) {

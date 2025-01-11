@@ -31,9 +31,19 @@ export default tseslint.config(
       ],
       'no-unused-vars': 'off',
       'import/no-unresolved': 'off',
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-this-alias': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          "argsIgnorePattern": "^_",
+          "ignoreRestSiblings": true,
+        },
+      ],
       '@typescript-eslint/no-explicit-any': ['error', { ignoreRestArgs: true }],
       'import/no-named-as-default': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      // 引入类型的时候这个规则会报错
+      'import/named': 'off',
       'max-len': ['warn', {
         code: 100,
       }],

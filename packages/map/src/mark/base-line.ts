@@ -1,7 +1,7 @@
 import { Point, PointLike } from '@circuit/math';
+import type { MarkMap } from '../map';
 import { BaseMark } from './base';
 import { Connection } from './connection';
-import type { MarkMap } from '../map';
 import { DataWithPosition, LineAndPointMark, MarkStructureData } from './types';
 
 export interface BaseLineData {
@@ -31,7 +31,7 @@ export abstract class BaseLineMark extends BaseMark {
 
     return Boolean(
       (left && right && !top && !bottom) ||
-      (!left && !right && top && bottom)
+      (!left && !right && top && bottom),
     );
   }
 
@@ -43,11 +43,11 @@ export abstract class BaseLineMark extends BaseMark {
     return this.connection.has(point);
   }
 
-  addConnect(point: Point, line?: string) {
+  addConnect(point: Point, _?: string) {
     return this.connection.add(point);
   }
 
-  deleteConnect(point: Point, line?: string) {
+  deleteConnect(point: Point, _?: string) {
     return this.connection.delete(point);
   }
 

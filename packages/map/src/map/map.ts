@@ -1,11 +1,8 @@
 import { PointLike, Point } from '@circuit/math';
-import { BaseMark } from '../mark/base';
-import { MarkMapStructuredData } from './types';
 import {
   Mark,
   MarkKind,
   getMarkFromData,
-  LineAndPointMark,
   MarkStructureData,
   LineStructureData,
   LinePointStructureData,
@@ -15,6 +12,8 @@ import {
   PartPinStructureData,
   PartPinLineStructureData,
 } from '../mark';
+import { BaseMark } from '../mark/base';
+import { MarkMapStructuredData } from './types';
 
 /** 标记图纸 */
 export class MarkMap extends Map {
@@ -82,7 +81,10 @@ export class MarkMap extends Map {
   set(position: PointLike, data: Omit<PartPinStructureData, 'position'>): this;
   set(position: PointLike, data: Omit<PartPinLineStructureData, 'position'>): this;
   set(position: PointLike, data: Omit<MarkStructureData, 'position'> | Mark) {
-    const node = data instanceof BaseMark ? data : getMarkFromData(this, { ...data, position } as any);
+    const node = data instanceof BaseMark
+      ? data
+      : getMarkFromData(this, { ...data, position } as any);
+
     super.set(this.toKey(position), node);
     return this;
   }
@@ -98,7 +100,9 @@ export class MarkMap extends Map {
   }
 
   entries() {
-    return this.getPoints().map((point) => [point, this.get(point)!] as [Point, Mark])[Symbol.iterator]();
+    return this
+      .getPoints()
+      .map((point) => [point, this.get(point)!] as [Point, Mark])[Symbol.iterator]();
   }
 
   forEach(callbackfn: (value: Mark, key: Point, map: MarkMap) => void): void {
@@ -120,7 +124,7 @@ export class MarkMap extends Map {
   }
 
   /** 设置器件数据 */
-  setPartMark(position: Point, part: string, pin?: number, ) {
+  setPartMark(position: Point, part: string, pin?: number ) {
     const oldMark = this.get(position);
 
     if (oldMark) {

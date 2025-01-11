@@ -1,10 +1,10 @@
 import { Point, PointLike } from '@circuit/math';
+import type { MarkMap } from '../map';
 import { BaseMark } from './base';
 import { BaseLineMark } from './base-line';
 import { Connection } from './connection';
-import type { MarkMap } from '../map';
-import { setClass, getMarkConstructor } from './utils';
 import { DataWithPosition, MarkKind, LineAndPointMark, MarkStructureWrapper } from './types';
+import { setClass, getMarkConstructor } from './utils';
 
 export interface LineCoverData {
   /** 导线编号 */
@@ -23,7 +23,7 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
   /** 导线节点类别 */
   static MarkKind = MarkKind.LineCover;
 
-  // @ts-ignore
+  // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.LineCover;
 
   readonly lines: string[];

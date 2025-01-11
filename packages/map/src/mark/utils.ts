@@ -1,8 +1,8 @@
 import { MarkMap } from '../map';
 import type { LineMark, LineStructureData } from './line';
-import type { LinePointMark, LinePointStructureData } from './line-point';
 import type { LineCoverMark, LineCoverStructureData } from './line-cover';
 import type { LineCrossMark, LineCrossStructureData } from './line-cross';
+import type { LinePointMark, LinePointStructureData } from './line-point';
 import type { PartMark, PartStructureData } from './part';
 import type { PartPinMark, PartPinStructureData } from './part-pin';
 import type { PartPinLineMark, PartPinLineStructureData } from './part-pin-line';

@@ -1,18 +1,24 @@
 import type { PointLike } from '@circuit/math';
+import type { LineMark, LineStructureData } from './line';
+import type { LineCoverMark, LineCoverStructureData } from './line-cover';
+import type { LineCrossMark, LineCrossStructureData } from './line-cross';
+import type { LinePointMark, LinePointStructureData } from './line-point';
 import type { PartMark, PartStructureData } from './part';
 import type { PartPinMark, PartPinStructureData } from './part-pin';
 import type { PartPinLineMark, PartPinLineStructureData } from './part-pin-line';
-import type { LineMark, LineStructureData } from './line';
-import type { LinePointMark, LinePointStructureData } from './line-point';
-import type { LineCoverMark, LineCoverStructureData } from './line-cover';
-import type { LineCrossMark, LineCrossStructureData } from './line-cross';
 
 /** 节点构造器集合 */
 export type MarkConstructor = MarkConstructorMap[keyof MarkConstructorMap];
 /** 节点集合 */
 export type Mark = LineAndPointMark | PartAndPinMark;
 /** 导线节点 */
-export type LineAndPointMark = LineMark | LinePointMark | LineCoverMark | LineCrossMark | PartPinLineMark;
+export type LineAndPointMark =
+  | LineMark
+  | LinePointMark
+  | LineCoverMark
+  | LineCrossMark
+  | PartPinLineMark;
+
 /** 器件节点 */
 export type PartAndPinMark = PartMark | PartPinMark;
 
@@ -46,7 +52,7 @@ export enum MarkKind {
 }
 
 /** 位置数据 */
-export type DataWithPosition<T = {}> = T & {
+export type DataWithPosition<T = object> = T & {
   position: PointLike;
 };
 

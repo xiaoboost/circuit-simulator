@@ -1,9 +1,9 @@
 import { Point } from '@circuit/math';
 import type { MarkMap } from '../map';
 import type { LineMark } from './line';
-import type { LinePointMark } from './line-point';
 import type { LineCoverMark } from './line-cover';
 import type { LineCrossMark } from './line-cross';
+import type { LinePointMark } from './line-point';
 import type { PartMark } from './part';
 import type { PartPinMark } from './part-pin';
 import type { PartPinLineMark } from './part-pin-line';

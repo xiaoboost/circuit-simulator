@@ -19,7 +19,7 @@ export class WorkerMainServer {
   /** 消息事件数据 */
   private messageStore: WorkerMessageStore[] = [];
   /** 接收事件数据暂存 */
-  private calledStore = new ChannelData<(data: any) => any>();
+  private calledStore = new ChannelData<(data: any) => unknown>();
   /** 事件编号 */
   private eventId = 0;
   /** 当前最大子进程编号 */
@@ -93,7 +93,7 @@ export class WorkerMainServer {
   }
 
   /** 监听消息 */
-  on<T = any>(name: string, handler: (data: T) => any) {
+  on<T = unknown>(name: string, handler: (data: T) => unknown) {
     this.calledStore.push(name, handler);
   }
 

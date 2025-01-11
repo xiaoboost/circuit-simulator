@@ -1,7 +1,7 @@
-import { BaseMark } from './base';
 import type { MarkMap } from '../map';
-import { setClass } from './utils';
+import { BaseMark } from './base';
 import { DataWithPosition, MarkKind, MarkStructureWrapper } from './types';
+import { setClass } from './utils';
 
 export interface PartData {
   /** 器件编号 */
@@ -15,7 +15,7 @@ export class PartMark extends BaseMark {
   /** 导线节点类别 */
   static MarkKind = MarkKind.Part;
 
-  // @ts-ignore
+  // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.Part;
 
   readonly part: string;
