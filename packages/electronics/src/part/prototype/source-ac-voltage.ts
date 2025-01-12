@@ -1,6 +1,6 @@
-import { ElectronicPrototype, UnitType } from '../types';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
 import { Direction } from '@circuit/math';
+import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
@@ -66,7 +66,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'path',
       attribute: {
-        // eslint-disable-next-line
+         
         d: 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,12H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0',
         stroke: 'currentColor',
       },

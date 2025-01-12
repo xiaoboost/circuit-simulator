@@ -1,15 +1,15 @@
 import { Point } from '@circuit/math';
 // import { MarkNodeKind } from '@circuit/map';
 import { isDef } from '@xiao-ai/utils';
+import type { Line } from '../';
+import type { Part } from '../../part';
+import { ElectronicKind } from '../../types';
 import { LinePath } from '../path';
 import { aStarPointSearch } from './point-search';
 // import { Cache } from './cache';
 import { Rules } from './search-rules';
 import { SearchStatus } from './types';
-import { ElectronicKind } from '../../types';
 
-import type { Line } from '../';
-import type { Part } from '../../part';
 
 export function getDrawSearcher(start: Point, direction: Point, line: Line) {
   /** 搜索路径 */

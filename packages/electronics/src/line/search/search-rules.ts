@@ -1,7 +1,7 @@
-import { Point } from '@circuit/math';
-import { SearchStatus } from './types';
-import { SearchNodeData } from './types';
 import { MarkMap } from '@circuit/map';
+import { Point } from '@circuit/math';
+import { SearchStatus , SearchNodeData } from './types';
+
 
 // 工具函数
 // 返回 node 所在器件

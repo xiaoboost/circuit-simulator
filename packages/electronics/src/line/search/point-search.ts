@@ -1,11 +1,11 @@
-import { Rules } from './search-rules';
+import { debug } from '@circuit/debug';
+import { Point, Rotate, RotateMatrix } from '@circuit/math';
+import { remove, AnyObject } from '@xiao-ai/utils';
 import { LinePath } from '../path';
 import { Cache } from './cache';
-import { SearchNodeData } from './types';
-import { debug } from '@circuit/debug';
-import { remove, AnyObject } from '@xiao-ai/utils';
-import { Point, Rotate, RotateMatrix } from '@circuit/math';
 import { RotateList } from './constant';
+import { Rules } from './search-rules';
+import { SearchNodeData } from './types';
 
 /** 搜索树 */
 export class SearchStack {
