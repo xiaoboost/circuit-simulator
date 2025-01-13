@@ -29,7 +29,7 @@ export class Connection {
     return Boolean(this.left && this.right && this.top && this.bottom);
   }
 
-  private vectorToKey(vector: Point) {
+  #vectorToKey(vector: Point) {
     if (process.env.NODE_ENV === 'development') {
       if (!vector.isAxis()) {
         throw new Error('连接器向量必须是轴向量');
@@ -63,37 +63,29 @@ export class Connection {
   }
 
   addVector(vector: Point) {
-    this[this.vectorToKey(vector)] = true;
+    this[this.#vectorToKey(vector)] = true;
   }
 
   deleteVector(vector: Point) {
-    this[this.vectorToKey(vector)] = false;
+    this[this.#vectorToKey(vector)] = false;
   }
 
   hasVector(vector: Point) {
-    return Boolean(this[this.vectorToKey(vector)]);
+    return Boolean(this[this.#vectorToKey(vector)]);
   }
 
-  getPoints() {
-    return (['top', 'right', 'bottom', 'left'] as const)
-      .map((key) => ({ key, val: this[key] }))
-      .filter(({ val }) => Boolean(val))
-      .map(({ key }) => {
-        switch (key) {
-          case 'left': {
-            return this.point.add([-20, 0]);
-          }
-          case 'right': {
-            return this.point.add([20, 0]);
-          }
-          case 'top': {
-            return this.point.add([0, -20]);
-          }
-          case 'bottom': {
-            return this.point.add([0, 20]);
-          }
-        }
-      });
+  /**
+   * 迭代连接的点:
+   *
+   * @description 顺序为：上右下左
+   */
+  getConnectedPoints(): (Point | undefined)[] {
+    return [
+      this.top ? this.point.add([-20, 0]) : undefined,
+      this.right ? this.point.add([20, 0]) : undefined,
+      this.bottom ? this.point.add([0, 20]) : undefined,
+      this.left ? this.point.add([0, -20]) : undefined,
+    ];
   }
 
   fromData(data: number[] = []) {
@@ -101,6 +93,6 @@ export class Connection {
   }
 
   toData() {
-    return [this.top, this.right, this.bottom, this.left].map((item) => Number(Boolean(item)));
+    return [this.top, this.right, this.bottom, this.left].map((item) => item ? 1 : 0);
   }
 }

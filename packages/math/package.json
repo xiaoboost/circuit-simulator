@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --config ./ava.config.js",
+    "test": "ava --no-cache --config ./ava.config.js",
     "build:cjs": "tsc -p ./tsconfig.build.json",
     "build": "pnpm run clear && pnpm run build:cjs",
     "watch": "pnpm run build -w",
