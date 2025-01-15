@@ -1,10 +1,10 @@
 import { Direction } from '@circuit/math';
 import { SheetContext } from '../base';
 import { ElectronicKind } from '../types';
-import { PartProps } from './props';
+import { PartMarker } from './mark';
 import type { PartData, PartStructuredData } from './types';
 
-export class Part extends PartProps {
+export class Part extends PartMarker {
   constructor(kind: ElectronicKind | PartData, context?: SheetContext) {
     super(kind, context);
   }
