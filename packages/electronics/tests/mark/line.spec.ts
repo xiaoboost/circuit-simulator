@@ -12,38 +12,40 @@ test('设置空导线', ({ deepEqual }) => {
     [140, 140],
   ];
   const line = new LineMarker(linePath, sheet);
+  const lineId = 'line_1';
 
+  line.id = lineId;
   line.setMark();
 
   deepEqual(sheet.markMap.toData(), [
     {
       kind: MarkKind.LinePoint,
-      line,
+      line: lineId,
       position: [100, 100],
       connection: [0, 1, 0, 0],
     },
     {
       kind: MarkKind.Line,
       position: [120, 100],
-      line,
+      line: lineId,
       connection: [0, 1, 0, 1],
     },
     {
       kind: MarkKind.Line,
       position: [140, 100],
-      line,
+      line: lineId,
       connection: [0, 0, 1, 1],
     },
     {
       kind: MarkKind.Line,
       position: [140, 120],
-      line,
+      line: lineId,
       connection: [1, 0, 1, 0],
     },
     {
       kind: MarkKind.LinePoint,
       position: [140, 140],
-      line,
+      line: lineId,
       connection: [1, 0, 0, 0],
     },
   ]);
@@ -53,537 +55,434 @@ test('设置空导线', ({ deepEqual }) => {
   deepEqual(sheet.markMap.toData(), []);
 });
 
-// test('两条空导线合并为交错节点', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line1 = 'line_1';
-//   const line2 = 'line_2';
-//   const line1Path = [[100, 100], [120, 100], [140, 100]].map(Point.from);
-//   const line2Path = [[140, 100], [140, 120], [140, 140]].map(Point.from);
+test('两条空导线合并为交错节点', ({ deepEqual }) => {
+  const sheet = new SheetContext();
+  const line1Id = 'line_1';
+  const line2Id = 'line_2';
+  const line1 = new LineMarker([[100, 100], [120, 100], [140, 100]], sheet);
+  const line2 = new LineMarker([[140, 100], [140, 120], [140, 140]], sheet);
 
-//   map.setLineMark(line1, line1Path);
-//   map.setLineMark(line2, line2Path);
+  line1.id = line1Id;
+  line2.id = line2Id;
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line1,
-//       position: [100, 100],
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       position: [140, 100],
-//       lines: [line1, line2],
-//       connection: [0, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [140, 120],
-//       line: line2,
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 140],
-//       line: line2,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+  line1.setMark();
+  line2.setMark();
 
-//   map.deleteLineMark(line1, line1Path);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      line: line1Id,
+      position: [100, 100],
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 1],
+    },
+    {
+      kind: MarkKind.LineCross,
+      position: [140, 100],
+      lines: [line1Id, line2Id],
+      connection: [0, 0, 1, 1],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [140, 120],
+      line: line2Id,
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 140],
+      line: line2Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 100],
-//       line: line2,
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [140, 120],
-//       line: line2,
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 140],
-//       line: line2,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-// });
+  line1.deleteMark();
 
-// test('三条空导线合并为交错节点', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line1 = 'line_1';
-//   const line2 = 'line_2';
-//   const line3 = 'line_3';
-//   const line1Path = [[100, 100], [120, 100], [140, 100]].map(Point.from);
-//   const line2Path = [[140, 100], [140, 120]].map(Point.from);
-//   const line3Path = [[140, 100], [140, 80]].map(Point.from);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 100],
+      line: line2Id,
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [140, 120],
+      line: line2Id,
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 140],
+      line: line2Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
+});
 
-//   map.setLineMark(line1, line1Path);
-//   map.setLineMark(line2, line2Path);
-//   map.setLineMark(line3, line3Path);
+test('三条空导线合并为交错节点', ({ deepEqual }) => {
+  const sheet = new SheetContext();
+  const line1Id = 'line_1';
+  const line2Id = 'line_2';
+  const line3Id = 'line_3';
+  const line1 = new LineMarker([[100, 100], [120, 100], [140, 100]], sheet);
+  const line2 = new LineMarker([[140, 100], [140, 120]], sheet);
+  const line3 = new LineMarker([[140, 100], [140, 80]], sheet);
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line3,
-//       position: [140, 80],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line1,
-//       position: [100, 100],
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       position: [140, 100],
-//       lines: [line1, line2, line3],
-//       connection: [1, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 120],
-//       line: line2,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+  line1.id = line1Id;
+  line2.id = line2Id;
+  line3.id = line3Id;
 
-//   map.deleteLineMark(line1, line1Path);
+  line1.setMark();
+  line2.setMark();
+  line3.setMark();
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line3,
-//       position: [140, 80],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       position: [140, 100],
-//       lines: [line2, line3],
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 120],
-//       line: line2,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-// });
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      line: line1Id,
+      position: [100, 100],
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 1],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      line: line3Id,
+      position: [140, 80],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      position: [140, 100],
+      lines: [line1Id, line2Id, line3Id],
+      connection: [1, 0, 1, 1],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 120],
+      line: line2Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
 
-// test('十字交叉的交叠节点', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line1 = 'line_1';
-//   const line2 = 'line_2';
-//   const line1Path = [[100, 100], [120, 100], [140, 100]].map(Point.from);
-//   const line2Path = [[120, 80], [120, 100], [120, 120]].map(Point.from);
+  line1.deleteMark();
 
-//   map.setLineMark(line1, line1Path);
-//   map.setLineMark(line2, line2Path);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      line: line3Id,
+      position: [140, 80],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      position: [140, 100],
+      lines: [line2Id, line3Id],
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 120],
+      line: line2Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
+});
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line2,
-//       position: [120, 80],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [100, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCover,
-//       position: [120, 100],
-//       lines: [line1, line2],
-//       connections: [
-//         {
-//           id: line1,
-//           data: [0, 1, 0, 1],
-//         },
-//         {
-//           id: line2,
-//           data: [1, 0, 1, 0],
-//         },
-//       ],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 100],
-//       line: line1,
-//       connection: [0, 0, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 120],
-//       line: line2,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+test('十字交叉的交叠节点', ({ deepEqual }) => {
+  const sheet = new SheetContext();
+  const line1Id = 'line_1';
+  const line2Id = 'line_2';
+  const line1 = new LineMarker([[100, 100], [120, 100], [140, 100]], sheet);
+  const line2 = new LineMarker([[120, 80], [120, 100], [120, 120]], sheet);
 
-//   map.deleteLineMark(line2, line2Path);
+  line1.id = line1Id;
+  line2.id = line2Id;
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [100, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 100],
-//       line: line1,
-//       connection: [0, 0, 0, 1],
-//     },
-//   ]);
-// });
+  line1.setMark();
+  line2.setMark();
 
-// test('两个直角导线交叠节点', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line1 = 'line_1';
-//   const line2 = 'line_2';
-//   const line1Path = [[100, 100], [120, 100], [120, 120]].map(Point.from);
-//   const line2Path = [[120, 80], [120, 100], [140, 100]].map(Point.from);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      position: [100, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      line: line2Id,
+      position: [120, 80],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCover,
+      position: [120, 100],
+      lines: [line1Id, line2Id],
+      connections: [
+        {
+          id: line1Id,
+          data: [0, 1, 0, 1],
+        },
+        {
+          id: line2Id,
+          data: [1, 0, 1, 0],
+        },
+      ],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 120],
+      line: line2Id,
+      connection: [1, 0, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 100],
+      line: line1Id,
+      connection: [0, 0, 0, 1],
+    },
+  ]);
 
-//   map.setLineMark(line1, line1Path);
-//   map.setLineMark(line2, line2Path);
+  line2.deleteMark();
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line2,
-//       position: [120, 80],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [100, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCover,
-//       position: [120, 100],
-//       lines: [line1, line2],
-//       connections: [
-//         {
-//           id: line1,
-//           data: [0, 0, 1, 1],
-//         },
-//         {
-//           id: line2,
-//           data: [1, 1, 0, 0],
-//         },
-//       ],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 100],
-//       line: line2,
-//       connection: [0, 0, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 120],
-//       line: line1,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      position: [100, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 1],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 100],
+      line: line1Id,
+      connection: [0, 0, 0, 1],
+    },
+  ]);
+});
 
-//   map.deleteLineMark(line2, line2Path);
+test('两个直角导线交叠节点', ({ deepEqual }) => {
+  const sheet = new SheetContext();
+  const line1Id = 'line_1';
+  const line2Id = 'line_2';
+  const line1 = new LineMarker([[100, 100], [120, 100], [120, 120]], sheet);
+  const line2 = new LineMarker([[120, 80], [120, 100], [140, 100]], sheet);
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [100, 100],
-//       line: line1,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line: line1,
-//       connection: [0, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 120],
-//       line: line1,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-// });
+  line1.id = line1Id;
+  line2.id = line2Id;
 
-// test('器件引脚连接导线', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line = 'line_1';
-//   const part = 'part_1';
-//   const pin = 1;
-//   const startNode = [100, 100];
-//   const linePath = [startNode, [120, 100], [140, 100], [140, 120]].map(Point.from);
+  line1.setMark();
+  line2.setMark();
 
-//   map.setPartMark(Point.from(startNode), part, pin);
-//   map.setLineMark(line, linePath);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      position: [100, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      line: line2Id,
+      position: [120, 80],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCover,
+      position: [120, 100],
+      lines:  [line1Id, line2Id],
+      connections: [
+        {
+          id: line1Id,
+          data: [0, 0, 1, 1],
+        },
+        {
+          id: line2Id,
+          data: [1, 1, 0, 0],
+        },
+      ],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 120],
+      line: line1Id,
+      connection: [1, 0, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [140, 100],
+      line: line2Id,
+      connection: [0, 0, 0, 1],
+    },
+  ]);
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.PartPinLine,
-//       part,
-//       pin,
-//       line,
-//       position: startNode,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [140, 100],
-//       line,
-//       connection: [0, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 120],
-//       line,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+  line2.deleteMark();
 
-//   map.deleteLineMark(line, linePath);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      position: [100, 100],
+      line: line1Id,
+      connection: [0, 1, 0, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 100],
+      line: line1Id,
+      connection: [0, 0, 1, 1],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 120],
+      line: line1Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
+});
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.PartPin,
-//       part,
-//       pin,
-//       position: startNode,
-//     },
-//   ]);
-// });
+test('三条导线构成 H 形状，删除中横导线', ({ deepEqual }) => {
+  const sheet = new SheetContext();
+  const line1Id = 'line_1';
+  const line2Id = 'line_2';
+  const line3Id = 'line_3';
+  const line4Id = 'line_4';
+  const line5Id = 'line_5';
+  const line1 = new LineMarker([[100, 100], [100, 120], [100, 140]], sheet);
+  const line2 = new LineMarker([[120, 100], [120, 120], [120, 140]], sheet);
+  const line3 = new LineMarker([[100, 140], [100, 160]], sheet);
+  const line4 = new LineMarker([[120, 140], [120, 160]], sheet);
+  const line5 = new LineMarker([[100, 140], [120, 140]], sheet);
 
-// test('三条导线构成 H 形状，删除中横导线', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line1 = 'line_1';
-//   const line2 = 'line_2';
-//   const line3 = 'line_3';
-//   const line4 = 'line_4';
-//   const line5 = 'line_5';
-//   const line1Path = [[100, 100], [100, 120], [100, 140]].map(Point.from);
-//   const line2Path = [[120, 100], [120, 120], [120, 140]].map(Point.from);
-//   const line3Path = [[100, 140], [100, 160]].map(Point.from);
-//   const line4Path = [[120, 140], [120, 160]].map(Point.from);
-//   const line5Path = [[100, 140], [120, 140]].map(Point.from);
+  line1.id = line1Id;
+  line2.id = line2Id;
+  line3.id = line3Id;
+  line4.id = line4Id;
+  line5.id = line5Id;
 
-//   map.setLineMark(line1, line1Path);
-//   map.setLineMark(line2, line2Path);
-//   map.setLineMark(line3, line3Path);
-//   map.setLineMark(line4, line4Path);
-//   map.setLineMark(line5, line5Path);
+  line1.setMark();
+  line2.setMark();
+  line3.setMark();
+  line4.setMark();
+  line5.setMark();
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line1,
-//       position: [100, 100],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 100],
-//       line: line2,
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       line: line1,
-//       position: [100, 120],
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 120],
-//       line: line2,
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       lines: [line1, line3, line5],
-//       position: [100, 140],
-//       connection: [1, 1, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       position: [120, 140],
-//       lines: [line2, line4, line5],
-//       connection: [1, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line3,
-//       position: [100, 160],
-//       connection: [1, 0, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 160],
-//       line: line4,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      line: line1Id,
+      position: [100, 100],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      line: line1Id,
+      position: [100, 120],
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      lines: [line1Id, line3Id, line5Id],
+      position: [100, 140],
+      connection: [1, 1, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      line: line3Id,
+      position: [100, 160],
+      connection: [1, 0, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 100],
+      line: line2Id,
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 120],
+      line: line2Id,
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      position: [120, 140],
+      lines: [line2Id, line4Id, line5Id],
+      connection: [1, 0, 1, 1],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 160],
+      line: line4Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
 
-//   map.deleteLineMark(line5, line5Path);
+  line5.deleteMark();
 
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line1,
-//       position: [100, 100],
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 100],
-//       line: line2,
-//       connection: [0, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       line: line1,
-//       position: [100, 120],
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 120],
-//       line: line2,
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       lines: [line1, line3],
-//       position: [100, 140],
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LineCross,
-//       position: [120, 140],
-//       lines: [line2, line4],
-//       connection: [1, 0, 1, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       line: line3,
-//       position: [100, 160],
-//       connection: [1, 0, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [120, 160],
-//       line: line4,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-// });
-
-// test('引脚连接导线，删除引脚', ({ deepEqual }) => {
-//   const map = new MarkMap();
-//   const line = 'line_1';
-//   const part = 'part_1';
-//   const pin = 1;
-//   const startNode = [100, 100];
-//   const linePath = [startNode, [120, 100], [140, 100], [140, 120]].map(Point.from);
-
-//   map.setPartMark(Point.from(startNode), part, pin);
-//   map.setLineMark(line, linePath);
-
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.PartPinLine,
-//       part,
-//       pin,
-//       line,
-//       position: startNode,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [140, 100],
-//       line,
-//       connection: [0, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 120],
-//       line,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-
-//   map.deletePartMark(Point.from(startNode));
-
-//   deepEqual(map.toData(), [
-//     {
-//       kind: MarkKind.LinePoint,
-//       line,
-//       position: startNode,
-//       connection: [0, 1, 0, 0],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [120, 100],
-//       line,
-//       connection: [0, 1, 0, 1],
-//     },
-//     {
-//       kind: MarkKind.Line,
-//       position: [140, 100],
-//       line,
-//       connection: [0, 0, 1, 1],
-//     },
-//     {
-//       kind: MarkKind.LinePoint,
-//       position: [140, 120],
-//       line,
-//       connection: [1, 0, 0, 0],
-//     },
-//   ]);
-// });
+  deepEqual(sheet.markMap.toData(), [
+    {
+      kind: MarkKind.LinePoint,
+      line: line1Id,
+      position: [100, 100],
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      line: line1Id,
+      position: [100, 120],
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      lines: [line1Id, line3Id],
+      position: [100, 140],
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      line: line3Id,
+      position: [100, 160],
+      connection: [1, 0, 0, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 100],
+      line: line2Id,
+      connection: [0, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.Line,
+      position: [120, 120],
+      line: line2Id,
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LineCross,
+      position: [120, 140],
+      lines: [line2Id, line4Id],
+      connection: [1, 0, 1, 0],
+    },
+    {
+      kind: MarkKind.LinePoint,
+      position: [120, 160],
+      line: line4Id,
+      connection: [1, 0, 0, 0],
+    },
+  ]);
+});

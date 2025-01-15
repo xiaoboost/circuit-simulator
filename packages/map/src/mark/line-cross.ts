@@ -45,6 +45,11 @@ export class LineCrossMark extends BaseLineMark {
     }
   }
 
+  /**
+   * 删除节点的某个记录
+   *
+   * @description
+   */
   deleteLine(line: string) {
     const { lines, connection, map, position } = this;
     const index = lines.findIndex((item) => item === line);
@@ -55,7 +60,11 @@ export class LineCrossMark extends BaseLineMark {
 
     lines.splice(index, 1);
 
-    for (const point of connection.getPoints()) {
+    for (const point of connection.getConnectedPoints()) {
+      if (!point) {
+        continue;
+      }
+
       const node = map.get(point);
 
       // 节点被删除或者退化为器件引脚，需要删除引用
@@ -71,18 +80,21 @@ export class LineCrossMark extends BaseLineMark {
       }
     }
 
+    // 当前仍然是大于两个导线，则返回自己
     if (lines.length > 1) {
       return this;
     }
-
-    const LinePointMark = getMarkConstructor('LinePointMark');
-    const newMark = new LinePointMark(map, {
-      line: lines[0],
-      position: position,
-      connection: connection.toData(),
-    });
-    this.map.set(this.position, newMark);
-    return newMark;
+    // 否则退化为导线空节点
+    else {
+      const LinePointMark = getMarkConstructor('LinePointMark');
+      const newMark = new LinePointMark(map, {
+        line: lines[0],
+        position: position,
+        connection: connection.toData(),
+      });
+      this.map.set(this.position, newMark);
+      return newMark;
+    }
   }
 
   toData(): LineCrossStructureData {

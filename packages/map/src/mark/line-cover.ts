@@ -63,6 +63,11 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
     this.getConnection(line)?.delete(point);
   }
 
+  /**
+   * 删除节点的某个记录
+   *
+   * @description 交叠节点删除其中一个导线，当前节点必然会退化为普通导线即`LineMark`
+   */
   deleteLine(line: string) {
     const LineMark = getMarkConstructor('LineMark');
     const newMark = new LineMark(this.map, {

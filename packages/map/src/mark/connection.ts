@@ -81,10 +81,10 @@ export class Connection {
    */
   getConnectedPoints(): (Point | undefined)[] {
     return [
-      this.top ? this.point.add([-20, 0]) : undefined,
+      this.top ? this.point.add([0, -20]) : undefined,
       this.right ? this.point.add([20, 0]) : undefined,
       this.bottom ? this.point.add([0, 20]) : undefined,
-      this.left ? this.point.add([0, -20]) : undefined,
+      this.left ? this.point.add([-20, 0]) : undefined,
     ];
   }
 

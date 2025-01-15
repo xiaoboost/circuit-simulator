@@ -121,7 +121,7 @@ test('getConnectedPoints', ({ deepEqual }) => {
 
   center.fromData([0, 1, 1, 0]);
 
-  const connectedPoints = center
+  let connectedPoints = center
     .getConnectedPoints()
     .map((item) => item ? item.toData() : undefined);
 
@@ -132,6 +132,23 @@ test('getConnectedPoints', ({ deepEqual }) => {
       [120, 100],
       [100, 120],
       undefined,
+    ],
+  );
+
+
+  center.fromData([1, 0, 0, 1]);
+
+  connectedPoints = center
+    .getConnectedPoints()
+    .map((item) => item ? item.toData() : undefined);
+
+  deepEqual(
+    connectedPoints,
+    [
+      [100, 80],
+      undefined,
+      undefined,
+      [80, 100],
     ],
   );
 });
