@@ -56,11 +56,11 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
   }
 
   addConnect(point: Point, line: string) {
-    this.getConnection(line).add(point);
+    this.getConnection(line)?.add(point);
   }
 
   deleteConnect(point: Point, line: string) {
-    this.getConnection(line).delete(point);
+    this.getConnection(line)?.delete(point);
   }
 
   deleteLine(line: string) {
@@ -79,8 +79,8 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
   }
 
   getConnection(line: string) {
-    if (!this.lines.includes(line)) {
-      throw new Error('获取连接器时导线编号错误');
+    if (!this.hasLine(line)) {
+      return;
     }
 
     const connection = this.connections.find((item) => item.id === line);

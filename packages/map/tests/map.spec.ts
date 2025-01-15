@@ -16,7 +16,7 @@ test('设置/删除节点', ({ true: isTrue, false: isFalse }) => {
   isFalse(map.has(position));
 });
 
-test('迭代顺序', ({is }) => {
+test('迭代顺序', ({ is }) => {
   const map = new MarkMap();
   const locations = [[100, 200], [200, 100], [100, 100], [260, 260]];
 
