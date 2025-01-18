@@ -1,11 +1,11 @@
-import { parse } from 'qs';
-import { local } from '@xiao-ai/utils/web';
+import { Part } from '@circuit/electronics';
 import { Watcher, delay } from '@xiao-ai/utils';
+import { local } from '@xiao-ai/utils/web';
+import { parse } from 'qs';
+import { end, step, oscilloscopes } from './config';
 import { CircuitDataKey } from './constant';
 import { CircuitData, ElectronicData } from './types';
-import { Part } from '@circuit/electronics';
 // import { PartComponent, LineComponent } from 'src/components/electronics';
-import { end, step, oscilloscopes } from './config';
 
 /** 所有器件 */
 export const parts = new Watcher<Part[]>([]);

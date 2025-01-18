@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { Sheet } from 'src/store';
+import { startLoading } from 'src/styles';
 
 /** 移除 loading 界面 */
 function removeLoading() {
-  const loading = document.getElementById('start-loading');
+  const loading = document.getElementById(startLoading);
 
   if (!loading) {
     return;

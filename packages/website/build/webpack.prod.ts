@@ -1,8 +1,8 @@
-import baseConfig from './webpack.base';
-import TerserPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import { WebpackProgressOraPlugin } from "webpack-progress-ora-plugin";
+import TerserPlugin from 'terser-webpack-plugin';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import { WebpackProgressOraPlugin } from 'webpack-progress-ora-plugin';
+import baseConfig from './webpack.base';
 
 if (!baseConfig.optimization) {
   baseConfig.optimization = {
@@ -20,7 +20,7 @@ if (process.env.ANALYZE === 'true') {
 
 baseConfig.plugins!.push(
   new WebpackProgressOraPlugin(),
-)
+);
 
 baseConfig.optimization.minimizer = baseConfig.optimization.minimizer.concat([
   new CssMinimizerPlugin(),

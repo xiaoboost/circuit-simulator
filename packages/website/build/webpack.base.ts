@@ -1,9 +1,12 @@
 import path from 'path';
-import Webpack from 'webpack';
+import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin';
+// eslint-disable-next-line
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import Webpack from 'webpack';
 
+import { startLoading } from '../src/styles/constant';
 import { resolve, version, build } from './utils';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -64,7 +67,20 @@ const baseConfig: Webpack.Configuration = {
       },
       {
         test: /\.css$/,
+        exclude: /\.vanilla\.css$/i,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      {
+        test: /\.vanilla\.css$/i,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: require.resolve('css-loader'),
+            options: {
+              url: false,
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpg|webp|svg)$/i,
@@ -99,6 +115,7 @@ const baseConfig: Webpack.Configuration = {
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
     }),
+    new VanillaExtractPlugin(),
     new MiniCssExtractPlugin({
       filename: isDevelopment
         ? 'styles/[name].css'
@@ -108,16 +125,19 @@ const baseConfig: Webpack.Configuration = {
       patterns: [
         {
           from: resolve('src/assets/favicon.ico'),
-          to: path.join(output, 'images/favicon.ico')
+          to: path.join(output, 'images/favicon.ico'),
         },
       ],
     }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
       data: {
-        version: version,
         build: build,
+        version: version,
         year: new Date().getFullYear(),
+      },
+      styles: {
+        loadingId: startLoading,
       },
       template: resolve('src/index.html'),
       inject: true,

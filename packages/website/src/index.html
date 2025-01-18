@@ -23,10 +23,10 @@
   </head>
   <body>
     <!-- 加载画面 -->
-    <section id="start-loading">
+    <section id="<%= htmlWebpackPlugin.options.styles.loadingId %>">
       <div>
-        <h3 style="font-style: italic;">加载中……</h3>
-        <span class="loader"><span class="loader-inner"></span></span>
+        <h3>加载中……</h3>
+        <div><span></span></div>
         <h3>绘制草图·模拟</h3>
       </div>
     </section>

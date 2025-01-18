@@ -1,6 +1,6 @@
+import { ElectronicKind } from '@circuit/electronics';
 import { Watcher, isArray } from '@xiao-ai/utils';
 import { parts, lines } from './sheet';
-import { ElectronicKind } from '@circuit/electronics';
 
 // import type { PartComponent, LineComponent } from 'src/components/electronics';
 

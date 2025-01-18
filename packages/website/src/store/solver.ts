@@ -1,10 +1,10 @@
-import { Watcher } from '@xiao-ai/utils';
 // import { SolveOption, SolverResult } from '@circuit/solver';
-import { WorkerMainServer } from '@circuit/worker';
+// import { WorkerMainServer } from '@circuit/worker';
+import { Watcher } from '@xiao-ai/utils';
 
-import { parts, lines } from './sheet';
 import { end, step } from './config';
 import { SolveEvent } from './constant';
+import { parts, lines } from './sheet';
 
 // import SolverWorker from './solver.worker.ts';
 

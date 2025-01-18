@@ -2,8 +2,8 @@ import '../styles';
 import './native';
 import 'core-js/stable';
 
-import { createRoot } from 'react-dom/client';
 import { createElement } from 'react';
+import { createRoot } from 'react-dom/client';
 
 import { App } from 'src/components/container';
 

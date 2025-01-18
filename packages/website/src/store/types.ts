@@ -1,5 +1,5 @@
-import type { SimulationConfig } from 'src/components/side-menu';
 import type { PartData } from '@circuit/electronics';
+// import type { SimulationConfig } from 'src/components/side-menu';
 
 /** 器件数据 */
 export type ElectronicData = (PartData | any)[];
@@ -9,7 +9,7 @@ export type OscilloscopeData = string[][];
 
 /** 电路数据 */
 export interface CircuitData {
-  simulation?: SimulationConfig;
+  simulation?: any;
   oscilloscopes?: OscilloscopeData;
   electronics?: ElectronicData;
 }

@@ -14,7 +14,7 @@ import { SearchStatus } from './types';
 export function getDrawSearcher(start: Point, direction: Point, line: Line) {
   /** 搜索路径 */
   function search(end: Point, bias: Point = Point.from([0, 0])): LinePath {
-
+    return {} as any;
   }
 
   /** 鼠标覆盖元件 */

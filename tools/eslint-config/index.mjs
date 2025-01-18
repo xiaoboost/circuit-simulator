@@ -19,7 +19,7 @@ export default tseslint.config(
     extends: [importPlugin.flatConfigs.recommended],
     rules: {
       'semi': ['error', 'always'],
-      'quotes': ['warn', 'single'],
+      'quotes': ['warn', 'single', { avoidEscape: true }],
       'brace-style': ['error', 'stroustrup', { 'allowSingleLine': false }],
       'comma-dangle': ['error', 'always-multiline'],
       'import/order': [
