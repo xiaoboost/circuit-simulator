@@ -30,8 +30,8 @@ export const Colors = {
   BorderLight: Color.rgb(228, 231, 237),
   BorderLighter: Color.rgb(235, 238, 245),
   BorderExtraLight: Color.rgb(242, 246, 252),
-  BackgroundBlack: Color.rgb(0, 0, 0),
-  BackgroundWhite: Color.rgb(255, 255, 255),
+  Black: Color.rgb(0, 0, 0),
+  White: Color.rgb(255, 255, 255),
 };
 
 /**

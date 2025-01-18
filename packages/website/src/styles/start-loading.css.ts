@@ -1,5 +1,5 @@
 import { globalStyle, globalKeyframes } from '@vanilla-extract/css';
-import { startLoading } from './constant';
+import { startLoading, Colors, Fonts } from './constant';
 
 const startId = `#${startLoading}`;
 const borderKeyframe = 'border-colors';
@@ -9,7 +9,7 @@ const loaderInnerKeyframe = 'loader-inner';
 
 globalStyle(startId, {
   position: 'absolute',
-  background: 'rgba(20, 20, 20, 0.95)',
+  background: Colors.Black.mix(Colors.White, 0.1).alpha(0.96).string(),
   height: '100%',
   width: '100%',
   zIndex: 10,
@@ -19,8 +19,8 @@ globalStyle(startId, {
 
 globalStyle(`${startId} > div`, {
   borderRadius: 25,
-  backgroundColor: '#222',
-  boxShadow: '0 0 10px #000000',
+  backgroundColor: Colors.Black.mix(Colors.White, 0.15).string(),
+  boxShadow: `0 0 10px ${Colors.Black.toString()}`,
   position: 'absolute',
   top: 0,
   left: 0,
@@ -36,11 +36,11 @@ globalStyle(`${startId} > div`, {
 });
 
 globalStyle(`${startId} > div h3`, {
-  fontFamily: "'Helvetica', 'Arial', 'Microsoft YaHei'",
+  fontFamily: Fonts.Default,
   padding: 0,
   fontSize: 18,
   fontWeight: 'normal',
-  color: '#999',
+  color: Colors.SecondaryText.toString(),
   textShadow: '1px 1px 2px black',
   height: '18px',
   lineHeight: '18px',
