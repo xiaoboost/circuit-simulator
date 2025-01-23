@@ -1,8 +1,8 @@
-import { IterativeCreation } from './types';
 import { ElectronicKind } from '@circuit/electronics';
 import { parseGainNumber } from '@circuit/math';
-import { parseNumber } from '../utils/number';
 import { stringifyInsidePart } from '../utils/connection';
+import { parseNumber } from '../utils/number';
+import { IterativeCreation } from './types';
 
 export const data: IterativeCreation = (part) => {
   const inputResId = 'InputR';

@@ -4,6 +4,6 @@
   "main": "index.js",
   "dependencies": {
     "ava": "6.2.0",
-    "tsx": "4.7.3"
+    "tsx": "4.19.2"
   }
 }

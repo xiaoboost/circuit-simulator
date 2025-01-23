@@ -1,4 +1,4 @@
-import { debug } from '@circuit/debug';
+// import { debug } from '@circuit/debug';
 import { Point, Rotate, RotateMatrix } from '@circuit/math';
 import { remove, AnyObject } from '@xiao-ai/utils';
 import { LinePath } from '../path';
@@ -125,7 +125,7 @@ export function aStarPointSearch(
 
   // 调试用时，指示终点
   if (process.env.NODE_ENV === 'development') {
-    debug.point(first.position, 'red');
+    // debug.point(first.position, 'red');
   }
 
   // 终点状态
@@ -147,7 +147,7 @@ export function aStarPointSearch(
     }
 
     if (process.env.NODE_ENV === 'development') {
-      debug.point(nodeNow.position, 'blue');
+      // debug.point(nodeNow.position, 'blue');
     }
 
     // 按方向扩展
@@ -158,7 +158,7 @@ export function aStarPointSearch(
       nodeExpand.value = rules.calValue(nodeExpand);
 
       if (process.env.NODE_ENV === 'development') {
-        debug.point(nodeExpand.position, 'black');
+        // debug.point(nodeExpand.position, 'black');
       }
 
       // 判断是否是终点
@@ -180,7 +180,7 @@ export function aStarPointSearch(
   }
 
   if (process.env.NODE_ENV === 'development') {
-    debug.clearAll();
+    // debug.clearAll();
   }
 
   if (!endStatus) {

@@ -1,7 +1,7 @@
 import { ElectronicKind } from '@circuit/electronics';
-import { IterativeCreation } from './types';
 import { getMark, getSetMethod } from '../utils/mark';
 import { parseNumber } from '../utils/number';
+import { IterativeCreation } from './types';
 
 export const data: IterativeCreation = (part) => {
   const resMark = getMark();

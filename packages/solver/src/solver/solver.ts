@@ -1,16 +1,23 @@
-import { concat, isNumber, isDef, AnyObject } from '@xiao-ai/utils';
-import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
-import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
-import { Mapping } from './map';
-import { isMeterGnd } from '../utils/part';
-
-import { ElectronicKind } from '@circuit/shared';
-
 import type {
   PartStructuredData as Part,
   // LineStructuredData as Line,
   ConnectionData,
 } from '@circuit/electronics';
+import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
+import { ElectronicKind } from '@circuit/shared';
+import { concat, isNumber, isDef, AnyObject } from '@xiao-ai/utils';
+
+import {
+  PartRunData,
+  Electronics,
+  IterativeEquation,
+  PartRunDataWithIterator,
+  CircuitBaseMatrix,
+} from '../parts';
+
+import { stringifyInsidePart, stringifyInsidePin, stringifyPin } from '../utils/connection';
+import { isMeterGnd } from '../utils/part';
+import { Mapping } from './map';
 
 type Line = any;
 
@@ -21,14 +28,6 @@ import {
   ProgressEvent,
   SolverResult,
 } from './types';
-
-import {
-  PartRunData,
-  Electronics,
-  IterativeEquation,
-  PartRunDataWithIterator,
-  CircuitBaseMatrix,
-} from '../parts';
 
 /** 求解器 */
 export class Solver {
@@ -194,7 +193,7 @@ export class Solver {
       const iterative = Electronics[part.kind];
 
       if (!iterative) {
-        throw new Error('非法器件')
+        throw new Error('非法器件');
       }
 
       const data = iterative(part);

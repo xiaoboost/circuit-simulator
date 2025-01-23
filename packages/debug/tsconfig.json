@@ -3,6 +3,7 @@
   "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
+    "outDir": "dist",
     "lib": ["DOM"]
   }
 }

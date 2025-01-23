@@ -1,7 +1,7 @@
 import test from 'ava';
 
-import { loadToData } from './utils';
 import { noApartPart, apartPart } from './data';
+import { loadToData } from './utils';
 
 test('所有器件都是原始器件', ({ snapshot }) => {
   snapshot(loadToData(noApartPart));

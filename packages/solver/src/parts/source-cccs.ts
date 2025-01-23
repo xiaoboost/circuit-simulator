@@ -1,5 +1,5 @@
-import { IterativeCreation } from './types';
 import { parseNumber } from '../utils/number';
+import { IterativeCreation } from './types';
 
 /**
  * 流控流源

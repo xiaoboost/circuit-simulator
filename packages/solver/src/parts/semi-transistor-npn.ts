@@ -1,8 +1,8 @@
-import { IterativeCreation } from './types';
 import { ElectronicKind } from '@circuit/electronics';
+import { stringifyInsidePart } from '../utils/connection';
 import { getMark, getSetMethod } from '../utils/mark';
 import { parseNumber } from '../utils/number';
-import { stringifyInsidePart } from '../utils/connection';
+import { IterativeCreation } from './types';
 
 // TODO: example 中的 common-emitter-amplifier、emitter-follower 两个样例
 export const data: IterativeCreation = (part) => {

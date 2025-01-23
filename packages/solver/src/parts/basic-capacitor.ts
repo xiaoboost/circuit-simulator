@@ -1,6 +1,6 @@
-import { IterativeCreation } from './types';
 import { getMark } from '../utils/mark';
 import { parseNumber } from '../utils/number';
+import { IterativeCreation } from './types';
 
 export const data: IterativeCreation = (part) => {
   const mark = getMark();

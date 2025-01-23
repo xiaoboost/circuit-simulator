@@ -1,12 +1,11 @@
-import { MarkMap } from '@circuit/map';
-import { Solver } from '../src/solver/solver';
 import {
   Part,
   Line,
   PartData,
   LineData,
-  Context,
 } from '@circuit/electronics';
+import { MarkMap } from '@circuit/map';
+import { Solver } from '../src/solver/solver';
 
 export function load(data: (PartData | LineData)[]) {
   const context: Context = {

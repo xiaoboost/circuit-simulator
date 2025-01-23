@@ -4,9 +4,10 @@
   "description": "电路仿真代码仓库",
   "scripts": {
     "build": "pnpm run --filter=!@circuit/website build",
-    "test": "pnpm run -r --parallel --filter . test",
-    "test:update": "pnpm run -r --parallel --filter . test:update",
+    "test": "pnpm -r run test",
+    "test:update": "pnpm -r run test:update",
     "lint": "pnpm -r --parallel run lint",
+    "lint:ci": "pnpm -r --parallel run lint --quiet",
     "lint:fix": "pnpm -r --parallel run lint:fix",
     "dev:website": "pnpm run --filter @circuit/website dev",
     "build:website": "pnpm run --filter @circuit/website build"

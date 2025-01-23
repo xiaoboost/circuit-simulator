@@ -1,5 +1,5 @@
-import type { Matrix } from '@circuit/math';
 import type { PartStructuredData } from '@circuit/electronics';
+import type { Matrix } from '@circuit/math';
 import type { CircuitSolverMatrix, IterativeEquation } from '../parts';
 
 /** 观测器 */
