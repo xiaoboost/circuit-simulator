@@ -5,7 +5,7 @@ import { ElectronicKind } from '../types';
 import { LinePath } from './path';
 import { LinePinStatus } from './types';
 
-export class LineProps extends Electronic {
+export abstract class LineProps extends Electronic {
   constructor(paths: PointLike[] = [], context?: SheetContext) {
     super(ElectronicKind.Line, context);
     this.#path = LinePath.from(paths);

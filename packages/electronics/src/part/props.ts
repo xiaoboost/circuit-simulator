@@ -6,7 +6,7 @@ import { Electronics } from './prototype';
 import { PartData, ElectronicPrototype, PartPinStatus } from './types';
 import { getMarginVertex } from './utils';
 
-export class PartProps extends Electronic {
+export abstract class PartProps extends Electronic {
   #position: Point;
   #rotate = new Matrix(2, 'E');
   #invRotate = new Matrix(2, 'E');

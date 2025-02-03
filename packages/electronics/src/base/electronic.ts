@@ -1,12 +1,12 @@
 import { isNumber, concat } from '@xiao-ai/utils';
 
+import type { Line } from '../line/line';
+import type { Part } from '../part/part';
+
 import { Electronics } from '../part/prototype';
 import { ElectronicKind } from '../types';
 import { Connection, ConnectionData } from './connection';
 import { SheetContext } from './sheet';
-
-// import type { Part } from '../part/part';
-// import type { Line } from '../../tmp/line';
 
 export interface ElectronicOption {
   id?: string;
@@ -61,16 +61,16 @@ export abstract class Electronic {
   }
 
   /** 拿起元件 */
-  deleteMark() {
-    throw new Error('方法未实现');
-  }
+  abstract deleteMark(): void;
   /** 放下元件 */
-  setMark() {
-    throw new Error('方法未实现');
+  abstract setMark(): void;
+
+  isLine(): this is Line {
+    return this.kind === ElectronicKind.Line;
   }
 
-  isLine(): this is any {
-    return this.kind === ElectronicKind.Line;
+  isPart(): this is Part {
+    return this.kind !== ElectronicKind.Line;
   }
 
   /** 删除自己 */
@@ -155,8 +155,19 @@ export abstract class Electronic {
   }
 
   /** 是否存在连接 */
-  hasConnection(id: string, mark: number) {
-    // return this.connections.some((item) => item.has(id, mark));
+  hasConnection(id: string): boolean;
+  hasConnection(id: string, mark: number): boolean;
+  hasConnection(id: string, mark?: number) {
+    return this.connections.some((item) => {
+      return item.some((data) => {
+        if (isNumber(mark)) {
+          return data.id === id && data.mark === mark;
+        }
+        else {
+          return data.id === id;
+        }
+      });
+    });
   }
 
   /** 获取所有连接 */

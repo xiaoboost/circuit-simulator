@@ -1,16 +1,15 @@
 
 import { MarkMap } from '@circuit/map';
-import { remove } from '@xiao-ai/utils';
-import type { Part } from '../part/part';
-import { ElectronicKind } from '../types';
-// import type { Line } from '../line/line';
+import { remove, Subscriber } from '@xiao-ai/utils';
+import type { Line } from '../line';
+import type { Part } from '../part';
 import type { Electronic } from './electronic';
 
-export class SheetContext {
+export class SheetContext extends Subscriber<readonly [Line[], Part[]]> {
   /** 图纸数据 */
   readonly markMap = new MarkMap();
   /** 导线储存 */
-  readonly #lines: Part[] = [];
+  readonly #lines: Line[] = [];
   /** 器件储存 */
   readonly #parts: Part[] = [];
 
@@ -21,22 +20,44 @@ export class SheetContext {
 
   /** 添加器件 */
   add(item: Electronic) {
-    if (item.kind === ElectronicKind.Line) {
-      this.#lines.push(item as Part);
-    }
-    else {
-      this.#parts.push(item as Part);
+    if (!this.findById(item.id)) {
+      const oldVal = [this.geAllLines(), this.getAllParts()] as const;
+
+      if (item.isLine()) {
+        this.#lines.push(item as Line);
+      }
+      else {
+        this.#parts.push(item as Part);
+      }
+
+      this.notify([this.geAllLines(), this.getAllParts()], oldVal);
     }
   }
 
   /** 移除器件 */
   delete(item: Electronic) {
-    if (item.kind === ElectronicKind.Line) {
-      remove(this.#lines, item);
+    if (this.findById(item.id)) {
+      const oldVal = [this.geAllLines(), this.getAllParts()] as const;
+
+      if (item.isLine()) {
+        remove(this.#lines, item);
+      }
+      else {
+        remove(this.#parts, item);
+      }
+
+      this.notify([this.geAllLines(), this.getAllParts()], oldVal);
     }
-    else {
-      remove(this.#parts, item);
-    }
+  }
+
+  /** 获取所有导线 */
+  geAllLines() {
+    return this.#lines.slice();
+  }
+
+  /** 获取所有器件 */
+  getAllParts() {
+    return this.#parts.slice();
   }
 
   /** 创建编号 */
