@@ -10,6 +10,6 @@ export function App() {
 
   return <div className={Styles.container}>
     <Header />
-    <Painter />
+    <Painter lines={[]} parts={[]} />
   </div>;
 }

@@ -1,7 +1,12 @@
 import type { Point } from '@circuit/math';
 import type { ConnectionStatus } from './base';
+import type { LineStructuredData } from './line';
+import type { PartStructuredData } from './part';
 
 export { ElectronicKind } from '@circuit/shared';
+
+/** 元件总类别 */
+export type ElectronicStructuredData = LineStructuredData | PartStructuredData;
 
 /** 引脚显示状态 */
 export interface PinUIStatus {

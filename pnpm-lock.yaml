@@ -102,12 +102,6 @@ importers:
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
-      '@circuit/math':
-        specifier: workspace:*
-        version: link:../math
-      '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
       react-use:
         specifier: 17.6.0
         version: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -124,15 +118,9 @@ importers:
       '@types/node':
         specifier: 20.12.8
         version: 20.12.8
-      '@types/react':
-        specifier: 19.1.2
-        version: 19.1.2
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
-      ava:
-        specifier: 6.2.0
-        version: 6.2.0(rollup@4.30.1)
       eslint:
         specifier: 9.17.0
         version: 9.17.0
@@ -237,6 +225,9 @@ importers:
       '@circuit/math':
         specifier: workspace:*
         version: link:../math
+      '@vanilla-extract/css':
+        specifier: 1.17.0
+        version: 1.17.0
       '@xiao-ai/utils':
         specifier: 1.6.6
         version: 1.6.6

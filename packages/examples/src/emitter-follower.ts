@@ -1,6 +1,7 @@
-import type { CircuitData } from 'src/store';
+// import type { CircuitData } from 'src/store';
 
-export const data: CircuitData = {
+// export const data: CircuitData = {\n
+export const data = {
   simulation: {
     end: '10m',
     step: '5u',
