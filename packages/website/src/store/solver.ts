@@ -4,7 +4,7 @@ import { Watcher } from '@xiao-ai/utils';
 
 import { end, step } from './config';
 import { SolveEvent } from './constant';
-import { parts, lines } from './sheet';
+// import { parts, lines } from './sheet';
 
 // import SolverWorker from './solver.worker.ts';
 

@@ -11,7 +11,7 @@ export function createServiceKey<T>(name: string) {
 
 /** 注册插件 */
 export function definePlugin(installer: PluginInstaller) {
-  if (PluginInstallers.includes(installer)) {
+  if (!PluginInstallers.includes(installer)) {
     PluginInstallers.push(installer);
   }
 }

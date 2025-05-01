@@ -1,9 +1,11 @@
 import { Point } from '@circuit/math';
 import { definePlugin, Watcher } from '../../context';
 import type { IMapCoordinateService } from '../../types';
+import { CURSOR_SERVICE } from '../cursor/constant';
+import { DRAG_SCENE_SERVICE } from '../drag-scene-service/constant';
 import { MAP_COORDINATE_SERVICE } from './constant';
 
-definePlugin(({ registerHook, registerService }) => {
+definePlugin(({ getService, registerHook, registerService }) => {
   const service: IMapCoordinateService = {
     value: new Watcher({
       position: new Point(0, 0),
@@ -31,6 +33,13 @@ definePlugin(({ registerHook, registerService }) => {
   registerHook({
     kind: 'EventListener',
     onMouseWheel(e) {
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+
+      // 当前场景不为空时不处理
+      if (!dragSceneService.isEmpty) {
+        return;
+      }
+
       const mousePosition = new Point(e.pageX, e.pageY);
       const { data: oldVal } = service.value;
       let size = oldVal.scale * 20;
@@ -64,18 +73,54 @@ definePlugin(({ registerHook, registerService }) => {
     },
   });
 
+  const DragSceneName = 'DragBackground';
+
   // 注册鼠标拖动背景事件
   registerHook({
     kind: 'DragScene',
-    name: 'DragBackground',
+    name: DragSceneName,
     start(event) {
-      return false;
+      // 非右键或者鼠标按下事件不处理
+      if (event.button !== 2 || event.type !== 'mousedown') {
+        return false;
+      }
+
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+
+      // 当前场景不为空时不处理
+      if (!dragSceneService.isEmpty) {
+        return false;
+      }
+
+      return true;
     },
     isEnd(event) {
-      return false;
+      // 非右键或者鼠标抬起事件不处理
+      if (event.button !== 2 || event.type !== 'mouseup') {
+        return false;
+      }
+
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+
+      // 当前场景不是鼠标拖动背景场景时不处理
+      if (!(
+        dragSceneService.scenes.length !== 1 ||
+        dragSceneService.scenes[0] !== DragSceneName
+      )) {
+        return false;
+      }
+
+      return true;
     },
     onDragMove(event) {
 
+    },
+    afterStart() {
+      const cursorService = getService(CURSOR_SERVICE);
+      cursorService.set(cursorService.kind.Dragging);
+    },
+    afterEnd() {
+      getService(CURSOR_SERVICE).clear();
     },
   });
 

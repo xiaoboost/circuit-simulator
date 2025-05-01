@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import { Sheet } from 'src/store';
 import { startLoading } from 'src/styles';
 
 /** 移除 loading 界面 */
@@ -13,10 +12,11 @@ function removeLoading() {
   loading.style.opacity = '0';
   loading.style.transition = 'opacity .5s';
   setTimeout(() => loading.remove(), 500);
-  console.log('Schematic Ready.');
+  console.log('图纸加载完成');
 }
 
 /** 初始化 */
 export function useInit() {
-  useEffect(() => void Sheet.appDataInit().then(removeLoading), []);
+  // useEffect(() => void Sheet.appDataInit().then(removeLoading), []);
+  removeLoading();
 }

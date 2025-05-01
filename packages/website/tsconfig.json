@@ -1,6 +1,6 @@
 {
   "extends": "@xiao-ai/tsconfig",
-  "include": ["src", "typings", "tests", "build"],
+  "include": ["src", "typings", "tests", "build", "../examples/src/bridge-rectifier.ts", "../examples/src/common-emitter-amplifier.ts", "../examples/src/current-amplifier.ts", "../examples/src/emitter-follower.ts", "../examples/src/first-order-ac.ts", "../examples/src/first-order-dc.ts", "../examples/src/half-wave-rectifier.ts", "../examples/src/phase-amplifier.ts", "../examples/src/resistance-bridge.ts", "../examples/src/resistance-series.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",

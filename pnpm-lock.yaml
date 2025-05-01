@@ -97,17 +97,20 @@ importers:
         specifier: 5.7.2
         version: 5.7.2
 
-  packages/event:
+  packages/examples:
     dependencies:
+      '@circuit/electronics':
+        specifier: workspace:*
+        version: link:../electronics
       '@circuit/math':
         specifier: workspace:*
         version: link:../math
       '@xiao-ai/utils':
         specifier: 1.6.6
         version: 1.6.6
-      react:
-        specifier: 19.1.0
-        version: 19.1.0
+      react-use:
+        specifier: 17.6.0
+        version: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -237,6 +240,9 @@ importers:
       '@xiao-ai/utils':
         specifier: 1.6.6
         version: 1.6.6
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
       react-use:
         specifier: 17.6.0
         version: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -366,15 +372,15 @@ importers:
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
-      '@circuit/event':
-        specifier: workspace:*
-        version: link:../event
       '@circuit/map':
         specifier: workspace:*
         version: link:../map
       '@circuit/math':
         specifier: workspace:*
         version: link:../math
+      '@circuit/painter':
+        specifier: workspace:*
+        version: link:../painter
       '@circuit/solver':
         specifier: workspace:*
         version: link:../solver
@@ -520,37 +526,6 @@ importers:
       worker-loader:
         specifier: 3.0.8
         version: 3.0.8(webpack@5.97.1)
-
-  packages/worker:
-    dependencies:
-      '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
-    devDependencies:
-      '@circuit/eslint-config':
-        specifier: workspace:*
-        version: link:../../tools/eslint-config
-      '@circuit/test-toolkit':
-        specifier: workspace:*
-        version: link:../../tools/test-toolkit
-      '@types/circuit':
-        specifier: workspace:*
-        version: link:../../tools/typings
-      '@xiao-ai/tsconfig':
-        specifier: 1.0.4
-        version: 1.0.4
-      eslint:
-        specifier: 9.17.0
-        version: 9.17.0
-      rimraf:
-        specifier: 5.0.5
-        version: 5.0.5
-      tslib:
-        specifier: 2.8.1
-        version: 2.8.1
-      typescript:
-        specifier: 5.7.2
-        version: 5.7.2
 
   tools/eslint-config:
     devDependencies:

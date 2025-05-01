@@ -1,3 +1,5 @@
+import { MouseEvent } from 'react';
+
 /** 鼠标拖动场景 */
 export interface DragScene {
   /** 钩子名称 */
@@ -20,6 +22,12 @@ export interface DragScene {
    * 拖拽执行中
    */
   onDragMove(event: MouseEvent): void;
+  /**
+   * 场景开始
+   *
+   * @description 首次移动之前
+   */
+  afterStart?(): void;
   /**
    * 场景结束
    */
