@@ -1,4 +1,29 @@
 import type { ReactNode } from 'react';
+import { createServiceKey } from '../../context';
+
+/**
+ * 视图层实现钩子
+ *
+ * @description 该钩子将用于视图图层的渲染
+ * @description 视图层从 DOM 上来说是高于绘图层的，视图层不会随着画布变化而变化
+ * @example
+ * ```ts
+ * const viewLayerHooks = usePainterHook(VIEW_LAYER_HOOK);
+ * ```
+ */
+export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
+
+/**
+ * 绘图层实现钩子
+ *
+ * @description 该钩子将用于绘图图层的渲染
+ * @description 绘图层从 DOM 上来说是低于绘图层的，绘图层会随着画布变化而变化
+ * @example
+ * ```ts
+ * const drawLayerHooks = usePainterHook(DRAW_LAYER_HOOK);
+ * ```
+ */
+export const DRAW_LAYER_HOOK = createServiceKey<IDrawLayer>('DrawLayer');
 
 interface BaseLayer {
   /**
@@ -16,9 +41,7 @@ interface BaseLayer {
 }
 
 /** 画布视图图层 */
-export interface ViewLayer extends BaseLayer {
-  /** 钩子类别 */
-  kind: 'ViewLayer';
+export interface IViewLayer extends BaseLayer {
   /**
    * 渲染组件
    *
@@ -28,9 +51,7 @@ export interface ViewLayer extends BaseLayer {
 }
 
 /** 画布绘图图层 */
-export interface DrawLayer extends BaseLayer {
-  /** 钩子类别 */
-  kind: 'DrawLayer';
+export interface IDrawLayer extends BaseLayer {
   /**
    * 渲染组件
    *

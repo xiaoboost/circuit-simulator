@@ -1,9 +1,13 @@
 import { Point } from '@circuit/math';
 import { definePlugin, Watcher } from '../../context';
-import type { IMapCoordinateService } from '../../types';
-import { CURSOR_SERVICE } from '../cursor/constant';
-import { DRAG_SCENE_SERVICE } from '../drag-scene-service/constant';
-import { MAP_COORDINATE_SERVICE } from './constant';
+import {
+  IMapCoordinateService,
+  CURSOR_SERVICE,
+  DRAG_SCENE_SERVICE,
+  MAP_COORDINATE_SERVICE,
+  EVENT_LISTENER_HOOK,
+  DRAG_SCENE_HOOK,
+} from '../../types';
 
 definePlugin(({ getService, registerHook, registerService }) => {
   const service: IMapCoordinateService = {
@@ -29,9 +33,12 @@ definePlugin(({ getService, registerHook, registerService }) => {
     },
   };
 
+  const minLimit = 20;
+  const maxLimit = 100;
+  const DragSceneName = 'DragBackground';
+
   // 注册滚轮缩放事件
-  registerHook({
-    kind: 'EventListener',
+  registerHook(EVENT_LISTENER_HOOK, {
     onMouseWheel(e) {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
@@ -40,7 +47,13 @@ definePlugin(({ getService, registerHook, registerService }) => {
         return;
       }
 
-      const mousePosition = new Point(e.pageX, e.pageY);
+      // 滚轮未滚动时不处理
+      if (e.deltaY === 0) {
+        return;
+      }
+
+      const domRect = e.currentTarget.getBoundingClientRect();
+      const mousePosition = new Point(e.pageX - domRect.left, e.pageY - domRect.top);
       const { data: oldVal } = service.value;
       let size = oldVal.scale * 20;
 
@@ -51,12 +64,12 @@ definePlugin(({ getService, registerHook, registerService }) => {
         size += 5;
       }
 
-      if (size < 20) {
-        size = 20;
+      if (size < minLimit) {
+        size = minLimit;
         return;
       }
-      if (size > 80) {
-        size = 80;
+      if (size > maxLimit) {
+        size = maxLimit;
         return;
       }
 
@@ -73,11 +86,8 @@ definePlugin(({ getService, registerHook, registerService }) => {
     },
   });
 
-  const DragSceneName = 'DragBackground';
-
   // 注册鼠标拖动背景事件
-  registerHook({
-    kind: 'DragScene',
+  registerHook(DRAG_SCENE_HOOK, {
     name: DragSceneName,
     start(event) {
       // 非右键或者鼠标按下事件不处理

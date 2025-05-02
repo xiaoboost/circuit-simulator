@@ -5,4 +5,7 @@ export {
   useWatcher,
 } from './define';
 
-export { usePainterService } from './react';
+export {
+  usePainterService,
+  usePainterHook,
+} from './react';

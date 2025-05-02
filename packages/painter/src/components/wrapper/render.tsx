@@ -4,7 +4,8 @@ import React, { useRef } from 'react';
 import { PainterContext } from '../../context/context';
 import { usePainterInit, usePainterUnmount } from '../../context/react';
 import { IPainterContext } from '../../context/types';
-import * as Styles from './styles.css';
+import { Entry } from '../entry';
+import { wrapper } from './styles.css';
 
 export interface PainterProps {
   className?: string;
@@ -20,13 +21,18 @@ export function Painter(props: PainterProps) {
     PluginUninstallers: [],
   });
 
-  usePainterInit(context.current);
+  const isReady = usePainterInit(context.current);
+
   usePainterUnmount(context.current);
+
+  if (!isReady) {
+    return <div className={wrapper}>Loading</div>;
+  }
 
   return (
     <PainterContext.Provider value={context.current}>
-      <div className={scl(props.className, Styles.painter)} style={props.style}>
-        <div>Painter</div>
+      <div className={scl(props.className, wrapper)} style={props.style}>
+        <Entry />
       </div>
     </PainterContext.Provider>
   );

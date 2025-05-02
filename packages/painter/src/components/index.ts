@@ -1,1 +1,1 @@
-export * from './painter';
+export * from './wrapper';

@@ -1,4 +1,4 @@
-import type { HookType } from '../types';
+import type { HookType, ServiceType } from '../types';
 
 /**
  * 服务注册键
@@ -24,15 +24,15 @@ export interface IPluginInstallerContext {
   /** 注册服务 */
   registerService<T>(key: ServiceTypeWithKey<T>, service: T): void;
   /** 注册钩子 */
-  registerHook(hook: HookType): void;
+  registerHook<T>(key: ServiceTypeWithKey<T>, hook: T): void;
 }
 
 /** 上下文储存 */
 export interface IPainterContext {
   /** 服务储存表 */
-  ServiceMap: Map<ServiceTypeWithKey<any>, any>;
+  ServiceMap: Map<ServiceTypeWithKey<any>, ServiceType>;
   /** 钩子储存表 */
-  HookMap: Map<string, HookType[]>;
+  HookMap: Map<ServiceTypeWithKey<any>, HookType[]>;
   /** 插件卸载器储存 */
   PluginUninstallers: PluginUninstaller[];
 }

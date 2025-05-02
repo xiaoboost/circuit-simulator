@@ -1,9 +1,19 @@
-import { MouseEvent } from 'react';
+import type { MouseEvent } from 'react';
+import { createServiceKey } from '../../context';
+
+/**
+ * 拖动场景钩子
+ *
+ * @description 该钩子将用于鼠标拖动场景的实现
+ * @example
+ * ```ts
+ * const dragSceneHooks = usePainterHook(DRAG_SCENE_HOOK);
+ * ```
+ */
+export const DRAG_SCENE_HOOK = createServiceKey<IDragScene>('DragScene');
 
 /** 鼠标拖动场景 */
-export interface DragScene {
-  /** 钩子名称 */
-  kind: 'DragScene';
+export interface IDragScene {
   /** 场景类型 */
   name: string;
   /**

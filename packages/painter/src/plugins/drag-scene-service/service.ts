@@ -1,6 +1,5 @@
 import { definePlugin } from '../../context';
-import { IDragSceneService } from '../../types';
-import { DRAG_SCENE_SERVICE } from './constant';
+import { IDragSceneService, DRAG_SCENE_SERVICE } from '../../types';
 
 definePlugin(({ registerService }) => {
   const scenes: string[] = [];
