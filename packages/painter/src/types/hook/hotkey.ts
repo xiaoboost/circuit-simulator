@@ -21,5 +21,5 @@ export interface IHotKey {
   /** 快捷操作名称 */
   name: string;
   /** 执行函数 */
-  action: () => void;
+  action: (event: KeyboardEvent) => void;
 }
