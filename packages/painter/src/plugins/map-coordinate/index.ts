@@ -1,1 +1,1 @@
-import './service';
+import './register';

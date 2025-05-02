@@ -30,7 +30,7 @@ export class MarkMap extends Map {
   static MarkKind = MarkKind;
 
   /** 节点转换为索引 key */
-  #toKey(node: PointLike) {
+  private _toKey(node: PointLike) {
     if (process.env.NODE_ENV === 'development') {
       if ((node[0] % 20 !== 0) || (node[1] % 20 !== 0)) {
         throw new Error(`节点数值必须是 20 的整数：[${node.join(', ')}]`);
@@ -41,7 +41,7 @@ export class MarkMap extends Map {
   }
 
   /** 索引 key 转换为节点 */
-  #toPoint(key: string) {
+  private _toPoint(key: string) {
     return Point.from(key.split(',').map(Number));
   }
 
@@ -50,9 +50,9 @@ export class MarkMap extends Map {
    *
    * @description 从上到下，从左往右
    */
-  #getPoints() {
+  private _getPoints() {
     return Array.from(super.keys())
-      .map((key: string) => this.#toPoint(key))
+      .map((key: string) => this._toPoint(key))
       .sort((pre, next) => {
         if (pre[0] < next[0]) {
           return -1;
@@ -68,7 +68,7 @@ export class MarkMap extends Map {
 
   /** 是否含有此节点 */
   has(point: PointLike) {
-    return super.has(this.#toKey(point));
+    return super.has(this._toKey(point));
   }
 
   /** 设置节点数据 */
@@ -85,38 +85,38 @@ export class MarkMap extends Map {
       ? data
       : getMarkFromData(this, { ...data, position } as any);
 
-    super.set(this.#toKey(position), node);
+    super.set(this._toKey(position), node);
     return this;
   }
 
   /** 获取节点数据 */
   get<T extends Mark = Mark>(point: PointLike): T | undefined {
-    return super.get(this.#toKey(point));
+    return super.get(this._toKey(point));
   }
 
   /** 移除节点信息 */
   delete(point: PointLike) {
-    return super.delete(this.#toKey(point));
+    return super.delete(this._toKey(point));
   }
 
   entries(): MapIterator<[Point, Mark]> {
     return this
-      .#getPoints()
+      ._getPoints()
       .map((point) => [point, this.get(point)!] as [Point, Mark])[Symbol.iterator]();
   }
 
   forEach(callbackfn: (value: Mark, key: Point, map: MarkMap) => void): void {
-    for (const point of this.#getPoints()) {
+    for (const point of this._getPoints()) {
       callbackfn(this.get(point)!, point, this);
     }
   }
 
   keys(): MapIterator<Point> {
-    return this.#getPoints()[Symbol.iterator]();
+    return this._getPoints()[Symbol.iterator]();
   }
 
   values(): MapIterator<Mark> {
-    return this.#getPoints().map((point) => this.get(point)!)[Symbol.iterator]();
+    return this._getPoints().map((point) => this.get(point)!)[Symbol.iterator]();
   }
 
   [Symbol.iterator]() {

@@ -21,6 +21,8 @@ export type PluginInstaller = (context: IPluginInstallerContext) => PluginUninst
 export interface IPluginInstallerContext {
   /** 获取当前服务 */
   getService<T>(key: ServiceTypeWithKey<T>): T;
+  /** 获取当前钩子 */
+  getHook<T>(key: ServiceTypeWithKey<T>): T[];
   /** 注册服务 */
   registerService<T>(key: ServiceTypeWithKey<T>, service: T): void;
   /** 注册钩子 */

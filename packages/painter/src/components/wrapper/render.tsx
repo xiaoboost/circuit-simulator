@@ -1,11 +1,9 @@
 import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
-import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useRef } from 'react';
 import { PainterContext } from '../../context/context';
 import { usePainterInit, usePainterUnmount } from '../../context/react';
 import { IPainterContext } from '../../context/types';
 import { Entry } from '../entry';
-import { wrapper } from './styles.css';
 
 export interface PainterProps {
   className?: string;
@@ -26,14 +24,12 @@ export function Painter(props: PainterProps) {
   usePainterUnmount(context.current);
 
   if (!isReady) {
-    return <div className={wrapper}>Loading</div>;
+    return <div>Loading</div>;
   }
 
   return (
     <PainterContext.Provider value={context.current}>
-      <div className={scl(props.className, wrapper)} style={props.style}>
-        <Entry />
-      </div>
+      <Entry className={props.className} style={props.style} />
     </PainterContext.Provider>
   );
 }

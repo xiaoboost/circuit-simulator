@@ -1,30 +1,24 @@
-import React, { WheelEvent } from 'react';
-import { usePainterService, usePainterHook, useWatcher } from '../../context';
-import { MAP_COORDINATE_SERVICE, EVENT_LISTENER_HOOK } from '../../types';
+import { stringifyClass as scl } from '@xiao-ai/utils';
+import React from 'react';
 import { Drawer } from '../drawer';
 import { Viewer } from '../viewer';
 import * as Styles from './styles.css';
-import { getBackgroundStyle } from './utils';
+import { useEventListener } from './use';
 
-export function Entry() {
-  const mapService = usePainterService(MAP_COORDINATE_SERVICE);
-  const [{ scale, position }] = useWatcher(mapService.value);
-  const events = usePainterHook(EVENT_LISTENER_HOOK);
-  const onWheelMouse = (event: WheelEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-    events
-      .map((event) => event.onMouseWheel)
-      .forEach((cb) => {
-        if (cb) {
-          cb(event);
-        }
-      });
-  };
+export interface EntryProps {
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+export function Entry(props: EntryProps) {
+  const eventListener = useEventListener();
 
   return (
     <div
-      className={Styles.entry} style={getBackgroundStyle(scale, position)}
-      onWheel={onWheelMouse}
+      className={scl(Styles.entry, props.className)}
+      style={props.style}
+      onContextMenu={(e) => e.preventDefault()}
+      {...eventListener}
     >
       <Drawer />
       <Viewer />

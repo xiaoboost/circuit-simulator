@@ -13,6 +13,7 @@ export function usePainterInit(context: IPainterContext) {
     PluginInstallers.forEach((installer) => {
       const uninstaller = installer({
         getService: (key) => context.ServiceMap.get(key) as any,
+        getHook: (key) => context.HookMap.get(key) as any,
         registerService: (key, service) => context.ServiceMap.set(key, service as ServiceType),
         registerHook: (key, hook) => {
           let arrHook = context.HookMap.get(key);
@@ -61,11 +62,5 @@ export function usePainterService<T>(key: ServiceTypeWithKey<T>) {
 /** 获取画布钩子 */
 export function usePainterHook<T>(key: ServiceTypeWithKey<T>) {
   const { HookMap } = useContext(PainterContext);
-  const hook = HookMap.get(key);
-
-  if (!hook) {
-    throw new Error(`未找到 ${String(key)} 钩子`);
-  }
-
-  return hook as unknown as T[];
+  return (HookMap.get(key) ?? []) as unknown as T[];
 }

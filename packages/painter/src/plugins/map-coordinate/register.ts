@@ -24,7 +24,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       }
     },
     setPosition(position) {
-      if (this.value.data.position.isEqual(position)) {
+      if (!this.value.data.position.isEqual(position)) {
         this.value.setData({
           scale: this.value.data.scale,
           position,
@@ -90,8 +90,8 @@ definePlugin(({ getService, registerHook, registerService }) => {
   registerHook(DRAG_SCENE_HOOK, {
     name: DragSceneName,
     start(event) {
-      // 非右键或者鼠标按下事件不处理
-      if (event.button !== 2 || event.type !== 'mousedown') {
+      // 非中键或者鼠标按下事件不处理
+      if (event.button !== 1 || event.type !== 'mousedown') {
         return false;
       }
 
@@ -105,8 +105,8 @@ definePlugin(({ getService, registerHook, registerService }) => {
       return true;
     },
     isEnd(event) {
-      // 非右键或者鼠标抬起事件不处理
-      if (event.button !== 2 || event.type !== 'mouseup') {
+      // 非中键或者鼠标抬起事件不处理
+      if (event.button !== 1 || event.type !== 'mouseup') {
         return false;
       }
 
@@ -114,8 +114,8 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
       // 当前场景不是鼠标拖动背景场景时不处理
       if (!(
-        dragSceneService.scenes.length !== 1 ||
-        dragSceneService.scenes[0] !== DragSceneName
+        dragSceneService.scenes.length === 1 &&
+        dragSceneService.scenes[0] === DragSceneName
       )) {
         return false;
       }
@@ -123,7 +123,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       return true;
     },
     onDragMove(event) {
-
+      service.setPosition(service.value.data.position.add(event.movement));
     },
     afterStart() {
       const cursorService = getService(CURSOR_SERVICE);
