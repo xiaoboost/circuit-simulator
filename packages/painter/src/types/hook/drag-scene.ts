@@ -4,14 +4,34 @@ import { createServiceKey } from '../../context';
 
 /** 拖动的鼠标事件 */
 export interface DragMouseEvent extends MouseEvent<HTMLElement> {
-  /** 鼠标当前相对于图纸位置 */
+  /**
+   * 鼠标相对于元素的位置
+   *
+   * @description 鼠标相对`DOM`左上角的位置
+   */
   readonly position: Point;
+  /**
+   * 鼠标相对于画布的位置
+   *
+   * @description 鼠标相对画布原点的位置
+   */
+  readonly positionInDrawer: Point;
 }
 
 /** 拖动的鼠标移动事件 */
 export interface DragMoveEvent extends DragMouseEvent {
-  /** 鼠标拖动的移动向量 */
+  /**
+   * 鼠标拖动的移动量
+   *
+   * @description 鼠标本身的移动量
+   */
   readonly movement: Point;
+  /**
+   * 鼠标拖动的移动量
+   *
+   * @description 鼠标在画布内的移动量
+   */
+  readonly movementInDrawer: Point;
 }
 
 /**

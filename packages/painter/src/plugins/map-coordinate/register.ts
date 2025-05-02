@@ -43,7 +43,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
       // 当前场景不为空时不处理
-      if (!dragSceneService.isEmpty) {
+      if (dragSceneService.size !== 0) {
         return;
       }
 
@@ -98,7 +98,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
       // 当前场景不为空时不处理
-      if (!dragSceneService.isEmpty) {
+      if (dragSceneService.size !== 0) {
         return false;
       }
 
@@ -114,8 +114,8 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
       // 当前场景不是鼠标拖动背景场景时不处理
       if (!(
-        dragSceneService.scenes.length === 1 &&
-        dragSceneService.scenes[0] === DragSceneName
+        dragSceneService.size === 1 &&
+        dragSceneService.has(DragSceneName)
       )) {
         return false;
       }

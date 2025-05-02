@@ -228,6 +228,9 @@ importers:
       '@circuit/math':
         specifier: workspace:*
         version: link:../math
+      '@circuit/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@vanilla-extract/css':
         specifier: 1.17.0
         version: 1.17.0

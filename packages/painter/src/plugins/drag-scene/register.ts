@@ -12,21 +12,7 @@ import {
 } from '../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
-  const scenes = new Set<string>();
-  const service: IDragSceneService = {
-    get scenes() {
-      return Array.from(scenes.values()) as readonly string[];
-    },
-    get isEmpty() {
-      return scenes.size === 0;
-    },
-    addScene(scene: string) {
-      scenes.add(scene);
-    },
-    removeScene(scene: string) {
-      scenes.delete(scene);
-    },
-  };
+  const service: IDragSceneService = new Set<string>();
 
   function getDragMouseEvent(event: MouseEvent<HTMLElement>) {
     const { left, top } = event.currentTarget.getBoundingClientRect();
@@ -35,7 +21,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     const mapPosition = map.position.mul(map.scale, -1);
     const dragMouseEvent: DragMouseEvent = {
       ...event,
-      position: mousePosition.add(mapPosition, -1),
+      position: mousePosition,
+      positionInDrawer: mousePosition.add(mapPosition, -1),
     };
 
     return dragMouseEvent;
@@ -44,7 +31,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   function startCb(event: MouseEvent<HTMLElement>) {
     const dragHook = getHook(DRAG_SCENE_HOOK);
     // 未进行的场景
-    const hooks = dragHook.filter((hook) => !scenes.has(hook.name));
+    const hooks = dragHook.filter((hook) => !service.has(hook.name));
 
     if (hooks.length === 0) {
       return;
@@ -59,19 +46,19 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         // 先触发开始事件，然后再添加场景
         Promise.resolve()
           .then(() => hook.afterStart?.())
-          .then(() => scenes.add(hook.name));
+          .then(() => service.add(hook.name));
       }
     }
   }
 
   function endCb(event: MouseEvent<HTMLElement>) {
-    if (scenes.size === 0) {
+    if (service.size === 0) {
       return;
     }
 
     const dragHook = getHook(DRAG_SCENE_HOOK);
     // 正在进行中的场景
-    const hooks = dragHook.filter((hook) => scenes.has(hook.name));
+    const hooks = dragHook.filter((hook) => service.has(hook.name));
 
     if (hooks.length === 0) {
       return;
@@ -85,7 +72,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       if (isEnd) {
         // 先移除场景，再触发结束事件
         Promise.resolve()
-          .then(() => scenes.delete(hook.name))
+          .then(() => service.delete(hook.name))
           .then(() => hook.afterEnd?.());
       }
     }
@@ -125,11 +112,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       endCb(event);
     },
     onMouseMove(event) {
-      if (scenes.size !== 0) {
+      if (service.size !== 0) {
         const dragHook = getHook(DRAG_SCENE_HOOK);
-        const hooks = dragHook.filter((hook) => scenes.has(hook.name));
+        const hooks = dragHook.filter((hook) => service.has(hook.name));
 
         if (hooks.length !== 0) {
+          const map = getService(MAP_COORDINATE_SERVICE);
           const movement = lastMousePosition
             ? new Point(event.pageX, event.pageY).add(lastMousePosition, -1)
             : new Point(0, 0);
@@ -138,6 +126,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             const dragMoveEvent: DragMoveEvent = {
               ...getDragMouseEvent(event),
               movement,
+              movementInDrawer: movement.mul(map.value.data.scale, -1),
             };
 
             for (const hook of hooks) {
