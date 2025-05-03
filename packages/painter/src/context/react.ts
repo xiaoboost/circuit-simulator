@@ -48,7 +48,7 @@ export function usePainterUnmount(context: IPainterContext) {
 }
 
 /** 获取画布服务 */
-export function usePainterService<T>(key: ServiceTypeWithKey<T>) {
+export function usePainterService<T extends ServiceType>(key: ServiceTypeWithKey<T>) {
   const { ServiceMap } = useContext(PainterContext);
   const service = ServiceMap.get(key);
 
@@ -60,7 +60,7 @@ export function usePainterService<T>(key: ServiceTypeWithKey<T>) {
 }
 
 /** 获取画布钩子 */
-export function usePainterHook<T>(key: ServiceTypeWithKey<T>) {
+export function usePainterHook<T extends HookType>(key: ServiceTypeWithKey<T>) {
   const { HookMap } = useContext(PainterContext);
   return (HookMap.get(key) ?? []) as unknown as T[];
 }

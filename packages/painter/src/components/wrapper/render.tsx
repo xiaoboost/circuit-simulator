@@ -29,7 +29,7 @@ export function Painter(props: PainterProps) {
 
   return (
     <PainterContext.Provider value={context.current}>
-      <Entry className={props.className} style={props.style} />
+      <Entry {...props} />
     </PainterContext.Provider>
   );
 }

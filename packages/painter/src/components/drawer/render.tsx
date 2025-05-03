@@ -23,10 +23,3 @@ export function Drawer() {
     </svg>
   );
 }
-
-/**
- * viewer 应该有三层
- * 器件、导线层
- * 节点层
- * 选择框层
- */
