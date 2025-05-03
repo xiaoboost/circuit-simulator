@@ -1,6 +1,6 @@
 import { MarkMap } from '@circuit/map';
-import { definePlugin } from '../../context';
-import { MAP_MARK_SERVICE_KEY } from '../../types';
+import { definePlugin } from '../../../context';
+import { MAP_MARK_SERVICE_KEY } from '../../../types';
 
 definePlugin(({ registerService }) => {
   const service = new MarkMap();

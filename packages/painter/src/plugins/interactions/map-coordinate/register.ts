@@ -1,5 +1,5 @@
 import { Point } from '@circuit/math';
-import { definePlugin, Watcher } from '../../context';
+import { definePlugin, Watcher } from '../../../context';
 import {
   IMapCoordinateService,
   CURSOR_SERVICE,
@@ -7,7 +7,7 @@ import {
   MAP_COORDINATE_SERVICE,
   EVENT_LISTENER_HOOK,
   DRAG_SCENE_HOOK,
-} from '../../types';
+} from '../../../types';
 
 definePlugin(({ getService, registerHook, registerService }) => {
   const service: IMapCoordinateService = {

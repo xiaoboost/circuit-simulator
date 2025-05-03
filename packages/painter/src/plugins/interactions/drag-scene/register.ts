@@ -1,6 +1,6 @@
 import { Point } from '@circuit/math';
 import type { MouseEvent } from 'react';
-import { definePlugin } from '../../context';
+import { definePlugin } from '../../../context';
 import {
   IDragSceneService,
   DRAG_SCENE_SERVICE,
@@ -9,7 +9,7 @@ import {
   MAP_COORDINATE_SERVICE,
   DragMouseEvent,
   DragMoveEvent,
-} from '../../types';
+} from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const service: IDragSceneService = new Set<string>();

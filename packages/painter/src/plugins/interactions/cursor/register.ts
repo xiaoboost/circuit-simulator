@@ -1,5 +1,5 @@
-import { definePlugin, Watcher } from '../../context';
-import { ICursorService, ICursorKind, CURSOR_SERVICE } from '../../types';
+import { definePlugin, Watcher } from '../../../context';
+import { ICursorService, ICursorKind, CURSOR_SERVICE } from '../../../types';
 
 definePlugin(({ registerService }) => {
   const service: ICursorService = {
