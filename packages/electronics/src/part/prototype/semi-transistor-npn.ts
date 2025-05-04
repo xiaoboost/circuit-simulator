@@ -73,15 +73,5 @@ export const data: ElectronicPrototype = {
         transform: 'translate(18, 26.4) rotate(38.7)',
       },
     },
-    {
-      name: 'rect',
-      attribute: {
-        x: '-10',
-        y: '-30',
-        width: '30',
-        height: '60',
-        className: MouseFocusClassName,
-      },
-    },
   ],
 };

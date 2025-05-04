@@ -1,14 +1,9 @@
-import { Colors } from '@circuit/shared';
 import { style } from '@vanilla-extract/css';
 
-import Grid from './assets/circuit-grid.svg';
-
-export const drawerWrapper = style({
+export const electronicBody = style({
   position: 'absolute',
   top: '0',
   left: '0',
-  color: Colors.BlackLight.toString(),
-  backgroundImage: `url("${Grid}")`,
   width: '100%',
   height: '100%',
   backgroundColor: 'transparent',

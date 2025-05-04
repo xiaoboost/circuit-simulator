@@ -1,5 +1,6 @@
+import { Colors, Fonts } from '@circuit/shared';
 import { globalStyle, globalKeyframes } from '@vanilla-extract/css';
-import { startLoading, Colors, Fonts } from './constant';
+import { startLoading } from './constant';
 
 const startId = `#${startLoading}`;
 const borderKeyframe = 'border-colors';

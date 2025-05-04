@@ -20,13 +20,13 @@ export type PluginInstaller = (context: IPluginInstallerContext) => PluginUninst
 /** 插件注册上下文 */
 export interface IPluginInstallerContext {
   /** 获取当前服务 */
-  getService<T>(key: ServiceTypeWithKey<T>): T;
+  getService<T extends ServiceType>(key: ServiceTypeWithKey<T>): T;
   /** 获取当前钩子 */
-  getHook<T>(key: ServiceTypeWithKey<T>): T[];
+  getHook<T extends HookType>(key: ServiceTypeWithKey<T>): T[];
   /** 注册服务 */
-  registerService<T>(key: ServiceTypeWithKey<T>, service: T): void;
+  registerService<T extends ServiceType>(key: ServiceTypeWithKey<T>, service: T): void;
   /** 注册钩子 */
-  registerHook<T>(key: ServiceTypeWithKey<T>, hook: T): void;
+  registerHook<T extends HookType>(key: ServiceTypeWithKey<T>, hook: T): void;
 }
 
 /** 上下文储存 */

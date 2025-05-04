@@ -78,15 +78,5 @@ export const data: ElectronicPrototype = {
         stroke: 'currentColor',
       },
     },
-    {
-      name: 'rect',
-      attribute: {
-        x: '-30',
-        y: '-35',
-        width: '60',
-        height: '70',
-        className: MouseFocusClassName,
-      },
-    },
   ],
 };

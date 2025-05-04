@@ -66,19 +66,9 @@ export const data: ElectronicPrototype = {
     {
       name: 'path',
       attribute: {
-         
+
         d: 'M0,-40V-19.5M0,19.5V40M0,-16V-8M-4,-12H4M-4,12H4M-10,0Q-5,-10,0,0M0,0Q5,10,10,0',
         stroke: 'currentColor',
-      },
-    },
-    {
-      name: 'rect',
-      attribute: {
-        x: '-20',
-        y: '-30',
-        width: '40',
-        height: '60',
-        className: MouseFocusClassName,
       },
     },
   ],

@@ -58,15 +58,5 @@ export const data: ElectronicPrototype = {
         strokeLinecap: 'square',
       },
     },
-    {
-      name: 'rect',
-      attribute: {
-        x: '-20',
-        y: '-30',
-        width: '40',
-        height: '60',
-        className: MouseFocusClassName,
-      },
-    },
   ],
 };

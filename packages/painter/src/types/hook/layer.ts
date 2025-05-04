@@ -1,3 +1,4 @@
+import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
 import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
 
@@ -50,6 +51,14 @@ export interface IViewLayer extends BaseLayer {
   Render(): ReactNode;
 }
 
+/** 画布图层渲染器输入参数 */
+export interface IDrawLayerProps {
+  /** 导线 */
+  lines: readonly LineStructuredData[];
+  /** 器件 */
+  parts: readonly PartStructuredData[];
+}
+
 /** 画布绘图图层 */
 export interface IDrawLayer extends BaseLayer {
   /**
@@ -57,5 +66,5 @@ export interface IDrawLayer extends BaseLayer {
    *
    * @description 画布层渲染组件将会覆盖当前画布区域，该组件会随着画布变化而变化
    */
-  Render(): ReactNode;
+  Render(props: IDrawLayerProps): ReactNode;
 }

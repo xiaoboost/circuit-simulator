@@ -2,12 +2,16 @@ import type { IDragScene } from './drag-scene';
 import type { IEventListener } from './event-listener';
 import type { IHotKey } from './hotkey';
 import type { IDrawLayer, IViewLayer } from './layer';
+import type { ILineRenderer } from './line';
+import type { IPartRenderer } from './part';
 import type { IComponentTooltipAction } from './tooltip';
 
 export * from './drag-scene';
 export * from './event-listener';
 export * from './hotkey';
 export * from './layer';
+export * from './line';
+export * from './part';
 export * from './tooltip';
 
 /** 钩子总类别 */
@@ -17,4 +21,6 @@ export type HookType =
   | IEventListener
   | IDrawLayer
   | IViewLayer
-  | IComponentTooltipAction;
+  | IComponentTooltipAction
+  | ILineRenderer
+  | IPartRenderer;

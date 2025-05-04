@@ -1,5 +1,10 @@
-import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
-import { Watcher } from '@xiao-ai/utils';
+import {
+  PartStructuredData,
+  LineStructuredData,
+  ElectronicKind,
+  ElectronicPrototype,
+} from '@circuit/electronics';
+import { type Watcher } from '@xiao-ai/utils';
 import { createServiceKey } from '../../context';
 
 /**
@@ -19,4 +24,6 @@ export interface IElectronicService {
   parts: Watcher<PartStructuredData[]>;
   /** 所有导线 */
   lines: Watcher<LineStructuredData[]>;
+  /** 获取原始定义 */
+  getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
 }

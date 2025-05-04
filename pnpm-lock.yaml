@@ -289,6 +289,9 @@ importers:
       '@xiao-ai/utils':
         specifier: 1.6.6
         version: 1.6.6
+      color:
+        specifier: 4.2.3
+        version: 4.2.3
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -296,6 +299,9 @@ importers:
       '@types/circuit':
         specifier: workspace:*
         version: link:../../tools/typings
+      '@types/color':
+        specifier: 4.2.0
+        version: 4.2.0
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
@@ -384,6 +390,9 @@ importers:
       '@circuit/painter':
         specifier: workspace:*
         version: link:../painter
+      '@circuit/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@circuit/solver':
         specifier: workspace:*
         version: link:../solver
@@ -402,9 +411,6 @@ importers:
       antd:
         specifier: 5.23.1
         version: 5.23.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      color:
-        specifier: 4.2.3
-        version: 4.2.3
       core-js:
         specifier: 3.40.0
         version: 3.40.0
@@ -430,9 +436,6 @@ importers:
       '@types/circuit':
         specifier: workspace:*
         version: link:../../tools/typings
-      '@types/color':
-        specifier: 4.2.0
-        version: 4.2.0
       '@types/node':
         specifier: 20.12.8
         version: 20.12.8

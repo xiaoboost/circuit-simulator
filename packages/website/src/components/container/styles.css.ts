@@ -1,5 +1,5 @@
+import { Colors, Fonts } from '@circuit/shared';
 import { style } from '@vanilla-extract/css';
-import { Colors, Fonts } from 'src/styles/constant';
 
 export const container = style({
   height: '100%',

@@ -61,15 +61,5 @@ export const data: ElectronicPrototype = {
         stroke: 'currentColor',
       },
     },
-    {
-      name: 'rect',
-      attribute: {
-        x: '-13',
-        y: '-30',
-        width: '26',
-        height: '60',
-        className: MouseFocusClassName,
-      },
-    },
   ],
 };

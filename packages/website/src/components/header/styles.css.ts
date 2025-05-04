@@ -1,5 +1,5 @@
+import { Colors } from '@circuit/shared';
 import { style } from '@vanilla-extract/css';
-import { Colors } from 'src/styles/constant';
 
 export const header = style({
   height: 44,
