@@ -7,14 +7,14 @@ export function Render({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER).sort(createSorter('asc'));
   const service = usePainterService(ELECTRONIC_SERVICE_KEY);
 
+  if (partRenderers.length === 0) {
+    return null;
+  }
+
   return (
     <>
       {parts.map((part) => {
         const prototype = service.getPartPrototype(part.kind);
-
-        if (!prototype) {
-          throw new Error('未找到器件原型');
-        }
 
         return (
           <g

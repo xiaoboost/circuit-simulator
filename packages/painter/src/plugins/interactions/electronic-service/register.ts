@@ -13,7 +13,13 @@ definePlugin(({ registerService }) => {
     parts: new Watcher<PartStructuredData[]>([]),
     lines: new Watcher<LineStructuredData[]>([]),
     getPartPrototype(kind: ElectronicKind) {
-      return Electronics[kind];
+      const result = Electronics[kind];
+
+      if (!result) {
+        throw new Error('未找到器件原型');
+      }
+
+      return result;
     },
   };
 

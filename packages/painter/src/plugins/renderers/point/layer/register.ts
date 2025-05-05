@@ -6,7 +6,7 @@ definePlugin(({ registerHook }) => {
   // 注册节点渲染层
   registerHook(DRAW_LAYER_HOOK, {
     name: 'PointLayer',
-    order: 1,
+    order: 3,
     Render,
   });
 });

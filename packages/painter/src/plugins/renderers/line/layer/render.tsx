@@ -6,6 +6,10 @@ import { createSorter } from '../../../../utils';
 export function Render({ lines }: IDrawLayerProps) {
   const lineRenderers = usePainterHook(LINE_RENDERER).sort(createSorter('asc'));
 
+  if (lineRenderers.length === 0) {
+    return null;
+  }
+
   return (
     <>
       {lines.map((line, index) => (
