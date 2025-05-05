@@ -4,6 +4,7 @@ import type { IHotKey } from './hotkey';
 import type { IDrawLayer, IViewLayer } from './layer';
 import type { ILineRenderer } from './line';
 import type { IPartRenderer } from './part';
+import type { IPointRenderer } from './point';
 import type { IComponentTooltipAction } from './tooltip';
 
 export * from './drag-scene';
@@ -12,6 +13,7 @@ export * from './hotkey';
 export * from './layer';
 export * from './line';
 export * from './part';
+export * from './point';
 export * from './tooltip';
 
 /** 钩子总类别 */
@@ -23,4 +25,5 @@ export type HookType =
   | IViewLayer
   | IComponentTooltipAction
   | ILineRenderer
-  | IPartRenderer;
+  | IPartRenderer
+  | IPointRenderer;

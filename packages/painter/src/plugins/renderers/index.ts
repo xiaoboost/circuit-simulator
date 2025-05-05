@@ -1,2 +1,3 @@
-import './part';
 import './line';
+import './part';
+import './point';
