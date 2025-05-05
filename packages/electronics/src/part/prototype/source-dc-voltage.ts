@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
   kind: ElectronicKind.DcVoltageSource,
   introduction: '直流电压源',
-  textPosition: [
-    [0, -24],
-    [0, 24],
-  ],
+  textBias: {
+    left: 24,
+    right: 24,
+  },
   padding: [1, 1, 1, 1],
   margin: [1, 0, 1, 0],
   params: [
@@ -17,7 +17,7 @@ export const data: ElectronicPrototype = {
       label: '电压值',
       unit: UnitType.Volt,
       default: '12',
-      vision: true,
+      visible: true,
     },
   ],
   points: [

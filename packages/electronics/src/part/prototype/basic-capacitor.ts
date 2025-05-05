@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'C',
   kind: ElectronicKind.Capacitor,
   introduction: '电容器',
-  textPosition: [
-    [0, -22],
-    [0, 22],
-  ],
+  textBias: {
+    top: 22,
+    bottom: 22,
+  },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [
@@ -17,7 +17,7 @@ export const data: ElectronicPrototype = {
       label: '电容量',
       unit: UnitType.Farad,
       default: '100u',
-      vision: true,
+      visible: true,
       ranks: ['', 'm', 'μ', 'n', 'p'],
     },
   ],

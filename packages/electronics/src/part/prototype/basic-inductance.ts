@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'L',
   kind: ElectronicKind.Inductance,
   introduction: '电感器',
-  textPosition: [
-    [0, -13],
-    [0, 10],
-  ],
+  textBias: {
+    top: 13,
+    bottom: 10,
+  },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [
@@ -17,7 +17,7 @@ export const data: ElectronicPrototype = {
       label: '电感量',
       unit: UnitType.Henry,
       default: '10u',
-      vision: true,
+      visible: true,
       ranks: ['', 'm', 'μ', 'n'],
     },
   ],

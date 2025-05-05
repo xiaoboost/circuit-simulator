@@ -134,7 +134,7 @@ export abstract class PartProps extends Electronic {
   #updateTexts() {
     this.#texts = this.params
       .map((v, i) => ({ ...Electronics[this.kind].params[i], value: v }))
-      .filter((txt) => txt.vision)
+      .filter((txt) => txt.visible)
       .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ'));
   }
 }

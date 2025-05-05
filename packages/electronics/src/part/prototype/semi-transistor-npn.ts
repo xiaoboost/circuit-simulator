@@ -1,14 +1,14 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'Q',
   kind: ElectronicKind.TransistorNPN,
   introduction: 'NPN型三极管',
-  textPosition: [
-    [25, 0],
-  ],
+  textBias: {
+    left: 25,
+  },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [
@@ -16,28 +16,28 @@ export const data: ElectronicPrototype = {
       label: '电流放大倍数',
       unit: UnitType.Space,
       default: '40',
-      vision: false,
+      visible: false,
       ranks: [],
     },
     {
       label: 'B极电阻',
       unit: UnitType.Ohm,
       default: '26',
-      vision: false,
+      visible: false,
       ranks: [],
     },
     {
       label: 'BE饱和压降',
       unit: UnitType.Volt,
       default: '0.6',
-      vision: false,
+      visible: false,
       ranks: [],
     },
     {
       label: 'CE饱和压降',
       unit: UnitType.Volt,
       default: '1',
-      vision: false,
+      visible: false,
       ranks: [],
     },
   ],

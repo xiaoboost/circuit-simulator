@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'IM',
   kind: ElectronicKind.CurrentMeter,
   introduction: '电流表',
-  textPosition: [
-    [0, -11],
-    [0, 11],
-  ],
+  textBias: {
+    top: 11,
+    bottom: 11,
+  },
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],
   params: [],

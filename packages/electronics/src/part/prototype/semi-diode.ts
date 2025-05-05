@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'VD',
   kind: ElectronicKind.Diode,
   introduction: '二极管',
-  textPosition: [
-    [0, -18],
-    [0, 18],
-  ],
+  textBias: {
+    left: 18,
+    right: 18,
+  },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [
@@ -17,21 +17,21 @@ export const data: ElectronicPrototype = {
       label: '导通电压',
       unit: UnitType.Volt,
       default: '1',
-      vision: false,
+      visible: false,
       ranks: ['', 'm'],
     },
     {
       label: '导通电阻',
       unit: UnitType.Ohm,
       default: '0.5',
-      vision: false,
+      visible: false,
       ranks: ['', 'm'],
     },
     {
       label: '关断电阻',
       unit: UnitType.Ohm,
       default: '5M',
-      vision: false,
+      visible: false,
       ranks: ['G', 'M', 'k'],
     },
   ],

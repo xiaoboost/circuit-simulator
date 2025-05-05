@@ -36,7 +36,7 @@ export const parts: PartStructuredData[] = [
     position: [580, 320],
     rotate: [[1, 0], [0, 1]],
     params: ['220', '200', '0', '0'],
-    text: 'Left',
+    textDirection: Direction.Left,
   },
   {
     kind: ElectronicKind.Capacitor,
@@ -44,7 +44,7 @@ export const parts: PartStructuredData[] = [
     position: [900, 320],
     rotate: [[0, 1], [-1, 0]],
     params: ['100u'],
-    textPosition: Direction.Left,
+    textDirection: Direction.Left,
     connections: [],
   },
   {

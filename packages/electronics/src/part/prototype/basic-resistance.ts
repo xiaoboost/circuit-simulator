@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'R',
   kind: ElectronicKind.Resistance,
   introduction: '电阻器',
-  textPosition: [
-    [0, -14],
-    [0, 14],
-  ],
+  textBias: {
+    top: 14,
+    bottom: 14,
+  },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],
   params: [
@@ -17,7 +17,7 @@ export const data: ElectronicPrototype = {
       label: '阻值',
       unit: UnitType.Ohm,
       default: '10k',
-      vision: true,
+      visible: true,
       ranks: ['G', 'M', 'k', ''],
     },
   ],

@@ -151,6 +151,17 @@ export class Point {
     );
   }
   /**
+   * 点旋转（乘以矩阵）
+   * @param {Matrix} ma
+   * @returns {Point}
+   */
+  rotate2(ma: number[][]) {
+    return new Point(
+      this[0] * ma[0][0] + this[1] * ma[1][0],
+      this[0] * ma[0][1] + this[1] * ma[1][1],
+    );
+  }
+  /**
    * 返回对 x, y 坐标分别求绝对值后组成的新 Point 实例
    *
    * @returns {Point}

@@ -7,7 +7,7 @@ export interface PartData {
   id: string;
   kind: keyof typeof ElectronicKind;
   position: number[];
-  rotate?: number[][];
+  rotate?: PartRotateMatrix;
   text?: keyof typeof Direction;
   params?: string[];
 }
@@ -25,19 +25,32 @@ export type Margin = readonly [number, number, number, number];
  */
 export type MarginVertex = readonly [Point, Point, Point, Point];
 
+/**
+ * 器件旋转矩阵
+ *
+ * @description 2 * 2 矩阵
+ */
+export type PartRotateMatrix = [[number, number], [number, number]];
+
 /** 器件结构化数据 */
 export interface PartStructuredData {
+  /** 器件编号 */
   id: string;
+  /** 器件类别 */
   kind: ElectronicKind;
+  /** 器件连接关系 */
   connections: (ConnectionData | undefined)[];
+  /** 器件中心坐标 */
   position: [number, number];
   /**
    * 文本方向
    *
    * @description 这个方向是器件本身的视角
    */
-  textPosition: Direction;
-  rotate: number[][];
+  textDirection: Direction;
+  /** 器件旋转矩阵 */
+  rotate: PartRotateMatrix;
+  /** 器件参数 */
   params: string[];
 }
 
@@ -81,12 +94,14 @@ export const MarginDirection = {
 
 /** 器件每项参数的说明 */
 export interface ParamsDescription {
-  /** 该参数的文字描述 */
+  /** 该参数的文字标题 */
   readonly label: string;
+  /** 该参数的文字描述 */
+  readonly description?: string;
   /** 该参数的物理单位 */
   readonly unit: UnitType;
   /** 该参数是否对外显示 */
-  readonly vision: boolean;
+  readonly visible: boolean;
   /** 该参数的初始默认值 */
   readonly default: string;
   /** 当前参数的快捷数量级选项 */
@@ -111,6 +126,15 @@ export interface ShapeDescription {
   readonly nonRotate?: true;
 }
 
+/** 文本偏移量 */
+export interface TextBias {
+  left?: number;
+  right?: number;
+  top?: number;
+  bottom?: number;
+  center?: number;
+}
+
 /** 器件原型数据类型 */
 export interface ElectronicPrototype {
   /** 器件编号的默认前置标记 */
@@ -120,7 +144,7 @@ export interface ElectronicPrototype {
   /** 器件简述 */
   readonly introduction: string;
   /** 周围文字距离器件中心点的偏移量 */
-  readonly textPosition: [number, number][];
+  readonly textBias?: TextBias;
   /** 器件内边框范围（上、右、下、左） */
   readonly padding: Margin;
   /** 器件外边框范围（上、右、下、左） */

@@ -8,8 +8,8 @@ export function Render({ lines }: IDrawLayerProps) {
 
   return (
     <>
-      {lines.map((line) => (
-        <g key={line.id}>
+      {lines.map((line, index) => (
+        <g key={line.id ?? index}>
           {lineRenderers.map(({ name, Render }) => (
             <Render key={name} data={line} />
           ))}

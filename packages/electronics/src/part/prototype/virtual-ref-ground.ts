@@ -1,16 +1,11 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'GND',
   kind: ElectronicKind.ReferenceGround,
   introduction: '参考地',
-  textPosition: [
-    [12, 0],
-    [-12, 0],
-    [0, 20],
-  ],
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],
   params: [],

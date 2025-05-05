@@ -1,15 +1,15 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'VM',
   kind: ElectronicKind.VoltageMeter,
   introduction: '电压表',
-  textPosition: [
-    [0, -24],
-    [0, 24],
-  ],
+  textBias: {
+    left: 24,
+    right: 24,
+  },
   padding: [1, 1, 1, 1],
   margin: [1, 0, 1, 0],
   params: [],

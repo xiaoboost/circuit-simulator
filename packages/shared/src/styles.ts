@@ -41,26 +41,56 @@ export const Fonts = {
    *
    * @description 无衬线中英文
    */
-  Default: (
-    "'Helvetica'," +
-    "'Arial'," +
-    "'Hiragino Sans GB'," +
-    "'WenQuanYi Micro Hei'," +
-    "'Microsoft YaHei'," +
-    'sans-serif'
-  ),
+  Default: [
+    /** 思源黑体 */
+    '"Source Han Sans SC"',
+    '思源黑体',
+    /** MacOS 默认字体 */
+    '-apple-system',
+    /** MacOS 苹方 */
+    '"PingFang SC"',
+    /** MacOS 冬青黑 */
+    '"Hiragino Sans GB"',
+    /** Windows 微软雅黑 */
+    '"Microsoft YaHei"',
+    /** Linux 文泉驿黑体 */
+    '"WenQuanYi Micro Hei"',
+    /** 安卓默认字体 */
+    '"Noto Sans CJK SC"',
+    'sans-serif',
+  ].join(', '),
   /**
    * 衬线字体
    *
    * @description 主要是用在标题等醒目位置
    */
-  Serif: "'Georgia', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft YaHei', serif",
-  /**
-   * 文本文字
-   *
-   * @description 主要用于各种说明文本
-   */
-  Text: "'Times New Roman', 'Microsoft YaHei'",
+  Serif: [
+    /** 思源宋体 */
+    '"Source Han Serif"',
+    '"思源宋体"',
+    /** MocOS 宋体 */
+    '"Songti SC"',
+    /** MacOS 华文宋体 */
+    'STSong',
+    /** windows 中易中宋 */
+    'STZhongsong',
+    /** windows 宋体 */
+    'SimSun',
+    /* Android 衬线字体 */
+    '"Noto Serif CJK SC"',
+    /* 跨平台英文字体 */
+    'Georgia',
+    '"Times New Roman"',
+    'serif',
+  ].join(', '),
+  /** 等宽字体 */
+  Mono: [
+    'Menlo',
+    'Monaco',
+    'Consolas',
+    '"Courier New"',
+    'monospace',
+  ].join(', '),
   /**
    * 标准字体大小
    */

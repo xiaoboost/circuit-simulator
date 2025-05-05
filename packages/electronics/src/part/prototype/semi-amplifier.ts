@@ -1,14 +1,14 @@
 import { Direction } from '@circuit/math';
-import { ElectronicKind, MouseFocusClassName } from '../../types';
+import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'OP',
   kind: ElectronicKind.OperationalAmplifier,
   introduction: '运算放大器',
-  textPosition: [
-    [0, 0],
-  ],
+  textBias: {
+    center: 0,
+  },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],
   params: [
@@ -16,28 +16,28 @@ export const data: ElectronicPrototype = {
       label: '开环增益',
       unit: UnitType.Decibel,
       default: '120',
-      vision: false,
+      visible: false,
       ranks: [],
     },
     {
       label: '输入电阻',
       unit: UnitType.Ohm,
       default: '80M',
-      vision: false,
+      visible: false,
       ranks: ['G', 'M', 'k', ''],
     },
     {
       label: '输出电阻',
       unit: UnitType.Ohm,
       default: '60',
-      vision: false,
+      visible: false,
       ranks: ['', 'm'],
     },
     // {
     //   label: '截止频率',
     //   unit: 'Hz',
     //   default: '1M',
-    //   vision: false,
+    //   visible: false,
     // },
   ],
   points: [
