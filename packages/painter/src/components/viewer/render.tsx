@@ -14,9 +14,7 @@ export function Viewer() {
 
   return (
     <div className={viewerWrapper}>
-      {viewers.map((item) => {
-        return item.Render();
-      })}
+      {viewers.map(({ Render }) => Render())}
     </div>
   );
 }

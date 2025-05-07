@@ -1,5 +1,4 @@
-import type { Watcher } from '@xiao-ai/utils';
-import { createServiceKey } from '../../context';
+import { createServiceKey, type Watcher } from '../../context';
 
 /**
  * 鼠标指针服务键

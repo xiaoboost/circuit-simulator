@@ -1,4 +1,3 @@
-import { type ReadonlySet } from '@circuit/shared';
 import { createServiceKey } from '../../context';
 
 /**

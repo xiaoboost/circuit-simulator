@@ -5,6 +5,7 @@ import type { IDrawLayer, IViewLayer } from './layer';
 import type { ILineRenderer } from './line';
 import type { IPartRenderer } from './part';
 import type { IPointRenderer } from './point';
+import type { IPainterToolBarAction } from './toolbar';
 import type { IComponentTooltipAction } from './tooltip';
 
 export * from './drag-scene';
@@ -15,6 +16,7 @@ export * from './line';
 export * from './part';
 export * from './point';
 export * from './tooltip';
+export * from './toolbar';
 
 /** 钩子总类别 */
 export type HookType =
@@ -26,4 +28,6 @@ export type HookType =
   | IComponentTooltipAction
   | ILineRenderer
   | IPartRenderer
-  | IPointRenderer;
+  | IPointRenderer
+  | IPainterToolBarAction;
+
