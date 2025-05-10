@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import type { MarkMap } from '../map';
 import type { LineMark } from './line';
 import type { LineCoverMark } from './line-cover';

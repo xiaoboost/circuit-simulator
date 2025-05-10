@@ -1,5 +1,5 @@
 import { ElectronicKind } from '@circuit/electronics';
-import { parseGainNumber } from '@circuit/math';
+import { parseGainNumber } from '@circuit/algorithm';
 import { stringifyInsidePart } from '../utils/connection';
 import { parseNumber } from '../utils/number';
 import { IterativeCreation } from './types';

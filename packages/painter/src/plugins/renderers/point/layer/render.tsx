@@ -1,4 +1,4 @@
-import { Point, getLineCoverPoints } from '@circuit/math';
+import { Point, getLineCoverPoints } from '@circuit/algorithm';
 import React, { useMemo } from 'react';
 import { usePainterHook, usePainterService } from '../../../../context';
 import {

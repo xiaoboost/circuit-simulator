@@ -1,4 +1,4 @@
-import { Direction } from '@circuit/math';
+import { Direction } from '@circuit/algorithm';
 import { SheetContext } from '../base';
 import { ElectronicKind } from '../types';
 import { PartMarker } from './mark';

@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import { definePlugin, Watcher } from '../../../context';
 import {
   IMapCoordinateService,

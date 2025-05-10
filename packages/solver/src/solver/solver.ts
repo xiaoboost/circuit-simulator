@@ -3,7 +3,7 @@ import type {
   // LineStructuredData as Line,
   ConnectionData,
 } from '@circuit/electronics';
-import { Matrix, BigNumber, parseShortNumber } from '@circuit/math';
+import { Matrix, BigNumber, parseShortNumber } from '@circuit/algorithm';
 import { ElectronicKind } from '@circuit/shared';
 import { concat, isNumber, isDef, AnyObject } from '@xiao-ai/utils';
 

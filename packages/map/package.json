@@ -22,7 +22,7 @@
     "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
-    "@circuit/math": "workspace:*",
+    "@circuit/algorithm": "workspace:*",
     "@circuit/shared": "workspace:*",
     "@xiao-ai/utils": "1.6.6"
   },

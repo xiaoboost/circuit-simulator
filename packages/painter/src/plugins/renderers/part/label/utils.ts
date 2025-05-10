@@ -1,5 +1,5 @@
 import { type TextBias } from '@circuit/electronics';
-import { Direction, Directions } from '@circuit/math';
+import { Direction, Directions } from '@circuit/algorithm';
 
 export function getDirectionByLabel(label: keyof TextBias) {
   switch (label) {

@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import { ICursorKind } from '../../types';
 
 export function getBackgroundStyle(scale: number, position: Point): React.CSSProperties {

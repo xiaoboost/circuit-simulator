@@ -20,11 +20,10 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.5.2",
-    "@antv/g2": "5.2.10",
-    "@circuit/debug": "workspace:*",
+    "@antv/g2": "5.3.2",
+    "@circuit/algorithm": "workspace:*",
     "@circuit/electronics": "workspace:*",
     "@circuit/map": "workspace:*",
-    "@circuit/math": "workspace:*",
     "@circuit/solver": "workspace:*",
     "@circuit/shared": "workspace:*",
     "@circuit/painter": "workspace:*",

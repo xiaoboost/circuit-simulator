@@ -1,5 +1,5 @@
 
-import { PointLike } from '@circuit/math';
+import { PointLike } from '@circuit/algorithm';
 import { Electronic, SheetContext } from '../base';
 import { ElectronicKind } from '../types';
 import { LinePath } from './path';

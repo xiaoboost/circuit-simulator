@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import type { MouseEvent } from 'react';
 import { definePlugin } from '../../../context';
 import {

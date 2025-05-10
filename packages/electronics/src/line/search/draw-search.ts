@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 // import { MarkNodeKind } from '@circuit/map';
 import { isDef } from '@xiao-ai/utils';
 import type { Line } from '../';

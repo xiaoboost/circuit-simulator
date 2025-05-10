@@ -1,4 +1,4 @@
-import { PointLike, Point } from '@circuit/math';
+import { PointLike, Point } from '@circuit/algorithm';
 import {
   Mark,
   MarkKind,

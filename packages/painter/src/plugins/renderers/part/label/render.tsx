@@ -1,4 +1,4 @@
-import { Point, Direction } from '@circuit/math';
+import { Point, Direction } from '@circuit/algorithm';
 import React, { useEffect, useState, useRef } from 'react';
 import { usePainterService } from '../../../../context';
 import { IPartRendererProps, MAP_COORDINATE_SERVICE } from '../../../../types';

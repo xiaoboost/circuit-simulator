@@ -1,5 +1,5 @@
 import type { ElectronicKind, ConnectionData } from '@circuit/electronics';
-import type { Matrix } from '@circuit/math';
+import type { Matrix } from '@circuit/algorithm';
 
 /** 描述电路的四个矩阵 */
 export interface CircuitBaseMatrix {

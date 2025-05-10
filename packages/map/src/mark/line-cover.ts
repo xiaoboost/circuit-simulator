@@ -1,4 +1,4 @@
-import { Point, PointLike } from '@circuit/math';
+import { Point, PointLike } from '@circuit/algorithm';
 import type { MarkMap } from '../map';
 import { BaseMark } from './base';
 import { BaseLineMark } from './base-line';

@@ -1,5 +1,5 @@
 import { MarkKind } from '@circuit/map';
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import { SheetContext } from '../base';
 import { ElectronicKind } from '../types';
 import { PartProps } from './props';

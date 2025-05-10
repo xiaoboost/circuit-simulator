@@ -1,4 +1,4 @@
-import type { Matrix } from '@circuit/math';
+import type { Matrix } from '@circuit/algorithm';
 
 /**
  * 数字标记

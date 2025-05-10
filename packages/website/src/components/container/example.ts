@@ -1,5 +1,5 @@
 import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/electronics';
-import { Direction } from '@circuit/math';
+import { Direction } from '@circuit/algorithm';
 
 export const parts: PartStructuredData[] = [
   {

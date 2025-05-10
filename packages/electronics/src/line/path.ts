@@ -1,4 +1,4 @@
-import { Point, PointLike } from '@circuit/math';
+import { Point, PointLike } from '@circuit/algorithm';
 import { LinePin } from './types';
 
 /** 导线路径类 */

@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/math",
-  "description": "circuit's math",
+  "name": "@circuit/algorithm",
+  "description": "circuit's algorithm lib",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",

@@ -1,4 +1,4 @@
-import { Direction } from '@circuit/math';
+import { Direction } from '@circuit/algorithm';
 import { ElectronicKind } from '../../types';
 import { ElectronicPrototype, UnitType } from '../types';
 

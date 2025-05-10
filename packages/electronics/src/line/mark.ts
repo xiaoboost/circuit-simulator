@@ -1,5 +1,5 @@
 import { MarkKind, LineAndPointMark } from '@circuit/map';
-import { PointLike } from '@circuit/math';
+import { PointLike } from '@circuit/algorithm';
 import { SheetContext } from '../base';
 import { LineProps } from './props';
 

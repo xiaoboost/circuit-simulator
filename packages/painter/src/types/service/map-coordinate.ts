@@ -1,4 +1,4 @@
-import type { Point } from '@circuit/math';
+import type { Point } from '@circuit/algorithm';
 import { createServiceKey, type Watcher } from '../../context';
 
 /**

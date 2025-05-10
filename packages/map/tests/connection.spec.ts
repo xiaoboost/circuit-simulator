@@ -1,4 +1,4 @@
-import { Point } from '@circuit/math';
+import { Point } from '@circuit/algorithm';
 import test from 'ava';
 import { Connection } from '../src/mark/connection';
 

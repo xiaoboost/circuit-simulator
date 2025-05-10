@@ -1,4 +1,4 @@
-import { Matrix, Point } from '@circuit/math';
+import { Matrix, Point } from '@circuit/algorithm';
 import { Margin, MarginVertex } from './types';
 
 export function getMarginVertex(position: Point, margin: Margin, rotate: Matrix): MarginVertex {

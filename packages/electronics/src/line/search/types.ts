@@ -1,4 +1,4 @@
-import type { Point } from '@circuit/math';
+import type { Point } from '@circuit/algorithm';
 import type { LinePath } from '../path';
 
 /** 搜索状态 */

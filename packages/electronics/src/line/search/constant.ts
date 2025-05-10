@@ -1,4 +1,4 @@
-import { Rotate } from '@circuit/math';
+import { Rotate } from '@circuit/algorithm';
 
 /** 扩展方向矩阵 */
 export const RotateList = [

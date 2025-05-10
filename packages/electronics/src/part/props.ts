@@ -1,4 +1,4 @@
-import { Point, Matrix, Directions } from '@circuit/math';
+import { Point, Matrix, Directions } from '@circuit/algorithm';
 import { isNumber } from '@xiao-ai/utils';
 import { SheetContext, Electronic } from '../base';
 import { ElectronicKind } from '../types';

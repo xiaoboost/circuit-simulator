@@ -1,4 +1,4 @@
-import type { PointLike } from '@circuit/math';
+import type { PointLike } from '@circuit/algorithm';
 import type { LineMark, LineStructureData } from './line';
 import type { LineCoverMark, LineCoverStructureData } from './line-cover';
 import type { LineCrossMark, LineCrossStructureData } from './line-cross';

@@ -1,5 +1,5 @@
 import { MarkKind } from '@circuit/map';
-import { RotateMatrix, Rotate, Point } from '@circuit/math';
+import { RotateMatrix, Rotate, Point } from '@circuit/algorithm';
 import { default as test } from 'ava';
 import { LineMarker, PartMarker, SheetContext } from '../../src';
 

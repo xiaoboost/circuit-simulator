@@ -1,4 +1,4 @@
-import { Point, Direction, NumberRank } from '@circuit/math';
+import { Point, Direction, NumberRank } from '@circuit/algorithm';
 import type { ConnectionData } from '../base';
 import type { ElectronicKind, BasePinStatus } from '../types';
 

@@ -1,4 +1,4 @@
-import type { Point } from '@circuit/math';
+import type { Point } from '@circuit/algorithm';
 import type { ConnectionStatus } from './base';
 import type { LineStructuredData } from './line';
 import type { PartStructuredData } from './part';

@@ -1,5 +1,4 @@
-// import { debug } from '@circuit/debug';
-import { Point, Rotate, RotateMatrix } from '@circuit/math';
+import { Point, Rotate, RotateMatrix } from '@circuit/algorithm';
 import { remove, AnyObject } from '@xiao-ai/utils';
 import { LinePath } from '../path';
 import { Cache } from './cache';
