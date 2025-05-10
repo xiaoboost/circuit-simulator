@@ -5,7 +5,6 @@ import { Viewer } from '../viewer';
 import { type PainterProps } from '../wrapper';
 import * as Styles from './styles.css';
 import {
-  useMouseListener,
   useKeyboardListener,
   useElectronicChangeAdapter,
   usePainterRefService,
@@ -13,7 +12,6 @@ import {
 
 export function Entry(props: PainterProps) {
   const painterRef = useRef<HTMLDivElement>(null);
-  const mouseListener = useMouseListener();
 
   usePainterRefService(painterRef);
   useKeyboardListener(painterRef);
@@ -22,12 +20,10 @@ export function Entry(props: PainterProps) {
   return (
     <div
       className={scl(Styles.entry, props.className)}
-      role="button"
       style={props.style}
       ref={painterRef}
       tabIndex={0}
       onContextMenu={(e) => e.preventDefault()}
-      {...mouseListener}
     >
       <Drawer />
       <Viewer />

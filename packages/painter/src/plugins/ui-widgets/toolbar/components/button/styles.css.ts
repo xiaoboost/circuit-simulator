@@ -15,6 +15,7 @@ export const btn = style({
   transition: 'background-color 200ms ease',
   cursor: 'pointer',
   marginRight: 4,
+  outline: 'none',
   backgroundColor: Colors.White.string(),
 
   selectors: {

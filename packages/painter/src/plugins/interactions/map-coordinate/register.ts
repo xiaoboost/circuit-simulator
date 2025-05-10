@@ -7,6 +7,7 @@ import {
   MAP_COORDINATE_SERVICE,
   EVENT_LISTENER_HOOK,
   DRAG_SCENE_HOOK,
+  CONFIGURATION_SERVICE,
 } from '../../../types';
 
 definePlugin(({ getService, registerHook, registerService }) => {
@@ -90,23 +91,31 @@ definePlugin(({ getService, registerHook, registerService }) => {
   registerHook(DRAG_SCENE_HOOK, {
     name: DragSceneName,
     start(event) {
-      // 非中键或者鼠标按下事件不处理
-      if (event.button !== 1 || event.type !== 'mousedown') {
+      // 非左键或者鼠标按下事件不处理
+      if (event.button !== 0 || event.type !== 'mousedown') {
         return false;
       }
 
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
+      const configurationService = getService(CONFIGURATION_SERVICE);
 
-      // 当前场景不为空时不处理
-      if (dragSceneService.size !== 0) {
+      // 当前场景不为空或者不是移动模式时不处理
+      if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
         return false;
       }
 
       return true;
     },
     isEnd(event) {
-      // 非中键或者鼠标抬起事件不处理
-      if (event.button !== 1 || event.type !== 'mouseup') {
+      const configuration = getService(CONFIGURATION_SERVICE);
+
+      // 不是移动模式时直接停止
+      if (!configuration.movePainterMode.data) {
+        return true;
+      }
+
+      // 非左键或者鼠标抬起事件不处理
+      if (event.button !== 0 || event.type !== 'mouseup') {
         return false;
       }
 
@@ -130,7 +139,15 @@ definePlugin(({ getService, registerHook, registerService }) => {
       cursorService.set(cursorService.kind.Dragging);
     },
     afterEnd() {
-      getService(CURSOR_SERVICE).clear();
+      const cursorService = getService(CURSOR_SERVICE);
+      const configurationService = getService(CONFIGURATION_SERVICE);
+
+      if (configurationService.movePainterMode.data) {
+        cursorService.set(cursorService.kind.Drag);
+      }
+      else {
+        cursorService.clear();
+      }
     },
   });
 
