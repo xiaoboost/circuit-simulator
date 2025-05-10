@@ -14,7 +14,7 @@ export function Viewer() {
 
   return (
     <div className={viewerWrapper}>
-      {viewers.map(({ Render }) => Render())}
+      {viewers.map(({ Render, name }) => <Render key={name} />)}
     </div>
   );
 }

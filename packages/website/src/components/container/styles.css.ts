@@ -8,4 +8,6 @@ export const container = style({
   color: Colors.PrimaryText.toString(),
   fontFamily: Fonts.Default,
   fontSize: Fonts.DefaultSize,
+  display: 'flex',
+  flexDirection: 'column',
 });

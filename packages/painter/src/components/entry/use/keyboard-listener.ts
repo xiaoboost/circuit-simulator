@@ -1,11 +1,10 @@
 import hotkeys from 'hotkeys-js';
-import { useEffect, useRef } from 'react';
+import { useEffect, RefObject } from 'react';
 import { usePainterHook } from '../../../context';
 import { HOT_KEY_HOOK } from '../../../types';
 
 /** 事件监听器 */
-export function useKeyboardListener() {
-  const painterRef = useRef<HTMLDivElement>(null);
+export function useKeyboardListener(painterRef: RefObject<HTMLDivElement | null>) {
   const hotkey = usePainterHook(HOT_KEY_HOOK);
   const getKey = (key: string | string[]) => Array.isArray(key) ? key.join(', ') : key;
 
@@ -33,6 +32,4 @@ export function useKeyboardListener() {
       });
     };
   }, [painterRef.current]);
-
-  return painterRef;
 }

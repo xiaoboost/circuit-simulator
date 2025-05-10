@@ -8,4 +8,5 @@ export {
 export {
   usePainterService,
   usePainterHook,
+  useHotkey,
 } from './react';

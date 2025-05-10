@@ -1,23 +1,10 @@
 import { Colors } from '@circuit/shared';
 import { style } from '@vanilla-extract/css';
 
-export const toolbar = style({
-  position: 'absolute',
-  right: 32,
-  bottom: 72,
-  padding: 8,
-  pointerEvents: 'auto',
-  backgroundColor: Colors.White.toString(),
-  border: `1px solid ${Colors.BorderBase.toString()}`,
-  borderRadius: 8,
-  display: 'flex',
-  flexDirection: 'row',
-  boxShadow: `0 2px 10px 2px ${Colors.Black.mix(Colors.White, 0.85).string()}`,
-});
-
 export const selected = style({});
+export const disabled = style({});
 
-export const actionIcon = style({
+export const btn = style({
   fontSize: 20,
   height: 36,
   minWidth: 36,
@@ -28,14 +15,21 @@ export const actionIcon = style({
   transition: 'background-color 200ms ease',
   cursor: 'pointer',
   marginRight: 4,
+  backgroundColor: Colors.White.string(),
 
   selectors: {
     '&:hover': {
-      backgroundColor: Colors.Black.mix(Colors.White, 0.9).string(),
+      backgroundColor: Colors.Black.mix(Colors.White, 0.92).string(),
     },
     '&:last-child': {
       marginRight: 0,
     },
+    [`&.${disabled}`]: {
+      color: Colors.Black.mix(Colors.White, 0.5).string(),
+      backgroundColor: Colors.White.string(),
+      cursor: 'not-allowed',
+    },
+    // 优先级最高，所以放在最下面
     [`&.${selected}`]: {
       backgroundColor: Colors.PrimaryLight.toString(),
       color: Colors.Primary.toString(),
@@ -44,7 +38,10 @@ export const actionIcon = style({
   },
 });
 
-export const actionIconInner = style({
+export const icon = style({
   height: 22,
   width: 22,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 });

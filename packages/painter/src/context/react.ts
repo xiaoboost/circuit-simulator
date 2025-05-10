@@ -1,6 +1,7 @@
+import HotKey, { KeyHandler } from 'hotkeys-js';
 import { useEffect, useContext, useState } from 'react';
 import { useUnmount } from 'react-use';
-import { HookType, ServiceType } from '../types';
+import { HookType, ServiceType, HotKeyOptions, PAINTER_HTML_ELEMENT } from '../types';
 import { PainterContext, PluginInstallers } from './context';
 import { IPainterContext, ServiceTypeWithKey } from './types';
 
@@ -63,4 +64,26 @@ export function usePainterService<T extends ServiceType>(key: ServiceTypeWithKey
 export function usePainterHook<T extends HookType>(key: ServiceTypeWithKey<T>) {
   const { HookMap } = useContext(PainterContext);
   return (HookMap.get(key) ?? []) as unknown as T[];
+}
+
+/** 注册画布键盘事件 */
+export function useHotkey(key: string, options: HotKeyOptions, callback: KeyHandler) {
+  const painterRef = usePainterService(PAINTER_HTML_ELEMENT);
+  const realOptions: HotKeyOptions = {
+    keyup: false,
+    keydown: false,
+    capture: true,
+    ...options,
+  };
+
+  useEffect(() => {
+    if (painterRef.current) {
+      // TODO: 需要优化，暂时使用 document 监听，因为只有激活元素才能有键盘事件
+      HotKey(key, realOptions, callback);
+    }
+
+    return () => {
+      HotKey.unbind(key, callback);
+    };
+  }, [key, callback, painterRef.current]);
 }

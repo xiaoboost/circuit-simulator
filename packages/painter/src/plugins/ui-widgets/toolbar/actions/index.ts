@@ -1,1 +1,1 @@
-import './move-mode';
+import './move-painter';

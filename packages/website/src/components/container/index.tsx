@@ -13,6 +13,6 @@ export function App() {
 
   return <div className={Styles.container}>
     <Header />
-    <Painter lines={lines} parts={parts} />
+    <Painter lines={lines} parts={parts} style={{ flexGrow: 1 }} />
   </div>;
 }
