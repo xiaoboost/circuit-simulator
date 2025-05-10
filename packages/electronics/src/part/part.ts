@@ -15,7 +15,7 @@ export class Part extends PartMarker {
       id: this.id,
       kind: this.kind,
       position: this.position.toData(),
-      rotate: this.rotate.toData() as any,
+      rotate: this.rotate,
       params: this.params.slice(),
       textDirection: Direction.Bottom,
       // 器件引脚只可能连接一个导线，所以这里取下标 0 的数据即可

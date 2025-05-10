@@ -1,4 +1,4 @@
-import { Point, Rotate, RotateMatrix } from '@circuit/algorithm';
+import { Point, Rotate, RotateMatrixSet } from '@circuit/algorithm';
 import { remove, AnyObject } from '@xiao-ai/utils';
 import { LinePath } from '../path';
 import { Cache } from './cache';
@@ -89,7 +89,7 @@ export class SearchStack {
 
 /** 生成新节点 */
 function newNode(node: SearchNodeData, index: Rotate): SearchNodeData {
-  const direction = node.direction.rotate(RotateMatrix[index]);
+  const direction = node.direction.rotate((RotateMatrixSet as any)[index]);
 
   return {
     direction,

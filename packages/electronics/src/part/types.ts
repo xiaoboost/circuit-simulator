@@ -1,4 +1,4 @@
-import { Point, Direction, NumberRank } from '@circuit/algorithm';
+import { Point, Direction, NumberRank, RotateMatrix } from '@circuit/algorithm';
 import type { ConnectionData } from '../base';
 import type { ElectronicKind, BasePinStatus } from '../types';
 
@@ -7,7 +7,7 @@ export interface PartData {
   id: string;
   kind: keyof typeof ElectronicKind;
   position: number[];
-  rotate?: PartRotateMatrix;
+  rotate?: RotateMatrix;
   text?: keyof typeof Direction;
   params?: string[];
 }
@@ -24,13 +24,6 @@ export type Margin = readonly [number, number, number, number];
  * @description 左上角开始，顺时针
  */
 export type MarginVertex = readonly [Point, Point, Point, Point];
-
-/**
- * 器件旋转矩阵
- *
- * @description 2 * 2 矩阵
- */
-export type PartRotateMatrix = [[number, number], [number, number]];
 
 /** 器件结构化数据 */
 export interface PartStructuredData {
@@ -49,7 +42,7 @@ export interface PartStructuredData {
    */
   textDirection: Direction;
   /** 器件旋转矩阵 */
-  rotate: PartRotateMatrix;
+  rotate: RotateMatrix;
   /** 器件参数 */
   params: string[];
 }

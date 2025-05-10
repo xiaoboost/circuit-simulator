@@ -1,8 +1,8 @@
-import { Point, Direction } from '@circuit/algorithm';
+import { Point, Direction, invertRotateMatrix } from '@circuit/algorithm';
 import React, { useEffect, useState, useRef } from 'react';
 import { usePainterService } from '../../../../context';
 import { IPartRendererProps, MAP_COORDINATE_SERVICE } from '../../../../types';
-import { invert2x2Matrix, keys } from '../../../../utils';
+import { keys } from '../../../../utils';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
 import { getDirectionByLabel } from './utils';
@@ -15,7 +15,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
     textDirection,
   } = data;
   const [label, subfix] = id.split('_');
-  const invRotate = invert2x2Matrix(rotate);
+  const invRotate = invertRotateMatrix(rotate);
   const { value: map } = usePainterService(MAP_COORDINATE_SERVICE);
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
@@ -61,8 +61,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
     const direction = keys(prototype.textBias)
       .filter(Boolean)
       .map((key) => getDirectionByLabel(key).mul(prototype.textBias![key]!))
-      // TODO: 矩阵算法应该要去掉，之后求解器直接用现成的，不再需要通用矩阵算法了
-      .map((bias) => bias.rotate2(rotate))
+      .map((bias) => bias.rotate(rotate))
       .reduce(
         (pre, next) =>
           pre.distance(position) < next.distance(position) ? pre : next,
@@ -114,7 +113,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
       ref={textRef}
       className={Styles.text}
       textAnchor={textAnchor}
-      transform={`matrix(${invRotate.join()},${position.rotate2(invRotate).join()})`}
+      transform={`matrix(${invRotate.join()},${position.rotate(invRotate).join()})`}
     >
       <text>
         <tspan>{label}</tspan>

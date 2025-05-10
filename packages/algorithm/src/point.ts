@@ -1,21 +1,5 @@
 import { isNumber } from '@xiao-ai/utils';
-import { Matrix } from './matrix';
-
-export type PointLike = number[] | [number, number] | Point;
-export type PointInput = PointLike | number;
-
-/** 方向 */
-export enum Direction {
-  Center,
-  Top,
-  TopLeft,
-  TopRight,
-  Bottom,
-  BottomLeft,
-  BottomRight,
-  Left,
-  Right,
-}
+import { type PointLike, type PointInput, Direction } from './types';
 
 /** 点和向量类 */
 export class Point {
@@ -144,18 +128,7 @@ export class Point {
    * @param {Matrix} ma
    * @returns {Point}
    */
-  rotate(ma: Matrix) {
-    return new Point(
-      this[0] * ma.get(0, 0) + this[1] * ma.get(1, 0),
-      this[0] * ma.get(0, 1) + this[1] * ma.get(1, 1),
-    );
-  }
-  /**
-   * 点旋转（乘以矩阵）
-   * @param {Matrix} ma
-   * @returns {Point}
-   */
-  rotate2(ma: number[][]) {
+  rotate(ma: number[][]) {
     return new Point(
       this[0] * ma[0][0] + this[1] * ma[1][0],
       this[0] * ma[0][1] + this[1] * ma[1][1],
@@ -540,15 +513,3 @@ export class Point {
     return [this[0], this[1]];
   }
 }
-
-export const Directions: Readonly<Record<Direction, Point>> = {
-  [Direction.Center]: Point.from([0, 0]),
-  [Direction.Top]: Point.from([0, -1]),
-  [Direction.Bottom]: Point.from([0, 1]),
-  [Direction.Left]: Point.from([-1, 0]),
-  [Direction.Right]: Point.from([1, 0]),
-  [Direction.TopLeft]: Point.from([-1, -1]),
-  [Direction.TopRight]: Point.from([1, -1]),
-  [Direction.BottomLeft]: Point.from([-1, 1]),
-  [Direction.BottomRight]: Point.from([1, 1]),
-};

@@ -20,7 +20,7 @@ function getAllPoints({ parts, lines }: IDrawLayerProps, service: IElectronicSer
 
     for (let i = 0; i < partPrototype.points.length; i++) {
       const pin = partPrototype.points[i];
-      const position = Point.from(pin.position).rotate2(part.rotate).add(part.position);
+      const position = Point.from(pin.position).rotate(part.rotate).add(part.position);
       const data = {
         kind: PointKind.PartPin,
         position: position.toData(),

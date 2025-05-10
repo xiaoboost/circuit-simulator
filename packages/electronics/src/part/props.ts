@@ -1,4 +1,4 @@
-import { Point, Matrix, Directions } from '@circuit/algorithm';
+import { Point, RotateMatrix, DirectionVectorSet, invertRotateMatrix } from '@circuit/algorithm';
 import { isNumber } from '@xiao-ai/utils';
 import { SheetContext, Electronic } from '../base';
 import { ElectronicKind } from '../types';
@@ -8,8 +8,8 @@ import { getMarginVertex } from './utils';
 
 export abstract class PartProps extends Electronic {
   #position: Point;
-  #rotate = new Matrix(2, 'E');
-  #invRotate = new Matrix(2, 'E');
+  #rotate: RotateMatrix = [[1, 0], [0, 1]];
+  #invRotate: RotateMatrix = [[1, 0], [0, 1]];
   #points: PartPinStatus[] = [];
   #params: string[] = [];
   #texts: string[] = [];
@@ -25,7 +25,7 @@ export abstract class PartProps extends Electronic {
     const data: Partial<Omit<PartData, 'kind'>> = !isNumber(kind) ? kind : {};
 
     this.#params = data.params ?? prototype.params.map((n) => n.default);
-    this.#rotate = data.rotate ? Matrix.from(data.rotate) : new Matrix(2, 'E');
+    this.#rotate = data.rotate ?? [[1, 0], [0, 1]];
     this.#position = data.position ? Point.from(data.position) : new Point(1e6, 1e6);
 
     this.#updateRotate();
@@ -43,9 +43,9 @@ export abstract class PartProps extends Electronic {
   }
   /** 旋转矩阵 */
   get rotate() {
-    return this.#rotate;
+    return invertRotateMatrix(this.#rotate);
   }
-  set rotate(val: Matrix) {
+  set rotate(val: RotateMatrix) {
     this.#pointsNeedUpdate = true;
     this.#invRotateNeedUpdate = true;
     this.#rotate = val;
@@ -104,7 +104,7 @@ export abstract class PartProps extends Electronic {
 
   /** 更新旋转矩阵 */
   #updateRotate() {
-    this.#invRotate = this.#rotate.inverse();
+    this.#invRotate = invertRotateMatrix(this.#rotate);
   }
   /** 更新引脚数据 */
   #updatePoints() {
@@ -120,7 +120,7 @@ export abstract class PartProps extends Electronic {
         status: connections[i].status,
         origin: Point.from(point.position),
         position: Point.prototype.rotate.call(point.position, rotate).add(position),
-        direction: Point.prototype.rotate.call(Directions[point.direction], rotate),
+        direction: Point.prototype.rotate.call(DirectionVectorSet[point.direction], rotate),
         ui: oldPoint?.ui ?? {
           size: -1,
           className: '',

@@ -1,22 +1,22 @@
+import { Direction, DirectionVectorSet } from '@circuit/algorithm';
 import { type TextBias } from '@circuit/electronics';
-import { Direction, Directions } from '@circuit/algorithm';
 
 export function getDirectionByLabel(label: keyof TextBias) {
   switch (label) {
     case 'left': {
-      return Directions[Direction.Left];
+      return DirectionVectorSet[Direction.Left];
     }
     case 'right': {
-      return Directions[Direction.Right];
+      return DirectionVectorSet[Direction.Right];
     }
     case 'top': {
-      return Directions[Direction.Top];
+      return DirectionVectorSet[Direction.Top];
     }
     case 'bottom': {
-      return Directions[Direction.Bottom];
+      return DirectionVectorSet[Direction.Bottom];
     }
     case 'center': {
-      return Directions[Direction.Center];
+      return DirectionVectorSet[Direction.Center];
     }
     default: {
       throw new Error(`未知的方向标签:${label}`);
