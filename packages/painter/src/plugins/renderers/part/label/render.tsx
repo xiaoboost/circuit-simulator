@@ -1,8 +1,8 @@
 import { Point, Direction, invertRotateMatrix } from '@circuit/algorithm';
+import { TextBias } from '@circuit/electronics';
 import React, { useEffect, useState, useRef } from 'react';
 import { usePainterService } from '../../../../context';
 import { IPartRendererProps, MAP_COORDINATE_SERVICE } from '../../../../types';
-import { keys } from '../../../../utils';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
 import { getDirectionByLabel } from './utils';
@@ -58,7 +58,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
     const xMiddleOffset = - textBoxRect.width / map.data.scale / 2;
 
     // 求此时距离可偏移方向最近的位置
-    const direction = keys(prototype.textBias)
+    const direction = (Object.keys(prototype.textBias) as (keyof TextBias)[])
       .filter(Boolean)
       .map((key) => getDirectionByLabel(key).mul(prototype.textBias![key]!))
       .map((bias) => bias.rotate(rotate))

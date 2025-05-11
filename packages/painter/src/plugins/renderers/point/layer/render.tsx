@@ -1,4 +1,4 @@
-import { Point, getPathCoverPoints } from '@circuit/algorithm';
+import { getPathCoverPoints } from '@circuit/algorithm';
 import React, { useMemo } from 'react';
 import { usePainterHook, usePainterService } from '../../../../context';
 import {
@@ -9,7 +9,6 @@ import {
   POINT_RENDERER,
   ELECTRONIC_SERVICE_KEY,
 } from '../../../../types';
-import { createSorter } from '../../../../utils';
 
 function getAllPoints({ parts, lines }: IDrawLayerProps, service: IElectronicService): PointData[] {
   const pointMap = new Map<string, PointData>();
@@ -83,7 +82,7 @@ function getAllPoints({ parts, lines }: IDrawLayerProps, service: IElectronicSer
 }
 
 export function Render(props: IDrawLayerProps) {
-  const pointRenderers = usePainterHook(POINT_RENDERER).sort(createSorter('asc'));
+  const pointRenderers = usePainterHook(POINT_RENDERER, 'asc');
   const electronicService = usePainterService(ELECTRONIC_SERVICE_KEY);
   const points = useMemo(() => getAllPoints(props, electronicService), [props.parts, props.lines]);
 

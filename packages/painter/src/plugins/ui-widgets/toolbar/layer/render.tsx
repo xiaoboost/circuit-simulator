@@ -1,11 +1,10 @@
 import React from 'react';
 import { usePainterHook } from '../../../../context';
 import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../types';
-import { createSorter } from '../../../../utils';
 import * as Styles from './styles.css';
 
 export function Render() {
-  const actions = usePainterHook(PAINTER_TOOLBAR_ACTION_HOOK).sort(createSorter('asc'));
+  const actions = usePainterHook(PAINTER_TOOLBAR_ACTION_HOOK, 'asc');
 
   if (actions.length === 0) {
     return null;

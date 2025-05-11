@@ -6,7 +6,6 @@ import {
   ELECTRONIC_SERVICE_KEY,
   CURSOR_SERVICE,
 } from '../../types';
-import { createSorter } from '../../utils';
 import * as Styles from './styles.css';
 import { useMouseListener } from './use';
 import { getBackgroundStyle, getCursorStyle } from './utils';
@@ -15,7 +14,7 @@ export function Drawer() {
   const mapService = usePainterService(MAP_COORDINATE_SERVICE);
   const [{ scale, position }] = useWatcher(mapService.value);
   const mouseListener = useMouseListener();
-  const layers = usePainterHook(DRAW_LAYER_HOOK).sort(createSorter('asc'));
+  const layers = usePainterHook(DRAW_LAYER_HOOK, 'asc');
   const electronicService = usePainterService(ELECTRONIC_SERVICE_KEY);
   const cursorService = usePainterService(CURSOR_SERVICE);
   const [parts] = useWatcher(electronicService.parts);

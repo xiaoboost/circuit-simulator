@@ -1,3 +1,4 @@
+import { createSorter } from '@circuit/shared';
 import HotKey, { KeyHandler } from 'hotkeys-js';
 import { useEffect, useContext, useState } from 'react';
 import { useUnmount } from 'react-use';
@@ -61,9 +62,22 @@ export function usePainterService<T extends ServiceType>(key: ServiceTypeWithKey
 }
 
 /** 获取画布钩子 */
-export function usePainterHook<T extends HookType>(key: ServiceTypeWithKey<T>) {
+export function usePainterHook<T extends HookType>(
+  key: ServiceTypeWithKey<T>,
+  sort?: 'asc' | 'desc',
+) {
   const { HookMap } = useContext(PainterContext);
-  return (HookMap.get(key) ?? []) as unknown as T[];
+  const hooks = (HookMap.get(key) ?? []) as unknown as T[];
+
+  if (hooks.length === 0) {
+    return [];
+  }
+
+  if (sort) {
+    return hooks.sort(createSorter(sort) as any);
+  }
+
+  return hooks;
 }
 
 /** 注册画布键盘事件 */

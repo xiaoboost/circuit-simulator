@@ -1,11 +1,10 @@
 import React from 'react';
 import { usePainterHook } from '../../context';
 import { VIEW_LAYER_HOOK } from '../../types';
-import { createSorter } from '../../utils';
 import { viewerWrapper } from './styles.css';
 
 export function Viewer() {
-  const viewers = usePainterHook(VIEW_LAYER_HOOK).sort(createSorter('asc'));
+  const viewers = usePainterHook(VIEW_LAYER_HOOK, 'asc');
 
   // 没有视图图层时不渲染
   if (viewers.length === 0) {

@@ -1,3 +1,3 @@
-# circuit/math
+# circuit/painter
 
-数学运算库
+画布组件

@@ -1,6 +1,6 @@
 {
   "extends": "@xiao-ai/tsconfig",
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "../shared/src/object.ts", "../shared/src/sort.ts"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
