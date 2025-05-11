@@ -1,13 +1,15 @@
 import { type Point } from './point';
 
+/** 点位置 */
+export type Position = [number, number];
 /** 折线 */
-export type Line = [number, number][];
+export type Path = Position[];
 /** 线段 */
-export type Segment = [[number, number], [number, number]];
+export type Segment = [Position, Position];
 /** 旋转矩阵 */
-export type RotateMatrix = [[number, number], [number, number]];
+export type RotateMatrix = [Position, Position];
 /** 点或者类似点 */
-export type PointLike = number[] | [number, number] | Point;
+export type PointLike = number[] | Position | Point;
 /** 点输入 */
 export type PointInput = PointLike | number;
 /** 向量方向定义 */

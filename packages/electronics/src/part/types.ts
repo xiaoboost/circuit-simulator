@@ -101,8 +101,8 @@ export interface ParamsDescription {
   readonly ranks?: NumberRank[];
 }
 
-/** 器件每个节点的描述 */
-export interface PointDescription {
+/** 器件每个引脚的描述 */
+export interface PinDescription {
   /** 该节点距离器件中心点的相对位置 */
   readonly position: [number, number];
   /** 该节点对外延伸的方向 */
@@ -145,7 +145,9 @@ export interface ElectronicPrototype {
   /** 每项参数的描述 */
   readonly params: ParamsDescription[];
   /** 器件每个节点的描述 */
-  readonly points: PointDescription[];
+  readonly pins: PinDescription[];
   /** 器件外形元素的描述 */
   readonly shape: ShapeDescription[];
+  /** 器件聚焦区域的描述 */
+  readonly focus: ShapeDescription[];
 }

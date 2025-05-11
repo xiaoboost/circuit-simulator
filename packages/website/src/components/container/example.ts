@@ -1,5 +1,5 @@
-import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/electronics';
 import { Direction } from '@circuit/algorithm';
+import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/electronics';
 
 export const parts: PartStructuredData[] = [
   {
@@ -218,5 +218,10 @@ export const lines: LineStructuredData[] = [
     id: 'L_27',
     kind: ElectronicKind.Line,
     path: [[700, 500], [780, 500]],
+  },
+  {
+    id: 'L_28',
+    kind: ElectronicKind.Line,
+    path: [[1000, 420], [1080, 420], [1080, 500]],
   },
 ] as any[];

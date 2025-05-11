@@ -1,7 +1,34 @@
+import { Colors } from '@circuit/shared';
 import React from 'react';
-import { IPointRendererProps } from '../../../../types';
+import { IPointRendererProps, PointKind } from '../../../../types';
 
 export function Render({ data }: IPointRendererProps) {
+  if (data.kind === PointKind.LineCover) {
+    return (
+      <circle cx='0' cy='0' r='3' fill={Colors.White.toString()} />
+    );
+  }
+  else if (data.kind === PointKind.LineCross) {
+    return (
+      <circle cx='0' cy='0' r='3' fill={Colors.White.toString()} />
+    );
+  }
+  else if (data.kind === PointKind.PartPin) {
+    return (
+      <circle cx='0' cy='0' r='3' fill={Colors.White.toString()} />
+    );
+  }
+  else if (data.kind === PointKind.LinePoint) {
+    return (
+      <circle cx='0' cy='0' r='3' fill={Colors.White.toString()} />
+    );
+  }
+  else if (data.kind === PointKind.PartPinLine) {
+    return (
+      <circle cx='0' cy='0' r='3' fill={Colors.White.toString()} />
+    );
+  }
+
   return (
     <>
       <circle

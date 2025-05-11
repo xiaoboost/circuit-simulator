@@ -21,7 +21,7 @@ export const data: ElectronicPrototype = {
       ranks: ['G', 'M', 'k', ''],
     },
   ],
-  points: [
+  pins: [
     {
       position: [-40, 0],
       direction: Direction.Left,
@@ -37,6 +37,17 @@ export const data: ElectronicPrototype = {
       attribute: {
         d: 'M-40,0H-24L-20,-9L-12,9L-4,-9L4,9L12,-9L20,9L24,0H40',
         stroke: 'currentColor',
+      },
+    },
+  ],
+  focus: [
+    {
+      name: 'rect',
+      attribute: {
+        x: '-30',
+        y: '-13',
+        width: '60',
+        height: '26',
       },
     },
   ],

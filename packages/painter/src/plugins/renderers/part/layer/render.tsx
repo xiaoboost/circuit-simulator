@@ -12,7 +12,7 @@ export function Render({ parts }: IDrawLayerProps) {
   }
 
   return (
-    <>
+    <g>
       {parts.map((part) => {
         const prototype = service.getPartPrototype(part.kind);
 
@@ -27,6 +27,6 @@ export function Render({ parts }: IDrawLayerProps) {
           </g>
         );
       })}
-    </>
+    </g>
   );
 }

@@ -54,7 +54,7 @@ export abstract class Electronic {
       this.connections = [new Connection(), new Connection()];
     }
     else {
-      this.connections = Array(Electronics[this.kind].points.length)
+      this.connections = Array(Electronics[this.kind].pins.length)
         .fill(0)
         .map(() => new Connection());
     }

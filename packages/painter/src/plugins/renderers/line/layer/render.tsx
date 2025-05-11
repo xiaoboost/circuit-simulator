@@ -11,7 +11,7 @@ export function Render({ lines }: IDrawLayerProps) {
   }
 
   return (
-    <>
+    <g>
       {lines.map((line, index) => (
         <g key={line.id ?? index}>
           {lineRenderers.map(({ name, Render }) => (
@@ -19,6 +19,6 @@ export function Render({ lines }: IDrawLayerProps) {
           ))}
         </g>
       ))}
-    </>
+    </g>
   );
 }

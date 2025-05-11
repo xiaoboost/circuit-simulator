@@ -13,7 +13,7 @@ export const data: ElectronicPrototype = {
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],
   params: [],
-  points: [
+  pins: [
     {
       position: [-20, 0],
       direction: Direction.Left,
@@ -39,6 +39,17 @@ export const data: ElectronicPrototype = {
         stroke: 'currentColor',
         strokeWidth: '0',
         strokeLinecap: 'square',
+      },
+    },
+  ],
+  focus: [
+    {
+      name: 'rect',
+      attribute: {
+        x: '-10',
+        y: '-8',
+        width: '20',
+        height: '16',
       },
     },
   ],

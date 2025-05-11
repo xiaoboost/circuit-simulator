@@ -112,8 +112,8 @@ export abstract class PartProps extends Electronic {
     const points = this.#points;
     const position = this.#position;
 
-    for (let i = 0; i < prototype.points.length; i++) {
-      const point = prototype.points[i];
+    for (let i = 0; i < prototype.pins.length; i++) {
+      const point = prototype.pins[i];
       const oldPoint = points[i];
       const newPoint: PartPinStatus = {
         index: i,

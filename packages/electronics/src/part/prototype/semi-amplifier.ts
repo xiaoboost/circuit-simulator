@@ -40,7 +40,7 @@ export const data: ElectronicPrototype = {
     //   visible: false,
     // },
   ],
-  points: [
+  pins: [
     {
       position: [-40, -20],
       direction: Direction.Left,
@@ -76,6 +76,17 @@ export const data: ElectronicPrototype = {
         d: 'M-22,-20H-16M-22,20H-16M-19,17V23',
         strokeWidth: '1',
         stroke: 'currentColor',
+      },
+    },
+  ],
+  focus: [
+    {
+      name: 'rect',
+      attribute: {
+        x: '-30',
+        y: '-35',
+        width: '60',
+        height: '70',
       },
     },
   ],

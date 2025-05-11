@@ -20,7 +20,7 @@ export const data: ElectronicPrototype = {
       visible: true,
     },
   ],
-  points: [
+  pins: [
     {
       position: [0, 40],
       direction: Direction.Bottom,
@@ -56,6 +56,17 @@ export const data: ElectronicPrototype = {
         stroke: 'currentColor',
         strokeWidth: '0.5',
         strokeLinecap: 'square',
+      },
+    },
+  ],
+  focus: [
+    {
+      name: 'rect',
+      attribute: {
+        x: '-20',
+        y: '-30',
+        width: '40',
+        height: '60',
       },
     },
   ],
