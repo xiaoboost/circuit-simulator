@@ -7,6 +7,7 @@ import {
 import { ElectronicKind } from '../types';
 import { Electronics } from './prototype';
 import { PartStoreData, PartStructuredData, PartPinData } from './types';
+import { getMarginVertex } from './utils';
 
 export function* getPartPins(part: PartStructuredData) {
   const prototype = Electronics[part.kind];
@@ -52,4 +53,20 @@ export function transformPartStateToStoreData(data: PartStructuredData): PartSto
   }
 
   return data;
+}
+
+/** 迭代器件内边距节点 */
+export function* getPaddingPoint(data: PartStructuredData) {
+  const { padding } = getPartPrototype(data.kind);
+  const [point1, point2, , point4] = getMarginVertex(data.position, padding, data.rotate);
+
+  for (const pointY of point1.toDestination(point4, 20)) {
+    const numberY = pointY[1];
+    const start = new Point(point1[0], numberY);
+    const end = new Point(point2[0], numberY);
+
+    for (const point of start.toDestination(end, 20)) {
+      yield point;
+    }
+  }
 }

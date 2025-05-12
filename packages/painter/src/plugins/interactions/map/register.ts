@@ -1,6 +1,7 @@
 import { MarkMap } from '@circuit/map';
 import { definePlugin } from '../../../context';
 import { MAP_SERVICE_KEY, LIFE_CYCLE_HOOK, ELECTRONIC_SERVICE_KEY } from '../../../types';
+import { setPartMark, setLineMark } from './mark';
 
 definePlugin(({ registerService, registerHook, getService }) => {
   const service = {
@@ -14,15 +15,16 @@ definePlugin(({ registerService, registerHook, getService }) => {
   registerHook(LIFE_CYCLE_HOOK, {
     // 初始化之前需要先初始化图纸标记
     beforeInit: () => {
-      debugger;
       const electronicService = getService(ELECTRONIC_SERVICE_KEY);
       const { parts: { data: parts }, lines: { data: lines } } = electronicService;
 
-      if (parts.length === 0 && lines.length === 0) {
-        return;
+      for (const part of parts) {
+        setPartMark(part, service.markService);
       }
 
-      // TODO:
+      for (const line of lines) {
+        setLineMark(line, service.markService);
+      }
     },
   });
 
