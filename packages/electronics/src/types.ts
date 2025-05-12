@@ -1,36 +1,31 @@
-import type { Point } from '@circuit/algorithm';
-import type { ConnectionStatus } from './base';
-import type { LineStructuredData } from './line';
-import type { PartStructuredData } from './part';
+import type { LineStructuredData, LineStoreData } from './line';
+import type { PartStructuredData, PartStoreData } from './part';
 
 export { ElectronicKind } from '@circuit/shared';
 
 /** 元件总类别 */
 export type ElectronicStructuredData = LineStructuredData | PartStructuredData;
 
-/** 引脚显示状态 */
-export interface PinUIStatus {
-  /**
-   * 节点半径
-   *
-   * @description `-1`表示不设定大小
-   */
-  size: number;
-  /** 节点样式名称 */
-  className: string;
+/**
+ * 储存数据
+ *
+ * @description 储存在数据库中的数据
+ */
+export interface ElectronicsStoreData {
+  /** 元件 */
+  parts: PartStoreData[];
+  /** 导线 */
+  lines: LineStoreData[];
 }
 
-/** 引脚数据 */
-export interface BasePinStatus {
-  /** 引脚下标 */
-  index: number;
-  /** 连接状态 */
-  status: ConnectionStatus;
-  /** 引脚相对图纸原点位置 */
-  position: Point;
-  /** UI 状态 */
-  ui: PinUIStatus;
+/**
+ * 状态数据
+ *
+ * @description 内存中的数据
+ */
+export interface ElectronicsStructuredData {
+  /** 元件 */
+  parts: PartStructuredData[];
+  /** 导线 */
+  lines: LineStructuredData[];
 }
-
-/** 鼠标控制元素类名称 */
-export const MouseFocusClassName = '_focus-transparent';

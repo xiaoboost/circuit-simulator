@@ -1,30 +1,16 @@
-import type { ConnectionData } from '../base';
-import type { ElectronicKind, BasePinStatus } from '../types';
+import type { Path } from '@circuit/algorithm';
+import type { ElectronicKind } from '../types';
 
 /** 导线原始数据 */
-export interface LineData {
-  kind: keyof typeof ElectronicKind;
-  path: number[][];
+export interface LineStoreData {
+  /** 导线路径 */
+  path: Path;
 }
 
 /** 导线结构化数据 */
-export interface LineStructuredData {
+export interface LineStructuredData extends LineStoreData {
+  /** 导线编号 */
   id: string;
-  path: [number, number][];
+  /** 导线类型 */
   kind: ElectronicKind.Line;
-  connections: ConnectionData[][];
-}
-
-/** 导线引脚状态 */
-// eslint-disable-next-line
-export interface LinePinStatus extends BasePinStatus {
-  // ..
-}
-
-/** 导线端点 */
-export const enum LinePin {
-  Start,
-  End,
-  Middle,
-  None,
 }

@@ -2,7 +2,14 @@ import { createSorter } from '@circuit/shared';
 import HotKey, { KeyHandler } from 'hotkeys-js';
 import { useEffect, useContext, useState } from 'react';
 import { useUnmount } from 'react-use';
-import { HookType, ServiceType, HotKeyOptions, PAINTER_HTML_ELEMENT } from '../types';
+import {
+  HookType,
+  ServiceType,
+  HotKeyOptions,
+  PAINTER_HTML_ELEMENT,
+  LIFE_CYCLE_HOOK,
+  ILifeCycle,
+} from '../types';
 import { PainterContext, PluginInstallers } from './context';
 import { IPainterContext, ServiceTypeWithKey } from './types';
 
@@ -32,8 +39,11 @@ export function usePainterInit(context: IPainterContext) {
       }
     });
 
-    // 加载完成
-    setReady(true);
+    const lifeCycleHooks = (context.HookMap.get(LIFE_CYCLE_HOOK) ?? []) as ILifeCycle[];
+
+    // 执行初始化钩子
+    Promise.all(lifeCycleHooks.map((i) => i.beforeInit?.()))
+      .then(() => setReady(true));
   }, []);
 
   return isReady;

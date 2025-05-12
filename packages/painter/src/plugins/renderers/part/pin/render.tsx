@@ -10,17 +10,25 @@ export function Render({ data, prototype }: IPartRendererProps) {
     return null;
   }
 
-  const { connections = [] } = data;
+  // FIXME: 连接关系待修改
+  // const { connections = [] } = data;
 
   return (
     <>
       {pins.map(({ position }, index) => (
+        // <Point
+        //   position={position}
+        //   hoverR={5}
+        //   normalR={connections[index] ? 0 : 1}
+        //   duration={200}
+        //   fill={connections[index] ? Colors.White.toString() : 'currentColor'}
+        // />
         <Point
           position={position}
           hoverR={5}
-          normalR={connections[index] ? 0 : 1}
+          normalR={0}
           duration={200}
-          fill={connections[index] ? Colors.White.toString() : 'currentColor'}
+          fill={Colors.White.toString()}
         />
       ))}
     </>

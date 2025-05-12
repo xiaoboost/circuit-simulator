@@ -30,3 +30,8 @@ export function invertRotateMatrix(matrix: RotateMatrix): RotateMatrix {
 export function rotateVector(vector: PointLike, rotate: RotateMatrix): Point {
   return Point.from(vector).rotate(rotate);
 }
+
+/** 矩阵是否相等 */
+export function isMatrixEqual(matrix1: RotateMatrix, matrix2: RotateMatrix): boolean {
+  return matrix1.every((row, i) => row.every((value, j) => value === matrix2[i][j]));
+}

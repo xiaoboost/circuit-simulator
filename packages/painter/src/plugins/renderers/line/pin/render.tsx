@@ -3,7 +3,7 @@ import React from 'react';
 import { ILineRendererProps } from '../../../../types';
 import { ElectronicPoint } from '../../../components';
 
-export function Render({ data: { path, connections } }: ILineRendererProps) {
+export function Render({ data: { path } }: ILineRendererProps) {
   if (path.length === 0) {
     return null;
   }
@@ -17,8 +17,10 @@ export function Render({ data: { path, connections } }: ILineRendererProps) {
   return (
     <>
       {pins.map((position, i) => {
-        const connect = connections?.[i];
-        const isSpace = !connect || connect.length === 0;
+        // FIXME: 连接关系待修改
+        // const connect = connections?.[i];
+        // const isSpace = !connect || connect.length === 0;
+        const isSpace = true;
 
         return (
           <ElectronicPoint

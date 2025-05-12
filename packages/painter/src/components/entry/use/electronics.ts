@@ -8,10 +8,20 @@ export function useElectronicChangeAdapter(props: PainterProps) {
   const electronicService = usePainterService(ELECTRONIC_SERVICE_KEY);
 
   useEffect(() => {
-    electronicService?.lines.setData(props.lines);
-  }, [props.lines]);
+    if (electronicService) {
+      electronicService.lines.setData(props.lines);
+    }
+  }, [props.lines, electronicService]);
 
   useEffect(() => {
-    electronicService?.parts.setData(props.parts);
-  }, [props.parts]);
+    if (electronicService) {
+      electronicService.parts.setData(props.parts);
+    }
+  }, [props.parts, electronicService]);
+
+  useEffect(() => {
+    if (electronicService) {
+      electronicService.updateData = props.onChange ?? (() => void 0);
+    }
+  }, [props.onChange, electronicService]);
 }

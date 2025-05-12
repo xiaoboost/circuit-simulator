@@ -1,0 +1,26 @@
+import { useEffect } from 'react';
+import { startLoading } from 'src/styles';
+
+/** 移除 loading 界面 */
+function removeLoading() {
+  const loading = document.getElementById(startLoading);
+
+  if (!loading) {
+    return;
+  }
+
+  loading.style.opacity = '0';
+  loading.style.transition = 'opacity .5s';
+  setTimeout(() => loading.remove(), 500);
+  console.log('图纸加载完成');
+}
+
+/** 移除加载界面 */
+export function useRemoveLoading(ready: boolean) {
+  useEffect(() => {
+    if (ready) {
+      removeLoading();
+    }
+  }, [ready]);
+}
+

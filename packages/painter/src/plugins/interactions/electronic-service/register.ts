@@ -6,7 +6,10 @@ import {
 } from '@circuit/electronics';
 import { Watcher } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
-import { ELECTRONIC_SERVICE_KEY, IElectronicService } from '../../../types';
+import {
+  ELECTRONIC_SERVICE_KEY,
+  IElectronicService,
+} from '../../../types';
 
 definePlugin(({ registerService }) => {
   const service: IElectronicService = {
@@ -21,6 +24,7 @@ definePlugin(({ registerService }) => {
 
       return result;
     },
+    updateData: () => void 0,
   };
 
   // 注册元件服务

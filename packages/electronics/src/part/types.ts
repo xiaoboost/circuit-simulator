@@ -1,15 +1,24 @@
-import { Point, Direction, NumberRank, RotateMatrix } from '@circuit/algorithm';
-import type { ConnectionData } from '../base';
-import type { ElectronicKind, BasePinStatus } from '../types';
+import { Point, Position, Direction, NumberRank, RotateMatrix } from '@circuit/algorithm';
+import type { ElectronicKind } from '../types';
 
 /** 器件原始数据 */
-export interface PartData {
+export interface PartStoreData {
+  /** 器件编号 */
   id: string;
-  kind: keyof typeof ElectronicKind;
-  position: number[];
+  /** 器件类别 */
+  kind: ElectronicKind;
+  /** 器件中心坐标 */
+  position: Position;
+  /** 器件参数 */
+  params: string[];
+  /** 器件旋转矩阵 */
   rotate?: RotateMatrix;
-  text?: keyof typeof Direction;
-  params?: string[];
+  /**
+   * 文本方向
+   *
+   * @description 这个方向是器件本身的视角
+   */
+  textDirection: Direction;
 }
 
 /**
@@ -26,33 +35,18 @@ export type Margin = readonly [number, number, number, number];
 export type MarginVertex = readonly [Point, Point, Point, Point];
 
 /** 器件结构化数据 */
-export interface PartStructuredData {
-  /** 器件编号 */
-  id: string;
-  /** 器件类别 */
-  kind: ElectronicKind;
-  /** 器件连接关系 */
-  connections: (ConnectionData | undefined)[];
-  /** 器件中心坐标 */
-  position: [number, number];
-  /**
-   * 文本方向
-   *
-   * @description 这个方向是器件本身的视角
-   */
-  textDirection: Direction;
-  /** 器件旋转矩阵 */
-  rotate: RotateMatrix;
-  /** 器件参数 */
-  params: string[];
-}
+export type PartStructuredData = Required<PartStoreData>;
 
 /** 器件引脚状态 */
-export interface PartPinStatus extends BasePinStatus {
+export interface PartPinData {
   /** 原本节点相对器件原点位置 */
   origin: Point;
   /** 节点向外的延申方向 */
   direction: Point;
+  /** 引脚下标 */
+  index: number;
+  /** 引脚相对图纸原点位置 */
+  position: Point;
 }
 
 /** 器件参数单位枚举 */

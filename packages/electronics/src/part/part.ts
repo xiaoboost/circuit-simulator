@@ -1,25 +1,55 @@
-import { Direction } from '@circuit/algorithm';
-import { SheetContext } from '../base';
+import {
+  rotateVector,
+  DirectionVectorSet,
+  Point,
+  isMatrixEqual,
+} from '@circuit/algorithm';
 import { ElectronicKind } from '../types';
-import { PartMarker } from './mark';
-import type { PartData, PartStructuredData } from './types';
+import { Electronics } from './prototype';
+import { PartStoreData, PartStructuredData, PartPinData } from './types';
 
-export class Part extends PartMarker {
-  constructor(kind: ElectronicKind | PartData, context?: SheetContext) {
-    super(kind, context);
+export function* getPartPins(part: PartStructuredData) {
+  const prototype = Electronics[part.kind];
+  const { rotate, position } = part;
+
+  for (let i = 0; i < prototype.pins.length; i++) {
+    const pin = prototype.pins[i];
+    const pinPosition = rotateVector(pin.position, rotate).add(position);
+    const data: PartPinData = {
+      index: i,
+      position: pinPosition,
+      origin: pinPosition,
+      direction: Point.prototype.rotate.call(DirectionVectorSet[pin.direction], rotate),
+    };
+
+    yield data;
+  }
+}
+
+export function getPartPrototype(kind: ElectronicKind) {
+  const prototype = Electronics[kind];
+
+  if (!prototype) {
+    throw new Error(`未知器件类型: ${kind}`);
   }
 
-  /** 输出数据 */
-  toStructuredData(): PartStructuredData {
+  return prototype;
+}
+
+export function transformPartStoreToStateData(data: PartStoreData): PartStructuredData {
+  return {
+    ...data,
+    rotate: data.rotate ?? [[1, 0], [0, 1]],
+  };
+}
+
+export function transformPartStateToStoreData(data: PartStructuredData): PartStoreData {
+  if (isMatrixEqual(data.rotate, [[1, 0], [0, 1]])) {
     return {
-      id: this.id,
-      kind: this.kind,
-      position: this.position.toData(),
-      rotate: this.rotate,
-      params: this.params.slice(),
-      textDirection: Direction.Bottom,
-      // 器件引脚只可能连接一个导线，所以这里取下标 0 的数据即可
-      connections: this.connections.map((item) => item[0]),
+      ...data,
+      rotate: undefined,
     };
   }
+
+  return data;
 }

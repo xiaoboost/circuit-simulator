@@ -3,8 +3,12 @@ import {
   LineStructuredData,
   ElectronicKind,
   ElectronicPrototype,
+  ElectronicStructuredData,
 } from '@circuit/electronics';
 import { createServiceKey, type Watcher } from '../../context';
+
+/** 更新数据回调 */
+export type UpdateElectronic = (data: ElectronicStructuredData) => ElectronicStructuredData;
 
 /**
  * 元件服务键
@@ -25,4 +29,6 @@ export interface IElectronicService {
   lines: Watcher<LineStructuredData[]>;
   /** 获取原始定义 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
+  /** 更新数据 */
+  updateData(cb: UpdateElectronic): void;
 }
