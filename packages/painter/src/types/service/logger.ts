@@ -13,6 +13,12 @@ export const LOGGER_SERVICE =
   createServiceKey<ILoggerService>('LoggerService');
 
 export interface ILoggerService {
+  /**
+   * 调试信息
+   *
+   * @description 只会在调试模式下打印
+   */
+  debug(name: string,...messages: string[]): void;
   /** 日志信息 */
   info(name: string,...messages: string[]): void;
   /** 警告信息 */

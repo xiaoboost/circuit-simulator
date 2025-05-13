@@ -9,6 +9,8 @@ import {
   PAINTER_HTML_ELEMENT,
   LIFE_CYCLE_HOOK,
   ILifeCycle,
+  LOGGER_SERVICE,
+  ILoggerService,
 } from '../types';
 import { PainterContext, PluginInstallers } from './context';
 import { IPainterContext, ServiceTypeWithKey } from './types';
@@ -43,7 +45,10 @@ export function usePainterInit(context: IPainterContext) {
 
     // 执行初始化钩子
     Promise.all(lifeCycleHooks.map((i) => i.beforeInit?.()))
-      .then(() => setReady(true));
+      .then(() => setReady(true))
+      .then(() => {
+        (context.ServiceMap.get(LOGGER_SERVICE)! as ILoggerService).info('Painter', '图纸加载完成');
+      });
   }, []);
 
   return isReady;

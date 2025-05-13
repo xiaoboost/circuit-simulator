@@ -1,20 +1,22 @@
-import type { IConfigurationService } from './configuration-service';
+import type { IConfigurationService } from './configuration';
 import type { ICursorService } from './cursor';
-import type { IDragSceneService } from './drag-scene-service';
-import type { IElectronicService } from './electronic-service';
+import type { IDebuggerService } from './debugger';
+import type { IDragSceneService } from './drag-scene';
+import type { IElectronicService } from './electronic';
 import type { ILoggerService } from './logger';
+import type { IMapService } from './map';
 import type { IMapCoordinateService } from './map-coordinate';
-import type { IMapService } from './map-service';
 import type { IPainterHTMLElement } from './painter-dom';
 
-export * from './configuration-service';
+export * from './configuration';
 export * from './map-coordinate';
 export * from './cursor';
-export * from './drag-scene-service';
-export * from './map-service';
+export * from './drag-scene';
+export * from './map';
 export * from './painter-dom';
-export * from './electronic-service';
+export * from './electronic';
 export * from './logger';
+export * from './debugger';
 
 export type ServiceType =
   | IConfigurationService
@@ -24,4 +26,5 @@ export type ServiceType =
   | IMapService
   | IElectronicService
   | IPainterHTMLElement
-  | ILoggerService;
+  | ILoggerService
+  | IDebuggerService;

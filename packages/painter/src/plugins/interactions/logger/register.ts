@@ -14,20 +14,19 @@ const getLoggerStyle = (color: string) => {
 definePlugin(({ registerService, getService }) => {
   const isDebugMode = () => getService(CONFIGURATION_SERVICE).debuggerMode.data;
   const service: ILoggerService = {
-    info(name, ...messages) {
+    debug(name, ...messages) {
       if (isDebugMode()) {
-        console.info(`%c[Info] [${name}]`, getLoggerStyle(Colors.Info.toString()), ...messages);
+        console.debug(`%c[Debug] [${name}]`, getLoggerStyle(Colors.Info.toString()), ...messages);
       }
+    },
+    info(name, ...messages) {
+      console.info(`%c[Info] [${name}]`, getLoggerStyle(Colors.Info.toString()), ...messages);
     },
     warn(name, ...messages) {
-      if (isDebugMode()) {
-        console.warn(`%c[Warn] [${name}]`, getLoggerStyle(Colors.Warning.toString()), ...messages);
-      }
+      console.warn(`%c[Warn] [${name}]`, getLoggerStyle(Colors.Warning.toString()), ...messages);
     },
     error(name, ...messages) {
-      if (isDebugMode()) {
-        console.error(`%c[Error] [${name}]`, getLoggerStyle(Colors.Danger.toString()), ...messages);
-      }
+      console.error(`%c[Error] [${name}]`, getLoggerStyle(Colors.Danger.toString()), ...messages);
     },
   };
 

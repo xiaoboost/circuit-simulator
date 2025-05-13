@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { startLoading } from 'src/styles';
+import { startLoading } from '../../../styles';
 
 /** 移除 loading 界面 */
 function removeLoading() {
@@ -12,7 +12,6 @@ function removeLoading() {
   loading.style.opacity = '0';
   loading.style.transition = 'opacity .5s';
   setTimeout(() => loading.remove(), 500);
-  console.log('图纸加载完成');
 }
 
 /** 移除加载界面 */
@@ -23,4 +22,3 @@ export function useRemoveLoading(ready: boolean) {
     }
   }, [ready]);
 }
-
