@@ -29,4 +29,6 @@ export interface IConfigurationService {
   partLabelVisible: Watcher<PartLabelVisibleKind>;
   /** 图纸移动模式 */
   movePainterMode: Watcher<boolean>;
+  /** 调试模式 */
+  debuggerMode: Watcher<boolean>;
 }

@@ -12,5 +12,7 @@ export const toolbar = style({
   borderRadius: 8,
   display: 'flex',
   flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
   boxShadow: `0 2px 10px 2px ${Colors.Black.mix(Colors.White, 0.85).string()}`,
 });

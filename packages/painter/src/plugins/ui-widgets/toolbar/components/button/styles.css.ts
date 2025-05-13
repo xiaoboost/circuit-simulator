@@ -34,7 +34,6 @@ export const btn = style({
     [`&.${selected}`]: {
       backgroundColor: Colors.PrimaryLight.toString(),
       color: Colors.Primary.toString(),
-      cursor: 'default',
     },
   },
 });

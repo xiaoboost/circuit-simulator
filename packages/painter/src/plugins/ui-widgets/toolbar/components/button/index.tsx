@@ -9,6 +9,10 @@ export interface ButtonProps {
   selected?: boolean;
   /** 按钮是否禁用 */
   disabled?: boolean;
+  /** 按钮样式 */
+  style?: React.CSSProperties;
+  /** 按钮类名 */
+  className?: string;
 }
 
 export function Button(props: React.PropsWithChildren<ButtonProps>) {
@@ -21,7 +25,8 @@ export function Button(props: React.PropsWithChildren<ButtonProps>) {
   return (
     <button
       onClick={onClick}
-      className={scl(Styles.btn, {
+      style={props.style}
+      className={scl(Styles.btn, props.className, {
         [Styles.selected]: props.selected,
         [Styles.disabled]: props.disabled,
       })}

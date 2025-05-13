@@ -2,6 +2,7 @@ import type { IConfigurationService } from './configuration-service';
 import type { ICursorService } from './cursor';
 import type { IDragSceneService } from './drag-scene-service';
 import type { IElectronicService } from './electronic-service';
+import type { ILoggerService } from './logger';
 import type { IMapCoordinateService } from './map-coordinate';
 import type { IMapService } from './map-service';
 import type { IPainterHTMLElement } from './painter-dom';
@@ -13,6 +14,7 @@ export * from './drag-scene-service';
 export * from './map-service';
 export * from './painter-dom';
 export * from './electronic-service';
+export * from './logger';
 
 export type ServiceType =
   | IConfigurationService
@@ -21,4 +23,5 @@ export type ServiceType =
   | ICursorService
   | IMapService
   | IElectronicService
-  | IPainterHTMLElement;
+  | IPainterHTMLElement
+  | ILoggerService;
