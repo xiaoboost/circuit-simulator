@@ -26,43 +26,27 @@ interface IAssert {
   assertArray(input: unknown): asserts input is unknown[];
   /** 断言函数类型 */
   assertFunction(input: unknown): asserts input is (...args: unknown[]) => unknown;
+  /** 断言非空数组类型 */
+  assertNonNull(input: unknown): asserts input is NonNullable<unknown>;
   /**
    * 断言自定义类型
    *
-   * @description 允许通过输入回调来进行自定义断言，断言类型会自动推倒。
+   * @description 允许通过输入回调来进行自定义断言。
    * @example
    * ```ts
-   * declare function isString(input: unknown): asserts input is string;
+   * declare function isString(input: unknown): boolean;
    * declare const input: string | MockData;
    *
-   * debuggerService.assert.assertCustomType(input, isString);
+   * debuggerService.assert.assertType(input, isString);
    * ```
    */
-  assertCustomType<T>(
+  assertType<T>(
     input: unknown,
-    cb: (input: unknown) => asserts input is T,
+    cb: (input: any) => boolean,
   ): asserts input is T;
-}
-
-/** 类型守护工具集 */
-interface ITypeGuard {
-  /** 断言数字 */
-  isNumber(input: unknown): input is number;
-  /** 断言字符串 */
-  isString(input: unknown): input is string;
-  /** 断言布尔 */
-  isBoolean(input: unknown): input is boolean;
-  /** 断言对象 */
-  isObject(input: unknown): input is object;
-  /** 断言数组 */
-  isArray(input: unknown): input is unknown[];
-  /** 断言函数 */
-  isFunction(input: unknown): input is (...args: unknown[]) => unknown;
 }
 
 export interface IDebuggerService {
   /** 断言函数工具集 */
   assert: IAssert;
-  /** 类型守护工具集 */
-  is: ITypeGuard;
 }

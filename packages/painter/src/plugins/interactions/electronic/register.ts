@@ -25,6 +25,24 @@ definePlugin(({ registerService }) => {
       return result;
     },
     updateData: () => void 0,
+    getPart(id) {
+      const result = this.parts.data.find((item) => item.id === id);
+
+      if (!result) {
+        throw new Error(`无法获取器件: ${id}`);
+      }
+
+      return result;
+    },
+    getLine(id) {
+      const result = this.lines.data.find((item) => item.id === id);
+
+      if (!result) {
+        throw new Error(`无法获取导线: ${id}`);
+      }
+
+      return result;
+    },
   };
 
   // 注册元件服务

@@ -5,3 +5,4 @@ import './map';
 import './electronic';
 import './configuration';
 import './logger';
+import './debugger';

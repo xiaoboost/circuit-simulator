@@ -26,7 +26,9 @@ export class LineCoverMark extends BaseMark implements Omit<BaseLineMark, 'line'
   // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.LineCover;
 
+  /** 导线编号 */
   readonly lines: string[];
+  /** 连接数据 */
   readonly connections: Connection[];
 
   constructor(map: MarkMap, data: DataWithPosition<LineCoverData>) {

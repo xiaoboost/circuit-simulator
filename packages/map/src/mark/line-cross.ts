@@ -20,6 +20,7 @@ export class LineCrossMark extends BaseLineMark {
   // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.LineCross;
 
+  /** 导线编号 */
   readonly lines: string[];
 
   constructor(map: MarkMap, data: DataWithPosition<LineCrossData>) {

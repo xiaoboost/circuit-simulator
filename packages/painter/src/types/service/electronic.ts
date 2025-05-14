@@ -27,6 +27,10 @@ export interface IElectronicService {
   parts: Watcher<PartStructuredData[]>;
   /** 所有导线 */
   lines: Watcher<LineStructuredData[]>;
+  /** 获取器件 */
+  getPart(id: string): Readonly<PartStructuredData>;
+  /** 获取导线 */
+  getLine(id: string): Readonly<LineStructuredData>;
   /** 获取原始定义 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
   /** 更新数据 */

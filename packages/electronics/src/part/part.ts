@@ -9,24 +9,14 @@ import { Electronics } from './prototype';
 import { PartStoreData, PartStructuredData, PartPinData } from './types';
 import { getMarginVertex } from './utils';
 
+/** 迭代器件所有引脚数据 */
 export function* getPartPins(part: PartStructuredData) {
-  const prototype = Electronics[part.kind];
-  const { rotate, position } = part;
-
-  for (let i = 0; i < prototype.pins.length; i++) {
-    const pin = prototype.pins[i];
-    const pinPosition = rotateVector(pin.position, rotate).add(position);
-    const data: PartPinData = {
-      index: i,
-      position: pinPosition,
-      origin: pinPosition,
-      direction: Point.prototype.rotate.call(DirectionVectorSet[pin.direction], rotate),
-    };
-
-    yield data;
+  for (let i = 0; i < getPartPrototype(part.kind).pins.length; i++) {
+    yield getPartPin(part, i);
   }
 }
 
+/** 获取器件原型 */
 export function getPartPrototype(kind: ElectronicKind) {
   const prototype = Electronics[kind];
 
@@ -37,6 +27,7 @@ export function getPartPrototype(kind: ElectronicKind) {
   return prototype;
 }
 
+/** 转换器件存储数据为状态数据 */
 export function transformPartStoreToStateData(data: PartStoreData): PartStructuredData {
   return {
     ...data,
@@ -44,6 +35,7 @@ export function transformPartStoreToStateData(data: PartStoreData): PartStructur
   };
 }
 
+/** 转换器件状态数据为存储数据 */
 export function transformPartStateToStoreData(data: PartStructuredData): PartStoreData {
   if (isMatrixEqual(data.rotate, [[1, 0], [0, 1]])) {
     return {
@@ -69,4 +61,19 @@ export function* getPaddingPoint(data: PartStructuredData) {
       yield point;
     }
   }
+}
+
+/** 获取器件节点数据 */
+export function getPartPin(data: PartStructuredData, pin: number): PartPinData {
+  const prototype = getPartPrototype(data.kind);
+  const pinData = prototype.pins[pin];
+  const pinPosition = rotateVector(pinData.position, data.rotate).add(data.position);
+  const result: PartPinData = {
+    index: pin,
+    position: pinPosition,
+    origin: pinPosition,
+    direction: Point.prototype.rotate.call(DirectionVectorSet[pinData.direction], data.rotate),
+  };
+
+  return result;
 }

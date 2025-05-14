@@ -18,6 +18,7 @@ export class PartMark extends BaseMark {
   // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.Part;
 
+  /** 器件编号 */
   readonly part: string;
 
   constructor(map: MarkMap, data: DataWithPosition<PartData>) {

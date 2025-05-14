@@ -20,9 +20,10 @@ export class PartPinMark extends BaseMark {
   // @ts-expect-error 这里只需要声明，不需要实例化
   declare readonly kind!: MarkKind.PartPin;
 
+  /** 器件编号 */
   readonly part: string;
+  /** 引脚编号 */
   readonly pin: number;
-
 
   constructor(map: MarkMap, data: DataWithPosition<PartPinData>) {
     super(map, data);

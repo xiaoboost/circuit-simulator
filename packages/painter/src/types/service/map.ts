@@ -19,8 +19,12 @@ export const MAP_SERVICE_KEY =
 export interface IPinConnection {
   /** 元件编号 */
   id: string;
-  /** 引脚号 */
-  pin: number;
+  /**
+   * 引脚号
+   *
+   * @description 如果为空，则表示该连接是导线连接。
+   */
+  pin?: number;
 }
 
 /** 图纸服务 */
@@ -37,6 +41,10 @@ export interface IMapService {
   deleteLineMark(data: LineStructuredData): void;
   /** 获取当前节点的所有连接 */
   getPinConnectionByPosition(position: PointLike): IPinConnection[];
-  /** 获取当前引脚的连接 */
+  /**
+   * 获取当前引脚的连接
+   *
+   * @description 排除自身
+   */
   getPinConnectionByPin(id: string, pin: number): IPinConnection[];
 }

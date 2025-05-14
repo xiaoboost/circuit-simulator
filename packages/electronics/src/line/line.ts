@@ -1,6 +1,8 @@
 import { ElectronicKind } from '../types';
 import { LineStoreData, LineStructuredData } from './types';
 
+export { isLine } from '@circuit/shared';
+
 let lineId = 1;
 
 export function transformLineStoreToStateData(data: LineStoreData): LineStructuredData {

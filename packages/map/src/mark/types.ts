@@ -18,6 +18,13 @@ export type LineAndPointMark =
   | LineCoverMark
   | LineCrossMark
   | PartPinLineMark;
+/** 连接点 */
+export type ConnectionPointMark =
+  | LinePointMark
+  | PartPinMark
+  | PartPinLineMark
+  | LinePointMark
+  | LineCrossMark;
 
 /** 器件节点 */
 export type PartAndPinMark = PartMark | PartPinMark;
