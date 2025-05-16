@@ -20,7 +20,7 @@ definePlugin(({ registerService, getService }) => {
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] [${name}]`, getLoggerStyle(Colors.Info.toString()), ...messages);
+      console.info(`%c[Info] [${name}]`, getLoggerStyle(Colors.Primary.toString()), ...messages);
     },
     warn(name, ...messages) {
       console.warn(`%c[Warn] [${name}]`, getLoggerStyle(Colors.Warning.toString()), ...messages);

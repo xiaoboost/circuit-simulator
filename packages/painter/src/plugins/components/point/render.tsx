@@ -14,7 +14,7 @@ export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {
    * @description 优先级最高
    * @default `-1`
    */
-  size?: number;
+  r?: number;
   /**
    * 悬停半径
    *
@@ -52,7 +52,7 @@ export function ElectronicPoint(props: ElectronicPointProps) {
     className,
     style,
     position,
-    size = -1,
+    r: size = -1,
     hoverR = 5,
     normalR = 0,
     duration = 200,
