@@ -15,7 +15,7 @@ import {
   deletePartMark,
 } from './mark';
 
-definePlugin(({ registerService, registerHook, getService }) => {
+definePlugin(({ registerService, getService }) => {
   const markService = new MarkMap();
   const service: IMapService = {
     markService,
@@ -49,30 +49,13 @@ definePlugin(({ registerService, registerHook, getService }) => {
         const pinData = getPartPin(part, pin);
 
         return getPinConnectionByPosition(pinData.position, markService)
-          .filter((item) => item.id !== id && item.pin === pin);
+          .filter((item) => item.id !== id && item.pin !== pin);
       }
     },
   };
 
   // 注册图纸服务
   registerService(MAP_SERVICE_KEY, service);
-
-  // 注册图纸钩子
-  registerHook(LIFE_CYCLE_HOOK, {
-    // 初始化之前需要先初始化图纸标记
-    beforeInit: () => {
-      const electronicService = getService(ELECTRONIC_SERVICE_KEY);
-      const { parts: { data: parts }, lines: { data: lines } } = electronicService;
-
-      for (const part of parts) {
-        setPartMark(part, markService);
-      }
-
-      for (const line of lines) {
-        setLineMark(line, markService);
-      }
-    },
-  });
 
   // 卸载器
   return () => {

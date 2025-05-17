@@ -21,4 +21,8 @@ export interface IDragSceneService extends ReadonlySet<string> {
    * @description 主动触发场景
    */
   trigger(scene: string, payload: any): void;
+  /**
+   * 只有某个场景
+   */
+  onlyHas(scene: string): boolean;
 }

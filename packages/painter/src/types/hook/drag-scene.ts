@@ -54,7 +54,7 @@ export interface IDragScene {
    *
    * @description 所有鼠标事件都会注入这里，当返回`true`时，表示该场景触发
    */
-  start(event: DragMouseEvent): boolean | undefined;
+  start?(event: DragMouseEvent): boolean | undefined;
   /**
    * 场景结束
    *
@@ -63,16 +63,21 @@ export interface IDragScene {
   isEnd(event: DragMouseEvent): boolean | undefined;
   /**
    * 拖拽执行中
+   *
+   * @description `payload`为场景触发时传递的参数
    */
-  onDragMove(event: DragMoveEvent): void;
+  onDragMove(event: DragMoveEvent, payload?: any): void;
   /**
    * 场景开始
    *
    * @description 首次移动之前
+   * @description `payload`为场景触发时传递的参数
    */
-  afterStart?(): void;
+  afterStart?(payload?: any): void;
   /**
    * 场景结束
+   *
+   * @description `payload`为场景触发时传递的参数
    */
-  afterEnd?(): void;
+  afterEnd?(payload?: any): void;
 }

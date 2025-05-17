@@ -1,13 +1,40 @@
-import { Point } from '@circuit/algorithm';
+import { Point, Path } from '@circuit/algorithm';
 import { LineStructuredData } from '@circuit/electronics';
 import { MarkMap, MarkKind, LineAndPointMark } from '@circuit/map';
 
+function getLinePoints(path: Path) {
+  if (path.length === 0) {
+    throw new Error('导线必须至少是个线段');
+  }
+
+  const result: Point[] = [];
+
+  for (let i = 1; i < path.length; i++) {
+    const start = Point.from(path[i - 1]);
+    const end = Point.from(path[i]);
+    const vector = end.add(start, -1).sign(20);
+
+    let current = start;
+
+    while (!current.isEqual(end)) {
+      result.push(current);
+      current = current.add(vector);
+    }
+  }
+
+  result.push(Point.from(path[path.length - 1]));
+
+  return result;
+}
+
 /** 设置导线图纸数据 */
 export function setLineMark(data: LineStructuredData, map: MarkMap) {
-  const { id: line, path: points } = data;
+  const { id: line, path } = data;
+  const points = getLinePoints(path);
+
   for (let i = 0; i < points.length; i++) {
-    const point = Point.from(points[i]);
-    const lastPoint = Point.from(points[i - 1]);
+    const point = points[i];
+    const lastPoint = points[i - 1];
     const mark = map.get(point);
 
     // 运行时距离检查
@@ -71,7 +98,8 @@ export function setLineMark(data: LineStructuredData, map: MarkMap) {
 
 /** 移除导线图纸数据 */
 export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
-  const { id: line, path: points } = data;
+  const { id: line, path } = data;
+  const points = getLinePoints(path);
 
   for (let i = 0; i < points.length; i++) {
     const point = Point.from(points[i]);

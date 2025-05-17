@@ -13,6 +13,7 @@ import {
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const sceneSet = new Set<string>();
+  const triggerPayloadMap = new Map<string, any>();
   const service: IDragSceneService = {
     get size() {
       return sceneSet.size;
@@ -24,7 +25,19 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       sceneSet.forEach(callback);
     },
     trigger(scene, payload) {
-      // TODO: 触发场景事件
+      sceneSet.add(scene);
+      triggerPayloadMap.set(scene, payload);
+
+      // 未进行的场景
+      const hooks = getHook(DRAG_SCENE_HOOK).filter((hook) => !service.has(hook.name));
+
+      // 触发之后立即运行
+      for (const hook of hooks) {
+        hook.afterStart?.(payload);
+      }
+    },
+    onlyHas(scene) {
+      return sceneSet.size === 1 && sceneSet.has(scene);
     },
   };
 
@@ -54,7 +67,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     const dragMouseEvent = getDragMouseEvent(event);
 
     for (const hook of hooks) {
-      const isStart = hook.start(dragMouseEvent);
+      const isStart = hook.start?.(dragMouseEvent);
 
       if (isStart) {
         // 先触发开始事件，然后再添加场景
@@ -82,12 +95,16 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
     for (const hook of hooks) {
       const isEnd = hook.isEnd(dragMouseEvent);
+      const triggerPayload = triggerPayloadMap.get(hook.name);
 
       if (isEnd) {
         // 先移除场景，再触发结束事件
         Promise.resolve()
-          .then(() => sceneSet.delete(hook.name))
-          .then(() => hook.afterEnd?.());
+          .then(() => {
+            sceneSet.delete(hook.name);
+            triggerPayloadMap.delete(hook.name);
+          })
+          .then(() => hook.afterEnd?.(triggerPayload));
       }
     }
   }
@@ -144,7 +161,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             };
 
             for (const hook of hooks) {
-              hook.onDragMove(dragMoveEvent);
+              hook.onDragMove(dragMoveEvent, triggerPayloadMap.get(hook.name));
             }
           }
         }

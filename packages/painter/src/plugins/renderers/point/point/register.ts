@@ -7,6 +7,7 @@ definePlugin(({ registerHook }) => {
   registerHook(POINT_RENDERER, {
     name: 'PointRenderer',
     order: 1,
+    getKey: ({ data }) => `${data.position.join(',')}-point`,
     Render,
   });
 });

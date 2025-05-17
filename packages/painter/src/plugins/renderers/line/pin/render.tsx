@@ -1,9 +1,12 @@
 import { Colors } from '@circuit/shared';
 import React from 'react';
-import { ILineRendererProps } from '../../../../types';
+import { usePainterService } from '../../../../context';
+import { ILineRendererProps, MAP_SERVICE_KEY } from '../../../../types';
 import { ElectronicPoint } from '../../../components';
 
-export function Render({ data: { path } }: ILineRendererProps) {
+export function Render({ data: { id, path } }: ILineRendererProps) {
+  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE_KEY);
+
   if (path.length === 0) {
     return null;
   }
@@ -17,13 +20,12 @@ export function Render({ data: { path } }: ILineRendererProps) {
   return (
     <>
       {pins.map((position, i) => {
-        // FIXME: 连接关系待修改
-        // const connect = connections?.[i];
-        // const isSpace = !connect || connect.length === 0;
-        const isSpace = true;
+        const connections = getPinConnectionByPin(id, i);
+        const isSpace = connections.length === 0;
 
         return (
           <ElectronicPoint
+            key={i}
             position={position}
             normalR={isSpace ? 2 : 1}
             fill={isSpace ? Colors.White.toString() : 'currentColor'}

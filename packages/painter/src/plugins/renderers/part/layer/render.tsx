@@ -1,3 +1,4 @@
+import { stringifyClass as scl } from '@xiao-ai/utils';
 import React from 'react';
 import { usePainterHook, usePainterService } from '../../../../context';
 import { composeRendererHOC } from '../../../../context/utils';
@@ -6,12 +7,15 @@ import {
   PART_RENDERER,
   ELECTRONIC_SERVICE_KEY,
   RENDERER_HOC,
+  SELECT_SERVICE,
 } from '../../../../types';
+import { selected } from './styles.css';
 
 export function Render({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
   const service = usePainterService(ELECTRONIC_SERVICE_KEY);
   const hooks = usePainterHook(RENDERER_HOC, 'desc');
+  const selectService = usePainterService(SELECT_SERVICE);
 
   if (partRenderers.length === 0) {
     return null;
@@ -26,6 +30,9 @@ export function Render({ parts }: IDrawLayerProps) {
           <g
             key={part.id}
             transform={`matrix(${part.rotate.join()},${part.position.join()})`}
+            className={scl({
+              [selected]: selectService.has(part.id),
+            })}
           >
             {partRenderers.map(({ name, Render, getKey }) => {
               if (hooks.length === 0) {

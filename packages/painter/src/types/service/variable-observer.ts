@@ -37,5 +37,5 @@ export interface IVariableObserverService {
   /** 取消观察变量 */
   unObserve(symbol: symbol, key: string, callback: ObserverCb): void;
   /** React 订阅变量 */
-  useVariable<T>(symbol: symbol, key: string): T;
+  useVariable<T>(symbol: symbol, key: string): T | undefined;
 }

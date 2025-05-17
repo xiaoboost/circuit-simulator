@@ -7,6 +7,7 @@ import type { ILoggerService } from './logger';
 import type { IMapService } from './map';
 import type { IMapCoordinateService } from './map-coordinate';
 import type { IPainterHTMLElement } from './painter-dom';
+import type { ISelectService } from './select';
 import type { IVariableObserverService } from './variable-observer';
 
 export * from './configuration';
@@ -19,6 +20,7 @@ export * from './electronic';
 export * from './logger';
 export * from './debugger';
 export * from './variable-observer';
+export * from './select';
 
 export type ServiceType =
   | IConfigurationService
@@ -30,4 +32,5 @@ export type ServiceType =
   | IPainterHTMLElement
   | ILoggerService
   | IDebuggerService
-  | IVariableObserverService;
+  | IVariableObserverService
+  | ISelectService;

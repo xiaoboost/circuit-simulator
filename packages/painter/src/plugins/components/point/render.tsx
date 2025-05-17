@@ -57,6 +57,7 @@ export function ElectronicPoint(props: ElectronicPointProps) {
     normalR = 0,
     duration = 200,
     onMouseDown,
+    fill = 'currentColor',
     ...rest
   } = props;
 
@@ -107,6 +108,7 @@ export function ElectronicPoint(props: ElectronicPointProps) {
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseDown={onMouseDown}
+      fill={fill}
     >
       <circle
         cx='0'

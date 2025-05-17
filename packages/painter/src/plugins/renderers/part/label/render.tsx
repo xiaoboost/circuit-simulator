@@ -1,8 +1,12 @@
 import { Point, Direction, invertRotateMatrix } from '@circuit/algorithm';
 import { TextBias } from '@circuit/electronics';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { usePainterService } from '../../../../context';
-import { IPartRendererProps, MAP_COORDINATE_SERVICE } from '../../../../types';
+import {
+  IPartRendererProps,
+  MAP_COORDINATE_SERVICE,
+  DRAG_SCENE_SERVICE,
+} from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
 import { getDirectionByLabel } from './utils';
@@ -20,7 +24,25 @@ export function Render({ data, prototype }: IPartRendererProps) {
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
+  const dragService = usePainterService(DRAG_SCENE_SERVICE);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
+
+  // 触发移动器件文本
+  const onMouseDown = useCallback((ev: React.MouseEvent<SVGGElement>) => {
+    // 非左键不处理
+    if (ev.button !== 0) {
+      return;
+    }
+
+    // 事件互斥
+    if (dragService.size !== 0) {
+      return;
+    }
+
+    dragService.trigger('move-part-label', {
+      id,
+    });
+  }, [dragService]);
 
   // 更新器件说明文本
   useEffect(() => {
@@ -114,6 +136,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
       className={Styles.text}
       textAnchor={textAnchor}
       transform={`matrix(${invRotate.join()},${position.rotate(invRotate).join()})`}
+      onMouseDown={onMouseDown}
     >
       <text>
         <tspan>{label}</tspan>

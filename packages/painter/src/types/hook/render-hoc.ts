@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { FC } from 'react';
 import { createServiceKey } from '../../context';
 
 /**
@@ -24,7 +24,7 @@ export interface IRendererWithHoc<T> {
 export type PropsWithRendererKey<T> = T & { $$key: string };
 
 /** HOC 高阶组件 */
-export type HOC<T> = (ChildRender: ComponentType<T>) => ComponentType<PropsWithRendererKey<T>>;
+export type HOC<T> = (ChildRender: FC<T>) => FC<PropsWithRendererKey<T>>;
 
 /** 高阶渲染器 */
 export interface IRendererHOC {

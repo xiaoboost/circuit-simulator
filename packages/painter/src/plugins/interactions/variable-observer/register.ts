@@ -78,4 +78,8 @@ definePlugin(({ registerService }) => {
 
   // 注册变量服务
   registerService(VARIABLE_OBSERVER_SERVICE, service);
+
+  return () => {
+    service.clear();
+  };
 });

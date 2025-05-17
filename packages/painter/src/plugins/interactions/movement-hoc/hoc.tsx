@@ -13,8 +13,8 @@ export const MoveHOC: HOC<MoveHOCProps> = (Renderer) => {
     const { $$key: key } = props;
     const { useVariable } = usePainterService(VARIABLE_OBSERVER_SERVICE);
     const movement = useVariable<Point>(MOVE_HOC_KEY, key);
-    const newProps =useMemo(() => {
-      if (movement.isZero()) {
+    const newProps = useMemo(() => {
+      if (!movement || movement.isZero()) {
         return props;
       }
 
