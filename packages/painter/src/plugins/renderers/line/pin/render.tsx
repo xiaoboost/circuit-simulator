@@ -27,6 +27,7 @@ export function Render({ data: { id, path } }: ILineRendererProps) {
           <ElectronicPoint
             key={i}
             position={position}
+            hoverR={isSpace ? 5: 4}
             normalR={isSpace ? 2 : 1}
             fill={isSpace ? Colors.White.toString() : 'currentColor'}
           />

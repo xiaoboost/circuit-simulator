@@ -1,5 +1,5 @@
 import { Position, Point } from '@circuit/algorithm';
-import React, { useState, useRef, useEffect, use } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { focus } from './styles.css';
 
 export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {

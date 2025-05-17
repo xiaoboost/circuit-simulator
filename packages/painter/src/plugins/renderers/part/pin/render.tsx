@@ -22,9 +22,8 @@ export function Render({ data, prototype }: IPartRendererProps) {
           <Point
             key={index}
             position={position}
-            hoverR={5}
-            normalR={isSpace ? 0 : 1}
-            duration={200}
+            hoverR={4}
+            normalR={0}
             fill={isSpace ? Colors.White.toString() : undefined}
           />
         );

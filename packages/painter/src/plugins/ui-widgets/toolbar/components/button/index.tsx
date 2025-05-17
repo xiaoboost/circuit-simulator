@@ -24,8 +24,8 @@ export function Button(props: React.PropsWithChildren<ButtonProps>) {
 
   return (
     <button
+      {...props}
       onClick={onClick}
-      style={props.style}
       className={scl(Styles.btn, props.className, {
         [Styles.selected]: props.selected,
         [Styles.disabled]: props.disabled,

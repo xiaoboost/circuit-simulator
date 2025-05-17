@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { usePainterService, useWatcher, useHotkey } from '../../../../../context';
 import { CONFIGURATION_SERVICE, DRAG_SCENE_SERVICE, CURSOR_SERVICE } from '../../../../../types';
@@ -60,13 +61,15 @@ export function Render() {
       >
         <Cursor />
       </Button>
-      <Button
-        onClick={onClickHand}
-        selected={isMoveMode}
-        disabled={isSpaceKeyDown}
-      >
-        <Hand />
-      </Button>
+      <Tooltip title='移动图纸'>
+        <Button
+          onClick={onClickHand}
+          selected={isMoveMode}
+          disabled={isSpaceKeyDown}
+        >
+          <Hand />
+        </Button>
+      </Tooltip>
     </>
   );
 }
