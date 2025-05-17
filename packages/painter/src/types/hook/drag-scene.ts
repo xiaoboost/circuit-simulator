@@ -32,6 +32,18 @@ export interface DragMoveEvent extends DragMouseEvent {
    * @description 鼠标在画布内的移动量
    */
   readonly movementInDrawer: Point;
+  /**
+   * 鼠标拖动累计移动量
+   *
+   * @description 相比开始拖动时，鼠标在屏幕上的总移动量
+   */
+  readonly movementAcc: Point;
+  /**
+   * 鼠标拖动累计移动量
+   *
+   * @description 相比开始拖动时，鼠标在画布上的总移动量
+   */
+  readonly movementInDrawerAcc: Point;
 }
 
 /**

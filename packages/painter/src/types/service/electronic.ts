@@ -24,9 +24,9 @@ export const ELECTRONIC_SERVICE_KEY =
 
 export interface IElectronicService {
   /** 所有器件 */
-  parts: Watcher<PartStructuredData[]>;
+  readonly parts: Watcher<PartStructuredData[]>;
   /** 所有导线 */
-  lines: Watcher<LineStructuredData[]>;
+  readonly lines: Watcher<LineStructuredData[]>;
   /** 获取器件 */
   getPart(id: string): Readonly<PartStructuredData>;
   /** 获取导线 */

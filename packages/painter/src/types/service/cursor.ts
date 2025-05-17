@@ -33,9 +33,9 @@ export enum ICursorKind {
 /** 指针服务 */
 export interface ICursorService {
   /** 当前指针 */
-  value: Watcher<ICursorKind>;
+  readonly value: Watcher<ICursorKind>;
   /** 指针类别枚举 */
-  kind: typeof ICursorKind;
+  readonly kind: typeof ICursorKind;
   /** 设置指针类别 */
   set(kind: ICursorKind): void;
   /** 恢复默认指针 */

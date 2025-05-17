@@ -1,4 +1,4 @@
-import { createServiceKey } from '../../context';
+import { createServiceKey, Watcher } from '../../context';
 
 /**
  * 选中服务键
@@ -14,12 +14,10 @@ export const SELECT_SERVICE =
 
 /** 选中服务 */
 export interface ISelectService {
-  /** 是否选中 */
-  has(id: string): boolean;
+  /** 选中内容 */
+  readonly value: Watcher<Set<string>>;
   /** 设置选中内容 */
   set(...ids: string[]): void;
   /** 清空选中内容 */
   clear(): void;
-  /** 获取选中内容 */
-  get(): string[];
 }

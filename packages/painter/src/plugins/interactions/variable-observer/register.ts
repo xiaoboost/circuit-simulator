@@ -15,10 +15,16 @@ definePlugin(({ registerService }) => {
       return variableMap.get(symbol)?.get(key);
     },
     set(symbol, key, newVal) {
-      const oldVal = this.get(symbol, key);
+      const valTable = variableMap.get(symbol) ?? new Map();
+
+      if (!variableMap.get(symbol)) {
+        variableMap.set(symbol, valTable);
+      }
+
+      const oldVal = valTable.get(key);
 
       if (oldVal !== newVal) {
-        variableMap.get(symbol)?.set(key, newVal);
+        valTable.set(key, newVal);
         observerMap.get(symbol)?.get(key)?.forEach(cb => cb(newVal, oldVal));
       }
     },

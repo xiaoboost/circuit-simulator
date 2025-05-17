@@ -8,12 +8,13 @@ import {
   EVENT_LISTENER_HOOK,
   MAP_COORDINATE_SERVICE,
   DragMouseEvent,
-  DragMoveEvent,
+  PAINTER_HTML_ELEMENT,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const sceneSet = new Set<string>();
   const triggerPayloadMap = new Map<string, any>();
+  const startPositionMap = new Map<string, Point>();
   const service: IDragSceneService = {
     get size() {
       return sceneSet.size;
@@ -25,16 +26,18 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       sceneSet.forEach(callback);
     },
     trigger(scene, payload) {
-      sceneSet.add(scene);
-      triggerPayloadMap.set(scene, payload);
-
-      // 未进行的场景
-      const hooks = getHook(DRAG_SCENE_HOOK).filter((hook) => !service.has(hook.name));
+      if (!payload.event) {
+        throw new Error('触发场景事件回调参数中必须包含鼠标事件数据！');
+      }
 
       // 触发之后立即运行
-      for (const hook of hooks) {
-        hook.afterStart?.(payload);
-      }
+      getHook(DRAG_SCENE_HOOK)
+        .find(({ name }) => name === scene)
+        ?.afterStart?.(payload);
+
+      sceneSet.add(scene);
+      triggerPayloadMap.set(scene, payload);
+      startPositionMap.set(scene, getDragMouseEvent(payload.event).position);
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
@@ -42,7 +45,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   };
 
   function getDragMouseEvent(event: MouseEvent<HTMLElement>) {
-    const { left, top } = event.currentTarget.getBoundingClientRect();
+    const painterElement = getService(PAINTER_HTML_ELEMENT);
+    const { left, top } = painterElement.current!.getBoundingClientRect();
     const { value: { data: map } } = getService(MAP_COORDINATE_SERVICE);
     const mousePosition = new Point(event.pageX - left, event.pageY - top);
     const mapPosition = map.position.mul(map.scale, -1);
@@ -72,7 +76,10 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       if (isStart) {
         // 先触发开始事件，然后再添加场景
         Promise.resolve()
-          .then(() => hook.afterStart?.())
+          .then(() => {
+            hook.afterStart?.();
+            startPositionMap.set(hook.name, Point.from(dragMouseEvent.position));
+          })
           .then(() => sceneSet.add(hook.name));
       }
     }
@@ -103,6 +110,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
           .then(() => {
             sceneSet.delete(hook.name);
             triggerPayloadMap.delete(hook.name);
+            startPositionMap.delete(hook.name);
           })
           .then(() => hook.afterEnd?.(triggerPayload));
       }
@@ -154,14 +162,21 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             : new Point(0, 0);
 
           if (!movement.isZero()) {
-            const dragMoveEvent: DragMoveEvent = {
-              ...getDragMouseEvent(event),
-              movement,
-              movementInDrawer: movement.mul(map.value.data.scale, -1),
-            };
+            const movementInDrawer = movement.mul(map.value.data.scale, -1);
+            const dragMouseEvent = getDragMouseEvent(event);
 
             for (const hook of hooks) {
-              hook.onDragMove(dragMoveEvent, triggerPayloadMap.get(hook.name));
+              const movementAcc = dragMouseEvent.position.add(startPositionMap.get(hook.name)!, -1);
+              const movementInDrawerAcc = movementAcc.mul(map.value.data.scale, -1);
+              const payload = triggerPayloadMap.get(hook.name);
+
+              hook.onDragMove({
+                ...dragMouseEvent,
+                movement,
+                movementInDrawer,
+                movementAcc,
+                movementInDrawerAcc,
+              }, payload);
             }
           }
         }

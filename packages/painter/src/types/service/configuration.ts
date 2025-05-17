@@ -24,11 +24,11 @@ export enum PartLabelVisibleKind {
 
 export interface IConfigurationService {
   /** 器件标签显示方式 */
-  PartLabelVisibleKind: typeof PartLabelVisibleKind;
+  readonly PartLabelVisibleKind: typeof PartLabelVisibleKind;
   /** 器件标签显示 */
-  partLabelVisible: Watcher<PartLabelVisibleKind>;
+  readonly partLabelVisible: Watcher<PartLabelVisibleKind>;
   /** 图纸移动模式 */
-  movePainterMode: Watcher<boolean>;
+  readonly movePainterMode: Watcher<boolean>;
   /** 调试模式 */
-  debuggerMode: Watcher<boolean>;
+  readonly debuggerMode: Watcher<boolean>;
 }

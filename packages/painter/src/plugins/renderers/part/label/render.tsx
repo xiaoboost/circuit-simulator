@@ -11,7 +11,7 @@ import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
 import { getDirectionByLabel } from './utils';
 
-export function Render({ data, prototype }: IPartRendererProps) {
+export function Render({ data, prototype, ref: refInParent }: IPartRendererProps) {
   const {
     id,
     params,
@@ -28,9 +28,9 @@ export function Render({ data, prototype }: IPartRendererProps) {
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
 
   // 触发移动器件文本
-  const onMouseDown = useCallback((ev: React.MouseEvent<SVGGElement>) => {
+  const onMouseDown = useCallback((event: React.MouseEvent<SVGGElement>) => {
     // 非左键不处理
-    if (ev.button !== 0) {
+    if (event.button !== 0) {
       return;
     }
 
@@ -41,6 +41,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
 
     dragService.trigger('move-part-label', {
       id,
+      event,
     });
   }, [dragService]);
 
@@ -50,7 +51,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
       return;
     }
 
-    setTexts(params
+    setTexts((params as string[])
       .map((v, i) => ({ ...prototype.params[i], value: v }))
       .filter((txt) => txt.visible)
       .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ')),
@@ -124,6 +125,13 @@ export function Render({ data, prototype }: IPartRendererProps) {
 
     setPosition(newPosition);
   }, [textDirection, texts, id, rotate, textRef.current]);
+
+  // 当前应用文本 Ref 变更推送至上层引用
+  useEffect(() => {
+    if (refInParent && textRef.current && refInParent) {
+      refInParent.current = textRef.current;
+    }
+  }, [textRef.current, refInParent]);
 
   // 不存在偏移量，则表示不需要显示
   if (!prototype.textBias) {

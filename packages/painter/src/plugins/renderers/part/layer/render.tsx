@@ -1,6 +1,6 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useMemo } from 'react';
-import { usePainterHook, usePainterService } from '../../../../context';
+import { useWatcher, usePainterHook, usePainterService } from '../../../../context';
 import { composeRendererHOC } from '../../../../context/utils';
 import {
   IDrawLayerProps,
@@ -16,6 +16,7 @@ export function Render({ parts }: IDrawLayerProps) {
   const service = usePainterService(ELECTRONIC_SERVICE_KEY);
   const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
   const selectService = usePainterService(SELECT_SERVICE);
+  const [selectedIds] = useWatcher(selectService.value);
   const LayerRenders = useMemo(() => {
     return partRenderers.map((hook) => ({
       ...hook,
@@ -37,7 +38,7 @@ export function Render({ parts }: IDrawLayerProps) {
             key={part.id}
             transform={`matrix(${part.rotate.join()},${part.position.join()})`}
             className={scl({
-              [selected]: selectService.has(part.id),
+              [selected]: selectedIds.has(part.id),
             })}
           >
             {LayerRenders.map(({ name, Render, getKey }) => (
