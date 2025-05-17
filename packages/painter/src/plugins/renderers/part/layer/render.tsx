@@ -1,5 +1,5 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { usePainterHook, usePainterService } from '../../../../context';
 import { composeRendererHOC } from '../../../../context/utils';
 import {
@@ -14,10 +14,16 @@ import { selected } from './styles.css';
 export function Render({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
   const service = usePainterService(ELECTRONIC_SERVICE_KEY);
-  const hooks = usePainterHook(RENDERER_HOC, 'desc');
+  const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
   const selectService = usePainterService(SELECT_SERVICE);
+  const LayerRenders = useMemo(() => {
+    return partRenderers.map((hook) => ({
+      ...hook,
+      Render: composeRendererHOC(hook.Render, HocHooks),
+    }));
+  }, [partRenderers, HocHooks]);
 
-  if (partRenderers.length === 0) {
+  if (LayerRenders.length === 0) {
     return null;
   }
 
@@ -34,16 +40,14 @@ export function Render({ parts }: IDrawLayerProps) {
               [selected]: selectService.has(part.id),
             })}
           >
-            {partRenderers.map(({ name, Render, getKey }) => {
-              if (hooks.length === 0) {
-                return <Render key={name} data={part} prototype={prototype} />;
-              }
-
-              const key = getKey({ data: part, prototype });
-              const RenderWithHoc = composeRendererHOC(Render, hooks);
-
-              return <RenderWithHoc key={key} $$key={key} data={part} prototype={prototype} />;
-            })}
+            {LayerRenders.map(({ name, Render, getKey }) => (
+              <Render
+                key={name}
+                $$key={getKey({ data: part, prototype })}
+                data={part}
+                prototype={prototype}
+              />
+            ))}
           </g>
         );
       })}
