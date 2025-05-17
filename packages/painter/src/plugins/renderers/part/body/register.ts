@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'PartBodyRenderer',
     order: 1,
     Render,
+    getKey: ({ data }) => `${data.id}-body`,
   });
 });

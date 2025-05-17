@@ -12,7 +12,21 @@ import {
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
-  const service: IDragSceneService = new Set<string>();
+  const sceneSet = new Set<string>();
+  const service: IDragSceneService = {
+    get size() {
+      return sceneSet.size;
+    },
+    has(name) {
+      return sceneSet.has(name);
+    },
+    forEach(callback) {
+      sceneSet.forEach(callback);
+    },
+    trigger(scene, payload) {
+      // TODO: 触发场景事件
+    },
+  };
 
   function getDragMouseEvent(event: MouseEvent<HTMLElement>) {
     const { left, top } = event.currentTarget.getBoundingClientRect();
@@ -46,7 +60,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         // 先触发开始事件，然后再添加场景
         Promise.resolve()
           .then(() => hook.afterStart?.())
-          .then(() => service.add(hook.name));
+          .then(() => sceneSet.add(hook.name));
       }
     }
   }
@@ -72,7 +86,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       if (isEnd) {
         // 先移除场景，再触发结束事件
         Promise.resolve()
-          .then(() => service.delete(hook.name))
+          .then(() => sceneSet.delete(hook.name))
           .then(() => hook.afterEnd?.());
       }
     }

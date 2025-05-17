@@ -1,3 +1,4 @@
+import { ReadonlySet } from '@circuit/shared';
 import { createServiceKey } from '../../context';
 
 /**
@@ -13,4 +14,11 @@ export const DRAG_SCENE_SERVICE =
   createServiceKey<IDragSceneService>('DragSceneService');
 
 /** 鼠标拖动服务 */
-export type IDragSceneService = Set<string>;
+export interface IDragSceneService extends ReadonlySet<string> {
+  /**
+   * 触发场景
+   *
+   * @description 主动触发场景
+   */
+  trigger(scene: string, payload: any): void;
+}

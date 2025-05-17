@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'PartPinRenderer',
     order: 4,
     Render,
+    getKey: ({ data }) => `${data.id}-pin`,
   });
 });

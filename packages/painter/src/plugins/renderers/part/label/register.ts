@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'PartLabelRenderer',
     order: 2,
     Render,
+    getKey: ({ data }) => `${data.id}-label`,
   });
 });

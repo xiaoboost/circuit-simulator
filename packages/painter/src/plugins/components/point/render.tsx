@@ -104,6 +104,9 @@ export function ElectronicPoint(props: ElectronicPointProps) {
       style={style}
       transform={`translate(${position.join()})`}
       {...rest}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      onMouseDown={onMouseDown}
     >
       <circle
         cx='0'
@@ -130,9 +133,6 @@ export function ElectronicPoint(props: ElectronicPointProps) {
         height='17'
         width='17'
         className={focus}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onMouseDown={onMouseDown}
       />
     </g>
   );

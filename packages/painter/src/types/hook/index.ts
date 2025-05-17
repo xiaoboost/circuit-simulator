@@ -6,6 +6,7 @@ import type { ILifeCycle } from './life-cycle';
 import type { ILineRenderer } from './line';
 import type { IPartRenderer } from './part';
 import type { IPointRenderer } from './point';
+import type { IRendererHOC } from './render-hoc';
 import type { IPainterToolBarAction } from './toolbar';
 import type { IComponentTooltipAction } from './tooltip';
 
@@ -19,6 +20,7 @@ export * from './point';
 export * from './tooltip';
 export * from './toolbar';
 export * from './life-cycle';
+export * from './render-hoc';
 
 /** 钩子总类别 */
 export type HookType =
@@ -32,4 +34,5 @@ export type HookType =
   | IPartRenderer
   | IPointRenderer
   | IPainterToolBarAction
-  | ILifeCycle;
+  | ILifeCycle
+  | IRendererHOC;

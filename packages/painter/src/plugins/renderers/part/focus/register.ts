@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'PartFocusRenderer',
     order: 3,
     Render,
+    getKey: ({ data }) => `${data.id}-focus`,
   });
 });

@@ -1,6 +1,7 @@
 import { PartStructuredData, ElectronicPrototype } from '@circuit/electronics';
 import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
+import { IRendererWithHoc } from './render-hoc';
 
 /**
  * 器件渲染器
@@ -22,7 +23,7 @@ export interface IPartRendererProps {
 }
 
 /** 器件渲染器 */
-export interface IPartRenderer {
+export interface IPartRenderer extends IRendererWithHoc<IPartRendererProps> {
   /**
    * 名称
    *

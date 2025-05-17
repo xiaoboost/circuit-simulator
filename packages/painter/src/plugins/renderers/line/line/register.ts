@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'LineRenderer',
     order: 1,
     Render,
+    getKey: ({ data }) => `${data.id}-path`,
   });
 });

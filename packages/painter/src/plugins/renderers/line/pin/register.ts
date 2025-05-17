@@ -8,5 +8,6 @@ definePlugin(({ registerHook }) => {
     name: 'LinePinRenderer',
     order: 4,
     Render,
+    getKey: ({ data }) => `${data.id}-pin`,
   });
 });

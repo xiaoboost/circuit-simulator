@@ -1,6 +1,7 @@
 import { LineStructuredData } from '@circuit/electronics';
 import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
+import { IRendererWithHoc } from './render-hoc';
 
 /**
  * 导线渲染器
@@ -20,7 +21,7 @@ export interface ILineRendererProps {
 }
 
 /** 器件渲染器 */
-export interface ILineRenderer {
+export interface ILineRenderer extends IRendererWithHoc<ILineRendererProps> {
   /**
    * 名称
    *
