@@ -1,12 +1,13 @@
-
 import { Position, Point } from '@circuit/algorithm';
-import React, { useState, useRef, useEffect } from 'react';
-import { usePainterService } from '../../../context';
-import { MAP_COORDINATE_SERVICE } from '../../../types';
+import React, { useState, useRef, useEffect, use } from 'react';
 import { focus } from './styles.css';
 
 export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {
-  /** 节点相对于图纸原点位置 */
+  /**
+   * 节点位置
+   *
+   * @description 这个位置是相对哪里的需要看 DOM 结构
+   */
   position: Point | Position
   /**
    * 半径
@@ -43,11 +44,7 @@ export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {
 export function ElectronicPoint(props: ElectronicPointProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
-  const { value: { data: { scale } } } = usePainterService(MAP_COORDINATE_SERVICE);
-  const [inner, setInner] = useState(0);
   const [actual, setActual] = useState(0);
-  const [animateTo, setAnimateTo] = useState(0);
-  const [animateStart, setAnimateStart] = useState(0);
   const {
     className,
     style,
@@ -61,43 +58,41 @@ export function ElectronicPoint(props: ElectronicPointProps) {
     ...rest
   } = props;
 
-  function setAnimate() {
+  function triggerAnimation(targetR: number) {
     if (!circle.current || !animate.current) {
       return;
     }
 
-    const circleRect = circle.current.getBoundingClientRect();
+    const currentR = parseFloat(circle.current.getAttribute('r')!) ?? 0;
 
-    // 计算当前值
-    setAnimateStart(circleRect ? circleRect.width / scale / 2 : 0);
-    // 确定新的终点值
-    setAnimateTo(actual);
-    // 动画启动
+    // 直接设置动画参数
+    animate.current.setAttribute('values', `${currentR};${targetR}`);
     animate.current.beginElement();
   }
 
-  function onMouseEnter() {
-    setInner(getSize(true));
+  function handleHover(isHover: boolean) {
+    const newSize = isHover ? hoverR : normalR;
+    const targetR = size >= 0 ? size : newSize;
+
+    setActual(targetR);
+    triggerAnimation(targetR);
   }
 
-  function onMouseLeave() {
-    setInner(getSize(false));
-  }
-
-  function getSize(isHover: boolean) {
-    return isHover ? hoverR : normalR;
-  }
-
-  // 设置初始值
   useEffect(() => {
-    onMouseLeave();
+    // 初始化设置
+    const initialSize = size >= 0 ? size : normalR;
+    setActual(initialSize);
+    if (circle.current) {
+      circle.current.setAttribute('r', initialSize.toString());
+    }
   }, []);
 
+  // 显式设置 r 值，此时需要强制指定大小
   useEffect(() => {
-    setActual(size >= 0 ? size : inner);
-  }, [size, inner]);
-
-  useEffect(setAnimate, [actual]);
+    if (size >= 0) {
+      triggerAnimation(size);
+    }
+  }, [size]);
 
   return (
     <g
@@ -105,35 +100,33 @@ export function ElectronicPoint(props: ElectronicPointProps) {
       style={style}
       transform={`translate(${position.join()})`}
       {...rest}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
+      onMouseEnter={() => handleHover(true)}
+      onMouseLeave={() => handleHover(false)}
       onMouseDown={onMouseDown}
       fill={fill}
     >
       <circle
         cx='0'
         cy='0'
+        r={actual}
         ref={circle}
         stroke='currentColor'
       >
         <animate
           ref={animate}
           fill='freeze'
-          attributeType='XML'
           attributeName='r'
-          begin='indefinite'
+          dur={`${duration}ms`}
           calcMode='spline'
           keyTimes='0; 1'
-          keySplines='.2 1 1 1'
-          dur={`${duration}ms`}
-          values={`${animateStart}; ${animateTo}`}>
-        </animate>
+          keySplines='0.2 1 1 1'
+        />
       </circle>
       <rect
-        x='-8.5'
-        y='-8.5'
-        height='17'
-        width='17'
+        x='-8'
+        y='-8'
+        height='16'
+        width='16'
         className={focus}
       />
     </g>

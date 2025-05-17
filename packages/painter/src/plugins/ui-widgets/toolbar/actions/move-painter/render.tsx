@@ -14,7 +14,6 @@ export function Render() {
   useHotkey('space', { keydown: true }, (ev) => {
     // 空格按下时，强制切换到移动模式
     if (dragScene.size === 0 && !ev.repeat) {
-      console.log('space keydown');
       setIsSpaceKeyDown(true);
       setIsMoveMode(true);
       cursorService.set(cursorService.kind.Drag);
