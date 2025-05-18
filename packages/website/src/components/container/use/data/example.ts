@@ -48,7 +48,7 @@ export const parts: PartStoreData[] = [
     position: [900, 320],
     rotate: [[0, 1], [-1, 0]],
     params: ['100u'],
-    textDirection: Direction.Top,
+    textDirection: Direction.Bottom,
   },
   {
     kind: ElectronicKind.Resistance,

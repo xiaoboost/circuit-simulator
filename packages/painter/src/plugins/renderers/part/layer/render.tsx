@@ -1,7 +1,7 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useWatcher, usePainterHook, usePainterService } from '../../../../context';
-import { composeRendererHOC } from '../../../../context/utils';
+import { composeHOC } from '../../../../context/utils';
 import {
   IDrawLayerProps,
   PART_RENDERER,
@@ -11,25 +11,19 @@ import {
 } from '../../../../types';
 import { selected } from './styles.css';
 
-export function Render({ parts }: IDrawLayerProps) {
+function PartLayerRender({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
   const service = usePainterService(ELECTRONIC_SERVICE_KEY);
   const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
   const selectService = usePainterService(SELECT_SERVICE);
   const [selectedIds] = useWatcher(selectService.value);
-  const LayerRenders = useMemo(() => {
-    return partRenderers.map((hook) => ({
-      ...hook,
-      Render: composeRendererHOC(hook.Render, HocHooks),
-    }));
-  }, [partRenderers, HocHooks]);
 
-  if (LayerRenders.length === 0) {
+  if (partRenderers.length === 0) {
     return null;
   }
 
   return (
-    <g>
+    <>
       {parts.map((part) => {
         const prototype = service.getPartPrototype(part.kind);
 
@@ -41,17 +35,20 @@ export function Render({ parts }: IDrawLayerProps) {
               [selected]: selectedIds.has(part.id),
             })}
           >
-            {LayerRenders.map(({ name, Render, getKey }) => (
-              <Render
-                key={name}
-                $$key={getKey({ data: part, prototype })}
-                data={part}
-                prototype={prototype}
-              />
+            {partRenderers.map((Render) => (
+              composeHOC({ data: part, prototype }, Render, HocHooks)
             ))}
           </g>
         );
       })}
-    </g>
+    </>
   );
 }
+
+export const Render = React.memo(
+  PartLayerRender,
+  ({ parts: prev }, { parts: next }) => (
+    prev.length === next.length &&
+    prev.every((part, i) => part === next[i])
+  ),
+);

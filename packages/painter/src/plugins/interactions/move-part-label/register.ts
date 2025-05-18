@@ -4,12 +4,10 @@ import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
-  RENDERER_HOC,
   ELECTRONIC_SERVICE_KEY,
   VARIABLE_OBSERVER_SERVICE as VarService,
 } from '../../../types';
-import { MOVE_PART_LABEL_HOC_KEY as KEY } from './constant';
-import { MovePartLabelHOC } from './hoc';
+import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';
@@ -75,11 +73,5 @@ definePlugin(({ registerHook, getService }) => {
         getService(VarService).set(KEY, label, undefined);
       });
     },
-  });
-
-  registerHook(RENDERER_HOC, {
-    name: 'MovePartLabelHOC',
-    order: 9,
-    RenderHOC: MovePartLabelHOC,
   });
 });

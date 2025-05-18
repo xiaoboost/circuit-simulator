@@ -9,3 +9,4 @@ import './debugger';
 import './variable-observer';
 import './select';
 import './move-part-label';
+import './movement';

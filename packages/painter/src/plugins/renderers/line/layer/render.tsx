@@ -1,35 +1,33 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { usePainterHook } from '../../../../context';
-import { composeRendererHOC } from '../../../../context/utils';
+import { composeHOC } from '../../../../context/utils';
 import { IDrawLayerProps, LINE_RENDERER, RENDERER_HOC } from '../../../../types';
 
-export function Render({ lines }: IDrawLayerProps) {
+function LineLayerRender({ lines }: IDrawLayerProps) {
   const lineRenderers = usePainterHook(LINE_RENDERER, 'asc');
   const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
-  const Renders = useMemo(() => {
-    return lineRenderers.map((hook) => ({
-      ...hook,
-      Render: composeRendererHOC(hook.Render, HocHooks),
-    }));
-  }, [lineRenderers, HocHooks]);
 
-  if (Renders.length === 0) {
+  if (lineRenderers.length === 0) {
     return null;
   }
 
   return (
-    <g>
+    <>
       {lines.map((line, index) => (
         <g key={line.id ?? index}>
-          {Renders.map(({ name, Render, getKey }) => (
-            <Render
-              key={name}
-              $$key={getKey({ data: line })}
-              data={line}
-            />
+          {lineRenderers.map((Render) => (
+            composeHOC({ data: line }, Render, HocHooks)
           ))}
         </g>
       ))}
-    </g>
+    </>
   );
 }
+
+export const Render = React.memo(
+  LineLayerRender,
+  ({ lines: prev }, { lines: next }) => (
+    prev.length === next.length &&
+    prev.every((line, i) => line === next[i])
+  ),
+);

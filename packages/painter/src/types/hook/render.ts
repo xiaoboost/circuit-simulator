@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { FC } from 'react';
 
 /** 渲染器基础属性 */
 export interface IRendererData<T> {
@@ -25,5 +25,5 @@ export interface IRendererData<T> {
    *
    * @description 器件渲染器
    */
-  Render(props: T): ReactNode;
+  Render: FC<T>;
 }

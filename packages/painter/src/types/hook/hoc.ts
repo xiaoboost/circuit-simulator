@@ -1,5 +1,6 @@
-import { FC } from 'react';
+import { FC, PropsWithChildren as PC } from 'react';
 import { createServiceKey } from '../../context';
+import { IRendererData } from './render';
 
 /**
  * 高阶组件渲染器
@@ -14,11 +15,8 @@ import { createServiceKey } from '../../context';
 export const RENDERER_HOC =
   createServiceKey<IRendererHOC>('RendererHOC');
 
-/** 参数附带当前渲染器编号 */
-export type PropsWithRendererKey<T = object> = T & { $$key: string };
-
-/** HOC 高阶组件 */
-export type HOC<T> = (ChildRender: FC<T>) => FC<PropsWithRendererKey<T>>;
+/** 高阶渲染器参数 */
+export type PropsWithHocParams<T = object> = T & PC<{ $$key: string }>;
 
 /** 高阶渲染器 */
 export interface IRendererHOC {
@@ -35,9 +33,16 @@ export interface IRendererHOC {
    */
   order?: number;
   /**
+   * 是否启用
+   *
+   * @description 如果返回`false`，则不在此渲染器上实现
+   * @default `() => true`
+   */
+  use?(hook: IRendererData<any>): boolean;
+  /**
    * 渲染器
    *
    * @description 套在渲染器上的高阶渲染器
    */
-  RenderHOC: HOC<any>;
+  Render: FC<PropsWithHocParams<any>>;
 }
