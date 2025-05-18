@@ -7,7 +7,7 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.TransistorNPN,
   introduction: 'NPN型三极管',
   textBias: {
-    left: 25,
+    Left: 25,
   },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],

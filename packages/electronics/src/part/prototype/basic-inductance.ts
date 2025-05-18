@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Inductance,
   introduction: '电感器',
   textBias: {
-    top: 13,
-    bottom: 10,
+    Top: 13,
+    Bottom: 10,
   },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],

@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Resistance,
   introduction: '电阻器',
   textBias: {
-    top: 14,
-    bottom: 14,
+    Top: 14,
+    Bottom: 14,
   },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],

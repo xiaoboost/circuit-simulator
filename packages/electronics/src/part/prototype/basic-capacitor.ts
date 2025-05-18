@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Capacitor,
   introduction: '电容器',
   textBias: {
-    top: 22,
-    bottom: 22,
+    Top: 22,
+    Bottom: 22,
   },
   padding: [0, 1, 0, 1],
   margin: [1, 1, 1, 1],

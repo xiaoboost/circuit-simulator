@@ -7,7 +7,7 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.OperationalAmplifier,
   introduction: '运算放大器',
   textBias: {
-    center: 0,
+    Center: 0,
   },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],

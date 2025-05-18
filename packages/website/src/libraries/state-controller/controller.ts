@@ -11,7 +11,7 @@ import {
 import {
   SubscribeEventName,
   type EditProducer,
-  type EditPatch,
+  type CommitPatch,
 } from './types';
 
 // 启动补丁功能
@@ -25,9 +25,9 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
   /** 当前状态 */
   private state: T;
   /** 修改栈 */
-  private editStack: EditPatch[] = [];
+  private editStack: CommitPatch[] = [];
   /** 栈指针 */
-  private stackPointer = 0;
+  private stackPointer = -1;
 
   constructor(initialState: T) {
     super();
@@ -45,7 +45,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
   }
 
   /** 编辑 */
-  edit(name: string, producer: EditProducer<T>): void {
+  commit(name: string, description: string, producer: EditProducer<T>): void {
     const { state, editStack, stackPointer } = this;
 
     // 指针不是最新，需要抛弃掉指针后面的修改
@@ -55,7 +55,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
     const [newState, patches, inversePatches] = produceWithPatches(state, producer);
 
     // 修改操作补丁储存
-    editStack.push({ name, patches, inversePatches });
+    editStack.push({ name, description, patches, inversePatches });
     // 新状态
     this.state = newState;
     // 编辑的时候，双指针都指向最新

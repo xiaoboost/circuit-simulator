@@ -6,7 +6,7 @@ import React, { useRef } from 'react';
 import { PainterContext } from '../../context/context';
 import { usePainterInit, usePainterUnmount } from '../../context/react';
 import { IPainterContext } from '../../context/types';
-import { UpdateElectronic } from '../../types';
+import { CommitData } from '../../types';
 import { Entry } from '../entry';
 
 export interface PainterProps {
@@ -14,7 +14,7 @@ export interface PainterProps {
   style?: React.CSSProperties;
   lines: LineStructuredData[];
   parts: PartStructuredData[];
-  onChange?: (cb: UpdateElectronic) => void;
+  commit?: (data: CommitData) => void;
 }
 
 export function Painter(props: PainterProps) {

@@ -1,9 +1,11 @@
 import { type Patch } from 'immer';
 
 /** 补丁信息 */
-export interface EditPatch {
+export interface CommitPatch {
   /** 补丁名称 */
-  name: string;
+  readonly name: string;
+  /** 补丁描述 */
+  readonly description: string;
   /** 修改补丁 */
   readonly patches: Patch[];
   /** 逆向补丁 */
@@ -23,4 +25,4 @@ export type SubscribeStateChangeEvent<T> = (state: T) => void;
 /** 订阅操作栈变更类型 */
 export type SubscribeStackChangeEvent = (name: string) => void;
 /** 编辑回调 */
-export type EditProducer<T> = (state: T) => T;
+export type EditProducer<T> = (state: T) => void;

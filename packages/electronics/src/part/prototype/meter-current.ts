@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.CurrentMeter,
   introduction: '电流表',
   textBias: {
-    top: 11,
-    bottom: 11,
+    Top: 11,
+    Bottom: 11,
   },
   padding: [0, 0, 0, 0],
   margin: [1, 1, 1, 1],

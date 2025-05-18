@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.DcCurrentSource,
   introduction: '直流电流源',
   textBias: {
-    left: 24,
-    right: 24,
+    Left: 24,
+    Right: 24,
   },
   padding: [1, 1, 1, 1],
   margin: [1, 0, 1, 0],

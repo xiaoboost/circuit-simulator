@@ -15,6 +15,7 @@ definePlugin(({ registerService }) => {
   const service: IElectronicService = {
     parts: new Watcher<PartStructuredData[]>([]),
     lines: new Watcher<LineStructuredData[]>([]),
+    commit: () => void 0,
     getPartPrototype(kind: ElectronicKind) {
       const result = Electronics[kind];
 
@@ -24,7 +25,6 @@ definePlugin(({ registerService }) => {
 
       return result;
     },
-    updateData: () => void 0,
     getPart(id) {
       const result = this.parts.data.find((item) => item.id === id);
 

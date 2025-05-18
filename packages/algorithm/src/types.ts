@@ -12,6 +12,8 @@ export type RotateMatrix = [Position, Position];
 export type PointLike = number[] | Position | Point;
 /** 点输入 */
 export type PointInput = PointLike | number;
+/** 方向文本 */
+export type DirectionLabel = keyof typeof Direction;
 /** 向量方向定义 */
 export enum Direction {
   Center,

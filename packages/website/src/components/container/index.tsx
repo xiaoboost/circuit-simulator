@@ -3,30 +3,33 @@ import React from 'react';
 
 import { Header } from '../header';
 
-// import { parts, lines } from './example';
-
 import * as Styles from './styles.css';
 import {
-  useStateInit,
+  useDataInit,
+  useStateController,
   useRemoveLoading,
 } from './use';
 
 export function App() {
-  const state = useStateInit();
+  const initData = useDataInit();
+  const [state, commit] = useStateController(initData);
+  const isReady = Boolean(initData && state);
 
-  useRemoveLoading(Boolean(state));
+  useRemoveLoading(isReady);
 
   if (!state) {
     return null;
   }
 
-  const {
-    parts,
-    lines,
-  } = state.getState();
-
-  return <div className={Styles.container}>
-    <Header />
-    <Painter lines={lines} parts={parts} style={{ flexGrow: 1 }} />
-  </div>;
+  return (
+    <div className={Styles.container}>
+      <Header />
+      <Painter
+        lines={state.lines ?? []}
+        parts={state.parts ?? []}
+        style={{ flexGrow: 1 }}
+        commit={commit}
+      />
+    </div>
+  );
 }

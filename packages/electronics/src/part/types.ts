@@ -1,4 +1,11 @@
-import { Point, Position, Direction, NumberRank, RotateMatrix } from '@circuit/algorithm';
+import {
+  Point,
+  Position,
+  Direction,
+  NumberRank,
+  RotateMatrix,
+  DirectionLabel,
+} from '@circuit/algorithm';
 import type { ElectronicKind } from '../types';
 
 /** 器件原始数据 */
@@ -114,13 +121,7 @@ export interface ShapeDescription {
 }
 
 /** 文本偏移量 */
-export interface TextBias {
-  left?: number;
-  right?: number;
-  top?: number;
-  bottom?: number;
-  center?: number;
-}
+export type TextBias = Partial<Record<DirectionLabel, number>>;
 
 /** 器件原型数据类型 */
 export interface ElectronicPrototype {

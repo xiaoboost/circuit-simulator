@@ -45,6 +45,8 @@ definePlugin(({ registerHook, getService }) => {
     },
     afterEnd({ id }: Payload) {
       getService(VarService).set(KEY, `${id}-label`, undefined);
+
+      // TODO:
     },
   });
 

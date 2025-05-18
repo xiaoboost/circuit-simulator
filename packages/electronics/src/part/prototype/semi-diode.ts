@@ -7,8 +7,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Diode,
   introduction: '二极管',
   textBias: {
-    left: 18,
-    right: 18,
+    Left: 18,
+    Right: 18,
   },
   padding: [1, 0, 1, 0],
   margin: [1, 1, 1, 1],

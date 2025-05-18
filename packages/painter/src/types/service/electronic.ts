@@ -3,12 +3,22 @@ import {
   LineStructuredData,
   ElectronicKind,
   ElectronicPrototype,
-  ElectronicStructuredData,
+  ElectronicsStructuredData,
 } from '@circuit/electronics';
 import { createServiceKey, type Watcher } from '../../context';
 
 /** 更新数据回调 */
-export type UpdateElectronic = (data: ElectronicStructuredData) => ElectronicStructuredData;
+export type CommitElectronic = (data: ElectronicsStructuredData) => void;
+
+/** 更新数据参数 */
+export interface CommitData {
+  /** 操作名称 */
+  name: string;
+  /** 操作详细描述 */
+  description: string;
+  /** 更新数据 */
+  patch: CommitElectronic;
+}
 
 /**
  * 元件服务键
@@ -33,6 +43,10 @@ export interface IElectronicService {
   getLine(id: string): Readonly<LineStructuredData>;
   /** 获取原始定义 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
-  /** 更新数据 */
-  updateData(cb: UpdateElectronic): void;
+  /**
+   * 提交数据
+   *
+   * @description 提交数据，并记录操作日志
+   */
+  commit(data: CommitElectronic): void;
 }
