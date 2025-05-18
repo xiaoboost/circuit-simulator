@@ -8,7 +8,7 @@ import {
 import { createServiceKey, type Watcher } from '../../context';
 
 /** 更新数据回调 */
-export type CommitElectronic = (data: ElectronicsStructuredData) => void;
+export type CommitElectronicCb = (data: ElectronicsStructuredData) => void;
 
 /** 更新数据参数 */
 export interface CommitData {
@@ -17,7 +17,7 @@ export interface CommitData {
   /** 操作详细描述 */
   description: string;
   /** 更新数据 */
-  patch: CommitElectronic;
+  patch: CommitElectronicCb;
 }
 
 /**
@@ -48,5 +48,5 @@ export interface IElectronicService {
    *
    * @description 提交数据，并记录操作日志
    */
-  commit(data: CommitElectronic): void;
+  commit(data: CommitData): void;
 }

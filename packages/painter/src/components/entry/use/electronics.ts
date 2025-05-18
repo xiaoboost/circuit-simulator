@@ -10,9 +10,9 @@ export function useElectronicChangeAdapter(props: PainterProps) {
 
   useEffect(() => {
     if (electronicService) {
-      electronicService.updateData = props.onChange ?? (() => void 0);
+      electronicService.commit = props.commit ?? (() => void 0);
     }
-  }, [props.onChange, electronicService]);
+  }, [props.commit, electronicService]);
 
   useEffect(() => {
     if (electronicService) {

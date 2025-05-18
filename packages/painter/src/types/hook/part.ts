@@ -1,7 +1,6 @@
 import type { PartStructuredData, ElectronicPrototype } from '@circuit/electronics';
-import type { ReactNode, RefObject } from 'react';
 import { createServiceKey } from '../../context';
-import type { IRendererWithHoc } from './render-hoc';
+import { IRendererData } from './render';
 
 /**
  * 器件渲染器
@@ -20,32 +19,7 @@ export interface IPartRendererProps {
   data: PartStructuredData;
   /** 器件原型 */
   prototype: ElectronicPrototype;
-  /**
-   * Ref 引用
-   *
-   * @description 暴露给上层 HOC 操作
-   */
-  ref?: RefObject<SVGGElement>;
 }
 
 /** 器件渲染器 */
-export interface IPartRenderer extends IRendererWithHoc<IPartRendererProps> {
-  /**
-   * 名称
-   *
-   * @description 渲染器唯一标识符
-   */
-  name: string;
-  /**
-   * 序号
-   *
-   * @description 顺序排列，数字越高 DOM 层级越高
-   */
-  order: number;
-  /**
-   * 渲染组件
-   *
-   * @description 器件渲染器
-   */
-  Render(props: IPartRendererProps): ReactNode;
-}
+export type IPartRenderer = IRendererData<IPartRendererProps>;

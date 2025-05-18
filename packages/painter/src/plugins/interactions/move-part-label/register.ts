@@ -1,14 +1,16 @@
-import { Point } from '@circuit/algorithm';
+import { Point, Direction } from '@circuit/algorithm';
 import { definePlugin } from '../../../context';
 import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
   RENDERER_HOC,
+  ELECTRONIC_SERVICE_KEY,
   VARIABLE_OBSERVER_SERVICE as VarService,
 } from '../../../types';
 import { MOVE_PART_LABEL_HOC_KEY as KEY } from './constant';
 import { MovePartLabelHOC } from './hoc';
+import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';
 
@@ -44,9 +46,34 @@ definePlugin(({ registerHook, getService }) => {
       return true;
     },
     afterEnd({ id }: Payload) {
-      getService(VarService).set(KEY, `${id}-label`, undefined);
+      const label = `${id}-label`;
+      const electronicsService = getService(ELECTRONIC_SERVICE_KEY);
+      const variableService = getService(VarService);
+      const part = electronicsService.getPart(id);
+      const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
 
-      // TODO:
+      // 方向发生变化，提交修改
+      if (newDirection !== part.textDirection) {
+        electronicsService.commit({
+          name: `移动器件 ${part.id} 文本`,
+          description: (
+            `移动器件 ${part.id} 文本，` +
+            `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
+          ),
+          patch: (data) => {
+            const part = data.parts.find((p) => p.id === id);
+
+            if (part) {
+              part.textDirection = newDirection;
+            }
+          },
+        });
+      }
+
+      // 等一帧清空临时状态
+      Promise.resolve().then(() => {
+        getService(VarService).set(KEY, label, undefined);
+      });
     },
   });
 

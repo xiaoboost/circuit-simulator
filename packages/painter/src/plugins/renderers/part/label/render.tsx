@@ -1,4 +1,12 @@
-import { Point, Direction, invertRotateMatrix } from '@circuit/algorithm';
+import {
+  Point,
+  Direction,
+  invertRotateMatrix,
+  DirectionVectorSet,
+  DirectionLabel,
+  isMatrixEqual,
+  rotateVector,
+} from '@circuit/algorithm';
 import { TextBias } from '@circuit/electronics';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { usePainterService } from '../../../../context';
@@ -9,9 +17,8 @@ import {
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
-import { getDirectionByLabel } from './utils';
 
-export function Render({ data, prototype, ref: refInParent }: IPartRendererProps) {
+function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const {
     id,
     params,
@@ -80,58 +87,43 @@ export function Render({ data, prototype, ref: refInParent }: IPartRendererProps
     /** 横轴居中对齐时的偏移量*/
     const xMiddleOffset = - textBoxRect.width / map.data.scale / 2;
 
-    // 求此时距离可偏移方向最近的位置
-    const direction = (Object.keys(prototype.textBias) as (keyof TextBias)[])
-      .filter(Boolean)
-      .map((key) => getDirectionByLabel(key).mul(prototype.textBias![key]!))
-      .map((bias) => bias.rotate(rotate))
-      .reduce(
-        (pre, next) =>
-          pre.distance(position) < next.distance(position) ? pre : next,
-      );
+    // 当前方向的偏移量
+    const textBias = prototype.textBias[Direction[textDirection] as DirectionLabel] ?? 0;
+    const finalDirection = rotateVector(DirectionVectorSet[textDirection], rotate).toDirection();
 
-    const directionLabel = direction.toDirection();
-
-    if (directionLabel === Direction.Left) {
+    if (finalDirection === Direction.Left) {
       setTextAnchor('end');
     }
-    else if (directionLabel === Direction.Right) {
+    else if (finalDirection === Direction.Right) {
       setTextAnchor('start');
     }
     else {
       setTextAnchor('middle');
     }
 
-    if (directionLabel === Direction.Left) {
-      newPosition[0] = - textBoxRect.width - direction[0];
+    if (finalDirection === Direction.Left) {
+      newPosition[0] = - textBias;
       newPosition[1] = yMiddleOffset;
     }
-    else if (directionLabel === Direction.Right) {
-      newPosition[0] = direction[0];
+    else if (finalDirection === Direction.Right) {
+      newPosition[0] = textBias;
       newPosition[1] = yMiddleOffset;
     }
-    else if (directionLabel === Direction.Center) {
+    else if (finalDirection === Direction.Center) {
       newPosition[0] = xMiddleOffset;
       newPosition[1] = yMiddleOffset;
     }
-    else if (directionLabel === Direction.Top) {
+    else if (finalDirection === Direction.Top) {
       newPosition[0] = 0;
-      newPosition[1] = - textBoxRect.height - direction[1];
+      newPosition[1] = - textBias;
     }
-    else if (directionLabel === Direction.Bottom) {
+    else if (finalDirection === Direction.Bottom) {
       newPosition[0] = 0;
-      newPosition[1] = baselineOffset + direction[1];
+      newPosition[1] = baselineOffset + textBias;
     }
 
     setPosition(newPosition);
   }, [textDirection, texts, id, rotate, textRef.current]);
-
-  // 当前应用文本 Ref 变更推送至上层引用
-  useEffect(() => {
-    if (refInParent && textRef.current && refInParent) {
-      refInParent.current = textRef.current;
-    }
-  }, [textRef.current, refInParent]);
 
   // 不存在偏移量，则表示不需要显示
   if (!prototype.textBias) {
@@ -156,3 +148,14 @@ export function Render({ data, prototype, ref: refInParent }: IPartRendererProps
     </g>
   );
 }
+
+export const Render = React.memo(
+  PartLabelRender,
+  ({ data: prev }, { data: next }) => (
+    prev.id === next.id &&
+    prev.kind === next.kind &&
+    isMatrixEqual(prev.rotate, next.rotate) &&
+    prev.textDirection === next.textDirection &&
+    prev.params.every((text, i) => text === next.params[i])
+  ),
+);

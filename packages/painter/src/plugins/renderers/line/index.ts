@@ -1,3 +1,3 @@
 import './layer';
-import './line';
+import './path';
 import './pin';

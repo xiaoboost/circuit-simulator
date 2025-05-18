@@ -1,7 +1,6 @@
 import { LineCoverMark } from '@circuit/map';
-import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
-import { IRendererWithHoc } from './render-hoc';
+import { IRendererData } from './render';
 
 /**
  * 节点渲染器
@@ -21,23 +20,4 @@ export interface IPointRendererProps {
 }
 
 /** 器件渲染器 */
-export interface IPointRenderer extends IRendererWithHoc<IPointRendererProps> {
-  /**
-   * 名称
-   *
-   * @description 渲染器唯一标识符
-   */
-  name: string;
-  /**
-   * 序号
-   *
-   * @description 顺序排列，数字越高 DOM 层级越高
-   */
-  order: number;
-  /**
-   * 渲染组件
-   *
-   * @description 节点渲染器
-   */
-  Render(props: IPointRendererProps): ReactNode;
-}
+export type IPointRenderer = IRendererData<IPointRendererProps>;

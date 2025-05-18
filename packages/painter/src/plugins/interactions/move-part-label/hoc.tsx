@@ -1,45 +1,20 @@
-import { Point, Position } from '@circuit/algorithm';
-import React, { useEffect, useMemo, useRef } from 'react';
+import { Point } from '@circuit/algorithm';
+import React from 'react';
 import { usePainterService } from '../../../context';
-import { HOC, VARIABLE_OBSERVER_SERVICE } from '../../../types';
-import { MOVE_PART_LABEL_HOC_KEY } from './constant';
+import { HOC, VARIABLE_OBSERVER_SERVICE as VAR, PropsWithRendererKey } from '../../../types';
+import { MOVE_PART_LABEL_HOC_KEY as KEY } from './constant';
 
-interface MoveHOCProps {
-  position: Position;
-}
-
-export const MovePartLabelHOC: HOC<MoveHOCProps> = (Renderer) => {
+export const MovePartLabelHOC: HOC<PropsWithRendererKey> = (Renderer) => {
   return function MovePartLabel(props) {
     const { $$key: key } = props;
-    const { useVariable } = usePainterService(VARIABLE_OBSERVER_SERVICE);
-    const movementRef = useRef<SVGGElement>(null);
-    const transformText = useRef('');
-    const movement = useVariable<Point>(MOVE_PART_LABEL_HOC_KEY, key);
-    const newProps = useMemo(() => ({
-      ...props,
-      ref: movementRef,
-    }), [props]);
+    const { useVariable } = usePainterService(VAR);
+    const movement = useVariable<Point>(KEY, key);
+    const isMoving = (movement && !movement.isZero());
 
-    useEffect(() => {
-      if (!movementRef.current || !movement || movement.isZero()) {
-        // 清空文本缓存
-        if (transformText.current) {
-          transformText.current = '';
-        }
-
-        return;
-      }
-
-      if (!transformText.current) {
-        transformText.current = movementRef.current.getAttribute('transform') ?? '';
-      }
-
-      movementRef.current.setAttribute(
-        'transform',
-        `${transformText.current} translate(${movement.join()})`,
-      );
-    }, [movement, movementRef.current]);
-
-    return <Renderer {...newProps} />;
+    return (
+      <g transform={isMoving ? `translate(${movement.join()})` : undefined}>
+        <Renderer {...props} />
+      </g>
+    );
   };
 };

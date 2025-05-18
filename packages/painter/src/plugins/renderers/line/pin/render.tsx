@@ -1,10 +1,11 @@
+import { isEqualPoint } from '@circuit/algorithm';
 import { Colors } from '@circuit/shared';
 import React from 'react';
 import { usePainterService } from '../../../../context';
 import { ILineRendererProps, MAP_SERVICE_KEY } from '../../../../types';
 import { ElectronicPoint } from '../../../components';
 
-export function Render({ data: { id, path } }: ILineRendererProps) {
+function PartPinRender({ data: { id, path } }: ILineRendererProps) {
   const { getPinConnectionByPin } = usePainterService(MAP_SERVICE_KEY);
 
   if (path.length === 0) {
@@ -36,3 +37,12 @@ export function Render({ data: { id, path } }: ILineRendererProps) {
     </>
   );
 }
+
+export const Render = React.memo(
+  PartPinRender,
+  ({ data: { path: prevPath } }, { data: { path: nextPath } }) => (
+    prevPath.length === nextPath.length &&
+    isEqualPoint(prevPath[0], nextPath[0]) &&
+    isEqualPoint(prevPath[prevPath.length - 1], nextPath[nextPath.length - 1])
+  ),
+);

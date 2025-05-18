@@ -3,7 +3,7 @@ import { usePainterHook } from '../../context';
 import { VIEW_LAYER_HOOK } from '../../types';
 import { viewerWrapper } from './styles.css';
 
-export function Viewer() {
+export const Viewer = React.memo(function Viewer() {
   const viewers = usePainterHook(VIEW_LAYER_HOOK, 'asc');
 
   // 没有视图图层时不渲染
@@ -16,4 +16,4 @@ export function Viewer() {
       {viewers.map(({ Render, name }) => <Render key={name} />)}
     </div>
   );
-}
+});

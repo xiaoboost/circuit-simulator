@@ -2,7 +2,7 @@ import React from 'react';
 import { IPartRendererProps } from '../../../../types';
 import { focus } from './styles.css';
 
-export function Render({ prototype }: IPartRendererProps) {
+function PartFocusRender({ prototype }: IPartRendererProps) {
   return (
     <g className={focus}>
       {prototype.focus.map(({ name: Tag, attribute }, index) => (
@@ -11,3 +11,7 @@ export function Render({ prototype }: IPartRendererProps) {
     </g>
   );
 }
+
+export const Render = React.memo(PartFocusRender, ({ data: prev }, { data: next }) => {
+  return prev.kind === next.kind;
+});

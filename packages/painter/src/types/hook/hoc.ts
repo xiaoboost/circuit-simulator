@@ -14,14 +14,8 @@ import { createServiceKey } from '../../context';
 export const RENDERER_HOC =
   createServiceKey<IRendererHOC>('RendererHOC');
 
-/** 渲染器给高阶组件提供的编号参数 */
-export interface IRendererWithHoc<T> {
-  /** 获取编号 */
-  getKey(props: T): string;
-}
-
 /** 参数附带当前渲染器编号 */
-export type PropsWithRendererKey<T> = T & { $$key: string };
+export type PropsWithRendererKey<T = object> = T & { $$key: string };
 
 /** HOC 高阶组件 */
 export type HOC<T> = (ChildRender: FC<T>) => FC<PropsWithRendererKey<T>>;

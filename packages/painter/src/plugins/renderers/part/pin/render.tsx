@@ -4,7 +4,7 @@ import { usePainterService } from '../../../../context';
 import { IPartRendererProps, MAP_SERVICE_KEY } from '../../../../types';
 import { ElectronicPoint as Point } from '../../../components';
 
-export function Render({ data, prototype }: IPartRendererProps) {
+function PartPinRender({ data, prototype }: IPartRendererProps) {
   const { pins } = prototype;
   const { getPinConnectionByPin } = usePainterService(MAP_SERVICE_KEY);
 
@@ -31,3 +31,7 @@ export function Render({ data, prototype }: IPartRendererProps) {
     </>
   );
 }
+
+export const Render = React.memo(PartPinRender, ({ data: prev }, { data: next }) => {
+  return prev.kind === next.kind;
+});
