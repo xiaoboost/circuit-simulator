@@ -3,6 +3,7 @@ import type { ICursorService } from './cursor';
 import type { IDebuggerService } from './debugger';
 import type { IDragSceneService } from './drag-scene';
 import type { IElectronicService } from './electronic';
+import type { IEventBus } from './event-bus';
 import type { ILoggerService } from './logger';
 import type { IMapService } from './map';
 import type { IMapCoordinateService } from './map-coordinate';
@@ -21,6 +22,7 @@ export * from './logger';
 export * from './debugger';
 export * from './variable-observer';
 export * from './select';
+export * from './event-bus';
 
 export type ServiceType =
   | IConfigurationService
@@ -33,4 +35,5 @@ export type ServiceType =
   | ILoggerService
   | IDebuggerService
   | IVariableObserverService
-  | ISelectService;
+  | ISelectService
+  | IEventBus;

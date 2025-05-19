@@ -6,6 +6,7 @@ import {
   SELECT_SERVICE,
   ELECTRONIC_SERVICE_KEY,
   VARIABLE_OBSERVER_SERVICE as VarService,
+  EVENT_BUS_KEY,
 } from '../../../types';
 import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
 import { getPartNearestDirection } from './utils';
@@ -46,12 +47,17 @@ definePlugin(({ registerHook, getService }) => {
     afterEnd({ id }: Payload) {
       const label = `${id}-label`;
       const electronicsService = getService(ELECTRONIC_SERVICE_KEY);
+      const eventBus = getService(EVENT_BUS_KEY);
       const variableService = getService(VarService);
       const part = electronicsService.getPart(id);
       const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
 
+      // 文本方向未发生变化，清空临时数据
+      if (newDirection === part.textDirection) {
+        variableService.set(KEY, label, undefined);
+      }
       // 方向发生变化，提交修改
-      if (newDirection !== part.textDirection) {
+      else {
         electronicsService.commit({
           name: `移动器件 ${part.id} 文本`,
           description: (
@@ -66,12 +72,12 @@ definePlugin(({ registerHook, getService }) => {
             }
           },
         });
-      }
 
-      // 等一帧清空临时状态
-      Promise.resolve().then(() => {
-        getService(VarService).set(KEY, label, undefined);
-      });
+        // 等待器件文本修改时，一起提交
+        eventBus
+          .once('PartLabelChanged')
+          .then(() => variableService.set(KEY, label, undefined));
+      }
     },
   });
 });

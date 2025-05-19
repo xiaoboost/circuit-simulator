@@ -19,7 +19,7 @@
     "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
-    "@xiao-ai/utils": "1.6.6",
+    "@xiao-ai/utils": "1.6.7",
     "color": "4.2.3"
   },
   "devDependencies": {

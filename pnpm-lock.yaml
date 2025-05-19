@@ -11,8 +11,8 @@ importers:
   packages/algorithm:
     dependencies:
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
       bignumber.js:
         specifier: 9.1.2
         version: 9.1.2
@@ -60,8 +60,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -140,8 +140,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -192,8 +192,8 @@ importers:
         specifier: 1.17.0
         version: 1.17.0
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
       antd:
         specifier: 5.24.9
         version: 5.24.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -247,8 +247,8 @@ importers:
   packages/shared:
     dependencies:
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
       color:
         specifier: 4.2.3
         version: 4.2.3
@@ -290,8 +290,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -360,8 +360,8 @@ importers:
         specifier: 0.1.4
         version: 0.1.4
       '@xiao-ai/utils':
-        specifier: 1.6.6
-        version: 1.6.6
+        specifier: 1.6.7
+        version: 1.6.7
       antd:
         specifier: 5.24.9
         version: 5.24.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -1663,8 +1663,8 @@ packages:
   '@xiao-ai/tsconfig@1.0.4':
     resolution: {integrity: sha512-rrW+0mmz950LqizmnValeKtMB6zVEgchppSnlAwvb5FQXSARuAdnxk5l0V7XxDCE0U80gI78DeKZEGBYJFT1xg==}
 
-  '@xiao-ai/utils@1.6.6':
-    resolution: {integrity: sha512-kr5VgyY1WrvpA97U1WQvMeuYlh1MVOFPjnW4/sR/fdZQkj99WEbSxFmPGZLgt17ahkvneoj75mHmWObjmbUuOQ==}
+  '@xiao-ai/utils@1.6.7':
+    resolution: {integrity: sha512-CBkWF9gsoboBui7/BmRgT27OXgQGKPUwbSIpkz9n24Fa/y+cazInV1zoBl8O83pSn09x7YW9z4tNoO6WxgkhdA==}
 
   '@xobotyi/scrollbar-width@1.9.5':
     resolution: {integrity: sha512-N8tkAACJx2ww8vFMneJmaAgmjAG1tnVBZJRLRcx061tmsLRZHSEZSLuGWnwPtunsSLvSqXQ2wfp7Mgqg1I+2dQ==}
@@ -7066,7 +7066,7 @@ snapshots:
 
   '@xiao-ai/tsconfig@1.0.4': {}
 
-  '@xiao-ai/utils@1.6.6':
+  '@xiao-ai/utils@1.6.7':
     dependencies:
       tslib: 2.8.1
 

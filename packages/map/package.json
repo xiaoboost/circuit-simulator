@@ -24,7 +24,7 @@
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
     "@circuit/shared": "workspace:*",
-    "@xiao-ai/utils": "1.6.6"
+    "@xiao-ai/utils": "1.6.7"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",

@@ -7,13 +7,13 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
-import { TextBias } from '@circuit/electronics';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { usePainterService } from '../../../../context';
 import {
   IPartRendererProps,
   MAP_COORDINATE_SERVICE,
   DRAG_SCENE_SERVICE,
+  EVENT_BUS_KEY,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.css';
@@ -31,6 +31,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
+  const eventBus = usePainterService(EVENT_BUS_KEY);
   const dragService = usePainterService(DRAG_SCENE_SERVICE);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
 
@@ -123,6 +124,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
 
     setPosition(newPosition);
+    eventBus.notify('PartLabelChanged');
   }, [textDirection, texts, id, rotate, textRef.current]);
 
   // 不存在偏移量，则表示不需要显示
