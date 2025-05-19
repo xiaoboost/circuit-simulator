@@ -7,4 +7,5 @@ export const entry = style({
   cursor: 'default',
   outline: 'none',
   overflow: 'hidden',
+  flexGrow: 1,
 });

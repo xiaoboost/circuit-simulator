@@ -8,7 +8,7 @@ import {
 import { createServiceKey, type Watcher } from '../../context';
 
 /** 更新数据回调 */
-export type CommitElectronicCb = (data: ElectronicsStructuredData) => void;
+export type CommitCb = (data: ElectronicsStructuredData) => void;
 
 /** 更新数据参数 */
 export interface CommitData {
@@ -17,26 +17,32 @@ export interface CommitData {
   /** 操作详细描述 */
   description: string;
   /** 更新数据 */
-  patch: CommitElectronicCb;
+  patch: CommitCb;
 }
 
 /**
- * 元件服务键
+ * 画布服务键
  *
- * @description 该服务提供了元件的各种服务
+ * @description 该服务提供了画布服务
  * @example
  * ```ts
- * const electronicService = usePainterService(ELECTRONIC_SERVICE_KEY);
+ * const painterService = usePainterService(PAINTER_SERVICE_KEY);
  * ```
  */
-export const ELECTRONIC_SERVICE_KEY =
-  createServiceKey<IElectronicService>('ElectronicService');
+export const PAINTER_SERVICE_KEY =
+  createServiceKey<IPainterService>('PainterService');
 
-export interface IElectronicService {
+export interface IPainterService {
   /** 所有器件 */
   readonly parts: Watcher<PartStructuredData[]>;
   /** 所有导线 */
   readonly lines: Watcher<LineStructuredData[]>;
+  /** 能否撤销 */
+  readonly canUndo: Watcher<boolean>;
+  /** 能否重做 */
+  readonly canRedo: Watcher<boolean>;
+  /** 画布状态 */
+  readonly isReady: Watcher<boolean>;
   /** 获取器件 */
   getPart(id: string): Readonly<PartStructuredData>;
   /** 获取导线 */
@@ -49,4 +55,8 @@ export interface IElectronicService {
    * @description 提交数据，并记录操作日志
    */
   commit(data: CommitData): void;
+  /** 撤销 */
+  undo(): void;
+  /** 重做 */
+  redo(): void;
 }

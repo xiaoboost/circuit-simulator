@@ -10,8 +10,8 @@ import {
 } from './constant';
 import {
   SubscribeEventName,
-  type EditProducer,
-  type CommitPatch,
+  type CommitData,
+  type PatchWithComment,
 } from './types';
 
 // 启动补丁功能
@@ -25,7 +25,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
   /** 当前状态 */
   private state: T;
   /** 修改栈 */
-  private editStack: CommitPatch[] = [];
+  private editStack: PatchWithComment[] = [];
   /** 栈指针 */
   private stackPointer = -1;
 
@@ -36,7 +36,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
   /** 是否可以撤销 */
   get canUndo(): boolean {
-    return this.editStack.length > 0 && this.stackPointer > 0;
+    return this.editStack.length > 0 && this.stackPointer > -1;
   }
 
   /** 是否可以重做 */
@@ -45,14 +45,14 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
   }
 
   /** 编辑 */
-  commit(name: string, description: string, producer: EditProducer<T>): void {
+  commit({ name, description, patch }: CommitData<T>) {
     const { state, editStack, stackPointer } = this;
 
     // 指针不是最新，需要抛弃掉指针后面的修改
     editStack.length = stackPointer + 1;
 
     // 生成补丁
-    const [newState, patches, inversePatches] = produceWithPatches(state, producer);
+    const [newState, patches, inversePatches] = produceWithPatches(state, patch);
 
     // 修改操作补丁储存
     editStack.push({ name, description, patches, inversePatches });
@@ -68,6 +68,8 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
     // 通知变更
     this.notify(SubscribeEventName.Change, newState);
+
+    return newState;
   }
 
   /** 撤销 */

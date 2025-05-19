@@ -2,7 +2,7 @@ import './map-coordinate';
 import './cursor';
 import './drag-scene';
 import './map';
-import './electronic';
+import './painter';
 import './configuration';
 import './logger';
 import './debugger';

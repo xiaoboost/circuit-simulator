@@ -4,7 +4,7 @@ import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
-  ELECTRONIC_SERVICE_KEY,
+  PAINTER_SERVICE_KEY,
   VARIABLE_OBSERVER_SERVICE as VarService,
   EVENT_BUS_KEY,
 } from '../../../types';
@@ -46,10 +46,10 @@ definePlugin(({ registerHook, getService }) => {
     },
     afterEnd({ id }: Payload) {
       const label = `${id}-label`;
-      const electronicsService = getService(ELECTRONIC_SERVICE_KEY);
+      const painterService = getService(PAINTER_SERVICE_KEY);
       const eventBus = getService(EVENT_BUS_KEY);
       const variableService = getService(VarService);
-      const part = electronicsService.getPart(id);
+      const part = painterService.getPart(id);
       const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
 
       // 文本方向未发生变化，清空临时数据
@@ -58,7 +58,7 @@ definePlugin(({ registerHook, getService }) => {
       }
       // 方向发生变化，提交修改
       else {
-        electronicsService.commit({
+        painterService.commit({
           name: `移动器件 ${part.id} 文本`,
           description: (
             `移动器件 ${part.id} 文本，` +

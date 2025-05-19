@@ -7,9 +7,7 @@ export function useDataInit() {
   const [data, setData] = useState<StateData | undefined>();
 
   useEffect(() => {
-    readFromCache().then((data) => {
-      setData(data);
-    });
+    readFromCache().then(setData);
   }, []);
 
   return data;

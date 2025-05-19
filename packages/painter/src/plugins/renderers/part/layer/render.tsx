@@ -5,7 +5,7 @@ import { composeHOC } from '../../../../context/utils';
 import {
   IDrawLayerProps,
   PART_RENDERER,
-  ELECTRONIC_SERVICE_KEY,
+  PAINTER_SERVICE_KEY,
   RENDERER_HOC,
   SELECT_SERVICE,
 } from '../../../../types';
@@ -13,7 +13,7 @@ import { selected } from './styles.css';
 
 function PartLayerRender({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
-  const service = usePainterService(ELECTRONIC_SERVICE_KEY);
+  const service = usePainterService(PAINTER_SERVICE_KEY);
   const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
   const selectService = usePainterService(SELECT_SERVICE);
   const [selectedIds] = useWatcher(selectService.value);

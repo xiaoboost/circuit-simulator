@@ -17,9 +17,9 @@ export const LIFE_CYCLE_HOOK =
  */
 export interface ILifeCycle {
   /**
-   * 初始化之前
+   * 插件初始化之后
    *
-   * @description 画布将会等待所有插件的此钩子运行完毕才加载
+   * @description 所有插件加载完成之后立即运行，画布此时还未启动
    */
-  beforeInit?(): void | Promise<void>;
+  afterPluginInit?(): void | Promise<void>;
 }

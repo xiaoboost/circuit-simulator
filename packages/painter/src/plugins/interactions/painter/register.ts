@@ -7,14 +7,19 @@ import {
 import { Watcher } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
 import {
-  ELECTRONIC_SERVICE_KEY,
-  IElectronicService,
+  PAINTER_SERVICE_KEY,
+  IPainterService,
 } from '../../../types';
 
 definePlugin(({ registerService }) => {
-  const service: IElectronicService = {
+  const service: IPainterService = {
     parts: new Watcher<PartStructuredData[]>([]),
     lines: new Watcher<LineStructuredData[]>([]),
+    canUndo: new Watcher<boolean>(false),
+    canRedo: new Watcher<boolean>(false),
+    isReady: new Watcher<boolean>(false),
+    undo: () => void 0,
+    redo: () => void 0,
     commit: () => void 0,
     getPartPrototype(kind: ElectronicKind) {
       const result = Electronics[kind];
@@ -46,11 +51,13 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册元件服务
-  registerService(ELECTRONIC_SERVICE_KEY, service);
+  registerService(PAINTER_SERVICE_KEY, service);
 
   // 卸载器
   return () => {
     service.parts.unObserve();
     service.lines.unObserve();
+    service.canUndo.unObserve();
+    service.canRedo.unObserve();
   };
 });

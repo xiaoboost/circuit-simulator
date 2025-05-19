@@ -6,7 +6,7 @@ import { type PainterProps } from '../wrapper';
 import * as Styles from './styles.css';
 import {
   useKeyboardListener,
-  useElectronicChangeAdapter,
+  usePainterAdapter,
   usePainterRefService,
 } from './use';
 
@@ -15,7 +15,7 @@ export function Entry(props: PainterProps) {
 
   usePainterRefService(painterRef);
   useKeyboardListener(painterRef);
-  useElectronicChangeAdapter(props);
+  usePainterAdapter(props);
 
   return (
     <div

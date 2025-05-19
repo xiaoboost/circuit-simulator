@@ -1,7 +1,16 @@
 import { type Patch } from 'immer';
 
+/** 提交数据 */
+export interface CommitData<T> {
+  /** 提交名称 */
+  name: string;
+  /** 提交描述 */
+  description: string;
+  /** 补丁 */
+  patch: EditProducer<T>;
+}
 /** 补丁信息 */
-export interface CommitPatch {
+export interface PatchWithComment {
   /** 补丁名称 */
   readonly name: string;
   /** 补丁描述 */

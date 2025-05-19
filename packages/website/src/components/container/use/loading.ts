@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { startLoading } from '../../../styles';
 
 /** 移除 loading 界面 */
@@ -15,10 +15,14 @@ function removeLoading() {
 }
 
 /** 移除加载界面 */
-export function useRemoveLoading(ready: boolean) {
+export function useRemoveLoading() {
+  const [ready, setReady] = useState(false);
+
   useEffect(() => {
     if (ready) {
       removeLoading();
     }
   }, [ready]);
+
+  return () => setReady(true);
 }

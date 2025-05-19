@@ -4,7 +4,7 @@ import { definePlugin } from '../../../context';
 import {
   MAP_SERVICE_KEY,
   LIFE_CYCLE_HOOK,
-  ELECTRONIC_SERVICE_KEY,
+  PAINTER_SERVICE_KEY,
   IMapService,
 } from '../../../types';
 import { getPinConnectionByPosition } from './connection';
@@ -35,7 +35,7 @@ definePlugin(({ registerService, getService }) => {
       return getPinConnectionByPosition(position, markService);
     },
     getPinConnectionByPin(id, pin) {
-      const electronicService = getService(ELECTRONIC_SERVICE_KEY);
+      const electronicService = getService(PAINTER_SERVICE_KEY);
 
       if (isLine(id)) {
         const line = electronicService.getLine(id);
