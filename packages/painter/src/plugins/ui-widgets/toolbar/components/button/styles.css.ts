@@ -26,7 +26,7 @@ export const btn = style({
       marginRight: 0,
     },
     [`&.${disabled}`]: {
-      color: Colors.Black.mix(Colors.White, 0.5).string(),
+      color: Colors.Black.mix(Colors.White, 0.65).string(),
       backgroundColor: Colors.White.string(),
       cursor: 'not-allowed',
     },

@@ -21,6 +21,10 @@ export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, '
     }
   }, [data]);
 
+  useEffect(() => {
+    return controller.current?.observe(StateController.SubscribeEventName.Change, setState);
+  }, [controller.current]);
+
   return {
     commit,
     undo,
