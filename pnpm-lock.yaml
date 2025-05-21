@@ -332,6 +332,9 @@ importers:
       '@ant-design/icons':
         specifier: 5.5.2
         version: 5.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@ant-design/v5-patch-for-react-19':
+        specifier: 1.0.3
+        version: 1.0.3(antd@5.24.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@antv/g2':
         specifier: 5.3.2
         version: 5.3.2
@@ -553,6 +556,14 @@ packages:
     resolution: {integrity: sha512-EzlvzE6xQUBrZuuhSAFTdsr4P2bBBHGZwKFemEfq8gIGyIQCxalYfZW/T2ORbtQx5rU69o+WycP3exY/7T1hGA==}
     peerDependencies:
       react: '>=16.9.0'
+
+  '@ant-design/v5-patch-for-react-19@1.0.3':
+    resolution: {integrity: sha512-iWfZuSUl5kuhqLUw7jJXUQFMMkM7XpW7apmKzQBQHU0cpifYW4A79xIBt9YVO5IBajKpPG5UKP87Ft7Yrw1p/w==}
+    engines: {node: '>=12.x'}
+    peerDependencies:
+      antd: '>=5.22.6'
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
 
   '@antv/component@2.1.2':
     resolution: {integrity: sha512-5nC9i9lh5rBHE+pk4TNnerLe4mn5874YHHhvv6EdL618UkgpdKJL0hJu4l7uAYjZ3g46VBK+IYT7md0FYv8f4w==}
@@ -5809,6 +5820,12 @@ snapshots:
       react: 19.1.0
       resize-observer-polyfill: 1.5.1
       throttle-debounce: 5.0.2
+
+  '@ant-design/v5-patch-for-react-19@1.0.3(antd@5.24.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      antd: 5.24.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
 
   '@antv/component@2.1.2':
     dependencies:

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.5.2",
+    "@ant-design/v5-patch-for-react-19": "1.0.3",
     "@antv/g2": "5.3.2",
     "@circuit/algorithm": "workspace:*",
     "@circuit/electronics": "workspace:*",

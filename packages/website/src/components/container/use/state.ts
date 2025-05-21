@@ -1,4 +1,5 @@
 import { PainterProps } from '@circuit/painter';
+import { message } from 'antd';
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { StateController, CommitData } from '../../../libraries';
 import { StateData } from '../../../types';
@@ -9,7 +10,7 @@ export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, '
 
   // 三个方法只需要监听实例
   const [commit, undo, redo] = useMemo(() => ([
-    (data: CommitData<any>) => setState(controller.current?.commit(data)),
+    (data: CommitData<any>) => controller.current?.commit(data),
     () => controller.current?.undo(),
     () => controller.current?.redo(),
   ]), [controller.current]);
@@ -22,7 +23,34 @@ export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, '
   }, [data]);
 
   useEffect(() => {
-    return controller.current?.observe(StateController.SubscribeEventName.Change, setState);
+    if (!controller.current) {
+      return;
+    }
+
+    const { current } = controller;
+    const { SubscribeEventName: Name } = StateController;
+
+    const unObserve1 = current.observe(Name.Change, (data) => {
+      setState(data);
+    });
+    const unObserve2 = current.observe(Name.Undo, (msg: string) => {
+      message.info({
+        type: 'success',
+        content: `已撤销: ${msg}`,
+      });
+    });
+    const unObserve3 = current.observe(Name.Redo, (msg: string) => {
+      message.open({
+        type: 'success',
+        content: `已重做: ${msg}`,
+      });
+    });
+
+    return () => {
+      unObserve1();
+      unObserve2();
+      unObserve3();
+    };
   }, [controller.current]);
 
   return {
