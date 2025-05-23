@@ -7,10 +7,9 @@ import {
   LIFE_CYCLE_HOOK,
   ILifeCycle,
 } from '../../../types';
-import type { PainterProps } from '../render';
 
 /** 画布组件初始化 */
-export function usePainterInit(context: IPainterContext, props: PainterProps) {
+export function usePainterInit(context: IPainterContext) {
   const [pluginReady, setPluginReady] = useState(false);
 
   // 加载插件

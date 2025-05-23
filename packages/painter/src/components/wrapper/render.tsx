@@ -44,7 +44,7 @@ export function Painter(props: PainterProps) {
     PluginUninstallers: [],
   });
 
-  const pluginReady = usePainterInit(context.current, props);
+  const pluginReady = usePainterInit(context.current);
 
   usePainterUnmount(context.current);
 
