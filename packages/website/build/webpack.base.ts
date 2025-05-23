@@ -4,6 +4,7 @@ import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import Webpack from 'webpack';
 
 import { startLoading } from '../src/styles/constant';
@@ -21,17 +22,6 @@ filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
 Released under the MIT License.`;
-
-const tsLoaderConfig = {
-  loader: 'ts-loader',
-  options: {
-    configFile: resolve('tsconfig.json'),
-    compilerOptions: {
-      module: 'NodeNext',
-      target: 'ES6',
-    },
-  },
-};
 
 const baseConfig: Webpack.Configuration = {
   mode: isDevelopment ? 'development' : 'production',
@@ -55,15 +45,18 @@ const baseConfig: Webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.worker\.tsx?$/,
-        use: [
-          'worker-loader',
-          tsLoaderConfig,
-        ],
-      },
-      {
         test: /\.tsx?$/,
-        ...tsLoaderConfig,
+        loader: 'swc-loader',
+        options: {
+          jsc: {
+            target: 'es2015',
+            parser: {
+              syntax: 'typescript',
+              decorators: true,
+              tsx: true,
+            },
+          },
+        },
       },
       {
         test: /\.css$/,
@@ -75,7 +68,7 @@ const baseConfig: Webpack.Configuration = {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: require.resolve('css-loader'),
+            loader: 'css-loader',
             options: {
               url: false,
             },
@@ -83,7 +76,7 @@ const baseConfig: Webpack.Configuration = {
         ],
       },
       {
-        test: /\.(png|jpg|webp|svg)$/i,
+        test: /\.(ico|svg)$/i,
         loader: 'url-loader',
         options: {
           limit: 8192,
@@ -146,6 +139,12 @@ const baseConfig: Webpack.Configuration = {
         collapseWhitespace: !isDevelopment,
         ignoreCustomComments: [/^-/],
       },
+    }),
+    new TsCheckerRspackPlugin({
+      typescript: {
+        configFile: resolve('tsconfig.json'),
+      },
+      devServer: true,
     }),
   ],
 };
