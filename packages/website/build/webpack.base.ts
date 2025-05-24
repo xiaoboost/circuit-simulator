@@ -1,7 +1,4 @@
-import path from 'path';
 import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin';
-// eslint-disable-next-line
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
@@ -18,7 +15,6 @@ Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
 Version: ${version}
 Build: ${build}
-filename: [name], chunkhash: [chunkhash]
 
 Nice to meet you ~ o(*￣▽￣*)ブ
 Released under the MIT License.`;
@@ -33,6 +29,7 @@ const baseConfig: Webpack.Configuration = {
     publicPath: '/',
     filename: isDevelopment ? 'js/[name].js' : 'js/[name].[chunkhash].js',
     chunkFilename: isDevelopment ? 'js/[name].js' : 'js/[name].[chunkhash].js',
+    assetModuleFilename: 'assets/[name].[hash:20][ext]',
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.json', '.css'],
@@ -77,9 +74,24 @@ const baseConfig: Webpack.Configuration = {
       },
       {
         test: /\.(ico|svg)$/i,
-        loader: 'url-loader',
+        type: 'asset/inline',
+      },
+      {
+        test: /\.(png|jpe?g|gif|webp)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.html$/,
+        loader: 'html-loader',
         options: {
-          limit: 8192,
+          esModule: false,
+          minimize: false,
+          sources: {
+            list: [
+              { tag: 'img', attribute: 'src', type: 'src' },
+              { tag: 'link', attribute: 'href', type: 'src' },
+            ],
+          },
         },
       },
     ],
@@ -114,31 +126,15 @@ const baseConfig: Webpack.Configuration = {
         ? 'styles/[name].css'
         : 'styles/[name].[contenthash:20].css',
     }),
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: resolve('src/assets/favicon.ico'),
-          to: path.join(output, 'images/favicon.ico'),
-        },
-      ],
-    }),
     new HtmlWebpackPlugin({
       filename: 'index.html',
-      data: {
-        build: build,
-        version: version,
-        year: new Date().getFullYear(),
-      },
-      styles: {
+      templateParameters: {
+        banner,
         loadingId: startLoading,
       },
-      template: resolve('src/index.html'),
+      template: resolve('src/index.ejs'),
       inject: true,
-      minify: {
-        removeComments: !isDevelopment,
-        collapseWhitespace: !isDevelopment,
-        ignoreCustomComments: [/^-/],
-      },
+      minify: false,
     }),
     new TsCheckerRspackPlugin({
       typescript: {
