@@ -9,7 +9,7 @@ import {
   RENDERER_HOC,
   SELECT_SERVICE,
 } from '../../../../types';
-import { selected } from './styles.css';
+import * as Styles from './styles.less';
 
 function PartLayerRender({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
@@ -32,7 +32,7 @@ function PartLayerRender({ parts }: IDrawLayerProps) {
             key={part.id}
             transform={`matrix(${part.rotate.join()},${part.position.join()})`}
             className={scl({
-              [selected]: selectedIds.has(part.id),
+              [Styles.selected]: selectedIds.has(part.id),
             })}
           >
             {partRenderers.map((Render) => (

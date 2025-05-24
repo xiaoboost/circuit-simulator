@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePainterHook } from '../../context';
 import { VIEW_LAYER_HOOK } from '../../types';
-import { viewerWrapper } from './styles.css';
+import * as Styles from './styles.less';
 
 export const Viewer = React.memo(function Viewer() {
   const viewers = usePainterHook(VIEW_LAYER_HOOK, 'asc');
@@ -12,7 +12,7 @@ export const Viewer = React.memo(function Viewer() {
   }
 
   return (
-    <div className={viewerWrapper}>
+    <div className={Styles.viewerWrapper}>
       {viewers.map(({ Render, name }) => <Render key={name} />)}
     </div>
   );

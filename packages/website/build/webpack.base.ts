@@ -1,10 +1,10 @@
-import { VanillaExtractPlugin } from '@vanilla-extract/webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import Webpack from 'webpack';
 
 import { startLoading } from '../src/styles/constant';
+import { transformLess } from './less';
 import { resolve, version, build } from './utils';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
@@ -57,17 +57,34 @@ const baseConfig: Webpack.Configuration = {
       },
       {
         test: /\.css$/,
-        exclude: /\.vanilla\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+        ],
       },
       {
-        test: /\.vanilla\.css$/i,
+        test: /\.less$/,
         use: [
           MiniCssExtractPlugin.loader,
           {
             loader: 'css-loader',
             options: {
-              url: false,
+              esModule: true,
+              modules: {
+                namedExport: true,
+                exportLocalsConvention: 'camel-case',
+                localIdentName: isDevelopment
+                  ? '[local]__[hash:base64:8]'
+                  : 'styles__[hash:base64:8]',
+              },
+            },
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              additionalData(code: string, context: Webpack.LoaderContext<any>) {
+                return transformLess(code, context.resourcePath);
+              },
             },
           },
         ],
@@ -120,7 +137,6 @@ const baseConfig: Webpack.Configuration = {
     new Webpack.DefinePlugin({
       'process.env.NODE_ENV': isDevelopment ? '"development"' : '"production"',
     }),
-    new VanillaExtractPlugin(),
     new MiniCssExtractPlugin({
       filename: isDevelopment
         ? 'styles/[name].css'

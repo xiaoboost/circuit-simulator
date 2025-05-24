@@ -16,7 +16,7 @@ import {
   EVENT_BUS_KEY,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 
 function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const {

@@ -1,10 +1,10 @@
 import React from 'react';
 import { IPartRendererProps } from '../../../../types';
-import { focus } from './styles.css';
+import * as Styles from './styles.less';
 
 function PartFocusRender({ prototype }: IPartRendererProps) {
   return (
-    <g className={focus}>
+    <g className={Styles.focus}>
       {prototype.focus.map(({ name: Tag, attribute }, index) => (
         <Tag key={index} {...attribute} />
       ))}

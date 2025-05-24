@@ -1,4 +1,3 @@
-import { Colors } from '@circuit/shared';
 import React from 'react';
 import { usePainterService } from '../../../../context';
 import { IPartRendererProps, MAP_SERVICE_KEY } from '../../../../types';
@@ -24,7 +23,7 @@ function PartPinRender({ data, prototype }: IPartRendererProps) {
             position={position}
             hoverR={4}
             normalR={0}
-            fill={isSpace ? Colors.White.toString() : undefined}
+            fill={isSpace ? '#fff' : undefined}
           />
         );
       })}

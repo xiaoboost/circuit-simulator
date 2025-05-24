@@ -3,7 +3,7 @@ import React, { useRef } from 'react';
 import { Drawer } from '../drawer';
 import { Viewer } from '../viewer';
 import { type PainterProps } from '../wrapper';
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 import {
   useKeyboardListener,
   usePainterAdapter,

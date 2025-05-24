@@ -1,5 +1,4 @@
 import { isEqualPoint } from '@circuit/algorithm';
-import { Colors } from '@circuit/shared';
 import React from 'react';
 import { usePainterService } from '../../../../context';
 import { ILineRendererProps, MAP_SERVICE_KEY } from '../../../../types';
@@ -30,7 +29,7 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
             position={position}
             hoverR={isSpace ? 5: 4}
             normalR={isSpace ? 2 : 1}
-            fill={isSpace ? Colors.White.toString() : 'currentColor'}
+            fill={isSpace ? '#fff' : undefined}
           />
         );
       })}

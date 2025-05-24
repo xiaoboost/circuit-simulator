@@ -1,6 +1,6 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import React from 'react';
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 
 export interface ButtonProps {
   /** 按钮点击事件 */

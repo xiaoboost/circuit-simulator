@@ -1,6 +1,6 @@
 import React from 'react';
-import { divider } from './styles.css';
+import * as Styles from './styles.less';
 
 export function Divider() {
-  return <div className={divider} />;
+  return <div className={Styles.divider} />;
 }

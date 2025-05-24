@@ -1,0 +1,41 @@
+.btn {
+  font-size: 20px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 200ms ease;
+  cursor: pointer;
+  margin-right: 4px;
+  outline: none;
+  background-color: @color-white;
+
+  &:hover {
+    background-color: mix(@color-black, @color-white, 0.92);
+  }
+  &:last-child {
+    margin-right: 0;
+  }
+
+  &.disabled {
+    color: mix(@color-black, @color-white, 0.65);
+    background-color: @color-white;
+    cursor: not-allowed;
+  }
+
+  // 优先级最高，所以放在最下面
+  &.selected {
+    background-color: @color-primary-light;
+    color: @color-primary;
+  }
+}
+
+.icon {
+  height: 22px;
+  width: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

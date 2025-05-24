@@ -10,7 +10,7 @@ import {
   PAINTER_SERVICE_KEY,
   CURSOR_SERVICE,
 } from '../../types';
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 import { useMouseListener } from './use';
 import { getBackgroundStyle, getCursorStyle } from './utils';
 

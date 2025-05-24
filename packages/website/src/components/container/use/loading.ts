@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { startLoading } from '../../../styles';
+import { startLoading } from '../../../styles/constant';
 
 /** 移除 loading 界面 */
 function removeLoading() {

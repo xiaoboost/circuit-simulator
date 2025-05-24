@@ -1,4 +1,3 @@
-import { Colors } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
   LOGGER_SERVICE,
@@ -16,17 +15,17 @@ definePlugin(({ registerService, getService }) => {
   const service: ILoggerService = {
     debug(name, ...messages) {
       if (isDebugMode()) {
-        console.debug(`%c[Debug] [${name}]`, getLoggerStyle(Colors.Info.toString()), ...messages);
+        console.debug(`%c[Debug] [${name}]`, getLoggerStyle('grey'), ...messages);
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] [${name}]`, getLoggerStyle(Colors.Primary.toString()), ...messages);
+      console.info(`%c[Info] [${name}]`, getLoggerStyle('blue'), ...messages);
     },
     warn(name, ...messages) {
-      console.warn(`%c[Warn] [${name}]`, getLoggerStyle(Colors.Warning.toString()), ...messages);
+      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('yellow'), ...messages);
     },
     error(name, ...messages) {
-      console.error(`%c[Error] [${name}]`, getLoggerStyle(Colors.Danger.toString()), ...messages);
+      console.error(`%c[Error] [${name}]`, getLoggerStyle('red'), ...messages);
     },
   };
 

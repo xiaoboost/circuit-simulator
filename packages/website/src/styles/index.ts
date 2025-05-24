@@ -1,4 +1,2 @@
-import './global.css';
-import './start-loading.css';
-
-export * from './constant';
+import './global.less';
+import './start-loading.less';

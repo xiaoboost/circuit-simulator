@@ -1,7 +1,7 @@
 import { Painter } from '@circuit/painter';
 import React from 'react';
 import { Header } from '../header';
-import { container } from './styles.css';
+import * as Styles from './styles.less';
 import {
   useDataInit,
   usePainterState,
@@ -14,7 +14,7 @@ export function App() {
   const painterState = usePainterState(data);
 
   return (
-    <div className={container}>
+    <div className={Styles.container}>
       <Header />
       {data
         ? <Painter

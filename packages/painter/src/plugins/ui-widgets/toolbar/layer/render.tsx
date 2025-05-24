@@ -1,7 +1,7 @@
 import React from 'react';
 import { usePainterHook } from '../../../../context';
 import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../types';
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 
 export function Render() {
   const actions = usePainterHook(PAINTER_TOOLBAR_ACTION_HOOK, 'asc');

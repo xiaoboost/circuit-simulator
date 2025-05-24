@@ -1,0 +1,31 @@
+:global {
+  * {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    cursor: inherit;
+    user-select: inherit;
+  }
+
+  // 第一部分全局样式
+  html, body, #root {
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    user-select: none;
+    cursor: default;
+  }
+
+  // 输入控件样式
+  input, textarea {
+    cursor: text;
+  }
+
+  each(range(6), {
+    @i: @value + 1;
+    h@{i} {
+      font-size: (20 - (@i - 1) * 2) * 1px;
+      margin-bottom: 15px;
+    }
+  });
+}

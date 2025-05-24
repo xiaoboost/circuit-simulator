@@ -1,6 +1,6 @@
 import { Position, Point } from '@circuit/algorithm';
 import React, { useState, useRef, useEffect } from 'react';
-import { focus } from './styles.css';
+import * as Styles from './styles.less';
 
 export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {
   /**
@@ -127,7 +127,7 @@ export function ElectronicPoint(props: ElectronicPointProps) {
         y='-8'
         height='16'
         width='16'
-        className={focus}
+        className={Styles.focus}
       />
     </g>
   );

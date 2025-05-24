@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as Styles from './styles.css';
+import * as Styles from './styles.less';
 
 export function Header() {
   return <div className={Styles.header}>
