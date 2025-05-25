@@ -1,5 +1,6 @@
 import { ChannelSubscriber } from '@xiao-ai/utils';
 import {
+  produce,
   produceWithPatches,
   enablePatches,
   applyPatches,
@@ -24,6 +25,8 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
   /** 当前状态 */
   private state: T;
+  /** 当前草稿 */
+  private draftState?: T;
   /** 修改栈 */
   private editStack: PatchWithComment[] = [];
   /** 栈指针 */
@@ -36,12 +39,39 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
   /** 是否可以撤销 */
   get canUndo(): boolean {
-    return this.editStack.length > 0 && this.stackPointer > -1;
+    return this.draftState
+      ? false
+      : this.editStack.length > 0 && this.stackPointer > -1;
   }
 
   /** 是否可以重做 */
   get canRedo(): boolean {
-    return this.editStack.length > 0 && this.stackPointer < this.editStack.length - 1;
+    return this.draftState
+      ? false
+      : (
+        this.editStack.length > 0 &&
+        this.stackPointer < (this.editStack.length - 1)
+      );
+  }
+
+  /**
+   * 提交草稿
+   *
+   * @description 提交草稿后，`state`会指向草稿，当前状态会保留，
+   * 草稿只能被放弃，不会有**撤销**和**重做**操作。
+   * 草稿可以使用`dropDraft`丢弃；
+   * 再次提交草稿时，当前草稿将会被覆盖；
+   * 提交`commit`后，草稿也会被丢弃。
+   */
+  draft(patch: CommitData<T>['patch']) {
+    this.draftState = produce(this.state, patch);
+    this.notify(SubscribeEventName.Change, this.draftState);
+  }
+
+  /** 丢弃草稿 */
+  dropDraft() {
+    this.draftState = undefined;
+    this.notify(SubscribeEventName.Change, this.state);
   }
 
   /** 编辑 */
@@ -68,8 +98,6 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
     // 通知变更
     this.notify(SubscribeEventName.Change, newState);
-
-    return newState;
   }
 
   /** 撤销 */
@@ -110,6 +138,6 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
 
   /** 获取当前状态 */
   getState(): T {
-    return this.state;
+    return this.draftState ?? this.state;
   }
 }
