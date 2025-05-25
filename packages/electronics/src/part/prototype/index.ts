@@ -1,5 +1,4 @@
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype } from '../types';
+import { ElectronicPrototype, ElectronicKind } from '../types';
 
 // 无源器件
 import { data as Capacitor } from './basic-capacitor';
@@ -26,10 +25,8 @@ import { data as ReferenceGround } from './virtual-ref-ground';
 type Electronics = { [key in ElectronicKind]: ElectronicPrototype };
 
 export const Electronics: Electronics = {
-  [ElectronicKind.Line]: {} as any,
   [ElectronicKind.VoltageControlledVoltageSource]: {} as any,
   [ElectronicKind.CurrentControlledCurrentSource]: {} as any,
-
   [ElectronicKind.Resistance]: Resistance,
   [ElectronicKind.Capacitor]: Capacitor,
   [ElectronicKind.Inductance]: Inductance,

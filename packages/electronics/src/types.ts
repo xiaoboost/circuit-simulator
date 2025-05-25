@@ -1,8 +1,6 @@
 import type { LineStructuredData, LineStoreData } from './line';
 import type { PartStructuredData, PartStoreData } from './part';
 
-export { ElectronicKind } from '@circuit/shared';
-
 /** 元件总类别 */
 export type ElectronicStructuredData = LineStructuredData | PartStructuredData;
 

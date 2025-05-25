@@ -1,4 +1,3 @@
-import { ElectronicKind } from '../types';
 import { LineStoreData, LineStructuredData } from './types';
 
 export { isLine } from '@circuit/shared';
@@ -9,7 +8,6 @@ export function transformLineStoreToStateData(data: LineStoreData): LineStructur
   return {
     ...data,
     id: `line_${lineId++}`,
-    kind: ElectronicKind.Line,
   };
 }
 

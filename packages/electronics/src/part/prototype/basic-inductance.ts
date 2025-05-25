@@ -1,11 +1,10 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype, UnitType } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'L',
   kind: ElectronicKind.Inductance,
-  introduction: '电感器',
+  category: ElectronicCategory.Passive,
   textBias: {
     Top: 13,
     Bottom: 10,

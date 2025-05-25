@@ -1,5 +1,4 @@
 import type { Path } from '@circuit/algorithm';
-import type { ElectronicKind } from '../types';
 
 /** 导线原始数据 */
 export interface LineStoreData {
@@ -11,6 +10,4 @@ export interface LineStoreData {
 export interface LineStructuredData extends LineStoreData {
   /** 导线编号 */
   id: string;
-  /** 导线类型 */
-  kind: ElectronicKind.Line;
 }

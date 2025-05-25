@@ -1,11 +1,10 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype, UnitType } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'Q',
   kind: ElectronicKind.TransistorNPN,
-  introduction: 'NPN型三极管',
+  category: ElectronicCategory.Semiconductor,
   textBias: {
     Left: 25,
   },

@@ -13,14 +13,15 @@
   background-color: @color-white;
 
   &:hover {
-    background-color: mix(@color-black, @color-white, 0.92);
+    background-color: mix(@color-white, @color-black, 90%);
   }
+
   &:last-child {
     margin-right: 0;
   }
 
   &.disabled {
-    color: mix(@color-black, @color-white, 0.65);
+    color: mix(@color-black, @color-white, 40%);
     background-color: @color-white;
     cursor: not-allowed;
   }

@@ -1,11 +1,10 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'VM',
   kind: ElectronicKind.VoltageMeter,
-  introduction: '电压表',
+  category: ElectronicCategory.Meter,
   textBias: {
     Left: 24,
     Right: 24,

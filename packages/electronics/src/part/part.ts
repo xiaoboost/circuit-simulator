@@ -4,9 +4,9 @@ import {
   Point,
   isMatrixEqual,
 } from '@circuit/algorithm';
-import { ElectronicKind } from '../types';
+import { ElectronicCategoryName, ElectronicName } from './constant';
 import { Electronics } from './prototype';
-import { PartStoreData, PartStructuredData, PartPinData } from './types';
+import { PartStoreData, PartStructuredData, PartPinData, ElectronicKind } from './types';
 import { getMarginVertex } from './utils';
 
 /** 迭代器件所有引脚数据 */
@@ -25,6 +25,14 @@ export function getPartPrototype(kind: ElectronicKind) {
   }
 
   return prototype;
+}
+
+/** 获取器件信息 */
+export function getPartInfo(kind: ElectronicKind) {
+  return {
+    name: ElectronicName[kind],
+    category: ElectronicCategoryName[getPartPrototype(kind).category],
+  };
 }
 
 /** 转换器件存储数据为状态数据 */

@@ -1,11 +1,10 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype, UnitType } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
   kind: ElectronicKind.DcVoltageSource,
-  introduction: '直流电压源',
+  category: ElectronicCategory.Power,
   textBias: {
     Left: 24,
     Right: 24,

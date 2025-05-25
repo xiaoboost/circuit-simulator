@@ -1,11 +1,10 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicKind } from '../../types';
-import { ElectronicPrototype, UnitType } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'OP',
   kind: ElectronicKind.OperationalAmplifier,
-  introduction: '运算放大器',
+  category: ElectronicCategory.Semiconductor,
   textBias: {
     Center: 0,
   },
