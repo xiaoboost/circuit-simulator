@@ -1,4 +1,4 @@
-.container {
+.layout {
   height: 100%;
   width: 100%;
   overflow: hidden;
@@ -7,4 +7,14 @@
   font-size: @font-default-size;
   display: flex;
   flex-direction: column;
+}
+
+.container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+.main-area {
+  flex-grow: 1;
 }

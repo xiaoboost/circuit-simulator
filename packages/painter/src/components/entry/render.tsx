@@ -18,7 +18,7 @@ export function Entry(props: PainterProps) {
   usePainterAdapter(props);
 
   return (
-    <div
+    <main
       className={scl(Styles.entry, props.className)}
       style={props.style}
       ref={painterRef}
@@ -27,6 +27,6 @@ export function Entry(props: PainterProps) {
     >
       <Drawer />
       <Viewer />
-    </div>
+    </main>
   );
 }
