@@ -50,6 +50,7 @@ export const data: ElectronicPrototype = {
       attribute: {
         d: 'M0,-40V40M-13,-11H13',
         stroke: 'currentColor',
+        fill: 'transparent',
       },
     },
     {

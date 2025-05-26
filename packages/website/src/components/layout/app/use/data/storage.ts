@@ -4,7 +4,7 @@ import {
   transformPartStoreToStateData,
   transformLineStoreToStateData,
 } from '@circuit/electronics';
-import { StateData } from '../../../../types';
+import { StateData } from '../../../../../types';
 import { storage, Columns } from './constant';
 
 import * as Example from './example';

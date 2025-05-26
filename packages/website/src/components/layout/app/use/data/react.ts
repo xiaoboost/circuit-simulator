@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { StateData } from '../../../../types';
+import { StateData } from '../../../../../types';
 import { readFromCache } from './storage';
 
 /** 数据初始化 */

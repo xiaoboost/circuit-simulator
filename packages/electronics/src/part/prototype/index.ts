@@ -25,7 +25,9 @@ import { data as ReferenceGround } from './virtual-ref-ground';
 type Electronics = { [key in ElectronicKind]: ElectronicPrototype };
 
 export const Electronics: Electronics = {
+  // TODO:
   [ElectronicKind.VoltageControlledVoltageSource]: {} as any,
+  // TODO:
   [ElectronicKind.CurrentControlledCurrentSource]: {} as any,
   [ElectronicKind.Resistance]: Resistance,
   [ElectronicKind.Capacitor]: Capacitor,

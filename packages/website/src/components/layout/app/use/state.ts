@@ -1,8 +1,8 @@
 import { PainterProps } from '@circuit/painter';
 import { message } from 'antd';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { StateController, CommitData } from '../../../libraries';
-import { StateData } from '../../../types';
+import { StateController, CommitData } from '../../../../libraries';
+import { StateData } from '../../../../types';
 
 export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, 'onReady'>> {
   const controller = useRef<StateController<StateData>>(null);

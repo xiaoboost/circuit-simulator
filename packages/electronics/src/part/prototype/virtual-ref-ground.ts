@@ -31,6 +31,7 @@ export const data: ElectronicPrototype = {
         y: '-10',
         width: '30',
         height: '26',
+        fill: 'transparent',
       },
     },
   ],

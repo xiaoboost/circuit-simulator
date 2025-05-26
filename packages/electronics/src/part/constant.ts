@@ -8,7 +8,7 @@ export const ElectronicName: Record<ElectronicKind, string> = {
   [ElectronicKind.VoltageMeter]: '电压测量',
   [ElectronicKind.OperationalAmplifier]: '运算放大器',
   [ElectronicKind.Diode]: '二极管',
-  [ElectronicKind.TransistorNPN]: 'npn 三极管',
+  [ElectronicKind.TransistorNPN]: 'NPN 三极管',
   [ElectronicKind.AcVoltageSource]: '交流电压源',
   [ElectronicKind.DcCurrentSource]: '直流电流源',
   [ElectronicKind.DcVoltageSource]: '直流电压源',
