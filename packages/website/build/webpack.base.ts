@@ -1,6 +1,6 @@
+import ForkTsCheckerWebpackPlugin  from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 import Webpack from 'webpack';
 
 import { startLoading } from '../src/styles/constant';
@@ -97,20 +97,6 @@ const baseConfig: Webpack.Configuration = {
         test: /\.(png|jpe?g|gif|webp)$/i,
         type: 'asset/resource',
       },
-      {
-        test: /\.html$/,
-        loader: 'html-loader',
-        options: {
-          esModule: false,
-          minimize: false,
-          sources: {
-            list: [
-              { tag: 'img', attribute: 'src', type: 'src' },
-              { tag: 'link', attribute: 'href', type: 'src' },
-            ],
-          },
-        },
-      },
     ],
   },
   optimization: {
@@ -152,7 +138,7 @@ const baseConfig: Webpack.Configuration = {
       inject: true,
       minify: false,
     }),
-    new TsCheckerRspackPlugin({
+    new ForkTsCheckerWebpackPlugin({
       typescript: {
         configFile: resolve('tsconfig.json'),
       },
