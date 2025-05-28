@@ -3,7 +3,7 @@ import { usePainterService } from '../../../context';
 import { PAINTER_SERVICE_KEY, MAP_SERVICE_KEY, LOGGER_SERVICE } from '../../../types';
 import { type PainterProps } from '../../wrapper';
 
-const methods = ['commit', 'undo', 'redo'] as const;
+const methods = ['commit', 'undo', 'redo', 'draft', 'dropDraft'] as const;
 const propKeys = [
   {
     key: 'parts' as const,

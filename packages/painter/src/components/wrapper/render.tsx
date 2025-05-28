@@ -5,7 +5,7 @@ import {
 import React, { useRef } from 'react';
 import { PainterContext } from '../../context/context';
 import { IPainterContext } from '../../context/types';
-import { CommitData } from '../../types';
+import { CommitData, CommitCb } from '../../types';
 import { Entry } from '../entry';
 import { usePainterInit, usePainterUnmount } from './use';
 
@@ -29,6 +29,10 @@ export interface PainterProps {
   redo: () => void;
   /** 提交 */
   commit: (data: CommitData) => void;
+  /** 草稿 */
+  draft: (data: CommitCb) => void;
+  /** 丢弃草稿 */
+  dropDraft: () => void;
   /**
    * 准备就绪
    *

@@ -1,5 +1,5 @@
 import { isNumber } from '@xiao-ai/utils';
-import { type PointLike, type PointInput, Direction } from './types';
+import { type PointLike, type PointInput, Direction, Position } from './types';
 
 /** 点和向量类 */
 export class Point {
@@ -509,7 +509,7 @@ export class Point {
   }
 
   /** 输出数据 */
-  toData(): [number, number] {
+  toData(): Position {
     return [this[0], this[1]];
   }
 }

@@ -14,18 +14,27 @@ definePlugin(({ registerService }) => {
     get(symbol, key) {
       return variableMap.get(symbol)?.get(key);
     },
-    set(symbol, key, newVal) {
-      const valTable = variableMap.get(symbol) ?? new Map();
+    set(symbol, key, newVal?) {
+      const setVal = (key: string, val: any) => {
+        const valTable = variableMap.get(symbol) ?? new Map();
 
-      if (!variableMap.get(symbol)) {
-        variableMap.set(symbol, valTable);
+        if (!variableMap.get(symbol)) {
+          variableMap.set(symbol, valTable);
+        }
+
+        const oldVal = valTable.get(key);
+
+        if (oldVal !== val) {
+          valTable.set(key, val);
+          observerMap.get(symbol)?.get(key)?.forEach(cb => cb(val, oldVal));
+        }
+      };
+
+      if (Array.isArray(key)) {
+        key.forEach(([k, v]) => setVal(k, v));
       }
-
-      const oldVal = valTable.get(key);
-
-      if (oldVal !== newVal) {
-        valTable.set(key, newVal);
-        observerMap.get(symbol)?.get(key)?.forEach(cb => cb(newVal, oldVal));
+      else {
+        setVal(key, newVal);
       }
     },
     observe(symbol, key, callback) {

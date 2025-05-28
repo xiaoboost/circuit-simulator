@@ -12,6 +12,7 @@ import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';
+const getLabelKey = (id: string) => `${id}-label`;
 
 interface Payload {
   id: string;
@@ -24,11 +25,11 @@ definePlugin(({ registerHook, getService }) => {
       // 设置选中
       getService(SELECT_SERVICE).set(id);
       // 偏移数据清零
-      getService(VarService).set(KEY, `${id}-label`, new Point(0, 0));
+      getService(VarService).set(KEY, getLabelKey(id), new Point(0, 0));
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
       if (getService(DRAG_SCENE_SERVICE).onlyHas(MoveDragSceneName)) {
-        getService(VarService).set(KEY, `${id}-label`, Point.from(movementInDrawerAcc));
+        getService(VarService).set(KEY, getLabelKey(id), Point.from(movementInDrawerAcc));
       }
     },
     isEnd(event) {
@@ -45,7 +46,7 @@ definePlugin(({ registerHook, getService }) => {
       return true;
     },
     afterEnd({ id }: Payload) {
-      const label = `${id}-label`;
+      const label = getLabelKey(id);
       const painterService = getService(PAINTER_SERVICE_KEY);
       const eventBus = getService(EVENT_BUS_KEY);
       const variableService = getService(VarService);

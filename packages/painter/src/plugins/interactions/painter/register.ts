@@ -21,6 +21,8 @@ definePlugin(({ registerService }) => {
     undo: () => void 0,
     redo: () => void 0,
     commit: () => void 0,
+    draft: () => void 0,
+    dropDraft: () => void 0,
     getPartPrototype(kind: ElectronicKind) {
       const result = Electronics[kind];
 

@@ -55,6 +55,10 @@ export interface IPainterService {
    * @description 提交数据，并记录操作日志
    */
   commit(data: CommitData): void;
+  /** 草稿 */
+  draft(cb: CommitCb): void;
+  /** 丢弃草稿 */
+  dropDraft(): void;
   /** 撤销 */
   undo(): void;
   /** 重做 */

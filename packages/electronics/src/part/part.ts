@@ -2,11 +2,24 @@ import {
   rotateVector,
   DirectionVectorSet,
   Point,
+  Position,
   isMatrixEqual,
+  Direction,
+  DirectionLabel,
 } from '@circuit/algorithm';
-import { ElectronicCategoryName, ElectronicName } from './constant';
+import { createId } from '../utils';
+import {
+  ElectronicName,
+  ElectronicCategoryName,
+  NewElectronicPosition,
+} from './constant';
 import { Electronics } from './prototype';
-import { PartStoreData, PartStructuredData, PartPinData, ElectronicKind } from './types';
+import {
+  PartStoreData,
+  PartStructuredData,
+  PartPinData,
+  ElectronicKind,
+} from './types';
 import { getMarginVertex } from './utils';
 
 /** 迭代器件所有引脚数据 */
@@ -84,4 +97,25 @@ export function getPartPin(data: PartStructuredData, pin: number): PartPinData {
   };
 
   return result;
+}
+
+/** 创建新器件 */
+export function createPartByKind(
+  kind: ElectronicKind,
+  parts: PartStructuredData[],
+): PartStructuredData {
+  const prototype = getPartPrototype(kind);
+  const id = createId(prototype.pre, parts.map((part) => part.id));
+  const textDirectionLabel = Object.keys(prototype.textBias ?? {})[0] ?? 'Bottom';
+  const textDirection = Direction[textDirectionLabel as DirectionLabel];
+  const part: PartStructuredData = {
+    id,
+    kind,
+    position: NewElectronicPosition.toData(),
+    rotate: [[1, 0], [0, 1]],
+    params: prototype.params.map((param) => param.default),
+    textDirection,
+  };
+
+  return part;
 }

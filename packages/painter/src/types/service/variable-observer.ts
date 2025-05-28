@@ -20,6 +20,7 @@ export interface IVariableObserverService {
   clear(): void;
   /** 设置变量 */
   set<T>(symbol: symbol, key: string, newVal: T): void;
+  set<T>(symbol: symbol, keyValues: [string, T][]): void;
   /** 获取变量 */
   get<T>(symbol: symbol, key: string): T | undefined;
   /** 观察变量 */

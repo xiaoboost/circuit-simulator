@@ -1,18 +1,20 @@
 import { PainterProps } from '@circuit/painter';
 import { message } from 'antd';
 import { useEffect, useState, useRef, useMemo } from 'react';
-import { StateController, CommitData } from '../../../../libraries';
+import { StateController, CommitData, EditProducer } from '../../../../libraries';
 import { StateData } from '../../../../types';
 
 export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, 'onReady'>> {
   const controller = useRef<StateController<StateData>>(null);
   const [state, setState] = useState<StateData | undefined>();
 
-  // 三个方法只需要监听实例
-  const [commit, undo, redo] = useMemo(() => ([
+  // 方法只需要监听实例
+  const [commit, undo, redo, draft, dropDraft] = useMemo(() => ([
     (data: CommitData<any>) => controller.current?.commit(data),
     () => controller.current?.undo(),
     () => controller.current?.redo(),
+    (data: EditProducer<any>) => controller.current?.draft(data),
+    () => controller.current?.dropDraft(),
   ]), [controller.current]);
 
   useEffect(() => {
@@ -57,6 +59,8 @@ export function usePainterState(data?: StateData): Readonly<Omit<PainterProps, '
     commit,
     undo,
     redo,
+    draft,
+    dropDraft,
     lines: state?.lines ?? [],
     parts: state?.parts ?? [],
     canUndo: controller.current?.canUndo ?? false,

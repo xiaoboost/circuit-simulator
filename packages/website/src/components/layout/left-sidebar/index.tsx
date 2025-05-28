@@ -1,11 +1,17 @@
 import { SearchOutlined } from '@ant-design/icons';
+import { ElectronicKind } from '@circuit/electronics';
 import { Input, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
-export function LeftSidebar() {
+export interface LeftSidebarProps {
+  /** 选中器件 */
+  onSelect?: (kind: ElectronicKind) => void;
+}
+
+export function LeftSidebar(props: LeftSidebarProps) {
   const title = '添加器件';
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
@@ -35,9 +41,9 @@ export function LeftSidebar() {
           <div key={category.key} className={Styles.categoryItem}>
             <div className={Styles.categoryTitle}>{category.title}</div>
             <div className={Styles.categoryComponents}>
-              {category.components.map(({ key, title, component: { shape } }) => (
+              {category.components.map(({ key, title, component: { shape, kind } }) => (
                 <Tooltip title={title} key={key} destroyTooltipOnHide>
-                  <div className={Styles.componentItem}>
+                  <div className={Styles.componentItem} onMouseDown={() => props.onSelect?.(kind)}>
                     <svg viewBox="0 0 80 80">
                       <g transform="translate(40, 40)">
                         {shape.map(({ name: Tag, attribute }, i) => (
