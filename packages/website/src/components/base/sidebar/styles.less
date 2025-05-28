@@ -1,12 +1,20 @@
 @prefix: sidebar;
 
-.@{prefix} {
-  width: 300px;
+.@{prefix}-wrapper {
   height: 100%;
-  background-color: @color-white;
-  border-right: 1px solid @color-border-light;
-  display: flex;
-  flex-direction: column;
+
+  &.@{prefix}-collapsed {
+    height: auto;
+  }
+
+  .@{prefix} {
+    width: 300px;
+    height: 100%;
+    background-color: @color-white;
+    border-right: 1px solid @color-border-light;
+    display: flex;
+    flex-direction: column;
+  }
 
   .@{prefix}-header {
     display: flex;

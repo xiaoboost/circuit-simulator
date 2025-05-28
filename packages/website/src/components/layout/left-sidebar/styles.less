@@ -1,5 +1,15 @@
-.left-sidebar {
-  border-right: 1px solid @color-border-light;
+.left-sidebar-wrapper {
+  left: 0;
+  z-index: 2;
+  position: absolute;
+
+  .left-sidebar {
+    border-right: 1px solid @color-border-light;
+  }
+
+  .left-sidebar-collapsed {
+    transform: translate(32px, 24px);
+  }
 
   .search-input {
     border: none;

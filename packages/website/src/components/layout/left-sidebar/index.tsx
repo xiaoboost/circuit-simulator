@@ -1,21 +1,26 @@
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
-import { DoubleLeft, Sidebar } from '../../base';
+import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
 export function LeftSidebar() {
+  const title = '添加器件';
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
 
   return (
     <Sidebar
-      title="添加器件"
-      icon={<DoubleLeft />}
-      className={Styles.leftSidebar}
-      onIconClick={() => {
-        console.log('icon clicked');
+      title={title}
+      icons={{
+        collapse: <DoubleLeft />,
+        expand: <DoubleRight />,
+      }}
+      classNames={{
+        wrapper: Styles.leftSidebarWrapper,
+        sidebar: Styles.leftSidebar,
+        collapsed: Styles.leftSidebarCollapsed,
       }}
     >
       <Input
