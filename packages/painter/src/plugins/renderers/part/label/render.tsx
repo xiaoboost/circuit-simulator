@@ -27,7 +27,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   } = data;
   const [label, subfix] = id.split('_');
   const invRotate = invertRotateMatrix(rotate);
-  const { value: map } = usePainterService(MAP_COORDINATE_SERVICE);
+  const { value: { data: map } } = usePainterService(MAP_COORDINATE_SERVICE);
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
@@ -76,17 +76,17 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     /** 文本盒子渲染状态 */
     const textBoxRect = textRef.current.getBBox();
     /** 轴线偏移量 */
-    const baselineOffset = Math.abs(textBoxRect.y / map.data.scale);
+    const baselineOffset = Math.abs(textBoxRect.y / map.scale);
     /** 纵轴居中对齐时的偏移量*/
     const yMiddleOffset = (
       (
         Math.abs(Math.abs(textBoxRect.y) - textBoxRect.height / 2) *
         (texts.length === 0 ? 1 : -1)
       ) /
-      map.data.scale
+      map.scale
     );
     /** 横轴居中对齐时的偏移量*/
-    const xMiddleOffset = - textBoxRect.width / map.data.scale / 2;
+    const xMiddleOffset = - textBoxRect.width / map.scale / 2;
 
     // 当前方向的偏移量
     const textBias = prototype.textBias[Direction[textDirection] as DirectionLabel] ?? 0;
@@ -116,7 +116,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
     else if (finalDirection === Direction.Top) {
       newPosition[0] = 0;
-      newPosition[1] = - textBias;
+      newPosition[1] = - (textHeight + textSpaceHeight) * texts.length - textBias;
     }
     else if (finalDirection === Direction.Bottom) {
       newPosition[0] = 0;

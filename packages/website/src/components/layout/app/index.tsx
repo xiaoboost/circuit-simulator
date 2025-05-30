@@ -17,7 +17,7 @@ export function App() {
   const painterState = usePainterState(data);
   const onCreatePart = useCallback((kind: ElectronicKind) => {
     painterState.draft((state) => {
-      state.parts.push(createPartByKind(kind, painterState.parts));
+      state.parts.push(createPartByKind(kind, state.parts));
     });
   }, [painterState.draft]);
 

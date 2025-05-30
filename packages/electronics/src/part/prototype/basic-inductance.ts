@@ -6,7 +6,7 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Inductance,
   category: ElectronicCategory.Passive,
   textBias: {
-    Top: 13,
+    Top: 14,
     Bottom: 10,
   },
   padding: [0, 1, 0, 1],

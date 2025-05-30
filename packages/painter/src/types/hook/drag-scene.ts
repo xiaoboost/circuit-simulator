@@ -1,7 +1,6 @@
 import type { Point } from '@circuit/algorithm';
 import type { MouseEvent } from 'react';
 import { createServiceKey } from '../../context';
-import type { ScenePayload } from '../service/drag-scene';
 
 /** 拖动的鼠标事件 */
 export interface DragMouseEvent extends MouseEvent {
@@ -47,6 +46,18 @@ export interface DragMoveEvent extends DragMouseEvent {
   readonly movementInDrawerAcc: Point;
 }
 
+/** 钩子参数 */
+export interface DragSceneHookPayload {
+  /**
+   * 手动触发动作时的传入事件参数
+   *
+   * @description 手动触发时如果传入了事件参数，这里会将其包装成画布自己的拖动事件
+   */
+  event?: DragMouseEvent;
+  /** 其他参数 */
+  [key: string]: any;
+}
+
 /**
  * 拖动场景钩子
  *
@@ -73,18 +84,18 @@ export interface IDragScene {
    *
    * @description `payload`为场景触发时传递的参数
    */
-  onDragMove(event: DragMoveEvent, payload: ScenePayload): void;
+  onDragMove(event: DragMoveEvent, payload: DragSceneHookPayload): void;
   /**
    * 场景开始
    *
    * @description 首次移动之前
    * @description `payload`为场景触发时传递的参数
    */
-  afterStart?(startPayload?: ScenePayload): void;
+  afterStart?(startPayload?: DragSceneHookPayload): void;
   /**
    * 场景结束
    *
    * @description `payload`为场景触发时传递的参数
    */
-  afterEnd?(startPayload?: ScenePayload, endPayload?: ScenePayload): void;
+  afterEnd?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
 }

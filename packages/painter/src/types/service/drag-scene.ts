@@ -1,4 +1,5 @@
 import { ReadonlySet } from '@circuit/shared';
+import { MouseEvent } from 'react';
 import { createServiceKey } from '../../context';
 
 /**
@@ -14,7 +15,13 @@ export const DRAG_SCENE_SERVICE =
   createServiceKey<IDragSceneService>('DragSceneService');
 
 /** 场景触发参数 */
-export interface ScenePayload {
+export interface SceneTriggerPayload {
+  /**
+   * 手动触发动作时的传入参数
+   *
+   * @description 如果可以获得鼠标事件则传入
+   */
+  event?: MouseEvent;
   /** 其他参数 */
   [key: string]: any;
 }
@@ -26,13 +33,13 @@ export interface IDragSceneService extends ReadonlySet<string> {
    *
    * @description 主动触发场景
    */
-  trigger(scene: string, startPayload?: ScenePayload): void;
+  trigger(scene: string, payload?: SceneTriggerPayload): void;
   /**
    * 触发场景结束
    *
    * @description 让场景立即结束，不会等待下一次`isEnd`判断
    */
-  triggerEnd(scene: string, endPayload?: ScenePayload): void;
+  triggerEnd(scene: string, payload?: SceneTriggerPayload): void;
   /**
    * 只有某个场景
    */

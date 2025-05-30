@@ -11,7 +11,8 @@ import {
   DRAG_SCENE_SERVICE,
   EVENT_BUS_KEY,
   LOGGER_SERVICE,
-  VARIABLE_OBSERVER_SERVICE as VarService,
+  DragSceneHookPayload,
+  VARIABLE_OBSERVER_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
 
@@ -20,12 +21,12 @@ const LoggerName = '创建器件';
 const getBodyKey = (id: string) => `${id}-body`;
 const getLabelKey = (id: string) => `${id}-label`;
 
-type StartPayloadType = PartStructuredData;
-type EndPayloadType = { esc: true };
+type StartPayloadType = PartStructuredData & DragSceneHookPayload;
+type EndPayloadType = { esc: true } & DragSceneHookPayload;
 
 definePlugin(({ registerHook, getService }) => {
-  const setPosition = (id: string, position: Point) => {
-    getService(VarService).set(KEY, [
+  const setPosition = (id: string, position?: Point) => {
+    getService(VARIABLE_OBSERVER_SERVICE).set(KEY, [
       [getBodyKey(id), position],
       [getLabelKey(id), position],
     ]);
@@ -74,7 +75,7 @@ definePlugin(({ registerHook, getService }) => {
     },
     onDragMove({ positionInDrawer }, { id }: StartPayloadType) {
       if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
-        setPosition(id, Point.from(positionInDrawer));
+        setPosition(id, NewElectronicPosition.mul(-1).add(positionInDrawer));
         getService(LOGGER_SERVICE).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
       }
     },
@@ -101,14 +102,23 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      debugger;
-      const label = getLabelKey(part.id);
       const eventBus = getService(EVENT_BUS_KEY);
-      const variableService = getService(VarService);
+      const currentPosition = endPayload.event!.positionInDrawer.round(20);
 
+      painterService.commit({
+        name: `创建器件 ${part.id}`,
+        description: `创建器件 ${part.id}，位置：${currentPosition.join()}`,
+        patch({ parts }) {
+          parts.push({
+            ...part,
+            position: currentPosition.toData(),
+          });
+        },
+      });
+
+      // 清除临时变量
+      setPosition(part.id, undefined);
       logger.info(LoggerName, '结束创建器件', part.id);
-      // const part = painterService.getPart(id);
-      // const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
     },
   });
 });

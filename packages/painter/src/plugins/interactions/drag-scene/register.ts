@@ -2,12 +2,13 @@ import { Point } from '@circuit/algorithm';
 import type { MouseEvent } from 'react';
 import { definePlugin } from '../../../context';
 import {
+  DragMouseEvent,
+  DragSceneHookPayload,
   IDragSceneService,
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   EVENT_LISTENER_HOOK,
   MAP_COORDINATE_SERVICE,
-  DragMouseEvent,
   PAINTER_HTML_ELEMENT,
 } from '../../../types';
 
@@ -26,17 +27,24 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       sceneSet.forEach(callback);
     },
     trigger(scene, payload) {
+      const startPayload: DragSceneHookPayload | undefined = payload?.event
+        ? {
+          ...payload,
+          event: getDragMouseEvent(payload.event),
+        }
+        : payload as any;
+
       // 触发之后立即运行
       getHook(DRAG_SCENE_HOOK)
         .find(({ name }) => name === scene)
-        ?.afterStart?.(payload);
+        ?.afterStart?.(startPayload);
 
       sceneSet.add(scene);
-      triggerPayloadMap.set(scene, payload);
+      triggerPayloadMap.set(scene, startPayload);
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
-      if (payload?.event) {
-        startPositionMap.set(scene, getDragMouseEvent(payload.event).position);
+      if (startPayload?.event) {
+        startPositionMap.set(scene, startPayload.position);
       }
     },
     triggerEnd(scene, payload) {
@@ -46,6 +54,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
       const triggerPayload = triggerPayloadMap.get(scene);
       const hook = getHook(DRAG_SCENE_HOOK).find(({ name }) => name === scene);
+      const endPayload: DragSceneHookPayload | undefined = payload?.event
+        ? {
+          ...payload,
+          event: getDragMouseEvent(payload.event),
+        }
+        : payload as any;
 
       // 先移除场景，再触发结束事件
       Promise.resolve()
@@ -54,7 +68,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
           triggerPayloadMap.delete(scene);
           startPositionMap.delete(scene);
         })
-        .then(() => hook?.afterEnd?.(triggerPayload, payload));
+        .then(() => hook?.afterEnd?.(triggerPayload, endPayload));
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
@@ -103,7 +117,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             triggerPayloadMap.delete(hook.name);
             startPositionMap.delete(hook.name);
           })
-          .then(() => hook.afterEnd?.(triggerPayload));
+          .then(() => hook.afterEnd?.(triggerPayload, { event: dragMouseEvent }));
       }
     }
   }
