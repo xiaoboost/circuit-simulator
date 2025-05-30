@@ -1,0 +1,22 @@
+@import '../../constant.ts';
+
+@computedValue: ((@ToolbarButtonWidth / 2 + @ToolbarPadding + 2) * 1px);
+
+.menu-drop-list {
+  :global(.ant-dropdown-menu) {
+    transform: translate(calc(50% - @computedValue), -10px);
+  }
+
+  width: 140px;
+
+  .menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+
+    &.selected {
+      color: @color-primary;
+    }
+  }
+}

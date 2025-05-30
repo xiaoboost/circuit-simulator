@@ -29,6 +29,8 @@ export interface IConfigurationService {
   readonly partLabelVisible: Watcher<PartLabelVisibleKind>;
   /** 图纸移动模式 */
   readonly movePainterMode: Watcher<boolean>;
-  /** 调试模式 */
-  readonly debuggerMode: Watcher<boolean>;
+  /** 打开调试日志 */
+  readonly openDebugLog: Watcher<boolean>;
+  /** 打开路径搜索调试器 */
+  readonly openPathSearcherDebugger: Watcher<boolean>;
 }

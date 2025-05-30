@@ -2,8 +2,7 @@ import { Tooltip } from 'antd';
 import React, { useState } from 'react';
 import { usePainterService, useWatcher, useHotkey } from '../../../../../context';
 import { CONFIGURATION_SERVICE, DRAG_SCENE_SERVICE, CURSOR_SERVICE } from '../../../../../types';
-import { Button } from '../../components';
-import { Cursor, Hand } from './icons';
+import { Button, Cursor, Hand } from '../../components';
 
 export function Render() {
   const configuration = usePainterService(CONFIGURATION_SERVICE);
@@ -54,14 +53,16 @@ export function Render() {
 
   return (
     <>
-      <Button
-        onClick={onClickCursor}
-        selected={!isMoveMode}
-        disabled={isSpaceKeyDown}
-      >
-        <Cursor />
+      <Tooltip title='编辑模式'>
+        <Button
+          onClick={onClickCursor}
+          selected={!isMoveMode}
+          disabled={isSpaceKeyDown}
+        >
+          <Cursor />
       </Button>
-      <Tooltip title='移动图纸'>
+      </Tooltip>
+      <Tooltip title='移动模式'>
         <Button
           onClick={onClickHand}
           selected={isMoveMode}

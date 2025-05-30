@@ -6,7 +6,8 @@ definePlugin(({ registerService }) => {
     PartLabelVisibleKind: PartLabelVisibleKind,
     partLabelVisible: new Watcher<PartLabelVisibleKind>(PartLabelVisibleKind.Visible),
     movePainterMode: new Watcher(false),
-    debuggerMode: new Watcher(false),
+    openDebugLog: new Watcher(false),
+    openPathSearcherDebugger: new Watcher(false),
   };
 
   // 注册配置服务
@@ -16,6 +17,7 @@ definePlugin(({ registerService }) => {
   return () => {
     service.partLabelVisible.unObserve();
     service.movePainterMode.unObserve();
-    service.debuggerMode.unObserve();
+    service.openDebugLog.unObserve();
+    service.openPathSearcherDebugger.unObserve();
   };
 });

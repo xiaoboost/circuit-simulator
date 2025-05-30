@@ -4,7 +4,7 @@ import * as Styles from './styles.less';
 
 export interface ButtonProps {
   /** 按钮点击事件 */
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /** 按钮是否被选中 */
   selected?: boolean;
   /** 按钮是否禁用 */
@@ -16,9 +16,9 @@ export interface ButtonProps {
 }
 
 export function Button(props: React.PropsWithChildren<ButtonProps>) {
-  const onClick = () => {
-    if (!props.disabled) {
-      props.onClick?.();
+  const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (!props?.disabled) {
+      props?.onClick?.(event);
     }
   };
 

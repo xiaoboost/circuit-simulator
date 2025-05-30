@@ -29,7 +29,7 @@
     "@circuit/shared": "workspace:*",
     "@circuit/solver": "workspace:*",
     "@xiao-ai/utils": "1.6.7",
-    "antd": "5.24.9",
+    "antd": "5.25.3",
     "core-js": "3.40.0",
     "immer": "10.1.1",
     "localforage": "1.10.0",

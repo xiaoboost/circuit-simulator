@@ -11,7 +11,7 @@ const getLoggerStyle = (color: string) => {
 };
 
 definePlugin(({ registerService, getService }) => {
-  const isDebugMode = () => getService(CONFIGURATION_SERVICE).debuggerMode.data;
+  const isDebugMode = () => getService(CONFIGURATION_SERVICE).openDebugLog.data;
   const service: ILoggerService = {
     debug(name, ...messages) {
       if (isDebugMode()) {

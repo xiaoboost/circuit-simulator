@@ -27,7 +27,7 @@
     "@circuit/map": "workspace:*",
     "@circuit/shared": "workspace:*",
     "@xiao-ai/utils": "1.6.7",
-    "antd": "5.24.9",
+    "antd": "5.25.3",
     "hotkeys-js": "3.13.9",
     "motion": "12.9.4",
     "react": "19.1.0",

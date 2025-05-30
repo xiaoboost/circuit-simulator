@@ -51,7 +51,7 @@ definePlugin(({ registerService, getService }) => {
     typeName: string,
     cb: (input: unknown) => boolean,
   ): asserts input is T {
-    if (getService(CONFIGURATION_SERVICE).debuggerMode.data) {
+    if (getService(CONFIGURATION_SERVICE).openDebugLog.data) {
       if (!cb(input)) {
         const currentType = isPrimitive(input) ? typeof input : Object.getPrototypeOf(input).name;
         const message = `类型校验未通过，期望类型: ${typeName}，输入值: ${input}，其类型为：${currentType}`;

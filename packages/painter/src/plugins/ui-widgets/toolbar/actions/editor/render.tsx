@@ -2,8 +2,7 @@ import { Tooltip } from 'antd';
 import React from 'react';
 import { usePainterService, useWatcher } from '../../../../../context';
 import { LOGGER_SERVICE, PAINTER_SERVICE_KEY, SELECT_SERVICE } from '../../../../../types';
-import { Button } from '../../components';
-import { Undo, Redo } from './icons';
+import { Button, Undo, Redo } from '../../components';
 
 export function Render() {
   const logger = usePainterService(LOGGER_SERVICE);

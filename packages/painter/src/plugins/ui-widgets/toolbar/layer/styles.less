@@ -1,8 +1,10 @@
+@import '../constant.ts';
+
 .toolbar {
   position: absolute;
   right: 32px;
   bottom: 32px;
-  padding: 8px;
+  padding: (@ToolbarPadding * 1px);
   pointer-events: auto;
   background-color: @color-white;
   border: 1px solid @color-border-base;
