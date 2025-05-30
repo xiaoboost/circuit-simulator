@@ -42,7 +42,7 @@ export function LeftSidebar(props: LeftSidebarProps) {
             <div className={Styles.categoryTitle}>{category.title}</div>
             <div className={Styles.categoryComponents}>
               {category.components.map(({ key, title, component: { shape, kind } }) => (
-                <Tooltip title={title} key={key} destroyTooltipOnHide>
+                <Tooltip title={title} key={key} destroyOnHidden>
                   <div className={Styles.componentItem} onMouseDown={() => props.onSelect?.(kind)}>
                     <svg viewBox="0 0 80 80">
                       <g transform="translate(40, 40)">

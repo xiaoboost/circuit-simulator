@@ -26,10 +26,6 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       sceneSet.forEach(callback);
     },
     trigger(scene, payload) {
-      if (!payload.event) {
-        throw new Error('触发场景事件回调参数中必须包含鼠标事件数据！');
-      }
-
       // 触发之后立即运行
       getHook(DRAG_SCENE_HOOK)
         .find(({ name }) => name === scene)
@@ -37,14 +33,35 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
       sceneSet.add(scene);
       triggerPayloadMap.set(scene, payload);
-      startPositionMap.set(scene, getDragMouseEvent(payload.event).position);
+
+      // 初始事件可能是空，因为不一定是从鼠标事件触发的
+      if (payload?.event) {
+        startPositionMap.set(scene, getDragMouseEvent(payload.event).position);
+      }
+    },
+    triggerEnd(scene, payload) {
+      if (!service.has(scene)) {
+        return;
+      }
+
+      const triggerPayload = triggerPayloadMap.get(scene);
+      const hook = getHook(DRAG_SCENE_HOOK).find(({ name }) => name === scene);
+
+      // 先移除场景，再触发结束事件
+      Promise.resolve()
+        .then(() => {
+          sceneSet.delete(scene);
+          triggerPayloadMap.delete(scene);
+          startPositionMap.delete(scene);
+        })
+        .then(() => hook?.afterEnd?.(triggerPayload, payload));
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
     },
   };
 
-  function getDragMouseEvent(event: MouseEvent<HTMLElement>) {
+  function getDragMouseEvent(event: MouseEvent) {
     const painterElement = getService(PAINTER_HTML_ELEMENT);
     const { left, top } = painterElement.current!.getBoundingClientRect();
     const { value: { data: map } } = getService(MAP_COORDINATE_SERVICE);
@@ -59,33 +76,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     return dragMouseEvent;
   }
 
-  function startCb(event: MouseEvent<HTMLElement>) {
-    const dragHook = getHook(DRAG_SCENE_HOOK);
-    // 未进行的场景
-    const hooks = dragHook.filter((hook) => !service.has(hook.name));
-
-    if (hooks.length === 0) {
-      return;
-    }
-
-    const dragMouseEvent = getDragMouseEvent(event);
-
-    for (const hook of hooks) {
-      const isStart = hook.start?.(dragMouseEvent);
-
-      if (isStart) {
-        // 先触发开始事件，然后再添加场景
-        Promise.resolve()
-          .then(() => {
-            hook.afterStart?.();
-            startPositionMap.set(hook.name, Point.from(dragMouseEvent.position));
-          })
-          .then(() => sceneSet.add(hook.name));
-      }
-    }
-  }
-
-  function endCb(event: MouseEvent<HTMLElement>) {
+  function endCb(event: MouseEvent) {
     if (service.size === 0) {
       return;
     }
@@ -127,27 +118,21 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   // 注册原始事件钩子
   registerHook(EVENT_LISTENER_HOOK, {
     onClick(event) {
-      startCb(event);
       endCb(event);
     },
     onDblClick(event) {
-      startCb(event);
       endCb(event);
     },
     onMouseDown(event) {
-      startCb(event);
       endCb(event);
     },
     onMouseUp(event) {
-      startCb(event);
       endCb(event);
     },
     onMouseEnter(event) {
-      startCb(event);
       endCb(event);
     },
     onMouseLeave(event) {
-      startCb(event);
       endCb(event);
     },
     onMouseMove(event) {
@@ -166,6 +151,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             const dragMouseEvent = getDragMouseEvent(event);
 
             for (const hook of hooks) {
+              // 初始时没有开始位置，设置开始位置，然后跳过首次处理
+              if (!startPositionMap.has(hook.name)) {
+                startPositionMap.set(hook.name, getDragMouseEvent(event).position);
+                continue;
+              }
+
               const movementAcc = dragMouseEvent.position.add(startPositionMap.get(hook.name)!, -1);
               const movementInDrawerAcc = movementAcc.mul(map.value.data.scale, -1);
               const payload = triggerPayloadMap.get(hook.name);

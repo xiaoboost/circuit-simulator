@@ -26,10 +26,10 @@ export interface CommitData {
  * @description 该服务提供了画布服务
  * @example
  * ```ts
- * const painterService = usePainterService(PAINTER_SERVICE_KEY);
+ * const painterService = usePainterService(PAINTER_SERVICE);
  * ```
  */
-export const PAINTER_SERVICE_KEY =
+export const PAINTER_SERVICE =
   createServiceKey<IPainterService>('PainterService');
 
 export interface IPainterService {

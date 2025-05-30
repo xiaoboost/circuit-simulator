@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { usePainterService } from '../../../context';
-import { PAINTER_SERVICE_KEY, MAP_SERVICE_KEY, LOGGER_SERVICE } from '../../../types';
+import { PAINTER_SERVICE, MAP_SERVICE, LOGGER_SERVICE } from '../../../types';
 import { type PainterProps } from '../../wrapper';
 
 const methods = ['commit', 'undo', 'redo', 'draft', 'dropDraft'] as const;
@@ -25,8 +25,8 @@ const propKeys = [
 
 /** 画布参数变化桥接 */
 export function usePainterAdapter(props: PainterProps) {
-  const painterService = usePainterService(PAINTER_SERVICE_KEY);
-  const mapService = usePainterService(MAP_SERVICE_KEY);
+  const painterService = usePainterService(PAINTER_SERVICE);
+  const mapService = usePainterService(MAP_SERVICE);
   const logger = usePainterService(LOGGER_SERVICE);
 
   for (const method of methods) {

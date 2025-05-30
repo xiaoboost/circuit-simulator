@@ -1,11 +1,11 @@
 import { isEqualPoint } from '@circuit/algorithm';
 import React from 'react';
 import { usePainterService } from '../../../../context';
-import { ILineRendererProps, MAP_SERVICE_KEY } from '../../../../types';
+import { ILineRendererProps, MAP_SERVICE } from '../../../../types';
 import { ElectronicPoint } from '../../../components';
 
 function PartPinRender({ data: { id, path } }: ILineRendererProps) {
-  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE_KEY);
+  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE);
 
   if (path.length === 0) {
     return null;

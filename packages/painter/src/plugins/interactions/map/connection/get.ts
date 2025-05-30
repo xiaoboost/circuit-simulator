@@ -7,10 +7,9 @@ export function getPinConnectionByPosition(
   service: MarkMap,
 ): IPinConnection[] {
   const mark = service.get(position);
-  const errorMessage = `无法获取节点连接，请检查节点位置是否正确: ${position.join()}`;
 
   if (!mark) {
-    throw new Error(errorMessage);
+    return [];
   }
 
   if (mark.isPartPin()) {
@@ -45,6 +44,6 @@ export function getPinConnectionByPosition(
     }));
   }
   else {
-    throw new Error(errorMessage);
+    throw new Error(`无法获取节点连接，请检查节点位置是否正确: ${position.join()}`);
   }
 }

@@ -7,7 +7,7 @@ import {
 import {
   MAP_COORDINATE_SERVICE,
   DRAW_LAYER_HOOK,
-  PAINTER_SERVICE_KEY,
+  PAINTER_SERVICE,
   CURSOR_SERVICE,
 } from '../../types';
 import * as Styles from './styles.less';
@@ -19,7 +19,7 @@ export function Drawer() {
   const [{ scale, position }] = useWatcher(mapService.value);
   const mouseListener = useMouseListener();
   const layers = usePainterHook(DRAW_LAYER_HOOK, 'asc');
-  const painterService = usePainterService(PAINTER_SERVICE_KEY);
+  const painterService = usePainterService(PAINTER_SERVICE);
   const cursorService = usePainterService(CURSOR_SERVICE);
   const [parts] = useWatcher(painterService.parts);
   const [lines] = useWatcher(painterService.lines);

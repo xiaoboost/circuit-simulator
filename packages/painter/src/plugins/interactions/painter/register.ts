@@ -7,7 +7,7 @@ import {
 import { Watcher } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
 import {
-  PAINTER_SERVICE_KEY,
+  PAINTER_SERVICE,
   IPainterService,
 } from '../../../types';
 
@@ -53,7 +53,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册元件服务
-  registerService(PAINTER_SERVICE_KEY, service);
+  registerService(PAINTER_SERVICE, service);
 
   // 卸载器
   return () => {

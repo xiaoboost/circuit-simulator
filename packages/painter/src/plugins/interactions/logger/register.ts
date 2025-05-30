@@ -15,17 +15,17 @@ definePlugin(({ registerService, getService }) => {
   const service: ILoggerService = {
     debug(name, ...messages) {
       if (isDebugMode()) {
-        console.debug(`%c[Debug] [${name}]`, getLoggerStyle('grey'), ...messages);
+        console.info(`%c[Debug] [${name}]`, getLoggerStyle('CornflowerBlue'), ...messages);
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] [${name}]`, getLoggerStyle('blue'), ...messages);
+      console.info(`%c[Info] [${name}]`, getLoggerStyle('Silver'), ...messages);
     },
     warn(name, ...messages) {
-      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('yellow'), ...messages);
+      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('LightCoral'), ...messages);
     },
     error(name, ...messages) {
-      console.error(`%c[Error] [${name}]`, getLoggerStyle('red'), ...messages);
+      console.error(`%c[Error] [${name}]`, getLoggerStyle('Tomato'), ...messages);
     },
   };
 

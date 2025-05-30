@@ -1,9 +1,10 @@
 import type { Point } from '@circuit/algorithm';
 import type { MouseEvent } from 'react';
 import { createServiceKey } from '../../context';
+import type { ScenePayload } from '../service/drag-scene';
 
 /** 拖动的鼠标事件 */
-export interface DragMouseEvent extends MouseEvent<HTMLElement> {
+export interface DragMouseEvent extends MouseEvent {
   /**
    * 鼠标相对于元素的位置
    *
@@ -62,12 +63,6 @@ export interface IDragScene {
   /** 场景类型 */
   name: string;
   /**
-   * 场景触发
-   *
-   * @description 所有鼠标事件都会注入这里，当返回`true`时，表示该场景触发
-   */
-  start?(event: DragMouseEvent): boolean | undefined;
-  /**
    * 场景结束
    *
    * @description 所有鼠标事件都会注入这里，当返回`true`时，表示该场景结束
@@ -78,18 +73,18 @@ export interface IDragScene {
    *
    * @description `payload`为场景触发时传递的参数
    */
-  onDragMove(event: DragMoveEvent, payload?: any): void;
+  onDragMove(event: DragMoveEvent, payload: ScenePayload): void;
   /**
    * 场景开始
    *
    * @description 首次移动之前
    * @description `payload`为场景触发时传递的参数
    */
-  afterStart?(payload?: any): void;
+  afterStart?(startPayload?: ScenePayload): void;
   /**
    * 场景结束
    *
    * @description `payload`为场景触发时传递的参数
    */
-  afterEnd?(payload?: any): void;
+  afterEnd?(startPayload?: ScenePayload, endPayload?: ScenePayload): void;
 }

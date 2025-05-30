@@ -4,7 +4,7 @@ import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
-  PAINTER_SERVICE_KEY,
+  PAINTER_SERVICE,
   VARIABLE_OBSERVER_SERVICE as VarService,
   EVENT_BUS_KEY,
 } from '../../../types';
@@ -47,7 +47,7 @@ definePlugin(({ registerHook, getService }) => {
     },
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);
-      const painterService = getService(PAINTER_SERVICE_KEY);
+      const painterService = getService(PAINTER_SERVICE);
       const eventBus = getService(EVENT_BUS_KEY);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);

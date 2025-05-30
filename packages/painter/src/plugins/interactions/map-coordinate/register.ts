@@ -40,6 +40,22 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
   // 注册滚轮缩放事件
   registerHook(EVENT_LISTENER_HOOK, {
+    onMouseDown(event) {
+      // 非左键或者鼠标按下事件不处理
+      if (event.button !== 0 || event.type !== 'mousedown') {
+        return;
+      }
+
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+      const configurationService = getService(CONFIGURATION_SERVICE);
+
+      // 当前场景不为空或者不是移动模式时不处理
+      if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
+        return;
+      }
+
+      dragSceneService.trigger(DragSceneName, { event });
+    },
     onMouseWheel(e) {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
@@ -90,22 +106,6 @@ definePlugin(({ getService, registerHook, registerService }) => {
   // 注册鼠标拖动背景事件
   registerHook(DRAG_SCENE_HOOK, {
     name: DragSceneName,
-    start(event) {
-      // 非左键或者鼠标按下事件不处理
-      if (event.button !== 0 || event.type !== 'mousedown') {
-        return false;
-      }
-
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const configurationService = getService(CONFIGURATION_SERVICE);
-
-      // 当前场景不为空或者不是移动模式时不处理
-      if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
-        return false;
-      }
-
-      return true;
-    },
     isEnd(event) {
       const configuration = getService(CONFIGURATION_SERVICE);
 

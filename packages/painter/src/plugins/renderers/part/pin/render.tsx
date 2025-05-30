@@ -1,11 +1,11 @@
 import React from 'react';
 import { usePainterService } from '../../../../context';
-import { IPartRendererProps, MAP_SERVICE_KEY } from '../../../../types';
+import { IPartRendererProps, MAP_SERVICE } from '../../../../types';
 import { ElectronicPoint as Point } from '../../../components';
 
 function PartPinRender({ data, prototype }: IPartRendererProps) {
   const { pins } = prototype;
-  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE_KEY);
+  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE);
 
   if (pins.length === 0) {
     return null;

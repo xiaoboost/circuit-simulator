@@ -4,12 +4,12 @@ import { usePainterHook, usePainterService } from '../../../../context';
 import {
   IDrawLayerProps,
   POINT_RENDERER,
-  MAP_SERVICE_KEY,
+  MAP_SERVICE,
 } from '../../../../types';
 
 function PointLayerRender(_: IDrawLayerProps) {
   const pointRenderers = usePainterHook(POINT_RENDERER, 'asc');
-  const { markService: mapMark } = usePainterService(MAP_SERVICE_KEY);
+  const { markService: mapMark } = usePainterService(MAP_SERVICE);
   const points = Array.from(mapMark.values()).filter((mark) => mark.kind === MarkKind.LineCover);
 
   if (pointRenderers.length === 0 || points.length === 0) {

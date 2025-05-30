@@ -2,9 +2,9 @@ import { isLine, getPartPin } from '@circuit/electronics';
 import { MarkMap } from '@circuit/map';
 import { definePlugin } from '../../../context';
 import {
-  MAP_SERVICE_KEY,
+  MAP_SERVICE,
   LIFE_CYCLE_HOOK,
-  PAINTER_SERVICE_KEY,
+  PAINTER_SERVICE,
   IMapService,
 } from '../../../types';
 import { getPinConnectionByPosition } from './connection';
@@ -35,7 +35,7 @@ definePlugin(({ registerService, getService }) => {
       return getPinConnectionByPosition(position, markService);
     },
     getPinConnectionByPin(id, pin) {
-      const electronicService = getService(PAINTER_SERVICE_KEY);
+      const electronicService = getService(PAINTER_SERVICE);
 
       if (isLine(id)) {
         const line = electronicService.getLine(id);
@@ -55,7 +55,7 @@ definePlugin(({ registerService, getService }) => {
   };
 
   // 注册图纸服务
-  registerService(MAP_SERVICE_KEY, service);
+  registerService(MAP_SERVICE, service);
 
   // 卸载器
   return () => {
