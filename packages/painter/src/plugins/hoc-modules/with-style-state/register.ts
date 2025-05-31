@@ -1,13 +1,13 @@
 import { definePlugin } from '../../../context';
 import { RENDERER_HOC } from '../../../types';
-import { MovementFactory } from './render';
+import { StyleFactory } from './render';
 
 definePlugin(({ registerHook }) => {
-  // 注册移动状态高阶组件
+  // 注册临时样式高阶组件
   registerHook(RENDERER_HOC, {
-    name: 'HOC:Movement',
-    order: 1,
+    name: 'HOC:Style',
+    order: 2,
     use: (hook) => !hook.name.includes('Pin'),
-    RenderHOC: MovementFactory,
+    RenderHOC: StyleFactory,
   });
 });

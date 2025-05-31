@@ -1,0 +1,20 @@
+import { Path } from '@circuit/algorithm';
+import React, { FC, useMemo } from 'react';
+import { usePainterService } from '../../../context';
+import {
+  PropsWithHocParams,
+  VARIABLE_OBSERVER_SERVICE as VAR,
+} from '../../../types';
+import { PATH_DISTORTION_HOC_SCOPE as KEY } from './constant';
+
+export function PathDistortionFactory(Render: FC<any>): FC<PropsWithHocParams<any>> {
+  function PathDistortionHOC(props: PropsWithHocParams<any>) {
+    const { $$key: key } = props;
+    const { useVariable } = usePainterService(VAR);
+    const path = useVariable<Path>(KEY, key);
+    const realPath = useMemo(() => path ? path : props.path, [path, props.path]);
+    return <Render {...props} path={realPath} />;
+  }
+
+  return React.memo(PathDistortionHOC);
+}

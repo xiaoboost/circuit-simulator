@@ -7,8 +7,8 @@ import {
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from './constant';
 
-export function MovementHOC(Render: FC<any>): FC<PropsWithHocParams<any>> {
-  function Movement(props: PropsWithHocParams<any>) {
+export function MovementFactory(Render: FC<any>): FC<PropsWithHocParams<any>> {
+  function MovementHOC(props: PropsWithHocParams<any>) {
     const { $$key: key } = props;
     const { useVariable } = usePainterService(VAR);
     const movement = useVariable<Point>(KEY, key);
@@ -21,5 +21,5 @@ export function MovementHOC(Render: FC<any>): FC<PropsWithHocParams<any>> {
     );
   }
 
-  return React.memo(Movement);
+  return React.memo(MovementHOC);
 }

@@ -31,7 +31,7 @@ export interface IRendererHOC<T = any> {
   /**
    * 序号
    *
-   * @description 数字越小，层级越浅
+   * @description 数字越小，越接近核心渲染器
    */
   order?: number;
   /**

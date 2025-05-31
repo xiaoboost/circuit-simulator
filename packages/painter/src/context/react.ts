@@ -69,7 +69,7 @@ export function useHotkey(key: string, options: HotKeyOptions, callback: KeyHand
 
 /** 组合高阶渲染器 */
 export function useComposeHOC<T extends object>(core: IRendererData<T>) {
-  const hooks = usePainterHook<IRendererHOC<T>>(RENDERER_HOC, 'desc');
+  const hooks = usePainterHook<IRendererHOC<T>>(RENDERER_HOC, 'asc');
   const Component = useMemo(() => {
     const filteredHooks = hooks.filter(hook => !hook.use || hook.use(core));
 
