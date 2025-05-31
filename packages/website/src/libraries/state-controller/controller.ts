@@ -96,6 +96,8 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
       editStack.shift();
     }
 
+    // 清除草稿
+    this.draftState = undefined;
     // 通知变更
     this.notify(SubscribeEventName.Change, newState);
   }
