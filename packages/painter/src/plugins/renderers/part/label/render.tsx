@@ -13,7 +13,7 @@ import {
   IPartRendererProps,
   MAP_COORDINATE_SERVICE,
   DRAG_SCENE_SERVICE,
-  EVENT_BUS_KEY,
+  EVENT_BUS_SERVICE,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
@@ -31,7 +31,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
-  const eventBus = usePainterService(EVENT_BUS_KEY);
+  const eventBus = usePainterService(EVENT_BUS_SERVICE);
   const dragService = usePainterService(DRAG_SCENE_SERVICE);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
 

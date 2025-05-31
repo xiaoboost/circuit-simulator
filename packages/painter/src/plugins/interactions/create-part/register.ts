@@ -9,7 +9,6 @@ import {
   SELECT_SERVICE,
   PAINTER_SERVICE,
   DRAG_SCENE_SERVICE,
-  EVENT_BUS_KEY,
   LOGGER_SERVICE,
   DragSceneHookPayload,
   VARIABLE_OBSERVER_SERVICE,
@@ -102,7 +101,6 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const eventBus = getService(EVENT_BUS_KEY);
       const currentPosition = endPayload.event!.positionInDrawer.round(20);
 
       painterService.commit({

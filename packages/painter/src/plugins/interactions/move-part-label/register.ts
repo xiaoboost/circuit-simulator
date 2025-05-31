@@ -6,12 +6,14 @@ import {
   SELECT_SERVICE,
   PAINTER_SERVICE,
   VARIABLE_OBSERVER_SERVICE as VarService,
-  EVENT_BUS_KEY,
+  EVENT_BUS_SERVICE,
+  LOGGER_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';
+const LoggerName = '移动器件信息文本';
 const getLabelKey = (id: string) => `${id}-label`;
 
 interface Payload {
@@ -22,6 +24,7 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(DRAG_SCENE_HOOK, {
     name: MoveDragSceneName,
     afterStart({ id }: Payload) {
+      getService(LOGGER_SERVICE).info(LoggerName, '开始移动器件信息文本', id);
       // 设置选中
       getService(SELECT_SERVICE).set(id);
       // 偏移数据清零
@@ -48,7 +51,7 @@ definePlugin(({ registerHook, getService }) => {
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);
       const painterService = getService(PAINTER_SERVICE);
-      const eventBus = getService(EVENT_BUS_KEY);
+      const eventBus = getService(EVENT_BUS_SERVICE);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);
       const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
@@ -56,15 +59,18 @@ definePlugin(({ registerHook, getService }) => {
       // 文本方向未发生变化，清空临时数据
       if (newDirection === part.textDirection) {
         variableService.set(KEY, label, undefined);
+        getService(LOGGER_SERVICE).info(LoggerName, '文本方向未发生变化', id);
       }
       // 方向发生变化，提交修改
       else {
+        const message = (
+          `移动器件 ${part.id} 文本，` +
+          `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
+        );
+
         painterService.commit({
           name: `移动器件 ${part.id} 文本`,
-          description: (
-            `移动器件 ${part.id} 文本，` +
-            `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
-          ),
+          description: message,
           patch: (data) => {
             const part = data.parts.find((p) => p.id === id);
 
@@ -73,6 +79,8 @@ definePlugin(({ registerHook, getService }) => {
             }
           },
         });
+
+        getService(LOGGER_SERVICE).info(LoggerName, message);
 
         // 等待器件文本修改时，一起提交
         eventBus

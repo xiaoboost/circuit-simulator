@@ -44,7 +44,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
       if (startPayload?.event) {
-        startPositionMap.set(scene, startPayload.position);
+        startPositionMap.set(scene, startPayload.event.position);
       }
     },
     triggerEnd(scene, payload) {
@@ -167,7 +167,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             for (const hook of hooks) {
               // 初始时没有开始位置，设置开始位置，然后跳过首次处理
               if (!startPositionMap.has(hook.name)) {
-                startPositionMap.set(hook.name, getDragMouseEvent(event).position);
+                startPositionMap.set(hook.name, dragMouseEvent.position);
                 continue;
               }
 
