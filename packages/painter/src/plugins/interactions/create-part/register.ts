@@ -13,7 +13,7 @@ import {
   DragSceneHookPayload,
   VARIABLE_OBSERVER_SERVICE,
 } from '../../../types';
-import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 
 const CreatePartSceneName = 'create-part';
 const LoggerName = '创建器件';

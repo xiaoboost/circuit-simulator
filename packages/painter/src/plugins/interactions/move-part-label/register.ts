@@ -9,7 +9,7 @@ import {
   EVENT_BUS_SERVICE,
   LOGGER_SERVICE,
 } from '../../../types';
-import { MOVEMENT_HOC_KEY as KEY } from '../movement/constant';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';

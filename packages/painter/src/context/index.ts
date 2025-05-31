@@ -9,4 +9,5 @@ export {
   usePainterService,
   usePainterHook,
   useHotkey,
+  useComposeHOC,
 } from './react';

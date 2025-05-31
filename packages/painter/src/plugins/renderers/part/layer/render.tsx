@@ -1,24 +1,27 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import React from 'react';
-import { useWatcher, usePainterHook, usePainterService } from '../../../../context';
-import { composeHOC } from '../../../../context/utils';
+import {
+  useComposeHOC,
+  useWatcher,
+  usePainterHook,
+  usePainterService,
+} from '../../../../context';
 import {
   IDrawLayerProps,
   PART_RENDERER,
   PAINTER_SERVICE,
-  RENDERER_HOC,
   SELECT_SERVICE,
 } from '../../../../types';
 import * as Styles from './styles.less';
 
 function PartLayerRender({ parts }: IDrawLayerProps) {
   const partRenderers = usePainterHook(PART_RENDERER, 'asc');
+  const partComposedRenderers = partRenderers.map(useComposeHOC);
   const service = usePainterService(PAINTER_SERVICE);
-  const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
   const selectService = usePainterService(SELECT_SERVICE);
   const [selectedIds] = useWatcher(selectService.value);
 
-  if (partRenderers.length === 0) {
+  if (partComposedRenderers.length === 0) {
     return null;
   }
 
@@ -35,9 +38,15 @@ function PartLayerRender({ parts }: IDrawLayerProps) {
               [Styles.selected]: selectedIds.has(part.id),
             })}
           >
-            {partRenderers.map((Render) => (
-              composeHOC({ data: part, prototype }, Render, HocHooks)
-            ))}
+            {partComposedRenderers.map(({ Component, getKey }) => {
+              const props = {
+                data: part,
+                prototype,
+              };
+              const key = getKey(props);
+
+              return <Component key={key} $$key={key} {...props} />;
+            })}
           </g>
         );
       })}

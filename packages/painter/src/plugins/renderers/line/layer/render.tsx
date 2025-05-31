@@ -1,13 +1,12 @@
 import React from 'react';
-import { usePainterHook } from '../../../../context';
-import { composeHOC } from '../../../../context/utils';
-import { IDrawLayerProps, LINE_RENDERER, RENDERER_HOC } from '../../../../types';
+import { usePainterHook, useComposeHOC } from '../../../../context';
+import { IDrawLayerProps, LINE_RENDERER } from '../../../../types';
 
 function LineLayerRender({ lines }: IDrawLayerProps) {
   const lineRenderers = usePainterHook(LINE_RENDERER, 'asc');
-  const HocHooks = usePainterHook(RENDERER_HOC, 'desc');
+  const lineComposedRenderers = lineRenderers.map(useComposeHOC);
 
-  if (lineRenderers.length === 0) {
+  if (lineComposedRenderers.length === 0) {
     return null;
   }
 
@@ -15,9 +14,11 @@ function LineLayerRender({ lines }: IDrawLayerProps) {
     <>
       {lines.map((line, index) => (
         <g key={line.id ?? index}>
-          {lineRenderers.map((Render) => (
-            composeHOC({ data: line }, Render, HocHooks)
-          ))}
+          {lineComposedRenderers.map(({ Component, getKey }) => {
+            const props = { data: line };
+            const key = getKey(props);
+            return <Component key={key} $$key={key} {...props} />;
+          })}
         </g>
       ))}
     </>

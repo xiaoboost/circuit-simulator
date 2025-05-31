@@ -1,13 +1,19 @@
 import { isEqualPoint } from '@circuit/algorithm';
 import React from 'react';
-import { usePainterService } from '../../../../context';
-import { ILineRendererProps, MAP_SERVICE } from '../../../../types';
-import { ElectronicPoint } from '../../../components';
+import { usePainterService, usePainterHook, useComposeHOC } from '../../../../context';
+import {
+  ILineRendererProps,
+  MAP_SERVICE,
+  PIN_RENDERER,
+  IPinRendererProps,
+} from '../../../../types';
 
 function PartPinRender({ data: { id, path } }: ILineRendererProps) {
   const { getPinConnectionByPin } = usePainterService(MAP_SERVICE);
+  const pinRenderers = usePainterHook(PIN_RENDERER);
+  const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
-  if (path.length === 0) {
+  if (path.length === 0 || pinComposedRenderers.length === 0) {
     return null;
   }
 
@@ -24,13 +30,19 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
         const isSpace = connections.length === 0;
 
         return (
-          <ElectronicPoint
-            key={i}
-            position={position}
-            hoverR={isSpace ? 5: 4}
-            normalR={isSpace ? 2 : 1}
-            fill={isSpace ? '#fff' : undefined}
-          />
+          <>
+            {pinComposedRenderers.map(({ Component, getKey }) => {
+              const props: IPinRendererProps = {
+                id: `${id}-${i}`,
+                position,
+                hoverR: isSpace ? 5: 4,
+                normalR: isSpace ? 2 : 1,
+                fill: isSpace ? '#fff' : undefined,
+              };
+              const key = getKey(props);
+              return <Component key={key} $$key={key} {...props} />;
+            })}
+          </>
         );
       })}
     </>

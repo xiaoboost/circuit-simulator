@@ -1,51 +1,16 @@
-import { Position, Point } from '@circuit/algorithm';
 import React, { useState, useRef, useEffect } from 'react';
+import { usePainterService } from '../../../../context';
+import { IPinRendererProps, DRAG_SCENE_SERVICE } from '../../../../types';
 import * as Styles from './styles.less';
 
-export interface ElectronicPointProps extends React.SVGProps<SVGCircleElement> {
-  /**
-   * 节点位置
-   *
-   * @description 这个位置是相对哪里的需要看 DOM 结构
-   */
-  position: Point | Position
-  /**
-   * 半径
-   *
-   * @description 优先级最高
-   * @default `-1`
-   */
-  r?: number;
-  /**
-   * 悬停半径
-   *
-   * @description 悬停时半径，优先级次高
-   * @default `5`
-   */
-  hoverR?: number;
-  /**
-   * 闲置半径
-   *
-   * @description 闲置时半径，优先级次高
-   * @default `0`
-   */
-  normalR?: number;
-  /**
-   * 动画持续时间
-   *
-   * @description 动画持续时间，单位为毫秒
-   * @default `200`
-   */
-  duration?: number;
-  /** 点击事件 */
-  onMouseDown?: (ev: React.MouseEvent) => any;
-}
-
-export function ElectronicPoint(props: ElectronicPointProps) {
+function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
+  const service = usePainterService(DRAG_SCENE_SERVICE);
   const [actual, setActual] = useState(0);
   const {
+    // 这只是为了满足类型，实际上不需要
+    id: _,
     className,
     style,
     position,
@@ -71,6 +36,11 @@ export function ElectronicPoint(props: ElectronicPointProps) {
   }
 
   function handleHover(isHover: boolean) {
+    // 有场景正在运行，不进行任何操作
+    if (service.size !== 0) {
+      return;
+    }
+
     const newSize = isHover ? hoverR : normalR;
     const targetR = size >= 0 ? size : newSize;
 
@@ -132,3 +102,5 @@ export function ElectronicPoint(props: ElectronicPointProps) {
     </g>
   );
 }
+
+export const Render = React.memo(PinRenderer);
