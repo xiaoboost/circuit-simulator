@@ -1,9 +1,9 @@
 import { ElectronicKind, createPartByKind } from '@circuit/electronics';
 import { Painter } from '@circuit/painter';
 import React, { useCallback } from 'react';
+import { ElectronicPanel } from '../electronic-panel';
 import { Header } from '../header';
-import { LeftSidebar } from '../left-sidebar';
-import { RightSidebar } from '../right-sidebar';
+import { PropertyPanel } from '../property-panel';
 import * as Styles from './styles.less';
 import {
   useDataInit,
@@ -25,7 +25,7 @@ export function App() {
     <article className={Styles.layout}>
       <Header />
       <div className={Styles.container}>
-        <LeftSidebar onSelect={onCreatePart} />
+        <ElectronicPanel onSelect={onCreatePart} />
         <div className={Styles.mainArea}>
         {data
           ? <Painter
@@ -35,7 +35,7 @@ export function App() {
           : <div>Loading</div>
         }
         </div>
-        <RightSidebar />
+        <PropertyPanel />
       </div>
 
     </article>

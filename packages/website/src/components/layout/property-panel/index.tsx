@@ -2,7 +2,7 @@ import React from 'react';
 import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 
-export function RightSidebar() {
+export function PropertyPanel() {
   const title = '器件属性';
   return (
     <Sidebar
@@ -12,9 +12,9 @@ export function RightSidebar() {
         expand: <DoubleLeft />,
       }}
       classNames={{
-        wrapper: Styles.rightSidebarWrapper,
-        sidebar: Styles.rightSidebar,
-        collapsed: Styles.rightSidebarCollapsed,
+        wrapper: Styles.propertyPanelWrapper,
+        sidebar: Styles.propertyPanel,
+        collapsed: Styles.propertyPanelCollapsed,
       }}
     >
       属性

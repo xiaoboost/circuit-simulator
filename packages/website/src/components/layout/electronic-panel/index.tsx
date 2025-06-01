@@ -6,12 +6,12 @@ import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
-export interface LeftSidebarProps {
+export interface ElectronicPanelProps {
   /** 选中器件 */
   onSelect?: (kind: ElectronicKind) => void;
 }
 
-export function LeftSidebar(props: LeftSidebarProps) {
+export function ElectronicPanel(props: ElectronicPanelProps) {
   const title = '添加器件';
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
@@ -24,9 +24,9 @@ export function LeftSidebar(props: LeftSidebarProps) {
         expand: <DoubleRight />,
       }}
       classNames={{
-        wrapper: Styles.leftSidebarWrapper,
-        sidebar: Styles.leftSidebar,
-        collapsed: Styles.leftSidebarCollapsed,
+        wrapper: Styles.electronicPanelWrapper,
+        sidebar: Styles.electronicPanel,
+        collapsed: Styles.electronicPanelCollapsed,
       }}
     >
       <Input
