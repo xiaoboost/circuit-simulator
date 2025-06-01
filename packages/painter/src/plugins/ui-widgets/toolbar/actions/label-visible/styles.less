@@ -1,0 +1,9 @@
+@import '../../constant.ts';
+
+@computedValue: (@ToolbarButtonWidth / 2px);
+
+.menu-drop-list {
+  :global(.ant-dropdown-menu) {
+    transform: translate(calc(50% - @computedValue), -10px);
+  }
+}

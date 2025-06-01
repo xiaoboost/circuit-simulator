@@ -1,12 +1,11 @@
 import { definePlugin } from '../../../../../context';
 import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../../types';
-import { EditorRender as Render } from './render';
+import { LabelVisibleRender as Render } from './render';
 
 definePlugin(({ registerHook }) => {
-  // 注册编辑按钮
   registerHook(PAINTER_TOOLBAR_ACTION_HOOK, {
-    name: 'EditorButton',
-    order: 3,
+    name: 'LabelVisibleButton',
+    order: 2,
     Render,
   });
 });

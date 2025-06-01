@@ -18,6 +18,8 @@ export enum PartLabelVisibleKind {
   Visible,
   /** 只显示编号 */
   OnlyId,
+  /** 只显示参数 */
+  OnlyParam,
   /** 不显示 */
   NotVisible,
 }

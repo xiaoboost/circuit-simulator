@@ -29,21 +29,17 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
         const connections = getPinConnectionByPin(id, i);
         const isSpace = connections.length === 0;
 
-        return (
-          <>
-            {pinComposedRenderers.map(({ Component, getKey }) => {
-              const props: IPinRendererProps = {
-                id: `${id}-${i}`,
-                position,
-                hoverR: isSpace ? 5: 4,
-                normalR: isSpace ? 2 : 1,
-                fill: isSpace ? '#fff' : undefined,
-              };
-              const key = getKey(props);
-              return <Component key={key} $$key={key} {...props} />;
-            })}
-          </>
-        );
+        return pinComposedRenderers.map(({ Component, getKey }) => {
+          const props: IPinRendererProps = {
+            id: `${id}-${i}`,
+            position,
+            hoverR: isSpace ? 5: 4,
+            normalR: isSpace ? 2 : 1,
+            fill: isSpace ? '#fff' : undefined,
+          };
+          const key = getKey(props);
+          return <Component key={key} $$key={key} {...props} />;
+        });
       })}
     </>
   );

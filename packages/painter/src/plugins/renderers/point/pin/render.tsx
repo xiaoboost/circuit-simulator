@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { usePainterService } from '../../../../context';
-import { IPinRendererProps, DRAG_SCENE_SERVICE } from '../../../../types';
+import { IPinRendererProps, DRAG_SCENE_SERVICE, PropsWithHocParams } from '../../../../types';
 import * as Styles from './styles.less';
 
 function PinRenderer(props: IPinRendererProps) {
@@ -11,6 +11,7 @@ function PinRenderer(props: IPinRendererProps) {
   const {
     // 这只是为了满足类型，实际上不需要
     id: _,
+    $$key: __,
     className,
     style,
     position,
@@ -21,7 +22,7 @@ function PinRenderer(props: IPinRendererProps) {
     onMouseDown,
     fill = 'currentColor',
     ...rest
-  } = props;
+  } = props as PropsWithHocParams<IPinRendererProps>;
 
   function triggerAnimation(targetR: number) {
     if (!circle.current || !animate.current) {

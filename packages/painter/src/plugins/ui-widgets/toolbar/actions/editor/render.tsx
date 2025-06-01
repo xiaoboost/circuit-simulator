@@ -4,7 +4,7 @@ import { usePainterService, useWatcher } from '../../../../../context';
 import { LOGGER_SERVICE, PAINTER_SERVICE, SELECT_SERVICE } from '../../../../../types';
 import { Button, Undo, Redo } from '../../components';
 
-export function Render() {
+export function EditorRender() {
   const logger = usePainterService(LOGGER_SERVICE);
   const painter = usePainterService(PAINTER_SERVICE);
   const select = usePainterService(SELECT_SERVICE);

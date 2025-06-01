@@ -1,12 +1,12 @@
 import { stringifyClass as sc } from '@xiao-ai/utils';
-import { Dropdown, MenuProps  } from 'antd';
+import { Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { usePainterService, useWatcher } from '../../../../../context';
 import { CONFIGURATION_SERVICE } from '../../../../../types';
 import { Button, Divider, Check } from '../../components';
 import * as Styles from './styles.less';
 
-export function Render() {
+export function DebuggerRender() {
   const {
     openDebugLog,
     openPathSearcherDebugger,

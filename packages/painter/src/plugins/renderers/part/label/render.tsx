@@ -8,15 +8,33 @@ import {
   rotateVector,
 } from '@circuit/algorithm';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { usePainterService } from '../../../../context';
+import { usePainterService, useWatcher } from '../../../../context';
 import {
+  PartLabelVisibleKind as Kind,
   IPartRendererProps,
   MAP_COORDINATE_SERVICE,
   DRAG_SCENE_SERVICE,
   EVENT_BUS_SERVICE,
+  CONFIGURATION_SERVICE,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
+
+function getTextLineCount(partLabelVisible: Kind, texts: string[]) {
+  if (partLabelVisible === Kind.NotVisible) {
+    return 0;
+  }
+
+  if (partLabelVisible === Kind.OnlyParam) {
+    return texts.length;
+  }
+
+  if (partLabelVisible === Kind.OnlyId) {
+    return 1;
+  }
+
+  return 1 + texts.length;
+}
 
 function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const {
@@ -33,7 +51,9 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const [texts, setTexts] = useState<string[]>([]);
   const eventBus = usePainterService(EVENT_BUS_SERVICE);
   const dragService = usePainterService(DRAG_SCENE_SERVICE);
+  const [partLabelVisible] = useWatcher(usePainterService(CONFIGURATION_SERVICE).partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
+  const textLineCount = getTextLineCount(partLabelVisible, texts);
 
   // 触发移动器件文本
   const onMouseDown = useCallback((event: React.MouseEvent<SVGGElement>) => {
@@ -55,7 +75,13 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
   // 更新器件说明文本
   useEffect(() => {
-    if (!params || !prototype.textBias) {
+    if (
+      !params ||
+      !prototype.textBias ||
+      partLabelVisible === Kind.OnlyId ||
+      partLabelVisible === Kind.NotVisible
+    ) {
+      setTexts([]);
       return;
     }
 
@@ -64,7 +90,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
       .filter((txt) => txt.visible)
       .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ')),
     );
-  }, [params]);
+  }, [params, partLabelVisible]);
 
   useEffect(() => {
     if (!prototype.textBias || !textRef.current) {
@@ -81,7 +107,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     const yMiddleOffset = (
       (
         Math.abs(Math.abs(textBoxRect.y) - textBoxRect.height / 2) *
-        (texts.length === 0 ? 1 : -1)
+        (textLineCount === 1 ? 1 : -1)
       ) /
       map.scale
     );
@@ -125,12 +151,18 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
     setPosition(newPosition);
     eventBus.notify('PartLabelChanged');
-  }, [textDirection, texts, id, rotate, textRef.current]);
+  }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible]);
 
-  // 不存在偏移量，则表示不需要显示
-  if (!prototype.textBias) {
+  if (
+    // 不存在偏移量
+    !prototype.textBias ||
+    // 没有需要显示的文本
+    textLineCount === 0
+  ) {
     return null;
   }
+
+  const visibleId = partLabelVisible === Kind.OnlyId || partLabelVisible === Kind.Visible;
 
   return (
     <g
@@ -140,12 +172,20 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
       transform={`matrix(${invRotate.join()},${position.rotate(invRotate).join()})`}
       onMouseDown={onMouseDown}
     >
-      <text>
-        <tspan>{label}</tspan>
-        <tspan fontSize="70%">{subfix}</tspan>
-      </text>
+      {visibleId && (
+        <text>
+          <tspan>{label}</tspan>
+          <tspan fontSize="70%">{subfix}</tspan>
+        </text>
+      )}
       {texts.map((text, i) => (
-        <text key={i} dy={(textHeight + textSpaceHeight) * (i + 1)}>{text}</text>
+        <text
+          key={i}
+          dy={
+            (textHeight + textSpaceHeight) *
+            (i + 1 - (visibleId ? 0 : 1))
+          }
+        >{text}</text>
       ))}
     </g>
   );

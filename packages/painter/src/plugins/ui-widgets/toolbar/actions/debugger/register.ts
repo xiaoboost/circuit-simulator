@@ -1,6 +1,6 @@
 import { definePlugin } from '../../../../../context';
 import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../../types';
-import { Render } from './render';
+import { DebuggerRender as Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册调试按钮

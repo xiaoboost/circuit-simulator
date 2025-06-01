@@ -4,7 +4,7 @@ import { usePainterService, useWatcher, useHotkey } from '../../../../../context
 import { CONFIGURATION_SERVICE, DRAG_SCENE_SERVICE, CURSOR_SERVICE } from '../../../../../types';
 import { Button, Cursor, Hand } from '../../components';
 
-export function Render() {
+export function MoveModeRender() {
   const configuration = usePainterService(CONFIGURATION_SERVICE);
   const dragScene = usePainterService(DRAG_SCENE_SERVICE);
   const cursorService = usePainterService(CURSOR_SERVICE);

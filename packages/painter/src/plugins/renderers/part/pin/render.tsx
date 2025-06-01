@@ -22,21 +22,17 @@ function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps
         const connections = getPinConnectionByPin(id, index);
         const isSpace = !connections || connections.length === 0;
 
-        return (
-          <>
-            {pinComposedRenderers.map(({ Component, getKey }) => {
-              const props: IPinRendererProps = {
-                id: `${id}-${index}`,
-                position,
-                hoverR: 4,
-                normalR: 0,
-                fill: isSpace ? '#fff' : undefined,
-              };
-              const key = getKey(props);
-              return <Component key={key} $$key={key} {...props} />;
-            })}
-          </>
-        );
+        return pinComposedRenderers.map(({ Component, getKey }) => {
+          const props: IPinRendererProps = {
+            id: `${id}-${index}`,
+            position,
+            hoverR: 4,
+            normalR: 0,
+            fill: isSpace ? '#fff' : undefined,
+          };
+          const key = getKey(props);
+          return <Component key={key} $$key={key} {...props} />;
+        });
       })}
     </>
   );
