@@ -53,7 +53,7 @@ export function MoveModeRender() {
 
   return (
     <>
-      <Tooltip title='编辑模式'>
+      <Tooltip title='编辑模式' destroyOnHidden>
         <Button
           onClick={onClickCursor}
           selected={!isMoveMode}
@@ -62,7 +62,7 @@ export function MoveModeRender() {
           <Cursor />
       </Button>
       </Tooltip>
-      <Tooltip title='移动模式'>
+      <Tooltip title='移动模式' destroyOnHidden>
         <Button
           onClick={onClickHand}
           selected={isMoveMode}

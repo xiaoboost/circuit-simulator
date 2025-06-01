@@ -23,12 +23,12 @@ export function EditorRender() {
 
   return (
     <>
-      <Tooltip title='撤销编辑'>
+      <Tooltip title='撤销编辑' destroyOnHidden>
         <Button disabled={!canUndo} onClick={onUndo}>
           <Undo />
         </Button>
       </Tooltip>
-      <Tooltip title='重做撤销'>
+      <Tooltip title='重做撤销' destroyOnHidden>
         <Button disabled={!canRedo} onClick={onRedo}>
           <Redo />
         </Button>
