@@ -49,7 +49,7 @@ export function LabelVisibleRender() {
       destroyOnHidden
       overlayClassName={Styles.menuDropList}
     >
-      <Tooltip title="显示器件信息" placement="bottom" destroyOnHidden>
+      <Tooltip title="器件信息配置" placement="bottom" destroyOnHidden>
         <Button>
           <Text />
         </Button>
