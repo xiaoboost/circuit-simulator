@@ -10,7 +10,7 @@ import {
   PAINTER_SERVICE,
   DRAG_SCENE_SERVICE,
   LOGGER_SERVICE,
-  MAP_SERVICE,
+  MAP_HASH_SERVICE,
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
 } from '../../../types';
@@ -102,7 +102,7 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const mapService = getService(MAP_SERVICE);
+      const mapService = getService(MAP_HASH_SERVICE);
       const collisionService = getService(COLLISION_SERVICE);
       const currentPosition = endPayload.event!.positionInDrawer.round(20);
       const realPosition = collisionService.findNearestAvailablePosition({

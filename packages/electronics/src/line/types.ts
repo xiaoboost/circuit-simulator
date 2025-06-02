@@ -1,4 +1,4 @@
-import type { Path } from '@circuit/algorithm';
+import type { Path, PathWithPoint } from '@circuit/algorithm';
 
 /** 导线原始数据 */
 export interface LineStoreData {
@@ -7,7 +7,9 @@ export interface LineStoreData {
 }
 
 /** 导线结构化数据 */
-export interface LineStructuredData extends LineStoreData {
+export interface LineStructuredData {
   /** 导线编号 */
   id: string;
+  /** 导线路径 */
+  path: PathWithPoint;
 }

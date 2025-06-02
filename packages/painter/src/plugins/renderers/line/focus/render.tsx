@@ -1,6 +1,5 @@
 import { isEqualPoint } from '@circuit/algorithm';
 import React from 'react';
-import { usePainterService } from '../../../../context';
 import { ILineRendererProps } from '../../../../types';
 import * as Styles from './styles.less';
 import { getLineRect } from './utils';

@@ -3,13 +3,13 @@ import React from 'react';
 import { usePainterService, usePainterHook, useComposeHOC } from '../../../../context';
 import {
   ILineRendererProps,
-  MAP_SERVICE,
+  CONNECTION_SERVICE,
   PIN_RENDERER,
   IPinRendererProps,
 } from '../../../../types';
 
 function PartPinRender({ data: { id, path } }: ILineRendererProps) {
-  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE);
+  const { getConnections } = usePainterService(CONNECTION_SERVICE);
   const pinRenderers = usePainterHook(PIN_RENDERER);
   const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
@@ -26,7 +26,7 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
   return (
     <>
       {pins.map((position, i) => {
-        const connections = getPinConnectionByPin(id, i);
+        const connections = getConnections(id, i);
         const isSpace = connections.length === 0;
 
         return pinComposedRenderers.map(({ Component, getKey }) => {

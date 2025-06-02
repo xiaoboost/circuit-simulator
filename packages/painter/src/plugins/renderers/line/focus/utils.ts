@@ -1,8 +1,8 @@
-import { Path } from '@circuit/algorithm';
+import { PathWithPoint } from '@circuit/algorithm';
 import { LINE_THICKNESS as rectWidth } from '@circuit/electronics';
 import { RectSize } from './types';
 
-export function getLineRect(path: Path) {
+export function getLineRect(path: PathWithPoint) {
   const rects: RectSize[] = [];
 
   for (let i = 0; i < path.length - 1; i++) {

@@ -1,8 +1,8 @@
-import { Point, Path } from '@circuit/algorithm';
+import { Point, PathWithPoint } from '@circuit/algorithm';
 import { LineStructuredData } from '@circuit/electronics';
 import { MarkMap, MarkKind, LineAndPointMark } from '@circuit/map';
 
-function getLinePoints(path: Path) {
+function getLinePoints(path: PathWithPoint) {
   if (path.length === 0) {
     throw new Error('导线必须至少是个线段');
   }

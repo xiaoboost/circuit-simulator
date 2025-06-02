@@ -1,7 +1,7 @@
 import './map-coordinate';
 import './cursor';
 import './drag-scene';
-import './map';
+import './map-hash';
 import './painter';
 import './configuration';
 import './logger';
@@ -12,3 +12,4 @@ import './move-part-label';
 import './event-bus';
 import './create-part';
 import './collision';
+import './connection';

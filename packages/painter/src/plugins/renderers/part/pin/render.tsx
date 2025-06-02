@@ -2,13 +2,13 @@ import React from 'react';
 import { usePainterService, usePainterHook, useComposeHOC } from '../../../../context';
 import {
   IPartRendererProps,
-  MAP_SERVICE,
+  CONNECTION_SERVICE,
   PIN_RENDERER,
   IPinRendererProps,
 } from '../../../../types';
 
 function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps) {
-  const { getPinConnectionByPin } = usePainterService(MAP_SERVICE);
+  const { getConnections } = usePainterService(CONNECTION_SERVICE);
   const pinRenderers = usePainterHook(PIN_RENDERER);
   const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
@@ -19,7 +19,7 @@ function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps
   return (
     <>
       {pins.map(({ position }, index) => {
-        const connections = getPinConnectionByPin(id, index);
+        const connections = getConnections(id, index);
         const isSpace = !connections || connections.length === 0;
 
         return pinComposedRenderers.map(({ Component, getKey }) => {

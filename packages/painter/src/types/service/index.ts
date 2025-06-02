@@ -1,12 +1,13 @@
 import type { ICollisionService } from './collision';
 import type { IConfigurationService } from './configuration';
+import type { IConnectionService } from './connection';
 import type { ICursorService } from './cursor';
 import type { IDebuggerService } from './debugger';
 import type { IDragSceneService } from './drag-scene';
 import type { IEventBus } from './event-bus';
 import type { ILoggerService } from './logger';
-import type { IMapService } from './map';
 import type { IMapCoordinateService } from './map-coordinate';
+import type { IMapService } from './map-hash';
 import type { IPainterService } from './painter';
 import type { IPainterHTMLElement } from './painter-dom';
 import type { ISelectService } from './select';
@@ -14,10 +15,11 @@ import type { IVariableObserverService } from './variable-observer';
 
 export * from './collision';
 export * from './configuration';
+export * from './connection';
 export * from './map-coordinate';
 export * from './cursor';
 export * from './drag-scene';
-export * from './map';
+export * from './map-hash';
 export * from './painter-dom';
 export * from './painter';
 export * from './logger';
@@ -39,4 +41,5 @@ export type ServiceType =
   | IDebuggerService
   | IVariableObserverService
   | ISelectService
-  | IEventBus;
+  | IEventBus
+  | IConnectionService;

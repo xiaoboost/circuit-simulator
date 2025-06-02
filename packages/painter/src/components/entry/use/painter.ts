@@ -2,9 +2,10 @@ import { useEffect } from 'react';
 import { usePainterService } from '../../../context';
 import {
   PAINTER_SERVICE,
-  MAP_SERVICE,
+  MAP_HASH_SERVICE,
   LOGGER_SERVICE,
   COLLISION_SERVICE,
+  CONNECTION_SERVICE,
 } from '../../../types';
 import { type PainterProps } from '../../wrapper';
 
@@ -31,9 +32,10 @@ const propKeys = [
 /** 画布参数变化桥接 */
 export function usePainterAdapter(props: PainterProps) {
   const painterService = usePainterService(PAINTER_SERVICE);
-  const mapService = usePainterService(MAP_SERVICE);
+  const mapService = usePainterService(MAP_HASH_SERVICE);
   const collisionService = usePainterService(COLLISION_SERVICE);
   const logger = usePainterService(LOGGER_SERVICE);
+  const connectionService = usePainterService(CONNECTION_SERVICE);
 
   for (const method of methods) {
     useEffect(() => {
@@ -66,6 +68,8 @@ export function usePainterAdapter(props: PainterProps) {
       collisionService.setEntity(line);
     }
 
+    // 初始化连接关系
+    connectionService.createConnectionFromData(props);
     // 初始化完毕
     props.onReady?.();
     // 启动画布

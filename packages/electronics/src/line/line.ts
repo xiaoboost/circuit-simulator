@@ -1,20 +1,19 @@
+import { Point } from '@circuit/algorithm';
 import { LineStoreData, LineStructuredData } from './types';
 
 export { isLine } from '@circuit/shared';
 
 let lineId = 1;
 
-export function transformLineStoreToStateData(data: LineStoreData): LineStructuredData {
+export function transformLineStoreToStateData({ path }: LineStoreData): LineStructuredData {
   return {
-    ...data,
     id: `line_${lineId++}`,
+    path: path.map(Point.from),
   };
 }
 
-export function transformLineStateToStoreData(data: LineStructuredData): LineStoreData {
-  const { path } = data;
-
+export function transformLineStateToStoreData({ path }: LineStructuredData): LineStoreData {
   return {
-    path,
+    path: path.map((item) => item.toData()),
   };
 }

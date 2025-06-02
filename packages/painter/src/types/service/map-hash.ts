@@ -1,4 +1,3 @@
-import { PointLike } from '@circuit/algorithm';
 import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
 import { MarkMap } from '@circuit/map';
 import { createServiceKey } from '../../context';
@@ -9,23 +8,11 @@ import { createServiceKey } from '../../context';
  * @description 图纸服务，该服务主要是提供图纸相关服务，比如元件连接关系等。
  * @example
  * ```ts
- * const mapService = usePainterService(MAP_SERVICE);
+ * const mapService = usePainterService(MAP_HASH_SERVICE);
  * ```
  */
-export const MAP_SERVICE =
+export const MAP_HASH_SERVICE =
   createServiceKey<IMapService>('Map');
-
-/** 引脚连接 */
-export interface IPinConnection {
-  /** 元件编号 */
-  id: string;
-  /**
-   * 引脚号
-   *
-   * @description 如果为空，则表示该连接是导线连接。
-   */
-  pin?: number;
-}
 
 /** 图纸服务 */
 export interface IMapService {
@@ -39,12 +26,4 @@ export interface IMapService {
   deletePartMark(data: PartStructuredData): void;
   /** 删除导线标记 */
   deleteLineMark(data: LineStructuredData): void;
-  /** 获取当前节点的所有连接 */
-  getPinConnectionByPosition(position: PointLike): IPinConnection[];
-  /**
-   * 获取当前引脚的连接
-   *
-   * @description 排除自身
-   */
-  getPinConnectionByPin(id: string, pin: number): IPinConnection[];
 }
