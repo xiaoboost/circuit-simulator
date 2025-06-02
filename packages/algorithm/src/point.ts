@@ -47,6 +47,13 @@ export class Point {
   }
 
   /**
+   * 创建零向量
+   */
+  static Zero() {
+    return new Point(0, 0);
+  }
+
+  /**
    * 迭代器函数
    *  - 用于解构赋值
    *

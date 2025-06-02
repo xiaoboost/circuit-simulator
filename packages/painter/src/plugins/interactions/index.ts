@@ -13,3 +13,4 @@ import './event-bus';
 import './create-part';
 import './collision';
 import './connection';
+import './select-box';
