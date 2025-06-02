@@ -2,7 +2,7 @@ import { Point } from '@circuit/algorithm';
 import { NewElectronicPosition, PartStructuredData } from '@circuit/electronics';
 import { definePlugin, Watcher } from '../../../context';
 import {
-  ICursorService,
+  DragSceneHookPayload,
   HOT_KEY_HOOK,
   DRAG_SCENE_HOOK,
   LIFE_CYCLE_HOOK,
@@ -10,7 +10,8 @@ import {
   PAINTER_SERVICE,
   DRAG_SCENE_SERVICE,
   LOGGER_SERVICE,
-  DragSceneHookPayload,
+  MAP_SERVICE,
+  COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
@@ -101,21 +102,35 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
+      const mapService = getService(MAP_SERVICE);
+      const collisionService = getService(COLLISION_SERVICE);
       const currentPosition = endPayload.event!.positionInDrawer.round(20);
+      const realPosition = collisionService.findNearestAvailablePosition({
+        ...part,
+        position: currentPosition,
+      });
+
+      if (!realPosition) {
+        logger.error(LoggerName, '创建器件失败，位置被占用', part.id);
+        return;
+      }
+
+      const newPart = {
+        ...part,
+        position: realPosition,
+      };
 
       painterService.commit({
         name: `创建器件 ${part.id}`,
-        description: `创建器件 ${part.id}，位置：${currentPosition.join()}`,
+        description: `创建器件 ${part.id}，位置：${realPosition.join()}`,
         patch({ parts }) {
-          parts.push({
-            ...part,
-            position: currentPosition.toData(),
-          });
+          parts.push(newPart);
         },
       });
 
-      // 清除临时变量
       setPosition(part.id, undefined);
+      mapService.setPartMark(newPart);
+      collisionService.setEntity(newPart);
       logger.info(LoggerName, '结束创建器件', part.id);
     },
   });

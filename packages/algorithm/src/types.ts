@@ -2,8 +2,10 @@ import { type Point } from './point';
 
 /** 点位置 */
 export type Position = [x: number, y: number];
-/** 折线 */
+/** 原始折线 */
 export type Path = Position[];
+/** 折线 */
+export type PathWithPoint = Point[];
 /** 线段 */
 export type Segment = [start: Position, end: Position];
 /** 旋转矩阵 */
@@ -16,6 +18,13 @@ export type PointInput = PointLike | number;
 export type DirectionLabel = keyof typeof Direction;
 /** 外框定义 */
 export type MarginBox = [top: number, right: number, bottom: number, left: number];
+/** 外框数据 */
+export interface Rect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 /** 矩形 */
 export interface BoundingBox {
   minX: number;

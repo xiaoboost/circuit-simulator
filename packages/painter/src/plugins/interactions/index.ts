@@ -11,3 +11,4 @@ import './select';
 import './move-part-label';
 import './event-bus';
 import './create-part';
+import './collision';

@@ -2,10 +2,12 @@ import {
   rotateVector,
   DirectionVectorSet,
   Point,
-  Position,
-  isMatrixEqual,
   Direction,
   DirectionLabel,
+  isMatrixNotRotate,
+  copyMatrix,
+  Rotate,
+  RotateMatrixSet,
 } from '@circuit/algorithm';
 import { createId } from '../utils';
 import {
@@ -20,10 +22,12 @@ import {
   PartPinData,
   ElectronicKind,
 } from './types';
-import { getMarginVertex } from './utils';
+import {
+  getPaddingRect,
+} from './utils';
 
 /** 迭代器件所有引脚数据 */
-export function* getPartPins(part: PartStructuredData) {
+export function *getPartPins(part: PartStructuredData) {
   for (let i = 0; i < getPartPrototype(part.kind).pins.length; i++) {
     yield getPartPin(part, i);
   }
@@ -52,26 +56,24 @@ export function getPartInfo(kind: ElectronicKind) {
 export function transformPartStoreToStateData(data: PartStoreData): PartStructuredData {
   return {
     ...data,
-    rotate: data.rotate ?? [[1, 0], [0, 1]],
+    position: Point.from(data.position),
+    rotate: data.rotate ?? copyMatrix(RotateMatrixSet[Rotate.Same]),
   };
 }
 
 /** 转换器件状态数据为存储数据 */
 export function transformPartStateToStoreData(data: PartStructuredData): PartStoreData {
-  if (isMatrixEqual(data.rotate, [[1, 0], [0, 1]])) {
-    return {
-      ...data,
-      rotate: undefined,
-    };
-  }
-
-  return data;
+  return {
+    ...data,
+    position: data.position.toData(),
+    rotate: isMatrixNotRotate(data.rotate) ? undefined : data.rotate,
+  };
 }
 
-/** 迭代器件内边距节点 */
-export function* getPaddingPoint(data: PartStructuredData) {
-  const { padding } = getPartPrototype(data.kind);
-  const [point1, point2, , point4] = getMarginVertex(data.position, padding, data.rotate);
+/** 迭代器件内边框内所有节点 */
+export function *getPaddingPoint(data: PartStructuredData) {
+  const { margin } = getPartPrototype(data.kind);
+  const [point1, point2, , point4] = getPaddingRect(data.position, margin, data.rotate);
 
   for (const pointY of point1.toDestination(point4, 20)) {
     const numberY = pointY[1];
@@ -88,11 +90,12 @@ export function* getPaddingPoint(data: PartStructuredData) {
 export function getPartPin(data: PartStructuredData, pin: number): PartPinData {
   const prototype = getPartPrototype(data.kind);
   const pinData = prototype.pins[pin];
-  const pinPosition = rotateVector(pinData.position, data.rotate).add(data.position);
+  const pinOrigin = rotateVector(pinData.position, data.rotate);
+  const pinPosition = pinOrigin.add(data.position);
   const result: PartPinData = {
     index: pin,
     position: pinPosition,
-    origin: pinPosition,
+    origin: pinOrigin,
     direction: Point.prototype.rotate.call(DirectionVectorSet[pinData.direction], data.rotate),
   };
 
@@ -111,7 +114,7 @@ export function createPartByKind(
   const part: PartStructuredData = {
     id,
     kind,
-    position: NewElectronicPosition.toData(),
+    position: Point.from(NewElectronicPosition),
     rotate: [[1, 0], [0, 1]],
     params: prototype.params.map((param) => param.default),
     textDirection,

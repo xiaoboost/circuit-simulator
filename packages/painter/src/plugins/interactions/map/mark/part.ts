@@ -8,6 +8,7 @@ import { MarkKind, MarkMap } from '@circuit/map';
 
 /** 设置器件图纸数据 */
 export function setPartMark(data: PartStructuredData, map: MarkMap) {
+  const pins = Array.from(getPartPins(data));
   const setPartMark = (position: Point, pin?: number) => {
     const oldMark = map.get(position);
 
@@ -29,12 +30,14 @@ export function setPartMark(data: PartStructuredData, map: MarkMap) {
     }
   };
 
-  for (const point of getPaddingPoint(data)) {
-    setPartMark(point);
+  for (const pin of pins) {
+    setPartMark(pin.position, pin.index);
   }
 
-  for (const pin of getPartPins(data)) {
-    setPartMark(pin.position, pin.index);
+  for (const point of getPaddingPoint(data)) {
+    if (pins.every((pin) => !pin.position.isEqual(point))) {
+      setPartMark(point);
+    }
   }
 }
 

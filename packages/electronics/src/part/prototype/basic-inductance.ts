@@ -9,8 +9,7 @@ export const data: ElectronicPrototype = {
     Top: 14,
     Bottom: 10,
   },
-  padding: [0, 1, 0, 1],
-  margin: [1, 1, 1, 1],
+  margin: [14, 50, 1, 50],
   params: [
     {
       label: '电感量',

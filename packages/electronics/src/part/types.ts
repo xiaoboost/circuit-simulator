@@ -5,6 +5,7 @@ import {
   NumberRank,
   RotateMatrix,
   DirectionLabel,
+  MarginBox as Margin,
 } from '@circuit/algorithm';
 
 /** 器件原始数据 */
@@ -28,20 +29,22 @@ export interface PartStoreData {
 }
 
 /**
- * 边距
- *
- * @description 上右下左
- */
-export type Margin = readonly [number, number, number, number];
-/**
  * 边距顶点
  *
  * @description 左上角开始，顺时针
  */
-export type MarginVertex = readonly [Point, Point, Point, Point];
+export type BoundingBox = readonly [
+  leftTop: Point,
+  rightTop: Point,
+  rightBottom: Point,
+  leftBottom: Point,
+];
 
 /** 器件结构化数据 */
-export type PartStructuredData = Required<PartStoreData>;
+export interface PartStructuredData extends Omit<Required<PartStoreData>, 'position'> {
+  /** 器件中心坐标 */
+  position: Point;
+}
 
 /** 器件引脚状态 */
 export interface PartPinData {
@@ -178,9 +181,7 @@ export interface ElectronicPrototype {
   readonly category: ElectronicCategory;
   /** 周围文字距离器件中心点的偏移量 */
   readonly textBias?: TextBias;
-  /** 器件内边框范围（上、右、下、左） */
-  readonly padding: Margin;
-  /** 器件外边框范围（上、右、下、左） */
+  /** 器件边框范围（上、右、下、左） */
   readonly margin: Margin;
   /** 每项参数的描述 */
   readonly params: ParamsDescription[];

@@ -5,8 +5,7 @@ export const data: ElectronicPrototype = {
   pre: 'GND',
   kind: ElectronicKind.ReferenceGround,
   category: ElectronicCategory.Virtual,
-  padding: [0, 0, 0, 0],
-  margin: [1, 1, 1, 1],
+  margin: [10, 8, 8, 8],
   params: [],
   pins: [
     {

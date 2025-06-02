@@ -6,10 +6,9 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.TransistorNPN,
   category: ElectronicCategory.Semiconductor,
   textBias: {
-    Left: 25,
+    Right: 16,
   },
-  padding: [1, 0, 1, 0],
-  margin: [1, 1, 1, 1],
+  margin: [50, 30, 50, 30],
   params: [
     {
       label: '电流放大倍数',

@@ -1,5 +1,7 @@
+
+import { RotateMatrixSet } from './constant';
 import { Point } from './point';
-import { RotateMatrix, PointLike } from './types';
+import { RotateMatrix, PointLike, Rotate } from './types';
 
 /** 旋转矩阵的逆矩阵 */
 export function invertRotateMatrix(matrix: RotateMatrix): RotateMatrix {
@@ -34,4 +36,14 @@ export function rotateVector(vector: PointLike, rotate: RotateMatrix): Point {
 /** 矩阵是否相等 */
 export function isMatrixEqual(matrix1: RotateMatrix, matrix2: RotateMatrix): boolean {
   return matrix1.every((row, i) => row.every((value, j) => value === matrix2[i][j]));
+}
+
+/** 矩阵不旋转 */
+export function isMatrixNotRotate(matrix: RotateMatrix): boolean {
+  return isMatrixEqual(matrix, RotateMatrixSet[Rotate.Same]);
+}
+
+/** 复制矩阵 */
+export function copyMatrix(matrix: RotateMatrix): RotateMatrix {
+  return matrix.map((row) => row.slice()) as RotateMatrix;
 }

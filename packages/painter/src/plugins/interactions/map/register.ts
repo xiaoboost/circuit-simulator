@@ -3,7 +3,6 @@ import { MarkMap } from '@circuit/map';
 import { definePlugin } from '../../../context';
 import {
   MAP_SERVICE,
-  LIFE_CYCLE_HOOK,
   PAINTER_SERVICE,
   IMapService,
 } from '../../../types';

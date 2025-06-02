@@ -272,6 +272,19 @@ export class Point {
     ));
   }
   /**
+   * x, y 分别对 n 的余数向下取整
+   *
+   * @description 靠近`0`的方向
+   * @param {number} [fixed=20]
+   * @returns {Point}
+   */
+  trunc(fixed = 20): Point {
+    return (new Point(
+      Math.trunc(this[0] / fixed) * fixed,
+      Math.trunc(this[1] / fixed) * fixed,
+    ));
+  }
+  /**
    * 对 x, y 分别除以 n, 然后向下取整
    *
    * @param {number} [fixed=20]

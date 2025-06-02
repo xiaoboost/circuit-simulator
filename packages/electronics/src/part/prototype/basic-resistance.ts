@@ -9,8 +9,7 @@ export const data: ElectronicPrototype = {
     Top: 14,
     Bottom: 14,
   },
-  padding: [0, 1, 0, 1],
-  margin: [1, 1, 1, 1],
+  margin: [15, 50, 15, 50],
   params: [
     {
       label: '阻值',

@@ -9,8 +9,7 @@ export const data: ElectronicPrototype = {
     Left: 18,
     Right: 18,
   },
-  padding: [1, 0, 1, 0],
-  margin: [1, 1, 1, 1],
+  margin: [50, 18, 50, 18],
   params: [
     {
       label: '导通电压',

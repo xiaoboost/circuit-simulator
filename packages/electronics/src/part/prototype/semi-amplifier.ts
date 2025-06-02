@@ -8,8 +8,7 @@ export const data: ElectronicPrototype = {
   textBias: {
     Center: 0,
   },
-  padding: [1, 0, 1, 0],
-  margin: [1, 1, 1, 1],
+  margin: [38, 50, 38, 50],
   params: [
     {
       label: '开环增益',
