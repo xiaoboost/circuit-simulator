@@ -1,3 +1,4 @@
+import { PIN_SIZE } from '@circuit/electronics';
 import React, { useState, useRef, useEffect } from 'react';
 import { usePainterService } from '../../../../context';
 import { IPinRendererProps, DRAG_SCENE_SERVICE, PropsWithHocParams } from '../../../../types';
@@ -96,8 +97,8 @@ function PinRenderer(props: IPinRendererProps) {
       <rect
         x='-8'
         y='-8'
-        height='16'
-        width='16'
+        height={PIN_SIZE}
+        width={PIN_SIZE}
         className={Styles.focus}
       />
     </g>
