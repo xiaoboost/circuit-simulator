@@ -1,8 +1,13 @@
+import { PartStructuredData } from '@circuit/electronics';
 import React from 'react';
 import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 
-export function PropertyPanel() {
+export interface PropertyPanelProps {
+  selected: PartStructuredData[];
+}
+
+export function PropertyPanel(props: PropertyPanelProps) {
   const title = '器件属性';
   return (
     <Sidebar

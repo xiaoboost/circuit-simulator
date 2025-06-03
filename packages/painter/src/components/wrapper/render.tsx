@@ -24,21 +24,23 @@ export interface PainterProps {
   /** 是否可以重做 */
   canRedo: boolean;
   /** 撤销 */
-  undo: () => void;
+  undo(): void;
   /** 重做 */
-  redo: () => void;
+  redo(): void;
   /** 提交 */
-  commit: (data: CommitData) => void;
+  commit(data: CommitData): void;
   /** 草稿 */
-  draft: (data: CommitCb) => void;
+  draft(data: CommitCb): void;
   /** 丢弃草稿 */
-  dropDraft: () => void;
+  dropDraft(): void;
   /**
    * 准备就绪
    *
    * @description 画布组件准备就绪时，由画布调用
    */
-  onReady?: () => void;
+  onReady?(): void;
+  /** 选中元件 */
+  onSelect?(ids: Set<string>): void;
 }
 
 export function Painter(props: PainterProps) {

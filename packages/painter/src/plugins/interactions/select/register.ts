@@ -1,5 +1,5 @@
 import { definePlugin, Watcher } from '../../../context';
-import { SELECT_SERVICE, LOGGER_SERVICE, ISelectService } from '../../../types';
+import { SELECT_SERVICE, LOGGER_SERVICE, EVENT_BUS_SERVICE, ISelectService } from '../../../types';
 
 const LoggerName = '选择服务';
 
@@ -22,6 +22,11 @@ definePlugin(({ registerService, getService }) => {
       selected.setData(new Set());
     },
   };
+
+  // 订阅选中事件
+  selected.observe((data) => {
+    getService(EVENT_BUS_SERVICE).notify('SelectElectronics', data);
+  });
 
   // 注册选择器服务
   registerService(SELECT_SERVICE, service);

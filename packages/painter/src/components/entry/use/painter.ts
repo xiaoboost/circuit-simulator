@@ -6,6 +6,7 @@ import {
   LOGGER_SERVICE,
   COLLISION_SERVICE,
   CONNECTION_SERVICE,
+  EVENT_BUS_SERVICE,
 } from '../../../types';
 import { type PainterProps } from '../../wrapper';
 
@@ -36,6 +37,7 @@ export function usePainterAdapter(props: PainterProps) {
   const collisionService = usePainterService(COLLISION_SERVICE);
   const logger = usePainterService(LOGGER_SERVICE);
   const connectionService = usePainterService(CONNECTION_SERVICE);
+  const eventBus = usePainterService(EVENT_BUS_SERVICE);
 
   for (const method of methods) {
     useEffect(() => {
@@ -75,6 +77,11 @@ export function usePainterAdapter(props: PainterProps) {
     // 启动画布
     painterService.isReady.setData(true);
     // 记录日志
-    logger.info('Painter', '图纸加载完成');
+    logger.info('画布', '图纸加载完成');
   }, []);
+
+  // 订阅选中事件
+  useEffect(() => {
+    return eventBus.observe('SelectElectronics', (data) => props?.onSelect?.(data));
+  }, [props.onSelect]);
 }
