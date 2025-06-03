@@ -13,6 +13,7 @@ import {
   DRAG_SCENE_SERVICE,
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
+  CONFIGURATION_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -58,12 +59,17 @@ definePlugin(({ registerHook, getService }) => {
     onMouseDown(event) {
       // 非左键事件不处理
       if (event.button !== 0) {
-        return false;
+        return;
+      }
+
+      // 移动图纸模式下不触发
+      if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
+        return;
       }
 
       // 场景互斥
       if (getService(DRAG_SCENE_SERVICE).size !== 0) {
-        return false;
+        return;
       }
 
       // 必须是在画布本身触发
@@ -108,8 +114,14 @@ definePlugin(({ registerHook, getService }) => {
 
   // 注册选择框组件
   registerHook(DRAW_LAYER_HOOK, {
-    name: 'PartLayer',
+    name: 'SelectBoxLayer',
     order: 4,
     Render: memo(SelectBox),
   });
+
+  // 卸载器
+  return () => {
+    start.unObserve();
+    end.unObserve();
+  };
 });

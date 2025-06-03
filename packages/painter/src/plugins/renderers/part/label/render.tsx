@@ -51,7 +51,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const [texts, setTexts] = useState<string[]>([]);
   const eventBus = usePainterService(EVENT_BUS_SERVICE);
   const dragService = usePainterService(DRAG_SCENE_SERVICE);
-  const [partLabelVisible] = useWatcher(usePainterService(CONFIGURATION_SERVICE).partLabelVisible);
+  const configurationService = usePainterService(CONFIGURATION_SERVICE);
+  const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);
 
@@ -59,6 +60,11 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const onMouseDown = useCallback((event: React.MouseEvent<SVGGElement>) => {
     // 非左键不处理
     if (event.button !== 0) {
+      return;
+    }
+
+    // 移动图纸模式下不触发
+    if (configurationService.movePainterMode.data) {
       return;
     }
 

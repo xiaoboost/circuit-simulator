@@ -1,5 +1,6 @@
 import { Point } from '@circuit/algorithm';
 import { NewElectronicPosition, PartStructuredData } from '@circuit/electronics';
+import { message } from 'antd';
 import { definePlugin, Watcher } from '../../../context';
 import {
   DragSceneHookPayload,
@@ -13,6 +14,7 @@ import {
   MAP_HASH_SERVICE,
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
+  CONFIGURATION_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 
@@ -35,14 +37,21 @@ definePlugin(({ registerHook, getService }) => {
   // 全局监听创建的器件
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
-      const { parts } = getService(PAINTER_SERVICE);
+      const { parts, dropDraft } = getService(PAINTER_SERVICE);
       const service = getService(DRAG_SCENE_SERVICE);
 
       parts.observe((state) => {
         const newPart = state.find((part) => NewElectronicPosition.isEqual(part.position));
 
         if (newPart && service.size === 0) {
-          service.trigger(CreatePartSceneName, newPart);
+          // 移动图纸模式下不触发
+          if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
+            dropDraft();
+            message.warning('移动图纸模式下不能创建器件');
+          }
+          else {
+            service.trigger(CreatePartSceneName, newPart);
+          }
         }
       });
     },
