@@ -14,6 +14,10 @@ import {
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
   CONFIGURATION_SERVICE,
+  COLLISION_SERVICE,
+  PAINTER_SERVICE,
+  LOGGER_SERVICE,
+  CONNECTION_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -21,12 +25,9 @@ import {
   SELECT_BOX_DRAG_SCENE_NAME,
 } from './constant';
 import * as Styles from './styles.less';
+import { toPath, markMovableLines } from './utils';
 
-function toPath(start: Point, end: Point) {
-  const [left, top] = start;
-  const [right, bottom] = end;
-  return `M${left},${top}L${right},${top}L${right},${bottom}L${left},${bottom}Z`;
-}
+const LoggerName = '多选框';
 
 definePlugin(({ registerHook, getService }) => {
   /** 起点坐标 */
@@ -99,6 +100,8 @@ definePlugin(({ registerHook, getService }) => {
       end.setData(Point.from(event.positionInDrawer));
     },
     afterStart(startPayload) {
+      // 打印日志
+      getService(LOGGER_SERVICE).info(LoggerName, '开始多选框选择');
       // 启动后清除选中
       getService(SELECT_SERVICE).clear();
       // 设置启动坐标
@@ -107,8 +110,42 @@ definePlugin(({ registerHook, getService }) => {
       end.setData(position);
     },
     afterEnd(startPayload, endPayload) {
+      if (!startPayload?.event || !endPayload?.event) {
+        throw new Error('选择框事件中没有位置信息，请检查代码逻辑是否正常');
+      }
+
+      const logger = getService(LOGGER_SERVICE);
+      const { positionInDrawer: startPosition } = startPayload.event;
+      const { positionInDrawer: endPosition } = endPayload.event;
+
+      if (startPosition.distance(endPosition) < SELECT_BOX_MIN_MOVE_DISTANCE) {
+        logger.info(LoggerName, '选择距离小于最小移动距离，不进行选择');
+        return;
+      }
+
+      const painterService = getService(PAINTER_SERVICE);
+      const { parts: { data: parts }, lines: { data: lines } } = painterService;
+      const selectService = getService(SELECT_SERVICE);
+      const collisionService = getService(COLLISION_SERVICE);
+      const ids = collisionService.getEntitiesInRect({
+        x: Math.min(startPosition[0], endPosition[0]),
+        y: Math.min(startPosition[1], endPosition[1]),
+        width: Math.abs(startPosition[0] - endPosition[0]),
+        height: Math.abs(startPosition[1] - endPosition[1]),
+      });
+      const partIds = ids.filter((id) => {
+        return parts.find((part) => part.id === id);
+      });
+      const lineIds = markMovableLines(partIds, getService(CONNECTION_SERVICE), painterService)
+        .filter((id) => {
+          return lines.find((line) => line.id === id);
+        });
+
+      logger.info(LoggerName, '多选框选择结束');
+
       start.setData(Point.Zero());
       end.setData(Point.Zero());
+      selectService.set(...partIds, ...lineIds);
     },
   });
 

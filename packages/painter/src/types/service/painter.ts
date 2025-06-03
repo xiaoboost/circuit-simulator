@@ -43,6 +43,8 @@ export interface IPainterService {
   readonly canRedo: Watcher<boolean>;
   /** 画布状态 */
   readonly isReady: Watcher<boolean>;
+  /** 是否是导线编号 */
+  isLineId(id: string): boolean;
   /** 获取器件 */
   getPart(id: string): Readonly<PartStructuredData>;
   /** 获取导线 */

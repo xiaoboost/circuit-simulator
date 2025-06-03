@@ -14,7 +14,7 @@ import {
   COLLISION_SERVICE,
   IEntityRegion,
 } from '../../../types';
-import { pointInRect, collision } from './collision';
+import { pointInRect, rectInRect, collision } from './collision';
 import { getRectByEntity } from './create';
 
 definePlugin(({ registerService }) => {
@@ -112,6 +112,15 @@ definePlugin(({ registerService }) => {
     },
     getEntityCollisionRects(id: string) {
       return map.get(id)?.rects ?? [];
+    },
+    getEntitiesInRect(rect: Rect) {
+      const result: string[] = [];
+      for (const [id, region] of map) {
+        if (region.rects.every((r) => rectInRect(rect, r))) {
+          result.push(id);
+        }
+      }
+      return result;
     },
     debugVisualize() {
       // TODO: Implement visualization for debugging purposes

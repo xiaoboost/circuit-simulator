@@ -1,10 +1,23 @@
+import { stringifyClass as scl } from '@xiao-ai/utils';
 import React from 'react';
-import { usePainterHook, useComposeHOC } from '../../../../context';
-import { IDrawLayerProps, LINE_RENDERER } from '../../../../types';
+import {
+  useComposeHOC,
+  useWatcher,
+  usePainterHook,
+  usePainterService,
+} from '../../../../context';
+import {
+  IDrawLayerProps,
+  LINE_RENDERER,
+  SELECT_SERVICE,
+} from '../../../../types';
+import * as Styles from './styles.less';
 
 function LineLayerRender({ lines }: IDrawLayerProps) {
   const lineRenderers = usePainterHook(LINE_RENDERER, 'asc');
   const lineComposedRenderers = lineRenderers.map(useComposeHOC);
+  const selectService = usePainterService(SELECT_SERVICE);
+  const [selectedIds] = useWatcher(selectService.value);
 
   if (lineComposedRenderers.length === 0) {
     return null;
@@ -13,7 +26,12 @@ function LineLayerRender({ lines }: IDrawLayerProps) {
   return (
     <>
       {lines.map((line, index) => (
-        <g key={line.id ?? index}>
+        <g
+          key={line.id ?? index}
+          className={scl({
+            [Styles.selected]: selectedIds.has(line.id),
+          })}
+        >
           {lineComposedRenderers.map(({ Component, getKey }) => {
             const props = { data: line };
             const key = getKey(props);

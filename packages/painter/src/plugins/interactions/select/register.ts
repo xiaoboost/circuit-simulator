@@ -1,14 +1,24 @@
 import { definePlugin, Watcher } from '../../../context';
-import { SELECT_SERVICE, ISelectService } from '../../../types';
+import { SELECT_SERVICE, LOGGER_SERVICE, ISelectService } from '../../../types';
 
-definePlugin(({ registerService }) => {
+const LoggerName = '选择服务';
+
+definePlugin(({ registerService, getService }) => {
   const selected = new Watcher(new Set<string>());
   const service: ISelectService = {
     value: selected,
     set(...ids) {
+      if (ids.length > 0) {
+        getService(LOGGER_SERVICE).info(LoggerName, '设置选中元件', ids.join(', '));
+      }
+      else {
+        getService(LOGGER_SERVICE).info(LoggerName, '设置选中元件为空');
+      }
+
       selected.setData(new Set(ids));
     },
     clear() {
+      getService(LOGGER_SERVICE).info(LoggerName, '清空选中元件');
       selected.setData(new Set());
     },
   };

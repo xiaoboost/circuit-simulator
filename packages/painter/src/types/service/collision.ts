@@ -85,6 +85,13 @@ export interface ICollisionService {
    */
   getEntityCollisionRects(id: string): Rect[];
 
+  /**
+   * 获取完全在指定矩形内的所有实体
+   * @param rect 指定的矩形区域
+   * @returns 完全在矩形内的实体ID列表
+   */
+  getEntitiesInRect(rect: Rect): string[];
+
   // ===== 特殊方法 =====
   /**
    * 可视化碰撞区域（调试用）

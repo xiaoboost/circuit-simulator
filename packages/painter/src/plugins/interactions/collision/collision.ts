@@ -19,3 +19,13 @@ export function collision(rect1: Rect, rect2: Rect) {
     rect1.y > rect2.y + rect2.height
   );
 }
+
+/** `rect1`是否完全包含`rect2` */
+export function rectInRect(rect1: Rect, rect2: Rect) {
+  return (
+    rect2.x >= rect1.x &&
+    rect2.y >= rect1.y &&
+    rect2.x + rect2.width <= rect1.x + rect1.width &&
+    rect2.y + rect2.height <= rect1.y + rect1.height
+  );
+}

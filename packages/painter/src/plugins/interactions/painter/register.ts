@@ -3,6 +3,7 @@ import {
   LineStructuredData,
   ElectronicKind,
   Electronics,
+  isLine,
 } from '@circuit/electronics';
 import { Watcher } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
@@ -23,6 +24,9 @@ definePlugin(({ registerService }) => {
     commit: () => void 0,
     draft: () => void 0,
     dropDraft: () => void 0,
+    isLineId(id) {
+      return isLine(id);
+    },
     getPartPrototype(kind: ElectronicKind) {
       const result = Electronics[kind];
 
