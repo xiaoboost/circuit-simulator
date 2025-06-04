@@ -101,7 +101,7 @@ definePlugin(({ registerHook, getService }) => {
     },
     afterStart(startPayload) {
       // 打印日志
-      getService(LOGGER_SERVICE).info(LoggerName, '开始多选框选择');
+      getService(LOGGER_SERVICE).debug(LoggerName, '开始多选框选择');
       // 启动后清除选中
       getService(SELECT_SERVICE).clear();
       // 设置启动坐标
@@ -119,7 +119,7 @@ definePlugin(({ registerHook, getService }) => {
       const { positionInDrawer: endPosition } = endPayload.event;
 
       if (startPosition.distance(endPosition) < SELECT_BOX_MIN_MOVE_DISTANCE) {
-        logger.info(LoggerName, '选择距离小于最小移动距离，不进行选择');
+        logger.debug(LoggerName, '选择距离小于最小移动距离，不进行选择');
         return;
       }
 
@@ -141,7 +141,7 @@ definePlugin(({ registerHook, getService }) => {
           return lines.find((line) => line.id === id);
         });
 
-      logger.info(LoggerName, '多选框选择结束');
+      logger.debug(LoggerName, '多选框选择结束');
 
       start.setData(Point.Zero());
       end.setData(Point.Zero());
