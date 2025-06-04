@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'C',
@@ -10,13 +16,16 @@ export const data: ElectronicPrototype = {
     Bottom: 22,
   },
   margin: [18, 50, 18, 50],
-  params: [
+  properties: [
     {
-      label: '电容量',
+      name: '电容量',
+      kind: PropertyKind.Number,
+      visibleInPainter: true,
       unit: UnitType.Farad,
-      default: '100u',
-      visible: true,
-      ranks: ['', 'm', 'μ', 'n', 'p'],
+      default: {
+        value: 100,
+        rank: 'u',
+      },
     },
   ],
   pins: [

@@ -22,9 +22,6 @@ import {
   PartPinData,
   ElectronicKind,
 } from './types';
-import {
-  getPaddingRect,
-} from './utils';
 
 /** 迭代器件所有引脚数据 */
 export function *getPartPins(part: PartStructuredData) {
@@ -57,33 +54,24 @@ export function transformPartStoreToStateData(data: PartStoreData): PartStructur
   return {
     ...data,
     position: Point.from(data.position),
+    propertyValues: data.propertyValues ?? [],
     rotate: data.rotate ?? copyMatrix(RotateMatrixSet[Rotate.Same]),
   };
 }
 
 /** 转换器件状态数据为存储数据 */
 export function transformPartStateToStoreData(data: PartStructuredData): PartStoreData {
-  return {
+  const result: PartStoreData = {
     ...data,
     position: data.position.toData(),
     rotate: isMatrixNotRotate(data.rotate) ? undefined : data.rotate,
   };
-}
 
-/** 迭代器件内边框内所有节点 */
-export function *getPaddingPoint(data: PartStructuredData) {
-  const { margin } = getPartPrototype(data.kind);
-  const [point1, point2, , point4] = getPaddingRect(data.position, margin, data.rotate);
-
-  for (const pointY of point1.toDestination(point4, 20)) {
-    const numberY = pointY[1];
-    const start = new Point(point1[0], numberY);
-    const end = new Point(point2[0], numberY);
-
-    for (const point of start.toDestination(end, 20)) {
-      yield point;
-    }
+  if (!result.propertyValues || result.propertyValues.length === 0) {
+    delete result.propertyValues;
   }
+
+  return result;
 }
 
 /** 获取器件节点数据 */
@@ -116,7 +104,9 @@ export function createPartByKind(
     kind,
     position: Point.from(NewElectronicPosition),
     rotate: [[1, 0], [0, 1]],
-    params: prototype.params.map((param) => param.default),
+    propertyValues: prototype.properties.map((p) => ({
+      ...p.default,
+    })),
     textDirection,
   };
 

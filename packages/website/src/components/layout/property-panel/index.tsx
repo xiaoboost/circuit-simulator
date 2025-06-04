@@ -4,6 +4,7 @@ import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
 import * as Styles from './styles.less';
 
 export interface PropertyPanelProps {
+  /** 选中的器件 */
   selected: PartStructuredData[];
 }
 

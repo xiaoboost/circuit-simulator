@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'L',
@@ -10,13 +16,16 @@ export const data: ElectronicPrototype = {
     Bottom: 10,
   },
   margin: [14, 50, 1, 50],
-  params: [
+  properties: [
     {
-      label: '电感量',
+      name: '电感量',
+      kind: PropertyKind.Number,
       unit: UnitType.Henry,
-      default: '10u',
-      visible: true,
-      ranks: ['', 'm', 'μ', 'n'],
+      visibleInPainter: true,
+      default: {
+        value: 10,
+        rank: 'u',
+      },
     },
   ],
   pins: [

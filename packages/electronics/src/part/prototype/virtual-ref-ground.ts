@@ -6,7 +6,7 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.ReferenceGround,
   category: ElectronicCategory.Virtual,
   margin: [10, 8, 8, 8],
-  params: [],
+  properties: [],
   pins: [
     {
       position: [0, -20],

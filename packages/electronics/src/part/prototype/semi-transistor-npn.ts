@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'Q',
@@ -9,34 +15,46 @@ export const data: ElectronicPrototype = {
     Right: 16,
   },
   margin: [50, 30, 50, 30],
-  params: [
+  properties: [
     {
-      label: '电流放大倍数',
+      name: '电流放大倍数',
+      kind: PropertyKind.Number,
       unit: UnitType.Space,
-      default: '40',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 100,
+      },
     },
     {
-      label: 'B极电阻',
+      name: 'B极电阻',
+      kind: PropertyKind.Number,
       unit: UnitType.Ohm,
-      default: '26',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 26,
+      },
     },
     {
-      label: 'BE饱和压降',
+      name: 'BE饱和压降',
+      kind: PropertyKind.Number,
       unit: UnitType.Volt,
-      default: '0.6',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 0.6,
+      },
     },
     {
-      label: 'CE饱和压降',
+      name: 'CE饱和压降',
+      kind: PropertyKind.Number,
       unit: UnitType.Volt,
-      default: '1',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 1,
+      },
     },
   ],
   pins: [

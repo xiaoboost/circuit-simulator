@@ -7,6 +7,7 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
+import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { usePainterService, useWatcher } from '../../../../context';
 import {
@@ -19,27 +20,12 @@ import {
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
-
-function getTextLineCount(partLabelVisible: Kind, texts: string[]) {
-  if (partLabelVisible === Kind.NotVisible) {
-    return 0;
-  }
-
-  if (partLabelVisible === Kind.OnlyParam) {
-    return texts.length;
-  }
-
-  if (partLabelVisible === Kind.OnlyId) {
-    return 1;
-  }
-
-  return 1 + texts.length;
-}
+import { getTextLineCount, propertyToString } from './utils';
 
 function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const {
     id,
-    params,
+    propertyValues: properties,
     rotate,
     textDirection,
   } = data;
@@ -82,7 +68,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   // 更新器件说明文本
   useEffect(() => {
     if (
-      !params ||
+      !properties ||
+      properties.length === 0 ||
       !prototype.textBias ||
       partLabelVisible === Kind.OnlyId ||
       partLabelVisible === Kind.NotVisible
@@ -91,12 +78,15 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
       return;
     }
 
-    setTexts((params as string[])
-      .map((v, i) => ({ ...prototype.params[i], value: v }))
-      .filter((txt) => txt.visible)
-      .map((txt) => `${txt.value}${txt.unit}`.replace(/u/g, 'μ')),
+    setTexts((properties)
+      .map((v, i) => ({
+        visibleInPainter: prototype.properties[i].visibleInPainter,
+        value: propertyToString(v, prototype.properties[i]),
+      }))
+      .filter((txt) => txt.visibleInPainter)
+      .map(({ value }) => value),
     );
-  }, [params, partLabelVisible]);
+  }, [properties, partLabelVisible]);
 
   useEffect(() => {
     if (!prototype.textBias || !textRef.current) {
@@ -204,6 +194,6 @@ export const Render = React.memo(
     prev.kind === next.kind &&
     isMatrixEqual(prev.rotate, next.rotate) &&
     prev.textDirection === next.textDirection &&
-    prev.params.every((text, i) => text === next.params[i])
+    isEqual(prev.propertyValues, next.propertyValues)
   ),
 );

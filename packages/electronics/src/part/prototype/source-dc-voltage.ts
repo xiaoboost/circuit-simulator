@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
@@ -10,12 +16,15 @@ export const data: ElectronicPrototype = {
     Right: 24,
   },
   margin: [50, 18, 50, 18],
-  params: [
+  properties: [
     {
-      label: '电压值',
+      name: '电压值',
+      kind: PropertyKind.Number,
       unit: UnitType.Volt,
-      default: '12',
-      visible: true,
+      visibleInPainter: true,
+      default: {
+        value: 12,
+      },
     },
   ],
   pins: [

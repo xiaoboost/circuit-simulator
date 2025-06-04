@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'V',
@@ -10,34 +16,46 @@ export const data: ElectronicPrototype = {
     Right: 24,
   },
   margin: [50, 24, 50, 24],
-  params: [
+  properties: [
     {
-      label: '峰值电压',
+      name: '峰值电压',
+      kind: PropertyKind.Number,
       unit: UnitType.Volt,
-      default: '220',
-      visible: true,
-      ranks: ['k', '', 'm'],
+      visibleInPainter: true,
+      default: {
+        value: 220,
+      },
     },
     {
-      label: '频率',
+      name: '频率',
+      kind: PropertyKind.Number,
       unit: UnitType.Hertz,
-      default: '50',
-      visible: true,
-      ranks: ['M', 'k', '', 'm'],
+      visibleInPainter: true,
+      ranks: ['G', 'M', 'k', ''],
+      default: {
+        value: 50,
+      },
     },
     {
-      label: '偏置电压',
+      name: '偏置电压',
+      description: '交流电压源的直流偏移量',
+      kind: PropertyKind.Number,
       unit: UnitType.Volt,
-      default: '0',
-      visible: false,
+      visibleInPainter: false,
       ranks: ['k', '', 'm'],
+      default: {
+        value: 0,
+      },
     },
     {
-      label: '初始相角',
+      name: '初始相角',
+      kind: PropertyKind.Number,
       unit: UnitType.Degree,
-      default: '0',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 0,
+      },
     },
   ],
   pins: [

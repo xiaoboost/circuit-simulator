@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'R',
@@ -10,13 +16,16 @@ export const data: ElectronicPrototype = {
     Bottom: 14,
   },
   margin: [15, 50, 15, 50],
-  params: [
+  properties: [
     {
-      label: '阻值',
+      name: '阻值',
+      kind: PropertyKind.Number,
       unit: UnitType.Ohm,
-      default: '10k',
-      visible: true,
-      ranks: ['G', 'M', 'k', ''],
+      visibleInPainter: true,
+      default: {
+        value: 10,
+        rank: 'k',
+      },
     },
   ],
   pins: [

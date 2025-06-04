@@ -1,5 +1,11 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory, UnitType } from '../types';
+import {
+  ElectronicPrototype,
+  ElectronicKind,
+  ElectronicCategory,
+  UnitType,
+  PropertyKind,
+} from '../types';
 
 export const data: ElectronicPrototype = {
   pre: 'OP',
@@ -9,34 +15,52 @@ export const data: ElectronicPrototype = {
     Center: 0,
   },
   margin: [38, 50, 38, 50],
-  params: [
+  properties: [
     {
-      label: '开环增益',
+      name: '开环增益',
+      description: '运算放大器在没有反馈电路时的增益',
+      kind: PropertyKind.Number,
       unit: UnitType.Decibel,
-      default: '120',
-      visible: false,
+      visibleInPainter: false,
       ranks: [],
+      default: {
+        value: 100,
+      },
     },
     {
-      label: '输入电阻',
+      name: '输入电阻',
+      kind: PropertyKind.Number,
       unit: UnitType.Ohm,
-      default: '80M',
-      visible: false,
+      visibleInPainter: false,
       ranks: ['G', 'M', 'k', ''],
+      default: {
+        value: 80,
+        rank: 'M',
+      },
     },
     {
-      label: '输出电阻',
+      name: '输出电阻',
+      kind: PropertyKind.Number,
       unit: UnitType.Ohm,
-      default: '60',
-      visible: false,
-      ranks: ['', 'm'],
+      visibleInPainter: false,
+      ranks: ['', 'm', 'u'],
+      default: {
+        value: 60,
+        rank: '',
+      },
     },
-    // {
-    //   label: '截止频率',
-    //   unit: 'Hz',
-    //   default: '1M',
-    //   visible: false,
-    // },
+    {
+      name: '截止频率',
+      description: '增益下降至直流（低频）增益的 -3 dB 点（约 70.7%） 时所对应的频率',
+      kind: PropertyKind.Number,
+      unit: UnitType.Hertz,
+      visibleInPainter: false,
+      ranks: ['k', 'M', 'G'],
+      default: {
+        value: 40,
+        rank: 'M',
+      },
+    },
   ],
   pins: [
     {

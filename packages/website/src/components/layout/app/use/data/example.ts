@@ -7,7 +7,18 @@ export const parts: PartStoreData[] = [
     id: 'VD_1',
     position: [700, 200],
     rotate: [[1, 0], [0, 1]],
-    params: ['1', '0.5', '0.2G'],
+    propertyValues: [
+      {
+        value: 0.7,
+      },
+      {
+        value: 0.5,
+      },
+      {
+        value: 0.2,
+        rank: 'G',
+      },
+    ],
     textDirection: Direction.Left,
   },
   {
@@ -15,7 +26,18 @@ export const parts: PartStoreData[] = [
     id: 'VD_2',
     position: [780, 200],
     rotate: [[1, 0], [0, 1]],
-    params: ['1', '0.5', '0.2G'],
+    propertyValues: [
+      {
+        value: 0.7,
+      },
+      {
+        value: 0.5,
+      },
+      {
+        value: 0.2,
+        rank: 'G',
+      },
+    ],
     textDirection: Direction.Left,
   },
   {
@@ -23,7 +45,18 @@ export const parts: PartStoreData[] = [
     id: 'VD_3',
     position: [700, 440],
     rotate: [[1, 0], [0, 1]],
-    params: ['1', '0.5', '0.2G'],
+    propertyValues: [
+      {
+        value: 0.7,
+      },
+      {
+        value: 0.5,
+      },
+      {
+        value: 0.2,
+        rank: 'G',
+      },
+    ],
     textDirection: Direction.Left,
   },
   {
@@ -31,7 +64,18 @@ export const parts: PartStoreData[] = [
     id: 'VD_4',
     position: [780, 440],
     rotate: [[1, 0], [0, 1]],
-    params: ['1', '0.5', '0.2G'],
+    propertyValues: [
+      {
+        value: 0.7,
+      },
+      {
+        value: 0.5,
+      },
+      {
+        value: 0.2,
+        rank: 'G',
+      },
+    ],
     textDirection: Direction.Left,
   },
   {
@@ -39,7 +83,20 @@ export const parts: PartStoreData[] = [
     id: 'V_1',
     position: [580, 320],
     rotate: [[1, 0], [0, 1]],
-    params: ['220', '200', '0', '0'],
+    propertyValues: [
+      {
+        value: 220,
+      },
+      {
+        value: 50,
+      },
+      {
+        value: 0,
+      },
+      {
+        value: 0,
+      },
+    ],
     textDirection: Direction.Left,
   },
   {
@@ -47,7 +104,12 @@ export const parts: PartStoreData[] = [
     id: 'C_1',
     position: [900, 320],
     rotate: [[0, 1], [-1, 0]],
-    params: ['100u'],
+    propertyValues: [
+      {
+        value: 100,
+        rank: 'u',
+      },
+    ],
     textDirection: Direction.Bottom,
   },
   {
@@ -55,13 +117,18 @@ export const parts: PartStoreData[] = [
     id: 'R_1',
     position: [960, 320],
     rotate: [[0, 1], [-1, 0]],
-    params: ['2k'],
+    propertyValues: [
+      {
+        value: 2,
+        rank: 'k',
+      },
+    ],
     textDirection: Direction.Top,
   },
   {
     kind: ElectronicKind.CurrentMeter,
     id: 'I_out',
-    params: [],
+    propertyValues: [],
     position: [840, 140],
     rotate: [[1, 0], [0, 1]],
     textDirection: Direction.Top,
@@ -69,7 +136,7 @@ export const parts: PartStoreData[] = [
   {
     kind: ElectronicKind.VoltageMeter,
     id: 'V_out',
-    params: [],
+    propertyValues: [],
     position: [1040, 320],
     rotate: [[1, 0], [0, 1]],
     textDirection: Direction.Right,
@@ -77,7 +144,7 @@ export const parts: PartStoreData[] = [
   {
     kind: ElectronicKind.VoltageMeter,
     id: 'V_in',
-    params: [],
+    propertyValues: [],
     position: [640, 320],
     rotate: [[1, 0], [0, 1]],
     textDirection: Direction.Right,
@@ -85,7 +152,7 @@ export const parts: PartStoreData[] = [
   {
     kind: ElectronicKind.ReferenceGround,
     id: 'GND_1',
-    params: [],
+    propertyValues: [],
     position: [700, 540],
     rotate: [[1, 0], [0, 1]],
     textDirection: Direction.Center,

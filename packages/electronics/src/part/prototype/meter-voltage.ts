@@ -10,7 +10,7 @@ export const data: ElectronicPrototype = {
     Right: 24,
   },
   margin: [50, 24, 50, 24],
-  params: [],
+  properties: [],
   pins: [
     {
       position: [0, -40],
