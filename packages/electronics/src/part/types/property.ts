@@ -64,8 +64,6 @@ export enum PropertyKind {
   Number,
   /** 枚举 */
   Enum,
-  /** 编号 */
-  Id,
   /** 多选选择器 */
   MultiSelect,
 }
@@ -163,14 +161,6 @@ export interface EnumPropertyDescription extends BasePropertyDescription {
   enums: EnumOrMultiSelectOption[];
 }
 
-/** 编号参数描述 */
-export interface IdPropertyDescription extends BasePropertyDescription {
-  /** 编号类型 */
-  kind: PropertyKind.Id;
-  /** 编号值 */
-  default: IdValue;
-}
-
 /** 多选选择器参数描述 */
 export interface MultiSelectPropertyDescription extends BasePropertyDescription {
   /** 多选选择器类型 */
@@ -194,5 +184,4 @@ export interface MultiSelectPropertyDescription extends BasePropertyDescription 
 export type PropertyDescription =
   | NumberPropertyDescription
   | EnumPropertyDescription
-  | IdPropertyDescription
   | MultiSelectPropertyDescription;

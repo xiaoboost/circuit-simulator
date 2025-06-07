@@ -50,7 +50,7 @@ export function getPartInfo(kind: ElectronicKind) {
 }
 
 /** 转换器件存储数据为状态数据 */
-export function transformPartStoreToStateData(data: PartStoreData): PartStructuredData {
+export function transformPartStoreToStructureData(data: PartStoreData): PartStructuredData {
   return {
     ...data,
     position: Point.from(data.position),
@@ -60,7 +60,7 @@ export function transformPartStoreToStateData(data: PartStoreData): PartStructur
 }
 
 /** 转换器件状态数据为存储数据 */
-export function transformPartStateToStoreData(data: PartStructuredData): PartStoreData {
+export function transformPartStructureToStoreData(data: PartStructuredData): PartStoreData {
   const result: PartStoreData = {
     ...data,
     position: data.position.toData(),

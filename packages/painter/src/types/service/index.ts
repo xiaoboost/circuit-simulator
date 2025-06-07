@@ -1,3 +1,4 @@
+import type { ICacheService } from './cache';
 import type { ICollisionService } from './collision';
 import type { IConfigurationService } from './configuration';
 import type { IConnectionService } from './connection';
@@ -13,6 +14,7 @@ import type { IPainterHTMLElement } from './painter-dom';
 import type { ISelectService } from './select';
 import type { IVariableObserverService } from './variable-observer';
 
+export * from './cache';
 export * from './collision';
 export * from './configuration';
 export * from './connection';
@@ -29,6 +31,7 @@ export * from './select';
 export * from './event-bus';
 
 export type ServiceType =
+  | ICacheService
   | ICollisionService
   | IConfigurationService
   | IDragSceneService

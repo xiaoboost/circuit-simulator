@@ -100,6 +100,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
     this.draftState = undefined;
     // 通知变更
     this.notify(SubscribeEventName.Change, newState);
+    this.notify(SubscribeEventName.Commit, newState);
   }
 
   /** 撤销 */
@@ -116,6 +117,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
     this.stackPointer--;
     // 通知变更
     this.notify(SubscribeEventName.Change, this.state);
+    this.notify(SubscribeEventName.Commit, this.state);
     // 通知操作栈变更
     this.notify(SubscribeEventName.Undo, currentEditPatch.name);
   }
@@ -134,6 +136,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
     this.stackPointer++;
     // 通知变更
     this.notify(SubscribeEventName.Change, this.state);
+    this.notify(SubscribeEventName.Commit, this.state);
     // 通知操作栈变更
     this.notify(SubscribeEventName.Redo, currentEditPatch.name);
   }

@@ -38,7 +38,7 @@ export function isMatrixEqual(matrix1: RotateMatrix, matrix2: RotateMatrix): boo
   return matrix1.every((row, i) => row.every((value, j) => value === matrix2[i][j]));
 }
 
-/** 矩阵不旋转 */
+/** 不旋转矩阵 */
 export function isMatrixNotRotate(matrix: RotateMatrix): boolean {
   return isMatrixEqual(matrix, RotateMatrixSet[Rotate.Same]);
 }

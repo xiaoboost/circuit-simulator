@@ -22,8 +22,18 @@ export interface PatchWithComment {
 }
 /** 订阅事件枚举 */
 export enum SubscribeEventName {
-  /** 状态变更 */
+  /**
+   * 状态变更
+   *
+   * @description 提交草稿时也会触发
+   */
   Change,
+  /**
+   * 提交数据
+   *
+   * @description 仅在提交数据时触发
+   */
+  Commit,
   /** 撤销 */
   Undo,
   /** 重做 */

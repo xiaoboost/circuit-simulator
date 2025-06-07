@@ -17,7 +17,7 @@ export interface StoreData extends ElectronicsStoreData {
  *
  * @description 内存中的数据
  */
-export interface StateData extends ElectronicsStructuredData {
+export interface StructuredData extends ElectronicsStructuredData {
   /** 版本 */
   version: string;
 }

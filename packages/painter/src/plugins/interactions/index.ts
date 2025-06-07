@@ -14,3 +14,4 @@ import './create-part';
 import './collision';
 import './connection';
 import './select-box';
+import './cache';

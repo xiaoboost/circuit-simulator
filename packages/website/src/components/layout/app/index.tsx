@@ -6,24 +6,24 @@ import { Header } from '../header';
 import { PropertyPanel } from '../property-panel';
 import * as Styles from './styles.less';
 import {
-  useDataInit,
-  usePainterState,
+  useCache,
+  useStorage,
   useRemoveLoading,
 } from './use';
 
 export function App() {
-  const data = useDataInit();
+  const cache = useCache();
   const removeLoading = useRemoveLoading();
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const painterState = usePainterState(data);
+  const [isDataReady, painterState] = useStorage();
   const onCreatePart = useCallback((kind: ElectronicKind) => {
-    painterState.draft((state) => {
+    painterState.onDraft?.((state) => {
       state.parts.push(createPartByKind(kind, state.parts));
     });
-  }, [painterState.draft]);
+  }, [painterState.onDraft]);
   const selectedParts = useMemo(() => {
-    return (data?.parts ?? []).filter((item) => selected.has(item.id));
-  }, [selected, data?.parts]);
+    return (painterState.parts ?? []).filter((item) => selected.has(item.id));
+  }, [selected, painterState.parts]);
 
   return (
     <article className={Styles.layout}>
@@ -31,11 +31,13 @@ export function App() {
       <div className={Styles.container}>
         <ElectronicPanel onSelect={onCreatePart} />
         <div className={Styles.mainArea}>
-        {data
+        {isDataReady && cache
           ? <Painter
             {...painterState}
             onSelect={setSelected}
             onReady={removeLoading}
+            onReadCache={cache.get}
+            onSaveCache={cache.set}
           />
           : <div>Loading</div>
         }
