@@ -20,6 +20,7 @@ export interface HotKeyOptions {
   keydown?: boolean | null;
   capture?: boolean
   single?: boolean;
+  element?: HTMLElement | null;
 }
 
 /** 快捷键定义 */

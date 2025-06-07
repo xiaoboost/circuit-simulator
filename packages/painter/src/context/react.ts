@@ -57,8 +57,13 @@ export function useHotkey(key: string, options: HotKeyOptions, callback: KeyHand
 
   useEffect(() => {
     if (painterRef.current) {
-      // TODO: 需要优化，暂时使用 document 监听，因为只有激活元素才能有键盘事件
-      HotKey(key, realOptions, callback);
+      HotKey(
+        key,
+        {
+          ...realOptions,
+          element: painterRef.current,
+        },
+        callback);
     }
 
     return () => {

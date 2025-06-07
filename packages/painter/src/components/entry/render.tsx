@@ -22,7 +22,7 @@ export function Entry(props: PainterProps) {
       className={scl(Styles.entry, props.className)}
       style={props.style}
       ref={painterRef}
-      tabIndex={0}
+      tabIndex={-1}
       onContextMenu={(e) => e.preventDefault()}
     >
       <Drawer />

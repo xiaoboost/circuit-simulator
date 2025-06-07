@@ -12,8 +12,8 @@ export const data: ElectronicPrototype = {
   kind: ElectronicKind.Resistance,
   category: ElectronicCategory.Passive,
   textBias: {
-    Top: 14,
-    Bottom: 14,
+    Top: 16,
+    Bottom: 16,
   },
   margin: [15, 50, 15, 50],
   properties: [

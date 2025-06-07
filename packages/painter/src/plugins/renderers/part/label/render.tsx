@@ -138,7 +138,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
     else if (finalDirection === Direction.Top) {
       newPosition[0] = 0;
-      newPosition[1] = - (textHeight + textSpaceHeight) * texts.length - textBias;
+      newPosition[1] = - (textHeight + textSpaceHeight) * (textLineCount - 1) - textBias;
     }
     else if (finalDirection === Direction.Bottom) {
       newPosition[0] = 0;
@@ -147,7 +147,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
     setPosition(newPosition);
     eventBus.notify('PartLabelChanged');
-  }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible]);
+  }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible, textLineCount]);
 
   if (
     // 不存在偏移量

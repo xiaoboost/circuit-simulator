@@ -19,6 +19,7 @@ export function useKeyboardListener(painterRef: RefObject<HTMLDivElement | null>
         keydown: true,
         capture: false,
         ...options,
+        element: painterRef.current,
       };
 
       hotkeys(getKey(key), opt, action);
