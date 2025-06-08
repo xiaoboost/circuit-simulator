@@ -15,7 +15,7 @@ export function App() {
   const cache = useCache();
   const removeLoading = useRemoveLoading();
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [isDataReady, painterState] = useStorage();
+  const {isReadonly, isDataReady, data: painterState, writeCache} = useStorage();
   const onCreatePart = useCallback((kind: ElectronicKind) => {
     painterState.onDraft?.((state) => {
       state.parts.push(createPartByKind(kind, state.parts));

@@ -4,9 +4,18 @@
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
-  "source": "src/index.ts",
-  "main": "dist/index.js",
-  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    },
+    "./*": {
+      "source": "./src/*.ts",
+      "import": "./src/*.ts",
+      "types": "./src/*.ts"
+    }
+  },
   "files": [
     "dist",
     "README.md",
@@ -22,14 +31,12 @@
     "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
-    "@circuit/electronics": "workspace:*",
-    "react-use": "17.6.0"
+    "@circuit/algorithm": "workspace:*",
+    "@circuit/electronics": "workspace:*"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
-    "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
-    "@types/node": "20.12.8",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.17.0",
     "rimraf": "5.0.5",

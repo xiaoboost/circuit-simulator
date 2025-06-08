@@ -24,6 +24,7 @@
     "@antv/g2": "5.3.2",
     "@circuit/algorithm": "workspace:*",
     "@circuit/electronics": "workspace:*",
+    "@circuit/examples": "workspace:*",
     "@circuit/map": "workspace:*",
     "@circuit/painter": "workspace:*",
     "@circuit/shared": "workspace:*",

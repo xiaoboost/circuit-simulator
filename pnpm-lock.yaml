@@ -96,25 +96,19 @@ importers:
 
   packages/examples:
     dependencies:
+      '@circuit/algorithm':
+        specifier: workspace:*
+        version: link:../algorithm
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
-      react-use:
-        specifier: 17.6.0
-        version: 17.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
         version: link:../../tools/eslint-config
-      '@circuit/test-toolkit':
-        specifier: workspace:*
-        version: link:../../tools/test-toolkit
       '@types/circuit':
         specifier: workspace:*
         version: link:../../tools/typings
-      '@types/node':
-        specifier: 20.12.8
-        version: 20.12.8
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
@@ -341,6 +335,9 @@ importers:
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
+      '@circuit/examples':
+        specifier: workspace:*
+        version: link:../examples
       '@circuit/map':
         specifier: workspace:*
         version: link:../map

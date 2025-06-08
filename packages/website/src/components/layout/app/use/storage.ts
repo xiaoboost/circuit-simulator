@@ -7,10 +7,12 @@ import {
   LineStructuredData,
 } from '@circuit/electronics';
 import { PainterProps } from '@circuit/painter';
+import { isString } from '@xiao-ai/utils';
 import { message } from 'antd';
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { parse } from 'qs';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { StateController, CommitData, EditProducer, CacheController } from '../../../../libraries';
-import { StructuredData } from '../../../../types';
+import { StoreData, StructuredData } from '../../../../types';
 
 /** 数据表名称 */
 const TableName = 'storage';
@@ -32,9 +34,42 @@ const Columns = [
     reverse: (data: LineStructuredData[]) => data.map(transformLineStore),
   },
 ];
+/** 示例数据 */
+const Examples = {
+  'bridge-rectifier': {
+    name: '桥式整流',
+    key: 'bridge-rectifier',
+    data: () => import('@circuit/examples/bridge-rectifier').then((m) => m.data),
+  },
+};
 
-function getInitData(cache: CacheController): Promise<StructuredData> {
+function transformStoreData(input: unknown): StructuredData {
   const data: StructuredData = {
+    version: '1.0.0',
+    parts: [],
+    lines: [],
+  };
+
+  for (const column of Columns) {
+    const val = (input as any)[column.key];
+    (data as any)[column.key] = column.transform(val);
+  }
+
+  return data;
+}
+
+function getStoreByExample(): Promise<StoreData | undefined> {
+  const { example } = parse(location.search.slice(1));
+
+  if (example && isString(example) && example in Examples) {
+    return Examples[example as keyof typeof Examples].data() as any;
+  }
+
+  return Promise.resolve(undefined);
+}
+
+function getStoreByCache(cache: CacheController): Promise<StoreData> {
+  const data: StoreData = {
     version: '1.0.0',
     parts: [],
     lines: [],
@@ -42,8 +77,7 @@ function getInitData(cache: CacheController): Promise<StructuredData> {
 
   return Promise.all(
     Columns.map(async (v) => {
-      const val = await cache.get(v.key);
-      (data as any)[v.key] = v.transform(val);
+      (data as any)[v.key] = await cache.get(v.key);
     }),
   ).then(() => data);
 }
@@ -60,6 +94,7 @@ export function useStorage() {
   const stateController = useRef<StateController<StructuredData>>(null);
   const cache = useRef<CacheController>(null);
   const [state, setState] = useState<StructuredData | undefined>();
+  const [isReadonly, setIsReadonly] = useState<boolean>(false);
 
   // 监听实例的回调
   const [onCommit, onUndo, onRedo, onDraft, onDropDraft] = useMemo(() => ([
@@ -82,7 +117,10 @@ export function useStorage() {
       setState(data);
     });
     const unObserve2 = current.observe(Name.Commit, (data) => {
-      setStorage(cache.current!, data);
+      // 只读模式下不写入缓存
+      if (isReadonly) {
+        setStorage(cache.current!, data);
+      }
     });
     const unObserve3 = current.observe(Name.Undo, (msg: string) => {
       message.info({
@@ -108,10 +146,23 @@ export function useStorage() {
   useEffect(() => {
     cache.current = new CacheController(TableName);
 
-    getInitData(cache.current).then((data) => {
-      stateController.current = new StateController(data);
-      setState(data);
-    });
+    getStoreByExample()
+      .then((data) => {
+        if (data) {
+          setIsReadonly(true);
+          return Promise.resolve(data);
+        }
+        else {
+          return getStoreByCache(cache.current!);
+        }
+      })
+      .then((data) => {
+        return transformStoreData(data);
+      })
+      .then((data) => {
+        stateController.current = new StateController(data);
+        setState(data);
+      });
   }, []);
 
   const data: Readonly<Omit<PainterProps, 'onReady'>> = {
@@ -125,6 +176,17 @@ export function useStorage() {
     canUndo: stateController.current?.canUndo ?? false,
     canRedo: stateController.current?.canRedo ?? false,
   };
+  // 强制写缓存
+  const writeCache = useCallback(() => {
+    if (cache.current && state) {
+      setStorage(cache.current, state);
+    }
+  }, [cache.current, state]);
 
-  return [Boolean(state), data] as const;
+  return {
+    isReadonly,
+    isDataReady: Boolean(state),
+    data,
+    writeCache,
+  };
 }
