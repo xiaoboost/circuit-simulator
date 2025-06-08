@@ -1,9 +1,28 @@
 .header{
   height: 48px;
-  width: 100vw;
+  width: 100%;
   background-color: @color-white;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid @color-border-light;
+  padding: 0 16px;
+  box-sizing: border-box;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    img {
+      height: 32px;
+      width: 32px;
+    }
+
+    .titleText {
+      font-size: 18px;
+      font-weight: bold;
+      color: @color-primary-text;
+    }
+  }
 }
