@@ -125,6 +125,49 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  packages/inject:
+    dependencies:
+      '@xiao-ai/utils':
+        specifier: 1.6.7
+        version: 1.6.7
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@circuit/test-toolkit':
+        specifier: workspace:*
+        version: link:../../tools/test-toolkit
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
+      '@types/node':
+        specifier: 20.12.8
+        version: 20.12.8
+      '@types/react':
+        specifier: 19.1.2
+        version: 19.1.2
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      ava:
+        specifier: 6.2.0
+        version: 6.2.0(rollup@4.30.1)
+      eslint:
+        specifier: 9.17.0
+        version: 9.17.0
+      rimraf:
+        specifier: 5.0.5
+        version: 5.0.5
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
   packages/map:
     dependencies:
       '@circuit/algorithm':
