@@ -409,6 +409,9 @@ importers:
       '@circuit/examples':
         specifier: workspace:*
         version: link:../examples
+      '@circuit/inject':
+        specifier: workspace:*
+        version: link:../inject
       '@circuit/map':
         specifier: workspace:*
         version: link:../map

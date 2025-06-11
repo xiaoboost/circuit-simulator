@@ -25,6 +25,7 @@
     "@circuit/algorithm": "workspace:*",
     "@circuit/electronics": "workspace:*",
     "@circuit/examples": "workspace:*",
+    "@circuit/inject": "workspace:*",
     "@circuit/map": "workspace:*",
     "@circuit/painter": "workspace:*",
     "@circuit/shared": "workspace:*",
