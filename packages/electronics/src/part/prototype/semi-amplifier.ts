@@ -5,7 +5,7 @@ import {
   ElectronicCategory,
   UnitType,
   PropertyKind,
-} from '../types';
+} from '@circuit/types';
 
 export const data: ElectronicPrototype = {
   pre: 'OP',

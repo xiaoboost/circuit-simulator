@@ -1,5 +1,5 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory } from '../types';
+import { ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
 
 export const data: ElectronicPrototype = {
   pre: 'GND',

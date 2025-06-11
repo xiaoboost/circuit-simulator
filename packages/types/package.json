@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/shared",
-  "description": "circuit's shared lib",
+  "name": "@circuit/types",
+  "description": "circuit's types library",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
@@ -19,7 +19,7 @@
     "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
-    "@circuit/inject": "workspace:*",
+    "@circuit/algorithm": "workspace:*",
     "@xiao-ai/utils": "1.6.7"
   },
   "devDependencies": {

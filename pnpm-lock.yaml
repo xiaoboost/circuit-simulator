@@ -56,9 +56,9 @@ importers:
       '@circuit/map':
         specifier: workspace:*
         version: link:../map
-      '@circuit/shared':
+      '@circuit/types':
         specifier: workspace:*
-        version: link:../shared
+        version: link:../types
       '@xiao-ai/utils':
         specifier: 1.6.7
         version: 1.6.7
@@ -280,12 +280,12 @@ importers:
 
   packages/shared:
     dependencies:
+      '@circuit/inject':
+        specifier: workspace:*
+        version: link:../inject
       '@xiao-ai/utils':
         specifier: 1.6.7
         version: 1.6.7
-      color:
-        specifier: 4.2.3
-        version: 4.2.3
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*
@@ -293,9 +293,6 @@ importers:
       '@types/circuit':
         specifier: workspace:*
         version: link:../../tools/typings
-      '@types/color':
-        specifier: 4.2.0
-        version: 4.2.0
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
@@ -348,6 +345,37 @@ importers:
       ava:
         specifier: 6.2.0
         version: 6.2.0(rollup@4.30.1)
+      eslint:
+        specifier: 9.17.0
+        version: 9.17.0
+      rimraf:
+        specifier: 5.0.5
+        version: 5.0.5
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
+  packages/types:
+    dependencies:
+      '@circuit/algorithm':
+        specifier: workspace:*
+        version: link:../algorithm
+      '@xiao-ai/utils':
+        specifier: 1.6.7
+        version: 1.6.7
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
       eslint:
         specifier: 9.17.0
         version: 9.17.0
@@ -1256,15 +1284,6 @@ packages:
   '@types/bonjour@3.5.13':
     resolution: {integrity: sha512-z9fJ5Im06zvUL548KvYNecEVlA7cVDkGUi6kZusb04mpyEFKCIZJvloCcmpmLaIahDpOQGHaHmG6imtPMmPXGQ==}
 
-  '@types/color-convert@2.0.4':
-    resolution: {integrity: sha512-Ub1MmDdyZ7mX//g25uBAoH/mWGd9swVbt8BseymnaE18SU4po/PjmCrHxqIIRjBo3hV/vh1KGr0eMxUhp+t+dQ==}
-
-  '@types/color-name@1.1.5':
-    resolution: {integrity: sha512-j2K5UJqGTxeesj6oQuGpMgifpT5k9HprgQd8D1Y0lOFqKHl3PJu5GMeS4Y5EgjS55AE6OQxf8mPED9uaGbf4Cg==}
-
-  '@types/color@4.2.0':
-    resolution: {integrity: sha512-6+xrIRImMtGAL2X3qYkd02Mgs+gFGs+WsK0b7VVMaO4mYRISwyTjcqNrO0mNSmYEoq++rSLDB2F5HDNmqfOe+A==}
-
   '@types/connect-history-api-fallback@1.5.4':
     resolution: {integrity: sha512-n6Cr2xS1h4uAulPRdlw6Jl6s1oG8KrVilPN2yUITEs+K48EzMJJ3W1xy8K5eWuFvjp3R74AOIGSmp2UfBJ8HFw==}
 
@@ -1987,10 +2006,6 @@ packages:
 
   color-string@1.9.1:
     resolution: {integrity: sha512-shrVawQFojnZv6xM40anx4CkoDP+fZsw/ZerEMsW/pyzsRbElpsL/DBVW7q3ExxwusdNXI3lXpuhEZkzs8p5Eg==}
-
-  color@4.2.3:
-    resolution: {integrity: sha512-1rXeuUUiGGrykh+CeBdu5Ie7OJwinCgQY0bc7GCRxy5xVHy+moaqkpL/jqQq0MtQOeYcrqEz4abc5f0KtU7W4A==}
-    engines: {node: '>=12.5.0'}
 
   colord@2.9.3:
     resolution: {integrity: sha512-jeC1axXpnb0/2nn/Y1LPuLdgXBLH7aDcHu4KEKfqw3CUhX7ZpfBSlPKyqXE6btIgEzfWtrX3/tyBCaCvXvMkOw==}
@@ -6373,16 +6388,6 @@ snapshots:
     dependencies:
       '@types/node': 20.12.8
 
-  '@types/color-convert@2.0.4':
-    dependencies:
-      '@types/color-name': 1.1.5
-
-  '@types/color-name@1.1.5': {}
-
-  '@types/color@4.2.0':
-    dependencies:
-      '@types/color-convert': 2.0.4
-
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
       '@types/express-serve-static-core': 5.0.5
@@ -7302,11 +7307,6 @@ snapshots:
     dependencies:
       color-name: 1.1.4
       simple-swizzle: 0.2.2
-
-  color@4.2.3:
-    dependencies:
-      color-convert: 2.0.1
-      color-string: 1.9.1
 
   colord@2.9.3: {}
 

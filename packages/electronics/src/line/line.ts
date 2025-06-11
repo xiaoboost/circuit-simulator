@@ -1,5 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { LineStoreData, LineStructuredData } from './types';
+import { LineStoreData, LineStructuredData } from '@circuit/types';
 
 let lineId = 1;
 

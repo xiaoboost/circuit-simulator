@@ -9,6 +9,12 @@ import {
   Rotate,
   RotateMatrixSet,
 } from '@circuit/algorithm';
+import {
+  PartStoreData,
+  PartStructuredData,
+  PartPinData,
+  ElectronicKind,
+} from '@circuit/types';
 import { createId } from '../utils';
 import {
   ElectronicName,
@@ -16,12 +22,6 @@ import {
   NewElectronicPosition,
 } from './constant';
 import { Electronics } from './prototype';
-import {
-  PartStoreData,
-  PartStructuredData,
-  PartPinData,
-  ElectronicKind,
-} from './types';
 
 /** 迭代器件所有引脚数据 */
 export function *getPartPins(part: PartStructuredData) {

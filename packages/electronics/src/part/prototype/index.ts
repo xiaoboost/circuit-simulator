@@ -1,4 +1,4 @@
-import { ElectronicPrototype, ElectronicKind } from '../types';
+import { ElectronicPrototype, ElectronicKind } from '@circuit/types';
 
 // 无源器件
 import { data as Capacitor } from './basic-capacitor';
