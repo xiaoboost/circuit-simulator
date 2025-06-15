@@ -1,6 +1,5 @@
 import type { IDragScene } from './drag-scene';
 import type { IEventListener } from './event-listener';
-import type { IRendererHOC } from './hoc';
 import type { IHotKey } from './hotkey';
 import type { IDrawLayer, IViewLayer } from './layer';
 import type { ILifeCycle } from './life-cycle';
@@ -21,8 +20,6 @@ export * from './point';
 export * from './tooltip';
 export * from './toolbar';
 export * from './life-cycle';
-export * from './hoc';
-export * from './render';
 export * from './pin';
 
 /** 钩子总类别 */
@@ -38,5 +35,4 @@ export type HookType =
   | IPointRenderer
   | IPainterToolBarAction
   | ILifeCycle
-  | IRendererHOC
   | IPinRenderer;

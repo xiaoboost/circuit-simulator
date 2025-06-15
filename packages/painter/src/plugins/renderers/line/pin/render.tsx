@@ -37,7 +37,7 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
             normalR: isSpace ? 2 : 1,
             fill: isSpace ? '#fff' : undefined,
           };
-          const key = getKey(props);
+          const key = getKey?.(props) ?? `${id}-${i}`;
           return <Component key={key} $$key={key} {...props} />;
         });
       })}

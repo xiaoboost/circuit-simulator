@@ -1,5 +1,5 @@
+import { RENDERER_HOC } from '@circuit/inject';
 import { definePlugin } from '../../../context';
-import { RENDERER_HOC } from '../../../types';
 import { PathDistortionFactory } from './render';
 
 definePlugin(({ registerHook }) => {

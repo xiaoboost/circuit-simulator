@@ -7,16 +7,18 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
+import {
+  CONFIGURATION_SERVICE,
+  EVENT_BUS_SERVICE,
+  PartLabelVisibleKind as Kind,
+} from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
-  PartLabelVisibleKind as Kind,
   IPartRendererProps,
   MAP_COORDINATE_SERVICE,
   DRAG_SCENE_SERVICE,
-  EVENT_BUS_SERVICE,
-  CONFIGURATION_SERVICE,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';

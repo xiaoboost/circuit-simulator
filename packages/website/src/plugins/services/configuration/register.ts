@@ -20,6 +20,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
     movePainterMode: new Watcher(false),
     openDebugLog: new Watcher(false),
     openPathSearcherDebugger: new Watcher(false),
+    previewMode: new Watcher(false),
   };
 
   const watcherCache: WatcherCacheData[] = [

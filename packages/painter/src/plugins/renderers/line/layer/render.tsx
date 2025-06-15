@@ -34,7 +34,7 @@ function LineLayerRender({ lines }: IDrawLayerProps) {
         >
           {lineComposedRenderers.map(({ Component, getKey }) => {
             const props = { data: line };
-            const key = getKey(props);
+            const key = getKey?.(props) ?? line.id;
             return <Component key={key} $$key={key} {...props} />;
           })}
         </g>

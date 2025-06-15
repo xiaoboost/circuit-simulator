@@ -35,4 +35,10 @@ export interface IConfigurationService {
   readonly openDebugLog: Watcher<boolean>;
   /** 打开路径搜索调试器 */
   readonly openPathSearcherDebugger: Watcher<boolean>;
+  /**
+   * 预览模式
+   *
+   * @description 此模式通常是在浏览样例，用户的修改不会被持久化，可以撤销和重做
+   */
+  readonly previewMode: Watcher<boolean>;
 }

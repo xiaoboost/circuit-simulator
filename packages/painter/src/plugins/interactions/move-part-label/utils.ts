@@ -6,9 +6,8 @@ import {
 } from '@circuit/algorithm';
 import {
   getPartPrototype,
-  type PartStructuredData,
-  type TextBias,
 } from '@circuit/electronics';
+import { PartStructuredData, TextBias } from '@circuit/types';
 
 /** 当前位置距离器件最近的方向 */
 export function getPartNearestDirection(data: PartStructuredData, position: Point) {

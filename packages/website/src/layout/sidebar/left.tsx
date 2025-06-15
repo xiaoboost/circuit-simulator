@@ -1,15 +1,17 @@
-import { DoubleLeft, DoubleRight, SearchOutlined } from '@circuit/icons';
-import { Input, Tooltip } from 'antd';
-import React, { useMemo, useState } from 'react';
+import { DoubleLeft, DoubleRight } from '@circuit/icons';
+import React from 'react';
+import { useHook } from '../../context';
+import { LEFT_SIDEBAR_RENDER } from '../../types';
 import { Sidebar } from './sidebar';
 import * as Styles from './styles.less';
 
 export const LeftSidebar = React.memo(function LeftSidebar() {
-  const title = '左侧边栏';
+  // TODO: 目前只有一个
+  const render = useHook(LEFT_SIDEBAR_RENDER)[0];
 
   return (
     <Sidebar
-      title={title}
+      title={<render.title />}
       icons={{
         collapse: <DoubleLeft />,
         expand: <DoubleRight />,
@@ -20,7 +22,7 @@ export const LeftSidebar = React.memo(function LeftSidebar() {
         collapsed: Styles.leftSidebarCollapsed,
       }}
     >
-      内容
+      <render.Render />
     </Sidebar>
   );
 });

@@ -1,6 +1,6 @@
 import type { PointLike } from '@circuit/algorithm';
+import { IRendererData } from '@circuit/inject';
 import { createServiceKey } from '../../context';
-import { IRendererData } from './render';
 
 /**
  * 器件渲染器

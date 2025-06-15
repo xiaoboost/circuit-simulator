@@ -1,6 +1,6 @@
+import { IRendererData } from '@circuit/inject';
 import { LineCoverMark } from '@circuit/map';
 import { createServiceKey } from '../../context';
-import { IRendererData } from './render';
 
 /**
  * 节点渲染器

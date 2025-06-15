@@ -1,7 +1,8 @@
 import { PIN_SIZE } from '@circuit/electronics';
+import { PropsWithHocParams } from '@circuit/inject';
 import React, { useState, useRef, useEffect } from 'react';
 import { useService } from '../../../../context';
-import { IPinRendererProps, DRAG_SCENE_SERVICE, PropsWithHocParams } from '../../../../types';
+import { IPinRendererProps, DRAG_SCENE_SERVICE } from '../../../../types';
 import * as Styles from './styles.less';
 
 function PinRenderer(props: IPinRendererProps) {

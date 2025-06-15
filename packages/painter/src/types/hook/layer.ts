@@ -1,4 +1,4 @@
-import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
+import { PartStructuredData, LineStructuredData } from '@circuit/types';
 import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
 

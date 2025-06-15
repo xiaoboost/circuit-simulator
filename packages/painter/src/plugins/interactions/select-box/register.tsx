@@ -138,7 +138,7 @@ definePlugin(({ registerHook, getService }) => {
       const partIds = ids.filter((id) => {
         return parts.find((part) => part.id === id);
       });
-      const lineIds = markMovableLines(partIds, getService(CONNECTION_SERVICE), painterService)
+      const lineIds = markMovableLines(partIds, getService(CONNECTION_SERVICE))
         .filter((id) => {
           return lines.find((line) => line.id === id);
         });

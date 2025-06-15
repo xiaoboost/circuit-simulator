@@ -30,7 +30,7 @@ function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps
             normalR: 0,
             fill: isSpace ? '#fff' : undefined,
           };
-          const key = getKey(props);
+          const key = getKey?.(props) ?? `${id}-${index}`;
           return <Component key={key} $$key={key} {...props} />;
         });
       })}

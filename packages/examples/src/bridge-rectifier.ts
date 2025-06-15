@@ -1,7 +1,8 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicsStoreData, ElectronicKind } from '@circuit/electronics';
+import { StoreData, ElectronicKind } from '@circuit/types';
 
-export const data: ElectronicsStoreData = {
+export const data: StoreData = {
+  version: '1.0.0',
   parts:  [
     {
       kind: ElectronicKind.Diode,

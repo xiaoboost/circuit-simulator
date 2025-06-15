@@ -1,5 +1,5 @@
-import { PropertyValue, PropertyDescription } from '@circuit/electronics';
-import { PartLabelVisibleKind as Kind } from '../../../../types';
+import { PartLabelVisibleKind as Kind } from '@circuit/shared';
+import { PropertyValue, PropertyDescription } from '@circuit/types';
 
 export function getTextLineCount(partLabelVisible: Kind, texts: string[]) {
   if (partLabelVisible === Kind.NotVisible) {

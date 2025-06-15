@@ -1,5 +1,9 @@
-import type { LineStructuredData, LineStoreData } from './line';
-import type { PartStructuredData, PartStoreData } from './part';
+import type {
+  LineStructuredData,
+  LineStoreData,
+  PartStructuredData,
+  PartStoreData,
+} from '@circuit/types';
 
 /** 元件总类别 */
 export type ElectronicStructuredData = LineStructuredData | PartStructuredData;

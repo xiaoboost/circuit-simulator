@@ -1,5 +1,5 @@
-import { PartStructuredData, LineStructuredData } from '@circuit/electronics';
 import { MarkMap } from '@circuit/map';
+import { PartStructuredData, LineStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
 /**

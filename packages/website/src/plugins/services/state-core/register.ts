@@ -1,6 +1,7 @@
 import { Electronics } from '@circuit/electronics';
-import { STATE_CORE_SERVICE, IStateCoreService, State } from '@circuit/shared';
-import { LineStructuredData, PartStructuredData } from '@circuit/types';
+import { STATE_CORE_SERVICE, IStateCoreService } from '@circuit/shared';
+import { LineStructuredData, PartStructuredData, StructuredData as State } from '@circuit/types';
+import { message } from 'antd';
 import {
   produce,
   produceWithPatches,
@@ -125,6 +126,11 @@ definePlugin(({ registerService }) => {
       stackPointer--;
       // 更新状态
       updateState();
+      // 提示
+      message.info({
+        type: 'success',
+        content: `已撤销: ${currentEditPatch.name}`,
+      });
     },
     redo() {
       if (!service.canRedo.data) {
@@ -139,6 +145,11 @@ definePlugin(({ registerService }) => {
       stackPointer++;
       // 更新状态
       updateState();
+      // 提示
+      message.info({
+        type: 'success',
+        content: `已重做: ${currentEditPatch.name}`,
+      });
     },
   };
 

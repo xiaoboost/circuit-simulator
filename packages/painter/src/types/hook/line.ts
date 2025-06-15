@@ -1,6 +1,6 @@
-import { LineStructuredData } from '@circuit/electronics';
+import { IRendererData } from '@circuit/inject';
+import { LineStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
-import { IRendererData } from './render';
 
 /**
  * 导线渲染器

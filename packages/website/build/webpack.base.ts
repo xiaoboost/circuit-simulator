@@ -138,12 +138,12 @@ const baseConfig: Webpack.Configuration = {
       inject: true,
       minify: false,
     }),
-    // new ForkTsCheckerWebpackPlugin({
-    //   typescript: {
-    //     configFile: resolve('tsconfig.json'),
-    //   },
-    //   devServer: true,
-    // }),
+    new ForkTsCheckerWebpackPlugin({
+      typescript: {
+        configFile: resolve('tsconfig.json'),
+      },
+      devServer: true,
+    }),
   ],
 };
 

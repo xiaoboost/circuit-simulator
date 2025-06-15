@@ -8,9 +8,11 @@ import {
   getPartPrototype,
   LINE_THICKNESS,
   ElectronicStructuredData,
+} from '@circuit/electronics';
+import {
   LineStructuredData,
   PartStructuredData,
-} from '@circuit/electronics';
+} from '@circuit/types';
 import {
   IEntityRegion,
 } from '../../../types';

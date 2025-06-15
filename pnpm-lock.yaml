@@ -99,9 +99,9 @@ importers:
       '@circuit/algorithm':
         specifier: workspace:*
         version: link:../algorithm
-      '@circuit/electronics':
+      '@circuit/types':
         specifier: workspace:*
-        version: link:../electronics
+        version: link:../types
     devDependencies:
       '@circuit/eslint-config':
         specifier: workspace:*

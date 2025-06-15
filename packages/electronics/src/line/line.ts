@@ -3,7 +3,7 @@ import { LineStoreData, LineStructuredData } from '@circuit/types';
 
 let lineId = 1;
 
-export function isLine(id: string) {
+export function isLineId(id: string) {
   return /^_\$[lL]ine_\d+$/.test(id);
 }
 

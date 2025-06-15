@@ -1,6 +1,6 @@
-import type { PartStructuredData, ElectronicPrototype } from '@circuit/electronics';
+import { IRendererData } from '@circuit/inject';
+import type { PartStructuredData, ElectronicPrototype } from '@circuit/types';
 import { createServiceKey } from '../../context';
-import { IRendererData } from './render';
 
 /**
  * 器件渲染器

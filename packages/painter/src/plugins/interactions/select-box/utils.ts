@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
+import { isLineId } from '@circuit/electronics';
 import {
   IConnectionService,
-  IPainterService,
   IConnectionData,
 } from '../../../types';
 
@@ -20,7 +20,6 @@ export function toPath(start: Point, end: Point) {
 export function markMovableLines(
   parts: string[],
   connection: IConnectionService,
-  { isLineId }: IPainterService,
 ): string[] {
   const movable = new Set<string>();
   const halfMovable = new Set<string>();

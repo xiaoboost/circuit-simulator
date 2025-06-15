@@ -4,11 +4,11 @@ import {
   RotateMatrix,
 } from '@circuit/algorithm';
 import {
-  PartStructuredData,
   getPartPins,
   getPartPrototype,
 } from '@circuit/electronics';
 import { MarkKind, MarkMap } from '@circuit/map';
+import { PartStructuredData } from '@circuit/types';
 
 /**
  * 获取内边框顶点

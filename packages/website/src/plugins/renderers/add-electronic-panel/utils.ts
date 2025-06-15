@@ -1,10 +1,9 @@
 import {
-  ElectronicCategory,
   ElectronicCategoryName,
-  ElectronicKind,
   ElectronicName,
   Electronics,
 } from '@circuit/electronics';
+import { ElectronicCategory, ElectronicKind } from '@circuit/types';
 import { CategoryData } from './types';
 
 export function getCategoryData(filter = ''): CategoryData[] {

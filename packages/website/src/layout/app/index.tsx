@@ -10,8 +10,10 @@ function Layout() {
   const [isReady, setIsReady] = useState(false);
 
   useInjectInstall(() => {
-    setIsReady(true);
-    removeLoading();
+    setTimeout(() => {
+      setIsReady(true);
+      removeLoading();
+    }, 500);
   });
 
   if (!isReady) {

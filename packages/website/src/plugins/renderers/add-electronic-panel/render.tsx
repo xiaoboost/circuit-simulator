@@ -1,34 +1,25 @@
-import { SearchOutlined } from '@ant-design/icons';
-import { ElectronicKind } from '@circuit/electronics';
+import { createPartByKind } from '@circuit/electronics';
+import { SearchOutlined } from '@circuit/icons';
+import { STATE_CORE_SERVICE } from '@circuit/shared';
+import { ElectronicKind } from '@circuit/types';
 import { Input, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
-import { DoubleLeft, DoubleRight, Sidebar } from '../../base';
+import { useService } from '../../../context';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
-export interface ElectronicPanelProps {
-  /** 选中器件 */
-  onSelect?: (kind: ElectronicKind) => void;
-}
-
-export function ElectronicPanel(props: ElectronicPanelProps) {
-  const title = '添加器件';
+export function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
+  const stateCore = useService(STATE_CORE_SERVICE);
+  const onSelect = (kind: ElectronicKind) => {
+    stateCore.draft((state) => {
+      state.parts.push(createPartByKind(kind, state.parts));
+    });
+  };
 
   return (
-    <Sidebar
-      title={title}
-      icons={{
-        collapse: <DoubleLeft />,
-        expand: <DoubleRight />,
-      }}
-      classNames={{
-        wrapper: Styles.electronicPanelWrapper,
-        sidebar: Styles.electronicPanel,
-        collapsed: Styles.electronicPanelCollapsed,
-      }}
-    >
+    <>
       <Input
         size="large"
         placeholder="搜索器件"
@@ -43,7 +34,7 @@ export function ElectronicPanel(props: ElectronicPanelProps) {
             <div className={Styles.categoryComponents}>
               {category.components.map(({ key, title, component: { shape, kind } }) => (
                 <Tooltip title={title} key={key} destroyOnHidden>
-                  <div className={Styles.componentItem} onMouseDown={() => props.onSelect?.(kind)}>
+                  <div className={Styles.componentItem} onMouseDown={() => onSelect(kind)}>
                     <svg viewBox="0 0 80 80">
                       <g transform="translate(40, 40)">
                         {shape.map(({ name: Tag, attribute }, i) => (
@@ -58,6 +49,6 @@ export function ElectronicPanel(props: ElectronicPanelProps) {
           </div>
         ))}
       </div>
-    </Sidebar>
+    </>
   );
 }

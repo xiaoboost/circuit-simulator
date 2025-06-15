@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
-    "@circuit/electronics": "workspace:*"
+    "@circuit/types": "workspace:*"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",

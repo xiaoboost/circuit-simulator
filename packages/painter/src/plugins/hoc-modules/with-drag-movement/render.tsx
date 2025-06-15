@@ -1,10 +1,8 @@
 import { Point } from '@circuit/algorithm';
+import { PropsWithHocParams } from '@circuit/inject';
 import React, { FC } from 'react';
 import { useService } from '../../../context';
-import {
-  PropsWithHocParams,
-  VARIABLE_OBSERVER_SERVICE as VAR,
-} from '../../../types';
+import { VARIABLE_OBSERVER_SERVICE as VAR } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from './constant';
 
 export function MovementFactory(Render: FC<any>): FC<PropsWithHocParams<any>> {

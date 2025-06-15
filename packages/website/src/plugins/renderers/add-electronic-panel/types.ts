@@ -2,7 +2,7 @@ import {
   ElectronicCategory,
   ElectronicKind,
   ElectronicPrototype,
-} from '@circuit/electronics';
+} from '@circuit/types';
 
 export interface CategoryData {
   key: ElectronicCategory;

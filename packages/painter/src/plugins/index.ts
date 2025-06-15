@@ -1,4 +1,4 @@
 import './interactions';
-// import './renderers';
+import './renderers';
 import './ui-widgets';
-// import './hoc-modules';
+import './hoc-modules';

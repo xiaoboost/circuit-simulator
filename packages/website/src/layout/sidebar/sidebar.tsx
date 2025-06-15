@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import * as Styles from './styles.less';
 
 export interface SidebarProps {
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   style?: React.CSSProperties;
   icons?: {

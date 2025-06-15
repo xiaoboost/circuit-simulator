@@ -1,9 +1,7 @@
+import { PropsWithHocParams } from '@circuit/inject';
 import React, { FC, useMemo } from 'react';
 import { useService } from '../../../context';
-import {
-  PropsWithHocParams,
-  VARIABLE_OBSERVER_SERVICE as VAR,
-} from '../../../types';
+import { VARIABLE_OBSERVER_SERVICE as VAR } from '../../../types';
 import { STYLE_HOC_SCOPE as KEY } from './constant';
 
 export function StyleFactory(Render: FC<any>): FC<PropsWithHocParams<any>> {

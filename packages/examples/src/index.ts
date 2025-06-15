@@ -1,1 +1,7 @@
-// 空文件，用于 package.json 定义的入口文件
+export default [
+  {
+    name: '桥式整流',
+    key: 'bridge-rectifier',
+    data: () => import('@circuit/examples/bridge-rectifier').then((m) => m.data),
+  },
+];
