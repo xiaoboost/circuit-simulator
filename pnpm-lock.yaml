@@ -125,6 +125,43 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  packages/icons:
+    dependencies:
+      '@ant-design/icons':
+        specifier: 5.5.2
+        version: 5.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      react:
+        specifier: 19.1.0
+        version: 19.1.0
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
+      '@types/node':
+        specifier: 20.12.8
+        version: 20.12.8
+      '@types/react':
+        specifier: 19.1.2
+        version: 19.1.2
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      eslint:
+        specifier: 9.17.0
+        version: 9.17.0
+      rimraf:
+        specifier: 5.0.5
+        version: 5.0.5
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
   packages/inject:
     dependencies:
       '@xiao-ai/utils':
@@ -283,6 +320,9 @@ importers:
       '@circuit/inject':
         specifier: workspace:*
         version: link:../inject
+      '@circuit/types':
+        specifier: workspace:*
+        version: link:../types
       '@xiao-ai/utils':
         specifier: 1.6.7
         version: 1.6.7
@@ -391,9 +431,6 @@ importers:
 
   packages/website:
     dependencies:
-      '@ant-design/icons':
-        specifier: 5.5.2
-        version: 5.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@ant-design/v5-patch-for-react-19':
         specifier: 1.0.3
         version: 1.0.3(antd@5.25.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -409,6 +446,9 @@ importers:
       '@circuit/examples':
         specifier: workspace:*
         version: link:../examples
+      '@circuit/icons':
+        specifier: workspace:*
+        version: link:../icons
       '@circuit/inject':
         specifier: workspace:*
         version: link:../inject
@@ -424,6 +464,9 @@ importers:
       '@circuit/solver':
         specifier: workspace:*
         version: link:../solver
+      '@circuit/types':
+        specifier: workspace:*
+        version: link:../types
       '@xiao-ai/utils':
         specifier: 1.6.7
         version: 1.6.7
@@ -567,9 +610,6 @@ importers:
   tools/typings: {}
 
 packages:
-
-  '@ant-design/colors@7.2.0':
-    resolution: {integrity: sha512-bjTObSnZ9C/O8MB/B4OUtd/q9COomuJAR2SYfhxLyHvCKn4EKwCN3e+fWGMo7H5InAyV0wL17jdE9ALrdOW/6A==}
 
   '@ant-design/colors@7.2.1':
     resolution: {integrity: sha512-lCHDcEzieu4GA3n8ELeZ5VQ8pKQAWcGGLRTQ50aQM2iqPpq2evTxER84jfdPvsPAtEcZ7m44NI45edFMo8oOYQ==}
@@ -4611,12 +4651,6 @@ packages:
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  rc-util@5.44.3:
-    resolution: {integrity: sha512-q6KCcOFk3rv/zD3MckhJteZxb0VjAIFuf622B7ElK4vfrZdAzs16XR5p3VTdy3+U5jfJU5ACz4QnhLSuAGe5dA==}
-    peerDependencies:
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-
   rc-util@5.44.4:
     resolution: {integrity: sha512-resueRJzmHG9Q6rI/DfK6Kdv9/Lfls05vzMs1Sk3M2P+3cJa+MakaZyWY8IPfehVuhPJFKrIY1IK4GqbiaiY5w==}
     peerDependencies:
@@ -5635,10 +5669,6 @@ packages:
 
 snapshots:
 
-  '@ant-design/colors@7.2.0':
-    dependencies:
-      '@ant-design/fast-color': 2.0.6
-
   '@ant-design/colors@7.2.1':
     dependencies:
       '@ant-design/fast-color': 2.0.6
@@ -5671,11 +5701,11 @@ snapshots:
 
   '@ant-design/icons@5.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
-      '@ant-design/colors': 7.2.0
+      '@ant-design/colors': 7.2.1
       '@ant-design/icons-svg': 4.4.2
       '@babel/runtime': 7.26.0
       classnames: 2.5.1
-      rc-util: 5.44.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
 
@@ -10161,13 +10191,6 @@ snapshots:
       rc-util: 5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  rc-util@5.44.3(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
-    dependencies:
-      '@babel/runtime': 7.26.0
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
-      react-is: 18.3.1
 
   rc-util@5.44.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0):
     dependencies:

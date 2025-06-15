@@ -4,7 +4,7 @@ import Logo from './assets/logo.png';
 
 import * as Styles from './styles.less';
 
-export function Header() {
+export const Header = React.memo(function Header() {
   return (
     <div className={Styles.header}>
       <span className={Styles.title}>
@@ -13,4 +13,4 @@ export function Header() {
       </span>
     </div>
   );
-}
+});

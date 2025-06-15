@@ -53,3 +53,30 @@
     flex-direction: column;
   }
 }
+
+.left-sidebar-wrapper {
+  left: 0;
+  z-index: 2;
+  position: absolute;
+
+  .left-sidebar {
+    border-right: 1px solid @color-border-light;
+  }
+
+  .left-sidebar-collapsed {
+    transform: translate(32px, 24px);
+  }
+}
+
+.right-sidebar-wrapper {
+
+  .right-sidebar {
+    border-left: 1px solid @color-border-light;
+  }
+
+  .right-sidebar-collapsed {
+    transform: translate(-32px, 24px);
+    position: absolute;
+    right: 0;
+  }
+}
