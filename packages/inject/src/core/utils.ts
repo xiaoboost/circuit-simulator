@@ -49,7 +49,7 @@ export function getHookWithScope<T>(
   key: ServiceTypeWithKey<T>,
   scope: symbol,
   ScopeManager: IScopeManager,
-  sort?: 'asc' | 'desc',
+  sort: 'asc' | 'desc' = 'asc',
 ): T[] {
   let scopeContainer = ScopeManager.get(scope);
 
@@ -69,11 +69,7 @@ export function getHookWithScope<T>(
     return [];
   }
 
-  if (!sort) {
-    return hooks.sort(createSorter(sort));
-  }
-
-  return hooks;
+  return hooks.sort(createSorter(sort));
 }
 
 /** 先序遍历作用域树 */
