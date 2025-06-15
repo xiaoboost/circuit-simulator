@@ -1,13 +1,18 @@
+import { Undo, Redo } from '@circuit/icons';
+import {
+  LOGGER_SERVICE,
+  STATE_CORE_SERVICE,
+} from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { usePainterService, useWatcher } from '../../../../../context';
-import { LOGGER_SERVICE, PAINTER_SERVICE, SELECT_SERVICE } from '../../../../../types';
-import { Button, Undo, Redo } from '../../components';
+import { useService, useWatcher } from '../../../../../context';
+import { SELECT_SERVICE } from '../../../../../types';
+import { Button } from '../../components';
 
 export function EditorRender() {
-  const logger = usePainterService(LOGGER_SERVICE);
-  const painter = usePainterService(PAINTER_SERVICE);
-  const select = usePainterService(SELECT_SERVICE);
+  const logger = useService(LOGGER_SERVICE);
+  const painter = useService(STATE_CORE_SERVICE);
+  const select = useService(SELECT_SERVICE);
   const [canUndo] = useWatcher(painter.canUndo);
   const [canRedo] = useWatcher(painter.canRedo);
   const onUndo = () => {

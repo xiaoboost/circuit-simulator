@@ -1,16 +1,17 @@
-import { stringifyClass as sc, isDef } from '@xiao-ai/utils';
+import { Debugger } from '@circuit/icons';
+import { CONFIGURATION_SERVICE } from '@circuit/shared';
+import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
-import { usePainterService, useWatcher } from '../../../../../context';
-import { CONFIGURATION_SERVICE } from '../../../../../types';
-import { Button, Divider, Debugger } from '../../components';
+import { useService, useWatcher } from '../../../../../context';
+import { Button, Divider } from '../../components';
 import * as Styles from './styles.less';
 
 export function DebuggerRender() {
   const {
     openDebugLog,
     openPathSearcherDebugger,
-  } = usePainterService(CONFIGURATION_SERVICE);
+  } = useService(CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
   const [path, setPath] = useWatcher(openPathSearcherDebugger);
 

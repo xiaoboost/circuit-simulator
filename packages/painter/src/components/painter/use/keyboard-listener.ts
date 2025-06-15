@@ -1,11 +1,11 @@
 import hotkeys from 'hotkeys-js';
 import { useEffect, RefObject } from 'react';
-import { usePainterHook } from '../../../context';
+import { useHook } from '../../../context';
 import { HOT_KEY_HOOK, HotKeyOptions } from '../../../types';
 
 /** 事件监听器 */
 export function useKeyboardListener(painterRef: RefObject<HTMLDivElement | null>) {
-  const hotkeyHooks = usePainterHook(HOT_KEY_HOOK);
+  const hotkeyHooks = useHook(HOT_KEY_HOOK);
   const getKey = (key: string | string[]) => Array.isArray(key) ? key.join(', ') : key;
 
   useEffect(() => {

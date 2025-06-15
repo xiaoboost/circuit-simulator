@@ -8,7 +8,7 @@ import { IRendererData } from './render';
  * @description 该钩子将用于单个引脚的渲染
  * @example
  * ```ts
- * const pinRendererHooks = usePainterHook(PIN_RENDERER);
+ * const pinRendererHooks = useHook(PIN_RENDERER);
  * ```
  */
 export const PIN_RENDERER = createServiceKey<IPinRenderer>('PinRenderer');

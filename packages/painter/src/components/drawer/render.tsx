@@ -1,13 +1,13 @@
+import { STATE_CORE_SERVICE } from '@circuit/shared';
 import React from 'react';
 import {
-  usePainterService,
-  usePainterHook,
+  useService,
+  useHook,
   useWatcher,
 } from '../../context';
 import {
   MAP_COORDINATE_SERVICE,
   DRAW_LAYER_HOOK,
-  PAINTER_SERVICE,
   CURSOR_SERVICE,
 } from '../../types';
 import * as Styles from './styles.less';
@@ -15,21 +15,14 @@ import { useMouseListener } from './use';
 import { getBackgroundStyle, getCursorStyle } from './utils';
 
 export function Drawer() {
-  const mapService = usePainterService(MAP_COORDINATE_SERVICE);
+  const mapService = useService(MAP_COORDINATE_SERVICE);
   const [{ scale, position }] = useWatcher(mapService.value);
   const mouseListener = useMouseListener();
-  const layers = usePainterHook(DRAW_LAYER_HOOK, 'asc');
-  const painterService = usePainterService(PAINTER_SERVICE);
-  const cursorService = usePainterService(CURSOR_SERVICE);
-  const [parts] = useWatcher(painterService.parts);
-  const [lines] = useWatcher(painterService.lines);
+  const layers = useHook(DRAW_LAYER_HOOK, 'asc');
+  const { state } = useService(STATE_CORE_SERVICE);
+  const cursorService = useService(CURSOR_SERVICE);
+  const [{ parts, lines }] = useWatcher(state);
   const [cursor] = useWatcher(cursorService.value);
-  const [isReady] = useWatcher(painterService.isReady);
-
-  // 未准备好时，不渲染
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <div

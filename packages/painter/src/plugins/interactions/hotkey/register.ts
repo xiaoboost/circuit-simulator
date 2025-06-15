@@ -1,12 +1,14 @@
+import {
+  LOGGER_SERVICE,
+  STATE_CORE_SERVICE,
+} from '@circuit/shared';
 import { remove } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
 import {
   HOT_KEY_HOOK,
-  PAINTER_SERVICE,
   EVENT_LISTENER_HOOK,
   PAINTER_HTML_ELEMENT,
   SELECT_SERVICE,
-  LOGGER_SERVICE,
 } from '../../../types';
 
 const LoggerName = '快捷键模块';
@@ -36,7 +38,7 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const painter = getService(PAINTER_SERVICE);
+      const painter = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
       const message = `删除以下元件：${Array.from(selected).join(', ')}`;
 

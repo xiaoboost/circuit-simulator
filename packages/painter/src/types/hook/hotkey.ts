@@ -6,7 +6,7 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于实现键盘快捷键功能
  * @example
  * ```ts
- * const hotKeyHooks = usePainterHook(HOT_KEY_HOOK);
+ * const hotKeyHooks = useHook(HOT_KEY_HOOK);
  * ```
  */
 export const HOT_KEY_HOOK = createServiceKey<IHotKey>('HotKey');

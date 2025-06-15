@@ -4,6 +4,7 @@ import { PartStructuredData, PartStoreData } from '../part';
 /** 元件总类别 */
 export type LineOrPartStructuredData = LineStructuredData | PartStructuredData;
 
+/** 基础数据 */
 export interface BaseStoreData {
   /** 版本 */
   version: string;
@@ -26,7 +27,7 @@ export interface StoreData extends BaseStoreData {
  *
  * @description 内存中的数据
  */
-export interface StructuredData extends BaseStoreData {
+export interface StructuredData {
   /** 元件 */
   parts: PartStructuredData[];
   /** 导线 */

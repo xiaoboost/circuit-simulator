@@ -1,15 +1,16 @@
+import { Text } from '@circuit/icons';
+import { CONFIGURATION_SERVICE } from '@circuit/shared';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
-import { usePainterService, useWatcher } from '../../../../../context';
-import { CONFIGURATION_SERVICE } from '../../../../../types';
-import { Button, Text } from '../../components';
+import { useService, useWatcher } from '../../../../../context';
+import { Button } from '../../components';
 import * as Styles from './styles.less';
 
 export function LabelVisibleRender() {
   const {
     PartLabelVisibleKind: Kind,
     partLabelVisible: visible,
-  } = usePainterService(CONFIGURATION_SERVICE);
+  } = useService(CONFIGURATION_SERVICE);
   const [labelVisible, setLabelVisible] = useWatcher(visible);
 
   const items: MenuProps['items'] = [

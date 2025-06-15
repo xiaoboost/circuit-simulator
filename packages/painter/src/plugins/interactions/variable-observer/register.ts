@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { definePlugin, usePainterService } from '../../../context';
+import { definePlugin, useService } from '../../../context';
 import { VARIABLE_OBSERVER_SERVICE, IVariableObserverService, ObserverCb } from '../../../types';
 
 definePlugin(({ registerService }) => {
@@ -80,7 +80,7 @@ definePlugin(({ registerService }) => {
       }
     },
     useVariable(symbol, key) {
-      const service = usePainterService(VARIABLE_OBSERVER_SERVICE);
+      const service = useService(VARIABLE_OBSERVER_SERVICE);
       const [value, setValue] = useState(service.get(symbol, key));
 
       useEffect(() => {

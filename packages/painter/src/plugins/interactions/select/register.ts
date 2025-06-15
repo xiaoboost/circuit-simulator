@@ -1,5 +1,6 @@
+import { LOGGER_SERVICE, EVENT_BUS_SERVICE } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
-import { SELECT_SERVICE, LOGGER_SERVICE, EVENT_BUS_SERVICE, ISelectService } from '../../../types';
+import { SELECT_SERVICE, ISelectService } from '../../../types';
 
 const LoggerName = '选择服务';
 

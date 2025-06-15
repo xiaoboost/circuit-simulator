@@ -1,20 +1,23 @@
 import { Point } from '@circuit/algorithm';
-import { NewElectronicPosition, PartStructuredData } from '@circuit/electronics';
+import { NewElectronicPosition } from '@circuit/electronics';
+import {
+  LOGGER_SERVICE,
+  CONFIGURATION_SERVICE,
+  STATE_CORE_SERVICE,
+} from '@circuit/shared';
+import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
-import { definePlugin, Watcher } from '../../../context';
+import { definePlugin } from '../../../context';
 import {
   DragSceneHookPayload,
   HOT_KEY_HOOK,
   DRAG_SCENE_HOOK,
   LIFE_CYCLE_HOOK,
   SELECT_SERVICE,
-  PAINTER_SERVICE,
   DRAG_SCENE_SERVICE,
-  LOGGER_SERVICE,
   MAP_HASH_SERVICE,
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
-  CONFIGURATION_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 
@@ -37,11 +40,11 @@ definePlugin(({ registerHook, getService }) => {
   // 全局监听创建的器件
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
-      const { parts, dropDraft } = getService(PAINTER_SERVICE);
+      const { state, dropDraft } = getService(STATE_CORE_SERVICE);
       const service = getService(DRAG_SCENE_SERVICE);
 
-      parts.observe((state) => {
-        const newPart = state.find((part) => NewElectronicPosition.isEqual(part.position));
+      state.observe(({ parts }) => {
+        const newPart = parts.find((part) => NewElectronicPosition.isEqual(part.position));
 
         if (newPart && service.size === 0) {
           // 移动图纸模式下不触发
@@ -102,7 +105,7 @@ definePlugin(({ registerHook, getService }) => {
       return true;
     },
     afterEnd(part: StartPayloadType, endPayload: EndPayloadType) {
-      const painterService = getService(PAINTER_SERVICE);
+      const painterService = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
 
       if (endPayload?.esc) {

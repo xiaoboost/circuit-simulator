@@ -8,7 +8,7 @@ import { IRendererData } from './render';
  * @description 该钩子将用于单个器件的渲染
  * @example
  * ```ts
- * const partRendererHooks = usePainterHook(PART_RENDERER);
+ * const partRendererHooks = useHook(PART_RENDERER);
  * ```
  */
 export const PART_RENDERER = createServiceKey<IPartRenderer>('PartRenderer');

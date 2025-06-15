@@ -8,7 +8,7 @@ import { IRendererData } from './render';
  * @description 该钩子将用于单个导线的渲染
  * @example
  * ```ts
- * const lineRendererHooks = usePainterHook(LINE_RENDERER);
+ * const lineRendererHooks = useHook(LINE_RENDERER);
  * ```
  */
 export const LINE_RENDERER = createServiceKey<ILineRenderer>('LineRenderer');

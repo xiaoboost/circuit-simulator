@@ -6,7 +6,7 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取鼠标指针变换功能
  * @example
  * ```ts
- * const cursorService = usePainterService(CURSOR_SERVICE);
+ * const cursorService = useService(CURSOR_SERVICE);
  * ```
  */
 export const CURSOR_SERVICE =

@@ -1,13 +1,15 @@
 import { Point, Direction } from '@circuit/algorithm';
+import {
+  EVENT_BUS_SERVICE,
+  LOGGER_SERVICE,
+  STATE_CORE_SERVICE,
+} from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
-  PAINTER_SERVICE,
   VARIABLE_OBSERVER_SERVICE as VarService,
-  EVENT_BUS_SERVICE,
-  LOGGER_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 import { getPartNearestDirection } from './utils';
@@ -50,7 +52,7 @@ definePlugin(({ registerHook, getService }) => {
     },
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);
-      const painterService = getService(PAINTER_SERVICE);
+      const painterService = getService(STATE_CORE_SERVICE);
       const eventBus = getService(EVENT_BUS_SERVICE);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);

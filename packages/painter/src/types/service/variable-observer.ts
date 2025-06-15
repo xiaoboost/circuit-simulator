@@ -6,7 +6,7 @@ import { createServiceKey } from '../../context';
  * @description 该服务用于获取变量功能
  * @example
  * ```ts
- * const variableObserverService = usePainterService(VARIABLE_OBSERVER_SERVICE);
+ * const variableObserverService = useService(VARIABLE_OBSERVER_SERVICE);
  * ```
  */
 export const VARIABLE_OBSERVER_SERVICE =

@@ -6,7 +6,7 @@ import { createServiceKey, Watcher } from '../../context';
  * @description 该服务用于获取当前画布选中的内容
  * @example
  * ```ts
- * const selectService = usePainterService(SELECT_SERVICE);
+ * const selectService = useService(SELECT_SERVICE);
  * ```
  */
 export const SELECT_SERVICE =

@@ -7,7 +7,7 @@ import { createServiceKey } from '../../context';
  * @description 获取图纸原始`DOM`
  * @example
  * ```ts
- * const painterHTMLElement = usePainterService(PAINTER_HTML_ELEMENT);
+ * const painterHTMLElement = useService(PAINTER_HTML_ELEMENT);
  * ```
  */
 export const PAINTER_HTML_ELEMENT =

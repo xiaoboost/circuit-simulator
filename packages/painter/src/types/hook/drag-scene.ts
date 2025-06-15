@@ -64,7 +64,7 @@ export interface DragSceneHookPayload {
  * @description 该钩子将用于鼠标拖动场景的实现
  * @example
  * ```ts
- * const dragSceneHooks = usePainterHook(DRAG_SCENE_HOOK);
+ * const dragSceneHooks = useHook(DRAG_SCENE_HOOK);
  * ```
  */
 export const DRAG_SCENE_HOOK = createServiceKey<IDragScene>('DragScene');

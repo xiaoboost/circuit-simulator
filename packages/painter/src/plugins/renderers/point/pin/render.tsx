@@ -1,13 +1,13 @@
 import { PIN_SIZE } from '@circuit/electronics';
 import React, { useState, useRef, useEffect } from 'react';
-import { usePainterService } from '../../../../context';
+import { useService } from '../../../../context';
 import { IPinRendererProps, DRAG_SCENE_SERVICE, PropsWithHocParams } from '../../../../types';
 import * as Styles from './styles.less';
 
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
-  const service = usePainterService(DRAG_SCENE_SERVICE);
+  const service = useService(DRAG_SCENE_SERVICE);
   const [actual, setActual] = useState(0);
   const {
     // 这只是为了满足类型，实际上不需要

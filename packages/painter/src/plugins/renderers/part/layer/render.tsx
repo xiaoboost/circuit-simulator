@@ -3,8 +3,8 @@ import React from 'react';
 import {
   useComposeHOC,
   useWatcher,
-  usePainterHook,
-  usePainterService,
+  useHook,
+  useService,
 } from '../../../../context';
 import {
   IDrawLayerProps,
@@ -15,10 +15,10 @@ import {
 import * as Styles from './styles.less';
 
 function PartLayerRender({ parts }: IDrawLayerProps) {
-  const partRenderers = usePainterHook(PART_RENDERER, 'asc');
+  const partRenderers = useHook(PART_RENDERER, 'asc');
   const partComposedRenderers = partRenderers.map(useComposeHOC);
-  const service = usePainterService(PAINTER_SERVICE);
-  const selectService = usePainterService(SELECT_SERVICE);
+  const service = useService(PAINTER_SERVICE);
+  const selectService = useService(SELECT_SERVICE);
   const [selectedIds] = useWatcher(selectService.value);
 
   if (partComposedRenderers.length === 0) {

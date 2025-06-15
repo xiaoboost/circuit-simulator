@@ -7,7 +7,7 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于监听原始 DOM 事件
  * @example
  * ```ts
- * const eventListenerHooks = usePainterHook(EVENT_LISTENER_HOOK);
+ * const eventListenerHooks = useHook(EVENT_LISTENER_HOOK);
  * ```
  */
 export const EVENT_LISTENER_HOOK = createServiceKey<IEventListener>('EventListener');

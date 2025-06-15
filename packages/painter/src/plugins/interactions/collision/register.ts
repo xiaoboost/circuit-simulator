@@ -5,9 +5,9 @@ import {
   DirectionVectorSet,
 } from '@circuit/algorithm';
 import {
-  ElectronicStructuredData,
+  LineOrPartStructuredData,
   PartStructuredData,
-} from '@circuit/electronics';
+} from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
   ICollisionService,
@@ -20,7 +20,7 @@ import { getRectByEntity } from './create';
 definePlugin(({ registerService }) => {
   const map = new Map<string, IEntityRegion>();
   const service: ICollisionService = {
-    setEntity(entity: ElectronicStructuredData) {
+    setEntity(entity: LineOrPartStructuredData) {
       return map.set(entity.id, getRectByEntity(entity));
     },
     removeEntity(id: string) {
@@ -47,7 +47,7 @@ definePlugin(({ registerService }) => {
       }
       return result;
     },
-    isPositionAvailable(entity: ElectronicStructuredData) {
+    isPositionAvailable(entity: LineOrPartStructuredData) {
       const { rects } = getRectByEntity(entity);
       return rects.every(r => {
         return this.rectCollides(r).length === 0;

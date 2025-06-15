@@ -24,6 +24,7 @@
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
     "@circuit/electronics": "workspace:*",
+    "@circuit/icons": "workspace:*",
     "@circuit/inject": "workspace:*",
     "@circuit/map": "workspace:*",
     "@circuit/shared": "workspace:*",

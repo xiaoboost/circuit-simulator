@@ -1,10 +1,10 @@
 import React from 'react';
-import { usePainterService } from '../../../../context';
+import { useService } from '../../../../context';
 import { IPartRendererProps, DRAG_SCENE_SERVICE } from '../../../../types';
 import * as Styles from './styles.less';
 
 function PartFocusRender({ data, prototype }: IPartRendererProps) {
-  const dragService = usePainterService(DRAG_SCENE_SERVICE);
+  const dragService = useService(DRAG_SCENE_SERVICE);
   const onMouseDown = React.useCallback((event: React.MouseEvent<SVGGElement>) => {
     // 非左键不处理
     if (event.button !== 0) {

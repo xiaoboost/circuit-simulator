@@ -1,6 +1,6 @@
 import { Point } from '@circuit/algorithm';
 import React, { FC } from 'react';
-import { usePainterService } from '../../../context';
+import { useService } from '../../../context';
 import {
   PropsWithHocParams,
   VARIABLE_OBSERVER_SERVICE as VAR,
@@ -10,7 +10,7 @@ import { MOVEMENT_HOC_SCOPE as KEY } from './constant';
 export function MovementFactory(Render: FC<any>): FC<PropsWithHocParams<any>> {
   function MovementHOC(props: PropsWithHocParams<any>) {
     const { $$key: key } = props;
-    const { useVariable } = usePainterService(VAR);
+    const { useVariable } = useService(VAR);
     const movement = useVariable<Point>(KEY, key);
     const isMoving = (movement && !movement.isZero());
 

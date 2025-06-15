@@ -1,6 +1,6 @@
 import { MarkKind } from '@circuit/map';
 import React from 'react';
-import { usePainterHook, usePainterService } from '../../../../context';
+import { useHook, useService } from '../../../../context';
 import {
   IDrawLayerProps,
   POINT_RENDERER,
@@ -8,8 +8,8 @@ import {
 } from '../../../../types';
 
 function PointLayerRender(_: IDrawLayerProps) {
-  const pointRenderers = usePainterHook(POINT_RENDERER, 'asc');
-  const { markService: mapMark } = usePainterService(MAP_HASH_SERVICE);
+  const pointRenderers = useHook(POINT_RENDERER, 'asc');
+  const { markService: mapMark } = useService(MAP_HASH_SERVICE);
   const points = Array.from(mapMark.values()).filter((mark) => mark.kind === MarkKind.LineCover);
 
   if (pointRenderers.length === 0 || points.length === 0) {

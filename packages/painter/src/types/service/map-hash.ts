@@ -8,7 +8,7 @@ import { createServiceKey } from '../../context';
  * @description 图纸服务，该服务主要是提供图纸相关服务，比如元件连接关系等。
  * @example
  * ```ts
- * const mapService = usePainterService(MAP_HASH_SERVICE);
+ * const mapService = useService(MAP_HASH_SERVICE);
  * ```
  */
 export const MAP_HASH_SERVICE =

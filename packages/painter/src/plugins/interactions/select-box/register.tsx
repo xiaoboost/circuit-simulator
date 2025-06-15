@@ -1,10 +1,15 @@
 import { Point } from '@circuit/algorithm';
+import {
+  CONFIGURATION_SERVICE,
+  LOGGER_SERVICE,
+  STATE_CORE_SERVICE,
+} from '@circuit/shared';
 import React, { memo } from 'react';
 import {
   Watcher,
   definePlugin,
   useWatcher,
-  usePainterService,
+  useService,
 } from '../../../context';
 import {
   DRAW_LAYER_HOOK,
@@ -13,10 +18,7 @@ import {
   DRAG_SCENE_SERVICE,
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
-  CONFIGURATION_SERVICE,
   COLLISION_SERVICE,
-  PAINTER_SERVICE,
-  LOGGER_SERVICE,
   CONNECTION_SERVICE,
 } from '../../../types';
 import {
@@ -37,7 +39,7 @@ definePlugin(({ registerHook, getService }) => {
 
   // 选择框组件
   function SelectBox() {
-    const [{ scale }] = useWatcher(usePainterService(MAP_COORDINATE_SERVICE).value);
+    const [{ scale }] = useWatcher(useService(MAP_COORDINATE_SERVICE).value);
     const [startPosition] = useWatcher(start);
     const [endPosition] = useWatcher(end);
 
@@ -123,8 +125,8 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const painterService = getService(PAINTER_SERVICE);
-      const { parts: { data: parts }, lines: { data: lines } } = painterService;
+      const painterService = getService(STATE_CORE_SERVICE);
+      const { state: { data: { parts, lines } } } = painterService;
       const selectService = getService(SELECT_SERVICE);
       const collisionService = getService(COLLISION_SERVICE);
       const ids = collisionService.getEntitiesInRect({

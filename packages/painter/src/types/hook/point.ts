@@ -8,7 +8,7 @@ import { IRendererData } from './render';
  * @description 该钩子将用于单个节点的渲染
  * @example
  * ```ts
- * const pointRendererHooks = usePainterHook(POINT_RENDERER);
+ * const pointRendererHooks = useHook(POINT_RENDERER);
  * ```
  */
 export const POINT_RENDERER = createServiceKey<IPointRenderer>('PointRenderer');

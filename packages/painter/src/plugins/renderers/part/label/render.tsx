@@ -9,7 +9,7 @@ import {
 } from '@circuit/algorithm';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { usePainterService, useWatcher } from '../../../../context';
+import { useService, useWatcher } from '../../../../context';
 import {
   PartLabelVisibleKind as Kind,
   IPartRendererProps,
@@ -31,13 +31,13 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   } = data;
   const [label, subfix] = id.split('_');
   const invRotate = invertRotateMatrix(rotate);
-  const { value: { data: map } } = usePainterService(MAP_COORDINATE_SERVICE);
+  const { value: { data: map } } = useService(MAP_COORDINATE_SERVICE);
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
-  const eventBus = usePainterService(EVENT_BUS_SERVICE);
-  const dragService = usePainterService(DRAG_SCENE_SERVICE);
-  const configurationService = usePainterService(CONFIGURATION_SERVICE);
+  const eventBus = useService(EVENT_BUS_SERVICE);
+  const dragService = useService(DRAG_SCENE_SERVICE);
+  const configurationService = useService(CONFIGURATION_SERVICE);
   const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);

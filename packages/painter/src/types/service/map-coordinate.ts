@@ -7,7 +7,7 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取图纸坐标的转换和计算功能
  * @example
  * ```ts
- * const mapCoordinateService = usePainterService(MAP_COORDINATE_SERVICE);
+ * const mapCoordinateService = useService(MAP_COORDINATE_SERVICE);
  * ```
  */
 export const MAP_COORDINATE_SERVICE =

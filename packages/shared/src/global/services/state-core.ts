@@ -4,15 +4,11 @@ import {
   LineStructuredData,
   ElectronicKind,
   ElectronicPrototype,
+  StructuredData,
 } from '@circuit/types';
 
-export interface State {
-  parts: PartStructuredData[];
-  lines: LineStructuredData[];
-}
-
 /** 更新数据回调 */
-export type CommitCb = (data: PartStructuredData | LineStructuredData) => void;
+export type CommitCb = (data: StructuredData) => void;
 
 /** 更新数据参数 */
 export interface CommitData {
@@ -42,13 +38,13 @@ export interface IStateCoreService {
    *
    * @description 有草稿时，指向草稿；无草稿时，指向最新提交
    */
-  readonly state: Watcher<State>;
+  readonly state: Watcher<StructuredData>;
   /**
    * 提交状态
    *
    * @description 仅指向最新提交
    */
-  readonly commitState: Watcher<State>;
+  readonly commitState: Watcher<StructuredData>;
   /** 能否撤销 */
   readonly canUndo: Watcher<boolean>;
   /** 能否重做 */

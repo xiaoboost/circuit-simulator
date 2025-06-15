@@ -3,8 +3,8 @@ import React from 'react';
 import {
   useComposeHOC,
   useWatcher,
-  usePainterHook,
-  usePainterService,
+  useHook,
+  useService,
 } from '../../../../context';
 import {
   IDrawLayerProps,
@@ -14,9 +14,9 @@ import {
 import * as Styles from './styles.less';
 
 function LineLayerRender({ lines }: IDrawLayerProps) {
-  const lineRenderers = usePainterHook(LINE_RENDERER, 'asc');
+  const lineRenderers = useHook(LINE_RENDERER, 'asc');
   const lineComposedRenderers = lineRenderers.map(useComposeHOC);
-  const selectService = usePainterService(SELECT_SERVICE);
+  const selectService = useService(SELECT_SERVICE);
   const [selectedIds] = useWatcher(selectService.value);
 
   if (lineComposedRenderers.length === 0) {

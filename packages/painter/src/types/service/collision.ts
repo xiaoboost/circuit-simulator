@@ -14,7 +14,7 @@ export interface IEntityRegion {
  * @description 该服务用于获取碰撞检测配置
  * @example
  * ```ts
- * const collisionService = usePainterService(COLLISION_SERVICE);
+ * const collisionService = useService(COLLISION_SERVICE);
  * ```
  */
 export const COLLISION_SERVICE =

@@ -256,6 +256,9 @@ importers:
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
+      '@circuit/icons':
+        specifier: workspace:*
+        version: link:../icons
       '@circuit/inject':
         specifier: workspace:*
         version: link:../inject

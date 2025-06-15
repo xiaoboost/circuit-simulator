@@ -1,11 +1,11 @@
 import { isDef } from '@xiao-ai/utils';
 import { WheelEvent, MouseEvent, useCallback } from 'react';
-import { usePainterHook } from '../../../context';
+import { useHook } from '../../../context';
 import { EVENT_LISTENER_HOOK } from '../../../types';
 
 /** 事件监听器 */
 export function useMouseListener() {
-  const events = usePainterHook(EVENT_LISTENER_HOOK);
+  const events = useHook(EVENT_LISTENER_HOOK);
   const onWheel = useCallback((event: WheelEvent<HTMLDivElement>) => {
     event.stopPropagation();
     events

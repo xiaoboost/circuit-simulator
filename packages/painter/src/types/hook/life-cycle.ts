@@ -6,7 +6,7 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于实现画布的生命周期
  * @example
  * ```ts
- * const lifeCycle = usePainterHook(LIFE_CYCLE_HOOK);
+ * const lifeCycle = useHook(LIFE_CYCLE_HOOK);
  * ```
  */
 export const LIFE_CYCLE_HOOK =

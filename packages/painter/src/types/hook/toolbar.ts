@@ -7,7 +7,7 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于画布快捷操作的实现
  * @example
  * ```ts
- * const painterToolbarActionHooks = usePainterHook(PAINTER_TOOLBAR_ACTION_HOOK);
+ * const painterToolbarActionHooks = useHook(PAINTER_TOOLBAR_ACTION_HOOK);
  * ```
  */
 export const PAINTER_TOOLBAR_ACTION_HOOK =

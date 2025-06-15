@@ -9,7 +9,7 @@ import { IRendererData } from './render';
  * 它通常情况下会直接返回子节点，但是在临时状态成立时，会通过修改`Props`或者给子节点添加`DOM`元素以达成对节点的临时渲染。
  * @example
  * ```ts
- * const rendererHOCs = usePainterHook(RENDERER_HOC);
+ * const rendererHOCs = useHook(RENDERER_HOC);
  * ```
  */
 export const RENDERER_HOC =

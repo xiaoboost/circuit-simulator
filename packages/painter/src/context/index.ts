@@ -11,9 +11,8 @@ export {
   useWatcher,
 } from '@circuit/inject';
 
-const PainterScope = createScopeSymbol('Painter', RootScope);
+export const PainterScope = createScopeSymbol('Painter', RootScope);
 const reactHook = createReactHookWithScope(PainterScope);
-
 export const definePlugin = createPluginDefinitionWithScope(PainterScope);
 export const useHook = reactHook.useHook;
 export const useService = reactHook.useService;

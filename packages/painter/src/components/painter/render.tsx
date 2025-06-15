@@ -2,20 +2,25 @@ import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useRef } from 'react';
 import { Drawer } from '../drawer';
 import { Viewer } from '../viewer';
-import { type PainterProps } from '../wrapper';
 import * as Styles from './styles.less';
 import {
   useKeyboardListener,
-  usePainterAdapter,
   usePainterRefService,
 } from './use';
 
-export function Entry(props: PainterProps) {
+/** 画布组件参数 */
+export interface PainterProps {
+  /** 画布组件的类名 */
+  className?: string;
+  /** 画布组件的样式 */
+  style?: React.CSSProperties;
+}
+
+export function Painter(props: PainterProps) {
   const painterRef = useRef<HTMLDivElement>(null);
 
   usePainterRefService(painterRef);
   useKeyboardListener(painterRef);
-  usePainterAdapter(props);
 
   return (
     <main

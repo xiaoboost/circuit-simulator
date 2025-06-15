@@ -7,7 +7,7 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于元件快捷操作的实现
  * @example
  * ```ts
- * const tooltipActionHooks = usePainterHook(COMPONENT_TOOLTIP_ACTION_HOOK);
+ * const tooltipActionHooks = useHook(COMPONENT_TOOLTIP_ACTION_HOOK);
  * ```
  */
 export const COMPONENT_TOOLTIP_ACTION_HOOK =

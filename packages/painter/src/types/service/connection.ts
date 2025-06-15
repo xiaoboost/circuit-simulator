@@ -7,7 +7,7 @@ import { createServiceKey } from '../../context';
  * @description 该服务用于获取连接关系服务
  * @example
  * ```ts
- * const connectionService = usePainterService(CONNECTION_SERVICE);
+ * const connectionService = useService(CONNECTION_SERVICE);
  * ```
  */
 export const CONNECTION_SERVICE =

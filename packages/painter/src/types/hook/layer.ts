@@ -9,7 +9,7 @@ import { createServiceKey } from '../../context';
  * @description 视图层从 DOM 上来说是高于绘图层的，视图层不会随着画布变化而变化
  * @example
  * ```ts
- * const viewLayerHooks = usePainterHook(VIEW_LAYER_HOOK);
+ * const viewLayerHooks = useHook(VIEW_LAYER_HOOK);
  * ```
  */
 export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
@@ -21,7 +21,7 @@ export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
  * @description 绘图层从 DOM 上来说是低于绘图层的，绘图层会随着画布变化而变化
  * @example
  * ```ts
- * const drawLayerHooks = usePainterHook(DRAW_LAYER_HOOK);
+ * const drawLayerHooks = useHook(DRAW_LAYER_HOOK);
  * ```
  */
 export const DRAW_LAYER_HOOK = createServiceKey<IDrawLayer>('DrawLayer');

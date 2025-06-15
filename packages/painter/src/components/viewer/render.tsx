@@ -1,10 +1,10 @@
 import React from 'react';
-import { usePainterHook } from '../../context';
+import { useHook } from '../../context';
 import { VIEW_LAYER_HOOK } from '../../types';
 import * as Styles from './styles.less';
 
 export const Viewer = React.memo(function Viewer() {
-  const viewers = usePainterHook(VIEW_LAYER_HOOK, 'asc');
+  const viewers = useHook(VIEW_LAYER_HOOK, 'asc');
 
   // 没有视图图层时不渲染
   if (viewers.length === 0) {

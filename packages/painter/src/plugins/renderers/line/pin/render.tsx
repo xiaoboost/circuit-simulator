@@ -1,6 +1,6 @@
 import { isEqualPoint } from '@circuit/algorithm';
 import React from 'react';
-import { usePainterService, usePainterHook, useComposeHOC } from '../../../../context';
+import { useService, useHook, useComposeHOC } from '../../../../context';
 import {
   ILineRendererProps,
   CONNECTION_SERVICE,
@@ -9,8 +9,8 @@ import {
 } from '../../../../types';
 
 function PartPinRender({ data: { id, path } }: ILineRendererProps) {
-  const { getConnections } = usePainterService(CONNECTION_SERVICE);
-  const pinRenderers = usePainterHook(PIN_RENDERER);
+  const { getConnections } = useService(CONNECTION_SERVICE);
+  const pinRenderers = useHook(PIN_RENDERER);
   const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
   if (path.length === 0 || pinComposedRenderers.length === 0) {
