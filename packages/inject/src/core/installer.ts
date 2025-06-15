@@ -1,13 +1,16 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { LIFE_CYCLE_HOOK, ILifeCycle } from '../builtin';
-import { PluginMetaInfos, InjectContext, RootScope } from './context';
+import { PluginMetaInfos, ScopeMetaInfos, InjectContext, RootScope } from './context';
 import { IScopeContainer, IScopeManager } from './types';
 import { getServiceWithScope, getHookWithScope, getScopeList } from './utils';
 
-function createScopeData(symbol: symbol, parentContainer: IScopeContainer | null): IScopeContainer {
+function createScopeData(
+  symbol: symbol,
+  parentContainer?: IScopeContainer | null,
+): IScopeContainer {
   return {
     scope: symbol,
-    parent: parentContainer,
+    parent: parentContainer ?? null,
     children: [],
     context: {
       ServiceMap: new Map(),
@@ -17,63 +20,87 @@ function createScopeData(symbol: symbol, parentContainer: IScopeContainer | null
   };
 }
 
-export function createScope(name: string, parentScope: symbol, manager: IScopeManager) {
-  const parentContainer = manager.get(parentScope);
+function createScope(scopeMeta: typeof ScopeMetaInfos, manager: IScopeManager) {
+  function createScopeRecursive(scope: symbol, parentScope: symbol | null = null) {
+    // 创建当前作用域容器
+    const parentContainer = parentScope ? manager.get(parentScope) : null;
+    const scopeContainer = createScopeData(scope, parentContainer);
 
-  if (!parentContainer) {
-    throw new Error(`在创建作用域时未找到上级作用域：${String(parentScope)}`);
+    if (parentContainer) {
+      manager.set(scope, scopeContainer);
+      scopeContainer.parent = parentContainer;
+      parentContainer.children.push(scopeContainer);
+    }
+    else {
+      manager.set(scope, createScopeData(scope));
+    }
+
+    // 处理子作用域
+    const children = scopeMeta.get(scope);
+    if (children) {
+      for (const child of children) {
+        createScopeRecursive(child, scope);
+      }
+    }
   }
 
+  // 从根作用域开始创建
+  createScopeRecursive(RootScope);
+}
+
+function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeManager) {
+  for (const { installer, scope } of pluginMetaInfos.values()) {
+    const scopeContainer = manager.get(scope);
+
+    if (!scopeContainer) {
+      throw new Error(`在注册插件时未找到 ${String(scope)} 对应作用域`);
+    }
+
+    const { context } = scopeContainer;
+    const uninstaller = installer({
+      getService: (key) => getServiceWithScope(key, scope, manager),
+      getHook: (key) => getHookWithScope(key, scope, manager),
+      registerService: (key, service) => context.ServiceMap.set(key, service),
+      registerHook: (key, hook) => {
+        context.HookMap.set(key, [...(context.HookMap.get(key) ?? []), hook]);
+      },
+    });
+
+    if (uninstaller) {
+      context.PluginUninstallers.push(uninstaller);
+    }
+  }
+}
+
+async function runPluginAfterInit(manager: IScopeManager) {
+  const list = getScopeList(manager.get(RootScope)!);
+
+  for (const { context: { HookMap } } of list) {
+    const lifeCycleHooks = (HookMap.get(LIFE_CYCLE_HOOK) ?? []) as ILifeCycle[];
+    await Promise.all(lifeCycleHooks.map((i) => i.afterPluginInit?.()));
+  }
+}
+
+export function createScopeSymbol(name: string, parentScope: symbol) {
   const symbol = Symbol(name);
-  const data = createScopeData(symbol, parentContainer);
-
-  parentContainer.children.push(data);
-  data.parent = parentContainer;
-
-  manager.set(symbol, data);
+  ScopeMetaInfos.set(parentScope, [...(ScopeMetaInfos.get(parentScope) ?? []), symbol]);
   return symbol;
 }
 
 export function useInjectInstall(ready?: () => void) {
   const manager = useContext(InjectContext);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    async function install() {
-      // 创建根作用域
-      manager.set(RootScope, createScopeData(RootScope, null));
-
-      for (const { installer, scope } of PluginMetaInfos.values()) {
-        const scopeContainer = manager.get(scope);
-
-        if (!scopeContainer) {
-          throw new Error(`在注册插件时未找到 ${String(scope)} 对应作用域`);
-        }
-
-        const { context } = scopeContainer;
-        const uninstaller = installer({
-          getService: (key) => getServiceWithScope(key, scope, manager),
-          getHook: (key) => getHookWithScope(key, scope, manager),
-          registerService: (key, service) => context.ServiceMap.set(key, service),
-          registerHook: (key, hook) => {
-            context.HookMap.set(key, [...(context.HookMap.get(key) ?? []), hook]);
-          },
-        });
-
-        if (uninstaller) {
-          context.PluginUninstallers.push(uninstaller);
-        }
-      }
-
-      // 作用域列表
-      const list = getScopeList(manager.get(RootScope)!);
-
-      for (const { context: { HookMap } } of list) {
-        const lifeCycleHooks = (HookMap.get(LIFE_CYCLE_HOOK) ?? []) as ILifeCycle[];
-        await Promise.all(lifeCycleHooks.map((i) => i.afterPluginInit?.()));
-      }
-    }
-
-    install().then(() => ready?.());
+    // 创建作用域
+    createScope(ScopeMetaInfos, manager);
+    // 创建插件
+    installPlugin(PluginMetaInfos, manager);
+    // 运行插件初始化钩子
+    runPluginAfterInit(manager).then(() => {
+      setIsInitialized(true);
+      ready?.();
+    });
 
     // 卸载插件
     return () => {
@@ -84,6 +111,9 @@ export function useInjectInstall(ready?: () => void) {
         context.HookMap.clear();
         context.ServiceMap.clear();
       });
+      setIsInitialized(false);
     };
   }, []);
+
+  return { isInitialized };
 }

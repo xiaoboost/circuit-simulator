@@ -256,12 +256,18 @@ importers:
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
+      '@circuit/inject':
+        specifier: workspace:*
+        version: link:../inject
       '@circuit/map':
         specifier: workspace:*
         version: link:../map
       '@circuit/shared':
         specifier: workspace:*
         version: link:../shared
+      '@circuit/types':
+        specifier: workspace:*
+        version: link:../types
       '@xiao-ai/utils':
         specifier: 1.6.7
         version: 1.6.7

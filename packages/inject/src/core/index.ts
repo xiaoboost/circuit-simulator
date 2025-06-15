@@ -16,7 +16,7 @@ export {
 } from './react';
 
 export {
-  createScope,
+  createScopeSymbol,
   useInjectInstall,
 } from './installer';
 

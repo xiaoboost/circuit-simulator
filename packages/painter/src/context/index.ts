@@ -1,13 +1,19 @@
-export {
-  createServiceKey,
-  definePlugin,
-  Watcher,
-  useWatcher,
-} from './define';
+import {
+  createScopeSymbol,
+  RootScope,
+  createPluginDefinitionWithScope,
+  createReactHookWithScope,
+} from '@circuit/inject';
 
 export {
-  usePainterService,
-  usePainterHook,
-  useHotkey,
-  useComposeHOC,
-} from './react';
+  createServiceKey,
+  Watcher,
+  useWatcher,
+} from '@circuit/inject';
+
+const PainterScope = createScopeSymbol('Painter', RootScope);
+const reactHook = createReactHookWithScope(PainterScope);
+
+export const definePlugin = createPluginDefinitionWithScope(PainterScope);
+export const useHook = reactHook.useHook;
+export const useService = reactHook.useService;

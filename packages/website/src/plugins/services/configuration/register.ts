@@ -3,7 +3,7 @@ import {
   IConfigurationService,
   CONFIGURATION_SERVICE,
   PartLabelVisibleKind,
-  CACHE_SERVICE,
+  STORAGE_SERVICE,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 
@@ -51,10 +51,10 @@ definePlugin(({ registerService, registerHook, getService }) => {
   // 注册初始化，读取缓存
   registerHook(LIFE_CYCLE_HOOK, {
     async beforeMounted() {
-      const cacheService = getService(CACHE_SERVICE);
+      const storageService = getService(STORAGE_SERVICE);
 
       for (const { key, watcher, default: defaultVal } of watcherCache) {
-        const cacheVal = await cacheService.get(key);
+        const cacheVal = await storageService.get(key);
         watcher.setData(cacheVal ?? defaultVal);
       }
     },
@@ -63,7 +63,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
   // 配置写入缓存
   watcherCache.forEach(({ key, watcher }) => {
     watcher.observe((data) => {
-      getService(CACHE_SERVICE).set(key, data);
+      getService(STORAGE_SERVICE).set(key, data);
     });
   });
 

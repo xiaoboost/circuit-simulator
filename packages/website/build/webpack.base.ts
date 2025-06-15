@@ -23,7 +23,7 @@ const baseConfig: Webpack.Configuration = {
   mode: isDevelopment ? 'development' : 'production',
   target: 'web',
   stats: 'normal',
-  entry: resolve('src/init/index.ts'),
+  entry: resolve('src/boot/index.ts'),
   output: {
     path: output,
     publicPath: '/',
@@ -138,12 +138,12 @@ const baseConfig: Webpack.Configuration = {
       inject: true,
       minify: false,
     }),
-    new ForkTsCheckerWebpackPlugin({
-      typescript: {
-        configFile: resolve('tsconfig.json'),
-      },
-      devServer: true,
-    }),
+    // new ForkTsCheckerWebpackPlugin({
+    //   typescript: {
+    //     configFile: resolve('tsconfig.json'),
+    //   },
+    //   devServer: true,
+    // }),
   ],
 };
 

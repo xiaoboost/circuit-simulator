@@ -1,2 +1,1 @@
-export * from './line';
-export { LineStructuredData, LineStoreData } from './line';
+export type * from './line';

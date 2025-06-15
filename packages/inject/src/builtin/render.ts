@@ -19,7 +19,7 @@ export interface IRendererData<T> {
    *
    * @description 当前渲染实例的唯一性
    */
-  getKey(props: T): string;
+  getKey?(props: T): string;
   /**
    * 渲染组件
    *

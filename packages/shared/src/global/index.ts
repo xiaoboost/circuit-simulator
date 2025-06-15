@@ -1,3 +1,3 @@
 export * from './services';
 
-export { LIFE_CYCLE_HOOK, ILifeCycle } from '@circuit/inject';
+export { LIFE_CYCLE_HOOK, type ILifeCycle } from '@circuit/inject';

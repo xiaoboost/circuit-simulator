@@ -1,5 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { ElectronicKind, ElectronicCategory } from './types';
+import { ElectronicKind, ElectronicCategory } from '@circuit/types';
 
 /** 新建器件时的位置 */
 export const NewElectronicPosition = Point.from([1e6, 1e6]);
