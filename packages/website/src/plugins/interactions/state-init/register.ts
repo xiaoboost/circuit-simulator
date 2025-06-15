@@ -47,7 +47,7 @@ function transformStoreData(input: unknown): StructuredData {
 function getStoreByExample(): Promise<StoreData | undefined> {
   const { example } = parse(location.search.slice(1));
 
-  if (example && isString(example) && example in Examples) {
+  if (example && isString(example)) {
     const exampleData = Examples.find((v) => v.key === example);
     if (exampleData) {
       return exampleData.data();
