@@ -3,8 +3,6 @@ import type { IPluginMeta, PluginInstaller, IScopeManager } from './types';
 
 /** 根作用域 */
 export const RootScope = Symbol('RootScope');
-/** 作用域管理器 */
-export const ScopeManager: IScopeManager = new Map();
 /** 插件定义储存 */
 export const PluginMetaInfos = new Map<PluginInstaller, IPluginMeta>();
 /** 上下文标记 */

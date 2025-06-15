@@ -1,5 +1,6 @@
 export * from './configuration';
-export * from './cache';
+export * from './storage';
 export * from './logger';
 export * from './event-bus';
 export * from './debugger';
+export * from './state-core';

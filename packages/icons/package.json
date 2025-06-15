@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/shared",
-  "description": "circuit's shared lib",
+  "name": "@circuit/icons",
+  "description": "circuit's icons library",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
@@ -14,18 +14,22 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "build": "pnpm run clear && tsc -p ./tsconfig.json",
+    "test": "ava --no-cache --config ./ava.config.js",
+    "build:cjs": "tsc -p ./tsconfig.build.json",
+    "build": "pnpm run clear && pnpm run build:cjs",
+    "watch": "pnpm run build -w",
     "lint": "eslint -c eslint.config.mjs",
     "lint:fix": "eslint --fix -c eslint.config.mjs"
   },
   "dependencies": {
-    "@circuit/inject": "workspace:*",
-    "@circuit/types": "workspace:*",
-    "@xiao-ai/utils": "1.6.7"
+    "@ant-design/icons": "5.5.2",
+    "react": "19.1.0"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
     "@types/circuit": "workspace:*",
+    "@types/node": "20.12.8",
+    "@types/react": "19.1.2",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.17.0",
     "rimraf": "5.0.5",

@@ -4,15 +4,8 @@ import { PluginMetaInfos, InjectContext, RootScope } from './context';
 import { IScopeContainer, IScopeManager } from './types';
 import { getServiceWithScope, getHookWithScope, getScopeList } from './utils';
 
-export function createScope(name: string, parentScope: symbol, manager: IScopeManager) {
-  const parentContainer = manager.get(parentScope);
-
-  if (!parentContainer) {
-    throw new Error(`在创建作用域时未找到上级作用域：${String(parentScope)}`);
-  }
-
-  const symbol = Symbol(name);
-  const data: IScopeContainer = {
+function createScopeData(symbol: symbol, parentContainer: IScopeContainer | null): IScopeContainer {
+  return {
     scope: symbol,
     parent: parentContainer,
     children: [],
@@ -22,6 +15,17 @@ export function createScope(name: string, parentScope: symbol, manager: IScopeMa
       PluginUninstallers: [],
     },
   };
+}
+
+export function createScope(name: string, parentScope: symbol, manager: IScopeManager) {
+  const parentContainer = manager.get(parentScope);
+
+  if (!parentContainer) {
+    throw new Error(`在创建作用域时未找到上级作用域：${String(parentScope)}`);
+  }
+
+  const symbol = Symbol(name);
+  const data = createScopeData(symbol, parentContainer);
 
   parentContainer.children.push(data);
   data.parent = parentContainer;
@@ -35,6 +39,9 @@ export function useInjectInstall(ready?: () => void) {
 
   useEffect(() => {
     async function install() {
+      // 创建根作用域
+      manager.set(RootScope, createScopeData(RootScope, null));
+
       for (const { installer, scope } of PluginMetaInfos.values()) {
         const scopeContainer = manager.get(scope);
 

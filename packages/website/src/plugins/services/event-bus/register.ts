@@ -1,6 +1,6 @@
+import { EVENT_BUS_SERVICE, IEventBus } from '@circuit/shared';
 import { ChannelSubscriber } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
-import { EVENT_BUS_SERVICE, IEventBus } from '../../../types';
 
 definePlugin(({ registerService }) => {
   const service: IEventBus = new ChannelSubscriber();

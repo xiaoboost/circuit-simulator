@@ -1,11 +1,11 @@
-import { definePlugin, Watcher } from '../../../context';
+import { LIFE_CYCLE_HOOK } from '@circuit/inject';
 import {
   IConfigurationService,
   CONFIGURATION_SERVICE,
   PartLabelVisibleKind,
-  LIFE_CYCLE_HOOK,
   CACHE_SERVICE,
-} from '../../../types';
+} from '@circuit/shared';
+import { definePlugin, Watcher } from '../../../context';
 
 interface WatcherCacheData {
   key: string;

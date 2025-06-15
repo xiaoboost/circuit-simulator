@@ -1,4 +1,10 @@
 import {
+  IDebuggerService,
+  LOGGER_SERVICE,
+  CONFIGURATION_SERVICE,
+  DEBUGGER_SERVICE,
+} from '@circuit/shared';
+import {
   isNumber,
   isString,
   isBoolean,
@@ -9,12 +15,6 @@ import {
   isPrimitive,
 } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
-import {
-  IDebuggerService,
-  LOGGER_SERVICE,
-  CONFIGURATION_SERVICE,
-  DEBUGGER_SERVICE,
-} from '../../../types';
 
 definePlugin(({ registerService, getService }) => {
   const service: IDebuggerService = {

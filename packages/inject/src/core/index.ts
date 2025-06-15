@@ -20,4 +20,7 @@ export {
   useInjectInstall,
 } from './installer';
 
-export { RootScope } from './context';
+export {
+  RootScope,
+  InjectContext,
+} from './context';

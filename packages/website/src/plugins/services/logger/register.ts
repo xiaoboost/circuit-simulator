@@ -1,9 +1,9 @@
-import { definePlugin } from '../../../context';
 import {
   LOGGER_SERVICE,
   CONFIGURATION_SERVICE,
   ILoggerService,
-} from '../../../types';
+} from '@circuit/shared';
+import { definePlugin } from '../../../context';
 
 const getLoggerStyle = (color: string) => {
   // eslint-disable-next-line

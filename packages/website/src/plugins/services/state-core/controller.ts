@@ -63,7 +63,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
    * 再次提交草稿时，当前草稿将会被覆盖；
    * 提交`commit`后，草稿也会被丢弃。
    */
-  draft(patch: CommitData<T>['patch']) {
+  draft(patch: CommitData['patch']) {
     this.draftState = produce(this.state, patch);
     this.notify(SubscribeEventName.Change, this.draftState);
   }
@@ -75,7 +75,7 @@ export class StateController<T extends ImmerObject> extends ChannelSubscriber {
   }
 
   /** 编辑 */
-  commit({ name, description, patch }: CommitData<T>) {
+  commit({ name, description, patch }: CommitData) {
     const { state, editStack, stackPointer } = this;
 
     // 指针不是最新，需要抛弃掉指针后面的修改

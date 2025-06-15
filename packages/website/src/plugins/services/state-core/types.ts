@@ -1,14 +1,7 @@
 import { type Patch } from 'immer';
 
-/** 提交数据 */
-export interface CommitData<T> {
-  /** 提交名称 */
-  name: string;
-  /** 提交描述 */
-  description: string;
-  /** 补丁 */
-  patch: EditProducer<T>;
-}
+export type { CommitData, CommitCb, State } from '@circuit/shared';
+
 /** 补丁信息 */
 export interface PatchWithComment {
   /** 补丁名称 */
@@ -43,5 +36,3 @@ export enum SubscribeEventName {
 export type SubscribeStateChangeEvent<T> = (state: T) => void;
 /** 订阅操作栈变更类型 */
 export type SubscribeStackChangeEvent = (name: string) => void;
-/** 编辑回调 */
-export type EditProducer<T> = (state: T) => void;
