@@ -10,6 +10,4 @@ export const RIGHT_SIDEBAR_RENDER = createServiceKey<IRightSidebarRender>('Right
 export interface IRightSidebarRender extends IRendererData<object> {
   /** 边栏标题 */
   title: FC;
-  /** 边栏内容 */
-  content: FC;
 }

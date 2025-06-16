@@ -3,15 +3,18 @@ import {
   DoubleRightOutlined as DoubleRight,
 } from '@circuit/icons';
 import React from 'react';
+import { useHook } from '../../context';
+import { RIGHT_SIDEBAR_RENDER } from '../../types';
 import { Sidebar } from './sidebar';
 import * as Styles from './styles.less';
 
 export const RightSidebar = React.memo(function RightSidebar() {
-  const title = '右侧边栏';
+  // TODO: 目前只有一个
+  const render = useHook(RIGHT_SIDEBAR_RENDER)[0];
 
   return (
     <Sidebar
-      title={title}
+      title={<render.title />}
       icons={{
         collapse: <DoubleRight />,
         expand: <DoubleLeft />,
@@ -22,7 +25,7 @@ export const RightSidebar = React.memo(function RightSidebar() {
         collapsed: Styles.rightSidebarCollapsed,
       }}
     >
-      内容
+      <render.Render />
     </Sidebar>
   );
 });
