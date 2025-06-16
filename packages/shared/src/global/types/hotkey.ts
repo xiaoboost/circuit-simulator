@@ -1,4 +1,4 @@
-import { createServiceKey } from '../../context';
+import { createServiceKey } from '@circuit/inject';
 
 /**
  * 快捷键监听
@@ -9,7 +9,7 @@ import { createServiceKey } from '../../context';
  * const hotKeyHooks = useHook(HOT_KEY_HOOK);
  * ```
  */
-export const HOT_KEY_HOOK = createServiceKey<IHotKey>('HotKey');
+export const HOT_KEY_HOOK = createServiceKey<IHotKey | IHotKey[]>('HotKey');
 
 /** 快捷键类型 */
 export type HotKeyType = string | string[];

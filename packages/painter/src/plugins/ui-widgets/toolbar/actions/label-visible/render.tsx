@@ -4,7 +4,7 @@ import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
 import { Button } from '../../components';
-import * as Styles from './styles.less';
+import { ToolbarMenuOffset } from '../../constant';
 
 export function LabelVisibleRender() {
   const {
@@ -37,6 +37,9 @@ export function LabelVisibleRender() {
 
   return (
     <Dropdown
+      align={{
+        offset: [0, -ToolbarMenuOffset],
+      }}
       menu={{
         items,
         selectable: true,
@@ -45,10 +48,9 @@ export function LabelVisibleRender() {
           setLabelVisible(Number(key));
         },
       }}
-      placement="top"
+      placement="topLeft"
       trigger={['click']}
       destroyOnHidden
-      overlayClassName={Styles.menuDropList}
     >
       <Tooltip title="器件信息配置" placement="bottom" destroyOnHidden>
         <Button>

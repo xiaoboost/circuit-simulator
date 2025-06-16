@@ -1,4 +1,4 @@
-import { Undo, Redo } from '@circuit/icons';
+import { UndoOutlined as Undo, RedoOutlined as Redo } from '@circuit/icons';
 import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,

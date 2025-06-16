@@ -1,11 +1,4 @@
-import './map-coordinate';
-import './cursor';
-import './drag-scene';
-import './map-hash';
-import './variable-observer';
-import './select';
-import './move-part-label';
 import './create-part';
-import './collision';
-import './connection';
+import './hotkey';
+import './move-part-label';
 import './select-box';

@@ -5,6 +5,7 @@ import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
 import { Button, Divider } from '../../components';
+import { ToolbarMenuOffset } from '../../constant';
 import * as Styles from './styles.less';
 
 export function DebuggerRender() {
@@ -64,9 +65,12 @@ export function DebuggerRender() {
     <>
       <Dropdown
         menu={{ items }}
-        placement="top"
+        placement="topLeft"
         trigger={['click']}
         destroyOnHidden
+        align={{
+          offset: [0, -ToolbarMenuOffset],
+        }}
         overlayClassName={Styles.menuDropList}
       >
         <Tooltip title="调试选项" placement="bottom" destroyOnHidden>

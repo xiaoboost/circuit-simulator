@@ -1,11 +1,11 @@
 import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
+  HOT_KEY_HOOK,
 } from '@circuit/shared';
 import { remove } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
 import {
-  HOT_KEY_HOOK,
   EVENT_LISTENER_HOOK,
   PAINTER_HTML_ELEMENT,
   SELECT_SERVICE,

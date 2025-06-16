@@ -1,12 +1,6 @@
 @import '../../constant.ts';
 
-@computedValue: ((@ToolbarButtonWidth / 2 + @ToolbarPadding + 2) * 1px);
-
 .menu-drop-list {
-  :global(.ant-dropdown-menu) {
-    transform: translate(calc(50% - @computedValue), -10px);
-  }
-
   .menu-item {
     display: flex;
     font-size: 16px;

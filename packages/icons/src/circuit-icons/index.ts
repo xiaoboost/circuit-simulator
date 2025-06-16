@@ -4,7 +4,5 @@ export * from './info-circle';
 export * from './check';
 export * from './cursor';
 export * from './debugger';
-export * from './redo';
-export * from './undo';
 export * from './text';
 export * from './hand';

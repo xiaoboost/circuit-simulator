@@ -4,13 +4,13 @@ import {
   LOGGER_SERVICE,
   CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
+  HOT_KEY_HOOK,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
 import { definePlugin } from '../../../context';
 import {
   DragSceneHookPayload,
-  HOT_KEY_HOOK,
   DRAG_SCENE_HOOK,
   LIFE_CYCLE_HOOK,
   SELECT_SERVICE,
