@@ -5,6 +5,7 @@ import {
   CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
   HOT_KEY_HOOK,
+  LIFE_CYCLE_HOOK,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
@@ -12,7 +13,6 @@ import { definePlugin } from '../../../context';
 import {
   DragSceneHookPayload,
   DRAG_SCENE_HOOK,
-  LIFE_CYCLE_HOOK,
   SELECT_SERVICE,
   DRAG_SCENE_SERVICE,
   MAP_HASH_SERVICE,
@@ -41,19 +41,19 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
       const { state, dropDraft } = getService(STATE_CORE_SERVICE);
-      const service = getService(DRAG_SCENE_SERVICE);
+      const dragScene = getService(DRAG_SCENE_SERVICE);
 
       state.observe(({ parts }) => {
         const newPart = parts.find((part) => NewElectronicPosition.isEqual(part.position));
 
-        if (newPart && service.size === 0) {
+        if (newPart && dragScene.size === 0) {
           // 移动图纸模式下不触发
           if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
             dropDraft();
             message.warning('移动图纸模式下不能创建器件');
           }
           else {
-            service.trigger(CreatePartSceneName, newPart);
+            dragScene.trigger(CreatePartSceneName, newPart);
           }
         }
       });

@@ -18,6 +18,10 @@ function Layout() {
       removeLoading();
       // 直接子外面用 useService 是不行的，因为只有初始化完成之后才能拿到服务
       context.get(RootScope)?.context.ServiceMap.get(LOGGER_SERVICE)?.info('基座', '初始化完成');
+
+      if (process.env.NODE_ENV === 'development') {
+        (window as any).$InjectionData = context;
+      }
     }, 500);
   });
 

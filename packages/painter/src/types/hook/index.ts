@@ -6,5 +6,4 @@ export * from './part';
 export * from './point';
 export * from './tooltip';
 export * from './toolbar';
-export * from './life-cycle';
 export * from './pin';
