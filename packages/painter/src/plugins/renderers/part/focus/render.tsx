@@ -16,10 +16,11 @@ function PartFocusRender({ data, prototype }: IPartRendererProps) {
       return;
     }
 
-    dragService.trigger('move-part-label', {
-      id: data.id,
-      event,
-    });
+    // TODO: 移动器件事件
+    // dragService.trigger('move-part-label', {
+    //   id: data.id,
+    //   event,
+    // });
   }, [dragService]);
 
   return (
