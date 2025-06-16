@@ -1,4 +1,7 @@
-import { DoubleLeft, DoubleRight } from '@circuit/icons';
+import {
+  DoubleLeftOutlined as DoubleLeft,
+  DoubleRightOutlined as DoubleRight,
+} from '@circuit/icons';
 import React from 'react';
 import { useHook } from '../../context';
 import { LEFT_SIDEBAR_RENDER } from '../../types';
