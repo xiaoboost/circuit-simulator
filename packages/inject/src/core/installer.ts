@@ -73,6 +73,7 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
 }
 
 async function runPluginAfterInit(manager: IScopeManager) {
+  // 创建时用先序的顺序
   const list = getScopeList(manager.get(RootScope)!);
 
   for (const { context: { HookMap } } of list) {
@@ -104,7 +105,8 @@ export function useInjectInstall(ready?: () => void) {
 
     // 卸载插件
     return () => {
-      const list = getScopeList(manager.get(RootScope)!);
+      // 卸载时用后序的顺序
+      const list = getScopeList(manager.get(RootScope)!).reverse();
       list.forEach(({ context }) => {
         context.PluginUninstallers.forEach((cb) => cb());
         context.PluginUninstallers.length = 0;

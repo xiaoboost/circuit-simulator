@@ -7,11 +7,11 @@ import {
 import {
   getPartPrototype,
   LINE_THICKNESS,
-  ElectronicStructuredData,
 } from '@circuit/electronics';
 import {
   LineStructuredData,
   PartStructuredData,
+  LineOrPartStructuredData,
 } from '@circuit/types';
 import {
   IEntityRegion,
@@ -80,7 +80,7 @@ function getLineEntityRects({ path }: LineStructuredData): Rect[] {
  * @param entity 实体
  * @returns 碰撞矩形
  */
-export function getRectByEntity(entity: ElectronicStructuredData): IEntityRegion {
+export function getRectByEntity(entity: LineOrPartStructuredData): IEntityRegion {
   if ('kind' in entity) {
     return {
       id: entity.id,

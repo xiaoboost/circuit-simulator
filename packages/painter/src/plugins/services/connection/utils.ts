@@ -1,9 +1,10 @@
 import { type Point } from '@circuit/algorithm';
-import { type ElectronicsStructuredData, getPartPins } from '@circuit/electronics';
+import { getPartPins } from '@circuit/electronics';
+import { type StructuredData } from '@circuit/types';
 import { type IConnectionData } from '../../../types';
 
 /** 记录所有器件的引脚位置 */
-export function getConnections({ parts, lines }: ElectronicsStructuredData) {
+export function getConnections({ parts, lines }: StructuredData) {
   const pinMap = new Map<string, IConnectionData[]>();
   const setPin = (position: Point, pin: IConnectionData) => {
     if (!pinMap.has(position.join())) {

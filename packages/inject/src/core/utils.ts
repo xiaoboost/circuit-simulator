@@ -77,10 +77,10 @@ export function getScopeList(root: IScopeContainer) {
   const result: IScopeContainer[] = [];
 
   function traverse(node: IScopeContainer) {
+    result.push(node);
     for (const child of node.children) {
       traverse(child);
     }
-    result.push(node);
   }
 
   traverse(root);

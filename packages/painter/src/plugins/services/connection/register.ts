@@ -1,4 +1,4 @@
-import { ElectronicsStructuredData } from '@circuit/electronics';
+import { StructuredData } from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
   CONNECTION_SERVICE,
@@ -15,7 +15,7 @@ definePlugin(({ registerService }) => {
   };
 
   const service: IConnectionService = {
-    createConnectionFromData(data: ElectronicsStructuredData) {
+    createConnectionFromData(data: StructuredData) {
       this.clearAll();
 
       // 获取所有连接

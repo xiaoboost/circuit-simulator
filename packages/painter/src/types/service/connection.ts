@@ -1,4 +1,4 @@
-import { ElectronicsStructuredData } from '@circuit/electronics';
+import { StructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
 /**
@@ -30,7 +30,7 @@ export interface IConnectionService {
   /**
    * 从原始数据创建连接关系
    */
-  createConnectionFromData(data: ElectronicsStructuredData): void;
+  createConnectionFromData(data: StructuredData): void;
 
   /**
    * 注册引脚

@@ -1,5 +1,5 @@
 import { Point, Rect } from '@circuit/algorithm';
-import { ElectronicStructuredData } from '@circuit/electronics';
+import { LineOrPartStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
 /** 实体区域 */
@@ -27,7 +27,7 @@ export interface ICollisionService {
    *
    * @description 如果有了那就更新
    */
-  setEntity(entity: ElectronicStructuredData): void;
+  setEntity(entity: LineOrPartStructuredData): void;
 
   /**
    * 移除实体
@@ -57,7 +57,7 @@ export interface ICollisionService {
    * @param entity 要检查的实体
    * @returns 是否无碰撞
    */
-  isPositionAvailable(device: ElectronicStructuredData): boolean;
+  isPositionAvailable(device: LineOrPartStructuredData): boolean;
 
   /**
    * 查找最近的可用位置（器件专用）
@@ -66,7 +66,7 @@ export interface ICollisionService {
    * @returns 最近可用坐标
    */
   findNearestAvailablePosition(
-    device: ElectronicStructuredData,
+    device: LineOrPartStructuredData,
     maxOffset?: number,
   ): Point | null;
 
