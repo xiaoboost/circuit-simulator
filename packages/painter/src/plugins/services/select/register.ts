@@ -1,22 +1,8 @@
-import { LOGGER_SERVICE, EVENT_BUS_SERVICE } from '@circuit/shared';
+import { LOGGER_SERVICE, EVENT_BUS_SERVICE, EventBusEvent, isSameSet } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import { SELECT_SERVICE, ISelectService } from '../../../types';
 
 const LoggerName = '选择服务';
-
-function isSameSet(set1: Set<string>, set2: Set<string>) {
-  if (set1.size !== set2.size) {
-    return false;
-  }
-
-  for (const key1 of set1) {
-    if (!set2.has(key1)) {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 definePlugin(({ registerService, getService }) => {
   const selected = new Watcher(new Set<string>());
@@ -41,7 +27,7 @@ definePlugin(({ registerService, getService }) => {
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {
     if (!isSameSet(preSet, nextSet)) {
-      getService(EVENT_BUS_SERVICE).notify('SelectElectronics', nextSet);
+      getService(EVENT_BUS_SERVICE).notify(EventBusEvent.SELECT_ELECTRONICS, nextSet);
     }
   });
 

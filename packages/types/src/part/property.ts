@@ -81,21 +81,13 @@ export interface EnumValue {
   value: string | number;
 }
 
-/** 编号 */
-export interface IdValue {
-  /** 编号前缀 */
-  pre: string;
-  /** 编号数字 */
-  number: string;
-}
-
 /** 选择器 */
 export interface MultiSelectValue {
   value: string[];
 }
 
 /** 值类型 */
-export type PropertyValue = NumberValue | EnumValue | IdValue | MultiSelectValue;
+export type PropertyValue = NumberValue | EnumValue | MultiSelectValue;
 
 /** 数值条件上下文 */
 export type NumberWhenContext = Record<string, PropertyValue>;

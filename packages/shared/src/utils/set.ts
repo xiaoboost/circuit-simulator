@@ -13,3 +13,17 @@ export interface ReadonlySet<T> {
    */
   has(value: T): boolean;
 }
+
+export function isSameSet<T>(set1: Set<T>, set2: Set<T>) {
+  if (set1.size !== set2.size) {
+    return false;
+  }
+
+  for (const key1 of set1) {
+    if (!set2.has(key1)) {
+      return false;
+    }
+  }
+
+  return true;
+}

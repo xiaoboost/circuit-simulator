@@ -12,10 +12,11 @@ import { definePlugin, Watcher } from '../../../context';
 import { UNDO_STACK_LIMIT } from './constant';
 import { type PatchWithComment } from './types';
 
-definePlugin(({ registerService }) => {
-  // 启动补丁功能
-  enablePatches();
+// 启动补丁功能
+enablePatches();
 
+// 注册插件
+definePlugin(({ registerService }) => {
   /** 当前状态 */
   let state: State = {
     parts: [] as PartStructuredData[],
@@ -158,6 +159,7 @@ definePlugin(({ registerService }) => {
 
   return () => {
     service.state.unObserve();
+    service.commitState.unObserve();
     service.canUndo.unObserve();
     service.canRedo.unObserve();
   };

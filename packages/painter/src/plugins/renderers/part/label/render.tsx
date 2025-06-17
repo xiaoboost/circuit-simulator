@@ -10,6 +10,7 @@ import {
 import {
   CONFIGURATION_SERVICE,
   EVENT_BUS_SERVICE,
+  EventBusEvent,
   PartLabelVisibleKind as Kind,
 } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
@@ -148,7 +149,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
 
     setPosition(newPosition);
-    eventBus.notify('PartLabelChanged');
+    eventBus.notify(EventBusEvent.PART_LABEL_CHANGED, id);
   }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible, textLineCount]);
 
   if (
