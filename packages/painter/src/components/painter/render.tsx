@@ -16,7 +16,7 @@ export interface PainterProps {
   style?: React.CSSProperties;
 }
 
-export function Painter(props: PainterProps) {
+export const Painter = React.memo(function Painter(props: PainterProps) {
   const painterRef = useRef<HTMLDivElement>(null);
 
   usePainterRefService(painterRef);
@@ -34,4 +34,4 @@ export function Painter(props: PainterProps) {
       <Viewer />
     </main>
   );
-}
+});

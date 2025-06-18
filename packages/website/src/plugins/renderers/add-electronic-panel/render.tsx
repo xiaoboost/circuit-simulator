@@ -1,18 +1,29 @@
 import { createPartByKind } from '@circuit/electronics';
 import { SearchOutlined } from '@circuit/icons';
-import { STATE_CORE_SERVICE } from '@circuit/shared';
+import { STATE_CORE_SERVICE, CONFIGURATION_SERVICE, LOGGER_SERVICE } from '@circuit/shared';
 import { ElectronicKind } from '@circuit/types';
-import { Input, Tooltip } from 'antd';
+import { Input, Tooltip, message } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useService } from '../../../context';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
+const LoggerName = '添加器件面板';
+
 export function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
   const stateCore = useService(STATE_CORE_SERVICE);
+  const configuration = useService(CONFIGURATION_SERVICE);
+  const logger = useService(LOGGER_SERVICE);
   const onSelect = (kind: ElectronicKind) => {
+    if (configuration.movePainterMode.data) {
+      const msg = '移动图纸模式下不能创建器件';
+      logger.info(LoggerName, msg);
+      message.warning(msg);
+      return;
+    }
+
     stateCore.draft((state) => {
       state.parts.push(createPartByKind(kind, state.parts));
     });

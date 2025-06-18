@@ -14,14 +14,17 @@ import {
 const LoggerName = '快捷键模块';
 
 definePlugin(({ registerHook, getService }) => {
+  const getPainterFocus = () => {
+    const painterEl = getService(PAINTER_HTML_ELEMENT)?.current;
+    if (painterEl && document.activeElement !== painterEl) {
+      painterEl.focus();
+    }
+  };
+
   // 画布自动获得焦点
   registerHook(EVENT_LISTENER_HOOK, {
-    onMouseDown() {
-      const painterEl = getService(PAINTER_HTML_ELEMENT)?.current;
-      if (painterEl && document.activeElement !== painterEl) {
-        painterEl.focus();
-      }
-    },
+    onMouseDown: getPainterFocus,
+    onMouseUp: getPainterFocus,
   });
 
   // 注册删除快捷键

@@ -1,6 +1,6 @@
 import test from 'ava';
 
-import { Point, Matrix, toRound } from '../src';
+import { Point, RotateMatrix, toRound } from '../src';
 
 const formatPointList = (points: Iterable<Point>) => Array.from(points).map((node) => node.join());
 
@@ -53,7 +53,7 @@ test('product()', ({ deepEqual }) => {
 
 test('rotate()', ({ deepEqual }) => {
   const node = new Point(1, 2);
-  const ma = Matrix.from([[0, 1], [-1, 0]]);
+  const ma: RotateMatrix = [[0, 1], [-1, 0]];
 
   const node1 = node.rotate(ma);
   const node2 = node1.rotate(ma);

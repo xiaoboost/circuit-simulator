@@ -14,7 +14,6 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "ava --no-cache --config ./ava.config.js",
     "build:cjs": "tsc -p ./tsconfig.build.json",
     "build": "pnpm run clear && pnpm run build:cjs",
     "watch": "pnpm run build -w",
@@ -30,9 +29,8 @@
     "@circuit/shared": "workspace:*",
     "@circuit/types": "workspace:*",
     "@xiao-ai/utils": "1.6.7",
-    "antd": "5.25.3",
-    "hotkeys-js": "3.13.9",
-    "motion": "12.9.4",
+    "antd": "5.26.1",
+    "hotkeys-js": "3.13.11",
     "react": "19.1.0",
     "react-use": "17.6.0"
   },
@@ -41,11 +39,11 @@
     "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.12.8",
-    "@types/react": "19.1.2",
+    "@types/react": "19.1.8",
     "@xiao-ai/tsconfig": "1.0.4",
-    "ava": "6.2.0",
+    "ava": "6.4.0",
     "eslint": "9.17.0",
-    "rimraf": "5.0.5",
+    "rimraf": "6.0.1",
     "tslib": "2.8.1",
     "typescript": "5.8.3"
   }

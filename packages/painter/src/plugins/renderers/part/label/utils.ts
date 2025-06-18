@@ -18,10 +18,7 @@ export function getTextLineCount(partLabelVisible: Kind, texts: string[]) {
 }
 
 export function propertyToString(val: PropertyValue, property: PropertyDescription): string {
-  if ('pre' in val) {
-    return `${val.pre}_${val.number}`;
-  }
-  else if (Array.isArray(val.value)) {
+  if (Array.isArray(val.value)) {
     return val.value.join(',');
   }
   else {

@@ -20,28 +20,29 @@ definePlugin(({ registerHook, getService }) => {
       const logger = getService(LOGGER_SERVICE);
 
       if (data.lines.length === 0 && data.parts.length === 0) {
-        logger.info(LoggerName, '初始化数据为空，画布跳过初始化');
+        logger.info(LoggerName, '初始化数据为空，跳过初始化');
         return;
       }
 
-      const { setPartMark, setLineMark } = getService(MAP_HASH_SERVICE);
+      const mapHashService = getService(MAP_HASH_SERVICE);
       const collisionService = getService(COLLISION_SERVICE);
       const connectionService = getService(CONNECTION_SERVICE);
 
       for (const part of data.parts ?? []) {
-        setPartMark(part);
+        mapHashService.setPartMark(part);
         collisionService.setEntity(part);
       }
 
       for (const line of data.lines ?? []) {
-        setLineMark(line);
+        mapHashService.setLineMark(line);
         collisionService.setEntity(line);
       }
 
       // 初始化连接关系
       connectionService.createConnectionFromData(data);
-      // 日志
+      // 完成日志
       logger.info(LoggerName, '初始化完成');
+
       // 延迟到下一帧
       return Promise.resolve();
     },
