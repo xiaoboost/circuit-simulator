@@ -10,11 +10,12 @@ import {
   IStorageService,
   STATE_CORE_SERVICE,
   LOGGER_SERVICE,
+  LIFE_CYCLE_HOOK,
 } from '@circuit/shared';
 import { PartStructuredData, LineStructuredData, StructuredData, StoreData } from '@circuit/types';
 import { isString } from '@xiao-ai/utils';
 import { parse } from 'qs';
-import { definePlugin, LIFE_CYCLE_HOOK } from '../../../context';
+import { definePlugin } from '../../../context';
 
 /** 数据列 */
 const Columns = [
