@@ -18,7 +18,7 @@ export function getConnections({ parts, lines }: StructuredData) {
     for (const pin of getPartPins(part)) {
       setPin(pin.position, {
         id: part.id,
-        index: pin.index,
+        pin: pin.index,
       });
     }
   }
@@ -28,7 +28,7 @@ export function getConnections({ parts, lines }: StructuredData) {
     for (let i = 0; i < points.length; i++) {
       setPin(points[i], {
         id: line.id,
-        index: i,
+        pin: i,
       });
     }
   }

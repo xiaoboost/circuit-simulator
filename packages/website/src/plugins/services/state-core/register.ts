@@ -90,7 +90,13 @@ definePlugin(({ registerService }) => {
       const [newState, patches, inversePatches] = produceWithPatches(state, patch);
 
       // 修改操作补丁储存
-      editStack.push({ name, description, patches, inversePatches });
+      editStack.push({
+        name,
+        description,
+        time: Date.now(),
+        patches,
+        inversePatches,
+      });
       // 新状态
       state = newState;
       // 编辑的时候，双指针都指向最新

@@ -1,6 +1,7 @@
 import { STATE_CORE_SERVICE } from '@circuit/shared';
 import { Input, Space } from 'antd';
-import React, { useState, useEffect } from 'react';
+import debounce from 'debounce';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useService } from '../../../../context';
 import { IPropertyInputProps } from '../../../../types';
 import * as Styles from './styles.less';
@@ -15,7 +16,10 @@ export interface IdInputDescriptor {
 
 export function IdInputRender({ value, onError, onChange }: IdInputProps) {
   const { state: { data: { parts } } } = useService(STATE_CORE_SERVICE);
-  const partIds = parts.map(part => part.id);
+  const onDebounceChange = useMemo(() => debounce(onChange, 500), [onChange]);
+  const partIds = parts
+    .map(part => part.id)
+    .filter((id) => id !== value);
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
   const [prefixError, setPrefixError] = useState(false);
@@ -69,7 +73,7 @@ export function IdInputRender({ value, onError, onChange }: IdInputProps) {
     }
 
     setPrefixError(false);
-    onChange(`${newPrefix}_${suffix}`);
+    onDebounceChange(`${newPrefix}_${suffix}`);
   };
   const onSuffixChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSuffix = e.target.value;
@@ -85,7 +89,7 @@ export function IdInputRender({ value, onError, onChange }: IdInputProps) {
     }
 
     setSuffixError(false);
-    onChange(`${prefix}_${newSuffix}`);
+    onDebounceChange(`${prefix}_${newSuffix}`);
   };
 
   return (

@@ -2,6 +2,7 @@ import {
   CONNECTION_SERVICE,
   IConnectionService,
   IConnectionData,
+  IConnectionDataWithPin,
 } from '@circuit/shared';
 import { StructuredData } from '@circuit/types';
 import { definePlugin } from '../../../context';
@@ -11,7 +12,7 @@ import { getConnections } from './utils';
 definePlugin(({ registerService }) => {
   const connections: IConnectionMap = new Map();
   const findConnectionIndex = (connections: IConnectionData[], target: IConnectionData): number => {
-    return connections.findIndex(conn => conn.id === target.id && conn.index === target.index);
+    return connections.findIndex(conn => conn.id === target.id && conn.pin === target.pin);
   };
 
   const service: IConnectionService = {
@@ -29,7 +30,7 @@ definePlugin(({ registerService }) => {
 
         // 注册连接
         for (const connection of connections) {
-          this.registerPin(connection.id, connection.index);
+          this.registerPin(connection.id, connection.pin);
         }
 
         // 相互建立连接关系
@@ -39,7 +40,7 @@ definePlugin(({ registerService }) => {
               continue;
             }
 
-            this.createConnection(connection.id, connection.index, other.id, other.index);
+            this.createConnection(connection.id, connection.pin, other.id, other.pin);
           }
         }
       }
@@ -69,7 +70,7 @@ definePlugin(({ registerService }) => {
         if (pinConnections) {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
           [...pinConnections].forEach(target => {
-            this.removeConnection(deviceId, pin, target.id, target.index);
+            this.removeConnection(deviceId, pin, target.id, target.pin);
           });
           deviceConnections.delete(pin);
         }
@@ -79,13 +80,13 @@ definePlugin(({ registerService }) => {
         deviceConnections.forEach((pinConnections, pin) => {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
           [...pinConnections].forEach(target => {
-            this.removeConnection(deviceId, pin, target.id, target.index);
+            this.removeConnection(deviceId, pin, target.id, target.pin);
           });
         });
         connections.delete(deviceId);
       }
     },
-    getConnections(id: string, pin?: number): IConnectionData[] {
+    getConnections(id: string, pin?: number): IConnectionDataWithPin[] {
       const deviceConnections = connections.get(id);
 
       if (!deviceConnections) {
@@ -94,14 +95,25 @@ definePlugin(({ registerService }) => {
 
       if (pin !== undefined) {
         const pinConnections = deviceConnections.get(pin);
-        return pinConnections ? [...pinConnections] : [];
+        return (pinConnections ? [...pinConnections] : []).map(connection => ({
+          ...connection,
+          originPin: pin,
+        }));
       }
 
       // 返回所有引脚的连接
-      const allConnections: IConnectionData[] = [];
-      deviceConnections.forEach(pinConnections => {
-        allConnections.push(...pinConnections);
-      });
+      const allConnections: IConnectionDataWithPin[] = [];
+
+      for (const key of deviceConnections.keys()) {
+        const pinConnections = deviceConnections.get(key);
+        if (pinConnections) {
+          allConnections.push(...pinConnections.map(connection => ({
+            ...connection,
+            originPin: key,
+          })));
+        }
+      }
+
       return allConnections;
     },
     createConnection(id: string, pin: number, targetId: string, targetPin: number) {
@@ -112,8 +124,8 @@ definePlugin(({ registerService }) => {
 
       const sourceConnections = connections.get(id)!.get(pin)!;
       const targetConnections = connections.get(targetId)!.get(targetPin)!;
-      const sourceTarget = { id: targetId, index: targetPin };
-      const targetSource = { id, index: pin };
+      const sourceTarget = { id: targetId, pin: targetPin };
+      const targetSource = { id, pin };
 
       if (findConnectionIndex(sourceConnections, sourceTarget) === -1) {
         sourceConnections.push(sourceTarget);
@@ -128,7 +140,7 @@ definePlugin(({ registerService }) => {
       if (deviceConnections) {
         const pinConnections = deviceConnections.get(pin);
         if (pinConnections) {
-          const sourceTarget = { id: targetId, index: targetPin };
+          const sourceTarget = { id: targetId, pin: targetPin };
           const sourceIndex = findConnectionIndex(pinConnections, sourceTarget);
           if (sourceIndex !== -1) {
             pinConnections.splice(sourceIndex, 1);
@@ -141,11 +153,36 @@ definePlugin(({ registerService }) => {
       if (targetDevice) {
         const targetPinConnection = targetDevice.get(targetPin);
         if (targetPinConnection) {
-          const targetSource = { id, index: pin };
+          const targetSource = { id, pin };
           const targetIndex = findConnectionIndex(targetPinConnection, targetSource);
           if (targetIndex !== -1) {
             targetPinConnection.splice(targetIndex, 1);
           }
+        }
+      }
+    },
+    changeDeviceId(id: string, newId: string) {
+      // 如果新旧编号相同，无需处理
+      if (id === newId) {
+        return;
+      }
+
+      const deviceConnections = connections.get(id);
+
+      if (!deviceConnections) {
+        return;
+      }
+
+      // 更新连接
+      connections.set(newId, deviceConnections);
+      // 删除旧数据
+      connections.delete(id);
+
+      // 遍历更新被连接器件的连接
+      for (const [originPin, pinConnections] of deviceConnections.entries()) {
+        for (const { id: targetId, pin: targetPin } of pinConnections) {
+          this.removeConnection(targetId, targetPin, id, originPin);
+          this.createConnection(targetId, targetPin, newId, originPin);
         }
       }
     },

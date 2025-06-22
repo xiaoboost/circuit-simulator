@@ -32,6 +32,7 @@
     "@xiao-ai/utils": "1.6.7",
     "antd": "5.26.1",
     "core-js": "3.43.0",
+    "debounce": "2.2.0",
     "immer": "10.1.1",
     "localforage": "1.10.0",
     "qs": "6.14.0",

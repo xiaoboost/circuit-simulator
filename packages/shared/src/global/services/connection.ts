@@ -13,11 +13,18 @@ import { StructuredData } from '@circuit/types';
 export const CONNECTION_SERVICE =
   createServiceKey<IConnectionService>('ConnectionService');
 
+/** 连接数据 */
 export interface IConnectionData {
   /** 元件编号 */
   id: string;
   /** 引脚编号 */
-  index: number;
+  pin: number;
+}
+
+/** 连接数据 */
+export interface IConnectionDataWithPin extends IConnectionData {
+  /** 当前引脚 */
+  originPin: number;
 }
 
 /** 引脚连接关系 */
@@ -49,11 +56,16 @@ export interface IConnectionService {
   removeDevice(deviceId: string, pin?: number): void;
 
   /**
+   * 变更元件编号
+   */
+  changeDeviceId(id: string, newId: string): void;
+
+  /**
    * 获取元件连接数据
    *
    * @description 不输入`pin`时将会拿到所有连接
    */
-  getConnections(id: string, pin?: number): IConnectionData[];
+  getConnections(id: string, pin?: number): IConnectionDataWithPin[];
 
   /**
    * 添加连接
