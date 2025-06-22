@@ -1,8 +1,8 @@
+import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
 import { useService, useHook, useComposeHOC } from '../../../../context';
 import {
   IPartRendererProps,
-  CONNECTION_SERVICE,
   PIN_RENDERER,
   IPinRendererProps,
 } from '../../../../types';

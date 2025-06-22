@@ -1,5 +1,5 @@
+import { createServiceKey } from '@circuit/inject';
 import { StructuredData } from '@circuit/types';
-import { createServiceKey } from '../../context';
 
 /**
  * 连接关系服务

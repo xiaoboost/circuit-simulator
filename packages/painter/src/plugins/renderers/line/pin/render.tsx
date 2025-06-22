@@ -1,9 +1,9 @@
 import { isEqualPoint } from '@circuit/algorithm';
+import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
 import { useService, useHook, useComposeHOC } from '../../../../context';
 import {
   ILineRendererProps,
-  CONNECTION_SERVICE,
   PIN_RENDERER,
   IPinRendererProps,
 } from '../../../../types';

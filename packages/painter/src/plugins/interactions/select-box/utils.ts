@@ -1,9 +1,6 @@
 import { Point } from '@circuit/algorithm';
 import { isLineId } from '@circuit/electronics';
-import {
-  IConnectionService,
-  IConnectionData,
-} from '../../../types';
+import { IConnectionData, IConnectionService } from '@circuit/shared';
 
 export function toPath(start: Point, end: Point) {
   const [left, top] = start;

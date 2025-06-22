@@ -2,11 +2,11 @@ import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
   LIFE_CYCLE_HOOK,
+  CONNECTION_SERVICE,
 } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
   COLLISION_SERVICE,
-  CONNECTION_SERVICE,
   MAP_HASH_SERVICE,
 } from '../../../types';
 

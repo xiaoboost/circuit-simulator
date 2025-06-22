@@ -3,6 +3,7 @@ import {
   CONFIGURATION_SERVICE,
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
+  CONNECTION_SERVICE,
 } from '@circuit/shared';
 import React, { memo } from 'react';
 import {
@@ -19,7 +20,6 @@ import {
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
   COLLISION_SERVICE,
-  CONNECTION_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
