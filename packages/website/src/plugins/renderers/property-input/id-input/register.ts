@@ -6,7 +6,7 @@ definePlugin(({ registerHook }) => {
   registerHook<IPropertyInput<IdInputValue, IdInputDescriptor>>(PROPERTY_INPUT, {
     name: 'painter',
     order: 1,
-    match: (property) => property.type === 'id',
+    match: (p) => p?.kind === 'id',
     Render: IdInputRender,
   });
 });

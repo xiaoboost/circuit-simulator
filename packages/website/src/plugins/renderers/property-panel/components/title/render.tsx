@@ -1,5 +1,5 @@
 import { ElectronicName } from '@circuit/electronics';
-import { useSelectedParts } from './utils';
+import { useSelectedParts } from './../../utils';
 
 export function PropertyPanelTitle() {
   const { selected, isEmpty, isSingle, isSameKind } = useSelectedParts();

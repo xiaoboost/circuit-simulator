@@ -3,19 +3,18 @@ import { PartStructuredData } from '@circuit/types';
 import React, { useEffect, useState } from 'react';
 import { useHook, useService } from '../../../context';
 import { PROPERTY_INPUT } from '../../../types';
-import { EmptyPropertyPanel } from './empty';
+import { EmptyPropertyPanel, SinglePropertyPanel } from './components';
 import { useSelectedParts } from './utils';
 
 export function PropertyPanelContent() {
   const { selected, isEmpty, isSingle, isSameKind } = useSelectedParts();
-  const inputs = useHook(PROPERTY_INPUT);
 
   if (isEmpty) {
     return <EmptyPropertyPanel />;
   }
 
   if (isSingle) {
-    return <div>属性面板内容</div>;
+    return <SinglePropertyPanel part={selected[0]} />;
   }
 
   if (isSameKind) {

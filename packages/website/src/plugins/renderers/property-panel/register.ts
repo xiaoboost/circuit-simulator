@@ -1,7 +1,7 @@
 import { definePlugin } from '../../../context';
 import { RIGHT_SIDEBAR_RENDER } from '../../../types';
+import { PropertyPanelTitle } from './components';
 import { PropertyPanelContent } from './content';
-import { PropertyPanelTitle } from './title';
 
 definePlugin(({ registerHook }) => {
   registerHook(RIGHT_SIDEBAR_RENDER, {

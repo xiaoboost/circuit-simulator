@@ -1,0 +1,32 @@
+.form-item {
+  display: flex;
+  padding: 6px 0;
+
+  &-content {
+    display: flex;
+    flex-direction: row;
+    height: 28px;
+    position: relative;
+  }
+
+  @label-width: 84px;
+
+  &-name {
+    font-size: 12px;
+    width: @label-width;
+    display: flex;
+    align-items: center;
+  }
+
+  &-value {
+    flex: 1;
+  }
+
+  &-error {
+    position: absolute;
+    color: @color-danger;
+    font-size: 12px;
+    bottom: -18px;
+    left: @label-width;
+  }
+}
