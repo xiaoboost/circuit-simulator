@@ -109,17 +109,19 @@ export function shortUnitList(
     ranks = allRanks;
   }
 
-  return ranks.map((origin) => {
-    const rank = origin === 'μ' ? 'u' : origin;
-    const label = origin === 'u' ? 'μ': origin;
+  return ranks
+    .sort((a, b) => allRanks.indexOf(a) - allRanks.indexOf(b))
+    .map((origin) => {
+      const rank = origin === 'μ' ? 'u' : origin;
+      const label = origin === 'u' ? 'μ': origin;
 
-    return {
-      label: isChinese
-        ? `${unitMap[rank]}${unit}`
-        : `${label}${unit}`,
-      value: rank,
-    };
-  });
+      return {
+        label: isChinese
+          ? `${unitMap[rank]}${unit}`
+          : `${label}${unit}`,
+        value: rank,
+      };
+    });
 }
 
 /** 解析输入数字 */

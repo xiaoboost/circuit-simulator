@@ -128,10 +128,6 @@ export interface NumberPropertyDescription extends BasePropertyDescription {
   default: NumberValue;
   /** 单位 */
   unit?: UnitType;
-  /** 最小值 */
-  min?: number;
-  /** 最大值 */
-  max?: number;
   /**
    * 数量级
    *

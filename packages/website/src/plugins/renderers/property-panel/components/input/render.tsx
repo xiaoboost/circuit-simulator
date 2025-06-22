@@ -1,4 +1,5 @@
-import React from 'react';
+import debounce from 'debounce';
+import React, { useMemo } from 'react';
 import { useHook } from '../../../../../context';
 import { PROPERTY_INPUT, type IPropertyInputProps } from '../../../../../types';
 
@@ -7,11 +8,16 @@ export interface FormItemProps {
   children: React.ReactNode;
 }
 
-export function Input<T = any, D extends object = object>(props: IPropertyInputProps<T, D>) {
+export function Input<
+  T = any,
+  D extends object = object
+>({ onChange, onError,...rest }: IPropertyInputProps<T, D>) {
   const inputs = useHook(PROPERTY_INPUT);
-  const input = inputs.find((input) => input.match(props.property));
+  const onDebounceChange = useMemo(() => debounce(onChange, 500), [onChange]);
+  const onDebounceError = useMemo(() => debounce(onError ?? (() => void 0), 500), [onError]);
+  const input = inputs.find((input) => input.match(rest.property));
 
   if (input) {
-    return <input.Render {...props} />;
+    return <input.Render {...rest} onChange={onDebounceChange} onError={onDebounceError} />;
   }
 }

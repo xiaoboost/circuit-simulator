@@ -1,22 +1,20 @@
 import { STATE_CORE_SERVICE } from '@circuit/shared';
 import { Input, Space } from 'antd';
-import debounce from 'debounce';
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useService } from '../../../../context';
 import { IPropertyInputProps } from '../../../../types';
 import * as Styles from './styles.less';
 
-export type IdInputValue = string;
+export type Value = string;
 
-export type IdInputProps = IPropertyInputProps<IdInputValue, IdInputDescriptor>;
+export type Props = IPropertyInputProps<Value, Descriptor>;
 
-export interface IdInputDescriptor {
-  kind: 'id';
+export interface Descriptor {
+  type: 'id';
 }
 
-export function IdInputRender({ value, onError, onChange }: IdInputProps) {
+export function IdInputRender({ value, onError, onChange }: Props) {
   const { state: { data: { parts } } } = useService(STATE_CORE_SERVICE);
-  const onDebounceChange = useMemo(() => debounce(onChange, 500), [onChange]);
   const partIds = parts
     .map(part => part.id)
     .filter((id) => id !== value);
@@ -72,8 +70,9 @@ export function IdInputRender({ value, onError, onChange }: IdInputProps) {
       }
     }
 
+    onError?.('');
     setPrefixError(false);
-    onDebounceChange(`${newPrefix}_${suffix}`);
+    onChange(`${newPrefix}_${suffix}`);
   };
   const onSuffixChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSuffix = e.target.value;
@@ -88,8 +87,9 @@ export function IdInputRender({ value, onError, onChange }: IdInputProps) {
       }
     }
 
+    onError?.('');
     setSuffixError(false);
-    onDebounceChange(`${prefix}_${newSuffix}`);
+    onChange(`${prefix}_${newSuffix}`);
   };
 
   return (
