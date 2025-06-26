@@ -9,6 +9,8 @@ import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
   SELECT_SERVICE,
+  CURSOR_SERVICE,
+  ICursorKind,
   VARIABLE_OBSERVER_SERVICE as VarService,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
@@ -31,6 +33,8 @@ definePlugin(({ registerHook, getService }) => {
       getService(SELECT_SERVICE).set(id);
       // 偏移数据清零
       getService(VarService).set(KEY, getLabelKey(id), new Point(0, 0));
+      // 设置鼠标指针
+      getService(CURSOR_SERVICE).set(ICursorKind.Dragging);
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
       if (getService(DRAG_SCENE_SERVICE).onlyHas(MoveDragSceneName)) {
@@ -56,7 +60,10 @@ definePlugin(({ registerHook, getService }) => {
       const eventBus = getService(EVENT_BUS_SERVICE);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);
+      const cursor = getService(CURSOR_SERVICE);
       const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
+
+      cursor.clear();
 
       // 文本方向未发生变化，清空临时数据
       if (newDirection === part.textDirection) {
