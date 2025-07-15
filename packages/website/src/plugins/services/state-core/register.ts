@@ -164,9 +164,9 @@ definePlugin(({ registerService }) => {
   registerService(STATE_CORE_SERVICE, service);
 
   return () => {
-    service.state.unObserve();
-    service.commitState.unObserve();
-    service.canUndo.unObserve();
-    service.canRedo.unObserve();
+    service.state.destroy();
+    service.commitState.destroy();
+    service.canUndo.destroy();
+    service.canRedo.destroy();
   };
 });

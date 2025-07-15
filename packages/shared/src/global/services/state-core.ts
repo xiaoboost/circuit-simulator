@@ -1,4 +1,5 @@
-import { createServiceKey, type Watcher } from '@circuit/inject';
+import { createServiceKey } from '@circuit/inject';
+import type { Watcher } from '@circuit/reactive';
 import {
   PartStructuredData,
   LineStructuredData,

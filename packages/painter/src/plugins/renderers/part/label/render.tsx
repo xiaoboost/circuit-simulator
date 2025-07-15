@@ -11,7 +11,6 @@ import {
   CONFIGURATION_SERVICE,
   EVENT_BUS_SERVICE,
   EventBusEvent,
-  PartLabelVisibleKind as Kind,
 } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
@@ -20,6 +19,8 @@ import {
   IPartRendererProps,
   MAP_COORDINATE_SERVICE,
   DRAG_SCENE_SERVICE,
+  PAINTER_CONFIGURATION_SERVICE,
+  PartLabelVisibleKind as Kind,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
@@ -41,7 +42,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const eventBus = useService(EVENT_BUS_SERVICE);
   const dragService = useService(DRAG_SCENE_SERVICE);
   const configurationService = useService(CONFIGURATION_SERVICE);
-  const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
+  const painterConfigurationService = useService(PAINTER_CONFIGURATION_SERVICE);
+  const [partLabelVisible] = useWatcher(painterConfigurationService.partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);
 

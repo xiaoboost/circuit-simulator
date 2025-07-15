@@ -160,7 +160,7 @@ definePlugin(({ registerHook, getService }) => {
 
   // 卸载器
   return () => {
-    start.unObserve();
-    end.unObserve();
+    start.destroy();
+    end.destroy();
   };
 });

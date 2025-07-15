@@ -7,9 +7,14 @@ import {
 
 export {
   createServiceKey,
+} from '@circuit/inject';
+
+export {
   Watcher,
   useWatcher,
-} from '@circuit/inject';
+  useArrayWatcher,
+  useObjectWatcher,
+} from '@circuit/reactive';
 
 export { useComposeHOC } from './react';
 

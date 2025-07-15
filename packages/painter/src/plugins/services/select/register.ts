@@ -26,7 +26,7 @@ definePlugin(({ registerService, getService }) => {
 
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {
-    if (!isSameSet(preSet, nextSet)) {
+    if (!preSet || !isSameSet(preSet, nextSet)) {
       getService(EVENT_BUS_SERVICE).notify(EventBusEvent.SELECT_ELECTRONICS, nextSet);
     }
   });
@@ -35,6 +35,6 @@ definePlugin(({ registerService, getService }) => {
   registerService(SELECT_SERVICE, service);
 
   return () => {
-    selected.unObserve();
+    selected.destroy();
   };
 });

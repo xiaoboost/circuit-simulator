@@ -1,40 +1,45 @@
 import { LIFE_CYCLE_HOOK } from '@circuit/inject';
-import {
-  IConfigurationService,
-  CONFIGURATION_SERVICE,
-  ConfigurationWatcherItemCache,
-  STORAGE_SERVICE,
-} from '@circuit/shared';
+import { STORAGE_SERVICE, ConfigurationWatcherItemCache } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
+import {
+  PartLabelVisibleKind,
+  PAINTER_CONFIGURATION_SERVICE,
+  IPainterConfigurationService,
+} from '../../../types';
 
 definePlugin(({ registerService, registerHook, getService }) => {
-  const service: IConfigurationService = {
-    movePainterMode: new Watcher(false),
-    openDebugLog: new Watcher(false),
-    previewMode: new Watcher(false),
+  const service: IPainterConfigurationService = {
+    PartLabelVisibleKind: PartLabelVisibleKind,
+    partLabelVisible: new Watcher<PartLabelVisibleKind>(PartLabelVisibleKind.Visible),
+    openPathSearcherDebugger: new Watcher(false),
+    enablePartRect: new Watcher(false),
   };
 
   const watcherCache: ConfigurationWatcherItemCache[] = [
     {
-      key: 'Configuration.Global.OpenDebugLog',
-      watcher: service.openDebugLog,
+      key: 'Configuration.Painter.PartLabelVisible',
+      watcher: service.partLabelVisible,
+      default: PartLabelVisibleKind.Visible,
+    },
+    {
+      key: 'Configuration.Painter.OpenPathSearcherDebugger',
+      watcher: service.openPathSearcherDebugger,
       default: false,
     },
     {
-      key: 'Configuration.Global.MovePainterMode',
-      watcher: service.movePainterMode,
+      key: 'Configuration.Painter.enablePartRect',
+      watcher: service.enablePartRect,
       default: false,
     },
   ];
 
   // 注册配置服务
-  registerService(CONFIGURATION_SERVICE, service);
+  registerService(PAINTER_CONFIGURATION_SERVICE, service);
 
   // 注册初始化，读取缓存
   registerHook(LIFE_CYCLE_HOOK, {
     async afterPluginInit() {
       const storageService = getService(STORAGE_SERVICE);
-
       for (const { key, watcher, default: defaultVal } of watcherCache) {
         const cacheVal = await storageService.get(key);
         watcher.setData(cacheVal ?? defaultVal);

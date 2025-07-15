@@ -18,6 +18,6 @@ definePlugin(({ registerService }) => {
 
   // 卸载器
   return () => {
-    service.value.unObserve();
+    service.value.destroy();
   };
 });

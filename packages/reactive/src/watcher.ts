@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, takeUntil, pairwise, map, startWith } from 'rxjs/operators';
+import { distinctUntilChanged, takeUntil, pairwise, map } from 'rxjs/operators';
 
 type ObserveCallback<T> = (current: T, previous?: T) => void;
 
@@ -30,8 +30,6 @@ export class ReadonlyWatcher<T> {
   /** 监听值变化 */
   observe(callback: ObserveCallback<T>): () => void {
     const subscription = this._subject.pipe(
-      // 初始化上次值
-      startWith(undefined as T | undefined),
       // 生成 [previous, current] 元组
       pairwise(),
       // 交换元组顺序

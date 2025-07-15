@@ -4,6 +4,7 @@ import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
+import { PAINTER_CONFIGURATION_SERVICE } from '../../../../../types';
 import { Button, Divider } from '../../components';
 import { ToolbarMenuOffset } from '../../constant';
 import * as Styles from './styles.less';
@@ -11,9 +12,11 @@ import * as Styles from './styles.less';
 export function DebuggerRender() {
   const {
     openDebugLog,
+  } = useService(CONFIGURATION_SERVICE);
+  const {
     openPathSearcherDebugger,
     enablePartRect,
-  } = useService(CONFIGURATION_SERVICE);
+  } = useService(PAINTER_CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
   const [path, setPath] = useWatcher(openPathSearcherDebugger);
   const [partRect, setPartRect] = useWatcher(enablePartRect);
@@ -71,7 +74,6 @@ export function DebuggerRender() {
       </div>
     ),
   }));
-
 
   return (
     <>

@@ -4,6 +4,11 @@ export {
   useInjectInstall,
   InjectContext,
   defineGlobalPlugin as definePlugin,
+} from '@circuit/inject';
+
+export {
   Watcher,
   useWatcher,
-} from '@circuit/inject';
+  useArrayWatcher,
+  useObjectWatcher,
+} from '@circuit/reactive';
