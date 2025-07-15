@@ -1,4 +1,4 @@
-import { createServiceKey, type Watcher } from '@circuit/inject';
+import { createServiceKey, Watcher } from '@circuit/inject';
 
 /**
  * 配置服务
@@ -35,6 +35,8 @@ export interface IConfigurationService {
   readonly openDebugLog: Watcher<boolean>;
   /** 打开路径搜索调试器 */
   readonly openPathSearcherDebugger: Watcher<boolean>;
+  /** 显示器件外边框 */
+  readonly enablePartRect: Watcher<boolean>;
   /**
    * 预览模式
    *

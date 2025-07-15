@@ -122,9 +122,6 @@ definePlugin(({ registerService }) => {
       }
       return result;
     },
-    debugVisualize() {
-      // TODO: Implement visualization for debugging purposes
-    },
   };
 
   // 注册碰撞服务

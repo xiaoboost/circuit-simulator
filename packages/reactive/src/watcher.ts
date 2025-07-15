@@ -79,13 +79,13 @@ export class ReadonlyWatcher<T> {
   }
 }
 
-/** 可写状态监听器 */
+/** 状态监听器 */
 export class Watcher<T> extends ReadonlyWatcher<T> {
   constructor(initialValue: T) {
     super(initialValue);
   }
 
-  // 设置新值
+  /** 设置新值 */
   setData(value: T): void {
     this._setData(value);
   }

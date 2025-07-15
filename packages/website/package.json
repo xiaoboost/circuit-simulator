@@ -28,6 +28,7 @@
     "@circuit/map": "workspace:*",
     "@circuit/painter": "workspace:*",
     "@circuit/shared": "workspace:*",
+    "@circuit/reactive": "workspace:*",
     "@circuit/types": "workspace:*",
     "@xiao-ai/utils": "1.6.7",
     "antd": "5.26.1",

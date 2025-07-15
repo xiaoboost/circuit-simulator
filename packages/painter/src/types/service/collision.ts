@@ -91,11 +91,4 @@ export interface ICollisionService {
    * @returns 完全在矩形内的实体ID列表
    */
   getEntitiesInRect(rect: Rect): string[];
-
-  // ===== 特殊方法 =====
-  /**
-   * 可视化碰撞区域（调试用）
-   * @returns `SVG`字符串表示所有碰撞矩形
-   */
-  debugVisualize(): void;
 }

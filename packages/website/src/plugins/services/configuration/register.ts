@@ -20,6 +20,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
     movePainterMode: new Watcher(false),
     openDebugLog: new Watcher(false),
     openPathSearcherDebugger: new Watcher(false),
+    enablePartRect: new Watcher(false),
     previewMode: new Watcher(false),
   };
 
@@ -42,6 +43,11 @@ definePlugin(({ registerService, registerHook, getService }) => {
     {
       key: 'Configuration.OpenPathSearcherDebugger',
       watcher: service.openPathSearcherDebugger,
+      default: false,
+    },
+    {
+      key: 'Configuration.enablePartRect',
+      watcher: service.enablePartRect,
       default: false,
     },
   ];

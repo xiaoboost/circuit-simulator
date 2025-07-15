@@ -12,9 +12,11 @@ export function DebuggerRender() {
   const {
     openDebugLog,
     openPathSearcherDebugger,
+    enablePartRect,
   } = useService(CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
   const [path, setPath] = useWatcher(openPathSearcherDebugger);
+  const [partRect, setPartRect] = useWatcher(enablePartRect);
 
   // 非本地或者没有设置链接条件，则不渲染调试按钮
   if (
@@ -43,6 +45,16 @@ export function DebuggerRender() {
         ev.stopPropagation();
         ev.preventDefault();
         setPath(!path);
+      },
+    },
+    {
+      key: '3',
+      label: '元件外边框',
+      isSelected: partRect,
+      onClick: (ev: React.MouseEvent) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        setPartRect(!partRect);
       },
     },
   ];

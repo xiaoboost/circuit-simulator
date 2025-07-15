@@ -6,3 +6,4 @@ export * from './map-hash';
 export * from './painter-dom';
 export * from './variable-observer';
 export * from './select';
+export * from './hover';

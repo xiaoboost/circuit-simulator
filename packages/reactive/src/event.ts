@@ -1,6 +1,7 @@
 import { Subject, Observable, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+/** 事件流 */
 export class EventStream<T = void> {
   private readonly _subject = new Subject<T | undefined>();
   private readonly _destroy$ = new Subject<void>();
