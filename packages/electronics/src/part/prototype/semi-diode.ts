@@ -77,15 +77,4 @@ export const data: ElectronicPrototype = {
       },
     },
   ],
-  focus: [
-    {
-      name: 'rect',
-      attribute: {
-        x: '-13',
-        y: '-32',
-        width: '26',
-        height: '60',
-      },
-    },
-  ],
 };

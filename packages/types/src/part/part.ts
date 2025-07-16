@@ -41,6 +41,4 @@ export interface ElectronicPrototype {
   readonly pins: PinDescription[];
   /** 器件外形元素的描述 */
   readonly shape: ShapeDescription[];
-  /** 器件聚焦区域的描述 */
-  readonly focus: ShapeDescription[];
 }

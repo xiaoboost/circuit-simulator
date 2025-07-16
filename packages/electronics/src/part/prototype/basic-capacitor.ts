@@ -48,15 +48,4 @@ export const data: ElectronicPrototype = {
       },
     },
   ],
-  focus: [
-    {
-      name: 'rect',
-      attribute: {
-        x: '-32',
-        y: '-15',
-        width: '60',
-        height: '32',
-      },
-    },
-  ],
 };
