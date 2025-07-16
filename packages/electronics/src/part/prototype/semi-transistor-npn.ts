@@ -14,7 +14,7 @@ export const data: ElectronicPrototype = {
   textBias: {
     Right: 16,
   },
-  margin: [50, 30, 50, 30],
+  margin: [32, 32, 32, 12],
   properties: [
     {
       name: '电流放大倍数',
@@ -96,8 +96,8 @@ export const data: ElectronicPrototype = {
       name: 'rect',
       attribute: {
         x: '-10',
-        y: '-30',
-        width: '30',
+        y: '-32',
+        width: '32',
         height: '60',
       },
     },

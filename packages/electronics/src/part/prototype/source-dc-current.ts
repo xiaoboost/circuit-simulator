@@ -15,7 +15,7 @@ export const data: ElectronicPrototype = {
     Left: 24,
     Right: 24,
   },
-  margin: [50, 24, 50, 24],
+  margin: [32, 24, 32, 24],
   properties: [
     {
       name: '电流值',
@@ -72,7 +72,7 @@ export const data: ElectronicPrototype = {
       name: 'rect',
       attribute: {
         x: '-20',
-        y: '-30',
+        y: '-32',
         width: '40',
         height: '60',
       },

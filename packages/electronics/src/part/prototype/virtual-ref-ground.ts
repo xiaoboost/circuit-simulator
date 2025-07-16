@@ -28,7 +28,7 @@ export const data: ElectronicPrototype = {
       attribute: {
         x: '-15',
         y: '-10',
-        width: '30',
+        width: '32',
         height: '26',
         fill: 'transparent',
       },

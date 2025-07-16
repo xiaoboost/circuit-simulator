@@ -14,7 +14,7 @@ export const data: ElectronicPrototype = {
   textBias: {
     Center: 0,
   },
-  margin: [38, 50, 38, 50],
+  margin: [38, 32, 38, 32],
   properties: [
     {
       name: '开环增益',
@@ -107,7 +107,7 @@ export const data: ElectronicPrototype = {
     {
       name: 'rect',
       attribute: {
-        x: '-30',
+        x: '-32',
         y: '-35',
         width: '60',
         height: '70',

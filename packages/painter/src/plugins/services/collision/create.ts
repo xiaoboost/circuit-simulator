@@ -3,10 +3,13 @@ import {
   Direction,
   DirectionVectorSet,
   MarginBox,
+  Point,
 } from '@circuit/algorithm';
 import {
   getPartPrototype,
+  getPartPins,
   LINE_THICKNESS,
+  PIN_SIZE,
 } from '@circuit/electronics';
 import {
   LineStructuredData,
@@ -17,8 +20,9 @@ import {
   IEntityRegion,
 } from '../../../types';
 
-/** 获取器件外边框四边距 */
-function getRectWithRotate(data: PartStructuredData): Rect {
+/** 获取器件外边框四边框 */
+function getPartRectWithRotate(data: PartStructuredData): Rect[] {
+  const rects: Rect[] = [];
   const { margin } = getPartPrototype(data.kind);
   const MarginDirection = [
     Direction.Top,
@@ -44,11 +48,27 @@ function getRectWithRotate(data: PartStructuredData): Rect {
     return result.value;
   }) as MarginBox;
 
-  return {
+  rects.push({
     x: data.position[0] - rotatedMargin[3],
     y: data.position[1] - rotatedMargin[0],
     width: rotatedMargin[1] + rotatedMargin[3],
     height: rotatedMargin[2] + rotatedMargin[0],
+  });
+
+  for (const pin of getPartPins(data)) {
+    rects.push(getPinRect(pin.position));
+  }
+
+  return rects;
+}
+
+/** 获取器件引脚四边框 */
+function getPinRect(position: Point): Rect {
+  return {
+    x: position[0] - PIN_SIZE / 2,
+    y: position[1] - PIN_SIZE / 2,
+    width: PIN_SIZE,
+    height: PIN_SIZE,
   };
 }
 
@@ -72,6 +92,9 @@ function getLineEntityRects({ path }: LineStructuredData): Rect[] {
     });
   }
 
+  rects.push(getPinRect(path[0]));
+  rects.push(getPinRect(path[path.length - 1]));
+
   return rects;
 }
 
@@ -84,7 +107,7 @@ export function getRectByEntity(entity: LineOrPartStructuredData): IEntityRegion
   if ('kind' in entity) {
     return {
       id: entity.id,
-      rects: [getRectWithRotate(entity)],
+      rects: getPartRectWithRotate(entity),
     };
   }
   else {
