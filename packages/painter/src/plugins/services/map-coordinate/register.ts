@@ -8,6 +8,7 @@ import {
   MAP_COORDINATE_SERVICE,
   EVENT_LISTENER_HOOK,
   DRAG_SCENE_HOOK,
+  PAINTER_HTML_ELEMENT,
 } from '../../../types';
 
 definePlugin(({ getService, registerHook, registerService }) => {
@@ -31,6 +32,23 @@ definePlugin(({ getService, registerHook, registerService }) => {
           position,
         });
       }
+    },
+    screenToViewPosition(position) {
+      // TODO: 这里应该可以优化吧，每次都获取一次元素的`BoundingClientRect`太浪费性能了
+      const painterElement = getService(PAINTER_HTML_ELEMENT);
+      const { left, top } = painterElement.current!.getBoundingClientRect();
+      return position.add([left, top], -1);
+    },
+    screenToMapPosition(position) {
+      return this.viewToMapPosition(this.screenToViewPosition(position));
+    },
+    viewToMapPosition(position) {
+      const { data: map } = this.value;
+      return position.add(map.position, -1).mul(map.scale, -1);
+    },
+    mapToViewPosition(mapCoordinate) {
+      const { data: map } = this.value;
+      return mapCoordinate.mul(map.scale).add(map.position);
     },
   };
 

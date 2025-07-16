@@ -27,4 +27,12 @@ export interface IMapCoordinateService {
   setScale(scale: number): void;
   /** 设置图纸位置 */
   setPosition(position: Point): void;
+  /** 屏幕坐标转换为视图坐标 */
+  screenToViewPosition(position: Point): Point;
+  /** 将屏幕坐标转换为图纸坐标 */
+  screenToMapPosition(position: Point): Point;
+  /** 将视图坐标转换为图纸坐标 */
+  viewToMapPosition(position: Point): Point;
+  /** 将图纸坐标转换为视图坐标 */
+  mapToViewPosition(mapCoordinate: Point): Point;
 }

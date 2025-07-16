@@ -6,3 +6,4 @@ import './select';
 import './map-hash';
 import './variable-observer';
 import './configuration';
+import './hover';

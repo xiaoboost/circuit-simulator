@@ -76,14 +76,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   };
 
   function getDragMouseEvent(event: MouseEvent) {
-    const painterElement = getService(PAINTER_HTML_ELEMENT);
-    const { left, top } = painterElement.current!.getBoundingClientRect();
-    const { value: { data: map } } = getService(MAP_COORDINATE_SERVICE);
-    const mousePosition = new Point(event.pageX - left, event.pageY - top);
+    const mapService = getService(MAP_COORDINATE_SERVICE);
+    const mousePosition = mapService.screenToViewPosition(Point.from([event.pageX, event.pageY]));
     const dragMouseEvent: DragMouseEvent = {
       ...event,
       position: mousePosition,
-      positionInDrawer: mousePosition.add(map.position, -1).mul(map.scale, -1),
+      positionInDrawer: mapService.viewToMapPosition(mousePosition),
     };
 
     return dragMouseEvent;
