@@ -5,5 +5,5 @@ export * from './line';
 export * from './part';
 export * from './point';
 export * from './tooltip';
-export * from './toolbar';
 export * from './pin';
+export * from './toolbar-action';

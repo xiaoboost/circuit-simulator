@@ -18,7 +18,7 @@ export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
  * 绘图层实现钩子
  *
  * @description 该钩子将用于绘图图层的渲染
- * @description 绘图层从 DOM 上来说是低于绘图层的，绘图层会随着画布变化而变化
+ * @description 绘图层从 DOM 上来说是低于绘图层的，绘图层会随着画布变化而变化，并且其内部应该是 SVG 元素
  * @example
  * ```ts
  * const drawLayerHooks = useHook(DRAW_LAYER_HOOK);

@@ -12,7 +12,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
     PartLabelVisibleKind: PartLabelVisibleKind,
     partLabelVisible: new Watcher<PartLabelVisibleKind>(PartLabelVisibleKind.Visible),
     openPathSearcherDebugger: new Watcher(false),
-    enablePartRect: new Watcher(false),
+    visibleElectronicOutline: new Watcher(false),
   };
 
   const watcherCache: ConfigurationWatcherItemCache[] = [
@@ -27,8 +27,8 @@ definePlugin(({ registerService, registerHook, getService }) => {
       default: false,
     },
     {
-      key: 'Configuration.Painter.enablePartRect',
-      watcher: service.enablePartRect,
+      key: 'Configuration.Painter.visibleElectronicOutline',
+      watcher: service.visibleElectronicOutline,
       default: false,
     },
   ];

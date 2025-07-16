@@ -15,13 +15,13 @@ export function DebuggerRender() {
   } = useService(CONFIGURATION_SERVICE);
   const {
     openPathSearcherDebugger,
-    enablePartRect,
+    visibleElectronicOutline,
   } = useService(PAINTER_CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
   const [path, setPath] = useWatcher(openPathSearcherDebugger);
-  const [partRect, setPartRect] = useWatcher(enablePartRect);
+  const [electronicOutline, setElectronicOutline] = useWatcher(visibleElectronicOutline);
 
-  // 非本地或者没有设置链接条件，则不渲染调试按钮
+  // 非本地或者没有设置链接条件，则不显示调试按钮
   if (
     !location.hostname.includes('localhost') &&
     !/(\?|&)debug=true(\?|&|$)/.test(location.search)
@@ -53,11 +53,11 @@ export function DebuggerRender() {
     {
       key: '3',
       label: '元件外边框',
-      isSelected: partRect,
+      isSelected: electronicOutline,
       onClick: (ev: React.MouseEvent) => {
         ev.stopPropagation();
         ev.preventDefault();
-        setPartRect(!partRect);
+        setElectronicOutline(!electronicOutline);
       },
     },
   ];

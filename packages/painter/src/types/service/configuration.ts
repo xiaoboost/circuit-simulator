@@ -31,6 +31,6 @@ export interface IPainterConfigurationService {
   readonly partLabelVisible: Watcher<PartLabelVisibleKind>;
   /** 打开路径搜索调试器 */
   readonly openPathSearcherDebugger: Watcher<boolean>;
-  /** 显示器件外边框 */
-  readonly enablePartRect: Watcher<boolean>;
+  /** 显示元件外边框 */
+  readonly visibleElectronicOutline: Watcher<boolean>;
 }

@@ -80,6 +80,9 @@ definePlugin(({ registerService }) => {
 
       return null;
     },
+    getAllEntitiesCollisionRects() {
+      return Array.from(map.values()).flatMap(region => region.rects);
+    },
     getEntityBoundingBox(id: string) {
       const region = map.get(id);
 

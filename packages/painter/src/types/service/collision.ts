@@ -79,6 +79,13 @@ export interface ICollisionService {
   getEntityBoundingBox(id: string): Rect | undefined;
 
   /**
+   * 获取所有实体的碰撞矩形数组
+   * @param id 实体ID
+   * @returns 矩形数组
+   */
+  getAllEntitiesCollisionRects(): Rect[];
+
+  /**
    * 获取实体的碰撞矩形数组
    * @param id 实体ID
    * @returns 矩形数组
