@@ -80,11 +80,10 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     const { left, top } = painterElement.current!.getBoundingClientRect();
     const { value: { data: map } } = getService(MAP_COORDINATE_SERVICE);
     const mousePosition = new Point(event.pageX - left, event.pageY - top);
-    const mapPosition = map.position.mul(map.scale, -1);
     const dragMouseEvent: DragMouseEvent = {
       ...event,
       position: mousePosition,
-      positionInDrawer: mousePosition.add(mapPosition, -1),
+      positionInDrawer: mousePosition.add(map.position, -1).mul(map.scale, -1),
     };
 
     return dragMouseEvent;
