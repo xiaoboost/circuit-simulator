@@ -95,7 +95,8 @@ definePlugin(({ registerHook, getService }) => {
         // 等待器件文本修改时，一起提交
         stream
           .get<Constant.PartLabelChangedPayload>(Constant.PartLabelChanged)
-          .once(() => variableService.set(KEY, label, undefined));
+          .once((payload) => payload?.id === part.id)
+          .then(() => variableService.set(KEY, label, undefined));
       }
     },
   });

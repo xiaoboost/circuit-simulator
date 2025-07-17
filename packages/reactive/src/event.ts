@@ -39,55 +39,21 @@ export class EventStream<T = void> {
     this._subject.complete();
   }
 
-  /** 一次性订阅 */
-  once(): Promise<T>;
-  once(callback: (value?: T) => void): () => void;
-  once(callback?: (value?: T) => void): Promise<T> | (() => void) {
-    if (typeof callback === 'function') {
+  /**
+   * 一次性订阅
+   *
+   * @description 如果传入过滤函数，则只订阅符合条件的值
+   */
+  once(filter?: (value?: T) => boolean): Promise<T> {
+    return new Promise((resolve) => {
       const unsubscribe = this.subscribe((val) => {
-        callback(val);
+        if (filter && !filter(val)) {
+          return;
+        }
+
         unsubscribe();
+        resolve(val as T);
       });
-
-      return unsubscribe;
-    }
-    else {
-      return new Promise((resolve) => {
-        const unsubscribe = this.subscribe((val) => {
-          unsubscribe();
-          resolve(val as T);
-        });
-      });
-    }
-  }
-
-  /** 过滤事件 */
-  filter(predicate: (value?: T) => boolean): EventStream<T> {
-    const filteredStream = new EventStream<T>();
-
-    const sub = this._subject.pipe(
-      takeUntil(this._destroy$),
-    ).subscribe(value => {
-      if (predicate(value)) {
-        filteredStream.emit(value);
-      }
     });
-
-    this._subscriptions.add(sub);
-    return filteredStream;
-  }
-
-  /** 映射事件 */
-  map<R>(mapper: (value?: T) => R): EventStream<R> {
-    const mappedStream = new EventStream<R>();
-
-    const sub = this._subject.pipe(
-      takeUntil(this._destroy$),
-    ).subscribe(value => {
-      mappedStream.emit(mapper(value));
-    });
-
-    this._subscriptions.add(sub);
-    return mappedStream;
   }
 }

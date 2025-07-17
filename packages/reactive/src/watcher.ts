@@ -40,14 +40,22 @@ export class ReadonlyWatcher<T> {
     return () => subscription.unsubscribe();
   }
 
-  /** 单次监听 */
-  once(callback: ObserveCallback<T>): () => void {
-    const unsubscribe = this.observe((current, previous) => {
-      callback(current, previous);
-      unsubscribe();
-    });
+  /**
+   * 一次性订阅
+   *
+   * @description 如果传入过滤函数，则只订阅符合条件的值
+   */
+  once(filter?: (value?: T) => boolean): Promise<T> {
+    return new Promise((resolve) => {
+      const unsubscribe = this.observe((val) => {
+        if (filter && !filter(val)) {
+          return;
+        }
 
-    return unsubscribe;
+        unsubscribe();
+        resolve(val as T);
+      });
+    });
   }
 
   /** 创建计算属性 */
