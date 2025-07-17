@@ -14,9 +14,9 @@ export function useSelectedParts() {
     .get<Stream.SelectedChangePayload>(Stream.SelectedChange);
 
   useEffect(() => {
-    return selectedSteam.subscribe((parts) => {
-      if (parts) {
-        setSelected(() => Array.from(parts).map((id) => stateCore.getPart(id)));
+    return selectedSteam.subscribe((electronics) => {
+      if (electronics) {
+        setSelected(() => stateCore.state.data.parts.filter((part) => electronics.has(part.id)));
       }
     });
   }, []);

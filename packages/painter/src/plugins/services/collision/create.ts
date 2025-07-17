@@ -15,14 +15,25 @@ import {
   LineStructuredData,
   PartStructuredData,
   LineOrPartStructuredData,
+  EntityKind,
 } from '@circuit/types';
 import {
   IEntityRegion,
 } from '../../../types';
 
+/** 获取器件引脚四边框 */
+function getPinRect(position: Point): Rect {
+  return {
+    x: position[0] - PIN_SIZE / 2,
+    y: position[1] - PIN_SIZE / 2,
+    width: PIN_SIZE,
+    height: PIN_SIZE,
+  };
+}
+
 /** 获取器件外边框四边框 */
-function getPartRectWithRotate(data: PartStructuredData): Rect[] {
-  const rects: Rect[] = [];
+function getPartRegion(data: PartStructuredData): IEntityRegion[] {
+  const rects: IEntityRegion[] = [];
   const { margin } = getPartPrototype(data.kind);
   const MarginDirection = [
     Direction.Top,
@@ -48,33 +59,42 @@ function getPartRectWithRotate(data: PartStructuredData): Rect[] {
     return result.value;
   }) as MarginBox;
 
+  // 器件外边框
   rects.push({
-    x: data.position[0] - rotatedMargin[3],
-    y: data.position[1] - rotatedMargin[0],
-    width: rotatedMargin[1] + rotatedMargin[3],
-    height: rotatedMargin[2] + rotatedMargin[0],
+    id: `${data.id}-body`,
+    entity: {
+      kind: EntityKind.Part,
+      id: data.id,
+    },
+    rects: [
+      {
+        x: data.position[0] - rotatedMargin[3],
+        y: data.position[1] - rotatedMargin[0],
+        width: rotatedMargin[1] + rotatedMargin[3],
+        height: rotatedMargin[2] + rotatedMargin[0],
+      },
+    ],
   });
 
+  // 器件引脚
   for (const pin of getPartPins(data)) {
-    rects.push(getPinRect(pin.position));
+    rects.push({
+      id: `${data.id}-pin-${pin.index}`,
+      entity: {
+        kind: EntityKind.PartPin,
+        id: data.id,
+        pin: pin.index,
+      },
+      rects: [getPinRect(pin.position)],
+    });
   }
 
   return rects;
 }
 
-/** 获取器件引脚四边框 */
-function getPinRect(position: Point): Rect {
-  return {
-    x: position[0] - PIN_SIZE / 2,
-    y: position[1] - PIN_SIZE / 2,
-    width: PIN_SIZE,
-    height: PIN_SIZE,
-  };
-}
-
 /** 获取连线实体的碰撞矩形 */
-function getLineEntityRects({ path }: LineStructuredData): Rect[] {
-  const rects: Rect[] = [];
+function getLineRegion({ path, id }: LineStructuredData): IEntityRegion[] {
+  const rects: IEntityRegion[] = [];
 
   for (let i = 0; i < path.length - 1; i++) {
     const start = path[i];
@@ -84,16 +104,46 @@ function getLineEntityRects({ path }: LineStructuredData): Rect[] {
     const right = Math.max(start[0], end[0]);
     const bottom = Math.max(start[1], end[1]);
 
+    // 导线线段
     rects.push({
-      x: left - LINE_THICKNESS / 2,
-      y: top - LINE_THICKNESS / 2,
-      height: (left === right) ? bottom - top + LINE_THICKNESS : LINE_THICKNESS,
-      width: (left === right) ? LINE_THICKNESS : right - left + LINE_THICKNESS,
+      id: `${id}-index-${i}`,
+      entity: {
+        kind: EntityKind.Line,
+        id,
+        index: i,
+      },
+      rects: [
+        {
+          x: left - LINE_THICKNESS / 2,
+          y: top - LINE_THICKNESS / 2,
+          height: (left === right) ? bottom - top + LINE_THICKNESS : LINE_THICKNESS,
+          width: (left === right) ? LINE_THICKNESS : right - left + LINE_THICKNESS,
+        },
+      ],
     });
   }
 
-  rects.push(getPinRect(path[0]));
-  rects.push(getPinRect(path[path.length - 1]));
+  // 导线起点
+  rects.push({
+    id: `${id}-start`,
+    entity: {
+      kind: EntityKind.LinePin,
+      id,
+      pin: 0,
+    },
+    rects: [getPinRect(path[0])],
+  });
+
+  // 导线终点
+  rects.push({
+    id: `${id}-end`,
+    entity: {
+      kind: EntityKind.LinePin,
+      id,
+      pin: 1,
+    },
+    rects: [getPinRect(path[path.length - 1])],
+  });
 
   return rects;
 }
@@ -103,17 +153,11 @@ function getLineEntityRects({ path }: LineStructuredData): Rect[] {
  * @param entity 实体
  * @returns 碰撞矩形
  */
-export function getRectByEntity(entity: LineOrPartStructuredData): IEntityRegion {
+export function getRectByEntity(entity: LineOrPartStructuredData): IEntityRegion[] {
   if ('kind' in entity) {
-    return {
-      id: entity.id,
-      rects: getPartRectWithRotate(entity),
-    };
+    return getPartRegion(entity);
   }
   else {
-    return {
-      id: entity.id,
-      rects: getLineEntityRects(entity),
-    };
+    return getLineRegion(entity);
   }
 }

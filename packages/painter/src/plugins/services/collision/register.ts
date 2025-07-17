@@ -7,6 +7,7 @@ import {
 import {
   LineOrPartStructuredData,
   PartStructuredData,
+  Entity,
 } from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
@@ -21,7 +22,9 @@ definePlugin(({ registerService }) => {
   const map = new Map<string, IEntityRegion>();
   const service: ICollisionService = {
     setEntity(entity: LineOrPartStructuredData) {
-      return map.set(entity.id, getRectByEntity(entity));
+      for (const region of getRectByEntity(entity)) {
+        map.set(region.id, region);
+      }
     },
     removeEntity(id: string) {
       map.delete(id);
@@ -30,27 +33,29 @@ definePlugin(({ registerService }) => {
       map.clear();
     },
     pointInEntities(point: Point) {
-      const result: string[] = [];
-      for (const [id, region] of map) {
+      const result: Entity[] = [];
+      for (const region of map.values()) {
         if (region.rects.some(rect => pointInRect(point, rect))) {
-          result.push(id);
+          result.push(region.entity);
         }
       }
       return result;
     },
     rectCollides(rect: Rect) {
-      const result: string[] = [];
-      for (const [id, region] of map) {
+      const result: Entity[] = [];
+      for (const region of map.values()) {
         if (region.rects.some(r => collision(r, rect))) {
-          result.push(id);
+          result.push(region.entity);
         }
       }
       return result;
     },
     isPositionAvailable(entity: LineOrPartStructuredData) {
-      const { rects } = getRectByEntity(entity);
-      return rects.every(r => {
-        return this.rectCollides(r).length === 0;
+      const regions = getRectByEntity(entity);
+      return regions.every(({ rects }) => {
+        return rects.every((r) => {
+          return this.rectCollides(r).length === 0;
+        });
       });
     },
     findNearestAvailablePosition(device: PartStructuredData, maxOffset = 20) {
@@ -117,12 +122,22 @@ definePlugin(({ registerService }) => {
       return map.get(id)?.rects ?? [];
     },
     getEntitiesInRect(rect: Rect) {
-      const result: string[] = [];
-      for (const [id, region] of map) {
+      const result: Entity[] = [];
+      for (const region of map.values()) {
         if (region.rects.every((r) => rectInRect(rect, r))) {
-          result.push(id);
+          result.push(region.entity);
         }
       }
+      return result;
+    },
+    getElectronicsInRect(rect: Rect) {
+      const entities = this.getEntitiesInRect(rect);
+      const result = new Set<string>();
+
+      for (const entity of entities) {
+        result.add(entity.id);
+      }
+
       return result;
     },
   };

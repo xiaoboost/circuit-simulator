@@ -1,10 +1,18 @@
 import { Point, Rect } from '@circuit/algorithm';
-import { LineOrPartStructuredData } from '@circuit/types';
+import { Entity, LineOrPartStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
 /** 实体区域 */
 export interface IEntityRegion {
+  /**
+   * 实体编号
+   *
+   * @description 唯一性
+   */
   id: string;
+  /** 关联实体 */
+  entity: Entity;
+  /** 区域尺寸 */
   rects: Rect[];
 }
 
@@ -45,12 +53,12 @@ export interface ICollisionService {
    * @param point 要检查的点坐标
    * @returns 包含该点的实体ID列表
    */
-  pointInEntities(point: Point): string[];
+  pointInEntities(point: Point): Entity[];
 
   /**
    * 检查矩形区域是否与任何实体碰撞
    */
-  rectCollides(rect: Rect): string[];
+  rectCollides(rect: Rect): Entity[];
 
   /**
    * 检查新实体位置是否可用
@@ -80,7 +88,6 @@ export interface ICollisionService {
 
   /**
    * 获取所有实体的碰撞矩形数组
-   * @param id 实体ID
    * @returns 矩形数组
    */
   getAllEntitiesCollisionRects(): Rect[];
@@ -95,7 +102,14 @@ export interface ICollisionService {
   /**
    * 获取完全在指定矩形内的所有实体
    * @param rect 指定的矩形区域
-   * @returns 完全在矩形内的实体ID列表
+   * @returns 完全在矩形内的实体列表
    */
-  getEntitiesInRect(rect: Rect): string[];
+  getEntitiesInRect(rect: Rect): Entity[];
+
+  /**
+   * 获取完全在指定矩形内的所有元件
+   * @param rect 指定的矩形区域
+   * @returns 完全在矩形内的实体对应元件编号列表
+   */
+  getElectronicsInRect(rect: Rect): Set<string>;
 }

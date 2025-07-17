@@ -12,9 +12,21 @@ const getLoggerStyle = (color: string) => {
 
 definePlugin(({ registerService, getService }) => {
   const isDebugMode = () => getService(CONFIGURATION_SERVICE).openDebugLog.data;
+
+  let lastLogKey: string | undefined;
+
   const service: ILoggerService = {
     debug(name, ...messages) {
       if (isDebugMode()) {
+        // 生成日志的唯一标识
+        const logKey = `${name}:${JSON.stringify(messages)}`;
+
+        // 重复的不打印
+        if (lastLogKey === logKey) {
+          return;
+        }
+
+        lastLogKey = logKey;
         console.info(`%c[Debug] [${name}]`, getLoggerStyle('CornflowerBlue'), ...messages);
       }
     },

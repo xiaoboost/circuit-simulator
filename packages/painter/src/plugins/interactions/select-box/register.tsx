@@ -129,19 +129,18 @@ definePlugin(({ registerHook, getService }) => {
       const { state: { data: { parts, lines } } } = painterService;
       const selectService = getService(SELECT_SERVICE);
       const collisionService = getService(COLLISION_SERVICE);
-      const ids = collisionService.getEntitiesInRect({
+      const ids = collisionService.getElectronicsInRect({
         x: Math.min(startPosition[0], endPosition[0]),
         y: Math.min(startPosition[1], endPosition[1]),
         width: Math.abs(startPosition[0] - endPosition[0]),
         height: Math.abs(startPosition[1] - endPosition[1]),
       });
-      const partIds = ids.filter((id) => {
-        return parts.find((part) => part.id === id);
-      });
-      const lineIds = markMovableLines(partIds, getService(CONNECTION_SERVICE))
-        .filter((id) => {
-          return lines.find((line) => line.id === id);
-        });
+      const partIds = parts
+        .map(({ id }) => id)
+        .filter((id) => ids.has(id));
+      const lineIds = lines
+        .map(({ id }) => id)
+        .filter((id) => ids.has(id));
 
       logger.debug(LoggerName, '多选框选择结束');
 
