@@ -3,7 +3,7 @@ import { takeUntil } from 'rxjs/operators';
 
 /** 事件流 */
 export class EventStream<T = void> {
-  private readonly _subject = new Subject<T | undefined>();
+  protected readonly _subject = new Subject<T | undefined>();
   private readonly _destroy$ = new Subject<void>();
   private readonly _subscriptions = new Subscription();
 
@@ -16,7 +16,7 @@ export class EventStream<T = void> {
   subscribe(callback: (value?: T) => void): () => void {
     const subscription = this._subject.pipe(
       takeUntil(this._destroy$),
-    ).subscribe(callback);
+    ).subscribe(callback as any);
 
     this._subscriptions.add(subscription);
 
@@ -40,13 +40,25 @@ export class EventStream<T = void> {
   }
 
   /** 一次性订阅 */
-  once(callback: (value?: T) => void): () => void {
-    const unsubscribe = this.subscribe((val) => {
-      callback(val);
-      unsubscribe();
-    });
+  once(): Promise<T>;
+  once(callback: (value?: T) => void): () => void;
+  once(callback?: (value?: T) => void): Promise<T> | (() => void) {
+    if (typeof callback === 'function') {
+      const unsubscribe = this.subscribe((val) => {
+        callback(val);
+        unsubscribe();
+      });
 
-    return unsubscribe;
+      return unsubscribe;
+    }
+    else {
+      return new Promise((resolve) => {
+        const unsubscribe = this.subscribe((val) => {
+          unsubscribe();
+          resolve(val as T);
+        });
+      });
+    }
   }
 
   /** 过滤事件 */

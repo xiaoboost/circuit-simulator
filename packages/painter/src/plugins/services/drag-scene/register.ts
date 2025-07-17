@@ -9,7 +9,6 @@ import {
   DRAG_SCENE_HOOK,
   EVENT_LISTENER_HOOK,
   MAP_COORDINATE_SERVICE,
-  PAINTER_HTML_ELEMENT,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {

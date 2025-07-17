@@ -9,8 +9,7 @@ import {
 } from '@circuit/algorithm';
 import {
   CONFIGURATION_SERVICE,
-  EVENT_BUS_SERVICE,
-  EventBusEvent,
+  STREAM_SERVICE,
 } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
@@ -21,6 +20,7 @@ import {
   DRAG_SCENE_SERVICE,
   PAINTER_CONFIGURATION_SERVICE,
   PartLabelVisibleKind as Kind,
+  PainterStreamConstant as Constant,
 } from '../../../../types';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
@@ -39,7 +39,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
-  const eventBus = useService(EVENT_BUS_SERVICE);
+  const stream = useService(STREAM_SERVICE)
+    .get<Constant.PartLabelChangedPayload>(Constant.PartLabelChanged);
   const dragService = useService(DRAG_SCENE_SERVICE);
   const configurationService = useService(CONFIGURATION_SERVICE);
   const painterConfigurationService = useService(PAINTER_CONFIGURATION_SERVICE);
@@ -151,7 +152,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
 
     setPosition(newPosition);
-    eventBus.notify(EventBusEvent.PART_LABEL_CHANGED, id);
+    stream.emit({ id });
   }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible, textLineCount]);
 
   if (

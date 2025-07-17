@@ -15,7 +15,7 @@ export const STREAM_SERVICE =
 
 export interface IStreamService {
   /** 获取或者创建流 */
-  getOrCreateStream<T = void>(key: symbol): EventStream<T>;
+  get<T = void>(key: symbol): EventStream<T>;
   /** 清除所有流 */
   clear(): void;
 }

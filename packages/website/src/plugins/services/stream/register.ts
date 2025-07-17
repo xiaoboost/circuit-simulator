@@ -5,7 +5,7 @@ import { definePlugin } from '../../../context';
 definePlugin(({ registerService }) => {
   const map = new Map<symbol, EventStream<any>>();
   const service: IStreamService = {
-    getOrCreateStream(key) {
+    get(key) {
       if (map.has(key)) {
         return map.get(key)!;
       }
@@ -15,6 +15,10 @@ definePlugin(({ registerService }) => {
       return stream;
     },
     clear() {
+      for (const stream of map.values()) {
+        stream.destroy();
+      }
+
       map.clear();
     },
   };

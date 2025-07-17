@@ -1,6 +1,6 @@
 import { Point, Direction } from '@circuit/algorithm';
 import {
-  EVENT_BUS_SERVICE,
+  STREAM_SERVICE,
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
 } from '@circuit/shared';
@@ -12,6 +12,7 @@ import {
   CURSOR_SERVICE,
   ICursorKind,
   VARIABLE_OBSERVER_SERVICE as VarService,
+  PainterStreamConstant as Constant,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 import { getPartNearestDirection } from './utils';
@@ -57,7 +58,7 @@ definePlugin(({ registerHook, getService }) => {
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);
       const painterService = getService(STATE_CORE_SERVICE);
-      const eventBus = getService(EVENT_BUS_SERVICE);
+      const stream = getService(STREAM_SERVICE);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);
       const cursor = getService(CURSOR_SERVICE);
@@ -92,9 +93,9 @@ definePlugin(({ registerHook, getService }) => {
         getService(LOGGER_SERVICE).info(LoggerName, message);
 
         // 等待器件文本修改时，一起提交
-        eventBus
-          .once('PartLabelChanged')
-          .then(() => variableService.set(KEY, label, undefined));
+        stream
+          .get<Constant.PartLabelChangedPayload>(Constant.PartLabelChanged)
+          .once(() => variableService.set(KEY, label, undefined));
       }
     },
   });

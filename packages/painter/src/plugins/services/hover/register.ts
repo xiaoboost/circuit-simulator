@@ -16,6 +16,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
   };
 
   registerHook(EVENT_LISTENER_HOOK, {
+    order: 1,
     onMouseMove(event) {
       const collisionService = getService(COLLISION_SERVICE);
       const mapService = getService(MAP_COORDINATE_SERVICE);

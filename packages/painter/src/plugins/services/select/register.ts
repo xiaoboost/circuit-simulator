@@ -1,4 +1,9 @@
-import { LOGGER_SERVICE, EVENT_BUS_SERVICE, EventBusEvent, isSameSet } from '@circuit/shared';
+import {
+  LOGGER_SERVICE,
+  STREAM_SERVICE,
+  GlobalStreamConstant as Constant,
+  isSameSet,
+} from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import { SELECT_SERVICE, ISelectService } from '../../../types';
 
@@ -27,7 +32,9 @@ definePlugin(({ registerService, getService }) => {
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {
     if (!preSet || !isSameSet(preSet, nextSet)) {
-      getService(EVENT_BUS_SERVICE).notify(EventBusEvent.SELECT_ELECTRONICS, nextSet);
+      getService(STREAM_SERVICE)
+        .get<Constant.SelectedChangePayload>(Constant.SelectedChange)
+        .emit(nextSet);
     }
   });
 

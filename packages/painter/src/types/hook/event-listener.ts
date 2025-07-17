@@ -14,6 +14,14 @@ export const EVENT_LISTENER_HOOK = createServiceKey<IEventListener>('EventListen
 
 /** 事件监听 */
 export interface IEventListener {
+  /**
+   * 事件监听的顺序
+   *
+   * @description 数字越小，优先级越高
+   * @default 0
+   */
+  order?: number;
+
   /** 点击事件 */
   onClick?(event: MouseEvent<HTMLElement>): void;
   /** 双击事件 */

@@ -1,4 +1,4 @@
-import { EVENT_BUS_SERVICE, STATE_CORE_SERVICE, EventBusEvent } from '@circuit/shared';
+import { STATE_CORE_SERVICE } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import React, { useEffect, useState } from 'react';
 import { useHook, useService } from '../../../context';

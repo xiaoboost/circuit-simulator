@@ -58,6 +58,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
   // 注册滚轮缩放事件
   registerHook(EVENT_LISTENER_HOOK, {
+    order: 0,
     onMouseDown(event) {
       // 非左键或者鼠标按下事件不处理
       if (event.button !== 0 || event.type !== 'mousedown') {
