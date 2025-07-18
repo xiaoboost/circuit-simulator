@@ -1,6 +1,10 @@
-import { createPartByKind } from '@circuit/electronics';
 import { SearchOutlined } from '@circuit/icons';
-import { STATE_CORE_SERVICE, CONFIGURATION_SERVICE, LOGGER_SERVICE } from '@circuit/shared';
+import {
+  CONFIGURATION_SERVICE,
+  LOGGER_SERVICE,
+  STREAM_SERVICE,
+  GlobalStreamConstant as Constant,
+} from '@circuit/shared';
 import { ElectronicKind } from '@circuit/types';
 import { Input, Tooltip, message } from 'antd';
 import React, { useMemo, useState } from 'react';
@@ -13,7 +17,7 @@ const LoggerName = '添加器件面板';
 export function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
-  const stateCore = useService(STATE_CORE_SERVICE);
+  const stream = useService(STREAM_SERVICE);
   const configuration = useService(CONFIGURATION_SERVICE);
   const logger = useService(LOGGER_SERVICE);
   const onSelect = (kind: ElectronicKind) => {
@@ -24,8 +28,9 @@ export function AddElectronicPanelRender() {
       return;
     }
 
-    stateCore.draft((state) => {
-      state.parts.push(createPartByKind(kind, state.parts));
+    // 触发创建器件事件
+    stream.get<Constant.NewPartPayload>(Constant.NewPart).emit({
+      kind,
     });
   };
 

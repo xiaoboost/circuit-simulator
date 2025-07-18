@@ -19,7 +19,6 @@ import { createId } from '../utils';
 import {
   ElectronicName,
   ElectronicCategoryName,
-  NewElectronicPosition,
 } from './constant';
 import { Electronics } from './prototype';
 
@@ -102,7 +101,7 @@ export function createPartByKind(
   const part: PartStructuredData = {
     id,
     kind,
-    position: Point.from(NewElectronicPosition),
+    position: Point.from([0, 0]),
     rotate: [[1, 0], [0, 1]],
     propertyValues: prototype.properties.map((p) => ({
       ...p.default,

@@ -19,6 +19,9 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     get size() {
       return sceneSet.size;
     },
+    isDragging() {
+      return sceneSet.size !== 0;
+    },
     has(name) {
       return sceneSet.has(name);
     },

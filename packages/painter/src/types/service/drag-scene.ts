@@ -28,6 +28,12 @@ export interface SceneTriggerPayload {
 
 /** 鼠标拖动服务 */
 export interface IDragSceneService extends ReadonlySet<string> {
+  /** 正在拖动 */
+  isDragging(): boolean;
+  /**
+   * 只有某个场景
+   */
+  onlyHas(scene: string): boolean;
   /**
    * 触发场景
    *
@@ -40,8 +46,4 @@ export interface IDragSceneService extends ReadonlySet<string> {
    * @description 让场景立即结束，不会等待下一次`isEnd`判断
    */
   triggerEnd(scene: string, payload?: SceneTriggerPayload): void;
-  /**
-   * 只有某个场景
-   */
-  onlyHas(scene: string): boolean;
 }

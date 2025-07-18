@@ -1,8 +1,4 @@
-import { Point } from '@circuit/algorithm';
 import { ElectronicKind, ElectronicCategory } from '@circuit/types';
-
-/** 新建器件时的位置 */
-export const NewElectronicPosition = Point.from([1e6, 1e6]);
 
 /** 器件名称 */
 export const ElectronicName: Record<ElectronicKind, string> = {

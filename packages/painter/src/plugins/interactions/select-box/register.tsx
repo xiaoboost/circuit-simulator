@@ -3,7 +3,6 @@ import {
   CONFIGURATION_SERVICE,
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
-  CONNECTION_SERVICE,
 } from '@circuit/shared';
 import React, { memo } from 'react';
 import {
@@ -27,7 +26,7 @@ import {
   SELECT_BOX_DRAG_SCENE_NAME,
 } from './constant';
 import * as Styles from './styles.less';
-import { toPath, markMovableLines } from './utils';
+import { toPath } from './utils';
 
 const LoggerName = '多选框';
 

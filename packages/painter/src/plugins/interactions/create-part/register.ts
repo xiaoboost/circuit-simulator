@@ -1,11 +1,13 @@
 import { Point } from '@circuit/algorithm';
-import { NewElectronicPosition } from '@circuit/electronics';
+import { createPartByKind } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
   CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
   HOT_KEY_HOOK,
   LIFE_CYCLE_HOOK,
+  STREAM_SERVICE,
+  GlobalStreamConstant as Constant,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
@@ -18,6 +20,7 @@ import {
   MAP_HASH_SERVICE,
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
+  PAINTER_HTML_ELEMENT,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 
@@ -26,8 +29,14 @@ const LoggerName = '创建器件';
 const getBodyKey = (id: string) => `${id}-body`;
 const getLabelKey = (id: string) => `${id}-label`;
 
-type StartPayloadType = PartStructuredData & DragSceneHookPayload;
-type EndPayloadType = { esc: true } & DragSceneHookPayload;
+interface StartPayloadType extends DragSceneHookPayload {
+  part: PartStructuredData;
+  afterDraft: boolean;
+}
+
+interface EndPayloadType extends DragSceneHookPayload {
+  esc: true;
+}
 
 definePlugin(({ registerHook, getService }) => {
   const setPosition = (id: string, position?: Point) => {
@@ -40,20 +49,28 @@ definePlugin(({ registerHook, getService }) => {
   // 全局监听创建的器件
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
-      const { state, dropDraft } = getService(STATE_CORE_SERVICE);
+      const stateCore = getService(STATE_CORE_SERVICE);
       const dragScene = getService(DRAG_SCENE_SERVICE);
+      const stream = getService(STREAM_SERVICE);
+      const newPartStream = stream.get<Constant.NewPartPayload>(Constant.NewPart);
 
-      state.observe(({ parts }) => {
-        const newPart = parts.find((part) => NewElectronicPosition.isEqual(part.position));
+      newPartStream.subscribe((payload) => {
+        if (!payload) {
+          return;
+        }
 
-        if (newPart && dragScene.size === 0) {
+        const newPart = createPartByKind(payload.kind, stateCore.state.data.parts);
+
+        if (!dragScene.isDragging()) {
           // 移动图纸模式下不触发
           if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
-            dropDraft();
             message.warning('移动图纸模式下不能创建器件');
           }
           else {
-            dragScene.trigger(CreatePartSceneName, newPart);
+            dragScene.trigger(CreatePartSceneName, {
+              part: newPart,
+              afterDraft: false,
+            });
           }
         }
       });
@@ -77,17 +94,28 @@ definePlugin(({ registerHook, getService }) => {
   // 创建的拖动场景
   registerHook(DRAG_SCENE_HOOK, {
     name: CreatePartSceneName,
-    afterStart({ id, position }: StartPayloadType) {
+    afterStart({ part }: StartPayloadType) {
       // 打印日志
-      getService(LOGGER_SERVICE).info(LoggerName, '开始创建器件', id);
+      getService(LOGGER_SERVICE).info(LoggerName, '开始创建器件', part.id);
       // 清空选中
       getService(SELECT_SERVICE).clear();
-      // 设置偏移
-      setPosition(id, Point.from(position));
+      // 下一帧时页面焦点设置为画布元素，不直接设置主要是为了规避浏览器事件系统的干扰
+      requestAnimationFrame(() => {
+        getService(PAINTER_HTML_ELEMENT)?.current?.focus({ preventScroll: true });
+      });
     },
-    onDragMove({ positionInDrawer }, { id }: StartPayloadType) {
-      if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
-        setPosition(id, NewElectronicPosition.mul(-1).add(positionInDrawer));
+    onDragMove({ positionInDrawer }, payload: StartPayloadType) {
+      if (!payload.afterDraft) {
+        getService(STATE_CORE_SERVICE).draft((state) => {
+          state.parts.push({
+            ...payload.part,
+            position: Point.from([0, 0]),
+          });
+        });
+        payload.afterDraft = true;
+      }
+      else if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
+        setPosition(payload.part.id, positionInDrawer);
         getService(LOGGER_SERVICE).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
       }
     },
@@ -104,7 +132,7 @@ definePlugin(({ registerHook, getService }) => {
 
       return true;
     },
-    afterEnd(part: StartPayloadType, endPayload: EndPayloadType) {
+    afterEnd({ part }: StartPayloadType, endPayload: EndPayloadType) {
       const painterService = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
 
