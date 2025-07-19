@@ -3,9 +3,9 @@ import { DRAW_LAYER_HOOK } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {
-  // 注册组件渲染层
+  // 注册元件渲染层
   registerHook(DRAW_LAYER_HOOK, {
-    name: 'PartLayer',
+    name: 'ElectronicLayer',
     order: 1,
     Render,
   });

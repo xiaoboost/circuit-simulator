@@ -39,10 +39,9 @@
   - [x] 组件
   - [x] 选中器件
 - [ ] 交叠节点渲染器
-- [ ] 选中的器件提到最顶层
+- [x] 选中的器件提到最顶层
 - [x] Hover 服务
   - 使用碰撞检测的内容来设置 hover 内容
-- [ ] 器件 Enter Leave Click DdClick 事件
 - [ ] 使用 Canvas 渲染
   - [ ] 器件本身使用 Canvas 渲染
   - [ ] 文本使用 Canvas 渲染
