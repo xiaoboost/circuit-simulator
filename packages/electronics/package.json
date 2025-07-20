@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
-    "@circuit/map": "workspace:*",
     "@circuit/types": "workspace:*",
     "@xiao-ai/utils": "1.6.7"
   },

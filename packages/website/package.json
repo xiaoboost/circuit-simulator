@@ -25,7 +25,6 @@
     "@circuit/examples": "workspace:*",
     "@circuit/icons": "workspace:*",
     "@circuit/inject": "workspace:*",
-    "@circuit/map": "workspace:*",
     "@circuit/painter": "workspace:*",
     "@circuit/shared": "workspace:*",
     "@circuit/reactive": "workspace:*",

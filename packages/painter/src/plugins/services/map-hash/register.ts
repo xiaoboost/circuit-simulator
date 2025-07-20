@@ -1,39 +1,27 @@
-import { MarkMap } from '@circuit/map';
 import { definePlugin } from '../../../context';
 import {
   MAP_HASH_SERVICE,
   IMapService,
 } from '../../../types';
-import {
-  setPartMark,
-  setLineMark,
-  deleteLineMark,
-  deletePartMark,
-} from './mark';
+import { Map } from './map';
 
 definePlugin(({ registerService }) => {
-  const markService = new MarkMap();
+  const markMap: Map.MarkMap = {};
   const service: IMapService = {
-    markService,
     setPartMark(data) {
-      return setPartMark(data, markService);
+      return Map.setPartMark(data, markMap);
     },
     setLineMark(data) {
-      return setLineMark(data, markService);
+      return Map.setLineMark(data, markMap);
     },
     deletePartMark(data) {
-      return deletePartMark(data, markService);
+      return Map.deletePartMark(data, markMap);
     },
     deleteLineMark(data) {
-      return deleteLineMark(data, markService);
+      return Map.deleteLineMark(data, markMap);
     },
   };
 
   // 注册图纸服务
   registerService(MAP_HASH_SERVICE, service);
-
-  // 卸载器
-  return () => {
-    service.markService.clear();
-  };
 });

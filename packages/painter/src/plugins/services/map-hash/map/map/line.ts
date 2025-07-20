@@ -1,6 +1,22 @@
 import { Point, PathWithPoint } from '@circuit/algorithm';
-import { MarkMap, MarkKind, LineAndPointMark } from '@circuit/map';
 import { LineStructuredData } from '@circuit/types';
+import {
+  MarkKind,
+  LineAndPointMark,
+  isLinePoint,
+  isLineCross,
+  isFullCross,
+  isPartPin,
+  isPartPinLine,
+  isLine,
+  isLineCover,
+  addLine,
+  deleteLine,
+  addConnect,
+  deleteConnect,
+} from '../mark';
+import { get, remove, set } from './map';
+import { MarkMap } from './types';
 
 function getLinePoints(path: PathWithPoint) {
   if (path.length === 0) {
@@ -35,7 +51,7 @@ export function setLineMark(data: LineStructuredData, map: MarkMap) {
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
     const lastPoint = points[i - 1];
-    const mark = map.get(point);
+    const mark = get(map, point);
 
     // 运行时距离检查
     if (process.env.NODE_ENV === 'development' && lastPoint) {
@@ -47,39 +63,43 @@ export function setLineMark(data: LineStructuredData, map: MarkMap) {
     // 端点
     if (i === 0 || i === points.length - 1) {
       if (mark) {
-        if (mark.isLinePoint()) {
-          mark.toCrossMark(line);
+        if (isLinePoint(mark)) {
+          set(map, addLine(mark, line));
         }
-        else if (mark.isLineCross() && !mark.isFullCross) {
-          mark.addLine(line);
+        else if (isLineCross(mark) && !isFullCross(mark)) {
+          set(map, addLine(mark, line));
         }
-        else if (mark.isPartPin()) {
-          mark.connectLine(line);
+        else if (isPartPin(mark)) {
+          set(map, addLine(mark, line));
         }
         else {
           throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
         }
       }
       else {
-        map.set(point, {
+        set(map, {
           kind: MarkKind.LinePoint,
-          line,
+          id: line,
+          position: point,
+          connection: {},
         });
       }
     }
     else {
       if (mark) {
-        if (mark.isLine()) {
-          mark.addCoverLine(line);
+        if (isLine(mark)) {
+          set(map, addLine(mark, line));
         }
         else {
           throw new Error('导线非端点只能途经其余导线的非端点');
         }
       }
       else {
-        map.set(point, {
+        set(map, {
           kind: MarkKind.Line,
-          line,
+          id: line,
+          position: point,
+          connection: {},
         });
       }
     }
@@ -88,11 +108,11 @@ export function setLineMark(data: LineStructuredData, map: MarkMap) {
       continue;
     }
 
-    const lastMark = map.get<LineAndPointMark>(lastPoint)!;
-    const currentMark = map.get<LineAndPointMark>(point)!;
+    const lastMark = get<LineAndPointMark>(map, lastPoint)!;
+    const currentMark = get<LineAndPointMark>(map, point)!;
 
-    lastMark.addConnect(currentMark.position, line);
-    currentMark.addConnect(lastMark.position, line);
+    addConnect(lastMark, currentMark.position, line);
+    addConnect(currentMark, lastMark.position, line);
   }
 }
 
@@ -104,7 +124,7 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
   for (let i = 0; i < points.length; i++) {
     const point = Point.from(points[i]);
     const lastPoint = Point.from(points[i - 1]);
-    const mark = map.get(point);
+    const mark = get(map, point);
 
     // 运行时距离检查
     if (process.env.NODE_ENV === 'development' && lastPoint) {
@@ -126,25 +146,25 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
     if (mark) {
       // 端点
       if (i === 0 || i === points.length - 1) {
-        if (mark.isLinePoint()) {
-          map.delete(mark.position);
+        if (isLinePoint(mark)) {
+          remove(map, mark.position);
         }
-        else if (mark.isLineCross()) {
-          mark.deleteLine(line);
+        else if (isLineCross(mark)) {
+          deleteLine(mark, line, map);
         }
-        else if (mark.isPartPinLine()) {
-          mark.deleteLine();
+        else if (isPartPinLine(mark)) {
+          deleteLine(mark);
         }
         else {
           throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
         }
       }
       else {
-        if (mark.isLine()) {
-          map.delete(mark.position);
+        if (isLine(mark)) {
+          remove(map, mark.position);
         }
-        else if (mark.isLineCover()) {
-          mark.deleteLine(line);
+        else if (isLineCover(mark)) {
+          deleteLine(mark, line);
         }
         else {
           throw new Error('删除导线时，非端点只可能有导线本身和交叠节点');

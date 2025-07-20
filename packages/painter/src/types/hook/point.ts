@@ -1,5 +1,5 @@
 import { IRendererData } from '@circuit/inject';
-import { LineCoverMark } from '@circuit/map';
+// import { LineCoverMark } from '@circuit/map';
 import { createServiceKey } from '../../context';
 
 /**
@@ -14,9 +14,10 @@ import { createServiceKey } from '../../context';
 export const POINT_RENDERER = createServiceKey<IPointRenderer>('PointRenderer');
 
 /** 节点渲染器输入参数 */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface IPointRendererProps {
   /** 节点数据 */
-  data: LineCoverMark;
+  // data: LineCoverMark;
 }
 
 /** 器件渲染器 */

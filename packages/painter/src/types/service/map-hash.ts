@@ -1,4 +1,3 @@
-import { MarkMap } from '@circuit/map';
 import { PartStructuredData, LineStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
@@ -16,8 +15,6 @@ export const MAP_HASH_SERVICE =
 
 /** 图纸服务 */
 export interface IMapService {
-  /** 标记服务 */
-  readonly markService: MarkMap;
   /** 设置器件标记 */
   setPartMark(data: PartStructuredData): void;
   /** 设置导线标记 */

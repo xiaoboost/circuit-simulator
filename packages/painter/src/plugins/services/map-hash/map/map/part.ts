@@ -7,8 +7,18 @@ import {
   getPartPins,
   getPartPrototype,
 } from '@circuit/electronics';
-import { MarkKind, MarkMap } from '@circuit/map';
 import { PartStructuredData } from '@circuit/types';
+import {
+  MarkKind,
+  isPart,
+  isPartPin,
+  isPartPinLine,
+  deleteLine,
+  addConnect,
+  deleteConnect,
+} from '../mark';
+import { get, remove, set } from './map';
+import { MarkMap } from './types';
 
 /**
  * 获取内边框顶点
@@ -60,22 +70,24 @@ function getPaddingPoint(data: PartStructuredData) {
 export function setPartMark(data: PartStructuredData, map: MarkMap) {
   const pins = Array.from(getPartPins(data));
   const setPartMark = (position: Point, pin?: number) => {
-    const oldMark = map.get(position);
+    const oldMark = get(map, position);
 
     if (oldMark) {
       throw new Error('器件节点必须放置在`空位`上');
     }
     else if (typeof pin === 'number') {
-      map.set(position, {
+      set(map, {
         kind: MarkKind.PartPin,
-        part: data.id,
+        id: data.id,
         pin,
+        position,
       });
     }
     else {
-      map.set(position, {
+      set(map, {
         kind: MarkKind.Part,
-        part: data.id,
+        id: data.id,
+        position,
       });
     }
   };
@@ -94,18 +106,18 @@ export function setPartMark(data: PartStructuredData, map: MarkMap) {
 /** 删除器件图纸数据 */
 export function deletePartMark(data: PartStructuredData, map: MarkMap) {
   const deletePointMark = (position: Point) => {
-    const mark = map.get(position);
+    const mark = get(map, position);
 
     if (!mark) {
       return;
     }
 
-    if (mark.isPartPin() || mark.isPart()) {
-      map.delete(position);
+    if (isPartPin(mark) || isPart(mark)) {
+      remove(map, position);
       return;
     }
-    else if (mark.isPartPinLine()) {
-      mark.deletePin();
+    else if (isPartPinLine(mark)) {
+      deleteLine(mark);
     }
     else {
       throw new Error(`当前位置不是器件：[${position[0]}, ${position[1]}]`);
