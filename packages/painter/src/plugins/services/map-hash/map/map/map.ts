@@ -1,6 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { Mark } from '../mark/types';
-import { MarkMap } from './types';
+import { Mark, MarkMap } from '../../../../../types';
 
 function toKey(node: Point) {
   if (process.env.NODE_ENV === 'development') {
@@ -67,5 +66,5 @@ export function keys(map: MarkMap) {
 
 export function values(map: MarkMap) {
   return getPoints(map)
-    .map((point) => get(map, point));
+    .map((point) => get(map, point) as Mark);
 }

@@ -2,11 +2,13 @@ import { definePlugin } from '../../../context';
 import {
   MAP_HASH_SERVICE,
   IMapService,
+  MarkMap,
+  Mark,
 } from '../../../types';
 import { Map } from './map';
 
 definePlugin(({ registerService }) => {
-  const markMap: Map.MarkMap = {};
+  const markMap: MarkMap = {};
   const service: IMapService = {
     setPartMark(data) {
       return Map.setPartMark(data, markMap);
@@ -19,6 +21,12 @@ definePlugin(({ registerService }) => {
     },
     deleteLineMark(data) {
       return Map.deleteLineMark(data, markMap);
+    },
+    getAllMarks() {
+      return Map.values(markMap);
+    },
+    getAssert(kind) {
+      return ((mark: Mark) => mark.kind === kind) as any;
     },
   };
 

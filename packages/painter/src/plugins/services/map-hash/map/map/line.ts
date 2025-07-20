@@ -1,8 +1,7 @@
 import { Point, PathWithPoint } from '@circuit/algorithm';
 import { LineStructuredData } from '@circuit/types';
+import { MarkMap, MarkKind, LineAndPointMark } from '../../../../../types';
 import {
-  MarkKind,
-  LineAndPointMark,
   isLinePoint,
   isLineCross,
   isFullCross,
@@ -16,7 +15,6 @@ import {
   deleteConnect,
 } from '../mark';
 import { get, remove, set } from './map';
-import { MarkMap } from './types';
 
 function getLinePoints(path: PathWithPoint) {
   if (path.length === 0) {

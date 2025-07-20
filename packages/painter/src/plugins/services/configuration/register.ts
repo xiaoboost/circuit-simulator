@@ -11,7 +11,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
   const service: IPainterConfigurationService = {
     PartLabelVisibleKind: PartLabelVisibleKind,
     partLabelVisible: new Watcher<PartLabelVisibleKind>(PartLabelVisibleKind.Visible),
-    openPathSearcherDebugger: new Watcher(false),
+    openMapMarkDebugger: new Watcher(false),
     visibleElectronicOutline: new Watcher(false),
   };
 
@@ -22,8 +22,8 @@ definePlugin(({ registerService, registerHook, getService }) => {
       default: PartLabelVisibleKind.Visible,
     },
     {
-      key: 'Configuration.Painter.OpenPathSearcherDebugger',
-      watcher: service.openPathSearcherDebugger,
+      key: 'Configuration.Painter.openMapMarkDebugger',
+      watcher: service.openMapMarkDebugger,
       default: false,
     },
     {

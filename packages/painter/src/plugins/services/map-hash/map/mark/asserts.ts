@@ -9,7 +9,7 @@ import {
   PartPinMark,
   PartPinLineMark,
   LineAndPointMark,
-} from './types';
+} from '../../../../../types';
 
   /** 导线 */
 export function isLine(mark: Mark): mark is LineMark {

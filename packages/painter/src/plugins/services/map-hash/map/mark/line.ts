@@ -1,4 +1,16 @@
 import { Point } from '@circuit/algorithm';
+import {
+  LineMark,
+  LineCoverMark,
+  LineAndPointMark,
+  LineCrossMark,
+  LinePointMark,
+  PartPinMark,
+  PartPinLineMark,
+  MarkKind,
+  Mark,
+  MarkMap,
+} from '../../../../../types';
 import * as Connection from '../connection';
 import * as Map from '../map';
 import {
@@ -10,17 +22,6 @@ import {
   isPartPinLine,
   isLineAndPoint,
 } from './asserts';
-import {
-  LineMark,
-  LineCoverMark,
-  LineAndPointMark,
-  LineCrossMark,
-  LinePointMark,
-  PartPinMark,
-  PartPinLineMark,
-  MarkKind,
-  Mark,
-} from './types';
 
 /** 是否包含导线 */
 export function hasLine(data: LineAndPointMark, line: string) {
@@ -124,12 +125,12 @@ export function deleteLine(data: LineCoverMark, line: string): LineMark;
 export function deleteLine(
   data: LineCrossMark,
   line: string,
-  map: Map.MarkMap,
+  map: MarkMap,
 ): LineCrossMark | LinePointMark;
 export function deleteLine(
   data: PartPinLineMark | LineCoverMark | LineCrossMark,
   line?: string,
-  map?: Map.MarkMap,
+  map?: MarkMap,
 ): Mark {
   if (isLineCover(data)) {
     if (!line) {
@@ -263,7 +264,7 @@ export function inSingleLine(data: LineCoverMark, next: Point, pre: Point) {
 export function alongLineAndVector(
   data: LineAndPointMark,
   vector: Point,
-  map: Map.MarkMap,
+  map: MarkMap,
   end?: Point,
 ) {
   const uVector = Point.from(vector).sign(20);

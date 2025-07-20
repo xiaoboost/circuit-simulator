@@ -1,6 +1,6 @@
 import { definePlugin } from '../../../../context';
 import { DRAW_LAYER_HOOK } from '../../../../types';
-import { Render } from './render';
+import { PointLayerRender as Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册节点渲染层

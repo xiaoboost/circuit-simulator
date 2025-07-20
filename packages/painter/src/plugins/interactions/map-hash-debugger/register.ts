@@ -1,11 +1,11 @@
 import { definePlugin } from '../../../context';
 import { DRAW_LAYER_HOOK } from '../../../types';
-import { ElectronicOutline } from './render';
+import { MapHashDebugger } from './render';
 
 definePlugin(({ registerHook }) => {
   registerHook(DRAW_LAYER_HOOK, {
-    name: 'electronic-outline',
-    order: 20,
-    Render: ElectronicOutline,
+    name: 'map-hash-debugger',
+    order: 30,
+    Render: MapHashDebugger,
   });
 });

@@ -29,8 +29,8 @@ export interface IPainterConfigurationService {
   readonly PartLabelVisibleKind: typeof PartLabelVisibleKind;
   /** 器件标签显示 */
   readonly partLabelVisible: Watcher<PartLabelVisibleKind>;
-  /** 打开路径搜索调试器 */
-  readonly openPathSearcherDebugger: Watcher<boolean>;
+  /** 打开图纸哈希调试器 */
+  readonly openMapMarkDebugger: Watcher<boolean>;
   /** 显示元件外边框 */
   readonly visibleElectronicOutline: Watcher<boolean>;
 }

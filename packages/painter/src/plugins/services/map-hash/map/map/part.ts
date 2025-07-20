@@ -8,8 +8,8 @@ import {
   getPartPrototype,
 } from '@circuit/electronics';
 import { PartStructuredData } from '@circuit/types';
+import { MarkMap, MarkKind } from '../../../../../types';
 import {
-  MarkKind,
   isPart,
   isPartPin,
   isPartPinLine,
@@ -18,7 +18,6 @@ import {
   deleteConnect,
 } from '../mark';
 import { get, remove, set } from './map';
-import { MarkMap } from './types';
 
 /**
  * 获取内边框顶点

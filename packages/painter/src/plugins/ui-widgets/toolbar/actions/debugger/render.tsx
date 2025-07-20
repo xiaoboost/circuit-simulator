@@ -14,11 +14,11 @@ export function DebuggerRender() {
     openDebugLog,
   } = useService(CONFIGURATION_SERVICE);
   const {
-    openPathSearcherDebugger,
+    openMapMarkDebugger,
     visibleElectronicOutline,
   } = useService(PAINTER_CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
-  const [path, setPath] = useWatcher(openPathSearcherDebugger);
+  const [mapMark, setMapMark] = useWatcher(openMapMarkDebugger);
   const [electronicOutline, setElectronicOutline] = useWatcher(visibleElectronicOutline);
 
   // 非本地或者没有设置链接条件，则不显示调试按钮
@@ -42,12 +42,12 @@ export function DebuggerRender() {
     },
     {
       key: '2',
-      label: '路径搜索器',
-      isSelected: path,
+      label: '图纸标记',
+      isSelected: mapMark,
       onClick: (ev: React.MouseEvent) => {
         ev.stopPropagation();
         ev.preventDefault();
-        setPath(!path);
+        setMapMark(!mapMark);
       },
     },
     {
