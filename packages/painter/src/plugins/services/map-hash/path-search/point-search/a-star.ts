@@ -42,7 +42,7 @@ export function aStarSearch({
 
   // 起点的 cornerParent 等于其自身
   first.cornerParent = first;
-  first.value = rules.calValue(first);
+  first.value = rules.cost(first);
   stack.push(first);
 
   hook?.useStartNode?.(first);
@@ -72,7 +72,7 @@ export function aStarSearch({
       // 生成扩展节点
       const nodeExpand = newNode(nodeNow, rotateList[i]);
 
-      nodeExpand.value = rules.calValue(nodeExpand);
+      nodeExpand.value = rules.cost(nodeExpand);
 
       hook?.useExpandNode?.(nodeExpand);
 
@@ -84,7 +84,7 @@ export function aStarSearch({
       }
 
       // 当前节点是否满足扩展要求
-      if (rules.checkPoint(nodeExpand)) {
+      if (rules.check(nodeExpand)) {
         stack.push(nodeExpand);
       }
     }

@@ -115,6 +115,21 @@ export function isFullCross(data: LineCrossMark) {
   return Connection.isFull(data.connection);
 }
 
+export function isNoConnect(data: Mark) {
+  if (!isLineAndPoint(data)) {
+    return false;
+  }
+
+  if (isLineCover(data)) {
+    return Object.values(data.connections).every((item) => {
+      return !item.left && !item.right && !item.top && !item.bottom;
+    });
+  }
+
+  const { connection: item } = data;
+  return !item.left && !item.right && !item.top && !item.bottom;
+}
+
 /**
  * 删除导线
  *

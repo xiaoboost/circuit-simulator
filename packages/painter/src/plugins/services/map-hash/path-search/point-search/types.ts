@@ -1,4 +1,5 @@
-import { Point, PathWithPoint } from '@circuit/algorithm';
+import type { Point, PathWithPoint } from '@circuit/algorithm';
+import type { Rules } from '../rules';
 
 /** 搜索用节点数据 */
 export interface SearchNodeData {
@@ -48,14 +49,4 @@ export interface SearchHook {
   useEndNode?(node: SearchNodeData): void;
   /** 结束搜索 */
   useEndSearch?(path: PathWithPoint): void;
-}
-
-/** 搜索规则 */
-export interface Rules {
-  /** 节点估值 */
-  calValue(node: SearchNodeData): number;
-  /** 节点合法性检查 */
-  checkPoint(node: SearchNodeData): boolean;
-  /** 是否是终点 */
-  isEnd(node: SearchNodeData): boolean;
 }
