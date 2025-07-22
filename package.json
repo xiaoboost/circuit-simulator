@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "电路仿真代码仓库",
   "scripts": {
-    "build": "pnpm run --filter=!@circuit/website build",
     "test": "pnpm -r run test",
     "test:update": "pnpm -r run test:update",
     "lint": "pnpm -r --parallel run lint",
     "lint:fix": "pnpm -r --parallel run lint:fix",
-    "dev:website": "pnpm run --filter @circuit/website dev",
-    "build:website": "pnpm run --filter @circuit/website build"
+    "dev": "pnpm run --filter @circuit/website dev",
+    "build": "pnpm run --filter @circuit/website build"
   },
   "engines": {
     "node": ">= 20.0.0",
