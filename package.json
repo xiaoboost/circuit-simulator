@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "电路仿真代码仓库",
   "scripts": {
-    "test": "pnpm -r run test",
-    "test:update": "pnpm -r run test:update",
+    "test": "pnpm -r run --parallel test",
+    "test:update": "pnpm -r run --parallel test:update",
     "lint": "pnpm -r --parallel run lint",
     "lint:fix": "pnpm -r --parallel run lint:fix",
     "dev": "pnpm run --filter @circuit/website dev",
