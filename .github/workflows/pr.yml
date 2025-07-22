@@ -1,61 +1,84 @@
-name: PR
+name: 代码合并检查
 on: [push, pull_request]
 
+# on:
+#   pull_request:
+#     types:
+#       - opened
+#       - synchronize
+#       - reopened
+#     branches:
+#       - master
+
+defaults:
+  run:
+    shell: bash
+
 jobs:
-  build:
+  Lint:
     strategy:
       fail-fast: false
       matrix:
-        node:
-          - '20'
         platform:
           - windows-latest
-        storeDir:
-         - '\.pnpm-store'
+          - macos-latest
 
-    name: '${{ matrix.platform }} / Node.js v${{ matrix.node }}'
+    name: 代码风格检查 ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
 
     steps:
       - name: Configure Git
+        shell: bash
         run: |
           git config --global core.autocrlf false
-          git config --global user.name "xyz"
-          git config --global user.email "x@y.z"
 
       - name: Checkout Commit
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install pnpm
-        run: |
-          npm install --g pnpm
-          pnpm --version
-
-      - name: Set Cache Directory
-        run: 'pnpm config set store-dir ${{ matrix.storeDir }}'
-
-      - name: Restore Cache Data
-        uses: actions/cache@v4
-        id: pnpm-cache
-        with:
-          path: ${{ matrix.storeDir }}
-          key: ${{ runner.os }}-node-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-
-      - name: Install Dependencies
-        run: pnpm install
+      - name: Setup Environment
+        uses: './.github/actions/setup-env'
 
       - name: Check Code Style
         run: pnpm run lint
 
-      - name: Build All Packages
-        run: pnpm run build
+  UnitTest:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - windows-latest
+          - macos-latest
 
-      - name: Run Tests
+    name: 单元测试 ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: './.github/actions/setup-env'
+
+      - name: Test Code
         run: pnpm run test
+
+  Build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - windows-latest
+          - macos-latest
+
+    name: 构建测试 ${{ matrix.platform }}
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout Commit
+        uses: actions/checkout@v4
+
+      - name: Setup Environment
+        uses: './.github/actions/setup-env'
+
+      - name: Build Blog
+        run: pnpm run build

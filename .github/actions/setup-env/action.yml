@@ -1,0 +1,46 @@
+name: Setup Environment
+description: 准备依赖环境
+runs:
+  using: "composite"
+  steps:
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global core.autocrlf false
+        git config --global user.name "ci-robot"
+        git config --global user.email "robot@git"
+
+    - name: Create Env File
+      shell: bash
+      run: |
+        touch .env
+        echo 'ENV=GITHUB_CI' >> .env
+
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: '10.11.0'
+        run_install: false
+
+    - name: Get Pnpm Store Directory
+      id: cache-dir
+      shell: bash
+      run: |
+        echo "store_path=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+
+    - name: Setup Pnpm Cache
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.cache-dir.outputs.store_path }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install Dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile --prefer-offline
