@@ -1,9 +1,10 @@
-import { CONFIGURATION_SERVICE, HOT_KEY_HOOK } from '@circuit/shared';
+import { HOT_KEY_HOOK } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../../../context';
 import {
   PAINTER_TOOLBAR_ACTION_HOOK,
   DRAG_SCENE_SERVICE,
   CURSOR_SERVICE,
+  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../../../types';
 import { MoveModeRenderWithSpace } from './render';
 
@@ -25,7 +26,7 @@ definePlugin(({ registerHook, getService }) => {
       action: (ev) => {
         const dragScene = getService(DRAG_SCENE_SERVICE);
         const cursorService = getService(CURSOR_SERVICE);
-        const configuration = getService(CONFIGURATION_SERVICE);
+        const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
 
         // 空格按下时，强制切换到移动模式
         if (dragScene.size === 0 && !ev.repeat) {
@@ -45,7 +46,7 @@ definePlugin(({ registerHook, getService }) => {
       action: () => {
         const dragScene = getService(DRAG_SCENE_SERVICE);
         const cursorService = getService(CURSOR_SERVICE);
-        const configuration = getService(CONFIGURATION_SERVICE);
+        const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
 
         // 空格抬起时，强制切换到鼠标模式
         // 如果此时在拖动，也进行强制转换

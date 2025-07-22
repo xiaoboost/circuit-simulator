@@ -2,7 +2,6 @@ import { Point } from '@circuit/algorithm';
 import { createPartByKind } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
-  CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
   HOT_KEY_HOOK,
   LIFE_CYCLE_HOOK,
@@ -21,6 +20,7 @@ import {
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
   PAINTER_HTML_ELEMENT,
+  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
 
@@ -50,6 +50,7 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
       const stateCore = getService(STATE_CORE_SERVICE);
+      const logger = getService(LOGGER_SERVICE);
       const dragScene = getService(DRAG_SCENE_SERVICE);
       const stream = getService(STREAM_SERVICE);
       const newPartStream = stream.get<Constant.NewPartPayload>(Constant.NewPart);
@@ -59,19 +60,20 @@ definePlugin(({ registerHook, getService }) => {
           return;
         }
 
+        if (getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data) {
+          const msg = '移动图纸模式下不能创建器件';
+          logger.info(LoggerName, msg);
+          message.warning(msg);
+          return;
+        }
+
         const newPart = createPartByKind(payload.kind, stateCore.state.data.parts);
 
         if (!dragScene.isDragging()) {
-          // 移动图纸模式下不触发
-          if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
-            message.warning('移动图纸模式下不能创建器件');
-          }
-          else {
-            dragScene.trigger(CreatePartSceneName, {
-              part: newPart,
-              afterDraft: false,
-            });
-          }
+          dragScene.trigger(CreatePartSceneName, {
+            part: newPart,
+            afterDraft: false,
+          });
         }
       });
     },

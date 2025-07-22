@@ -33,8 +33,6 @@ interface StartPayloadType extends DragSceneHookPayload {
   partId: string;
   /** 元件引脚索引 */
   partPinIndex: number;
-  /** 是否已经拖动模式 */
-  afterDraft: boolean;
 }
 
 interface EndPayloadType extends DragSceneHookPayload {

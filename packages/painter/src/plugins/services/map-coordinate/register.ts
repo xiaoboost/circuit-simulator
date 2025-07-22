@@ -1,5 +1,4 @@
 import { Point } from '@circuit/algorithm';
-import { CONFIGURATION_SERVICE } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   IMapCoordinateService,
@@ -9,6 +8,7 @@ import {
   EVENT_LISTENER_HOOK,
   DRAG_SCENE_HOOK,
   PAINTER_HTML_ELEMENT,
+  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../types';
 
 definePlugin(({ getService, registerHook, registerService }) => {
@@ -66,7 +66,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       }
 
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const configurationService = getService(CONFIGURATION_SERVICE);
+      const configurationService = getService(PAINTER_CONFIGURATION_SERVICE);
 
       // 当前场景不为空或者不是移动模式时不处理
       if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
@@ -126,7 +126,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
   registerHook(DRAG_SCENE_HOOK, {
     name: DragSceneName,
     isEnd(event) {
-      const configuration = getService(CONFIGURATION_SERVICE);
+      const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
 
       // 不是移动模式时直接停止
       if (!configuration.movePainterMode.data) {
@@ -159,7 +159,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
     },
     afterEnd() {
       const cursorService = getService(CURSOR_SERVICE);
-      const configurationService = getService(CONFIGURATION_SERVICE);
+      const configurationService = getService(PAINTER_CONFIGURATION_SERVICE);
 
       if (configurationService.movePainterMode.data) {
         cursorService.set(cursorService.kind.Drag);

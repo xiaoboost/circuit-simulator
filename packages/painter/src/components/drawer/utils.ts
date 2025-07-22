@@ -1,6 +1,8 @@
 import { Point } from '@circuit/algorithm';
 import { ICursorKind } from '../../types';
 
+import IconDrawLine from './assets/draw-line.svg';
+
 export function getBackgroundStyle(scale: number, position: Point): React.CSSProperties {
   const size = scale * 20;
   const biasX = position[0] % size;
@@ -41,6 +43,10 @@ export function getCursorStyle(cursor: ICursorKind): React.CSSProperties {
     case ICursorKind.ResizeNS:
       return {
         cursor: 'ns-resize',
+      };
+    case ICursorKind.DrawLine:
+      return {
+        cursor: `url(${IconDrawLine}) 16 16, default`,
       };
     default:
       return {};

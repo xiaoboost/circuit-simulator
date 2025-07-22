@@ -21,8 +21,6 @@ export const CONFIGURATION_SERVICE =
   createServiceKey<IConfigurationService>('ConfigurationService');
 
 export interface IConfigurationService {
-  /** 图纸移动模式 */
-  readonly movePainterMode: Watcher<boolean>;
   /** 打开调试日志 */
   readonly openDebugLog: Watcher<boolean>;
   /**

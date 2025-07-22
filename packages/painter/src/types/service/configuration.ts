@@ -25,6 +25,8 @@ export enum PartLabelVisibleKind {
 }
 
 export interface IPainterConfigurationService {
+  /** 图纸移动模式 */
+  readonly movePainterMode: Watcher<boolean>;
   /** 器件标签显示方式 */
   readonly PartLabelVisibleKind: typeof PartLabelVisibleKind;
   /** 器件标签显示 */

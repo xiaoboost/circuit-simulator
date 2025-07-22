@@ -7,10 +7,7 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
-import {
-  CONFIGURATION_SERVICE,
-  STREAM_SERVICE,
-} from '@circuit/shared';
+import { STREAM_SERVICE } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useService, useWatcher } from '../../../../context';
@@ -42,9 +39,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const stream = useService(STREAM_SERVICE)
     .get<Constant.PartLabelChangedPayload>(Constant.PartLabelChanged);
   const dragService = useService(DRAG_SCENE_SERVICE);
-  const configurationService = useService(CONFIGURATION_SERVICE);
-  const painterConfigurationService = useService(PAINTER_CONFIGURATION_SERVICE);
-  const [partLabelVisible] = useWatcher(painterConfigurationService.partLabelVisible);
+  const configurationService = useService(PAINTER_CONFIGURATION_SERVICE);
+  const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);
 

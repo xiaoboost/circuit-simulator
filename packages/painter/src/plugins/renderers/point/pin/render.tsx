@@ -2,13 +2,18 @@ import { PIN_SIZE } from '@circuit/electronics';
 import { PropsWithHocParams } from '@circuit/inject';
 import React, { useState, useRef, useEffect } from 'react';
 import { useService } from '../../../../context';
-import { IPinRendererProps, DRAG_SCENE_SERVICE } from '../../../../types';
+import {
+  IPinRendererProps,
+  DRAG_SCENE_SERVICE,
+  PAINTER_CONFIGURATION_SERVICE,
+} from '../../../../types';
 import * as Styles from './styles.less';
 
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
   const service = useService(DRAG_SCENE_SERVICE);
+  const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
   const [actual, setActual] = useState(0);
   const {
     // 这只是为了满足类型，实际上不需要
@@ -39,8 +44,8 @@ function PinRenderer(props: IPinRendererProps) {
   }
 
   function handleHover(isHover: boolean) {
-    // 有场景正在运行，不进行任何操作
-    if (service.size !== 0) {
+    // 有场景正在运行或者是图纸移动模式时，不进行任何操作
+    if (service.size !== 0 || configuration.movePainterMode.data) {
       return;
     }
 

@@ -1,6 +1,5 @@
 import { Point } from '@circuit/algorithm';
 import {
-  CONFIGURATION_SERVICE,
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
 } from '@circuit/shared';
@@ -19,6 +18,7 @@ import {
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
   COLLISION_SERVICE,
+  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -65,7 +65,7 @@ definePlugin(({ registerHook, getService }) => {
       }
 
       // 移动图纸模式下不触发
-      if (getService(CONFIGURATION_SERVICE).movePainterMode.data) {
+      if (getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data) {
         return;
       }
 

@@ -9,6 +9,7 @@ import {
 
 definePlugin(({ registerService, registerHook, getService }) => {
   const service: IPainterConfigurationService = {
+    movePainterMode: new Watcher(false),
     PartLabelVisibleKind: PartLabelVisibleKind,
     partLabelVisible: new Watcher<PartLabelVisibleKind>(PartLabelVisibleKind.Visible),
     openMapMarkDebugger: new Watcher(false),
@@ -29,6 +30,11 @@ definePlugin(({ registerService, registerHook, getService }) => {
     {
       key: 'Configuration.Painter.visibleElectronicOutline',
       watcher: service.visibleElectronicOutline,
+      default: false,
+    },
+    {
+      key: 'Configuration.Painter.MovePainterMode',
+      watcher: service.movePainterMode,
       default: false,
     },
   ];

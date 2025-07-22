@@ -1,33 +1,20 @@
 import { SearchOutlined } from '@circuit/icons';
 import {
-  CONFIGURATION_SERVICE,
-  LOGGER_SERVICE,
   STREAM_SERVICE,
   GlobalStreamConstant as Constant,
 } from '@circuit/shared';
 import { ElectronicKind } from '@circuit/types';
-import { Input, Tooltip, message } from 'antd';
+import { Input, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';
 import { useService } from '../../../context';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
-const LoggerName = '添加器件面板';
-
 export function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
   const stream = useService(STREAM_SERVICE);
-  const configuration = useService(CONFIGURATION_SERVICE);
-  const logger = useService(LOGGER_SERVICE);
   const onSelect = (kind: ElectronicKind) => {
-    if (configuration.movePainterMode.data) {
-      const msg = '移动图纸模式下不能创建器件';
-      logger.info(LoggerName, msg);
-      message.warning(msg);
-      return;
-    }
-
     // 触发创建器件事件
     stream.get<Constant.NewPartPayload>(Constant.NewPart).emit({
       kind,

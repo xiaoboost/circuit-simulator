@@ -9,7 +9,6 @@ import { definePlugin, Watcher } from '../../../context';
 
 definePlugin(({ registerService, registerHook, getService }) => {
   const service: IConfigurationService = {
-    movePainterMode: new Watcher(false),
     openDebugLog: new Watcher(false),
     previewMode: new Watcher(false),
   };
@@ -18,11 +17,6 @@ definePlugin(({ registerService, registerHook, getService }) => {
     {
       key: 'Configuration.Global.OpenDebugLog',
       watcher: service.openDebugLog,
-      default: false,
-    },
-    {
-      key: 'Configuration.Global.MovePainterMode',
-      watcher: service.movePainterMode,
       default: false,
     },
   ];
