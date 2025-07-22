@@ -14,9 +14,12 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "build": "pnpm run clear && tsc -p ./tsconfig.json",
-    "lint": "eslint -c eslint.config.mjs",
-    "lint:fix": "eslint --fix -c eslint.config.mjs"
+    "build:cjs": "tsc -p ./tsconfig.json",
+    "build": "pnpm run clear && pnpm run build:cjs",
+    "lint:type": "pnpm run build:cjs --noEmit",
+    "lint:style": "eslint -c eslint.config.mjs",
+    "lint:fix": "eslint --fix -c eslint.config.mjs",
+    "lint": "pnpm run lint:type && pnpm run lint:style"
   },
   "dependencies": {
     "@circuit/inject": "workspace:*",
@@ -27,6 +30,7 @@
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
     "@types/circuit": "workspace:*",
+    "@types/node": "20.12.8",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.17.0",
     "rimraf": "6.0.1",

@@ -16,8 +16,3 @@ export const enum SearchStatus {
   /** 变形状态 */
   DeformNormal = 30,
 }
-
-/** 搜索上下文 */
-export interface SearchContext {
-
-}

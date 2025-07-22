@@ -15,8 +15,9 @@
     "dev": "pnpm run clear && cross-env NODE_ENV=development npm run webpack -- serve -c ./build/webpack.dev.ts",
     "build": "pnpm run clear && cross-env NODE_ENV=production npm run webpack -- build -c ./build/webpack.prod.ts",
     "analyze": "pnpm run clear && cross-env NODE_ENV=production ANALYZE=true npm run webpack -- -c build/webpack.prod.ts",
-    "lint": "eslint -c eslint.config.mjs",
-    "lint:fix": "eslint --fix -c eslint.config.mjs"
+    "lint:style": "eslint -c eslint.config.mjs",
+    "lint:fix": "eslint --fix -c eslint.config.mjs",
+    "lint": "pnpm run lint:style"
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "1.0.3",

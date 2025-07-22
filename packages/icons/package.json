@@ -14,11 +14,13 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "build:cjs": "tsc -p ./tsconfig.build.json",
+    "build:cjs": "tsc -p ./tsconfig.json",
     "build": "pnpm run clear && pnpm run build:cjs",
     "watch": "pnpm run build -w",
-    "lint": "eslint -c eslint.config.mjs",
-    "lint:fix": "eslint --fix -c eslint.config.mjs"
+    "lint:type": "pnpm run build:cjs --noEmit",
+    "lint:style": "eslint -c eslint.config.mjs",
+    "lint:fix": "eslint --fix -c eslint.config.mjs",
+    "lint": "pnpm run lint:type && pnpm run lint:style"
   },
   "dependencies": {
     "@ant-design/icons": "6.0.0",

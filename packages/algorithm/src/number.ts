@@ -110,7 +110,6 @@ export function shortUnitList(
   }
 
   return ranks
-    .sort((a, b) => allRanks.indexOf(a) - allRanks.indexOf(b))
     .map((origin) => {
       const rank = origin === 'μ' ? 'u' : origin;
       const label = origin === 'u' ? 'μ': origin;
@@ -121,7 +120,8 @@ export function shortUnitList(
           : `${label}${unit}`,
         value: rank,
       };
-    });
+    })
+    .sort(({ value: a }, { value: b }) => allRanks.indexOf(a) - allRanks.indexOf(b));
 }
 
 /** 解析输入数字 */

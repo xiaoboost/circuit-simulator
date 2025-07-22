@@ -1,4 +1,4 @@
-import { Point } from '@circuit/algorithm';
+import { Point, PointInput } from '@circuit/algorithm';
 import {
   LineMark,
   LineCoverMark,
@@ -278,7 +278,7 @@ export function inSingleLine(data: LineCoverMark, next: Point, pre: Point) {
 
 export function alongLineAndVector(
   data: LineAndPointMark,
-  vector: Point,
+  vector: PointInput,
   map: MarkMap,
   end?: Point,
 ) {

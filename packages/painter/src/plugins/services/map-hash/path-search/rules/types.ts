@@ -31,7 +31,7 @@ export interface RulesContext extends RulesOptions{
   /** 排除线段 */
   excludeLines: [Point, Point][];
   /** 终点等效线段 */
-  endLines: Point[][];
+  endLines: [Point, Point][];
 }
 
 /** 估值函数 */
