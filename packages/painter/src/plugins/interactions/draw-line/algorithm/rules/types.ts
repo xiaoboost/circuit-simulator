@@ -1,6 +1,6 @@
 import type { Point } from '@circuit/algorithm';
 import type { MarkMap } from '../../../../../types';
-import type { SearchNodeData } from '../point-search';
+import type { SearchNodeData } from '../a-star';
 
 /** 搜索规则 */
 export interface Rules {

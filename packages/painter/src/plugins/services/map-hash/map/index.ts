@@ -1,3 +1,3 @@
-export * as Connection from './connection';
-export * as Mark from './mark';
-export * as Map from './map';
+export * from './map';
+export * from './line';
+export * from './part';

@@ -7,13 +7,13 @@ import {
 import {
   LineOrPartStructuredData,
   PartStructuredData,
-  Entity,
 } from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
   ICollisionService,
   COLLISION_SERVICE,
   IEntityRegion,
+  Entity,
 } from '../../../types';
 import { pointInRect, rectInRect, collision } from './collision';
 import { getRectByEntity } from './create';

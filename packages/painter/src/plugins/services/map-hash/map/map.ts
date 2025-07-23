@@ -1,5 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { Mark, MarkMap } from '../../../../../types';
+import { Mark, MarkMap } from '../../../../types';
 
 function toKey(node: Point) {
   if (process.env.NODE_ENV === 'development') {

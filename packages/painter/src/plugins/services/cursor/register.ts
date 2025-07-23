@@ -1,11 +1,11 @@
 import { LIFE_CYCLE_HOOK } from '@circuit/shared';
-import { EntityKind } from '@circuit/types';
 import { definePlugin, Watcher } from '../../../context';
 import {
   ICursorService,
   ICursorKind,
   CURSOR_SERVICE,
   HOVER_SERVICE,
+  EntityKind,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getService }) => {

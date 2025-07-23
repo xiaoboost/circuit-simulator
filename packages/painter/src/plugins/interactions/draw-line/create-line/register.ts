@@ -1,17 +1,14 @@
 import { Point } from '@circuit/algorithm';
-import { createPartByKind } from '@circuit/electronics';
+import { createLine, getPartPin } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
   CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
   HOT_KEY_HOOK,
   LIFE_CYCLE_HOOK,
-  STREAM_SERVICE,
-  GlobalStreamConstant as Constant,
 } from '@circuit/shared';
-import { EntityKind } from '@circuit/types';
-import { message } from 'antd';
-import { definePlugin } from '../../../context';
+import { LineStructuredData } from '@circuit/types';
+import { definePlugin } from '../../../../context';
 import {
   DragSceneHookPayload,
   EVENT_LISTENER_HOOK,
@@ -23,16 +20,29 @@ import {
   COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
   PAINTER_HTML_ELEMENT,
-} from '../../../types';
-
-const CreateLineSceneName = 'create-line';
-const LoggerName = '创建导线';
+  EntityKind,
+  EntityPartPin,
+} from '../../../../types';
+import { PathSearcher } from '../algorithm';
+import {
+  createPainterController,
+  createSearchHook,
+} from '../utils';
+import {
+  CreateLineSceneName,
+  LoggerName,
+} from './constant';
+import {
+  createDrawLineSearcher as createSearcher,
+} from './search';
 
 interface StartPayloadType extends DragSceneHookPayload {
-  /** 绘制导线时点击编号 */
-  partId: string;
-  /** 元件引脚索引 */
-  partPinIndex: number;
+  /** 新导线 */
+  line: LineStructuredData;
+  /** 创建状态 */
+  start: EntityPartPin;
+  /** 搜索器 */
+  search: PathSearcher;
 }
 
 interface EndPayloadType extends DragSceneHookPayload {
@@ -40,7 +50,7 @@ interface EndPayloadType extends DragSceneHookPayload {
 }
 
 definePlugin(({ registerHook, getService }) => {
-  // 注册创建导线的拖动场景
+  // 注册创建导线场景
   registerHook(EVENT_LISTENER_HOOK, {
     order: 9,
     onMouseDown(event) {
@@ -51,27 +61,37 @@ definePlugin(({ registerHook, getService }) => {
 
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
       const hoverService = getService(HOVER_SERVICE);
+      const state = getService(STATE_CORE_SERVICE);
       const hover = hoverService.status.data;
 
-      if (
-        // 没有悬停
-        !hover ||
-        // 悬停的不是空器件引脚
-        hover.kind !== EntityKind.PartPin ||
-        // 正在拖动
-        dragSceneService.isDragging()
-      ) {
-        return;
-      }
+      if (hover?.kind === EntityKind.PartPin && !dragSceneService.isDragging()) {
+        const part = state.getPart(hover.id);
+        const pin = getPartPin(part, hover.pin);
+        const line = createLine(pin.position);
+        const search = createSearcher({
+          start: pin.position,
+          direction: pin.direction,
+          map: getService(MAP_HASH_SERVICE),
+          painter: createPainterController(getService),
+          hook: createSearchHook(getService),
+        });
 
-      debugger;
+        state.draft(({ lines }) => (lines.push(line), void 0));
+        dragSceneService.trigger(CreateLineSceneName, {
+          line,
+          search,
+          start: {
+            ...hover,
+          },
+        });
+      }
     },
   });
 
   // 键盘按下`Esc`时取消创建
   registerHook(HOT_KEY_HOOK, {
     key: 'esc',
-    name: '取消创建器件',
+    name: '取消创建导线',
     action: () => {
       const service = getService(DRAG_SCENE_SERVICE);
 
@@ -85,11 +105,16 @@ definePlugin(({ registerHook, getService }) => {
   // 创建的拖动场景
   registerHook(DRAG_SCENE_HOOK, {
     name: CreateLineSceneName,
-    afterStart({ part }: StartPayloadType) {
+    afterStart({ line, start }: StartPayloadType) {
       // 打印日志
-      getService(LOGGER_SERVICE).info(LoggerName, '开始创建导线', part.id);
+      getService(LOGGER_SERVICE).info(
+        LoggerName,
+        '开始创建导线',
+        `从器件 ${start.id} 第 ${start.pin} 引脚开始`,
+        `新导线编号 ${line.id}`,
+      );
       // 清空选中
-      getService(SELECT_SERVICE).clear();
+      getService(SELECT_SERVICE).set(line.id);
     },
     onDragMove({ positionInDrawer }, payload: StartPayloadType) {
       // if (!payload.afterDraft) {

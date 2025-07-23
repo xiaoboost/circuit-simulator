@@ -8,7 +8,7 @@ import {
   getPartPrototype,
 } from '@circuit/electronics';
 import { PartStructuredData } from '@circuit/types';
-import { MarkMap, MarkKind } from '../../../../../types';
+import { MarkMap, MarkKind } from '../../../../types';
 import {
   isPart,
   isPartPin,

@@ -1,6 +1,6 @@
-import type { Point } from '@circuit/algorithm';
-import type { Entity } from '@circuit/types';
-import type { SearchHook } from '../point-search';
+import type { Point, PathWithPoint } from '@circuit/algorithm';
+import type { IMapMarkService, Entity } from '../../../../../types';
+import type { SearchHook } from '../a-star';
 
 /** 搜索状态 */
 export const enum SearchStatus {
@@ -31,13 +31,17 @@ export interface PainterController {
   clearPinSize: (id: string, pin: number) => void;
 }
 
-export interface PathSearchContext {
+/** 路径搜索器 */
+export type PathSearcher = (end: Point, bias?: Point) => PathWithPoint;
+
+/** 路径搜索器选项 */
+export interface PathSearcherOptions {
   /** 起点 */
   start: Point;
-  /** 终点 */
-  end: Point;
   /** 起始方向 */
   direction: Point;
+  /** 标记图纸 */
+  map: IMapMarkService;
   /** 画布控制器 */
   painter: PainterController;
   /** 搜索钩子 */

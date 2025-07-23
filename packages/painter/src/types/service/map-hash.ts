@@ -132,8 +132,24 @@ export type ConnectionPointMark =
 /** 器件节点 */
 export type PartAndPinMark = PartMark | PartPinMark;
 
+/** 标记图纸服务 */
+export interface IMapMarkService {
+  /** 检查点是否存在 */
+  has(point: Point): boolean;
+  /** 获取点对应的标记 */
+  get<T extends Mark = Mark>(node: Point): T | undefined
+  /** 设置标记 */
+  set(mark: Mark): void;
+  /** 删除点对应的标记 */
+  remove(point: Point): void;
+  /** 获取所有标记 */
+  entries(): [Point, Mark][];
+  /** 标记数据断言 */
+  getAssert<T extends MarkKind>(kind: T): (mark: Mark) => mark is Extract<Mark, { kind: T }>;
+}
+
 /** 图纸服务 */
-export interface IMapService {
+export interface IMapService extends IMapMarkService{
   /** 设置器件标记 */
   setPartMark(data: PartStructuredData): void;
   /** 设置导线标记 */
@@ -144,6 +160,4 @@ export interface IMapService {
   deleteLineMark(data: LineStructuredData): void;
   /** 获取所有标记 */
   getAllMarks(): Mark[];
-  /** 标记数据断言 */
-  getAssert<T extends MarkKind>(kind: T): (mark: Mark) => mark is Extract<Mark, { kind: T }>;
 }

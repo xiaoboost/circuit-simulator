@@ -1,5 +1,5 @@
-import { Entity } from '@circuit/types';
-import { createServiceKey, Watcher } from '../../context';
+import { createServiceKey, type Watcher } from '../../context';
+import type { Entity } from '../types';
 
 /**
  * 鼠标悬停服务键

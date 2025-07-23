@@ -1,6 +1,6 @@
 import { Point, PathWithPoint } from '@circuit/algorithm';
 import { LineStructuredData } from '@circuit/types';
-import { MarkMap, MarkKind, LineAndPointMark } from '../../../../../types';
+import { MarkMap, MarkKind, LineAndPointMark } from '../../../../types';
 import {
   isLinePoint,
   isLineCross,

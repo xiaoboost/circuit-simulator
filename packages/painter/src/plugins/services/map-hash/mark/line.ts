@@ -10,7 +10,7 @@ import {
   MarkKind,
   Mark,
   MarkMap,
-} from '../../../../../types';
+} from '../../../../types';
 import * as Connection from '../connection';
 import * as Map from '../map';
 import {

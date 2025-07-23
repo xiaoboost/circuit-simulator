@@ -15,10 +15,10 @@ import {
   LineStructuredData,
   PartStructuredData,
   LineOrPartStructuredData,
-  EntityKind,
 } from '@circuit/types';
 import {
   IEntityRegion,
+  EntityKind,
 } from '../../../types';
 
 /** 获取器件引脚四边框 */

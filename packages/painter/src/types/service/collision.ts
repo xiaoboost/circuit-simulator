@@ -1,6 +1,7 @@
 import { Point, Rect } from '@circuit/algorithm';
-import { Entity, LineOrPartStructuredData } from '@circuit/types';
+import { LineOrPartStructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
+import { Entity } from '../types';
 
 /** 实体区域 */
 export interface IEntityRegion {

@@ -1,6 +1,5 @@
 import { Point } from '@circuit/algorithm';
 import { LOGGER_SERVICE } from '@circuit/shared';
-import { EntityKind, Entity } from '@circuit/types';
 import { definePlugin, Watcher } from '../../../context';
 import {
   IHoverService,
@@ -8,6 +7,8 @@ import {
   EVENT_LISTENER_HOOK,
   MAP_COORDINATE_SERVICE,
   COLLISION_SERVICE,
+  EntityKind,
+  Entity,
 } from '../../../types';
 
 const LoggerName = '悬停服务';
