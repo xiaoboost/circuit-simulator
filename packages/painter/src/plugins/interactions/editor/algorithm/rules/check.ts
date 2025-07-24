@@ -1,4 +1,4 @@
-import { Map, Mark } from '../../../../services/map-hash';
+import { Map, Mark } from '../../constant';
 import type { SearchNodeData } from '../a-star';
 import type { RulesContext } from './types';
 import { manhattanDistance as distance, isNodeInLine, isNodeVerticalLine } from './utils';

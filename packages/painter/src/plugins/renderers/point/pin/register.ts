@@ -7,7 +7,7 @@ definePlugin(({ registerHook }) => {
   registerHook(PIN_RENDERER, {
     name: 'PinRenderer',
     order: 1,
-    getKey: ({ id }) => `${id}-pin`,
+    getKey: ({ id }) => id,
     Render,
   });
 });

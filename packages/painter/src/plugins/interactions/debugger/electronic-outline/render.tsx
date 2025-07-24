@@ -1,10 +1,10 @@
 import React from 'react';
-import { useService, useWatcher } from '../../../context';
+import { useService, useWatcher } from '../../../../context';
 import {
   PAINTER_CONFIGURATION_SERVICE,
   COLLISION_SERVICE,
   MAP_COORDINATE_SERVICE,
-} from '../../../types';
+} from '../../../../types';
 
 const OutlineWidth = 2;
 

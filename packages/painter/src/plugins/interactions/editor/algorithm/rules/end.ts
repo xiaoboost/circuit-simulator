@@ -1,4 +1,4 @@
-import { SearchNodeData } from '../point-search';
+import { SearchNodeData } from '../a-star';
 import { RulesContext } from './types';
 import { isNodeInLine } from './utils';
 

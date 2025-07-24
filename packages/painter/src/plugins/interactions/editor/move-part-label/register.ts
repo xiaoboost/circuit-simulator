@@ -4,7 +4,7 @@ import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
 } from '@circuit/shared';
-import { definePlugin } from '../../../context';
+import { definePlugin } from '../../../../context';
 import {
   DRAG_SCENE_SERVICE,
   DRAG_SCENE_HOOK,
@@ -13,8 +13,8 @@ import {
   ICursorKind,
   VARIABLE_OBSERVER_SERVICE as VarService,
   PainterStreamConstant as Constant,
-} from '../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
+} from '../../../../types';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../../../hoc-modules';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';

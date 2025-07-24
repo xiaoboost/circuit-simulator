@@ -1,5 +1,5 @@
 import type { Point, PathWithPoint } from '@circuit/algorithm';
-import type { MarkMap, Entity } from '../../../../../types';
+import type { MarkMap, Entity } from '../../constant';
 import type { SearchHook } from '../a-star';
 
 /** 搜索状态 */

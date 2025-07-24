@@ -1,14 +1,14 @@
 import { Direction, DirectionVectorSet } from '@circuit/algorithm';
 import { isDef } from '@xiao-ai/utils';
 import React from 'react';
-import { useService, useWatcher } from '../../../context';
+import { useService, useWatcher } from '../../../../context';
 import {
   PAINTER_CONFIGURATION_SERVICE,
   MAP_HASH_SERVICE,
   MAP_COORDINATE_SERVICE,
   MarkKind,
   ConnectionData,
-} from '../../../types';
+} from '../../../../types';
 
 const nodeColor: Record<MarkKind, string> = {
   [MarkKind.Part]: 'black',

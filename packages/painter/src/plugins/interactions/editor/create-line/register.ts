@@ -2,10 +2,7 @@ import { Point } from '@circuit/algorithm';
 import { createLine, getPartPin } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
-  CONFIGURATION_SERVICE,
   STATE_CORE_SERVICE,
-  HOT_KEY_HOOK,
-  LIFE_CYCLE_HOOK,
 } from '@circuit/shared';
 import { LineStructuredData } from '@circuit/types';
 import { definePlugin } from '../../../../context';
@@ -17,24 +14,16 @@ import {
   SELECT_SERVICE,
   DRAG_SCENE_SERVICE,
   MAP_HASH_SERVICE,
-  COLLISION_SERVICE,
   VARIABLE_OBSERVER_SERVICE,
-  PAINTER_HTML_ELEMENT,
   EntityKind,
   EntityPartPin,
+  PAINTER_CONFIGURATION_SERVICE as CONFIGURATION,
 } from '../../../../types';
 import { PathSearcher } from '../algorithm';
-import {
-  createPainterController,
-  createSearchHook,
-} from '../utils';
-import {
-  CreateLineSceneName,
-  LoggerName,
-} from './constant';
-import {
-  createDrawLineSearcher as createSearcher,
-} from './search';
+import { PATH_DISTORTION_HOC_SCOPE as KEY } from '../constant';
+import { createPainterController, createSearchHook } from '../utils';
+import { CreateLineSceneName, LoggerName } from './constant';
+import { createDrawLineSearcher as createSearcher } from './search';
 
 interface StartPayloadType extends DragSceneHookPayload {
   /** 新导线 */
@@ -45,14 +34,16 @@ interface StartPayloadType extends DragSceneHookPayload {
   search: PathSearcher;
 }
 
-interface EndPayloadType extends DragSceneHookPayload {
-  esc: true;
-}
-
 definePlugin(({ registerHook, getService }) => {
+  const setPath = (id: string, path: Point[]) => {
+    const VarService = getService(VARIABLE_OBSERVER_SERVICE);
+    VarService.set(KEY, `${id}-path`, path);
+    VarService.set(KEY, `${id}-pin`, path);
+  };
+
   // 注册创建导线场景
   registerHook(EVENT_LISTENER_HOOK, {
-    order: 9,
+    order: 5,
     onMouseDown(event) {
       // 非左键不处理
       if (event.button !== 0) {
@@ -62,60 +53,76 @@ definePlugin(({ registerHook, getService }) => {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
       const hoverService = getService(HOVER_SERVICE);
       const state = getService(STATE_CORE_SERVICE);
+      const configuration = getService(CONFIGURATION);
       const hover = hoverService.status.data;
 
-      if (hover?.kind === EntityKind.PartPin && !dragSceneService.isDragging()) {
-        const part = state.getPart(hover.id);
-        const pin = getPartPin(part, hover.pin);
-        const line = createLine(pin.position);
-        const search = createSearcher({
-          start: pin.position,
-          direction: pin.direction,
-          map: getService(MAP_HASH_SERVICE).getMap(),
-          painter: createPainterController(getService),
-          hook: createSearchHook(getService),
-        });
-
-        state.draft(({ lines }) => (lines.push(line), void 0));
-        dragSceneService.trigger(CreateLineSceneName, {
-          line,
-          search,
-          start: {
-            ...hover,
-          },
-        });
+      if (
+        // 没有悬停
+        !hover ||
+        // 悬停的不是引脚
+        hover.kind !== EntityKind.PartPin ||
+        // 移动模式
+        configuration.movePainterMode.data ||
+        // 正在拖动
+        dragSceneService.isDragging()
+      ) {
+        return;
       }
+
+      const part = state.getPart(hover.id);
+      const pin = getPartPin(part, hover.pin);
+      const line = createLine(pin.position);
+      const search = createSearcher({
+        start: pin.position,
+        direction: pin.direction,
+        map: getService(MAP_HASH_SERVICE).getMap(),
+        painter: createPainterController(getService),
+        hook: createSearchHook(getService),
+      });
+
+      // 创建导线草稿
+      state.draft(({ lines }) => {
+        lines.push(line);
+      });
+
+      // 触发创建导线事件
+      dragSceneService.trigger(CreateLineSceneName, {
+        line,
+        search,
+        start: {
+          ...hover,
+        },
+      });
     },
   });
 
   // 创建的拖动场景
   registerHook(DRAG_SCENE_HOOK, {
     name: CreateLineSceneName,
-    afterStart({ line, start }: StartPayloadType) {
+    afterStart({ line, start, search, event }: StartPayloadType) {
+      const logger = getService(LOGGER_SERVICE);
+
+      if (!event) {
+        const msg = '创建导线事件触发时，必须传入鼠标事件';
+        logger.error(LoggerName, msg);
+        throw new Error(msg);
+      }
+
       // 打印日志
-      getService(LOGGER_SERVICE).info(
+      logger.info(
         LoggerName,
         '开始创建导线',
         `从器件 ${start.id} 第 ${start.pin} 引脚开始`,
         `新导线编号 ${line.id}`,
       );
-      // 清空选中
+      // 选中导线
       getService(SELECT_SERVICE).set(line.id);
+      // 初始化导线路径
+      setPath(line.id, search(event.positionInDrawer));
     },
-    onDragMove({ positionInDrawer }, payload: StartPayloadType) {
-      // if (!payload.afterDraft) {
-      //   getService(STATE_CORE_SERVICE).draft((state) => {
-      //     state.parts.push({
-      //       ...payload.part,
-      //       position: Point.from([0, 0]),
-      //     });
-      //   });
-      //   payload.afterDraft = true;
-      // }
-      // else if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
-      //   setPosition(payload.part.id, positionInDrawer);
-      //   getService(LOGGER_SERVICE).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
-      // }
+    onDragMove({ positionInDrawer, movement }, { line, search }: StartPayloadType) {
+      setPath(line.id, search(positionInDrawer, movement));
+      getService(LOGGER_SERVICE).debug(LoggerName, '创建中的导线', positionInDrawer.join());
     },
     isEnd(event) {
       // 非左键或者鼠标抬起事件不处理
@@ -130,7 +137,7 @@ definePlugin(({ registerHook, getService }) => {
 
       return true;
     },
-    afterEnd({ part }: StartPayloadType, endPayload: EndPayloadType) {
+    afterEnd({ line }: StartPayloadType) {
       // const painterService = getService(STATE_CORE_SERVICE);
       // const logger = getService(LOGGER_SERVICE);
 

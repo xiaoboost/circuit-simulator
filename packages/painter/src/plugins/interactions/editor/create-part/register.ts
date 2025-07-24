@@ -9,7 +9,7 @@ import {
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
-import { definePlugin } from '../../../context';
+import { definePlugin } from '../../../../context';
 import {
   DragSceneHookPayload,
   DRAG_SCENE_HOOK,
@@ -20,8 +20,8 @@ import {
   VARIABLE_OBSERVER_SERVICE,
   PAINTER_HTML_ELEMENT,
   PAINTER_CONFIGURATION_SERVICE,
-} from '../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../../hoc-modules';
+} from '../../../../types';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../../../hoc-modules';
 
 const CreatePartSceneName = 'create-part';
 const LoggerName = '创建器件';

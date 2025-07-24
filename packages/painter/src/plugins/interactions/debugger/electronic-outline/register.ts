@@ -1,5 +1,5 @@
-import { definePlugin } from '../../../context';
-import { DRAW_LAYER_HOOK } from '../../../types';
+import { definePlugin } from '../../../../context';
+import { DRAW_LAYER_HOOK } from '../../../../types';
 import { ElectronicOutline } from './render';
 
 definePlugin(({ registerHook }) => {

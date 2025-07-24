@@ -1,6 +1,5 @@
 import type { Point } from '@circuit/algorithm';
-import type { MarkMap } from '../../../../../types';
-import { Map, Mark } from '../../../../services/map-hash';
+import { Map, Mark, type MarkMap } from '../../constant';
 import type { SearchNodeData } from '../a-star';
 
 /** 返回节点所在器件 */
