@@ -80,22 +80,30 @@ export interface IDragScene {
    */
   isEnd(event: DragMouseEvent): boolean | undefined;
   /**
+   * 场景开始
+   *
+   * @description 首次移动之前
+   */
+  afterStart?(startPayload?: DragSceneHookPayload): void;
+  /**
+   * 首次拖拽执行
+   *
+   * @description `payload`为场景触发时传递的参数
+   * @description 此项回调设定时，首次拖拽执行时会调用此回调，否则将会调用`onDragMove`
+   */
+  onFirstDragMove?(event: DragMoveEvent, payload: DragSceneHookPayload): void;
+  /**
    * 拖拽执行中
    *
    * @description `payload`为场景触发时传递的参数
    */
   onDragMove(event: DragMoveEvent, payload: DragSceneHookPayload): void;
   /**
-   * 场景开始
-   *
-   * @description 首次移动之前
-   * @description `payload`为场景触发时传递的参数
-   */
-  afterStart?(startPayload?: DragSceneHookPayload): void;
-  /**
    * 场景结束
-   *
-   * @description `payload`为场景触发时传递的参数
    */
   afterEnd?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
+  /**
+   * 取消场景
+   */
+  onCancel?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
 }

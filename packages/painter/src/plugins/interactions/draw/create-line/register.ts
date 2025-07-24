@@ -71,7 +71,7 @@ definePlugin(({ registerHook, getService }) => {
         const search = createSearcher({
           start: pin.position,
           direction: pin.direction,
-          map: getService(MAP_HASH_SERVICE),
+          map: getService(MAP_HASH_SERVICE).getMap(),
           painter: createPainterController(getService),
           hook: createSearchHook(getService),
         });
@@ -84,20 +84,6 @@ definePlugin(({ registerHook, getService }) => {
             ...hover,
           },
         });
-      }
-    },
-  });
-
-  // 键盘按下`Esc`时取消创建
-  registerHook(HOT_KEY_HOOK, {
-    key: 'esc',
-    name: '取消创建导线',
-    action: () => {
-      const service = getService(DRAG_SCENE_SERVICE);
-
-      // 当前正在创建器件，则取消创建
-      if (service.has(CreateLineSceneName)) {
-        service.triggerEnd(CreateLineSceneName, { esc: true });
       }
     },
   });

@@ -23,6 +23,6 @@ export {
 } from './context';
 
 export {
-  ServiceTypeWithKey,
-  IPluginInstallerContext,
+  type ServiceTypeWithKey,
+  type IPluginInstallerContext,
 } from './types';

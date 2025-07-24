@@ -1,7 +1,7 @@
 import type { Point } from '@circuit/algorithm';
 import type { MarkMap } from '../../../../../types';
-import { Map, Mark } from '../../map';
-import type { SearchNodeData } from '../point-search';
+import { Map, Mark } from '../../../../services/map-hash';
+import type { SearchNodeData } from '../a-star';
 
 /** 返回节点所在器件 */
 export function getPart(map: MarkMap, node: Point) {

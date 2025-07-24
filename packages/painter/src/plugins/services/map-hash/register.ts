@@ -10,20 +10,8 @@ import * as Map from './map';
 definePlugin(({ registerService }) => {
   const markMap: MarkMap = {};
   const service: IMapService = {
-    has(point) {
-      return Map.has(markMap, point);
-    },
-    get(point) {
-      return Map.get(markMap, point);
-    },
-    set(mark) {
-      return Map.set(markMap, mark);
-    },
-    remove(point) {
-      return Map.remove(markMap, point);
-    },
-    entries() {
-      return Map.entries(markMap);
+    getMap() {
+      return markMap;
     },
     setPartMark(data) {
       return Map.setPartMark(data, markMap);

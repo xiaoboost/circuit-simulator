@@ -1,5 +1,5 @@
 import type { Point, PathWithPoint } from '@circuit/algorithm';
-import type { IMapMarkService, Entity } from '../../../../../types';
+import type { MarkMap, Entity } from '../../../../../types';
 import type { SearchHook } from '../a-star';
 
 /** 搜索状态 */
@@ -41,7 +41,7 @@ export interface PathSearcherOptions {
   /** 起始方向 */
   direction: Point;
   /** 标记图纸 */
-  map: IMapMarkService;
+  map: MarkMap;
   /** 画布控制器 */
   painter: PainterController;
   /** 搜索钩子 */

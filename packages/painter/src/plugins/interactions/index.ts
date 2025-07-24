@@ -5,4 +5,4 @@ import './select-box';
 import './initialize';
 import './electronic-outline';
 import './map-hash-debugger';
-import './draw-line';
+import './draw';

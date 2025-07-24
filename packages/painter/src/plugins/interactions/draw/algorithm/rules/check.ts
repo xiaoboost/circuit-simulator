@@ -1,5 +1,5 @@
-import { Map, Mark } from '../../map';
-import type { SearchNodeData } from '../point-search';
+import { Map, Mark } from '../../../../services/map-hash';
+import type { SearchNodeData } from '../a-star';
 import type { RulesContext } from './types';
 import { manhattanDistance as distance, isNodeInLine, isNodeVerticalLine } from './utils';
 

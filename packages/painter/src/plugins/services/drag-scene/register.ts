@@ -1,4 +1,5 @@
 import { Point } from '@circuit/algorithm';
+import { HOT_KEY_HOOK } from '@circuit/shared';
 import type { MouseEvent } from 'react';
 import { definePlugin } from '../../../context';
 import {
@@ -14,6 +15,7 @@ import {
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const sceneSet = new Set<string>();
   const triggerPayloadMap = new Map<string, any>();
+  const isMovedMap = new Map<string, boolean>();
   const startPositionMap = new Map<string, Point>();
   const service: IDragSceneService = {
     get size() {
@@ -42,6 +44,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         ?.afterStart?.(startPayload);
 
       sceneSet.add(scene);
+      isMovedMap.set(scene, false);
       triggerPayloadMap.set(scene, startPayload);
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
@@ -50,27 +53,48 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       }
     },
     triggerEnd(scene, payload) {
-      if (!service.has(scene)) {
+      if (scene !== '*' && !service.has(scene)) {
         return;
       }
 
-      const triggerPayload = triggerPayloadMap.get(scene);
-      const hook = getHook(DRAG_SCENE_HOOK).find(({ name }) => name === scene);
-      const endPayload: DragSceneHookPayload | undefined = payload?.event
-        ? {
-          ...payload,
-          event: getDragMouseEvent(payload.event),
-        }
-        : payload as any;
+      const hooks = getHook(DRAG_SCENE_HOOK).filter(({ name }) => {
+        return (
+          (scene === '*' || name === scene) &&
+          sceneSet.has(name)
+        );
+      });
 
-      // 先移除场景，再触发结束事件
       Promise.resolve()
+        // 先删除场景记录
         .then(() => {
-          sceneSet.delete(scene);
-          triggerPayloadMap.delete(scene);
-          startPositionMap.delete(scene);
+          hooks.forEach(({ name }) => {
+            sceneSet.delete(name);
+            isMovedMap.delete(name);
+          });
         })
-        .then(() => hook?.afterEnd?.(triggerPayload, endPayload));
+        // 触发结束/取消事件
+        .then(() => {
+          const hookKey = payload?.esc ? 'onCancel' : 'afterEnd';
+
+          hooks.forEach(({ name, [hookKey]: hook }) => {
+            const triggerPayload = triggerPayloadMap.get(name);
+            const endPayload: DragSceneHookPayload | undefined = payload?.event
+              ? {
+                ...payload,
+                event: getDragMouseEvent(payload.event),
+              }
+              : payload as any;
+
+            hook?.(triggerPayload, endPayload);
+          });
+        })
+        // 最后删除记录数据
+        .then(() => {
+          hooks.forEach(({ name }) => {
+            triggerPayloadMap.delete(name);
+            startPositionMap.delete(name);
+          });
+        });
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
@@ -113,6 +137,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         Promise.resolve()
           .then(() => {
             sceneSet.delete(hook.name);
+            isMovedMap.delete(hook.name);
             triggerPayloadMap.delete(hook.name);
             startPositionMap.delete(hook.name);
           })
@@ -148,6 +173,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     onMouseLeave(event) {
       endCb(event);
     },
+  });
+
+  // 注册拖拽场景实现钩子
+  registerHook(EVENT_LISTENER_HOOK, {
+    // 这个事件的优先级较低
+    order: 10,
     onMouseMove(event) {
       if (service.size !== 0) {
         const dragHook = getHook(DRAG_SCENE_HOOK);
@@ -173,20 +204,36 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
               const movementAcc = dragMouseEvent.position.add(startPositionMap.get(hook.name)!, -1);
               const movementInDrawerAcc = movementAcc.mul(map.value.data.scale, -1);
               const payload = triggerPayloadMap.get(hook.name);
-
-              hook.onDragMove({
+              const dragEvent = {
                 ...dragMouseEvent,
                 movement,
                 movementInDrawer,
                 movementAcc,
                 movementInDrawerAcc,
-              }, payload);
+              };
+
+              // 这里必须是等于 false
+              if (isMovedMap.get(hook.name) === false && hook.onFirstDragMove) {
+                hook.onFirstDragMove(dragEvent, payload);
+              }
+              else {
+                hook.onDragMove(dragEvent, payload);
+              }
             }
           }
         }
       }
 
       lastMousePosition = new Point(event.pageX, event.pageY);
+    },
+  });
+
+  // 键盘按下`Esc`时取消拖拽事件钩子
+  registerHook(HOT_KEY_HOOK, {
+    key: 'esc',
+    name: '取消拖拽事件',
+    action: () => {
+      service.triggerEnd('*', { esc: true });
     },
   });
 

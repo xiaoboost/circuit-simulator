@@ -3,7 +3,6 @@ import { createPartByKind } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
-  HOT_KEY_HOOK,
   LIFE_CYCLE_HOOK,
   STREAM_SERVICE,
   GlobalStreamConstant as Constant,
@@ -32,10 +31,6 @@ const getLabelKey = (id: string) => `${id}-label`;
 interface StartPayloadType extends DragSceneHookPayload {
   part: PartStructuredData;
   afterDraft: boolean;
-}
-
-interface EndPayloadType extends DragSceneHookPayload {
-  esc: true;
 }
 
 definePlugin(({ registerHook, getService }) => {
@@ -79,20 +74,6 @@ definePlugin(({ registerHook, getService }) => {
     },
   });
 
-  // 键盘按下`Esc`时取消创建
-  registerHook(HOT_KEY_HOOK, {
-    key: 'esc',
-    name: '取消创建器件',
-    action: () => {
-      const service = getService(DRAG_SCENE_SERVICE);
-
-      // 当前正在创建器件，则取消创建
-      if (service.has(CreatePartSceneName)) {
-        service.triggerEnd(CreatePartSceneName, { esc: true });
-      }
-    },
-  });
-
   // 创建的拖动场景
   registerHook(DRAG_SCENE_HOOK, {
     name: CreatePartSceneName,
@@ -106,17 +87,16 @@ definePlugin(({ registerHook, getService }) => {
         getService(PAINTER_HTML_ELEMENT)?.current?.focus({ preventScroll: true });
       });
     },
-    onDragMove({ positionInDrawer }, payload: StartPayloadType) {
-      if (!payload.afterDraft) {
-        getService(STATE_CORE_SERVICE).draft((state) => {
-          state.parts.push({
-            ...payload.part,
-            position: Point.from([0, 0]),
-          });
+    onFirstDragMove({ positionInDrawer }, payload) {
+      getService(STATE_CORE_SERVICE).draft((state) => {
+        state.parts.push({
+          ...payload.part,
+          position: Point.from(positionInDrawer),
         });
-        payload.afterDraft = true;
-      }
-      else if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
+      });
+    },
+    onDragMove({ positionInDrawer }, payload: StartPayloadType) {
+      if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
         setPosition(payload.part.id, positionInDrawer);
         getService(LOGGER_SERVICE).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
       }
@@ -134,19 +114,18 @@ definePlugin(({ registerHook, getService }) => {
 
       return true;
     },
-    afterEnd({ part }: StartPayloadType, endPayload: EndPayloadType) {
+    afterEnd({ part }: StartPayloadType, endPayload) {
+      console.log('afterEnd', endPayload);
       const painterService = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
-
-      if (endPayload?.esc) {
-        logger.info(LoggerName, '取消创建器件', part.id);
-        painterService.dropDraft();
-        return;
-      }
-
       const mapService = getService(MAP_HASH_SERVICE);
       const collisionService = getService(COLLISION_SERVICE);
-      const currentPosition = endPayload.event!.positionInDrawer.round(20);
+      const currentPosition = endPayload?.event?.positionInDrawer?.round(20);
+
+      if (!currentPosition) {
+        throw new Error('创建器件失败，位置未确定');
+      }
+
       const realPosition = collisionService.findNearestAvailablePosition({
         ...part,
         position: currentPosition,
@@ -174,6 +153,12 @@ definePlugin(({ registerHook, getService }) => {
       mapService.setPartMark(newPart);
       collisionService.setEntity(newPart);
       logger.info(LoggerName, '结束创建器件', part.id);
+    },
+    onCancel({ part }: StartPayloadType) {
+      const painterService = getService(STATE_CORE_SERVICE);
+      const logger = getService(LOGGER_SERVICE);
+      logger.info(LoggerName, '取消创建器件', part.id);
+      painterService.dropDraft();
     },
   });
 });

@@ -1,4 +1,4 @@
-import type { SearchNodeData } from '../point-search';
+import type { SearchNodeData } from '../a-star';
 import type { RulesContext } from './types';
 import { manhattanDistance } from './utils';
 

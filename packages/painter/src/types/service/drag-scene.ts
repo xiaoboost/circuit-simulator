@@ -22,6 +22,12 @@ export interface SceneTriggerPayload {
    * @description 如果可以获得鼠标事件则传入
    */
   event?: MouseEvent;
+  /**
+   * 手动触发的取消参数
+   *
+   * @description 手动取消场景时，传入此参数
+   */
+  esc?: boolean;
   /** 其他参数 */
   [key: string]: any;
 }
