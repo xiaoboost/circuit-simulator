@@ -21,7 +21,7 @@ import {
   PAINTER_HTML_ELEMENT,
   PAINTER_CONFIGURATION_SERVICE,
 } from '../../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../../../hoc-modules';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
 
 const CreatePartSceneName = 'create-part';
 const LoggerName = '创建器件';
@@ -102,20 +102,10 @@ definePlugin(({ registerHook, getService }) => {
       }
     },
     isEnd(event) {
-      // 非左键或者鼠标抬起事件不处理
-      if (event.button !== 0 || event.type !== 'mouseup') {
-        return false;
-      }
-
-      // 当前场景不是鼠标拖动背景场景时不处理
-      if (!getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
-        return false;
-      }
-
-      return true;
+      return getService(DRAG_SCENE_SERVICE)
+        .isLeftMouseUpNoMovingHasScene(event, CreatePartSceneName);
     },
     afterEnd({ part }: StartPayloadType, endPayload) {
-      console.log('afterEnd', endPayload);
       const painterService = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
       const mapService = getService(MAP_HASH_SERVICE);

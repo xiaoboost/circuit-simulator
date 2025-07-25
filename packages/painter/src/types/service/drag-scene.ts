@@ -41,6 +41,14 @@ export interface IDragSceneService extends ReadonlySet<string> {
    */
   onlyHas(scene: string): boolean;
   /**
+   * 鼠标左键按下非拖动状态且没有场景
+   */
+  isLeftMouseDownNoMovingNoScene(event: MouseEvent): boolean;
+  /**
+   * 鼠标左键抬起非拖动状态且只有某个场景
+   */
+  isLeftMouseUpNoMovingHasScene(event: MouseEvent, scene: string): boolean;
+  /**
    * 触发场景
    *
    * @description 主动触发场景

@@ -127,28 +127,14 @@ definePlugin(({ getService, registerHook, registerService }) => {
     name: DragSceneName,
     isEnd(event) {
       const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
       // 不是移动模式时直接停止
       if (!configuration.movePainterMode.data) {
         return true;
       }
 
-      // 非左键或者鼠标抬起事件不处理
-      if (event.button !== 0 || event.type !== 'mouseup') {
-        return false;
-      }
-
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
-
-      // 当前场景不是鼠标拖动背景场景时不处理
-      if (!(
-        dragSceneService.size === 1 &&
-        dragSceneService.has(DragSceneName)
-      )) {
-        return false;
-      }
-
-      return true;
+      return dragSceneService.isLeftMouseUpNoMovingHasScene(event, DragSceneName);
     },
     onDragMove(event) {
       service.setPosition(service.value.data.position.add(event.movement));

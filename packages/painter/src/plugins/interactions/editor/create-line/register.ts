@@ -125,17 +125,8 @@ definePlugin(({ registerHook, getService }) => {
       getService(LOGGER_SERVICE).debug(LoggerName, '创建中的导线', positionInDrawer.join());
     },
     isEnd(event) {
-      // 非左键或者鼠标抬起事件不处理
-      if (event.button !== 0 || event.type !== 'mouseup') {
-        return false;
-      }
-
-      // 当前场景不是鼠标拖动背景场景时不处理
-      if (!getService(DRAG_SCENE_SERVICE).onlyHas(CreateLineSceneName)) {
-        return false;
-      }
-
-      return true;
+      return getService(DRAG_SCENE_SERVICE)
+        .isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName);
     },
     afterEnd({ line }: StartPayloadType) {
       // const painterService = getService(STATE_CORE_SERVICE);

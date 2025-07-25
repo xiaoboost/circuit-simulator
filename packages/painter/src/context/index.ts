@@ -16,7 +16,7 @@ export {
   useObjectWatcher,
 } from '@circuit/reactive';
 
-export { useComposeHOC } from './react';
+export * from './react';
 
 export const PainterScope = createScopeSymbol('Painter', RootScope);
 const reactHook = createReactHookWithScope(PainterScope);

@@ -18,7 +18,6 @@ import {
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
   COLLISION_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -59,24 +58,13 @@ definePlugin(({ registerHook, getService }) => {
   // 注册选择框启动事件
   registerHook(EVENT_LISTENER_HOOK, {
     onMouseDown(event) {
-      // 非左键事件不处理
-      if (event.button !== 0) {
-        return;
-      }
+      const dragSceneService = getService(DRAG_SCENE_SERVICE);
 
-      // 移动图纸模式下不触发
-      if (getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data) {
-        return;
-      }
-
-      // 场景互斥
-      if (getService(DRAG_SCENE_SERVICE).size !== 0) {
-        return;
-      }
-
-      // 必须是在画布本身触发
-      if ((event.target as HTMLElement).tagName === 'svg') {
-        getService(DRAG_SCENE_SERVICE).trigger(SELECT_BOX_DRAG_SCENE_NAME, { event });
+      if (
+        dragSceneService.isLeftMouseDownNoMovingNoScene(event) &&
+        (event.target as HTMLElement).tagName === 'svg'
+      ) {
+        dragSceneService.trigger(SELECT_BOX_DRAG_SCENE_NAME, { event });
       }
     },
   });
@@ -85,17 +73,8 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(DRAG_SCENE_HOOK, {
     name: SELECT_BOX_DRAG_SCENE_NAME,
     isEnd(event) {
-      // 非左键或者鼠标抬起事件不处理
-      if (event.button !== 0 || event.type !== 'mouseup') {
-        return false;
-      }
-
-      // 当前场景不是鼠标拖动背景场景时不处理
-      if (!getService(DRAG_SCENE_SERVICE).onlyHas(SELECT_BOX_DRAG_SCENE_NAME)) {
-        return false;
-      }
-
-      return true;
+      return getService(DRAG_SCENE_SERVICE)
+        .isLeftMouseUpNoMovingHasScene(event, SELECT_BOX_DRAG_SCENE_NAME);
     },
     onDragMove(event) {
       end.setData(Point.from(event.positionInDrawer));

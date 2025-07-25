@@ -10,6 +10,7 @@ import {
   DRAG_SCENE_HOOK,
   EVENT_LISTENER_HOOK,
   MAP_COORDINATE_SERVICE,
+  PAINTER_CONFIGURATION_SERVICE,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
@@ -98,6 +99,21 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
+    },
+    isLeftMouseDownNoMovingNoScene(event) {
+      return (
+        event.button === 0 &&
+        event.type === 'mousedown' &&
+        this.size === 0 &&
+        !getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data
+      );
+    },
+    isLeftMouseUpNoMovingHasScene(event, scene) {
+      return (
+        event.button === 0 &&
+        event.type === 'mouseup' &&
+        sceneSet.has(scene)
+      );
     },
   };
 

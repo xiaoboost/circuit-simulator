@@ -14,7 +14,7 @@ import {
   VARIABLE_OBSERVER_SERVICE as VarService,
   PainterStreamConstant as Constant,
 } from '../../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../../../hoc-modules';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';
@@ -38,22 +38,11 @@ definePlugin(({ registerHook, getService }) => {
       getService(CURSOR_SERVICE).set(ICursorKind.Dragging);
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
-      if (getService(DRAG_SCENE_SERVICE).onlyHas(MoveDragSceneName)) {
-        getService(VarService).set(KEY, getLabelKey(id), Point.from(movementInDrawerAcc));
-      }
+      getService(VarService).set(KEY, getLabelKey(id), Point.from(movementInDrawerAcc));
     },
     isEnd(event) {
-      // 非左键或者鼠标抬起事件不处理
-      if (event.button !== 0 || event.type !== 'mouseup') {
-        return false;
-      }
-
-      // 当前场景不是鼠标拖动背景场景时不处理
-      if (!getService(DRAG_SCENE_SERVICE).onlyHas(MoveDragSceneName)) {
-        return false;
-      }
-
-      return true;
+      return getService(DRAG_SCENE_SERVICE)
+        .isLeftMouseUpNoMovingHasScene(event, MoveDragSceneName);
     },
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);

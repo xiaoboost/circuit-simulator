@@ -4,9 +4,7 @@ import {
   invertRotateMatrix,
   getDirectionByLabel,
 } from '@circuit/algorithm';
-import {
-  getPartPrototype,
-} from '@circuit/electronics';
+import { getPartPrototype } from '@circuit/electronics';
 import { PartStructuredData, TextBias } from '@circuit/types';
 
 /** 当前位置距离器件最近的方向 */
