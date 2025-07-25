@@ -46,25 +46,9 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
   // 触发移动器件文本
   const onMouseDown = useCallback((event: React.MouseEvent<SVGGElement>) => {
-    // 非左键不处理
-    if (event.button !== 0) {
-      return;
+    if (dragService.isLeftMouseDownNoMovingNoScene(event)) {
+      dragService.trigger('move-part-label', { id, event });
     }
-
-    // 移动图纸模式下不触发
-    if (configurationService.movePainterMode.data) {
-      return;
-    }
-
-    // 事件互斥
-    if (dragService.size !== 0) {
-      return;
-    }
-
-    dragService.trigger('move-part-label', {
-      id,
-      event,
-    });
   }, [dragService]);
 
   // 更新器件说明文本
