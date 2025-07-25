@@ -14,7 +14,7 @@ import { createServiceKey } from '../../context';
 export const LINE_RENDERER = createServiceKey<ILineRenderer>('LineRenderer');
 
 /** 画布图层渲染器输入参数 */
-export interface ILineRendererProps {
+export interface ILineRendererProps extends React.SVGProps<SVGElement> {
   /** 导线数据 */
   data: LineStructuredData;
 }

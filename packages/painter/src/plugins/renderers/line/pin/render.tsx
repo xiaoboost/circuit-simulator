@@ -5,7 +5,7 @@ import { useService, useHook } from '../../../../context';
 import { ILineRendererProps, PIN_RENDERER } from '../../../../types';
 import { Pin } from './pin';
 
-function PartPinRender({ data: { id, path } }: ILineRendererProps) {
+function PartPinRender({ data: { id, path }, style }: ILineRendererProps) {
   const { getConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
 
@@ -27,6 +27,7 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
       <Pin
         key={key}
         id={key}
+        style={style}
         position={position}
         hoverR={isSpace ? 5: 4}
         normalR={isSpace ? 2 : 1}

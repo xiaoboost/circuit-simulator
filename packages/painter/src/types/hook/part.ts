@@ -14,7 +14,7 @@ import { createServiceKey } from '../../context';
 export const PART_RENDERER = createServiceKey<IPartRenderer>('PartRenderer');
 
 /** 器件渲染器输入参数 */
-export interface IPartRendererProps {
+export interface IPartRendererProps extends React.SVGProps<SVGElement> {
   /** 器件数据 */
   data: PartStructuredData;
   /** 器件原型 */

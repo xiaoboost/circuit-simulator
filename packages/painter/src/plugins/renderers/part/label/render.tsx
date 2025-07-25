@@ -23,7 +23,7 @@ import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
 import { getTextLineCount, propertyToString } from './utils';
 
-function PartLabelRender({ data, prototype }: IPartRendererProps) {
+function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
   const {
     id,
     propertyValues: properties,
@@ -149,6 +149,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   return (
     <g
       ref={textRef}
+      style={style}
       className={Styles.text}
       textAnchor={textAnchor}
       transform={`matrix(${invRotate.join()},${position.rotate(invRotate).join()})`}

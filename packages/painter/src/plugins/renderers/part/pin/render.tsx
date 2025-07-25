@@ -4,7 +4,7 @@ import { useService, useHook } from '../../../../context';
 import { IPartRendererProps, PIN_RENDERER } from '../../../../types';
 import { Pin } from './pin';
 
-function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps) {
+function PartPinRender({ data: { id }, prototype: { pins }, style }: IPartRendererProps) {
   const { getConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
 
@@ -23,6 +23,7 @@ function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps
         position={position}
         hoverR={4}
         normalR={0}
+        style={style}
         fill={isSpace ? '#fff' : undefined}
       />
     );

@@ -2,13 +2,17 @@ import { isEqualPoint } from '@circuit/algorithm';
 import React from 'react';
 import { ILineRendererProps } from '../../../../types';
 
-function LinePathRender({ data: { path } }: ILineRendererProps) {
+function LinePathRender({ data: { path }, style }: ILineRendererProps) {
   if (path.length === 0) {
     return null;
   }
 
   return (
-    <path stroke='currentColor' d={`M${path.map((n) => n.join(',')).join('L')}`} />
+    <path
+      stroke='currentColor'
+      style={style}
+      d={`M${path.map((n) => n.join(',')).join('L')}`}
+    />
   );
 }
 
