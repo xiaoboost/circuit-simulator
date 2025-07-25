@@ -29,7 +29,10 @@ definePlugin(({ registerService, registerHook, getService }) => {
   registerHook(LIFE_CYCLE_HOOK, {
     afterPluginInit() {
       getService(HOVER_SERVICE).status.observe((val) => {
-        if (!val) {
+        if (
+          !val ||
+          val.kind === EntityKind.Part
+        ) {
           defaultCursor = ICursorKind.Default;
         }
         else if (
