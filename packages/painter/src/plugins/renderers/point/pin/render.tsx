@@ -1,7 +1,8 @@
 import { PIN_SIZE } from '@circuit/electronics';
 import { PropsWithHocParams } from '@circuit/inject';
-import React, { useState, useRef, useEffect } from 'react';
-import { useService } from '../../../../context';
+import { RENDERER_HOC } from '@circuit/shared';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { useService, useHook, composeHOC } from '../../../../context';
 import {
   IPinRendererProps,
   DRAG_SCENE_SERVICE,
@@ -110,5 +111,20 @@ function PinRenderer(props: IPinRendererProps) {
     </g>
   );
 }
+
+// function PinWithHOC(props: IPinRendererProps) {
+//   const hocHooks = useHook(RENDERER_HOC, 'asc');
+//   const { Component } = useMemo(
+//     () => composeHOC({
+//       name: 'PinRenderer',
+//       order: 1,
+//       getKey: ({ id }) => id,
+//       Render: PinRenderer,
+//     }, hocHooks),
+//     [hocHooks],
+//   );
+
+//   return <Component $$key={props.id} {...props} />;
+// }
 
 export const Render = React.memo(PinRenderer);

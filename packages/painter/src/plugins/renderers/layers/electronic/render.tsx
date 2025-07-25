@@ -1,84 +1,37 @@
-import { STATE_CORE_SERVICE } from '@circuit/shared';
-import { LineStructuredData, PartStructuredData } from '@circuit/types';
-import { stringifyClass as scl } from '@xiao-ai/utils';
+import { getPartPrototype } from '@circuit/electronics';
 import React from 'react';
-import {
-  useComposeHOC,
-  useWatcher,
-  useHook,
-  useService,
-} from '../../../../context';
-import {
-  IDrawLayerProps,
-  PART_RENDERER,
-  LINE_RENDERER,
-  SELECT_SERVICE,
-} from '../../../../types';
-import * as Styles from './styles.less';
+import { useWatcher, useService } from '../../../../context';
+import { IDrawLayerProps, SELECT_SERVICE } from '../../../../types';
+import { Line } from './line';
+import { Part } from './part';
 
 function ElectronicLayerRender({ parts, lines }: IDrawLayerProps) {
-  const partRenderers = useHook(PART_RENDERER, 'asc');
-  const lineRenderers = useHook(LINE_RENDERER, 'asc');
-  const service = useService(STATE_CORE_SERVICE);
   const selectService = useService(SELECT_SERVICE);
-  const partComposedRenderers = partRenderers.map(useComposeHOC);
-  const lineComposedRenderers = lineRenderers.map(useComposeHOC);
   const [selectedIds] = useWatcher(selectService.value);
-  const line = (line: LineStructuredData) => (
-    <g
-      key={line.id}
-      className={scl({
-        [Styles.selected]: selectedIds.has(line.id),
-      })}
-    >
-      {lineComposedRenderers.map(({ Component, getKey }) => {
-        const props = { data: line };
-        const key = getKey?.(props) ?? line.id;
-        return <Component key={key} $$key={key} {...props} />;
-      })}
-    </g>
-  );
-  const part = (part: PartStructuredData) => {
-    const prototype = service.getPartPrototype(part.kind);
-
-    return (
-      <g
-        key={part.id}
-        transform={`matrix(${part.rotate.join()},${part.position.join()})`}
-        className={scl({
-          [Styles.selected]: selectedIds.has(part.id),
-        })}
-      >
-        {partComposedRenderers.map(({ Component, getKey }) => {
-          const props = {
-            data: part,
-            prototype,
-          };
-          const key = getKey?.(props) ?? part.id;
-
-          return <Component key={key} $$key={key} {...props} />;
-        })}
-      </g>
-    );
-  };
 
   // 如果元件和导线都没有数据，则不渲染
-  if (lineComposedRenderers.length === 0 && partComposedRenderers.length === 0) {
+  if (parts.length === 0 && lines.length === 0) {
     return null;
   }
 
-  return (
-    <>
-      {/* 未选中的元件 */}
-      {parts.filter((part) => !selectedIds.has(part.id)).map(part)}
-      {/* 未选中的导线 */}
-      {lines.filter((line) => !selectedIds.has(line.id)).map(line)}
-      {/* 选中的元件 */}
-      {parts.filter((part) => selectedIds.has(part.id)).map(part)}
-      {/* 选中的导线 */}
-      {lines.filter((line) => selectedIds.has(line.id)).map(line)}
-    </>
-  );
+  return [
+    // 未选中的元件
+    ...parts
+      .filter((part) => !selectedIds.has(part.id))
+      .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />),
+    // 未选中的导线
+    ...lines
+      .filter((line) => !selectedIds.has(line.id))
+      .map((line) => <Line key={line.id} data={line} />),
+    // 选中的元件
+    ...parts
+      .filter((part) => selectedIds.has(part.id))
+      .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />),
+    // 选中的导线
+    ...lines
+      .filter((line) => selectedIds.has(line.id))
+      .map((line) => <Line key={line.id} data={line} />),
+  ];
 }
 
 export const Render = React.memo(

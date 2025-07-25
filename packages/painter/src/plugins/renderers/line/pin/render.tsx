@@ -1,19 +1,15 @@
 import { isEqualPoint } from '@circuit/algorithm';
 import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
-import { useService, useHook, useComposeHOC } from '../../../../context';
-import {
-  ILineRendererProps,
-  PIN_RENDERER,
-  IPinRendererProps,
-} from '../../../../types';
+import { useService, useHook } from '../../../../context';
+import { ILineRendererProps, PIN_RENDERER } from '../../../../types';
+import { Pin } from './pin';
 
 function PartPinRender({ data: { id, path } }: ILineRendererProps) {
   const { getConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
-  const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
-  if (path.length === 0 || pinComposedRenderers.length === 0) {
+  if (path.length === 0 || pinRenderers.length === 0) {
     return null;
   }
 
@@ -23,26 +19,21 @@ function PartPinRender({ data: { id, path } }: ILineRendererProps) {
     pins.pop();
   }
 
-  return (
-    <>
-      {pins.map((position, i) => {
-        const connections = getConnections(id, i);
-        const isSpace = connections.length === 0;
-
-        return pinComposedRenderers.map(({ Component, getKey }) => {
-          const props: IPinRendererProps = {
-            id: `${id}-${i}`,
-            position,
-            hoverR: isSpace ? 5: 4,
-            normalR: isSpace ? 2 : 1,
-            fill: isSpace ? '#fff' : undefined,
-          };
-          const key = getKey?.(props) ?? `${id}-${i}`;
-          return <Component key={key} $$key={key} {...props} />;
-        });
-      })}
-    </>
-  );
+  return pins.map((position, i) => {
+    const connections = getConnections(id, i);
+    const isSpace = connections.length === 0;
+    const key = `${id}-${i}`;
+    return (
+      <Pin
+        key={key}
+        id={key}
+        position={position}
+        hoverR={isSpace ? 5: 4}
+        normalR={isSpace ? 2 : 1}
+        fill={isSpace ? '#fff' : undefined}
+      />
+    );
+  });
 }
 
 export const Render = React.memo(

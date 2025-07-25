@@ -1,41 +1,32 @@
 import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
-import { useService, useHook, useComposeHOC } from '../../../../context';
-import {
-  IPartRendererProps,
-  PIN_RENDERER,
-  IPinRendererProps,
-} from '../../../../types';
+import { useService, useHook } from '../../../../context';
+import { IPartRendererProps, PIN_RENDERER } from '../../../../types';
+import { Pin } from './pin';
 
 function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps) {
   const { getConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
-  const pinComposedRenderers = pinRenderers.map(useComposeHOC);
 
-  if (pins.length === 0 || pinComposedRenderers.length === 0) {
+  if (pins.length === 0 || pinRenderers.length === 0) {
     return null;
   }
 
-  return (
-    <>
-      {pins.map(({ position }, index) => {
-        const connections = getConnections(id, index);
-        const isSpace = !connections || connections.length === 0;
-
-        return pinComposedRenderers.map(({ Component, getKey }) => {
-          const props: IPinRendererProps = {
-            id: `${id}-${index}`,
-            position,
-            hoverR: 4,
-            normalR: 0,
-            fill: isSpace ? '#fff' : undefined,
-          };
-          const key = getKey?.(props) ?? `${id}-${index}`;
-          return <Component key={key} $$key={key} {...props} />;
-        });
-      })}
-    </>
-  );
+  return pins.map(({ position }, index) => {
+    const connections = getConnections(id, index);
+    const isSpace = !connections || connections.length === 0;
+    const key = `${id}-${index}`;
+    return (
+      <Pin
+        key={key}
+        id={key}
+        position={position}
+        hoverR={4}
+        normalR={0}
+        fill={isSpace ? '#fff' : undefined}
+      />
+    );
+  });
 }
 
 export const Render = React.memo(PartPinRender, ({ data: prev }, { data: next }) => {
