@@ -1,8 +1,7 @@
 import { PIN_SIZE } from '@circuit/electronics';
 import { PropsWithHocParams } from '@circuit/inject';
-import { RENDERER_HOC } from '@circuit/shared';
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useService, useHook, composeHOC } from '../../../../context';
+import React, { useState, useRef, useEffect } from 'react';
+import { useService } from '../../../../context';
 import {
   IPinRendererProps,
   DRAG_SCENE_SERVICE,
@@ -13,7 +12,7 @@ import * as Styles from './styles.less';
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
-  const service = useService(DRAG_SCENE_SERVICE);
+  const dragService = useService(DRAG_SCENE_SERVICE);
   const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
   const [actual, setActual] = useState(0);
   const {
@@ -46,7 +45,7 @@ function PinRenderer(props: IPinRendererProps) {
 
   function handleHover(isHover: boolean) {
     // 有场景正在运行或者是图纸移动模式时，不进行任何操作
-    if (service.size !== 0 || configuration.movePainterMode.data) {
+    if (dragService.isDragging() || configuration.movePainterMode.data) {
       return;
     }
 
