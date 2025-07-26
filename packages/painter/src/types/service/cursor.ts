@@ -28,6 +28,8 @@ export enum ICursorKind {
   Drag,
   /** 抓取状态（拖拽中） */
   Dragging,
+  /** 多选框 */
+  SelectBox,
   /** 绘制导线 */
   DrawLine,
 }

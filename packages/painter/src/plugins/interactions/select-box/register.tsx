@@ -18,6 +18,8 @@ import {
   SELECT_SERVICE,
   EVENT_LISTENER_HOOK,
   COLLISION_SERVICE,
+  CURSOR_SERVICE,
+  ICursorKind,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -78,6 +80,10 @@ definePlugin(({ registerHook, getService }) => {
     },
     onDragMove(event) {
       end.setData(Point.from(event.positionInDrawer));
+
+      if (start.data.distance(end.data) > SELECT_BOX_MIN_MOVE_DISTANCE) {
+        getService(CURSOR_SERVICE).set(ICursorKind.SelectBox);
+      }
     },
     afterStart(startPayload) {
       // 打印日志
@@ -95,8 +101,12 @@ definePlugin(({ registerHook, getService }) => {
       }
 
       const logger = getService(LOGGER_SERVICE);
+      const cursorService = getService(CURSOR_SERVICE);
       const { positionInDrawer: startPosition } = startPayload.event;
       const { positionInDrawer: endPosition } = endPayload.event;
+
+      // 取消多选框图标
+      cursorService.clear();
 
       if (startPosition.distance(endPosition) < SELECT_BOX_MIN_MOVE_DISTANCE) {
         logger.debug(LoggerName, '选择距离小于最小移动距离，不进行选择');
@@ -125,6 +135,11 @@ definePlugin(({ registerHook, getService }) => {
       start.setData(Point.Zero());
       end.setData(Point.Zero());
       selectService.set(...partIds, ...lineIds);
+    },
+    onCancel() {
+      getService(CURSOR_SERVICE).clear();
+      start.setData(Point.Zero());
+      end.setData(Point.Zero());
     },
   });
 

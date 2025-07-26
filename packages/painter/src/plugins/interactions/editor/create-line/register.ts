@@ -17,7 +17,6 @@ import {
   VARIABLE_OBSERVER_SERVICE,
   EntityKind,
   EntityPartPin,
-  PAINTER_CONFIGURATION_SERVICE as CONFIGURATION,
 } from '../../../../types';
 import { PathSearcher } from '../algorithm';
 import { PATH_DISTORTION_HOC_SCOPE as KEY } from '../constant';
@@ -45,30 +44,21 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(EVENT_LISTENER_HOOK, {
     order: 5,
     onMouseDown(event) {
-      // 非左键不处理
-      if (event.button !== 0) {
-        return;
-      }
-
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
       const hoverService = getService(HOVER_SERVICE);
-      const state = getService(STATE_CORE_SERVICE);
-      const configuration = getService(CONFIGURATION);
       const hover = hoverService.status.data;
 
       if (
-        // 没有悬停
-        !hover ||
-        // 悬停的不是引脚
-        hover.kind !== EntityKind.PartPin ||
-        // 移动模式
-        configuration.movePainterMode.data ||
-        // 正在拖动
-        dragSceneService.isDragging()
+        !dragSceneService.isLeftMouseDownNoMovingNoScene(event) ||
+        (
+          !hover ||
+          hover.kind !== EntityKind.PartPin
+        )
       ) {
         return;
       }
 
+      const state = getService(STATE_CORE_SERVICE);
       const part = state.getPart(hover.id);
       const pin = getPartPin(part, hover.pin);
       const line = createLine(pin.position);

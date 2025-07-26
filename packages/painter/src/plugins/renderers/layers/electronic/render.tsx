@@ -14,24 +14,26 @@ function ElectronicLayerRender({ parts, lines }: IDrawLayerProps) {
     return null;
   }
 
-  return [
-    // 未选中的元件
-    ...parts
-      .filter((part) => !selectedIds.has(part.id))
-      .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />),
-    // 未选中的导线
-    ...lines
-      .filter((line) => !selectedIds.has(line.id))
-      .map((line) => <Line key={line.id} data={line} />),
-    // 选中的元件
-    ...parts
-      .filter((part) => selectedIds.has(part.id))
-      .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />),
-    // 选中的导线
-    ...lines
-      .filter((line) => selectedIds.has(line.id))
-      .map((line) => <Line key={line.id} data={line} />),
-  ];
+  return (
+    <g>
+      {/* 未选中的元件 */}
+      {...parts
+        .filter((part) => !selectedIds.has(part.id))
+        .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />)}
+      {/* 未选中的导线 */}
+      {...lines
+        .filter((line) => !selectedIds.has(line.id))
+        .map((line) => <Line key={line.id} data={line} />)}
+      {/* 选中的元件 */}
+      {...parts
+        .filter((part) => selectedIds.has(part.id))
+        .map((part) => <Part key={part.id} data={part} prototype={getPartPrototype(part.kind)} />)}
+      {/* 选中的导线 */}
+      {...lines
+        .filter((line) => selectedIds.has(line.id))
+        .map((line) => <Line key={line.id} data={line} />)}
+    </g>
+  );
 }
 
 export const Render = React.memo(

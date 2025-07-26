@@ -94,9 +94,9 @@ export function MapHashDebugger() {
 
         return (
           <>
-            {paths.map(([start, end]) => (
+            {paths.map(([start, end], i) => (
               <path
-                key={`path-${mark.kind}-${start.join(',')}-${end.join(',')}`}
+                key={`path-${mark.kind}-${start.join(',')}-${end.join(',')}-${i}`}
                 strokeWidth={3 / scale}
                 stroke={nodeColor[mark.kind]}
                 fill='transparent'
