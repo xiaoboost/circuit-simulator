@@ -83,5 +83,5 @@ jobs:
       - name: Setup Environment
         uses: './.github/actions/setup-env'
 
-      - name: Build Blog
+      - name: Build Website
         run: pnpm run build
