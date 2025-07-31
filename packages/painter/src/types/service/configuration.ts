@@ -33,6 +33,8 @@ export interface IPainterConfigurationService {
   readonly partLabelVisible: Watcher<PartLabelVisibleKind>;
   /** 打开图纸哈希调试器 */
   readonly openMapMarkDebugger: Watcher<boolean>;
+  /** 打开导线搜索调试器 */
+  readonly openLineSearchDebugger: Watcher<boolean>;
   /** 显示元件外边框 */
   readonly visibleElectronicOutline: Watcher<boolean>;
 }

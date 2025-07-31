@@ -20,7 +20,7 @@ import {
 } from '../../../../types';
 import { PathSearcher } from '../algorithm';
 import { PATH_DISTORTION_HOC_SCOPE as KEY } from '../constant';
-import { createPainterController, createSearchHook } from '../utils';
+import { painterStateGetter, createSearchHook, setSearchResult } from '../utils';
 import { CreateLineSceneName, LoggerName } from './constant';
 import { createDrawLineSearcher as createSearcher } from './search';
 
@@ -63,10 +63,12 @@ definePlugin(({ registerHook, getService }) => {
       const pin = getPartPin(part, hover.pin);
       const line = createLine(pin.position);
       const search = createSearcher({
+        lineId: line.id,
+        startPart: hover.id,
         start: pin.position,
         direction: pin.direction,
         map: getService(MAP_HASH_SERVICE).getMap(),
-        painter: createPainterController(getService),
+        painter: painterStateGetter(getService),
         hook: createSearchHook(getService),
       });
 
@@ -98,6 +100,7 @@ definePlugin(({ registerHook, getService }) => {
         throw new Error(msg);
       }
 
+      debugger;
       // 打印日志
       logger.info(
         LoggerName,
@@ -108,11 +111,10 @@ definePlugin(({ registerHook, getService }) => {
       // 选中导线
       getService(SELECT_SERVICE).set(line.id);
       // 初始化导线路径
-      setPath(line.id, search(event.positionInDrawer));
+      setSearchResult(getService, search(event.positionInDrawer));
     },
     onDragMove({ positionInDrawer, movement }, { line, search }: StartPayloadType) {
-      setPath(line.id, search(positionInDrawer, movement));
-      getService(LOGGER_SERVICE).debug(LoggerName, '创建中的导线', positionInDrawer.join());
+      setSearchResult(getService, search(positionInDrawer, movement));
     },
     isEnd(event) {
       return getService(DRAG_SCENE_SERVICE)

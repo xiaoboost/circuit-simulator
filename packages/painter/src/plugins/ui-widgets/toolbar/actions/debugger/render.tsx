@@ -15,10 +15,12 @@ export function DebuggerRender() {
   } = useService(CONFIGURATION_SERVICE);
   const {
     openMapMarkDebugger,
+    openLineSearchDebugger,
     visibleElectronicOutline,
   } = useService(PAINTER_CONFIGURATION_SERVICE);
   const [log, setLog] = useWatcher(openDebugLog);
   const [mapMark, setMapMark] = useWatcher(openMapMarkDebugger);
+  const [lineSearch, setLineSearch] = useWatcher(openLineSearchDebugger);
   const [electronicOutline, setElectronicOutline] = useWatcher(visibleElectronicOutline);
 
   // 非本地或者没有设置链接条件，则不显示调试按钮
@@ -52,6 +54,16 @@ export function DebuggerRender() {
     },
     {
       key: '3',
+      label: '导线搜索器',
+      isSelected: lineSearch,
+      onClick: (ev: React.MouseEvent) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        setLineSearch(!lineSearch);
+      },
+    },
+    {
+      key: '4',
       label: '元件外边框',
       isSelected: electronicOutline,
       onClick: (ev: React.MouseEvent) => {

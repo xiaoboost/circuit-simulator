@@ -13,4 +13,6 @@ export {
 export {
   type MarkMap,
   type Entity,
+  EntityKind,
+  MarkKind,
 } from '../../../types';
