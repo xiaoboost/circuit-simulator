@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
-    "@types/node": "20.12.8",
+    "@types/node": "20.19.0",
     "@types/react": "19.1.8",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.17.0",

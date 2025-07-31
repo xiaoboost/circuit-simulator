@@ -30,7 +30,7 @@
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
     "@types/circuit": "workspace:*",
-    "@types/node": "20.12.8",
+    "@types/node": "20.19.0",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.17.0",
     "rimraf": "6.0.1",
