@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.mjs",
   "devDependencies": {
-    "eslint": "9.25.1",
-    "eslint-plugin-import": "2.31.0",
-    "typescript-eslint": "8.34.1"
+    "eslint": "9.32.0",
+    "eslint-plugin-import": "2.32.0",
+    "typescript-eslint": "8.38.0"
   }
 }

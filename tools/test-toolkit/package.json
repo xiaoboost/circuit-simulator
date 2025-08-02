@@ -10,15 +10,15 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "4.7.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "vitest": "3.2.4"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.4",
     "@testing-library/react": "16.3.0",
-    "@types/react": "19.1.8",
-    "@types/react-dom": "19.1.6",
+    "@types/react": "19.1.9",
+    "@types/react-dom": "19.1.7",
     "@xiao-ai/tsconfig": "1.0.4",
     "typescript": "5.8.3"
   }

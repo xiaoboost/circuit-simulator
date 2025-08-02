@@ -25,15 +25,15 @@
   },
   "dependencies": {
     "@ant-design/icons": "6.0.0",
-    "react": "19.1.0"
+    "react": "19.1.1"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.19.0",
-    "@types/react": "19.1.8",
+    "@types/react": "19.1.9",
     "@xiao-ai/tsconfig": "1.0.4",
-    "eslint": "9.17.0",
+    "eslint": "9.32.0",
     "rimraf": "6.0.1",
     "tslib": "2.8.1",
     "typescript": "5.8.3"
