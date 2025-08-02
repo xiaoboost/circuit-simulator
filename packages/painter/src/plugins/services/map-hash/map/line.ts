@@ -148,10 +148,10 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
           remove(map, mark.position);
         }
         else if (isLineCross(mark)) {
-          deleteLine(mark, line, map);
+          set(map, deleteLine(mark, line, map));
         }
         else if (isPartPinLine(mark)) {
-          deleteLine(mark);
+          set(map, deleteLine(mark));
         }
         else {
           throw new Error('导线端点只能出现在其他导线端点、交错节点、器件引脚处');
@@ -162,7 +162,7 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
           remove(map, mark.position);
         }
         else if (isLineCover(mark)) {
-          deleteLine(mark, line);
+          set(map, deleteLine(mark, line));
         }
         else {
           throw new Error('删除导线时，非端点只可能有导线本身和交叠节点');
