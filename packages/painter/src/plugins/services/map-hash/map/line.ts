@@ -120,8 +120,8 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
   const points = getLinePoints(path);
 
   for (let i = 0; i < points.length; i++) {
-    const point = Point.from(points[i]);
-    const lastPoint = Point.from(points[i - 1]);
+    const point = points[i];
+    const lastPoint = points[i - 1];
     const mark = get(map, point);
 
     // 运行时距离检查
