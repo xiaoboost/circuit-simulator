@@ -4,6 +4,7 @@
   "description": "电路仿真代码仓库",
   "scripts": {
     "test": "pnpm -r run --parallel test",
+    "test:prepare": "pnpm run --filter @circuit/test-toolkit build",
     "test:update": "pnpm -r run --parallel test:update",
     "lint": "pnpm -r --parallel run lint",
     "lint:fix": "pnpm -r --parallel run lint:fix",

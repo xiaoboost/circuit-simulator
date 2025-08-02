@@ -60,7 +60,7 @@ jobs:
         uses: './.github/actions/setup-env'
 
       - name: Test Prepare
-        run: pnpm run --filter @circuit/test-toolkit build
+        run: pnpm run test:prepare
 
       - name: Test Code
         run: pnpm run test
