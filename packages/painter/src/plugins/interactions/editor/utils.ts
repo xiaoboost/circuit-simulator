@@ -1,6 +1,9 @@
-import { IPluginInstallerContext } from '@circuit/inject';
-import { LOGGER_SERVICE } from '@circuit/shared';
+import { IPluginInstallerContext } from '@circuit/inject/core/types';
 import { HOVER_SERVICE, VARIABLE_OBSERVER_SERVICE } from '../../../types';
+import {
+  PATH_SEARCH_POINTS_STATE as pathKey,
+  PathSearchPointData,
+} from '../../interactions/debugger/path-search';
 import { SearchHook, PainterState, SearchResult } from './algorithm';
 import { POINT_RADIUS_HOC_SCOPE as PinSize } from './constant';
 
@@ -18,27 +21,49 @@ export function painterStateGetter(getService: GetService): PainterState {
 
 export function setSearchResult(getService: GetService, result: SearchResult[]): void {
   const VarService = getService(VARIABLE_OBSERVER_SERVICE);
-  // ..
+
+  for (const fixture of result) {
+    if ('path' in fixture) {
+      VarService.set(pathKey, `${fixture.id}-path`, fixture.path);
+      VarService.set(pathKey, `${fixture.id}-pin`, fixture.path);
+    }
+  }
 }
 
 export function createSearchHook(getService: GetService): SearchHook {
-  const loggerService = getService(LOGGER_SERVICE);
+  const varService = getService(VARIABLE_OBSERVER_SERVICE);
+  let store: PathSearchPointData | undefined = undefined;
 
   return {
-    useCurrentNode(node) {
-      // ..
+    start(start, end) {
+      store = {
+        start,
+        end,
+        current: undefined,
+        expand: undefined,
+        result: undefined,
+      };
+      varService.set(pathKey, { ...store });
     },
-    useExpandNode(node) {
-      // ..
+    end(path) {
+      store!.result = path;
+      varService.set(pathKey, { ...store });
     },
-    useStartNode(node) {
-      // ..
+    expand(node) {
+      store!.expand = [...(store!.expand ?? []), {
+        point: node.position,
+        value: node.value,
+      }];
+      varService.set(pathKey, { ...store });
     },
-    useEndNode(node) {
-      // ..
+    used(node) {
+      store!.current = node.position;
+      store!.expand = undefined;
+      varService.set(pathKey, { ...store });
     },
-    useEndSearch(path) {
-      // ..
+    afterEnd() {
+      store = undefined;
+      varService.set(pathKey, undefined);
     },
   };
 }

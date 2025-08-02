@@ -19,9 +19,11 @@ export interface IVariableObserverService {
   /** 清除所有变量 */
   clear(): void;
   /** 设置变量 */
+  set<T>(symbol: symbol, newVal: T): void;
   set<T>(symbol: symbol, key: string, newVal: T): void;
   set<T>(symbol: symbol, keyValues: [string, T][]): void;
   /** 获取变量 */
+  get<T>(symbol: symbol): T | undefined;
   get<T>(symbol: symbol, key: string): T | undefined;
   /** 观察变量 */
   observe<T>(symbol: symbol, key: string, callback: ObserverCb<T>): () => void;
@@ -38,5 +40,6 @@ export interface IVariableObserverService {
   /** 取消观察变量 */
   unObserve(symbol: symbol, key: string, callback: ObserverCb): void;
   /** React 订阅变量 */
+  useVariable<T>(symbol: symbol): T | undefined;
   useVariable<T>(symbol: symbol, key: string): T | undefined;
 }

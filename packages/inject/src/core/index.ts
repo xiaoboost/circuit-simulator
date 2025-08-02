@@ -21,8 +21,3 @@ export {
   RootScope,
   InjectContext,
 } from './context';
-
-export {
-  type ServiceTypeWithKey,
-  type IPluginInstallerContext,
-} from './types';

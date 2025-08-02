@@ -14,12 +14,10 @@ import {
   SELECT_SERVICE,
   DRAG_SCENE_SERVICE,
   MAP_HASH_SERVICE,
-  VARIABLE_OBSERVER_SERVICE,
   EntityKind,
   EntityPartPin,
 } from '../../../../types';
 import { PathSearcher } from '../algorithm';
-import { PATH_DISTORTION_HOC_SCOPE as KEY } from '../constant';
 import { painterStateGetter, createSearchHook, setSearchResult } from '../utils';
 import { CreateLineSceneName, LoggerName } from './constant';
 import { createDrawLineSearcher as createSearcher } from './search';
@@ -34,12 +32,6 @@ interface StartPayloadType extends DragSceneHookPayload {
 }
 
 definePlugin(({ registerHook, getService }) => {
-  const setPath = (id: string, path: Point[]) => {
-    const VarService = getService(VARIABLE_OBSERVER_SERVICE);
-    VarService.set(KEY, `${id}-path`, path);
-    VarService.set(KEY, `${id}-pin`, path);
-  };
-
   // 注册创建导线场景
   registerHook(EVENT_LISTENER_HOOK, {
     order: 5,

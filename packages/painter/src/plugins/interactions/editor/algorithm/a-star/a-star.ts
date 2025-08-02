@@ -45,7 +45,7 @@ export function aStarSearch({
   first.value = rules.cost(first);
   stack.push(first);
 
-  hook?.useStartNode?.(first);
+  hook?.start?.(start, end, direction);
 
   // 终点状态
   let endStatus: SearchNodeData | undefined = void 0;
@@ -65,7 +65,7 @@ export function aStarSearch({
       break;
     }
 
-    hook?.useCurrentNode?.(nodeNow);
+    hook?.used?.(nodeNow);
 
     // 按方向扩展
     for (let i = 0; i < rotateList.length; i++) {
@@ -74,12 +74,11 @@ export function aStarSearch({
 
       nodeExpand.value = rules.cost(nodeExpand);
 
-      hook?.useExpandNode?.(nodeExpand);
+      hook?.expand?.(nodeExpand);
 
       // 判断是否是终点
       if (rules.isEnd(nodeExpand)) {
         endStatus = nodeExpand;
-        hook?.useEndNode?.(endStatus);
         break;
       }
 
@@ -110,7 +109,7 @@ export function aStarSearch({
   way.push(start);
   way.reverse();
 
-  hook?.useEndSearch?.(way);
+  hook?.end?.(way);
 
   return way;
 }

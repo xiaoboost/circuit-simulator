@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { definePlugin, useService } from '../../../context';
 import { VARIABLE_OBSERVER_SERVICE, IVariableObserverService, ObserverCb } from '../../../types';
 
+const DEFAULT_KEY = '_$default';
+
 definePlugin(({ registerService }) => {
   const variableMap = new Map<symbol, Map<string, any>>();
   const observerMap = new Map<symbol, Map<string, ObserverCb[]>>();
@@ -11,10 +13,10 @@ definePlugin(({ registerService }) => {
       variableMap.clear();
       observerMap.clear();
     },
-    get(symbol, key) {
+    get(symbol, key: string = DEFAULT_KEY) {
       return variableMap.get(symbol)?.get(key);
     },
-    set(symbol, key, newVal?) {
+    set(symbol, key?, newVal?) {
       const setVal = (key: string, val: any) => {
         const valTable = variableMap.get(symbol) ?? new Map();
 
@@ -30,7 +32,11 @@ definePlugin(({ registerService }) => {
         }
       };
 
-      if (Array.isArray(key)) {
+      // 如果 key 不是字符串，则认为是值
+      if (typeof key !== 'string') {
+        setVal(DEFAULT_KEY, key);
+      }
+      else if (Array.isArray(key)) {
         key.forEach(([k, v]) => setVal(k, v));
       }
       else {
@@ -79,7 +85,7 @@ definePlugin(({ registerService }) => {
         cbList.splice(index, 1);
       }
     },
-    useVariable(symbol, key) {
+    useVariable(symbol, key: string = DEFAULT_KEY) {
       const service = useService(VARIABLE_OBSERVER_SERVICE);
       const [value, setValue] = useState(service.get(symbol, key));
 

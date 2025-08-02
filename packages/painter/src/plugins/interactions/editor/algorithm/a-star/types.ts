@@ -39,14 +39,14 @@ export interface AStarSearchOption {
 
 /** 搜索钩子函数 */
 export interface SearchHook {
-  /** 使用当前节点 */
-  useCurrentNode?(node: SearchNodeData): void;
-  /** 使用扩展节点 */
-  useExpandNode?(node: SearchNodeData): void;
-  /** 使用起点节点 */
-  useStartNode?(node: SearchNodeData): void;
-  /** 使用终点节点 */
-  useEndNode?(node: SearchNodeData): void;
+  /** 开始搜索 */
+  start?(start: Point, end: Point, direction: Point): void;
   /** 结束搜索 */
-  useEndSearch?(path: PathWithPoint): void;
+  end?(path: PathWithPoint): void;
+  /** 待扩展节点 */
+  expand?(node: SearchNodeData): void;
+  /** 已扩展结点 */
+  used?(node: SearchNodeData): void;
+  /** 搜索结束 */
+  afterEnd?(): void;
 }
