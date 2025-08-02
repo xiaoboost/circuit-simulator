@@ -45,7 +45,7 @@ function PinRenderer(props: IPinRendererProps) {
 
   function handleHover(isHover: boolean) {
     // 有场景正在运行或者是图纸移动模式时，不进行任何操作
-    if (dragService.isDragging() || configuration.movePainterMode.data) {
+    if (dragService.isDragging.data || configuration.movePainterMode.data) {
       return;
     }
 

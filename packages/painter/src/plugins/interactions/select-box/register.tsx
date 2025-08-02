@@ -39,7 +39,7 @@ definePlugin(({ registerHook, getService }) => {
 
   // 选择框组件
   function SelectBox() {
-    const [{ scale }] = useWatcher(useService(MAP_COORDINATE_SERVICE).value);
+    const [scale] = useWatcher(useService(MAP_COORDINATE_SERVICE).scale);
     const [startPosition] = useWatcher(start);
     const [endPosition] = useWatcher(end);
 

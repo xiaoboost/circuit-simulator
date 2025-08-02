@@ -9,6 +9,8 @@ import { useService, useWatcher } from '../../../../../context';
 import { SELECT_SERVICE } from '../../../../../types';
 import { Button } from '../../components';
 
+const LoggerName = '快捷操作';
+
 export function EditorRender() {
   const logger = useService(LOGGER_SERVICE);
   const painter = useService(STATE_CORE_SERVICE);
@@ -16,12 +18,12 @@ export function EditorRender() {
   const [canUndo] = useWatcher(painter.canUndo);
   const [canRedo] = useWatcher(painter.canRedo);
   const onUndo = () => {
-    logger.info('快捷操作栏', '画布触发撤销');
+    logger.info(LoggerName, '画布触发撤销');
     select.clear();
     painter.undo();
   };
   const onRedo = () => {
-    logger.info('快捷操作栏', '画布触发重做');
+    logger.info(LoggerName, '画布触发重做');
     select.clear();
     painter.redo();
   };

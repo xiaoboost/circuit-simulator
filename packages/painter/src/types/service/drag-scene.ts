@@ -1,6 +1,6 @@
 import { ReadonlySet } from '@circuit/shared';
 import { MouseEvent } from 'react';
-import { createServiceKey } from '../../context';
+import { createServiceKey, type Watcher } from '../../context';
 
 /**
  * 鼠标指针服务键
@@ -35,7 +35,7 @@ export interface SceneTriggerPayload {
 /** 鼠标拖动服务 */
 export interface IDragSceneService extends ReadonlySet<string> {
   /** 正在拖动 */
-  isDragging(): boolean;
+  isDragging: Watcher<boolean>;
   /**
    * 只有某个场景
    */

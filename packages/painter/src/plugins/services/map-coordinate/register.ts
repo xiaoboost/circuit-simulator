@@ -13,24 +13,34 @@ import {
 
 definePlugin(({ getService, registerHook, registerService }) => {
   const service: IMapCoordinateService = {
-    value: new Watcher({
-      position: new Point(0, 0),
-      scale: 1,
-    }),
-    setScale(scale) {
-      if (scale !== this.value.data.scale) {
-        this.value.setData({
-          scale,
-          position: this.value.data.position,
-        });
+    ScaleMin: 0.5,
+    ScaleMax: 2,
+    scale: new Watcher(1),
+    position: new Watcher(new Point(0, 0)),
+    zoomIn() {
+      let size = this.scale.data + 0.1;
+
+      if (size > this.ScaleMax) {
+        size = this.ScaleMax;
       }
+
+      this.setScale(size);
+    },
+    zoomOut() {
+      let size = this.scale.data - 0.1;
+
+      if (size < this.ScaleMin) {
+        size = this.ScaleMin;
+      }
+
+      this.setScale(size);
+    },
+    setScale(scale) {
+      this.scale.setData(Math.round(scale * 10) / 10);
     },
     setPosition(position) {
-      if (!this.value.data.position.isEqual(position)) {
-        this.value.setData({
-          scale: this.value.data.scale,
-          position,
-        });
+      if (!this.position.data.isEqual(position)) {
+        this.position.setData(position);
       }
     },
     screenToViewPosition(position) {
@@ -42,18 +52,16 @@ definePlugin(({ getService, registerHook, registerService }) => {
     screenToMapPosition(position) {
       return this.viewToMapPosition(this.screenToViewPosition(position));
     },
-    viewToMapPosition(position) {
-      const { data: map } = this.value;
-      return position.add(map.position, -1).mul(map.scale, -1);
+    viewToMapPosition(input) {
+      const { scale: { data: scale }, position: { data: position } } = this;
+      return input.add(position, -1).mul(scale, -1);
     },
     mapToViewPosition(mapCoordinate) {
-      const { data: map } = this.value;
-      return mapCoordinate.mul(map.scale).add(map.position);
+      const { scale: { data: scale }, position: { data: position } } = this;
+      return mapCoordinate.mul(scale).add(position);
     },
   };
 
-  const minLimit = 20;
-  const maxLimit = 100;
   const DragSceneName = 'DragBackground';
 
   // 注册滚轮缩放事件
@@ -90,35 +98,23 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
       const domRect = e.currentTarget.getBoundingClientRect();
       const mousePosition = new Point(e.pageX - domRect.left, e.pageY - domRect.top);
-      const { data: oldVal } = service.value;
-      let size = oldVal.scale * 20;
+      const { scale, position } = service;
+      const oldScale = scale.data;
 
       if (e.deltaY > 0) {
-        size -= 5;
+        service.zoomOut();
       }
       else if (e.deltaY < 0) {
-        size += 5;
+        service.zoomIn();
       }
 
-      if (size < minLimit) {
-        size = minLimit;
-        return;
-      }
-      if (size > maxLimit) {
-        size = maxLimit;
-        return;
-      }
-
-      size = size / 20;
-
-      service.value.setData({
-        scale: size,
-        position: oldVal.position
+      service.position.setData(
+        position.data
           .add(mousePosition, -1)
-          .mul(size / oldVal.scale)
+          .mul(scale.data / oldScale)
           .add(mousePosition)
           .round(1),
-      });
+      );
     },
   });
 
@@ -137,7 +133,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
       return dragSceneService.isLeftMouseUpNoMovingHasScene(event, DragSceneName);
     },
     onDragMove(event) {
-      service.setPosition(service.value.data.position.add(event.movement));
+      service.setPosition(service.position.data.add(event.movement));
     },
     afterStart() {
       const cursorService = getService(CURSOR_SERVICE);
@@ -161,6 +157,7 @@ definePlugin(({ getService, registerHook, registerService }) => {
 
   // 卸载器
   return () => {
-    service.value.destroy();
+    service.scale.destroy();
+    service.position.destroy();
   };
 });

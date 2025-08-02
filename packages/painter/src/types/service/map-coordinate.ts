@@ -13,18 +13,30 @@ import { createServiceKey, type Watcher } from '../../context';
 export const MAP_COORDINATE_SERVICE =
   createServiceKey<IMapCoordinateService>('MapCoordinateService');
 
-export interface IMapCoordinate {
-  /** 图纸位置 */
-  position: Point;
-  /** 图纸缩放比例 */
-  scale: number;
-}
-
+/** 图纸坐标服务 */
 export interface IMapCoordinateService {
-  /** 图纸参数 */
-  value: Watcher<IMapCoordinate>;
+  /** 图纸缩放比例最小值 */
+  ScaleMin: number;
+  /** 图纸缩放比例最大值 */
+  ScaleMax: number;
+  /** 图纸缩放比例 */
+  scale: Watcher<number>;
+  /** 图纸位置 */
+  position: Watcher<Point>;
   /** 设置缩放比例 */
   setScale(scale: number): void;
+  /**
+   * 放大图纸
+   *
+   * @description 缩放比提高 10%
+   */
+  zoomIn(): void;
+  /**
+   * 缩小图纸
+   *
+   * @description 缩放比降低 10%
+   */
+  zoomOut(): void;
   /** 设置图纸位置 */
   setPosition(position: Point): void;
   /** 将屏幕坐标转换为视图坐标 */

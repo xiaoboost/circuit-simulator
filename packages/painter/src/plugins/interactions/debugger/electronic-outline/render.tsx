@@ -13,7 +13,7 @@ export function ElectronicOutline() {
   const [electronicOutline] = useWatcher(configuration.visibleElectronicOutline);
   const collisionService = useService(COLLISION_SERVICE);
   const mapService = useService(MAP_COORDINATE_SERVICE);
-  const [{ scale }] = useWatcher(mapService.value);
+  const [scale] = useWatcher(mapService.scale);
 
   if (!electronicOutline) {
     return null;

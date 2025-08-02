@@ -25,7 +25,7 @@ export function MapHashDebugger() {
   const [openMapMarkDebugger] = useWatcher(configuration.openMapMarkDebugger);
   const mapHashService = useService(MAP_HASH_SERVICE);
   const mapService = useService(MAP_COORDINATE_SERVICE);
-  const [{ scale }] = useWatcher(mapService.value);
+  const [scale] = useWatcher(mapService.scale);
 
   if (!openMapMarkDebugger) {
     return null;

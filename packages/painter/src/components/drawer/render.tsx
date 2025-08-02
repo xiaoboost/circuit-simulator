@@ -16,7 +16,8 @@ import { getBackgroundStyle, getCursorStyle } from './utils';
 
 export function Drawer() {
   const mapService = useService(MAP_COORDINATE_SERVICE);
-  const [{ scale, position }] = useWatcher(mapService.value);
+  const [scale] = useWatcher(mapService.scale);
+  const [position] = useWatcher(mapService.position);
   const mouseListener = useMouseListener();
   const layers = useHook(DRAW_LAYER_HOOK, 'asc');
   const { state } = useService(STATE_CORE_SERVICE);

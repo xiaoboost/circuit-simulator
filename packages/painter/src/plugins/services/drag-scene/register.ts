@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
 import { HOT_KEY_HOOK } from '@circuit/shared';
 import type { MouseEvent } from 'react';
-import { definePlugin } from '../../../context';
+import { definePlugin, Watcher } from '../../../context';
 import {
   DragMouseEvent,
   DragSceneHookPayload,
@@ -19,11 +19,9 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const isMovedMap = new Map<string, boolean>();
   const startPositionMap = new Map<string, Point>();
   const service: IDragSceneService = {
+    isDragging: new Watcher(false),
     get size() {
       return sceneSet.size;
-    },
-    isDragging() {
-      return sceneSet.size !== 0;
     },
     has(name) {
       return sceneSet.has(name);
@@ -47,6 +45,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       sceneSet.add(scene);
       isMovedMap.set(scene, false);
       triggerPayloadMap.set(scene, startPayload);
+      service.isDragging.setData(sceneSet.size !== 0);
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
       if (startPayload?.event) {
@@ -71,6 +70,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
           hooks.forEach(({ name }) => {
             sceneSet.delete(name);
             isMovedMap.delete(name);
+            service.isDragging.setData(sceneSet.size !== 0);
           });
         })
         // 触发结束/取消事件
@@ -156,6 +156,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             isMovedMap.delete(hook.name);
             triggerPayloadMap.delete(hook.name);
             startPositionMap.delete(hook.name);
+            service.isDragging.setData(sceneSet.size !== 0);
           })
           .then(() => hook.afterEnd?.(triggerPayload, { event: dragMouseEvent }));
       }
@@ -207,7 +208,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
             : new Point(0, 0);
 
           if (!movement.isZero()) {
-            const movementInDrawer = movement.mul(map.value.data.scale, -1);
+            const movementInDrawer = movement.mul(map.scale.data, -1);
             const dragMouseEvent = getDragMouseEvent(event);
 
             for (const hook of hooks) {
@@ -218,7 +219,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
               }
 
               const movementAcc = dragMouseEvent.position.add(startPositionMap.get(hook.name)!, -1);
-              const movementInDrawerAcc = movementAcc.mul(map.value.data.scale, -1);
+              const movementInDrawerAcc = movementAcc.mul(map.scale.data, -1);
               const payload = triggerPayloadMap.get(hook.name);
               const dragEvent = {
                 ...dragMouseEvent,
