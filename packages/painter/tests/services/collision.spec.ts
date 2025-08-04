@@ -23,7 +23,7 @@ describe('碰撞服务', () => {
 
   it('导线碰撞信息', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
-    const line = createLineByPath('L_1', [
+    const line = createLineByPath([
       Point.from([0, 0]),
       Point.from([0, 100]),
       Point.from([100, 100]),
@@ -56,7 +56,7 @@ describe('碰撞服务', () => {
   it('获取点覆盖信息', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
     const part = createPartByKind(ElectronicKind.Resistance, []);
-    const line = createLineByPath('L_1', [
+    const line = createLineByPath([
       Point.from([40, 0]),
       Point.from([40, 100]),
       Point.from([100, 100]),
@@ -66,9 +66,9 @@ describe('碰撞服务', () => {
     collision.setEntity(line);
 
     expect(collision.pointInEntities(Point.from([40, 0]))).toEqual([
-      { kind: EntityKind.PartPin, id: 'R_1', pin: 1 },
-      { kind: EntityKind.Line, id: 'L_1', index: 0 },
-      { kind: EntityKind.LinePin, id: 'L_1', pin: 0 },
+      { kind: EntityKind.PartPin, id: part.id, pin: 1 },
+      { kind: EntityKind.Line, id: line.id, index: 0 },
+      { kind: EntityKind.LinePin, id: line.id, pin: 0 },
     ]);
   });
 });
