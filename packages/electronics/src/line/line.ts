@@ -24,6 +24,13 @@ export function transformLineStructureToStoreData({ path }: LineStructuredData):
   };
 }
 
+export function createLineByPath(id: string, path: Point[]): LineStructuredData {
+  return {
+    id,
+    path: path.slice(),
+  };
+}
+
 export function createLine(start: Point): LineStructuredData {
   return {
     id: createLineId(),

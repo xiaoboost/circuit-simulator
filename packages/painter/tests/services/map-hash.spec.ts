@@ -1,5 +1,6 @@
-import { Point, Direction, RotateMatrixSet, Rotate } from '@circuit/algorithm';
-import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/types';
+import { Point } from '@circuit/algorithm';
+import { createPartByKind, createLineByPath } from '@circuit/electronics';
+import { ElectronicKind } from '@circuit/types';
 import { describe, it, expect } from 'vitest';
 import { Map } from '../../src/plugins/services/map-hash';
 import { MAP_HASH_SERVICE, MarkKind } from '../../src/types';
@@ -10,14 +11,7 @@ describe('图纸标记服务', () => {
 
   it('标记器件', async () => {
     const mapHash = await getPlugin(MAP_HASH_SERVICE);
-    const part: PartStructuredData = {
-      id: 'R_1',
-      kind: ElectronicKind.Resistance,
-      position: Point.from(0),
-      textDirection: Direction.Top,
-      propertyValues: [],
-      rotate: RotateMatrixSet[Rotate.Same],
-    };
+    const part = createPartByKind(ElectronicKind.Resistance, []);
 
     mapHash.setPartMark(part);
     expect(Map.values(mapHash.getMap())).toEqual([
@@ -34,14 +28,11 @@ describe('图纸标记服务', () => {
 
   it('标记导线', async () => {
     const mapHash = await getPlugin(MAP_HASH_SERVICE);
-    const line: LineStructuredData = {
-      id: 'L_1',
-      path: [
-        Point.from([0, 0]),
-        Point.from([0, 60]),
-        Point.from([60, 60]),
-      ],
-    };
+    const line = createLineByPath('L_1', [
+      Point.from([0, 0]),
+      Point.from([0, 60]),
+      Point.from([60, 60]),
+    ]);
 
     mapHash.setLineMark(line);
     expect(Map.values(mapHash.getMap())).toEqual([
@@ -95,22 +86,12 @@ describe('图纸标记服务', () => {
 
   it('标记器件+导线，然后删除导线', async () => {
     const mapHash = await getPlugin(MAP_HASH_SERVICE);
-    const part: PartStructuredData = {
-      id: 'R_1',
-      kind: ElectronicKind.Resistance,
-      position: Point.from(0),
-      textDirection: Direction.Top,
-      propertyValues: [],
-      rotate: RotateMatrixSet[Rotate.Same],
-    };
-    const line: LineStructuredData = {
-      id: 'L_1',
-      path: [
-        Point.from([40, 0]),
-        Point.from([40, 60]),
-        Point.from([60, 60]),
-      ],
-    };
+    const part = createPartByKind(ElectronicKind.Resistance, []);
+    const line = createLineByPath('L_1', [
+      Point.from([40, 0]),
+      Point.from([40, 60]),
+      Point.from([60, 60]),
+    ]);
 
     mapHash.setPartMark(part);
     mapHash.setLineMark(line);

@@ -30,7 +30,6 @@ const getLabelKey = (id: string) => `${id}-label`;
 
 interface StartPayloadType extends DragSceneHookPayload {
   part: PartStructuredData;
-  afterDraft: boolean;
 }
 
 definePlugin(({ registerHook, getService }) => {
@@ -67,7 +66,6 @@ definePlugin(({ registerHook, getService }) => {
         if (!dragScene.isDragging.data) {
           dragScene.trigger(CreatePartSceneName, {
             part: newPart,
-            afterDraft: false,
           });
         }
       });

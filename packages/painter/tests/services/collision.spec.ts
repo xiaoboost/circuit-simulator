@@ -1,5 +1,6 @@
-import { Point, Direction, RotateMatrixSet, Rotate } from '@circuit/algorithm';
-import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/types';
+import { Point, RotateMatrixSet, Rotate } from '@circuit/algorithm';
+import { createPartByKind, createLineByPath } from '@circuit/electronics';
+import { ElectronicKind } from '@circuit/types';
 import { describe, it, expect } from 'vitest';
 import { COLLISION_SERVICE, EntityKind } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
@@ -9,14 +10,7 @@ describe('碰撞服务', () => {
 
   it('器件碰撞信息', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
-    const part: PartStructuredData = {
-      id: 'R_1',
-      kind: ElectronicKind.Resistance,
-      position: Point.from(0),
-      textDirection: Direction.Top,
-      propertyValues: [],
-      rotate: RotateMatrixSet[Rotate.Same],
-    };
+    const part = createPartByKind(ElectronicKind.Resistance, []);
 
     collision.setEntity(part);
 
@@ -29,14 +23,11 @@ describe('碰撞服务', () => {
 
   it('导线碰撞信息', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
-    const line: LineStructuredData = {
-      id: 'L_1',
-      path: [
-        Point.from([0, 0]),
-        Point.from([0, 100]),
-        Point.from([100, 100]),
-      ],
-    };
+    const line = createLineByPath('L_1', [
+      Point.from([0, 0]),
+      Point.from([0, 100]),
+      Point.from([100, 100]),
+    ]);
 
     collision.setEntity(line);
 
@@ -50,15 +41,9 @@ describe('碰撞服务', () => {
 
   it('器件碰撞信息-旋转', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
-    const part: PartStructuredData = {
-      id: 'R_1',
-      kind: ElectronicKind.Resistance,
-      position: Point.from(0),
-      textDirection: Direction.Top,
-      propertyValues: [],
-      rotate: RotateMatrixSet[Rotate.Clockwise],
-    };
+    const part = createPartByKind(ElectronicKind.Resistance, []);
 
+    part.rotate = RotateMatrixSet[Rotate.Clockwise];
     collision.setEntity(part);
 
     expect(collision.getAllEntitiesCollisionRects()).toEqual([
@@ -70,22 +55,12 @@ describe('碰撞服务', () => {
 
   it('获取点覆盖信息', async () => {
     const collision = await getPlugin(COLLISION_SERVICE);
-    const part: PartStructuredData = {
-      id: 'R_1',
-      kind: ElectronicKind.Resistance,
-      position: Point.from(0),
-      textDirection: Direction.Top,
-      propertyValues: [],
-      rotate: RotateMatrixSet[Rotate.Same],
-    };
-    const line: LineStructuredData = {
-      id: 'L_1',
-      path: [
-        Point.from([40, 0]),
-        Point.from([40, 100]),
-        Point.from([100, 100]),
-      ],
-    };
+    const part = createPartByKind(ElectronicKind.Resistance, []);
+    const line = createLineByPath('L_1', [
+      Point.from([40, 0]),
+      Point.from([40, 100]),
+      Point.from([100, 100]),
+    ]);
 
     collision.setEntity(part);
     collision.setEntity(line);
