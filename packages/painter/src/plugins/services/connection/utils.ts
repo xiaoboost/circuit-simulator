@@ -1,7 +1,7 @@
 import { type Point } from '@circuit/algorithm';
 import { getPartPins } from '@circuit/electronics';
-import { type IConnectionData } from '@circuit/shared';
 import { type StructuredData } from '@circuit/types';
+import { type IConnectionData } from '../../../types';
 
 /** 记录所有器件的引脚位置 */
 export function getConnections({ parts, lines }: StructuredData) {

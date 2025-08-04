@@ -1,11 +1,11 @@
-import {
-  CONNECTION_SERVICE,
-  IConnectionService,
-  IConnectionData,
-  IConnectionDataWithPin,
-} from '@circuit/shared';
 import { StructuredData } from '@circuit/types';
 import { definePlugin } from '../../../context';
+import {
+  CONNECTION_SERVICE,
+  type IConnectionService,
+  type IConnectionData,
+  type IConnectionDataWithPin,
+} from '../../../types';
 import { IConnectionMap } from './types';
 import { getConnections } from './utils';
 

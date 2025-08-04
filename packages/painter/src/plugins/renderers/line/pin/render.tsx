@@ -1,8 +1,11 @@
 import { isEqualPoint } from '@circuit/algorithm';
-import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
 import { useService, useHook } from '../../../../context';
-import { ILineRendererProps, PIN_RENDERER } from '../../../../types';
+import {
+  type ILineRendererProps,
+  PIN_RENDERER,
+  CONNECTION_SERVICE,
+} from '../../../../types';
 import { Pin } from './pin';
 
 function PartPinRender({ data: { id, path }, style }: ILineRendererProps) {

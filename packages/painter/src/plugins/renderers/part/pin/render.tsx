@@ -1,7 +1,10 @@
-import { CONNECTION_SERVICE } from '@circuit/shared';
 import React from 'react';
 import { useService, useHook } from '../../../../context';
-import { IPartRendererProps, PIN_RENDERER } from '../../../../types';
+import {
+  type IPartRendererProps,
+  PIN_RENDERER,
+  CONNECTION_SERVICE,
+} from '../../../../types';
 import { Pin } from './pin';
 
 function PartPinRender({ data: { id }, prototype: { pins }, style }: IPartRendererProps) {

@@ -1,5 +1,5 @@
 import { getPartPrototype } from '@circuit/electronics';
-import { STATE_CORE_SERVICE, LOGGER_SERVICE, CONNECTION_SERVICE } from '@circuit/shared';
+import { STATE_CORE_SERVICE, LOGGER_SERVICE } from '@circuit/shared';
 import { PartStructuredData, PropertyValue } from '@circuit/types';
 import React, { useState, useCallback, useMemo } from 'react';
 import { useService } from '../../../../../context';
@@ -17,7 +17,7 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
   const [idError, setIdError] = useState('');
   const { commit } = useService(STATE_CORE_SERVICE);
   const logger = useService(LOGGER_SERVICE);
-  const connection = useService(CONNECTION_SERVICE);
+  // const connection = useService(CONNECTION_SERVICE);
   const { properties } = getPartPrototype(part.kind);
   const [errors, setErrors] = useState<string[]>([]);
   const changeId = useCallback((value: string) => {
@@ -33,8 +33,9 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
         }
       },
     });
-    connection.changeDeviceId(part.id, value);
-  }, [part.id, commit, logger, connection]);
+    // TODO: 画布内部监听 ID 变化来实现连接关系变更
+    // connection.changeDeviceId(part.id, value);
+  }, [part.id, commit, logger]);
 
   const changeProperty = useCallback((index: number, value: PropertyValue) => {
     const message = (
