@@ -15,12 +15,29 @@ import {
   PartPinData,
   ElectronicKind,
 } from '@circuit/types';
-import { createId } from '../utils';
+import { nanoid } from 'nanoid';
 import {
   ElectronicName,
   ElectronicCategoryName,
 } from './constant';
 import { Electronics } from './prototype';
+
+/** 创建引用编号 */
+function createRefTag(pre: string, ids: string[]): string {
+  let index = 1;
+
+  const idMap = new Map(ids.map((id) => [id, true]));
+
+  while (idMap.has(`${pre}_${index}`)) {
+    index++;
+  }
+
+  return `${pre}_${index}`;
+}
+
+function createPartId(): string {
+  return `_$part_${nanoid()}`;
+}
 
 /** 迭代器件所有引脚数据 */
 export function *getPartPins(part: PartStructuredData) {
@@ -52,6 +69,7 @@ export function getPartInfo(kind: ElectronicKind) {
 export function transformPartStoreToStructureData(data: PartStoreData): PartStructuredData {
   return {
     ...data,
+    id: createPartId(),
     position: Point.from(data.position),
     propertyValues: data.propertyValues ?? [],
     rotate: data.rotate ?? copyMatrix(RotateMatrixSet[Rotate.Same]),
@@ -95,12 +113,12 @@ export function createPartByKind(
   parts: PartStructuredData[],
 ): PartStructuredData {
   const prototype = getPartPrototype(kind);
-  const id = createId(prototype.pre, parts.map((part) => part.id));
   const textDirectionLabel = Object.keys(prototype.textBias ?? {})[0] ?? 'Bottom';
   const textDirection = Direction[textDirectionLabel as DirectionLabel];
   const part: PartStructuredData = {
-    id,
+    id: createPartId(),
     kind,
+    referenceTag: createRefTag(prototype.pre, parts.map((part) => part.referenceTag)),
     position: Point.from([0, 0]),
     rotate: [[1, 0], [0, 1]],
     propertyValues: prototype.properties.map((p) => ({

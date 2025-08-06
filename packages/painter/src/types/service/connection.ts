@@ -56,11 +56,6 @@ export interface IConnectionService {
   removeDevice(deviceId: string, pin?: number): void;
 
   /**
-   * 变更元件编号
-   */
-  changeDeviceId(id: string, newId: string): void;
-
-  /**
    * 获取元件连接数据
    *
    * @description 不输入`pin`时将会拿到所有连接

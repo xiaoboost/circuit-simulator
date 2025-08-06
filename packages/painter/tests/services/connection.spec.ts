@@ -75,36 +75,4 @@ describe('连接服务', () => {
     connection.removeDevice(line.id);
     expect(connection.getConnections(part.id)).toEqual([]);
   });
-
-  it('器件+导线，变更器件编号', async () => {
-    const connection = await getPlugin(CONNECTION_SERVICE);
-    const part = createPartByKind(ElectronicKind.Resistance, []);
-    const line = createLineByPath([
-      Point.from([40, 0]),
-      Point.from([80, 0]),
-    ]);
-
-    connection.createConnectionFromData({
-      parts: [part],
-      lines: [line],
-    });
-
-    expect(connection.getConnections(line.id)).toEqual([
-      {
-        id: part.id,
-        pin: 1,
-        originPin: 0,
-      },
-    ]);
-
-    const newPartId = 'R_2';
-    connection.changeDeviceId(part.id, newPartId);
-    expect(connection.getConnections(line.id)).toEqual([
-      {
-        id: newPartId,
-        pin: 1,
-        originPin: 0,
-      },
-    ]);
-  });
 });

@@ -1,14 +1,13 @@
 import { Point } from '@circuit/algorithm';
 import { LineStoreData, LineStructuredData } from '@circuit/types';
-
-let lineId = 1;
+import { nanoid } from 'nanoid';
 
 export function isLineId(id: string) {
   return /^_\$[lL]ine_\d+$/.test(id);
 }
 
 function createLineId() {
-  return `_$line_${lineId++}`;
+  return `_$line_${nanoid()}`;
 }
 
 export function transformLineStoreToStructureData({ path }: LineStoreData): LineStructuredData {

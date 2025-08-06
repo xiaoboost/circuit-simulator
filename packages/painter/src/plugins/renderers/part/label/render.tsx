@@ -29,8 +29,8 @@ function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
     propertyValues: properties,
     rotate,
     textDirection,
+    referenceTag,
   } = data;
-  const [label, subfix] = id.split('_');
   const invRotate = invertRotateMatrix(rotate);
   const [scale] = useWatcher(useService(MAP_COORDINATE_SERVICE).scale);
   const textRef = useRef<SVGTextElement>(null);
@@ -157,8 +157,8 @@ function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
     >
       {visibleId && (
         <text>
-          <tspan>{label}</tspan>
-          <tspan fontSize="70%">{subfix}</tspan>
+          <tspan>{prototype.pre}</tspan>
+          <tspan fontSize="70%">{referenceTag}</tspan>
         </text>
       )}
       {texts.map((text, i) => (

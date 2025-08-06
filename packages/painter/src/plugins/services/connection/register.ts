@@ -161,31 +161,6 @@ definePlugin(({ registerService }) => {
         }
       }
     },
-    changeDeviceId(id: string, newId: string) {
-      // 如果新旧编号相同，无需处理
-      if (id === newId) {
-        return;
-      }
-
-      const deviceConnections = connections.get(id);
-
-      if (!deviceConnections) {
-        return;
-      }
-
-      // 更新连接
-      connections.set(newId, deviceConnections);
-      // 删除旧数据
-      connections.delete(id);
-
-      // 遍历更新被连接器件的连接
-      for (const [originPin, pinConnections] of deviceConnections.entries()) {
-        for (const { id: targetId, pin: targetPin } of pinConnections) {
-          this.removeConnection(targetId, targetPin, id, originPin);
-          this.createConnection(targetId, targetPin, newId, originPin);
-        }
-      }
-    },
   };
 
   // 注册服务

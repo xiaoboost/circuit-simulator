@@ -9,8 +9,8 @@ import { PropertyValue } from './property';
 
 /** 器件原始数据 */
 export interface PartStoreData {
-  /** 器件编号 */
-  id: string;
+  /** 器件引用标签 */
+  referenceTag: string;
   /** 器件类别 */
   kind: ElectronicKind;
   /** 器件中心坐标 */
@@ -29,6 +29,8 @@ export interface PartStoreData {
 
 /** 器件结构化数据 */
 export interface PartStructuredData extends Omit<Required<PartStoreData>, 'position'> {
+  /** 器件编号 */
+  id: string;
   /** 器件中心坐标 */
   position: Point;
 }

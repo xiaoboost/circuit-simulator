@@ -6,7 +6,7 @@ export const data: StoreData = {
   parts:  [
     {
       kind: ElectronicKind.Diode,
-      id: 'VD_1',
+      referenceTag: '1',
       position: [700, 200],
       rotate: [[1, 0], [0, 1]],
       propertyValues: [
@@ -25,7 +25,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.Diode,
-      id: 'VD_2',
+      referenceTag: '2',
       position: [780, 200],
       rotate: [[1, 0], [0, 1]],
       propertyValues: [
@@ -44,7 +44,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.Diode,
-      id: 'VD_3',
+      referenceTag: '3',
       position: [700, 440],
       rotate: [[1, 0], [0, 1]],
       propertyValues: [
@@ -63,7 +63,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.Diode,
-      id: 'VD_4',
+      referenceTag: '4',
       position: [780, 440],
       rotate: [[1, 0], [0, 1]],
       propertyValues: [
@@ -82,7 +82,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.AcVoltageSource,
-      id: 'V_1',
+      referenceTag: '1',
       position: [580, 320],
       rotate: [[1, 0], [0, 1]],
       propertyValues: [
@@ -103,7 +103,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.Capacitor,
-      id: 'C_1',
+      referenceTag: '1',
       position: [900, 320],
       rotate: [[0, 1], [-1, 0]],
       propertyValues: [
@@ -116,7 +116,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.Resistance,
-      id: 'R_1',
+      referenceTag: '1',
       position: [960, 320],
       rotate: [[0, 1], [-1, 0]],
       propertyValues: [
@@ -129,7 +129,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.CurrentMeter,
-      id: 'I_out',
+      referenceTag: 'out',
       propertyValues: [],
       position: [840, 140],
       rotate: [[1, 0], [0, 1]],
@@ -137,7 +137,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.VoltageMeter,
-      id: 'V_out',
+      referenceTag: 'out',
       propertyValues: [],
       position: [1040, 320],
       rotate: [[1, 0], [0, 1]],
@@ -145,7 +145,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.VoltageMeter,
-      id: 'V_in',
+      referenceTag: 'in',
       propertyValues: [],
       position: [640, 320],
       rotate: [[1, 0], [0, 1]],
@@ -153,7 +153,7 @@ export const data: StoreData = {
     },
     {
       kind: ElectronicKind.ReferenceGround,
-      id: 'GND_1',
+      referenceTag: '1',
       propertyValues: [],
       position: [700, 540],
       rotate: [[1, 0], [0, 1]],
