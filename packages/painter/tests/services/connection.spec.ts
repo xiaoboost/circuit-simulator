@@ -1,16 +1,16 @@
 import { Point } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
-import { ElectronicKind } from '@circuit/types';
+import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { CONNECTION_SERVICE } from '../../src/types';
+import { CONNECTION_SERVICE, IConnectionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('连接服务', () => {
   registerPlugin('services/connection/register.ts');
 
-  let connection: any;
-  let part: any;
-  let line: any;
+  let connection: IConnectionService;
+  let part: PartStructuredData;
+  let line: LineStructuredData;
 
   beforeEach(async () => {
     connection = await getPlugin(CONNECTION_SERVICE);

@@ -26,6 +26,7 @@ export interface IVariableObserverService {
   get<T>(symbol: symbol): T | undefined;
   get<T>(symbol: symbol, key: string): T | undefined;
   /** 观察变量 */
+  observe<T>(symbol: symbol, callback: ObserverCb<T>): () => void;
   observe<T>(symbol: symbol, key: string, callback: ObserverCb<T>): () => void;
   /**
    * 取消所有观察

@@ -1,16 +1,16 @@
 import { Point, RotateMatrixSet, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
-import { ElectronicKind } from '@circuit/types';
+import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach } from 'vitest';
-import { COLLISION_SERVICE, EntityKind } from '../../src/types';
+import { COLLISION_SERVICE, EntityKind, ICollisionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('碰撞服务', () => {
   registerPlugin('services/collision/register.ts');
 
-  let collision: any;
-  let part: any;
-  let line: any;
+  let collision: ICollisionService;
+  let part: PartStructuredData;
+  let line: LineStructuredData;
 
   beforeEach(async () => {
     collision = await getPlugin(COLLISION_SERVICE);

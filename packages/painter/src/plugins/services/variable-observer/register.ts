@@ -32,28 +32,43 @@ definePlugin(({ registerService }) => {
         }
       };
 
+      // 首先检查是否是数组（批量设置）
+      if (Array.isArray(key)) {
+        key.forEach((item) => {
+          if (Array.isArray(item) && item.length === 2) {
+            setVal(item[0], item[1]);
+          }
+        });
+      }
       // 如果 key 不是字符串，则认为是值
-      if (typeof key !== 'string') {
+      else if (typeof key !== 'string') {
         setVal(DEFAULT_KEY, key);
       }
-      else if (Array.isArray(key)) {
-        key.forEach(([k, v]) => setVal(k, v));
+      else if (newVal === undefined) {
+        // 如果 newVal 是 undefined，说明是 set(symbol, value) 的形式
+        setVal(DEFAULT_KEY, key);
       }
       else {
         setVal(key, newVal);
       }
     },
-    observe(symbol, key, callback) {
+    observe(symbol, key?, callback?) {
+      // 如果 key 是函数，说明是 observe(symbol, callback) 的形式
+      if (typeof key === 'function') {
+        callback = key;
+        key = DEFAULT_KEY;
+      }
+
       const observer = observerMap.get(symbol) ?? new Map();
 
       if (!observerMap.has(symbol)) {
         observerMap.set(symbol, observer);
       }
 
-      observer.set(key, [...(observer.get(key) ?? []), callback]);
+      observer.set(key as string, [...(observer.get(key as string) ?? []), callback]);
 
       return () => {
-        this.unObserve(symbol, key, callback as any);
+        this.unObserve(symbol, key as string, callback as any);
       };
     },
     unObserve(symbol?, key?, callback?) {

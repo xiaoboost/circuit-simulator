@@ -1,17 +1,17 @@
 import { Point } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
-import { ElectronicKind } from '@circuit/types';
+import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Map } from '../../src/plugins/services/map-hash';
-import { MAP_HASH_SERVICE, MarkKind } from '../../src/types';
+import { MAP_HASH_SERVICE, MarkKind, IMapService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('图纸标记服务', () => {
   registerPlugin('services/map-hash/register.ts');
 
-  let mapHash: any;
-  let part: any;
-  let line: any;
+  let mapHash: IMapService;
+  let part: PartStructuredData;
+  let line: LineStructuredData;
 
   beforeEach(async () => {
     mapHash = await getPlugin(MAP_HASH_SERVICE);
