@@ -1,5 +1,8 @@
 import { Point } from '@circuit/algorithm';
-import { createPartByKind } from '@circuit/electronics';
+import {
+  createPartByKind,
+  createPartReferenceTag as createPartTag,
+} from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
   STATE_CORE_SERVICE,
@@ -77,7 +80,7 @@ definePlugin(({ registerHook, getService }) => {
     name: CreatePartSceneName,
     afterStart({ part }: StartPayloadType) {
       // 打印日志
-      getService(LOGGER_SERVICE).info(LoggerName, '开始创建器件', part.id);
+      getService(LOGGER_SERVICE).info(LoggerName, '开始创建器件', createPartTag(part));
       // 清空选中
       getService(SELECT_SERVICE).clear();
       // 下一帧时页面焦点设置为画布元素，不直接设置主要是为了规避浏览器事件系统的干扰
@@ -114,13 +117,14 @@ definePlugin(({ registerHook, getService }) => {
         throw new Error('创建器件失败，位置未确定');
       }
 
+      const partTag = createPartTag(part);
       const realPosition = collisionService.findNearestAvailablePosition({
         ...part,
         position: currentPosition,
       });
 
       if (!realPosition) {
-        logger.error(LoggerName, '创建器件失败，位置被占用', part.id);
+        logger.error(LoggerName, '创建器件失败，位置被占用', partTag);
         return;
       }
 
@@ -130,8 +134,8 @@ definePlugin(({ registerHook, getService }) => {
       };
 
       painterService.commit({
-        name: `创建器件 ${part.id}`,
-        description: `创建器件 ${part.id}，位置：${realPosition.join()}`,
+        name: `创建器件 ${partTag}`,
+        description: `创建器件 ${partTag}，位置：${realPosition.join()}`,
         patch({ parts }) {
           parts.push(newPart);
         },
@@ -140,12 +144,12 @@ definePlugin(({ registerHook, getService }) => {
       setPosition(part.id, undefined);
       mapService.setPartMark(newPart);
       collisionService.setEntity(newPart);
-      logger.info(LoggerName, '结束创建器件', part.id);
+      logger.info(LoggerName, '结束创建器件', partTag);
     },
     onCancel({ part }: StartPayloadType) {
       const painterService = getService(STATE_CORE_SERVICE);
       const logger = getService(LOGGER_SERVICE);
-      logger.info(LoggerName, '取消创建器件', part.id);
+      logger.info(LoggerName, '取消创建器件', createPartTag(part));
       painterService.dropDraft();
     },
   });

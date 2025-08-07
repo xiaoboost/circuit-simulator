@@ -1,4 +1,5 @@
 import { Point, Direction } from '@circuit/algorithm';
+import { createPartReferenceTag as createPartTag } from '@circuit/electronics';
 import {
   STREAM_SERVICE,
   LOGGER_SERVICE,
@@ -52,23 +53,24 @@ definePlugin(({ registerHook, getService }) => {
       const part = painterService.getPart(id);
       const cursor = getService(CURSOR_SERVICE);
       const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
+      const partTag = createPartTag(part);
 
       cursor.clear();
 
       // 文本方向未发生变化，清空临时数据
       if (newDirection === part.textDirection) {
         variableService.set(KEY, label, undefined);
-        getService(LOGGER_SERVICE).info(LoggerName, '文本方向未发生变化', id);
+        getService(LOGGER_SERVICE).info(LoggerName, `${partTag} 文本方向未发生变化`);
       }
       // 方向发生变化，提交修改
       else {
         const message = (
-          `移动器件 ${part.id} 文本，` +
+          `移动器件 ${partTag} 文本，` +
           `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
         );
 
         painterService.commit({
-          name: `移动器件 ${part.id} 文本`,
+          name: `移动器件 ${partTag} 文本`,
           description: message,
           patch: (data) => {
             const part = data.parts.find((p) => p.id === id);

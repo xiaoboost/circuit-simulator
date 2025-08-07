@@ -12,17 +12,19 @@ import { createServiceKey } from '@circuit/inject';
 export const LOGGER_SERVICE =
   createServiceKey<ILoggerService>('LoggerService');
 
+export type Message = string | (() => string);
+
 export interface ILoggerService {
   /**
    * 调试信息
    *
    * @description 只会在调试模式下打印
    */
-  debug(name: string,...messages: string[]): void;
+  debug(name: string,...messages: Message[]): void;
   /** 日志信息 */
-  info(name: string,...messages: string[]): void;
+  info(name: string,...messages: Message[]): void;
   /** 警告信息 */
-  warn(name: string, ...messages: string[]): void;
+  warn(name: string, ...messages: Message[]): void;
   /** 错误信息 */
-  error(name: string, ...messages: string[]): void;
+  error(name: string, ...messages: Message[]): void;
 }

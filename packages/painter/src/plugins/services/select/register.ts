@@ -1,8 +1,10 @@
+import { createPartReferenceTag } from '@circuit/electronics';
 import {
   LOGGER_SERVICE,
   STREAM_SERVICE,
   GlobalStreamConstant as Constant,
   isSameSet,
+  STATE_CORE_SERVICE,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import { SELECT_SERVICE, ISelectService } from '../../../types';
@@ -15,7 +17,20 @@ definePlugin(({ registerService, getService }) => {
     value: selected,
     set(...ids) {
       if (ids.length > 0) {
-        getService(LOGGER_SERVICE).info(LoggerName, '设置选中元件', ids.join(', '));
+        const getIdsString = () => {
+          const { state: { data: { parts, lines } } } = getService(STATE_CORE_SERVICE);
+          const lineIds = lines
+            .filter((line) => ids.includes(line.id))
+            .map((line) => line.id);
+
+          const partIds = parts
+            .filter((part) => ids.includes(part.id))
+            .map((part) => createPartReferenceTag(part));
+
+          return [...lineIds, ...partIds].join(', ');
+        };
+
+        getService(LOGGER_SERVICE).info(LoggerName, '设置选中元件', getIdsString);
       }
       else {
         getService(LOGGER_SERVICE).debug(LoggerName, '设置选中元件为空');

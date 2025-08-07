@@ -23,7 +23,7 @@ import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
 import { getTextLineCount, propertyToString } from './utils';
 
-function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
+function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const {
     id,
     propertyValues: properties,
@@ -133,7 +133,15 @@ function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
 
     setPosition(newPosition);
     stream.emit({ id });
-  }, [textDirection, texts, id, rotate, textRef.current, partLabelVisible, textLineCount]);
+  }, [
+    texts,
+    rotate,
+    textDirection,
+    referenceTag,
+    textRef.current,
+    partLabelVisible,
+    textLineCount,
+  ]);
 
   if (
     // 不存在偏移量
@@ -149,7 +157,6 @@ function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
   return (
     <g
       ref={textRef}
-      style={style}
       className={Styles.text}
       textAnchor={textAnchor}
       transform={`matrix(${invRotate.join()},${position.rotate(invRotate).join()})`}
@@ -177,8 +184,8 @@ function PartLabelRender({ data, prototype, style }: IPartRendererProps) {
 export const Render = React.memo(
   PartLabelRender,
   ({ data: prev }, { data: next }) => (
-    prev.id === next.id &&
     prev.kind === next.kind &&
+    prev.referenceTag === next.referenceTag &&
     isMatrixEqual(prev.rotate, next.rotate) &&
     prev.textDirection === next.textDirection &&
     isEqual(prev.propertyValues, next.propertyValues)

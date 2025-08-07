@@ -1,4 +1,8 @@
-import { getPartPrototype } from '@circuit/electronics';
+import {
+  createPartReferenceTag as createPartTag,
+  parsePartReferenceTag as parsePartTag,
+  getPartPrototype,
+} from '@circuit/electronics';
 import { STATE_CORE_SERVICE, LOGGER_SERVICE } from '@circuit/shared';
 import { PartStructuredData, PropertyValue } from '@circuit/types';
 import React, { useState, useCallback, useMemo } from 'react';
@@ -17,11 +21,11 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
   const [idError, setIdError] = useState('');
   const { commit } = useService(STATE_CORE_SERVICE);
   const logger = useService(LOGGER_SERVICE);
-  // const connection = useService(CONNECTION_SERVICE);
   const { properties } = getPartPrototype(part.kind);
   const [errors, setErrors] = useState<string[]>([]);
-  const changeId = useCallback((value: string) => {
-    const message = `将器件编号从 ${part.id} 改为 ${value}`;
+  const changeTag = useCallback((value: string) => {
+    const message = `将器件引用编号从 ${createPartTag(part)} 改为 ${value}`;
+    const [, newTag] = parsePartTag(value);
     logger.info(LoggerName, message);
     commit({
       name: '修改器件编号',
@@ -29,13 +33,11 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
       patch({ parts }) {
         const originPart = parts.find((item) => item.id === part.id);
         if (originPart) {
-          originPart.id = value;
+          originPart.referenceTag = newTag;
         }
       },
     });
-    // TODO: 画布内部监听 ID 变化来实现连接关系变更
-    // connection.changeDeviceId(part.id, value);
-  }, [part.id, commit, logger]);
+  }, [part, commit, logger]);
 
   const changeProperty = useCallback((index: number, value: PropertyValue) => {
     const message = (
@@ -54,7 +56,7 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
         }
       },
     });
-  }, [part.id, part.propertyValues, properties, commit, logger]);
+  }, [part, properties, commit, logger]);
   const onError = useCallback((index: number, error: string) => {
     setErrors((prev) => {
       const newErrors = [...prev];
@@ -76,10 +78,10 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
       <Form title='标识属性'>
         <FormItem title='编号' error={idError}>
           <Input
-            property={{ type: 'id' }}
-            value={part.id}
+            property={{ type: 'referenceTag' }}
+            value={createPartTag(part)}
             onError={setIdError}
-            onChange={changeId}
+            onChange={changeTag}
           />
         </FormItem>
       </Form>

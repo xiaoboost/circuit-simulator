@@ -2,6 +2,7 @@ import {
   LOGGER_SERVICE,
   CONFIGURATION_SERVICE,
   ILoggerService,
+  Message,
 } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 
@@ -12,14 +13,20 @@ const getLoggerStyle = (color: string) => {
 
 definePlugin(({ registerService, getService }) => {
   const isDebugMode = () => getService(CONFIGURATION_SERVICE).openDebugLog.data;
+  const getMessage = (messages: Message[]) => {
+    return messages.map((message) => {
+      return typeof message === 'function' ? message() : message;
+    });
+  };
 
   let lastLogKey: string | undefined;
 
   const service: ILoggerService = {
     debug(name, ...messages) {
       if (isDebugMode()) {
+        const realMessages = getMessage(messages);
         // 生成日志的唯一标识
-        const logKey = `${name}:${JSON.stringify(messages)}`;
+        const logKey = `${name}:${realMessages.join(' ')}`;
 
         // 重复的不打印
         if (lastLogKey === logKey) {
@@ -27,17 +34,17 @@ definePlugin(({ registerService, getService }) => {
         }
 
         lastLogKey = logKey;
-        console.info(`%c[Debug] [${name}]`, getLoggerStyle('CornflowerBlue'), ...messages);
+        console.info(`%c[Debug] [${name}]`, getLoggerStyle('CornflowerBlue'), ...realMessages);
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] [${name}]`, getLoggerStyle('Silver'), ...messages);
+      console.info(`%c[Info] [${name}]`, getLoggerStyle('Silver'), ...getMessage(messages));
     },
     warn(name, ...messages) {
-      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('LightCoral'), ...messages);
+      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('LightCoral'), ...getMessage(messages));
     },
     error(name, ...messages) {
-      console.error(`%c[Error] [${name}]`, getLoggerStyle('Tomato'), ...messages);
+      console.error(`%c[Error] [${name}]`, getLoggerStyle('Tomato'), ...getMessage(messages));
     },
   };
 

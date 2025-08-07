@@ -32,11 +32,27 @@ function createRefTag(pre: string, ids: string[]): string {
     index++;
   }
 
-  return `${pre}_${index}`;
+  return String(index);
 }
 
 function createPartId(): string {
   return `_$part_${nanoid()}`;
+}
+
+/** 拼接器件引用编号 */
+export function joinPartReferenceTag(prefix: string, suffix: string): string {
+  return `${prefix}_${suffix}`;
+}
+
+/** 获取器件完整引用编号 */
+export function createPartReferenceTag(part: PartStructuredData): string {
+  return joinPartReferenceTag(getPartPrototype(part.kind).pre, part.referenceTag);
+}
+
+/** 解析器件引用编号 */
+export function parsePartReferenceTag(tag: string): [prefix: string, suffix: string] {
+  const [prefix, ...rest] = tag.split('_');
+  return [prefix, rest.join('_')];
 }
 
 /** 迭代器件所有引脚数据 */
@@ -118,7 +134,7 @@ export function createPartByKind(
   const part: PartStructuredData = {
     id: createPartId(),
     kind,
-    referenceTag: createRefTag(prototype.pre, parts.map((part) => part.referenceTag)),
+    referenceTag: createRefTag(prototype.pre, parts.map((part) => createPartReferenceTag(part))),
     position: Point.from([0, 0]),
     rotate: [[1, 0], [0, 1]],
     propertyValues: prototype.properties.map((p) => ({

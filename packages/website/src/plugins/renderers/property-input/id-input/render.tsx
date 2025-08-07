@@ -1,79 +1,53 @@
+import {
+  createPartReferenceTag as createPartTag,
+  joinPartReferenceTag as joinPartTag,
+  parsePartReferenceTag as parsePartTag,
+} from '@circuit/electronics';
 import { STATE_CORE_SERVICE } from '@circuit/shared';
-import { Input, Space } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { Input } from 'antd';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useService } from '../../../../context';
 import { IPropertyInputProps } from '../../../../types';
-import * as Styles from './styles.less';
 
 export type Value = string;
 
 export type Props = IPropertyInputProps<Value, Descriptor>;
 
 export interface Descriptor {
-  type: 'id';
+  type: 'referenceTag';
 }
 
 export function IdInputRender({ value, onError, onChange }: Props) {
   const { state: { data: { parts } } } = useService(STATE_CORE_SERVICE);
-  const partIds = parts
-    .map(part => part.id)
-    .filter((id) => id !== value);
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
-  const [prefixError, setPrefixError] = useState(false);
   const [suffixError, setSuffixError] = useState(false);
+  const restPartTags = useMemo(() => {
+    return parts
+      .map(part => createPartTag(part))
+      .filter((id) => id !== value);
+  }, [parts, value]);
 
   useEffect(() => {
-    const [prefix, suffix] = value.split('_');
+    const [prefix, suffix] = parsePartTag(value);
     setPrefix(prefix);
     setSuffix(suffix);
   }, [value]);
 
-  const prefixRules = [
-    {
-      rule: (val: string) => val.length > 0,
-      error: '器件编号前缀不能为空',
-    },
-    {
-      rule: (val: string) => /^[A-Z]+$/.test(val),
-      error: '器件编号前缀只允许大写字母',
-    },
-    {
-      rule: (val: string) => !partIds.includes(`${val}_${suffix}`),
-      error: '器件编号已存在',
-    },
-  ];
   const suffixRules = [
     {
       rule: (val: string) => val.length > 0,
-      error: '器件编号前缀不能为空',
+      error: '器件引用编号不能为空',
     },
     {
       rule: (val: string) => /^[a-zA-Z0-9]+$/.test(val),
-      error: '器件编号前缀只允许字母和数字',
+      error: '器件引用编号只允许字母和数字',
     },
     {
-      rule: (val: string) => !partIds.includes(`${val}_${suffix}`),
+      rule: (val: string) => !restPartTags.includes(joinPartTag(prefix, val)),
       error: '器件编号已存在',
     },
   ];
-  const onPrefixChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newPrefix = e.target.value;
-
-    setPrefix(newPrefix);
-
-    for (const { rule, error } of prefixRules) {
-      if (!rule(newPrefix)) {
-        onError?.(error);
-        setPrefixError(true);
-        return;
-      }
-    }
-
-    onError?.('');
-    setPrefixError(false);
-    onChange(`${newPrefix}_${suffix}`);
-  };
   const onSuffixChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSuffix = e.target.value;
 
@@ -93,21 +67,12 @@ export function IdInputRender({ value, onError, onChange }: Props) {
   };
 
   return (
-    <Space.Compact style={{ height: '100%' }}>
-      <Input
-        placeholder="前缀"
-        style={{ width: '120px' }}
-        value={prefix}
-        onChange={onPrefixChange}
-        status={prefixError ? 'error' : undefined}
-      />
-      <span className={Styles.inputSplit}>-</span>
-      <Input
-        placeholder="编号"
-        value={suffix}
-        onChange={onSuffixChange}
-        status={suffixError ? 'error' : undefined}
-      />
-    </Space.Compact>
+    <Input
+      addonBefore={prefix}
+      placeholder="请输入引用编号"
+      value={suffix}
+      onChange={onSuffixChange}
+      status={suffixError ? 'error' : undefined}
+    />
   );
 }
