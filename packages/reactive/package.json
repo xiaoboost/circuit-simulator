@@ -15,7 +15,9 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "build:cjs": "tsc -p ./tsconfig.json",
+    "test": "pnpm run test:watch --run",
+    "test:watch": "vitest -c ./vite.config.ts",
+    "build:cjs": "tsc -p ./tsconfig.build.json",
     "build": "pnpm run clear && pnpm run build:cjs",
     "lint:type": "pnpm run build:cjs --noEmit",
     "lint:style": "eslint -c eslint.config.mjs",
@@ -28,12 +30,14 @@
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
+    "@circuit/test-toolkit": "workspace:*",
     "@types/node": "20.19.0",
     "@types/react": "19.1.9",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.32.0",
     "rimraf": "6.0.1",
     "tslib": "2.8.1",
-    "typescript": "5.8.3"
+    "typescript": "5.8.3",
+    "vitest": "3.2.4"
   }
 }
