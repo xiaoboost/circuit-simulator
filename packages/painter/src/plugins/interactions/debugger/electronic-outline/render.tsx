@@ -19,7 +19,7 @@ export function ElectronicOutline() {
     return null;
   }
 
-  const rects = collisionService.getAllEntitiesCollisionRects();
+  const rects = collisionService.getAllEntityRects();
 
   return (
     <g>
