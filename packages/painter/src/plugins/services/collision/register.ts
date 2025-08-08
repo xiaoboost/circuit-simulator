@@ -4,10 +4,7 @@ import {
   Direction,
   DirectionVectorSet,
 } from '@circuit/algorithm';
-import {
-  LineOrPartStructuredData,
-  PartStructuredData,
-} from '@circuit/types';
+import { LineOrPartStructuredData } from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
   ICollisionService,
@@ -15,7 +12,7 @@ import {
   IEntityRegion,
   Entity,
 } from '../../../types';
-import { pointInRect, rectInRect, collision } from './collision';
+import { pointInRect, rectInRect, collision, rectOffset } from './collision';
 import { getRectByEntity } from './create';
 
 definePlugin(({ registerService }) => {
@@ -27,7 +24,9 @@ definePlugin(({ registerService }) => {
       }
     },
     removeEntity(id: string) {
-      map.delete(id);
+      for (const region of this.getEntityRegion(id) ?? []) {
+        map.delete(region.id);
+      }
     },
     clearAll() {
       map.clear();
@@ -41,7 +40,7 @@ definePlugin(({ registerService }) => {
       }
       return result;
     },
-    rectCollides(rect: Rect) {
+    rectInEntities(rect: Rect) {
       const result: Entity[] = [];
       for (const region of map.values()) {
         if (region.rects.some(r => collision(r, rect))) {
@@ -50,19 +49,26 @@ definePlugin(({ registerService }) => {
       }
       return result;
     },
-    isPositionAvailable(entity: LineOrPartStructuredData) {
+    isEntityCollision(entity: LineOrPartStructuredData) {
       const regions = getRectByEntity(entity);
-      return regions.every(({ rects }) => {
-        return rects.every((r) => {
-          return this.rectCollides(r).length === 0;
+      return regions.some(({ rects }) => {
+        return rects.some((r) => {
+          return this.rectInEntities(r).length > 0;
         });
       });
     },
-    findNearestAvailablePosition(device: PartStructuredData, maxOffset = 20) {
-      if (this.isPositionAvailable(device)) {
-        return Point.from(device.position);
+    findNearestNotCollisionPosition(device: LineOrPartStructuredData, maxOffset = 400) {
+      const entity = getRectByEntity(device);
+      const rects = entity.flatMap(({ rects }) => rects);
+      const isCollision = (rects: Rect[]) => rects.some((r) => {
+        return this.rectInEntities(r).length > 0;
+      });
+
+      if (!isCollision(rects)) {
+        return Point.from(0);
       }
 
+      const perBias = 20;
       const directions = [
         Direction.Top,
         Direction.Bottom,
@@ -70,32 +76,36 @@ definePlugin(({ registerService }) => {
         Direction.Right,
       ];
 
-      for (let offset = 1; offset <= maxOffset; offset++) {
+      for (let offset = 1; offset <= maxOffset / perBias; offset++) {
         for (const direction of directions) {
-          const newPosition = device.position.add(
-            DirectionVectorSet[direction].mul(20 * offset),
-          );
-          const newDevice = { ...device, position: newPosition };
+          const bias = DirectionVectorSet[direction].mul(20 * offset);
+          const newRects = rects.map((r) => rectOffset(r, bias));
 
-          if (this.isPositionAvailable(newDevice)) {
-            return newPosition;
+          if (!isCollision(newRects)) {
+            return bias;
           }
         }
       }
 
       return null;
     },
-    getAllEntitiesCollisionRects() {
+    getEntityRegion(id: string) {
+      const result: IEntityRegion[] = [];
+      for (const region of map.values()) {
+        if (region.entity.id === id) {
+          result.push(region);
+        }
+      }
+      return result;
+    },
+    getEntityRects(id) {
+      return this.getEntityRegion(id).flatMap((region) => region.rects);
+    },
+    getAllEntityRects() {
       return Array.from(map.values()).flatMap(region => region.rects);
     },
     getEntityBoundingBox(id: string) {
-      const region = map.get(id);
-
-      if (!region) {
-        return;
-      }
-
-      const { rects } = region;
+      const rects = this.getEntityRects(id);
 
       if (rects.length === 0) {
         return;
@@ -118,24 +128,13 @@ definePlugin(({ registerService }) => {
         height: maxY - minY,
       };
     },
-    getEntityCollisionRects(id: string) {
-      return map.get(id)?.rects ?? [];
-    },
-    getEntitiesInRect(rect: Rect) {
-      const result: Entity[] = [];
-      for (const region of map.values()) {
-        if (region.rects.every((r) => rectInRect(rect, r))) {
-          result.push(region.entity);
-        }
-      }
-      return result;
-    },
     getElectronicsInRect(rect: Rect) {
-      const entities = this.getEntitiesInRect(rect);
       const result = new Set<string>();
 
-      for (const entity of entities) {
-        result.add(entity.id);
+      for (const region of map.values()) {
+        if (region.rects.every((r) => rectInRect(rect, r))) {
+          result.add(region.entity.id);
+        }
       }
 
       return result;

@@ -118,16 +118,17 @@ definePlugin(({ registerHook, getService }) => {
       }
 
       const partTag = createPartTag(part);
-      const realPosition = collisionService.findNearestAvailablePosition({
+      const realBias = collisionService.findNearestNotCollisionPosition({
         ...part,
         position: currentPosition,
       });
 
-      if (!realPosition) {
+      if (!realBias) {
         logger.error(LoggerName, '创建器件失败，位置被占用', partTag);
         return;
       }
 
+      const realPosition = currentPosition.add(realBias);
       const newPart = {
         ...part,
         position: realPosition,

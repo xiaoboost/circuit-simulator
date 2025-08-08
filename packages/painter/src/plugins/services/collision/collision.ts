@@ -29,3 +29,13 @@ export function rectInRect(rect1: Rect, rect2: Rect) {
     rect2.y + rect2.height <= rect1.y + rect1.height
   );
 }
+
+/** 举行偏移 */
+export function rectOffset(rect: Rect, offset: Point): Rect {
+  return {
+    x: rect.x + offset[0],
+    y: rect.y + offset[1],
+    width: rect.width,
+    height: rect.height,
+  };
+}
