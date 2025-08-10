@@ -3,7 +3,7 @@
 .btn {
   font-size: 20px;
   height: (@ToolbarButtonWidth * 1px);
-  min-width: 36px;
+  min-width: (@ToolbarButtonWidth * 1px);
   border-radius: 6px;
   display: flex;
   justify-content: center;
@@ -15,7 +15,7 @@
   background-color: @color-white;
 
   &:hover {
-    background-color: mix(@color-white, @color-black, 90%);
+    background-color: mix(@color-white, @color-black, 95%);
   }
 
   &:last-child {

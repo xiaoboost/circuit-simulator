@@ -1,5 +1,6 @@
 import { PlusOutlined as Add, MinusOutlined as Minus } from '@circuit/icons';
 import { LOGGER_SERVICE } from '@circuit/shared';
+import { Tooltip } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
 import {
@@ -30,13 +31,17 @@ export function ScaleRender() {
   return (
     <>
       <Divider />
-      <Button disabled={isDragging && scale <= mapService.ScaleMin} onClick={scaleZoomIn}>
-        <Add />
-      </Button>
+      <Tooltip title='放大图纸' destroyOnHidden>
+        <Button disabled={isDragging && scale <= mapService.ScaleMin} onClick={scaleZoomIn}>
+          <Add />
+        </Button>
+      </Tooltip>
       <div className={Styles.scaleNumber}>{Math.round(scale * 100)}%</div>
-      <Button disabled={isDragging && scale >= mapService.ScaleMax} onClick={scaleZoomOut}>
-        <Minus />
-      </Button>
+      <Tooltip title='缩小图纸' destroyOnHidden>
+        <Button disabled={isDragging && scale >= mapService.ScaleMax} onClick={scaleZoomOut}>
+          <Minus />
+        </Button>
+      </Tooltip>
     </>
   );
 }
