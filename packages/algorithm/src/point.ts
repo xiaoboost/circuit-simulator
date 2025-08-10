@@ -176,6 +176,122 @@ export class Point {
     );
   }
   /**
+   * 求 this 到 point 的曼哈顿距离
+   *
+   * @param {PointLike} point
+   * @returns {number}
+   */
+  manhattanDistance(point: PointLike): number {
+    return (
+      Math.abs(this[0] - point[0]) +
+      Math.abs(this[1] - point[1])
+    );
+  }
+  /**
+   * 求 this 到线段的几何距离
+   *
+   * @param {PointLike[]} segment 线段 [start, end]
+   * @returns {number}
+   */
+  distanceToSegment(segment: PointLike[]): number {
+    const [start, end] = segment;
+
+    // 计算线段向量
+    const lineVectorX = end[0] - start[0];
+    const lineVectorY = end[1] - start[1];
+
+    // 计算点到起点的向量
+    const pointVectorX = this[0] - start[0];
+    const pointVectorY = this[1] - start[1];
+
+    // 计算线段长度的平方
+    const lineLengthSq = lineVectorX * lineVectorX + lineVectorY * lineVectorY;
+
+    if (lineLengthSq === 0) {
+      // 线段退化为点，直接计算欧几里得距离
+      return Math.sqrt(pointVectorX * pointVectorX + pointVectorY * pointVectorY);
+    }
+
+    // 计算投影参数 t
+    const t = Math.max(
+      0,
+      Math.min(
+        1,
+        (pointVectorX * lineVectorX + pointVectorY * lineVectorY) / lineLengthSq,
+      ),
+    );
+
+    // 计算投影点
+    const projectionX = start[0] + t * lineVectorX;
+    const projectionY = start[1] + t * lineVectorY;
+
+    // 计算点到投影点的距离
+    return Math.sqrt(
+      (this[0] - projectionX) * (this[0] - projectionX) +
+      (this[1] - projectionY) * (this[1] - projectionY),
+    );
+  }
+  /**
+   * 求 this 到线段的曼哈顿距离（针对横平竖直线段优化）
+   *
+   * @param {PointLike[]} segment 线段 [start, end]
+   * @returns {number}
+   */
+  manhattanDistanceToSegment(segment: PointLike[]): number {
+    const [start, end] = segment;
+
+    // 判断线段是水平还是垂直
+    const isHorizontal = start[1] === end[1]; // y坐标相同
+    const isVertical = start[0] === end[0];   // x坐标相同
+
+    if (isHorizontal) {
+      // 水平线段：计算x方向的距离和y方向的距离
+      const x1 = Math.min(start[0], end[0]);
+      const x2 = Math.max(start[0], end[0]);
+
+      // 如果点在x范围内，y方向距离为0，否则为到端点的y距离
+      const yDistance = Math.abs(this[1] - start[1]);
+
+      // 如果点在x范围内，x方向距离为0，否则为到最近端点的x距离
+      let xDistance = 0;
+      if (this[0] < x1) {
+        xDistance = x1 - this[0];
+      }
+      else if (this[0] > x2) {
+        xDistance = this[0] - x2;
+      }
+
+      return xDistance + yDistance;
+    }
+
+    if (isVertical) {
+      // 垂直线段：计算x方向的距离和y方向的距离
+      const y1 = Math.min(start[1], end[1]);
+      const y2 = Math.max(start[1], end[1]);
+
+      // 如果点在y范围内，x方向距离为0，否则为到端点的x距离
+      const xDistance = Math.abs(this[0] - start[0]);
+
+      // 如果点在y范围内，y方向距离为0，否则为到最近端点的y距离
+      let yDistance = 0;
+      if (this[1] < y1) {
+        yDistance = y1 - this[1];
+      }
+      else if (this[1] > y2) {
+        yDistance = this[1] - y2;
+      }
+
+      return xDistance + yDistance;
+    }
+
+    // 理论上不应该有斜线段，但为了安全起见
+    // 如果线段既不是水平也不是垂直，回退到曼哈顿距离到端点
+    return Math.min(
+      this.manhattanDistance(start),
+      this.manhattanDistance(end),
+    );
+  }
+  /**
    * this 在`vector`上的投影向量
    *
    * @param {Point} vector 投影向量

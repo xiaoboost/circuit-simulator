@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-import { Point, RotateMatrix, toRound } from '../src';
+import { Point, RotateMatrix, toRound, Segment } from '../src';
 
 const formatPointList = (points: Iterable<Point>) => Array.from(points).map((node) => node.join());
 
@@ -140,6 +140,122 @@ describe('Point', () => {
 
     it('计算到其他点的距离应该正确', () => {
       expect(new Point(5, 5).distance([2, 1])).toBe(5);
+    });
+  });
+
+  describe('manhattanDistance()', () => {
+    it('计算到原点的曼哈顿距离应该正确', () => {
+      expect(new Point(3, 4).manhattanDistance([0, 0])).toBe(7);
+      expect(new Point(-3, -4).manhattanDistance([0, 0])).toBe(7);
+    });
+
+    it('计算到其他点的曼哈顿距离应该正确', () => {
+      expect(new Point(5, 5).manhattanDistance([2, 1])).toBe(7);
+      expect(new Point(1, 1).manhattanDistance([4, 6])).toBe(8);
+    });
+
+    it('计算到Point对象的曼哈顿距离应该正确', () => {
+      expect(new Point(3, 4).manhattanDistance(new Point(1, 2))).toBe(4);
+      expect(new Point(0, 0).manhattanDistance(new Point(-5, -3))).toBe(8);
+    });
+  });
+
+  describe('distanceToSegment()', () => {
+    it('计算到水平线段的距离应该正确', () => {
+      const point = new Point(3, 5);
+      const horizontalSegment: [Point, Point] = [new Point(0, 2), new Point(6, 2)];
+
+      // 点到线段的垂直距离 + 水平投影距离
+      expect(point.distanceToSegment(horizontalSegment)).toBeCloseTo(3, 0.1);
+    });
+
+    it('计算到垂直线段的距离应该正确', () => {
+      const point = new Point(5, 3);
+      const verticalSegment: [Point, Point] = [new Point(2, 0), new Point(2, 6)];
+
+      // 点到线段的水平距离 + 垂直投影距离
+      expect(point.distanceToSegment(verticalSegment)).toBeCloseTo(3, 0.1);
+    });
+
+    it('计算到斜线段的距离应该正确', () => {
+      const point = new Point(2, 2);
+      const diagonalSegment: [Point, Point] = [new Point(0, 0), new Point(4, 4)];
+
+      // 点到线段的投影距离
+      expect(point.distanceToSegment(diagonalSegment)).toBeCloseTo(0, 3);
+    });
+
+    it('计算到退化线段（点）的距离应该正确', () => {
+      const point = new Point(3, 4);
+      const degenerateSegment: [Point, Point] = [new Point(1, 2), new Point(1, 2)];
+
+      // 线段退化为点，直接计算欧几里得距离
+      expect(point.distanceToSegment(degenerateSegment)).toBeCloseTo(2.8284, 0.1);
+    });
+
+    it('计算到线段端点的距离应该正确', () => {
+      const point = new Point(0, 0);
+      const segment: [Point, Point] = [new Point(3, 0), new Point(6, 0)];
+
+      // 点到最近端点的距离
+      expect(point.distanceToSegment(segment)).toBe(3);
+    });
+  });
+
+  describe('manhattanDistanceToSegment()', () => {
+    it('计算到水平线段的曼哈顿距离应该正确', () => {
+      const point = new Point(3, 5);
+      const horizontalSegment: [Point, Point] = [new Point(0, 2), new Point(6, 2)];
+
+      // 点在x范围内，x距离为0，y距离为3
+      expect(point.manhattanDistanceToSegment(horizontalSegment)).toBe(3);
+    });
+
+    it('计算到水平线段端点的曼哈顿距离应该正确', () => {
+      const point = new Point(8, 5);
+      const horizontalSegment: [Point, Point] = [new Point(0, 2), new Point(6, 2)];
+
+      // 点在x范围外，x距离为2，y距离为3
+      expect(point.manhattanDistanceToSegment(horizontalSegment)).toBe(5);
+    });
+
+    it('计算到垂直线段的曼哈顿距离应该正确', () => {
+      const point = new Point(5, 3);
+      const verticalSegment: [Point, Point] = [new Point(2, 0), new Point(2, 6)];
+
+      // 点在y范围内，y距离为0，x距离为3
+      expect(point.manhattanDistanceToSegment(verticalSegment)).toBe(3);
+    });
+
+    it('计算到垂直线段端点的曼哈顿距离应该正确', () => {
+      const point = new Point(5, 8);
+      const verticalSegment: [Point, Point] = [new Point(2, 0), new Point(2, 6)];
+
+      // 点在y范围外，y距离为2，x距离为3
+      expect(point.manhattanDistanceToSegment(verticalSegment)).toBe(5);
+    });
+
+    it('计算到斜线段的曼哈顿距离应该回退到端点距离', () => {
+      const point = new Point(3, 4);
+      const diagonalSegment: [Point, Point] = [new Point(1, 1), new Point(5, 5)];
+
+      // 斜线段回退到曼哈顿距离到最近端点
+      expect(point.manhattanDistanceToSegment(diagonalSegment)).toBe(3);
+    });
+
+    it('计算到数组形式线段的曼哈顿距离应该正确', () => {
+      const point = new Point(3, 4);
+      const horizontalSegment: Segment = [[0, 2], [6, 2]];
+
+      expect(point.manhattanDistanceToSegment(horizontalSegment)).toBe(2);
+    });
+
+    it('计算到边界线段的曼哈顿距离应该正确', () => {
+      const point = new Point(3, 2);
+      const horizontalSegment: [Point, Point] = [new Point(0, 2), new Point(6, 2)];
+
+      // 点在线段上，距离为0
+      expect(point.manhattanDistanceToSegment(horizontalSegment)).toBe(0);
     });
   });
 

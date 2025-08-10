@@ -8,6 +8,8 @@ export type Path = Position[];
 export type PathWithPoint = Point[];
 /** 线段 */
 export type Segment = [start: Position, end: Position];
+/** 线段 */
+export type SegmentWithPoint = [start: Point, end: Point];
 /** 旋转矩阵 */
 export type RotateMatrix = [Position, Position];
 /** 点或者类似点 */
