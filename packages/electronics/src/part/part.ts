@@ -56,10 +56,10 @@ export function parsePartReferenceTag(tag: string): [prefix: string, suffix: str
 }
 
 /** 迭代器件所有引脚数据 */
-export function *getPartPins(part: PartStructuredData) {
-  for (let i = 0; i < getPartPrototype(part.kind).pins.length; i++) {
-    yield getPartPin(part, i);
-  }
+export function getPartPins(part: PartStructuredData) {
+  return getPartPrototype(part.kind).pins.map((_, index) => {
+    return getPartPin(part, index);
+  });
 }
 
 /** 获取器件原型 */

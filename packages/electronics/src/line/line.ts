@@ -1,4 +1,4 @@
-import { Point } from '@circuit/algorithm';
+import { Point, PathWithPoint } from '@circuit/algorithm';
 import { LineStoreData, LineStructuredData } from '@circuit/types';
 import { nanoid } from 'nanoid';
 
@@ -23,7 +23,7 @@ export function transformLineStructureToStoreData({ path }: LineStructuredData):
   };
 }
 
-export function createLineByPath(path: Point[]): LineStructuredData {
+export function createLineByPath(path: PathWithPoint): LineStructuredData {
   return {
     id: createLineId(),
     path: path.slice(),
@@ -35,4 +35,9 @@ export function createLine(start: Point): LineStructuredData {
     id: createLineId(),
     path: [start],
   };
+}
+
+/** 获取当前线段的方向 */
+export function getIndexVector(path: PathWithPoint, index: number) {
+  return new Point(path[index], path[index + 1]);
 }

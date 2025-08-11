@@ -19,7 +19,13 @@ export interface ILifeCycle {
   /**
    * 插件初始化之后
    *
-   * @description 所有插件加载完成之后立即运行
+   * @description 所有插件加载完成之后运行
    */
   afterPluginInit?(): void | Promise<void>;
+  /**
+   * 画布初始化之后
+   *
+   * @description 画布初始化完成之后，但是 Loading 界面还没消失
+   */
+  afterPainterInit?(): void | Promise<void>;
 }

@@ -12,7 +12,7 @@ import { createServiceKey } from '../../context';
  * ```
  */
 export const MAP_HASH_SERVICE =
-  createServiceKey<IMapService>('Map');
+  createServiceKey<IMapService>('MapHash');
 
 export interface ConnectionData {
   /** 左侧连通性 */

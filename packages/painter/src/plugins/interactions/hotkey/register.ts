@@ -5,28 +5,11 @@ import {
 } from '@circuit/shared';
 import { remove } from '@xiao-ai/utils';
 import { definePlugin } from '../../../context';
-import {
-  EVENT_LISTENER_HOOK,
-  PAINTER_HTML_ELEMENT,
-  SELECT_SERVICE,
-} from '../../../types';
+import { SELECT_SERVICE } from '../../../types';
 
 const LoggerName = '快捷键模块';
 
 definePlugin(({ registerHook, getService }) => {
-  const getPainterFocus = () => {
-    const painterEl = getService(PAINTER_HTML_ELEMENT)?.current;
-    if (painterEl && document.activeElement !== painterEl) {
-      painterEl.focus();
-    }
-  };
-
-  // 画布自动获得焦点
-  registerHook(EVENT_LISTENER_HOOK, {
-    onMouseDown: getPainterFocus,
-    onMouseUp: getPainterFocus,
-  });
-
   // 注册删除快捷键
   registerHook(HOT_KEY_HOOK, {
     key: 'backspace,del',

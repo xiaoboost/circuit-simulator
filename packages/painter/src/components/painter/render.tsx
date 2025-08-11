@@ -6,6 +6,7 @@ import * as Styles from './styles.less';
 import {
   useKeyboardListener,
   usePainterRefService,
+  usePainterInit,
 } from './use';
 
 /** 画布组件参数 */
@@ -19,6 +20,7 @@ export interface PainterProps {
 export const Painter = React.memo(function Painter(props: PainterProps) {
   const painterRef = useRef<HTMLDivElement>(null);
 
+  usePainterInit();
   usePainterRefService(painterRef);
   useKeyboardListener(painterRef);
 
