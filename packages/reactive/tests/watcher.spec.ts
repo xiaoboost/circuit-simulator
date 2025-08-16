@@ -58,6 +58,77 @@ describe('ReadonlyWatcher 只读状态监听器', () => {
 
       expect(callback).not.toHaveBeenCalled();
     });
+
+    it('_setData 调用几次，回调就应该调用几次，不会有多余的重复调用', () => {
+      const callback = vi.fn();
+      const unsubscribe = watcher.observe(callback);
+
+      // 第一次调用 _setData
+      watcher['_setData'](5);
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(callback).toHaveBeenCalledWith(5, 0);
+
+      // 第二次调用 _setData
+      watcher['_setData'](10);
+      expect(callback).toHaveBeenCalledTimes(2);
+      expect(callback).toHaveBeenCalledWith(10, 5);
+
+      // 第三次调用 _setData
+      watcher['_setData'](15);
+      expect(callback).toHaveBeenCalledTimes(3);
+      expect(callback).toHaveBeenCalledWith(15, 10);
+
+      // 验证总共只调用了3次
+      expect(callback).toHaveBeenCalledTimes(3);
+
+      unsubscribe();
+    });
+
+    it('多个 observe 监听时，多次 _setData，每个 observe 都分别调用几次，不会重复', () => {
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+      const callback3 = vi.fn();
+
+      const unsubscribe1 = watcher.observe(callback1);
+      const unsubscribe2 = watcher.observe(callback2);
+      const unsubscribe3 = watcher.observe(callback3);
+
+      // 第一次调用 _setData
+      watcher['_setData'](5);
+      expect(callback1).toHaveBeenCalledTimes(1);
+      expect(callback2).toHaveBeenCalledTimes(1);
+      expect(callback3).toHaveBeenCalledTimes(1);
+      expect(callback1).toHaveBeenCalledWith(5, 0);
+      expect(callback2).toHaveBeenCalledWith(5, 0);
+      expect(callback3).toHaveBeenCalledWith(5, 0);
+
+      // 第二次调用 _setData
+      watcher['_setData'](10);
+      expect(callback1).toHaveBeenCalledTimes(2);
+      expect(callback2).toHaveBeenCalledTimes(2);
+      expect(callback3).toHaveBeenCalledTimes(2);
+      expect(callback1).toHaveBeenCalledWith(10, 5);
+      expect(callback2).toHaveBeenCalledWith(10, 5);
+      expect(callback3).toHaveBeenCalledWith(10, 5);
+
+      // 第三次调用 _setData
+      watcher['_setData'](15);
+      expect(callback1).toHaveBeenCalledTimes(3);
+      expect(callback2).toHaveBeenCalledTimes(3);
+      expect(callback3).toHaveBeenCalledTimes(3);
+      expect(callback1).toHaveBeenCalledWith(15, 10);
+      expect(callback2).toHaveBeenCalledWith(15, 10);
+      expect(callback3).toHaveBeenCalledWith(15, 10);
+
+      // 验证每个监听器总共只调用了3次
+      expect(callback1).toHaveBeenCalledTimes(3);
+      expect(callback2).toHaveBeenCalledTimes(3);
+      expect(callback3).toHaveBeenCalledTimes(3);
+
+      unsubscribe1();
+      unsubscribe2();
+      unsubscribe3();
+    });
   });
 
   describe('once 一次性订阅', () => {

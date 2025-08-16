@@ -32,10 +32,8 @@ export class ReadonlyWatcher<T> {
     const subscription = this._subject.pipe(
       // 生成 [previous, current] 元组
       pairwise(),
-      // 交换元组顺序
-      map(([previous, current]) => [current, previous] as [T, T | undefined]),
       takeUntil(this._destroy$),
-    ).subscribe(([current, previous]) => callback(current, previous));
+    ).subscribe(([previous, current]) => callback(current, previous));
 
     return () => subscription.unsubscribe();
   }
