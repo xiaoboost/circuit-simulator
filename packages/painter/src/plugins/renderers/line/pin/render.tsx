@@ -8,7 +8,7 @@ import {
 } from '../../../../types';
 import { Pin } from './pin';
 
-function PartPinRender({ data: { id, path }, style }: ILineRendererProps) {
+function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
   const { getConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
 
@@ -30,6 +30,8 @@ function PartPinRender({ data: { id, path }, style }: ILineRendererProps) {
       <Pin
         key={key}
         id={key}
+        parentId={id}
+        pinIndex={i}
         style={style}
         position={position}
         hoverR={isSpace ? 5: 4}
@@ -41,7 +43,7 @@ function PartPinRender({ data: { id, path }, style }: ILineRendererProps) {
 }
 
 export const Render = React.memo(
-  PartPinRender,
+  LinePinRender,
   ({ data: { path: prevPath } }, { data: { path: nextPath } }) => (
     prevPath.length === nextPath.length &&
     isEqualPoint(prevPath[0], nextPath[0]) &&

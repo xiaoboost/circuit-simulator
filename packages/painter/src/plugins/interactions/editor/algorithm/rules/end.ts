@@ -1,6 +1,5 @@
 import { SearchNodeData } from '../a-star';
 import { RulesContext } from './types';
-import { isNodeInLine } from './utils';
 
 /** 等于终点 */
 export function isEndPoint(this: RulesContext, node: SearchNodeData) {
@@ -9,7 +8,7 @@ export function isEndPoint(this: RulesContext, node: SearchNodeData) {
 
 /** 在终点等效线段中 */
 export function isInEndLines(this: RulesContext, node: SearchNodeData) {
-  return this.endLines.find((line) => isNodeInLine(node.position, line));
+  return this.endLines.find((line) => node.position.isInLine(line));
 }
 
 /** 绘制导线时，终点在导线中 */
@@ -32,7 +31,7 @@ export function checkNodeInLineWhenDraw(this: RulesContext, node: SearchNodeData
   }
 
   // 等效线段和当前节点方向平行
-  if (exLine[1].add(exLine[0], -1).isParallel(node.direction)) {
+  if (exLine[1].add(exLine[0], -1).isParallelTo(node.direction)) {
     return true;
   }
   // 等效线段和当前节点方向垂直

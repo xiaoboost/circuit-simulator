@@ -1,6 +1,7 @@
 import type { Point } from '@circuit/algorithm';
 import type { MarkMap } from '../../../../../types';
 import type { SearchNodeData } from '../a-star';
+import type { SearchMode } from '../searcher';
 
 /** 搜索规则 */
 export interface Rules {
@@ -22,14 +23,12 @@ export interface RulesOptions {
   direction: Point;
   /** 标记图纸数据 */
   map: MarkMap;
+  /** 搜索模式 */
+  mode: SearchMode;
 }
 
 /** 搜索规则上下文 */
-export interface RulesContext extends RulesOptions{
-  /** 排除器件 */
-  excludeParts: string[];
-  /** 排除线段 */
-  excludeLines: [Point, Point][];
+export interface RulesContext extends RulesOptions {
   /** 终点等效线段 */
   endLines: [Point, Point][];
 }

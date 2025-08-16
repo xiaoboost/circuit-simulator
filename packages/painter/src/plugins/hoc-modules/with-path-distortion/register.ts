@@ -7,7 +7,7 @@ definePlugin(({ registerHook }) => {
   registerHook(RENDERER_HOC, {
     name: 'HOC:PathDistortion',
     order: 4,
-    use: ({ name }) => name === 'LinePathRenderer',
+    use: ({ name }) => name.startsWith('Line'),
     RenderHOC: PathDistortionFactory,
   });
 });

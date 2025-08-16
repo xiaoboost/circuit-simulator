@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import type { PathWithPoint } from '@circuit/algorithm';
+import React, { useEffect, useRef } from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
   PAINTER_CONFIGURATION_SERVICE,
@@ -7,93 +8,71 @@ import {
 import {
   PATH_SEARCH_POINTS_STATE,
   PathSearchPointData,
-  PointWithValue,
   SearchPointColor,
 } from './constant';
+
+function draw(data: PathSearchPointData, dom: SVGGElement) {
+  let content = '';
+
+  const appendCircle = (cx: number, cy: number, fill: string) => {
+    content += `<circle cx="${cx}" cy="${cy}" fill="${fill}" r="4" />`;
+  };
+
+  const appendPath = (data: PathWithPoint, color: string) => {
+    // eslint-disable-next-line
+    content += `<path d="M${data.map((n) => n.join(',')).join('L')}" stroke="${color}" fill="transparent" />`;
+  };
+
+  const appendText = (x: number, y: number, fill: string, text: string) => {
+    // eslint-disable-next-line
+    content += `<text x="${x}" y="${y}" fill="${fill}" font-size="10" stroke-width="0.5">${text}</text>`;
+  };
+
+  if (data.current) {
+    appendCircle(data.current[0], data.current[1], SearchPointColor.current);
+  }
+
+  if (data.start) {
+    appendCircle(data.start[0], data.start[1], SearchPointColor.start);
+  }
+
+  if (data.end) {
+    appendCircle(data.end[0], data.end[1], SearchPointColor.end);
+  }
+
+  if (data.expand && data.expand.length > 0) {
+    data.expand.forEach(({ point, value }) => {
+      appendCircle(point[0], point[1], SearchPointColor.expand);
+      appendText(point[0] - 8, point[1] + 20, SearchPointColor.expand, String(value));
+    });
+  }
+
+  if (data.result) {
+    appendPath(data.result, SearchPointColor.result);
+  }
+
+  dom.innerHTML = content;
+}
 
 export function PathSearchDebugger() {
   const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
   const [openLineSearchDebugger] = useWatcher(configuration.openLineSearchDebugger);
-  const { useVariable } = useService(VARIABLE_OBSERVER_SERVICE);
-  const pathSearchPoints = useVariable<PathSearchPointData>(PATH_SEARCH_POINTS_STATE);
-  const [expandPoints, setExpandPoints] = useState<PointWithValue[]>([]);
+  const { observe } = useService(VARIABLE_OBSERVER_SERVICE);
+  const drawRef = useRef<SVGGElement>(null);
 
   useEffect(() => {
-    if (!openLineSearchDebugger || !pathSearchPoints) {
-      if (expandPoints.length !== 0) {
-        setExpandPoints([]);
-      }
-
+    if (!openLineSearchDebugger || !drawRef.current) {
       return;
     }
 
-    const expand = pathSearchPoints.expand ?? [];
-    const newPoints = expand
-      .filter(({ point }) => !expandPoints.every(({ point: p }) => p.isEqual(point)));
+    return observe<PathSearchPointData>(PATH_SEARCH_POINTS_STATE, (data) => {
+      draw(data, drawRef.current!);
+    });
+  }, [openLineSearchDebugger, drawRef.current]);
 
-    if (newPoints.length > 0) {
-      setExpandPoints(expandPoints.concat(newPoints));
-    }
-  }, [pathSearchPoints, pathSearchPoints]);
-
-  if (!openLineSearchDebugger || !pathSearchPoints) {
+  if (!openLineSearchDebugger) {
     return null;
   }
 
-  const circles = [
-    {
-      cx: pathSearchPoints.current?.[0],
-      cy: pathSearchPoints.current?.[1],
-      fill: SearchPointColor.current,
-    },
-    {
-      cx: pathSearchPoints.start?.[0],
-      cy: pathSearchPoints.start?.[1],
-      fill: SearchPointColor.start,
-    },
-    {
-      cx: pathSearchPoints.end?.[0],
-      cy: pathSearchPoints.end?.[1],
-      fill: SearchPointColor.end,
-    },
-    ...(pathSearchPoints.expand?.map(({ point }) => ({
-      cx: point[0],
-      cy: point[1],
-      fill: SearchPointColor.expand,
-    })) ?? []),
-  ];
-
-  const resultPath = pathSearchPoints.result
-    ? `M${pathSearchPoints.result.map((n) => n.join(',')).join('L')}`
-    : undefined;
-
-  return (
-    <g>
-      {circles.map((circle, i) => (
-        <circle
-          key={`circle-${i}`}
-          {...circle}
-          r={4}
-        />
-      ))}
-      {resultPath && (
-        <path
-          d={resultPath}
-          strokeWidth={2}
-          stroke={SearchPointColor.result}
-          fill='transparent'
-        />
-      )}
-      {expandPoints.map(({ point, value }) => (
-        <text
-          key={`text-${point[0]}-${point[1]}`}
-          x={point[0] - 8}
-          y={point[1] + 8}
-          fill={SearchPointColor.expand}
-        >
-          {value}
-        </text>
-      ))}
-    </g>
-  );
+  return <g ref={drawRef}></g>;
 }

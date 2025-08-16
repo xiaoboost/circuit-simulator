@@ -68,7 +68,8 @@ definePlugin(({ registerService }) => {
       observer.set(key as string, [...(observer.get(key as string) ?? []), callback]);
 
       return () => {
-        this.unObserve(symbol, key as string, callback as any);
+        // 这里不能用 this
+        service.unObserve(symbol, key as string, callback as any);
       };
     },
     unObserve(symbol?, key?, callback?) {

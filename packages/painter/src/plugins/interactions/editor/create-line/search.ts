@@ -1,11 +1,28 @@
-import { Point, PathWithPoint } from '@circuit/algorithm';
-import { PathSearcher, SearchResult, SearchMode } from '../algorithm';
-import { Entity, EntityKind } from '../constant';
+import { Point, type PathWithPoint } from '@circuit/algorithm';
+import { getPartPins, getIndexVector } from '@circuit/electronics';
+import { isDef } from '@xiao-ai/utils';
+import {
+  PathSearcher,
+  SearchResult,
+  SearchMode,
+  aStarSearch,
+  createRules,
+  removeRepeat,
+  endToPoint,
+  endToLine,
+  isSimilar,
+} from '../algorithm';
+import {
+  EntityKind,
+  Map as MapHash,
+  Mark as MapMark,
+  PIN_DRAW_EXPANDED_STYLE,
+  PIN_DRAW_FIXED_STYLE,
+} from '../constant';
 import { DrawLineSearcherOptions } from './types';
 
 export function createDrawLineSearcher({
   start,
-  startPart,
   direction,
   lineId,
   map,
@@ -14,71 +31,345 @@ export function createDrawLineSearcher({
 }: DrawLineSearcherOptions): PathSearcher {
   /** 搜索缓存 */
   const cache = new Map<string, PathWithPoint>();
-  /** 上次鼠标悬停状态 */
-  let lastHover: Entity | undefined;
+  /** 上次对齐的节点 */
+  let lastAlignPin: { id: string, pin: number } | undefined;
+  /** 搜索终点列表 */
+  let endList: Point[] = [];
+  /** 搜索模式 */
+  let searchMode: SearchMode;
+  /** 优先出线方向 */
+  let preferDirection: Point;
+  /** 搜索结果 */
+  let result: SearchResult[] = [];
 
-  return (end, endBias = Point.from([0, 0])): SearchResult[] => {
-    /** 搜索结果 */
-    const result: SearchResult[] = [];
+  /** 获取搜索状态 */
+  function getSearchStatus(end: Point, endBias: Point) {
     /** 终点所在方块左上角坐标 */
-    const vertex = end.floor();
+    const origin = end.floor();
     /** 四方格坐标 */
-    const endGrid = vertex.toGrid();
+    const endGrid = origin.toGrid();
     /** 四方格中心坐标 */
-    const endCenter = vertex.add(10);
+    const endCenter = origin.add(10);
     /** 至四方格中心坐标的偏移量 */
     const directionBias = endCenter.add(start, -1).sign().add(direction);
-    /** 优先出线方向 */
-    const preferDirection = Math.abs(directionBias[0]) > Math.abs(directionBias[1])
-      ? new Point(directionBias[0], 0).sign()
-      : new Point(0, directionBias[1]).sign();
     /** 当前鼠标悬停状态 */
     const hover = painter.getHover();
 
-    // 导线空节点半径默认最大
-    result.push({ id: lineId, pin: 1, size: 8 });
-    // 引脚复位
-
-
-    /** 搜索终点列表 */
-    let endList: Point[] = [];
-    /** 搜索模式 */
-    let searchMode = SearchMode.DrawNormal;
+    // 初始化上下文
+    result = [];
+    endList = [];
+    searchMode = SearchMode.DrawNormal;
+    preferDirection = Math.abs(directionBias[0]) > Math.abs(directionBias[1])
+      ? new Point(directionBias[0], 0).sign()
+      : new Point(0, directionBias[1]).sign();
 
     /**
-     * 终点在空白
-     *   
-     *   四方格和起点曼哈顿距离相差小于等于2，此时需要排除终点四方格的器件标记
-     *   否则，直接搜索终点四方格
-     *
-     * 终点在导线、导线节点
-     *   终点等效为导线
-     *
-     * 终点在器件、器件引脚
-     *   是否有空的器件引脚
-     *     有，则挑一个离鼠标最近的对齐
-     *     无，则按照器件边框，搜索最近的可用点，使用这个点作为终点重新收缩
+     * 在器件或者器件节点上
+     *   鼠标有无空余节点
+     *     有，对齐最近的节点
+     *       最近的节点是否是起点
+     *         是，后续全部退出，返回只有起点的路径
+     *         否，则对齐最近的节点，并继续搜索
+     *     无，则按照在空白的模式继续
+     *   鼠标在导线节点上
+     *     对齐导线节点
+     *   鼠标在导线上
+     *     对齐导线
+     *   鼠标在空白
+     *     四角节点被占用情况
+     *       有节点在空状态，搜索这几个节点
+     *       全部被占用
+     *         全部被导线占用，则被占用的所有导线全线等效为终点
+     *         全部被器件占用，则搜索最近的可行点
      */
 
     // 终点在空白
     if (!hover) {
-      endList = endGrid;
       searchMode = SearchMode.DrawNormal;
-      // if (lastHover) {
-      //   result.push({ id: lastHover.id, pin: 1, size: undefined });
-      // }
+      endList = endGrid.filter((node) => !MapHash.get(map, node));
+
+      // 四个节点均被占用
+      if (endList.length === 0) {
+        // 终点在起点的四方格内，返回起点即可
+        if (endGrid.some((node) => node.isEqual(start))) {
+          result.push({ id: lineId, path: [start] });
+          return;
+        }
+        else {
+          // 有导线的时候，搜索这几个导线
+          // 全都被器件占据，则搜索最近的可行点
+          throw new Error('FIXME: 终点四方格全被占用，无法计算路径');
+        }
+      }
+
+      // 导线节点半径最大
+      result.push({ id: lineId, pin: 1, style: PIN_DRAW_EXPANDED_STYLE });
     }
     // 终点在导线
-    else if (hover.kind === EntityKind.Line) {
-
+    else if (hover.kind === EntityKind.Line || hover.kind === EntityKind.LinePin) {
+      searchMode = SearchMode.DrawAlignLine;
+      // 导线节点半径缩小
+      result.push({ id: lineId, pin: 1, style: PIN_DRAW_FIXED_STYLE });
     }
     // 终点在器件
-    else if (hover.kind === EntityKind.Part) {
+    else if (hover.kind === EntityKind.Part || hover.kind === EntityKind.PartPin) {
+      searchMode = SearchMode.DrawNormal;
+      const part = painter.getPart(hover.id);
 
+      if (!part) {
+        throw new Error('无法获取元件数据');
+      }
+
+      const pins = getPartPins(part).map((pin) => pin.origin);
+      const mouseToPart = new Point(part.position, end.add(endBias));
+      const idlePoint = pins.filter((_, i) => {
+        return painter.getConnection(part.id, i).length === 0;
+      });
+
+      // 有空引脚，允许直接对齐
+      if (idlePoint.length > 0) {
+        const allowPoint = mouseToPart.minAngle(idlePoint);
+        const index = pins.findIndex((node) => node.isEqual(allowPoint));
+
+        // 上次对齐的节点和这次的不同，则释放上次对齐的节点
+        if (lastAlignPin && (lastAlignPin.id !== hover.id || lastAlignPin.pin !== index)) {
+          result.push({ ...lastAlignPin, style: undefined });
+        }
+
+        // 点对齐状态
+        searchMode = SearchMode.DrawAlignPoint;
+        // 终点只有需要对齐的点
+        endList = [part.position.add(allowPoint)];
+        // // 器件节点半径固定
+        // result.push({ id: hover.id, pin: index, style: PIN_DRAW_EXPANDED_STYLE });
+        // // 更新上次对齐的节点
+        // lastAlignPin = { id: hover.id, pin: index };
+
+        // FIXME: 这里还有别的要优化
+        // 对齐的终点等于起点，导线节点半径放大
+        if (endList[0].isEqual(start)) {
+          result.push({ id: lineId, pin: 1, style: PIN_DRAW_EXPANDED_STYLE });
+        }
+        else {
+          result.push({ id: lineId, pin: 1, style: PIN_DRAW_EXPANDED_STYLE });
+        }
+      }
+      else {
+        // TODO: 没有空引脚，应该按照空白模式继续
+      }
     }
-    // this.line.points[1].size = 8;
-    // 引脚复位
+    else {
+      throw new Error(`意外情况，无法计算路径，当前 Hover 状态：${JSON.stringify(hover)}`);
+    }
 
-    return result;
+    // 按照到起点的距离，由大到小排序
+    if (endList.length > 1) {
+      endList = endList.sort(
+        (pre, next) =>
+          pre.distance(start) > next.distance(start) ? -1 : 1,
+      );
+    }
+  }
+
+  /** 二次搜索 */
+  function secondSearch(path: PathWithPoint): PathWithPoint {
+    const newPath = path.slice();
+
+    if (newPath.length <= 3) {
+      return newPath;
+    }
+
+    // 如果初始方向和第二个线段方向相同，说明此处需要修正
+    if (preferDirection.isSameDirection(getIndexVector(newPath, 1))) {
+      const start = newPath[0];
+      const end = newPath[2];
+      const temp = aStarSearch({
+        start,
+        end,
+        hook,
+        direction: preferDirection,
+        rules: createRules({
+          start,
+          end,
+          map,
+          mode: SearchMode.DrawModification,
+          direction: preferDirection,
+        }),
+      });
+
+      newPath.splice(0, 3, ...temp);
+      removeRepeat(newPath);
+    }
+
+    for (let i = 0; i < newPath.length - 3; i++) {
+      const vector = [
+        (new Point(newPath[i], newPath[i + 1])).toUnit(),
+        (new Point(newPath[i + 2], newPath[i + 3])).toUnit(),
+      ];
+
+      // 同向修饰
+      if (vector[0].isEqual(vector[1])) {
+        const start = newPath[i + 1];
+        const end = newPath[i + 3];
+        const direction = vector[0];
+        const tempWay = aStarSearch({
+          start,
+          end,
+          hook,
+          direction,
+          rules: createRules({
+            start,
+            end,
+            map,
+            mode: SearchMode.DrawModification,
+            direction,
+          }),
+        });
+
+        if (tempWay.length < 4 && getIndexVector(tempWay, 0).isSameDirection(vector[0])) {
+          newPath.splice(i + 1, 3, ...tempWay);
+          removeRepeat(newPath);
+          i--;
+        }
+      }
+      // 反向修饰
+      else if (newPath.length > 4) {
+        const start = newPath[i];
+        const end = newPath[i + 3];
+        const direction = vector[0];
+        const tempWay = aStarSearch({
+          start,
+          end,
+          hook,
+          direction,
+          rules: createRules({
+            start,
+            end,
+            map,
+            mode: SearchMode.DrawModification,
+            direction,
+          }),
+        });
+
+        if (tempWay.length < 4) {
+          newPath.splice(i, 4, ...tempWay);
+          removeRepeat(newPath);
+          i--;
+        }
+      }
+    }
+
+    return removeRepeat(newPath);
+  }
+
+  /** 搜索路径 */
+  function getSearchPath() {
+    for (const end of endList) {
+      const key = end.join(',');
+
+      if (cache.has(key)) {
+        continue;
+      }
+
+      const tempWay = secondSearch(aStarSearch({
+        start,
+        end,
+        hook,
+        direction: preferDirection,
+        rules: createRules({
+          start,
+          end,
+          map,
+          mode: searchMode,
+          direction: preferDirection,
+        }),
+      }));
+
+      cache.set(key, tempWay);
+    }
+  }
+
+  /** 修饰路径 */
+  function modifyPath(end: Point) {
+    // 点对齐的情况下，直接获取缓存
+    if (searchMode === SearchMode.DrawAlignPoint) {
+      result.push({
+        id: lineId,
+        path: cache.get(endList[0].join(','))!,
+      });
+    }
+    // 对齐导线的情况下，修饰导线
+    else if (searchMode === SearchMode.DrawAlignLine) {
+      const endRound = end.round();
+      const endMark = MapHash.get(map, endRound)!;
+      const endRoundWay = cache.get(endRound.join(','))!;
+      // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+      const roundSet = endList.filter((node) => {
+        if (MapMark.isLineAndPoint(endMark)) {
+          return MapMark.hasConnect(endMark, node)
+            ? MapMark.isPartPinLine(MapHash.get(map, node)!)
+            : false;
+        }
+        else {
+          return false;
+        }
+      });
+
+      if (roundSet.length > 0) {
+        /** 交集中离鼠标最近的点 */
+        const closest = end.closest(roundSet);
+        const similarPath = cache.get(closest.join(','));
+        // 导线形状相似
+        if (similarPath && isSimilar(endRoundWay, similarPath)) {
+          result.push({
+            id: lineId,
+            path: endToLine(endRoundWay, [endRound, closest], end),
+          });
+
+          result.push({
+            id: lineId,
+            pin: 1,
+            style: PIN_DRAW_EXPANDED_STYLE,
+          });
+        }
+        else {
+          result.push({
+            id: lineId,
+            path: endToPoint(endRoundWay, end),
+          });
+        }
+      }
+      else {
+        result.push({
+          id: lineId,
+          path: endToPoint(endRoundWay, end),
+        });
+      }
+    }
+    // 普通终点
+    else {
+      // 选取终点中节点最多的路径
+      const newPath = endList
+        .map((node) => cache.get(node.join(',')))
+        .filter(isDef)
+        .reduce(
+          (pre, next) => pre.length >= next.length ? pre : next,
+        )
+        .slice();
+
+      // 指向终点
+      result.push({
+        id: lineId,
+        path: endToPoint(newPath, end),
+      });
+    }
+  }
+
+  return (end, endBias = Point.from([0, 0])): SearchResult[] => {
+    getSearchStatus(end, endBias);
+    getSearchPath();
+    modifyPath(end);
+
+    return result.slice();
   };
 }

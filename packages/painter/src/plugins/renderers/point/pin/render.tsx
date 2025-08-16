@@ -1,24 +1,27 @@
-import { PIN_SIZE } from '@circuit/electronics';
 import { PropsWithHocParams } from '@circuit/inject';
 import React, { useState, useRef, useEffect } from 'react';
 import { useService } from '../../../../context';
 import {
   IPinRendererProps,
   DRAG_SCENE_SERVICE,
+  HOVER_SERVICE,
   PAINTER_CONFIGURATION_SERVICE,
+  EntityKind,
 } from '../../../../types';
-import * as Styles from './styles.less';
 
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
   const dragService = useService(DRAG_SCENE_SERVICE);
+  const hoverService = useService(HOVER_SERVICE);
   const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
   const [actual, setActual] = useState(0);
   const {
     // 这只是为了满足类型，实际上不需要
     id: _,
     $$key: __,
+    parentId,
+    pinIndex,
     className,
     style,
     position,
@@ -26,7 +29,6 @@ function PinRenderer(props: IPinRendererProps) {
     hoverR = 5,
     normalR = 0,
     duration = 200,
-    onMouseDown,
     fill = 'currentColor',
     ...rest
   } = props as PropsWithHocParams<IPinRendererProps>;
@@ -65,6 +67,42 @@ function PinRenderer(props: IPinRendererProps) {
     }
   }, []);
 
+  useEffect(() => {
+    const hoverUnOb = hoverService.status.observe((cur, pre) => {
+      // 有拖动场景时，不进行任何操作
+      if (dragService.isDragging.data) {
+        return;
+      }
+
+      if (
+        cur?.kind === EntityKind.PartPin ||
+        cur?.kind === EntityKind.LinePin
+      ) {
+        if (cur.id === parentId && cur.pin === pinIndex) {
+          handleHover(true);
+        }
+        return;
+      }
+
+      if (pre?.kind === EntityKind.PartPin || pre?.kind === EntityKind.LinePin) {
+        if (pre.id === parentId && pre.pin === pinIndex) {
+          handleHover(false);
+        }
+        return;
+      }
+    });
+    const dragUnOb = dragService.isDragging.observe((val) => {
+      if (val) {
+        handleHover(false);
+      }
+    });
+
+    return () => {
+      hoverUnOb();
+      dragUnOb();
+    };
+  }, []);
+
   // 显式设置 r 值，此时需要强制指定大小
   useEffect(() => {
     if (size >= 0) {
@@ -77,11 +115,8 @@ function PinRenderer(props: IPinRendererProps) {
       className={className}
       style={style}
       transform={`translate(${position.join()})`}
-      {...rest}
-      onMouseEnter={() => handleHover(true)}
-      onMouseLeave={() => handleHover(false)}
-      onMouseDown={onMouseDown}
       fill={fill}
+      {...rest}
     >
       <circle
         cx='0'
@@ -93,37 +128,17 @@ function PinRenderer(props: IPinRendererProps) {
         <animate
           ref={animate}
           fill='freeze'
+          attributeType='XML'
           attributeName='r'
+          begin='indefinite'
           dur={`${duration}ms`}
           calcMode='spline'
           keyTimes='0; 1'
           keySplines='0.2 1 1 1'
         />
       </circle>
-      <rect
-        x='-8'
-        y='-8'
-        height={PIN_SIZE}
-        width={PIN_SIZE}
-        className={Styles.focus}
-      />
     </g>
   );
 }
-
-// function PinWithHOC(props: IPinRendererProps) {
-//   const hocHooks = useHook(RENDERER_HOC, 'asc');
-//   const { Component } = useMemo(
-//     () => composeHOC({
-//       name: 'PinRenderer',
-//       order: 1,
-//       getKey: ({ id }) => id,
-//       Render: PinRenderer,
-//     }, hocHooks),
-//     [hocHooks],
-//   );
-
-//   return <Component $$key={props.id} {...props} />;
-// }
 
 export const Render = React.memo(PinRenderer);

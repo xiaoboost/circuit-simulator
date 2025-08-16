@@ -1,4 +1,6 @@
 import type { Point, PathWithPoint } from '@circuit/algorithm';
+import type { PartStructuredData, LineStructuredData } from '@circuit/types';
+import type { IConnectionDataWithPin } from '../../../../../types';
 import type { MarkMap, Entity } from '../../constant';
 import type { SearchHook } from '../a-star';
 
@@ -25,6 +27,12 @@ export const enum SearchMode {
 export interface PainterState {
   /** 鼠标覆盖状态 */
   getHover: () => Entity | undefined;
+  /** 获取元件数据 */
+  getPart: (id: string) => Readonly<PartStructuredData> | undefined;
+  /** 获取导线 */
+  getLine: (id: string) => Readonly<LineStructuredData> | undefined;
+  /** 获取连接数据 */
+  getConnection: (id: string, pin: number) => Readonly<IConnectionDataWithPin>[];
 }
 
 /** 路径搜索器 */
@@ -45,11 +53,11 @@ export interface PinSizeResult {
   /** 引脚编号 */
   pin: number;
   /**
-   * 引脚半径
+   * 引脚样式
    *
-   * @description 为空则为恢复原大小
+   * @description 为空则为恢复原始样式
    */
-  size?: number;
+  style?: Record<string, any>;
 }
 
 /** 搜索结果 */

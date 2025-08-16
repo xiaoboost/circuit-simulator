@@ -1,13 +1,13 @@
 import { RENDERER_HOC } from '@circuit/inject';
 import { definePlugin } from '../../../context';
-import { PinRadiusFactory } from './render';
+import { PinStyleFactory } from './render';
 
 definePlugin(({ registerHook }) => {
-  // 引脚半径高阶组件
+  // 引脚样式高阶组件
   registerHook(RENDERER_HOC, {
-    name: 'HOC:PinRadius',
+    name: 'HOC:PinStyle',
     order: 3,
     use: ({ name }) => name === 'PinRenderer',
-    RenderHOC: PinRadiusFactory,
+    RenderHOC: PinStyleFactory,
   });
 });

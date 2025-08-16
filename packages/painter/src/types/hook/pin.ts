@@ -22,6 +22,18 @@ export interface IPinRendererProps extends React.SVGProps<SVGCircleElement> {
    */
   id: string;
   /**
+   * 隶属的元件编号
+   *
+   * @description 该引脚隶属的元件（器件或导线）的唯一标识
+   */
+  parentId: string;
+  /**
+   * 引脚索引
+   *
+   * @description 引脚在父元件中的编号或索引位置
+   */
+  pinIndex: number;
+  /**
    * 节点位置
    *
    * @description 这个位置是相对哪里的需要看 DOM 结构
@@ -55,8 +67,6 @@ export interface IPinRendererProps extends React.SVGProps<SVGCircleElement> {
    * @default `200`
    */
   duration?: number;
-  /** 点击事件 */
-  onMouseDown?: (ev: React.MouseEvent) => any;
 }
 
 /** 引脚渲染器 */

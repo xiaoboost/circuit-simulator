@@ -445,7 +445,7 @@ export class Point {
    * @param {PointLike} vector
    * @returns {boolean}
    */
-  isParallel(vector: PointLike): boolean {
+  isParallelTo(vector: PointLike): boolean {
     return (this[0] * vector[1] === this[1] * vector[0]);
   }
   /**
@@ -454,7 +454,7 @@ export class Point {
    * @param {PointLike} vector
    * @returns {boolean}
    */
-  isVertical(vector: PointLike): boolean {
+  isVerticalTo(vector: PointLike): boolean {
     return ((this[0] * vector[0] + this[1] * vector[1]) === 0);
   }
   /**
@@ -469,7 +469,7 @@ export class Point {
       this.isZero() || (this.isZero.call(vector) as boolean) ||
       // 非零向量
       (
-        this.isParallel(vector) &&
+        this.isParallelTo(vector) &&
         (vector[0] * this[0] > 0 || vector[1] * this[1] > 0)
       )
     );
@@ -486,7 +486,7 @@ export class Point {
       this.isZero() || (this.isZero.call(vector) as boolean) ||
       // 非零向量
       (
-        this.isParallel(vector) &&
+        this.isParallelTo(vector) &&
         (vector[0] * this[0] < 0 || vector[1] * this[1] < 0)
       )
     );
@@ -516,6 +516,18 @@ export class Point {
       (this[0] === 0 && this[1] !== 0) ||
       (this[0] !== 0 && this[1] === 0)
     );
+  }
+  /**
+   * 是否是水平向量
+   */
+  isHorizontal() {
+    return this[1] === 0;
+  }
+  /**
+   * 是否是垂直向量
+   */
+  isVertical() {
+    return this[0] === 0;
   }
   /**
    * 向着终点生成所有沿途节点

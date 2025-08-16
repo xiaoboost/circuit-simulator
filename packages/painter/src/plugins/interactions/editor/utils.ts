@@ -1,37 +1,57 @@
-import { IPluginInstallerContext } from '@circuit/inject/core/types';
-import { HOVER_SERVICE, VARIABLE_OBSERVER_SERVICE } from '../../../types';
+import type { IStateCoreService } from '@circuit/shared';
+import type {
+  IHoverService,
+  IVariableObserverService,
+  IConnectionService,
+} from '../../../types';
 import {
-  PATH_SEARCH_POINTS_STATE as pathKey,
+  PATH_SEARCH_POINTS_STATE as DebugKey,
   PathSearchPointData,
 } from '../../interactions/debugger/path-search';
 import { SearchHook, PainterState, SearchResult } from './algorithm';
-import { POINT_RADIUS_HOC_SCOPE as PinSize } from './constant';
+import {
+  PATH_DISTORTION_HOC_SCOPE as PathKey,
+  PIN_STYLE_HOC_SCOPE as PinKey,
+} from './constant';
 
-type GetService = IPluginInstallerContext['getService'];
-
-export function painterStateGetter(getService: GetService): PainterState {
-  const hoverService = getService(HOVER_SERVICE);
-
+export function painterStateGetter(
+  hover: IHoverService,
+  state: IStateCoreService,
+  connection: IConnectionService,
+): PainterState {
   return {
     getHover() {
-      return hoverService.status.data;
+      return hover.status.data;
+    },
+    getPart(id) {
+      return state.getPart(id);
+    },
+    getLine(id) {
+      return state.getLine(id);
+    },
+    getConnection(id: string, pin: number) {
+      return connection.getConnections(id, pin);
     },
   };
 }
 
-export function setSearchResult(getService: GetService, result: SearchResult[]): void {
-  const VarService = getService(VARIABLE_OBSERVER_SERVICE);
-
+export function setSearchResult(
+  varService: IVariableObserverService,
+  result: SearchResult[],
+): void {
   for (const fixture of result) {
     if ('path' in fixture) {
-      VarService.set(pathKey, `${fixture.id}-path`, fixture.path);
-      VarService.set(pathKey, `${fixture.id}-pin`, fixture.path);
+      varService.set(PathKey, `${fixture.id}-path`, fixture.path);
+      varService.set(PathKey, `${fixture.id}-pin`, fixture.path);
+    }
+
+    if ('pin' in fixture) {
+      varService.set(PinKey, `${fixture.id}-${fixture.pin}`, fixture.style);
     }
   }
 }
 
-export function createSearchHook(getService: GetService): SearchHook {
-  const varService = getService(VARIABLE_OBSERVER_SERVICE);
+export function createSearchHook(varService: IVariableObserverService): SearchHook {
   let store: PathSearchPointData | undefined = undefined;
 
   return {
@@ -43,27 +63,27 @@ export function createSearchHook(getService: GetService): SearchHook {
         expand: undefined,
         result: undefined,
       };
-      varService.set(pathKey, { ...store });
+      varService.set(DebugKey, { ...store });
     },
     end(path) {
       store!.result = path;
-      varService.set(pathKey, { ...store });
+      varService.set(DebugKey, { ...store });
     },
     expand(node) {
       store!.expand = [...(store!.expand ?? []), {
         point: node.position,
         value: node.value,
       }];
-      varService.set(pathKey, { ...store });
+      varService.set(DebugKey, { ...store });
     },
     used(node) {
       store!.current = node.position;
       store!.expand = undefined;
-      varService.set(pathKey, { ...store });
+      varService.set(DebugKey, { ...store });
     },
     afterEnd() {
       store = undefined;
-      varService.set(pathKey, undefined);
+      varService.set(DebugKey, undefined);
     },
   };
 }

@@ -27,7 +27,6 @@ definePlugin(({ registerHook, getService }) => {
           requestAnimationFrame(() => {
             getPainterFocus();
             resolve();
-            console.log('画布获得焦点');
           });
         }
         else {

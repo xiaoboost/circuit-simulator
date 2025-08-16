@@ -23,6 +23,8 @@ function PartPinRender({ data: { id }, prototype: { pins }, style }: IPartRender
       <Pin
         key={key}
         id={key}
+        parentId={id}
+        pinIndex={index}
         position={position}
         hoverR={4}
         normalR={0}
