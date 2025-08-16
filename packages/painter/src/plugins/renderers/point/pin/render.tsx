@@ -7,6 +7,7 @@ import {
   HOVER_SERVICE,
   PAINTER_CONFIGURATION_SERVICE,
   EntityKind,
+  Entity,
 } from '../../../../types';
 
 function PinRenderer(props: IPinRendererProps) {
@@ -46,11 +47,6 @@ function PinRenderer(props: IPinRendererProps) {
   }
 
   function handleHover(isHover: boolean) {
-    // 有场景正在运行或者是图纸移动模式时，不进行任何操作
-    if (dragService.isDragging.data || configuration.movePainterMode.data) {
-      return;
-    }
-
     const newSize = isHover ? hoverR : normalR;
     const targetR = size >= 0 ? size : newSize;
 
@@ -68,38 +64,54 @@ function PinRenderer(props: IPinRendererProps) {
   }, []);
 
   useEffect(() => {
+    function isHover(entity: Entity | undefined) {
+      return (
+        (
+          entity?.kind === EntityKind.PartPin ||
+          entity?.kind === EntityKind.LinePin
+        ) &&
+        (
+          entity.id === parentId &&
+          entity.pin === pinIndex
+        )
+      );
+    }
+
+    function isEnableHover() {
+      return (
+        !dragService.isDragging.data &&
+        !configuration.movePainterMode.data
+      );
+    }
+
+    function handleObHover(hoverFalse: boolean) {
+      if (hoverFalse) {
+        handleHover(false);
+      }
+      else if (isHover(hoverService.status.data)) {
+        handleHover(true);
+      }
+    }
+
     const hoverUnOb = hoverService.status.observe((cur, pre) => {
-      // 有拖动场景时，不进行任何操作
-      if (dragService.isDragging.data) {
+      if (!isEnableHover()) {
         return;
       }
 
-      if (
-        cur?.kind === EntityKind.PartPin ||
-        cur?.kind === EntityKind.LinePin
-      ) {
-        if (cur.id === parentId && cur.pin === pinIndex) {
-          handleHover(true);
-        }
-        return;
+      if (isHover(cur)) {
+        handleHover(true);
       }
-
-      if (pre?.kind === EntityKind.PartPin || pre?.kind === EntityKind.LinePin) {
-        if (pre.id === parentId && pre.pin === pinIndex) {
-          handleHover(false);
-        }
-        return;
-      }
-    });
-    const dragUnOb = dragService.isDragging.observe((val) => {
-      if (val) {
+      else if (isHover(pre)) {
         handleHover(false);
       }
     });
+    const dragUnOb = dragService.isDragging.observe(handleObHover);
+    const moveUnOb = configuration.movePainterMode.observe(handleObHover);
 
     return () => {
       hoverUnOb();
       dragUnOb();
+      moveUnOb();
     };
   }, []);
 
