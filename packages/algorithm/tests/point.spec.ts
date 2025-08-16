@@ -336,30 +336,30 @@ describe('Point', () => {
     });
   });
 
-  describe('isParallel()', () => {
+  describe('isParallelTo()', () => {
     it('零向量应该与任何向量平行', () => {
-      expect(Point.from(0).isParallel([-1, 2])).toBe(true);
-      expect(Point.from(0).isParallel([2, 10])).toBe(true);
+      expect(Point.from(0).isParallelTo([-1, 2])).toBe(true);
+      expect(Point.from(0).isParallelTo([2, 10])).toBe(true);
     });
 
     it('平行向量应该返回true', () => {
-      expect(new Point(1, -2).isParallel([-1, 2])).toBe(true);
-      expect(new Point(1, -2).isParallel([2, -4])).toBe(true);
+      expect(new Point(1, -2).isParallelTo([-1, 2])).toBe(true);
+      expect(new Point(1, -2).isParallelTo([2, -4])).toBe(true);
     });
 
     it('不平行向量应该返回false', () => {
-      expect(new Point(1, -2).isParallel([2, 4])).toBe(false);
+      expect(new Point(1, -2).isParallelTo([2, 4])).toBe(false);
     });
   });
 
-  describe('isVertical()', () => {
+  describe('isVerticalTo()', () => {
     it('垂直向量应该返回true', () => {
-      expect(new Point(1, -2).isVertical([2, 1])).toBe(true);
-      expect(new Point(1, -4).isVertical([4, 1])).toBe(true);
+      expect(new Point(1, -2).isVerticalTo([2, 1])).toBe(true);
+      expect(new Point(1, -4).isVerticalTo([4, 1])).toBe(true);
     });
 
     it('不垂直向量应该返回false', () => {
-      expect(new Point(0, -4).isVertical([-4, 1])).toBe(false);
+      expect(new Point(0, -4).isVerticalTo([-4, 1])).toBe(false);
     });
   });
 
