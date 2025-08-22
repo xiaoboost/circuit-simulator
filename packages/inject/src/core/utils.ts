@@ -57,16 +57,12 @@ export function getHookWithScope<T>(
     throw new Error(`未找到 ${String(scope)} 作用域`);
   }
 
-  let hooks = scopeContainer.context.HookMap.get(key);
+  let hooks = scopeContainer.context.HookMap.get(key) ?? [];
 
   // 逐级向上查找
-  while (!hooks && scopeContainer.parent) {
+  while (scopeContainer.parent) {
     scopeContainer = scopeContainer.parent;
-    hooks = scopeContainer.context.HookMap.get(key);
-  }
-
-  if (!hooks || hooks.length === 0) {
-    return [];
+    hooks = hooks.concat(scopeContainer.context.HookMap.get(key) ?? []);
   }
 
   return hooks.sort(createSorter(sort));

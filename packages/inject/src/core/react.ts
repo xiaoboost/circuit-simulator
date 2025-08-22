@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useMemo } from 'react';
 import { RootScope, InjectContext } from './context';
 import { ServiceTypeWithKey } from './types';
 import { getHookWithScope, getServiceWithScope } from './utils';
@@ -24,7 +24,10 @@ export function createReactHookWithScope(scope: symbol) {
       return getServiceWithScope(key, scope, useContext(InjectContext));
     },
     useHook<T>(key: ServiceTypeWithKey<T>, sort?: 'asc' | 'desc') {
-      return getHookWithScope(key, scope, useContext(InjectContext), sort);
+      const context = useContext(InjectContext);
+      return useMemo(() => {
+        return getHookWithScope(key, scope, context, sort);
+      }, [key, scope, sort, context]);
     },
   };
 }

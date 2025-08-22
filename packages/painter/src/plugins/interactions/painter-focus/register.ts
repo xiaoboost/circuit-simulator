@@ -21,7 +21,7 @@ definePlugin(({ registerHook, getService }) => {
 
   // 画布初始化时获得焦点
   registerHook(LIFE_CYCLE_HOOK, {
-    afterPainterInit() {
+    afterPainterMounted() {
       return new Promise<void>((resolve) => {
         if ('requestAnimationFrame' in window) {
           requestAnimationFrame(() => {

@@ -27,5 +27,9 @@ export interface ILifeCycle {
    *
    * @description 画布初始化完成之后，但是 Loading 界面还没消失
    */
-  afterPainterInit?(): void | Promise<void>;
+  afterPainterMounted?(): void | Promise<void>;
+  /**
+   * 画布卸载前
+   */
+  beforePainterUnmount?(): void | Promise<void>;
 }
