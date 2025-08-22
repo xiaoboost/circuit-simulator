@@ -157,6 +157,92 @@ describe('碰撞服务', () => {
     it('空碰撞系统应该返回 undefined', () => {
       expect(collision.getEntityBoundingBox(part.id)).toBeUndefined();
     });
+
+    it('多个器件的边界框', () => {
+      const part1 = createPartByKind(ElectronicKind.Resistance, []);
+      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      part1.position = Point.from([0, 0]);
+      part2.position = Point.from([100, 0]);
+
+      collision.setEntity(part1);
+      collision.setEntity(part2);
+
+      const result = collision.getEntityBoundingBox(part1.id, part2.id);
+      expect(result).toEqual({ x: -48, y: -18, width: 196, height: 36 });
+    });
+
+    it('器件和导线的混合边界框', () => {
+      collision.setEntity(part);
+      collision.setEntity(line);
+
+      const result = collision.getEntityBoundingBox(part.id, line.id);
+      expect(result).toEqual({ x: -48, y: -15, width: 156, height: 123 });
+    });
+
+    it('多个导线的边界框', () => {
+      const line1 = createLineByPath([
+        Point.from([0, 0]),
+        Point.from([0, 50]),
+      ]);
+      const line2 = createLineByPath([
+        Point.from([100, 0]),
+        Point.from([100, 50]),
+      ]);
+
+      collision.setEntity(line1);
+      collision.setEntity(line2);
+
+      const result = collision.getEntityBoundingBox(line1.id, line2.id);
+      expect(result).toEqual({ x: -8, y: -8, width: 116, height: 66 });
+    });
+
+    it('部分存在的实体ID应该忽略不存在的ID', () => {
+      collision.setEntity(part);
+
+      const result = collision.getEntityBoundingBox(part.id, 'non-existent-id');
+      expect(result).toEqual({ x: -48, y: -15, width: 96, height: 30 });
+    });
+
+    it('所有ID都不存在时应该返回 undefined', () => {
+      const result = collision.getEntityBoundingBox('non-existent-id-1', 'non-existent-id-2');
+      expect(result).toBeUndefined();
+    });
+
+    it('空ID数组应该返回 undefined', () => {
+      const result = collision.getEntityBoundingBox();
+      expect(result).toBeUndefined();
+    });
+
+    it('多个器件的分散边界框', () => {
+      const part1 = createPartByKind(ElectronicKind.Resistance, []);
+      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      const part3 = createPartByKind(ElectronicKind.Inductance, []);
+
+      part1.position = Point.from([0, 0]);
+      part2.position = Point.from([200, 0]);
+      part3.position = Point.from([100, 100]);
+
+      collision.setEntity(part1);
+      collision.setEntity(part2);
+      collision.setEntity(part3);
+
+      const result = collision.getEntityBoundingBox(part1.id, part2.id, part3.id);
+      expect(result).toEqual({ x: -48, y: -18, width: 296, height: 126 });
+    });
+
+    it('垂直排列的多个器件边界框', () => {
+      const part1 = createPartByKind(ElectronicKind.Resistance, []);
+      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+
+      part1.position = Point.from([0, 0]);
+      part2.position = Point.from([0, 100]);
+
+      collision.setEntity(part1);
+      collision.setEntity(part2);
+
+      const result = collision.getEntityBoundingBox(part1.id, part2.id);
+      expect(result).toEqual({ x: -48, y: -15, width: 96, height: 133 });
+    });
   });
 
   describe('获取矩形内的元件', () => {
@@ -200,6 +286,72 @@ describe('碰撞服务', () => {
       expect(result.has(part1.id)).toBe(true);
       expect(result.has(part2.id)).toBe(true);
       expect(result.size).toBe(2);
+    });
+
+    it('边界完全重合的矩形应该被包含', () => {
+      collision.setEntity(part);
+      // 创建一个与 part 边界完全重合的矩形
+      const testRect = { x: -48, y: -15, width: 96, height: 30 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(part.id)).toBe(true);
+    });
+
+    it('边界稍微超出给定矩形的元件不应该被包含', () => {
+      collision.setEntity(part);
+      // 创建一个稍微小于 part 边界的矩形
+      const testRect = { x: -47, y: -14, width: 94, height: 28 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(part.id)).toBe(false);
+    });
+
+    it('导线完全在矩形内应该被包含', () => {
+      collision.setEntity(line);
+      const testRect = { x: -10, y: -10, width: 120, height: 120 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(line.id)).toBe(true);
+    });
+
+    it('导线部分超出矩形边界不应该被包含', () => {
+      collision.setEntity(line);
+      const testRect = { x: 0, y: 0, width: 100, height: 100 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(line.id)).toBe(false);
+    });
+
+    it('多个元件中只有部分完全在矩形内', () => {
+      const part1 = createPartByKind(ElectronicKind.Resistance, []);
+      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      const part3 = createPartByKind(ElectronicKind.Inductance, []);
+
+      part1.position = Point.from([0, 0]);
+      part2.position = Point.from([100, 0]);
+      part3.position = Point.from([200, 0]);
+
+      collision.setEntity(part1);
+      collision.setEntity(part2);
+      collision.setEntity(part3);
+
+      // 只包含前两个元件的矩形
+      const testRect = { x: -50, y: -50, width: 150, height: 100 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(part1.id)).toBe(true);
+      expect(result.has(part2.id)).toBe(true);
+      expect(result.has(part3.id)).toBe(false);
+      expect(result.size).toBe(2);
+    });
+
+    it('矩形完全在元件内部时不应该返回该元件', () => {
+      collision.setEntity(part);
+      // 创建一个完全在 part 内部的矩形
+      const testRect = { x: -30, y: -10, width: 20, height: 20 };
+      const result = collision.getElectronicsInRect(testRect);
+
+      expect(result.has(part.id)).toBe(false);
     });
   });
 });

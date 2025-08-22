@@ -46,8 +46,8 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
   // 触发移动器件文本
   const onMouseDown = useCallback((event: React.MouseEvent<SVGGElement>) => {
-    if (dragService.isLeftMouseDownNoMovingNoScene(event)) {
-      dragService.trigger('move-part-label', { id, event });
+    if (dragService.isLeftMouseDownNoMovingNoScene(event.nativeEvent)) {
+      dragService.trigger('move-part-label', { id, event: event.nativeEvent });
     }
   }, [dragService]);
 

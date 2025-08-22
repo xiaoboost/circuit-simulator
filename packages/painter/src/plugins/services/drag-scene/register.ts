@@ -1,9 +1,9 @@
 import { Point } from '@circuit/algorithm';
 import { HOT_KEY_HOOK } from '@circuit/shared';
-import type { MouseEvent } from 'react';
 import { definePlugin, Watcher } from '../../../context';
 import {
   DragMouseEvent,
+  DragMoveEvent,
   DragSceneHookPayload,
   IDragSceneService,
   DRAG_SCENE_SERVICE,
@@ -120,11 +120,19 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   function getDragMouseEvent(event: MouseEvent) {
     const mapService = getService(MAP_COORDINATE_SERVICE);
     const mousePosition = mapService.screenToViewPosition(Point.from([event.pageX, event.pageY]));
-    const dragMouseEvent: DragMouseEvent = {
-      ...event,
-      position: mousePosition,
-      positionInDrawer: mapService.viewToMapPosition(mousePosition),
-    };
+    const positionInDrawer = mapService.viewToMapPosition(mousePosition);
+    const dragMouseEvent: DragMouseEvent = new Proxy(event, {
+      get(target, prop) {
+        switch (prop) {
+          case 'position':
+            return mousePosition;
+          case 'positionInDrawer':
+            return positionInDrawer;
+          default:
+            return Reflect.get(target, prop);
+        }
+      },
+    }) as any;
 
     return dragMouseEvent;
   }
@@ -221,20 +229,29 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
               const movementAcc = dragMouseEvent.position.add(startPositionMap.get(hook.name)!, -1);
               const movementInDrawerAcc = movementAcc.mul(map.scale.data, -1);
               const payload = triggerPayloadMap.get(hook.name);
-              const dragEvent = {
-                ...dragMouseEvent,
-                movement,
-                movementInDrawer,
-                movementAcc,
-                movementInDrawerAcc,
-              };
+              const dragMoveEvent: DragMoveEvent = new Proxy(dragMouseEvent, {
+                get(target, prop) {
+                  switch (prop) {
+                    case 'movement':
+                      return movement;
+                    case 'movementInDrawer':
+                      return movementInDrawer;
+                    case 'movementAcc':
+                      return movementAcc;
+                    case 'movementInDrawerAcc':
+                      return movementInDrawerAcc;
+                    default:
+                      return Reflect.get(target, prop);
+                  }
+                },
+              }) as any;
 
               // 这里必须是等于 false
               if (isMovedMap.get(hook.name) === false && hook.onFirstDragMove) {
-                hook.onFirstDragMove(dragEvent, payload);
+                hook.onFirstDragMove(dragMoveEvent, payload);
               }
               else {
-                hook.onDragMove(dragEvent, payload);
+                hook.onDragMove(dragMoveEvent, payload);
               }
             }
           }

@@ -1,5 +1,4 @@
 import type { Point } from '@circuit/algorithm';
-import type { MouseEvent } from 'react';
 import { createServiceKey } from '../../context';
 
 /** 拖动的鼠标事件 */

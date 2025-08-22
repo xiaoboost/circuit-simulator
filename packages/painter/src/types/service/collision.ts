@@ -87,7 +87,7 @@ export interface ICollisionService {
    * @param id 实体ID
    * @returns 边界框或`undefined`
    */
-  getEntityBoundingBox(id: string): Rect | undefined;
+  getEntityBoundingBox(...ids: string[]): Rect | undefined;
 
   /**
    * 获取实体区域

@@ -104,8 +104,8 @@ definePlugin(({ registerService }) => {
     getAllEntityRects() {
       return Array.from(map.values()).flatMap(region => region.rects);
     },
-    getEntityBoundingBox(id: string) {
-      const rects = this.getEntityRects(id);
+    getEntityBoundingBox(...ids: string[]) {
+      const rects = ids.flatMap(id => this.getEntityRects(id));
 
       if (rects.length === 0) {
         return;

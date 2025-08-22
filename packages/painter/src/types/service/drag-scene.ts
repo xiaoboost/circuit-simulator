@@ -1,5 +1,4 @@
 import { ReadonlySet } from '@circuit/shared';
-import { MouseEvent } from 'react';
 import { createServiceKey, type Watcher } from '../../context';
 
 /**
