@@ -50,6 +50,8 @@ export interface IStateCoreService {
   readonly canUndo: Watcher<boolean>;
   /** 能否重做 */
   readonly canRedo: Watcher<boolean>;
+  /** 空图纸 */
+  readonly isEmpty: Watcher<boolean>;
   /** 获取器件原型 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
   /** 获取器件 */

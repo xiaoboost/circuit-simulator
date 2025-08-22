@@ -30,12 +30,12 @@ export function EditorRender() {
 
   return (
     <>
-      <Tooltip title='撤销编辑' destroyOnHidden>
+      <Tooltip title={canUndo ? '撤销编辑' : '暂无操作可撤销'} destroyOnHidden>
         <Button disabled={!canUndo} onClick={onUndo}>
           <Undo />
         </Button>
       </Tooltip>
-      <Tooltip title='重做撤销' destroyOnHidden>
+      <Tooltip title={canRedo ? '重做撤销' : '暂无操作可重做'} destroyOnHidden>
         <Button disabled={!canRedo} onClick={onRedo}>
           <Redo />
         </Button>

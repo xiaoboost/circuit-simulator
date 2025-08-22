@@ -17,6 +17,19 @@ export function ScaleRender() {
   const logger = useService(LOGGER_SERVICE);
   const [scale] = useWatcher(mapService.scale);
   const [isDragging] = useWatcher(dragScene.isDragging);
+  const isScaleMax = scale >= mapService.ScaleMax;
+  const isScaleMin = scale <= mapService.ScaleMin;
+  const draggingTooltip = '拖动中，无法缩放';
+  const zoomInTooltip = isScaleMax
+    ? '已是最大缩放'
+    : isDragging
+      ? draggingTooltip
+      : '放大图纸';
+  const zoomOutTooltip = isScaleMin
+    ? '已是最小缩放'
+    : isDragging
+      ? draggingTooltip
+      : '缩小图纸';
 
   const scaleZoomIn = () => {
     logger.info(LoggerName, '画布放大');
@@ -30,13 +43,13 @@ export function ScaleRender() {
   return (
     <>
       <Divider />
-      <Tooltip title='放大图纸' destroyOnHidden>
-        <Button disabled={isDragging || scale >= mapService.ScaleMax} onClick={scaleZoomIn}>
+      <Tooltip title={zoomInTooltip} destroyOnHidden>
+        <Button disabled={isDragging || isScaleMax} onClick={scaleZoomIn}>
           <Add />
         </Button>
       </Tooltip>
-      <Tooltip title='缩小图纸' destroyOnHidden>
-        <Button disabled={isDragging || scale <= mapService.ScaleMin} onClick={scaleZoomOut}>
+      <Tooltip title={zoomOutTooltip} destroyOnHidden>
+        <Button disabled={isDragging || isScaleMin} onClick={scaleZoomOut}>
           <Minus />
         </Button>
       </Tooltip>

@@ -9,3 +9,4 @@ export * from './select';
 export * from './hover';
 export * from './configuration';
 export * from './connection';
+export * from './viewport';

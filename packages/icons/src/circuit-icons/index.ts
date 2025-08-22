@@ -5,3 +5,4 @@ export * from './debugger';
 export * from './text';
 export * from './hand';
 export * from './empty';
+export * from './fit-screen';

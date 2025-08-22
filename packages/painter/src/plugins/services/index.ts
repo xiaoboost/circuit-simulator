@@ -8,3 +8,4 @@ import './variable-observer';
 import './configuration';
 import './hover';
 import './connection';
+import './viewport';

@@ -32,6 +32,7 @@ definePlugin(({ registerService }) => {
   const updateState = () => {
     service.state.setData(draftState ?? state);
     service.commitState.setData(state);
+    service.isEmpty.setData(state.parts.length === 0 && state.lines.length === 0);
     service.canUndo.setData(
       draftState
         ? false
@@ -55,6 +56,7 @@ definePlugin(({ registerService }) => {
     }),
     canUndo: new Watcher(false),
     canRedo: new Watcher(false),
+    isEmpty: new Watcher(true),
     getPartPrototype(kind) {
       const result = Electronics[kind];
 
