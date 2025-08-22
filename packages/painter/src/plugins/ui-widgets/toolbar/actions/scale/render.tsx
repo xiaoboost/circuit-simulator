@@ -8,7 +8,6 @@ import {
   DRAG_SCENE_SERVICE,
 } from '../../../../../types';
 import { Button, Divider } from '../../components';
-import * as Styles from './styles.less';
 
 const LoggerName = '快捷操作';
 
@@ -32,13 +31,12 @@ export function ScaleRender() {
     <>
       <Divider />
       <Tooltip title='放大图纸' destroyOnHidden>
-        <Button disabled={isDragging && scale <= mapService.ScaleMin} onClick={scaleZoomIn}>
+        <Button disabled={isDragging || scale >= mapService.ScaleMax} onClick={scaleZoomIn}>
           <Add />
         </Button>
       </Tooltip>
-      <div className={Styles.scaleNumber}>{Math.round(scale * 100)}%</div>
       <Tooltip title='缩小图纸' destroyOnHidden>
-        <Button disabled={isDragging && scale >= mapService.ScaleMax} onClick={scaleZoomOut}>
+        <Button disabled={isDragging || scale <= mapService.ScaleMin} onClick={scaleZoomOut}>
           <Minus />
         </Button>
       </Tooltip>

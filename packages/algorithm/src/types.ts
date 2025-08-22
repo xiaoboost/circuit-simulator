@@ -20,12 +20,15 @@ export type PointInput = PointLike | number;
 export type DirectionLabel = keyof typeof Direction;
 /** 外框定义 */
 export type MarginBox = [top: number, right: number, bottom: number, left: number];
-/** 外框数据 */
-export interface Rect {
-  x: number;
-  y: number;
+/** 大小 */
+export interface Size {
   width: number;
   height: number;
+}
+/** 外框数据 */
+export interface Rect extends Size {
+  x: number;
+  y: number;
 }
 /** 矩形 */
 export interface BoundingBox {

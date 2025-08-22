@@ -2,11 +2,10 @@
 
 .toolbar {
   position: absolute;
-  right: 40px;
-  bottom: 40px;
+  right: 32px;
+  bottom: 32px;
   padding: (@ToolbarPadding * 1px);
   pointer-events: auto;
-  background-color: fade(@color-white, 90%);
   border: 1px solid @color-border-base;
   border-radius: 8px;
   display: flex;
@@ -14,4 +13,6 @@
   justify-content: center;
   align-items: center;
   box-shadow: 0 2px 10px 2px mix(@color-white, @color-black, 85%);
+  background-color: fade(@color-white, 60%);
+  backdrop-filter: blur(10px);
 }

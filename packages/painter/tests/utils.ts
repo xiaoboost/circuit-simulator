@@ -10,9 +10,16 @@ export function resolveRegister(file: string) {
   return import(path.resolve(__dirname, '../src/plugins', file));
 }
 
-export function registerPlugin(file: string) {
-  beforeAll(() => resolveRegister(file));
-  afterAll(() => clearRegister());
+export function registerPlugin(file: string, testConfig: Record<string, any> = {}) {
+  beforeAll(async () => {
+    await resolveRegister(file);
+    (globalThis as any).__TEST_CONFIG__ = testConfig;
+  });
+
+  afterAll(async () => {
+    await clearRegister();
+    delete (globalThis as any).__TEST_CONFIG__;
+  });
 }
 
 export async function getPlugin<T>(key: ServiceTypeWithKey<T>): Promise<T> {

@@ -64,6 +64,11 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
       registerHook: (key, hook) => {
         context.HookMap.set(key, [...(context.HookMap.get(key) ?? []), hook]);
       },
+      getTestConfig(key) {
+        return process.env.NODE_ENV === 'test'
+          ? (globalThis as any)?.__TEST_CONFIG__?.[key]
+          : undefined;
+      },
     });
 
     if (uninstaller) {

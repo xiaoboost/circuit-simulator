@@ -33,6 +33,8 @@ export interface IPluginInstallerContext {
   registerService<T>(key: ServiceTypeWithKey<T>, service: T): void;
   /** 注册钩子 */
   registerHook<T>(key: ServiceTypeWithKey<T>, hook: T): void;
+  /** 获取测试时配置 */
+  getTestConfig<T = any>(key: string): T;
 }
 
 /** 上下文储存 */
