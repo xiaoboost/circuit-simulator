@@ -37,7 +37,7 @@ export interface IConnectionService {
   /**
    * 从原始数据创建连接关系
    */
-  createConnectionFromData(data: StructuredData): void;
+  createFromData(data: StructuredData): void;
 
   /**
    * 注册引脚

@@ -23,7 +23,7 @@ describe('连接服务', () => {
 
   describe('空器件处理', () => {
     it('空器件应该没有连接', async () => {
-      connection.createConnectionFromData({
+      connection.createFromData({
         parts: [part],
         lines: [],
       });
@@ -34,7 +34,7 @@ describe('连接服务', () => {
 
   describe('基本连接', () => {
     beforeEach(() => {
-      connection.createConnectionFromData({
+      connection.createFromData({
         parts: [part],
         lines: [line],
       });
@@ -67,7 +67,7 @@ describe('连接服务', () => {
 
   describe('移除导线', () => {
     beforeEach(() => {
-      connection.createConnectionFromData({
+      connection.createFromData({
         parts: [part],
         lines: [line],
       });

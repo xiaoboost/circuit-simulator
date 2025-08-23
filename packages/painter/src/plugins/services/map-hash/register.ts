@@ -10,6 +10,14 @@ import * as MapMark from './mark';
 definePlugin(({ registerService }) => {
   const markMap: MarkMap = {};
   const service: IMapHashService = {
+    createFromData({ parts, lines }) {
+      for (const part of parts) {
+        Map.setPartMark(part, markMap);
+      }
+      for (const line of lines) {
+        Map.setLineMark(line, markMap);
+      }
+    },
     setPartMark: (data) => Map.setPartMark(data, markMap),
     setLineMark: (data) => Map.setLineMark(data, markMap),
     deletePartMark: (data) => Map.deletePartMark(data, markMap),

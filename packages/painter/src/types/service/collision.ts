@@ -1,5 +1,5 @@
 import { Point, Rect } from '@circuit/algorithm';
-import { LineOrPartStructuredData } from '@circuit/types';
+import { LineOrPartStructuredData, StructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 import { Entity } from '../types';
 
@@ -31,6 +31,11 @@ export const COLLISION_SERVICE =
 
 export interface ICollisionService {
   // ===== 实体管理 =====
+  /**
+   * 从初始数据创建图纸记录
+   * @description 从初始化数据创建图纸记录，其实是调用`setEntity`的语法糖
+   */
+  createFromData(data: StructuredData): void;
   /**
    * 添加实体到碰撞系统
    * @description 如果有了那就更新

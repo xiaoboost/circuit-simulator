@@ -28,18 +28,12 @@ definePlugin(({ registerHook, getService }) => {
       const collisionService = getService(COLLISION_SERVICE);
       const connectionService = getService(CONNECTION_SERVICE);
 
-      for (const part of data.parts ?? []) {
-        mapHashService.setPartMark(part);
-        collisionService.setEntity(part);
-      }
-
-      for (const line of data.lines ?? []) {
-        mapHashService.setLineMark(line);
-        collisionService.setEntity(line);
-      }
-
+      // 初始化碰撞系统
+      collisionService.createFromData(data);
+      // 初始化图纸标记
+      mapHashService.createFromData(data);
       // 初始化连接关系
-      connectionService.createConnectionFromData(data);
+      connectionService.createFromData(data);
       // 完成日志
       logger.info(LoggerName, '初始化完成');
 

@@ -55,15 +55,6 @@ export function remove(map: MarkMap, node: Point) {
   delete map[toKey(node)];
 }
 
-export function entries(map: MarkMap) {
-  return getPoints(map)
-    .map((point) => [point, get(map, point)] as [Point, Mark]);
-}
-
-export function keys(map: MarkMap) {
-  return getPoints(map).map((point) => point);
-}
-
 export function values(map: MarkMap) {
   return getPoints(map)
     .map((point) => get(map, point) as Mark);

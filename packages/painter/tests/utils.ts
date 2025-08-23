@@ -10,9 +10,16 @@ export function resolveRegister(file: string) {
   return import(path.resolve(__dirname, '../src/plugins', file));
 }
 
-export function registerPlugin(file: string, testConfig: Record<string, any> = {}) {
+export function registerPlugin(file: string | string[], testConfig: Record<string, any> = {}) {
   beforeAll(async () => {
-    await resolveRegister(file);
+    if (Array.isArray(file)) {
+      for (const f of file) {
+        await resolveRegister(f);
+      }
+    }
+    else {
+      await resolveRegister(file);
+    }
     (globalThis as any).__TEST_CONFIG__ = testConfig;
   });
 

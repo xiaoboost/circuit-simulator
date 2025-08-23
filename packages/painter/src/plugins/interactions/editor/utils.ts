@@ -15,6 +15,11 @@ import {
   PIN_STYLE_HOC_SCOPE as PinKey,
 } from './constant';
 
+// 这些是导出给测试用的
+export { createDrawLineSearcher } from './create-line/search';
+export type { PathSearcher, PainterState } from './algorithm';
+export * from './constant';
+
 export function painterStateGetter(
   hover: IHoverService,
   state: IStateCoreService,

@@ -16,7 +16,7 @@ definePlugin(({ registerService }) => {
   };
 
   const service: IConnectionService = {
-    createConnectionFromData(data: StructuredData) {
+    createFromData(data: StructuredData) {
       this.clearAll();
 
       // 获取所有连接

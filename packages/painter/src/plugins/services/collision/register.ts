@@ -18,6 +18,14 @@ import { getRectByEntity } from './create';
 definePlugin(({ registerService }) => {
   const map = new Map<string, IEntityRegion>();
   const service: ICollisionService = {
+    createFromData(data) {
+      for (const part of data.parts) {
+        this.setEntity(part);
+      }
+      for (const line of data.lines) {
+        this.setEntity(line);
+      }
+    },
     setEntity(entity: LineOrPartStructuredData) {
       for (const region of getRectByEntity(entity)) {
         map.set(region.id, region);
