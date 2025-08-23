@@ -4,3 +4,4 @@ import './debugger';
 import './storage';
 import './state-core';
 import './stream';
+import './layout';

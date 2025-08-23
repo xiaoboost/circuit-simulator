@@ -1,11 +1,14 @@
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Button } from 'antd';
-import React, { useState } from 'react';
+import React from 'react';
 import * as Styles from './styles.less';
 
 export interface SidebarProps {
   title: React.ReactNode;
+  width?: number;
   children: React.ReactNode;
+  isCollapsed: boolean;
+  onCollapse: (isCollapsed: boolean) => void;
   style?: React.CSSProperties;
   icons?: {
     collapse?: React.ReactNode;
@@ -21,12 +24,13 @@ export interface SidebarProps {
 export function Sidebar({
   title,
   children,
+  isCollapsed,
+  onCollapse,
   classNames,
   style,
   icons,
+  width = 300,
 }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   return (
     <aside
       className={sc(Styles.sidebarWrapper, classNames?.wrapper, {
@@ -37,16 +41,19 @@ export function Sidebar({
       {isCollapsed
         ? (
           <div className={classNames?.collapsed}>
-            <Button icon={icons?.expand} onClick={() => setIsCollapsed(false)}>{title}</Button>
+            <Button icon={icons?.expand} onClick={() => onCollapse(false)}>{title}</Button>
           </div>
         )
         : (
-          <div className={sc(Styles.sidebar, classNames?.sidebar)}>
+          <div
+            className={sc(Styles.sidebar, classNames?.sidebar)}
+            style={{ width }}
+          >
             <div className={Styles.sidebarHeader}>
               <span className={Styles.sidebarHeaderTitle}>{title}</span>
               <span
                 className={Styles.sidebarHeaderIcon}
-                onClick={() => setIsCollapsed(true)}
+                onClick={() => onCollapse(true)}
               >
                 {icons?.collapse}
               </span>
