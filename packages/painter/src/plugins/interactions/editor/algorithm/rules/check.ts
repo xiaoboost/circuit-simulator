@@ -1,4 +1,3 @@
-import { Map, Mark } from '../../constant';
 import type { SearchNodeData } from '../a-star';
 import type { RulesContext } from './types';
 
@@ -8,10 +7,10 @@ import type { RulesContext } from './types';
  * @description 在导线和节点处会限制曼哈顿距离
  */
 export function isValidNode(this: RulesContext, node: SearchNodeData): boolean {
-  const { map } = this;
-  const status = Map.get(map, node.position);
+  const { painter } = this;
+  const status = painter.get(node.position);
 
-  if (status && (Mark.isPart(status) || Mark.isPartPinLine(status))) {
+  if (status && (painter.isPart(status) || painter.isPartPinLine(status))) {
     return false;
   }
 

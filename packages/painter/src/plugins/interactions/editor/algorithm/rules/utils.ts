@@ -1,25 +1,21 @@
-import type { Point } from '@circuit/algorithm';
-import { Map, Mark, type MarkMap } from '../../constant';
+import { Point } from '@circuit/algorithm';
 import type { SearchNodeData } from '../a-star';
+import type { PainterState } from '../searcher';
 
 /** 返回节点所在器件 */
-export function getPart(map: MarkMap, node: Point) {
-  const status = Map.get(map, node);
+export function getPart(painter: PainterState, node: Point) {
+  const status = painter.get(node);
 
-  if (!status) {
-    return;
-  }
-
-  if (Mark.isPart(status) || Mark.isPartPin(status)) {
+  if (painter.isPart(status) || painter.isPartPin(status)) {
     return status.id;
   }
 }
 
 /** 返回节点所在线段 */
-export function getSegment(map: MarkMap, node: Point) {
-  const data = Map.get(map, node);
+export function getSegment(painter: PainterState, node: Point) {
+  const data = painter.get(node);
 
-  if (!data || !Mark.isLineAndPoint(data)) {
+  if (!data || !painter.isLineAndPoint(data)) {
     return;
   }
 
@@ -28,8 +24,8 @@ export function getSegment(map: MarkMap, node: Point) {
   for (let i = 0; i < 2; i++) {
     const directors = [[1, 0], [-1, 0], [0, -1], [0, 1]];
     const limit = [
-      Mark.alongLineAndVector(data, directors[i * 2], map),
-      Mark.alongLineAndVector(data, directors[i * 2 + 1], map),
+      painter.alongLineAndVector(data, Point.from(directors[i * 2])),
+      painter.alongLineAndVector(data, Point.from(directors[i * 2 + 1])),
     ];
 
     if (!limit[0].position.isEqual(limit[1].position)) {
@@ -41,10 +37,10 @@ export function getSegment(map: MarkMap, node: Point) {
 }
 
 /** 节点所在线段是否和当前节点方向垂直 */
-export function isNodeVerticalLine(map: MarkMap, node: SearchNodeData): boolean {
-  const status = Map.get(map, node.position);
+export function isNodeVerticalLine(painter: PainterState, node: SearchNodeData): boolean {
+  const status = painter.get(node.position);
 
-  if (!status || Mark.isNoConnect(status)) {
+  if (!status || painter.isNoConnect(status)) {
     return false;
   }
 

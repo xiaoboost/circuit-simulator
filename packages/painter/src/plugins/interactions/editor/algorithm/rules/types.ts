@@ -1,7 +1,6 @@
 import type { Point } from '@circuit/algorithm';
-import type { MarkMap } from '../../../../../types';
 import type { SearchNodeData } from '../a-star';
-import type { SearchMode } from '../searcher';
+import type { SearchMode, PainterState } from '../searcher';
 
 /** 搜索规则 */
 export interface Rules {
@@ -22,7 +21,7 @@ export interface RulesOptions {
   /** 初始方向 */
   direction: Point;
   /** 标记图纸数据 */
-  map: MarkMap;
+  painter: PainterState;
   /** 搜索模式 */
   mode: SearchMode;
 }

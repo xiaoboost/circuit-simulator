@@ -3,6 +3,7 @@ import type {
   IHoverService,
   IVariableObserverService,
   IConnectionService,
+  IMapHashService,
 } from '../../../types';
 import {
   PATH_SEARCH_POINTS_STATE as DebugKey,
@@ -18,6 +19,7 @@ export function painterStateGetter(
   hover: IHoverService,
   state: IStateCoreService,
   connection: IConnectionService,
+  map: IMapHashService,
 ): PainterState {
   return {
     getHover() {
@@ -32,6 +34,7 @@ export function painterStateGetter(
     getConnection(id: string, pin: number) {
       return connection.getConnections(id, pin);
     },
+    ...map,
   };
 }
 

@@ -1,7 +1,12 @@
 import type { Point, PathWithPoint } from '@circuit/algorithm';
 import type { PartStructuredData, LineStructuredData } from '@circuit/types';
-import type { IConnectionDataWithPin } from '../../../../../types';
-import type { MarkMap, Entity } from '../../constant';
+import type {
+  IConnectionDataWithPin,
+  IMapHashMarkService,
+  IMapHashCoreService,
+  IMapHashAssertService,
+} from '../../../../../types';
+import type { Entity } from '../../constant';
 import type { SearchHook } from '../a-star';
 
 /** 搜索状态 */
@@ -24,7 +29,11 @@ export const enum SearchMode {
 }
 
 /** 画布状态 */
-export interface PainterState {
+export interface PainterState
+  extends
+    IMapHashCoreService,
+    IMapHashMarkService,
+    IMapHashAssertService {
   /** 鼠标覆盖状态 */
   getHover: () => Entity | undefined;
   /** 获取元件数据 */
@@ -73,8 +82,6 @@ export interface PathSearcherOptions {
   start: Point;
   /** 起始方向 */
   direction: Point;
-  /** 标记图纸 */
-  map: MarkMap;
   /** 画布控制器 */
   painter: PainterState;
   /** 搜索钩子 */

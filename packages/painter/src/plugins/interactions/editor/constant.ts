@@ -6,12 +6,6 @@ export {
 } from '../../hoc-modules';
 
 export {
-  Mark,
-  Map,
-  Connection,
-} from '../../services/map-hash';
-
-export {
   type MarkMap,
   type Entity,
   EntityKind,

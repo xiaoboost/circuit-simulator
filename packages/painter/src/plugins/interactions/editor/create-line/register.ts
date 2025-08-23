@@ -48,14 +48,14 @@ definePlugin(({ registerHook, getService }) => {
     order: 5,
     onMouseDown(event) {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const hoverService = getService(HOVER_SERVICE);
-      const hover = hoverService.status.data;
+      const hover = getService(HOVER_SERVICE);
+      const hoverData = hover.status.data;
 
       if (
         !dragSceneService.isLeftMouseDownNoMovingNoScene(event) ||
         (
-          !hover ||
-          hover.kind !== EntityKind.PartPin
+          !hoverData ||
+          hoverData.kind !== EntityKind.PartPin
         )
       ) {
         return;
@@ -63,15 +63,15 @@ definePlugin(({ registerHook, getService }) => {
 
       const state = getService(STATE_CORE_SERVICE);
       const connection = getService(CONNECTION_SERVICE);
-      const part = state.getPart(hover.id);
-      const pin = getPartPin(part, hover.pin);
+      const map = getService(MAP_HASH_SERVICE);
+      const part = state.getPart(hoverData.id);
+      const pin = getPartPin(part, hoverData.pin);
       const line = createLine(pin.position);
       const search = createSearcher({
         lineId: line.id,
         start: pin.position,
         direction: pin.direction,
-        map: getService(MAP_HASH_SERVICE).getMap(),
-        painter: painterStateGetter(hoverService, state, connection),
+        painter: painterStateGetter(hover, state, connection, map),
         hook: createSearchHook(getService(VARIABLE_OBSERVER_SERVICE)),
       });
 
@@ -86,8 +86,8 @@ definePlugin(({ registerHook, getService }) => {
         search,
         event,
         start: {
-          id: hover.id,
-          pin: hover.pin,
+          id: hoverData.id,
+          pin: hoverData.pin,
           tag: createPartReferenceTag(part),
         },
       });

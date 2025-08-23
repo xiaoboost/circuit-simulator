@@ -14,8 +14,6 @@ import {
 } from '../algorithm';
 import {
   EntityKind,
-  Map as MapHash,
-  Mark as MapMark,
   PIN_DRAW_EXPANDED_STYLE,
   PIN_DRAW_FIXED_STYLE,
 } from '../constant';
@@ -25,7 +23,6 @@ export function createDrawLineSearcher({
   start,
   direction,
   lineId,
-  map,
   painter,
   hook,
 }: DrawLineSearcherOptions): PathSearcher {
@@ -86,7 +83,7 @@ export function createDrawLineSearcher({
     // 终点在空白
     if (!hover) {
       searchMode = SearchMode.DrawNormal;
-      endList = endGrid.filter((node) => !MapHash.get(map, node));
+      endList = endGrid.filter((node) => !painter.get(node));
 
       // 四个节点均被占用
       if (endList.length === 0) {
@@ -191,7 +188,7 @@ export function createDrawLineSearcher({
         rules: createRules({
           start,
           end,
-          map,
+          painter,
           mode: SearchMode.DrawModification,
           direction: preferDirection,
         }),
@@ -220,7 +217,7 @@ export function createDrawLineSearcher({
           rules: createRules({
             start,
             end,
-            map,
+            painter,
             mode: SearchMode.DrawModification,
             direction,
           }),
@@ -245,7 +242,7 @@ export function createDrawLineSearcher({
           rules: createRules({
             start,
             end,
-            map,
+            painter,
             mode: SearchMode.DrawModification,
             direction,
           }),
@@ -279,7 +276,7 @@ export function createDrawLineSearcher({
         rules: createRules({
           start,
           end,
-          map,
+          painter,
           mode: searchMode,
           direction: preferDirection,
         }),
@@ -301,13 +298,13 @@ export function createDrawLineSearcher({
     // 对齐导线的情况下，修饰导线
     else if (searchMode === SearchMode.DrawAlignLine) {
       const endRound = end.round();
-      const endMark = MapHash.get(map, endRound)!;
+      const endMark = painter.get(endRound)!;
       const endRoundWay = cache.get(endRound.join(','))!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
       const roundSet = endList.filter((node) => {
-        if (MapMark.isLineAndPoint(endMark)) {
-          return MapMark.hasConnect(endMark, node)
-            ? MapMark.isPartPinLine(MapHash.get(map, node)!)
+        if (painter.isLineAndPoint(endMark)) {
+          return painter.hasConnect(endMark, node)
+            ? painter.isPartPinLine(painter.get(node))
             : false;
         }
         else {
