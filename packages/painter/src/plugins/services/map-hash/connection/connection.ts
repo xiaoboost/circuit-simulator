@@ -8,6 +8,11 @@ function vectorToKey(vector: Point) {
     }
   }
 
+  // 曼哈顿距离为 20 的向量才是有效的连接器向量
+  if (Math.abs(vector[0] + vector[1]) !== 20) {
+    return;
+  }
+
   if (vector[0] > 0 && vector[1] === 0) {
     return 'right';
   }
@@ -36,7 +41,7 @@ export function add(current: Point, next: Point, connection: ConnectionData) {
 export function remove(current: Point, next: Point, connection: ConnectionData) {
   const key = vectorToKey(next.add(current, -1));
   if (key) {
-    connection[key] = false;
+    delete connection[key];
   }
 }
 
@@ -51,7 +56,7 @@ export function has(current: Point, next: Point, connection: ConnectionData) {
 
 export function getPoints(connection: ConnectionData) {
   return [
-    connection.left ? Point.from([0, -20]) : undefined,
+    connection.top ? Point.from([0, -20]) : undefined,
     connection.right ? Point.from([20, 0]) : undefined,
     connection.bottom ? Point.from([0, 20]) : undefined,
     connection.left ? Point.from([-20, 0]) : undefined,

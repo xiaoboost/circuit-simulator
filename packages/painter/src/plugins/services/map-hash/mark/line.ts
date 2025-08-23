@@ -73,14 +73,14 @@ export function deleteConnect(data: LineAndPointMark, next: Point) {
 }
 
 /** 是否包含连接 */
-export function hasConnect(data: LineAndPointMark, point: Point) {
+export function hasConnect(data: LineAndPointMark, next: Point) {
   if (data.kind === MarkKind.LineCover) {
     return Object.values(data.connections).some((item) => {
-      return Connection.has(data.position, point, item);
+      return Connection.has(data.position, next, item);
     });
   }
   else {
-    return Connection.has(data.position, point, data.connection);
+    return Connection.has(data.position, next, data.connection);
   }
 }
 
@@ -176,7 +176,7 @@ export function deleteLine(
       throw new Error('交错节点必须指定导线');
     }
 
-    const { lines, connection, position } = data;
+    const { lines } = data;
     const index = lines.findIndex((item) => item === line);
 
     if (index === -1) {
@@ -184,18 +184,6 @@ export function deleteLine(
     }
 
     lines.splice(index, 1);
-
-    for (const point of Connection.getPoints(connection)) {
-      if (!point) {
-        continue;
-      }
-
-      const node = Map.get(map, point);
-
-      if (node &&isLineAndPoint(node)) {
-        Connection.remove(position, point, connection);
-      }
-    }
 
     // 当前仍然是大于一个导线，则返回自己
     if (lines.length > 1) {
@@ -262,7 +250,7 @@ export function addLine(
       kind: MarkKind.LineCover,
       lines: [data.id, line],
       position: Point.from(data.position),
-      connections: { [line]: { ...data.connection } },
+      connections: { [data.id]: { ...data.connection } },
     };
   }
 
@@ -270,7 +258,7 @@ export function addLine(
 }
 
 /** 前后位置和当前节点是否连通 */
-export function inSingleLine(data: LineCoverMark, next: Point, pre: Point) {
+export function inStraightLine(data: LineCoverMark, next: Point, pre: Point) {
   return Object.values(data.connections).some((item) => {
     return Connection.has(data.position, pre, item) && Connection.has(data.position, next, item);
   });
@@ -289,7 +277,7 @@ export function alongLineAndVector(
   let next = Map.get(map, current.position.add(uVector));
 
   // 当前点没有到达终点，还在导线所在直线内部，那就前进
-  while (next && (end ? current.position.isEqual(end) : true)) {
+  while (next && (end ? !current.position.isEqual(end) : true)) {
     if (process.env.NODE_ENV === 'development') {
       index++;
       if (index > 500) {
@@ -300,7 +288,7 @@ export function alongLineAndVector(
     if (isLineCover(current)) {
       const pre = current.position.add(uVector, -1);
 
-      if (inSingleLine(current, next.position, pre)) {
+      if (inStraightLine(current, next.position, pre)) {
         current = next as LineAndPointMark;
         next = Map.get(map, current.position.add(uVector));
       }

@@ -12,7 +12,7 @@ import { createServiceKey } from '../../context';
  * ```
  */
 export const MAP_HASH_SERVICE =
-  createServiceKey<IMapService>('MapHash');
+  createServiceKey<IMapHashService>('MapHash');
 
 export interface ConnectionData {
   /** 左侧连通性 */
@@ -132,10 +132,44 @@ export type ConnectionPointMark =
 /** 器件节点 */
 export type PartAndPinMark = PartMark | PartPinMark;
 
-/** 图纸服务 */
-export interface IMapService {
-  /** 获取标记图纸 */
-  getMap(): Readonly<MarkMap>;
+/** 图纸服务核心方法 */
+export interface IMapHashCoreService {
+  /** 获取所有标记 */
+  getAllMarks(): Mark[];
+  /** 标记是否存在 */
+  has(position: Point): boolean;
+  /** 获取标记 */
+  get(position: Point): Mark | undefined;
+  /** 设置标记 */
+  set(data: Mark): void;
+  /** 删除标记 */
+  delete(position: Point): void;
+}
+
+/** 图纸服务断言方法 */
+export interface IMapHashAssertService {
+  /** 导线断言 */
+  isLine(mark: unknown): mark is LineMark;
+  /** 导线节点断言 */
+  isLinePoint(mark: unknown): mark is LinePointMark;
+  /** 交错节点断言 */
+  isLineCross(mark: unknown): mark is LineCrossMark;
+  /** 交叠节点断言 */
+  isLineCover(mark: unknown): mark is LineCoverMark;
+  /** 器件节点断言 */
+  isPart(mark: unknown): mark is PartMark;
+  /** 器件空引脚节点断言 */
+  isPartPin(mark: unknown): mark is PartPinMark;
+  /** 器件引脚节点连接导线断言 */
+  isPartPinLine(mark: unknown): mark is PartPinLineMark;
+  /** 导线节点和器件节点断言 */
+  isLineAndPoint(mark: unknown): mark is LineAndPointMark;
+  /** 器件节点和器件空引脚节点断言 */
+  isPartAndPin(mark: unknown): mark is PartAndPinMark;
+}
+
+/** 图纸服务业务方法 */
+export interface IMapHashBusinessService {
   /** 设置器件标记 */
   setPartMark(data: PartStructuredData): void;
   /** 设置导线标记 */
@@ -144,8 +178,30 @@ export interface IMapService {
   deletePartMark(data: PartStructuredData): void;
   /** 删除导线标记 */
   deleteLineMark(data: LineStructuredData): void;
-  /** 获取所有标记 */
-  getAllMarks(): Mark[];
-  /** 标记数据断言 */
-  getAssert<T extends MarkKind>(kind: T): (mark: Mark) => mark is Extract<Mark, { kind: T }>;
 }
+
+/** 图纸服务标记数据方法 */
+export interface IMapHashMarkService {
+  /** 是否包含导线 */
+  hasLine(data: LineAndPointMark, line: string): boolean;
+  /** 是否包含连接 */
+  hasConnect(data: LineAndPointMark, next: Point): boolean;
+  /** 是否包含直线通路 */
+  hasStraightLine(data: LineAndPointMark): boolean;
+  /** 是否全交叉 */
+  isFullCross(data: LineCrossMark): boolean;
+  /** 是否无连接 */
+  isNoConnect(data: Mark): boolean;
+  /** 前后位置和当前节点是否连通 */
+  inStraightLine(data: LineCoverMark, next: Point, pre: Point): boolean;
+  /** 沿着导线前进 */
+  alongLineAndVector(data: LineAndPointMark, vector: Point, end?: Point): LineAndPointMark;
+}
+
+/** 图纸服务 */
+export interface IMapHashService extends
+  IMapHashCoreService,
+  IMapHashAssertService,
+  IMapHashBusinessService,
+  IMapHashMarkService
+{}

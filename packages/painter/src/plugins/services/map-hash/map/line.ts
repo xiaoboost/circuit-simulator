@@ -13,6 +13,7 @@ import {
   deleteLine,
   addConnect,
   deleteConnect,
+  isLineAndPoint,
 } from '../mark';
 import { get, remove, set } from './map';
 
@@ -123,6 +124,7 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
     const point = points[i];
     const lastPoint = points[i - 1];
     const mark = get(map, point);
+    const lastMark = lastPoint && get(map, lastPoint);
 
     // 运行时距离检查
     if (process.env.NODE_ENV === 'development' && lastPoint) {
@@ -139,6 +141,14 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
       ) {
         throw new Error('删除节点并非指定导线编号');
       }
+    }
+
+    if (point && isLineAndPoint(lastMark)) {
+      deleteConnect(lastMark, point);
+    }
+
+    if (lastPoint && isLineAndPoint(mark)) {
+      deleteConnect(mark, lastPoint);
     }
 
     if (mark) {
