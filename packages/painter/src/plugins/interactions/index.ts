@@ -4,3 +4,4 @@ import './initialize';
 import './editor';
 import './debugger';
 import './painter-focus';
+import './painter-init';
