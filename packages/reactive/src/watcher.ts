@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { distinctUntilChanged, takeUntil, pairwise, map } from 'rxjs/operators';
+import { distinctUntilChanged, takeUntil, pairwise } from 'rxjs/operators';
 
 type ObserveCallback<T> = (current: T, previous?: T) => void;
 

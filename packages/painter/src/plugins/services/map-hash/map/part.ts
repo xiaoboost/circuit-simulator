@@ -13,7 +13,6 @@ import {
   isPart,
   isPartPin,
   isPartPinLine,
-  deleteLine,
   deletePartInPartPinLine,
 } from '../mark';
 import { get, remove, set } from './map';

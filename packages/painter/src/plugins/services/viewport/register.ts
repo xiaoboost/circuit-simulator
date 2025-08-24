@@ -204,7 +204,7 @@ definePlugin(({ registerService, getService }) => {
       previousViewState = null;
       return true;
     },
-    isInViewport(id) {
+    isInViewport() {
       // TODO:
       return false;
     },

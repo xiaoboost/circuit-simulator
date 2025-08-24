@@ -1,10 +1,10 @@
 // import { MarkKind } from '@circuit/map';
-import React from 'react';
-import { useHook, useService } from '../../../../context';
+// import React from 'react';
+// import { useHook, useService } from '../../../../context';
 import {
   IDrawLayerProps,
-  POINT_RENDERER,
-  MAP_HASH_SERVICE,
+  // POINT_RENDERER,
+  // MAP_HASH_SERVICE,
 } from '../../../../types';
 
 export function PointLayerRender(_: IDrawLayerProps) {

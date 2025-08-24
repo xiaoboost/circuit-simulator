@@ -1,8 +1,8 @@
-import { STATE_CORE_SERVICE } from '@circuit/shared';
-import { PartStructuredData } from '@circuit/types';
-import React, { useEffect, useState } from 'react';
-import { useHook, useService } from '../../../context';
-import { PROPERTY_INPUT } from '../../../types';
+// import { STATE_CORE_SERVICE } from '@circuit/shared';
+// import { PartStructuredData } from '@circuit/types';
+import React from 'react';
+// import { useHook, useService } from '../../../context';
+// import { PROPERTY_INPUT } from '../../../types';
 import { EmptyPropertyPanel, SinglePropertyPanel } from './components';
 import { useSelectedParts } from './utils';
 
