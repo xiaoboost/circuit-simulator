@@ -45,10 +45,8 @@ export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
       const [eventType, capture, passive] = key.split(':');
       const isCapture = capture === 'capture';
       const isPassive = passive === 'passive';
+      const sortedHooks = hooks.sort((a, b) => (a.hook.order ?? 0) - (b.hook.order ?? 0));
       const handler = (event: Event) => {
-        // 按优先级执行
-        const sortedHooks = hooks.sort((a, b) => (a.hook.order ?? 0) - (b.hook.order ?? 0));
-
         for (const { hook, listener } of sortedHooks) {
           const cb = hook[listener as keyof IEventListener];
 

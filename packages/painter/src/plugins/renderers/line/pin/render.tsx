@@ -18,10 +18,6 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
 
   const pins = [path[0], path[path.length - 1]];
 
-  if (pins[0][0] === pins[1][0] && pins[0][1] === pins[1][1]) {
-    pins.pop();
-  }
-
   return pins.map((position, i) => {
     const connections = getConnections(id, i);
     const isSpace = connections.length === 0;

@@ -61,8 +61,8 @@ export function createDrawLineSearcher({
       : new Point(0, directionBias[1]).sign();
 
     /**
-     * 在器件或者器件节点上
-     *   鼠标有无空余节点
+     * 在器件或器件节点上
+     *   器件有无空余节点
      *     有，对齐最近的节点
      *       最近的节点是否是起点
      *         是，后续全部退出，返回只有起点的路径
@@ -110,7 +110,6 @@ export function createDrawLineSearcher({
     }
     // 终点在器件
     else if (hover.kind === EntityKind.Part || hover.kind === EntityKind.PartPin) {
-      searchMode = SearchMode.DrawNormal;
       const part = painter.getPart(hover.id);
 
       if (!part) {
@@ -126,33 +125,24 @@ export function createDrawLineSearcher({
       // 有空引脚，允许直接对齐
       if (idlePoint.length > 0) {
         const allowPoint = mouseToPart.minAngle(idlePoint);
-        const index = pins.findIndex((node) => node.isEqual(allowPoint));
-
-        // 上次对齐的节点和这次的不同，则释放上次对齐的节点
-        if (lastAlignPin && (lastAlignPin.id !== hover.id || lastAlignPin.pin !== index)) {
-          result.push({ ...lastAlignPin, style: undefined });
-        }
 
         // 点对齐状态
         searchMode = SearchMode.DrawAlignPoint;
         // 终点只有需要对齐的点
         endList = [part.position.add(allowPoint)];
-        // // 器件节点半径固定
-        // result.push({ id: hover.id, pin: index, style: PIN_DRAW_EXPANDED_STYLE });
-        // // 更新上次对齐的节点
-        // lastAlignPin = { id: hover.id, pin: index };
 
-        // FIXME: 这里还有别的要优化
         // 对齐的终点等于起点，导线节点半径放大
         if (endList[0].isEqual(start)) {
           result.push({ id: lineId, pin: 1, style: PIN_DRAW_EXPANDED_STYLE });
         }
+        // 对齐其他节点时，导线节点半径缩小
         else {
-          result.push({ id: lineId, pin: 1, style: PIN_DRAW_EXPANDED_STYLE });
+          result.push({ id: lineId, pin: 1, style: PIN_DRAW_FIXED_STYLE });
         }
       }
       else {
         // TODO: 没有空引脚，应该按照空白模式继续
+        searchMode = SearchMode.DrawNormal;
       }
     }
     else {
