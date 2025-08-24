@@ -110,8 +110,12 @@ export interface PartPinMark extends Omit<BaseMark, 'connection'> {
   pin: number;
 }
 
-/** 节点集合 */
-export type Mark = LineAndPointMark | PartAndPinMark;
+/** 导线节点和导线节点 */
+export type LineAndLineMark =
+  | LineMark
+  | LinePointMark
+  | LineCoverMark
+  | LineCrossMark;
 
 /** 导线节点 */
 export type LineAndPointMark =
@@ -128,6 +132,9 @@ export type ConnectionPointMark =
   | PartPinLineMark
   | LinePointMark
   | LineCrossMark;
+
+/** 节点集合 */
+export type Mark = LineAndPointMark | PartAndPinMark;
 
 /** 器件节点 */
 export type PartAndPinMark = PartMark | PartPinMark;
@@ -164,6 +171,8 @@ export interface IMapHashAssertService {
   isPartPinLine(mark: unknown): mark is PartPinLineMark;
   /** 导线节点和器件节点断言 */
   isLineAndPoint(mark: unknown): mark is LineAndPointMark;
+  /** 全导线节点断言 */
+  isLineAndLine(mark: unknown): mark is LineAndLineMark;
   /** 器件节点和器件空引脚节点断言 */
   isPartAndPin(mark: unknown): mark is PartAndPinMark;
 }

@@ -10,6 +10,7 @@ import {
   PartPinLineMark,
   LineAndPointMark,
   PartAndPinMark,
+  LineAndLineMark,
 } from '../../../../types';
 
 /** 导线 */
@@ -45,6 +46,16 @@ export function isPartPin(mark?: Mark): mark is PartPinMark {
 /** 器件引脚连接导线节点 */
 export function isPartPinLine(mark?: Mark): mark is PartPinLineMark {
   return mark?.kind === MarkKind.PartPinLine;
+}
+
+/** 全导线节点断言 */
+export function isLineAndLine(mark?: Mark): mark is LineAndLineMark {
+  return (
+    isLine(mark) ||
+    isLinePoint(mark) ||
+    isLineCover(mark) ||
+    isLineCross(mark)
+  );
 }
 
 /** 导线节点和器件节点断言 */

@@ -35,6 +35,7 @@ definePlugin(({ registerService }) => {
     isPartPin: MapMark.isPartPin,
     isPartPinLine: MapMark.isPartPinLine,
     isLineAndPoint: MapMark.isLineAndPoint,
+    isLineAndLine: MapMark.isLineAndLine,
     isPartAndPin: MapMark.isPartAndPin,
     hasConnect: MapMark.hasConnect,
     hasLine: MapMark.hasLine,

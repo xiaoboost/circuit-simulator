@@ -109,6 +109,11 @@ export function aStarSearch({
   way.push(start);
   way.reverse();
 
+  // 如果路径只有起点，则添加终点，保持路径长度为 2
+  if (way.length === 1) {
+    way.push(end);
+  }
+
   hook?.end?.(way);
 
   return way;

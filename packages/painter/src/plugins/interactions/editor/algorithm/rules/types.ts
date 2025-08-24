@@ -1,4 +1,4 @@
-import type { Point } from '@circuit/algorithm';
+import type { Point, SegmentWithPoint } from '@circuit/algorithm';
 import type { SearchNodeData } from '../a-star';
 import type { SearchMode, PainterState } from '../searcher';
 
@@ -29,7 +29,7 @@ export interface RulesOptions {
 /** 搜索规则上下文 */
 export interface RulesContext extends RulesOptions {
   /** 终点等效线段 */
-  endLines: [Point, Point][];
+  endLines: SegmentWithPoint[];
 }
 
 /** 估值函数 */

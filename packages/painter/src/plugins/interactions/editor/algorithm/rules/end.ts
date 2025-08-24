@@ -8,6 +8,11 @@ export function isEndPoint(this: RulesContext, node: SearchNodeData) {
 
 /** 在终点等效线段中 */
 export function isInEndLines(this: RulesContext, node: SearchNodeData) {
+  return Boolean(findInEndLines.call(this, node));
+}
+
+/** 在终点等效线段中 */
+function findInEndLines(this: RulesContext, node: SearchNodeData) {
   return this.endLines.find((line) => node.position.isInLine(line));
 }
 
@@ -19,7 +24,7 @@ export function checkNodeInLineWhenDraw(this: RulesContext, node: SearchNodeData
   }
 
   // 是否在终点等效线段中
-  const exLine = isInEndLines.call(this, node) as ReturnType<typeof isInEndLines>;
+  const exLine = findInEndLines.call(this, node);
 
   // 不在等效终线中
   if (!exLine) {

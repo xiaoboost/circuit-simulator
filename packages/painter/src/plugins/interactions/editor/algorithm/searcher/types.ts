@@ -11,15 +11,13 @@ import type { SearchHook } from '../a-star';
 
 /** 搜索状态 */
 export const enum SearchMode {
-  // 绘制搜索
-  /** 绘制普通状态 */
+  // ========== 绘制导线 ==========
+  /** 绘制搜索 */
   DrawNormal = 10,
-  /** 对齐引脚 */
+  /** 点对齐 */
   DrawAlignPoint,
-  /** 对齐导线 */
+  /** 线对齐 */
   DrawAlignLine,
-  /** 导线修饰 */
-  DrawModification,
 
   /** 移动状态 */
   MoveNormal = 20,

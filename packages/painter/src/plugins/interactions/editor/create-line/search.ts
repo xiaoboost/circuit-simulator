@@ -28,8 +28,6 @@ export function createDrawLineSearcher({
 }: DrawLineSearcherOptions): PathSearcher {
   /** 搜索缓存 */
   const cache = new Map<string, PathWithPoint>();
-  /** 上次对齐的节点 */
-  let lastAlignPin: { id: string, pin: number } | undefined;
   /** 搜索终点列表 */
   let endList: Point[] = [];
   /** 搜索模式 */
@@ -60,29 +58,8 @@ export function createDrawLineSearcher({
       ? new Point(directionBias[0], 0).sign()
       : new Point(0, directionBias[1]).sign();
 
-    /**
-     * 在器件或器件节点上
-     *   器件有无空余节点
-     *     有，对齐最近的节点
-     *       最近的节点是否是起点
-     *         是，后续全部退出，返回只有起点的路径
-     *         否，则对齐最近的节点，并继续搜索
-     *     无，则按照在空白的模式继续
-     *   鼠标在导线节点上
-     *     对齐导线节点
-     *   鼠标在导线上
-     *     对齐导线
-     *   鼠标在空白
-     *     四角节点被占用情况
-     *       有节点在空状态，搜索这几个节点
-     *       全部被占用
-     *         全部被导线占用，则被占用的所有导线全线等效为终点
-     *         全部被器件占用，则搜索最近的可行点
-     */
-
     // 终点在空白
     if (!hover) {
-      searchMode = SearchMode.DrawNormal;
       endList = endGrid.filter((node) => !painter.get(node));
 
       // 四个节点均被占用
@@ -104,6 +81,9 @@ export function createDrawLineSearcher({
     }
     // 终点在导线
     else if (hover.kind === EntityKind.Line || hover.kind === EntityKind.LinePin) {
+      // 四方格上在导线上的点
+      endList = endGrid.filter((node) => painter.isLineAndLine(painter.get(node)));
+      // 线对齐模式
       searchMode = SearchMode.DrawAlignLine;
       // 导线节点半径缩小
       result.push({ id: lineId, pin: 1, style: PIN_DRAW_FIXED_STYLE });
@@ -179,7 +159,7 @@ export function createDrawLineSearcher({
           start,
           end,
           painter,
-          mode: SearchMode.DrawModification,
+          mode: SearchMode.DrawAlignPoint,
           direction: preferDirection,
         }),
       });
@@ -208,7 +188,7 @@ export function createDrawLineSearcher({
             start,
             end,
             painter,
-            mode: SearchMode.DrawModification,
+            mode: SearchMode.DrawAlignPoint,
             direction,
           }),
         });
@@ -233,7 +213,7 @@ export function createDrawLineSearcher({
             start,
             end,
             painter,
-            mode: SearchMode.DrawModification,
+            mode: SearchMode.DrawAlignPoint,
             direction,
           }),
         });
