@@ -28,14 +28,14 @@ describe('图纸标记服务', () => {
 
   describe('核心服务方法', () => {
     it('has 方法应该正确判断位置是否存在标记', () => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+      const part = createPartByKind(ElectronicKind.Resistance);
       mapHash.setPartMark(part);
       expect(mapHash.has(Point.from([0, 0]))).toBe(true);
       expect(mapHash.has(Point.from([100, 100]))).toBe(false);
     });
 
     it('get 方法应该正确获取指定位置的标记', () => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+      const part = createPartByKind(ElectronicKind.Resistance);
       mapHash.setPartMark(part);
       const mark = mapHash.get(Point.from([0, 0]));
       expect(mark).toBeDefined();
@@ -56,7 +56,7 @@ describe('图纸标记服务', () => {
     });
 
     it('delete 方法应该正确删除指定位置的标记', () => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+      const part = createPartByKind(ElectronicKind.Resistance);
       mapHash.setPartMark(part);
       expect(mapHash.has(Point.from([0, 0]))).toBe(true);
       mapHash.delete(Point.from([0, 0]));
@@ -69,7 +69,7 @@ describe('图纸标记服务', () => {
       let part: PartStructuredData;
 
       beforeEach(async () => {
-        part = createPartByKind(ElectronicKind.Resistance, []);
+        part = createPartByKind(ElectronicKind.Resistance);
       });
 
       it('设置器件标记应该生成正确的标记', () => {
@@ -161,7 +161,7 @@ describe('图纸标记服务', () => {
       let line: LineStructuredData;
 
       beforeEach(async () => {
-        part = createPartByKind(ElectronicKind.Resistance, []);
+        part = createPartByKind(ElectronicKind.Resistance);
         line = createLineByPath([
           Point.from([40, 0]),
           Point.from([40, 60]),

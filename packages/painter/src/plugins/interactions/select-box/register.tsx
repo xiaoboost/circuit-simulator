@@ -20,6 +20,7 @@ import {
   COLLISION_SERVICE,
   CURSOR_SERVICE,
   ICursorKind,
+  HOVER_SERVICE,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -61,9 +62,14 @@ definePlugin(({ registerHook, getService }) => {
   registerHook(EVENT_LISTENER_HOOK, {
     onMouseDown(event) {
       const dragSceneService = getService(DRAG_SCENE_SERVICE);
+      const hoverService = getService(HOVER_SERVICE);
 
       if (
+        // 没有悬停实体
+        !hoverService.status.data &&
+        // 拖动服务判断可以启动
         dragSceneService.isLeftMouseDownNoMovingNoScene(event) &&
+        // 鼠标在画布上
         (event.target as HTMLElement).tagName === 'svg'
       ) {
         dragSceneService.trigger(SELECT_BOX_DRAG_SCENE_NAME, { event });

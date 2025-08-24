@@ -10,7 +10,11 @@ export function isValidNode(this: RulesContext, node: SearchNodeData): boolean {
   const { painter } = this;
   const status = painter.get(node.position);
 
-  if (status && (painter.isPart(status) || painter.isPartPinLine(status))) {
+  if (
+    painter.isPart(status) ||
+    painter.isPartPinLine(status) ||
+    painter.isPartPin(status)
+  ) {
     return false;
   }
 

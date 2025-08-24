@@ -1,5 +1,5 @@
 import { Point, Direction, DirectionVectorSet } from '@circuit/algorithm';
-import { createPartByKind } from '@circuit/electronics';
+import { createPartByKind, createPartsByKind } from '@circuit/electronics';
 import {
   ElectronicKind,
   StructuredData,
@@ -52,11 +52,10 @@ describe('创建导线搜索路径', () => {
   ]);
 
   describe('器件引脚开始创建导线', () => {
-    it('创建导线时，鼠标在起点引脚附近，此时的路径应该仅有起点坐标', async() => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+    it('单器件，鼠标在起点引脚附近，此时的路径应该仅有起点坐标', async() => {
       const lineId = 'line-1';
       const data: StructuredData = {
-        parts: [part],
+        parts: [createPartByKind(ElectronicKind.Resistance)],
         lines: [],
       };
       const painterState = await createSearchEnv(data);
@@ -69,7 +68,7 @@ describe('创建导线搜索路径', () => {
 
       // 初始时鼠标悬停在引脚上
       painterState.setHover({
-        id: part.id,
+        id: data.parts[0].id,
         kind: EntityKind.PartPin,
         pin: 1,
       });
@@ -91,11 +90,10 @@ describe('创建导线搜索路径', () => {
       ]);
     });
 
-    it('创建导线时，终点在起点右侧空白处，此时路径应该是两段线段', async() => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+    it('单器件，终点在起点右侧空白处，此时路径应该是两段线段', async() => {
       const lineId = 'line-1';
       const data: StructuredData = {
-        parts: [part],
+        parts: [createPartByKind(ElectronicKind.Resistance)],
         lines: [],
       };
       const painterState = await createSearchEnv(data);
@@ -106,7 +104,7 @@ describe('创建导线搜索路径', () => {
         painter: painterState,
       });
 
-      // 初始终点设置在引脚附近
+      // 初始终点设置在右侧空白处
       const end = Point.from([218, 206]);
 
       expect(search(end)).toEqual([
@@ -126,11 +124,10 @@ describe('创建导线搜索路径', () => {
       ]);
     });
 
-    it('创建导线时，终点在起点左侧空白处，此时路径应该是两段线段', async() => {
-      const part = createPartByKind(ElectronicKind.Resistance, []);
+    it('单器件，终点在起点左侧空白处，此时路径应该是两段线段', async() => {
       const lineId = 'line-1';
       const data: StructuredData = {
-        parts: [part],
+        parts: [createPartByKind(ElectronicKind.Resistance)],
         lines: [],
       };
       const painterState = await createSearchEnv(data);
@@ -141,7 +138,7 @@ describe('创建导线搜索路径', () => {
         painter: painterState,
       });
 
-      // 初始终点设置在引脚附近
+      // 初始终点设置在左侧空白处
       const end = Point.from([-54, 97]);
 
       expect(search(end)).toEqual([
@@ -156,6 +153,49 @@ describe('创建导线搜索路径', () => {
             Point.from([40, 0]),
             Point.from([40, 97]),
             Point.from([-54, 97]),
+          ],
+        },
+      ]);
+    });
+
+    it('两个器件，另一个挡住了路径，终点在起点右侧空白处，此时路径应该是三段线段', async() => {
+      const parts = createPartsByKind([
+        ElectronicKind.Resistance,
+        ElectronicKind.Resistance,
+      ]);
+
+      // 第二个器件在第一个器件右侧，并且挡住导线前进路径
+      parts[1].position = Point.from([60, 40]);
+
+      const lineId = 'line-1';
+      const data: StructuredData = {
+        parts,
+        lines: [],
+      };
+      const painterState = await createSearchEnv(data);
+      const search = createDrawLineSearcher({
+        lineId,
+        start: Point.from([40, 0]),
+        direction: DirectionVectorSet[Direction.Right],
+        painter: painterState,
+      });
+
+      // 初始终点设置在引脚附近
+      const end = Point.from([97, 104]);
+
+      expect(search(end)).toEqual([
+        {
+          id: lineId,
+          pin: 1,
+          style: PIN_DRAW_EXPANDED_STYLE,
+        },
+        {
+          id: lineId,
+          path: [
+            Point.from([40, 0]),
+            Point.from([120, 0]),
+            Point.from([120, 104]),
+            Point.from([97, 104]),
           ],
         },
       ]);

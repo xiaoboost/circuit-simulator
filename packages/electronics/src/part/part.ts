@@ -126,7 +126,7 @@ export function getPartPin(data: PartStructuredData, pin: number): PartPinData {
 /** 创建新器件 */
 export function createPartByKind(
   kind: ElectronicKind,
-  parts: PartStructuredData[],
+  parts: PartStructuredData[] = [],
 ): PartStructuredData {
   const prototype = getPartPrototype(kind);
   const textDirectionLabel = Object.keys(prototype.textBias ?? {})[0] ?? 'Bottom';
@@ -144,4 +144,15 @@ export function createPartByKind(
   };
 
   return part;
+}
+
+/** 创建多个器件 */
+export function createPartsByKind(kinds: ElectronicKind[]): PartStructuredData[] {
+  const parts: PartStructuredData[] = [];
+
+  for (const kind of kinds) {
+    parts.push(createPartByKind(kind, parts));
+  }
+
+  return parts;
 }

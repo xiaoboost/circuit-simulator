@@ -14,7 +14,7 @@ describe('连接服务', () => {
 
   beforeEach(async () => {
     connection = await getPlugin(CONNECTION_SERVICE);
-    part = createPartByKind(ElectronicKind.Resistance, []);
+    part = createPartByKind(ElectronicKind.Resistance);
     line = createLineByPath([
       Point.from([40, 0]),
       Point.from([80, 0]),

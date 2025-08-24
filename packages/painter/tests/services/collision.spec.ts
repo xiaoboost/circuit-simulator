@@ -14,7 +14,7 @@ describe('碰撞服务', () => {
 
   beforeEach(async () => {
     collision = await getPlugin(COLLISION_SERVICE);
-    part = createPartByKind(ElectronicKind.Resistance, []);
+    part = createPartByKind(ElectronicKind.Resistance);
     line = createLineByPath([
       Point.from([0, 0]),
       Point.from([0, 100]),
@@ -93,28 +93,28 @@ describe('碰撞服务', () => {
   describe('实体碰撞检测', () => {
     it('新实体不与现有实体碰撞应该返回 false', () => {
       collision.setEntity(part);
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       newPart.position = Point.from([200, 200]);
       expect(collision.isEntityCollision(newPart)).toBe(false);
     });
 
     it('新实体与现有实体碰撞应该返回 true', () => {
       collision.setEntity(part);
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       // 与 part 重叠
       newPart.position = Point.from([0, 0]);
       expect(collision.isEntityCollision(newPart)).toBe(true);
     });
 
     it('空碰撞系统应该返回 false', () => {
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       expect(collision.isEntityCollision(newPart)).toBe(false);
     });
   });
 
   describe('查找最近的无碰撞位置', () => {
     it('实体无碰撞时应该返回零偏移', () => {
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       newPart.position = Point.from([200, 200]);
       const result = collision.findNearestNotCollisionPosition(newPart);
       expect(result).toEqual(Point.from([0, 0]));
@@ -122,7 +122,7 @@ describe('碰撞服务', () => {
 
     it('实体有碰撞时应该返回有效偏移', () => {
       collision.setEntity(part);
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       newPart.position = Point.from([0, 0]);
       const result = collision.findNearestNotCollisionPosition(newPart);
       expect(result).toEqual(Point.from([0, -40]));
@@ -130,7 +130,7 @@ describe('碰撞服务', () => {
 
     it('超过最大偏移时应该返回 null', () => {
       collision.setEntity(part);
-      const newPart = createPartByKind(ElectronicKind.Capacitor, []);
+      const newPart = createPartByKind(ElectronicKind.Capacitor);
       newPart.position = Point.from([0, 0]);
       const result = collision.findNearestNotCollisionPosition(newPart, 10); // 很小的最大偏移
       expect(result).toBeNull();
@@ -159,8 +159,8 @@ describe('碰撞服务', () => {
     });
 
     it('多个器件的边界框', () => {
-      const part1 = createPartByKind(ElectronicKind.Resistance, []);
-      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      const part1 = createPartByKind(ElectronicKind.Resistance);
+      const part2 = createPartByKind(ElectronicKind.Capacitor);
       part1.position = Point.from([0, 0]);
       part2.position = Point.from([100, 0]);
 
@@ -214,9 +214,9 @@ describe('碰撞服务', () => {
     });
 
     it('多个器件的分散边界框', () => {
-      const part1 = createPartByKind(ElectronicKind.Resistance, []);
-      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
-      const part3 = createPartByKind(ElectronicKind.Inductance, []);
+      const part1 = createPartByKind(ElectronicKind.Resistance);
+      const part2 = createPartByKind(ElectronicKind.Capacitor);
+      const part3 = createPartByKind(ElectronicKind.Inductance);
 
       part1.position = Point.from([0, 0]);
       part2.position = Point.from([200, 0]);
@@ -231,8 +231,8 @@ describe('碰撞服务', () => {
     });
 
     it('垂直排列的多个器件边界框', () => {
-      const part1 = createPartByKind(ElectronicKind.Resistance, []);
-      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      const part1 = createPartByKind(ElectronicKind.Resistance);
+      const part2 = createPartByKind(ElectronicKind.Capacitor);
 
       part1.position = Point.from([0, 0]);
       part2.position = Point.from([0, 100]);
@@ -272,8 +272,8 @@ describe('碰撞服务', () => {
     });
 
     it('多个元件在矩形内应该全部返回', () => {
-      const part1 = createPartByKind(ElectronicKind.Resistance, []);
-      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
+      const part1 = createPartByKind(ElectronicKind.Resistance);
+      const part2 = createPartByKind(ElectronicKind.Capacitor);
       part1.position = Point.from([0, 0]);
       part2.position = Point.from([100, 0]);
 
@@ -323,9 +323,9 @@ describe('碰撞服务', () => {
     });
 
     it('多个元件中只有部分完全在矩形内', () => {
-      const part1 = createPartByKind(ElectronicKind.Resistance, []);
-      const part2 = createPartByKind(ElectronicKind.Capacitor, []);
-      const part3 = createPartByKind(ElectronicKind.Inductance, []);
+      const part1 = createPartByKind(ElectronicKind.Resistance);
+      const part2 = createPartByKind(ElectronicKind.Capacitor);
+      const part3 = createPartByKind(ElectronicKind.Inductance);
 
       part1.position = Point.from([0, 0]);
       part2.position = Point.from([100, 0]);
