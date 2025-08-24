@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { definePlugin, useService } from '../../../context';
+import { definePlugin } from '../../../context';
 import { VARIABLE_OBSERVER_SERVICE, IVariableObserverService, ObserverCb } from '../../../types';
 
 const DEFAULT_KEY = '_$default';
@@ -102,7 +102,6 @@ definePlugin(({ registerService }) => {
       }
     },
     useVariable(symbol, key: string = DEFAULT_KEY) {
-      const service = useService(VARIABLE_OBSERVER_SERVICE);
       const [value, setValue] = useState(service.get(symbol, key));
 
       useEffect(() => {

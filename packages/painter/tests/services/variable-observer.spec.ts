@@ -1,5 +1,5 @@
 import { renderHook } from '@circuit/test-toolkit';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
 import { VARIABLE_OBSERVER_SERVICE, IVariableObserverService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
@@ -10,8 +10,12 @@ describe('变量观察服务', () => {
   const testSymbol1 = Symbol('test1');
   const testSymbol2 = Symbol('test2');
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     variableObserver = await getPlugin(VARIABLE_OBSERVER_SERVICE);
+  });
+
+  beforeEach(() => {
+    variableObserver.clear();
   });
 
   describe('基本设置和获取', () => {

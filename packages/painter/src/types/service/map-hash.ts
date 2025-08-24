@@ -25,7 +25,7 @@ export interface ConnectionData {
   bottom?: boolean;
 }
 
-export type MarkMap = Record<string, Mark>;
+export type MarkMap = Map<string, Mark>;
 
 /** 节点类型常量 */
 export enum MarkKind {
@@ -143,6 +143,8 @@ export type PartAndPinMark = PartMark | PartPinMark;
 export interface IMapHashCoreService {
   /** 获取所有标记 */
   getAllMarks(): Mark[];
+  /** 清除所有标记 */
+  clearAll(): void;
   /** 标记是否存在 */
   has(position: Point): boolean;
   /** 获取标记 */

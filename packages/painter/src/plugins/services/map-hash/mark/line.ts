@@ -130,10 +130,22 @@ export function isNoConnect(data: Mark) {
   return !item.left && !item.right && !item.top && !item.bottom;
 }
 
+/** 删除器件引脚连接导线节点中的导线部分 */
+export function deletePartInPartPinLine(data: PartPinLineMark): LinePointMark {
+  return {
+    kind: MarkKind.LinePoint,
+    id: data.line,
+    position: Point.from(data.position),
+    connection: {
+      ...data.connection,
+    },
+  };
+}
+
 /**
  * 删除导线
  *
- * @description 被移除导线的连接也会被一并移除
+ * @description 仅操作节点，并不会删除连接
  */
 export function deleteLine(data: PartPinLineMark): PartPinMark;
 export function deleteLine(data: LineCoverMark, line: string): LineMark;

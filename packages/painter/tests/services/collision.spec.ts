@@ -1,7 +1,7 @@
 import { Point, RotateMatrixSet, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import { COLLISION_SERVICE, ICollisionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
@@ -12,8 +12,12 @@ describe('碰撞服务', () => {
   let part: PartStructuredData;
   let line: LineStructuredData;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     collision = await getPlugin(COLLISION_SERVICE);
+  });
+
+  beforeEach(() => {
+    collision.clearAll();
     part = createPartByKind(ElectronicKind.Resistance);
     line = createLineByPath([
       Point.from([0, 0]),

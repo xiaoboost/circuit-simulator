@@ -152,7 +152,7 @@ definePlugin(({ registerService, getService }) => {
         ]);
       }
 
-      await animateToPosition(position, targetScale, duration, mapCoordinateService);
+      await animateToPosition(targetPosition, targetScale, duration, mapCoordinateService);
 
       return true;
     },

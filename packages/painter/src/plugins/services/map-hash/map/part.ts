@@ -14,8 +14,7 @@ import {
   isPartPin,
   isPartPinLine,
   deleteLine,
-  addConnect,
-  deleteConnect,
+  deletePartInPartPinLine,
 } from '../mark';
 import { get, remove, set } from './map';
 
@@ -116,7 +115,7 @@ export function deletePartMark(data: PartStructuredData, map: MarkMap) {
       return;
     }
     else if (isPartPinLine(mark)) {
-      deleteLine(mark);
+      set(map, deletePartInPartPinLine(mark));
     }
     else {
       throw new Error(`当前位置不是器件：[${position[0]}, ${position[1]}]`);

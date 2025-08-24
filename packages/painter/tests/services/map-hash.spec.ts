@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import {
   MAP_HASH_SERVICE,
   MarkKind,
@@ -22,8 +22,12 @@ describe('图纸标记服务', () => {
 
   let mapHash: IMapHashService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     mapHash = await getPlugin(MAP_HASH_SERVICE);
+  });
+
+  beforeEach(() => {
+    mapHash.clearAll();
   });
 
   describe('核心服务方法', () => {
@@ -213,7 +217,7 @@ describe('图纸标记服务', () => {
         ]);
       });
 
-      it('删除导线后器件标记应该保持不变', () => {
+      it('删除导线后器件节点标记应该还原回 PartPin', () => {
         mapHash.setPartMark(part);
         mapHash.setLineMark(line);
         mapHash.deleteLineMark(line);
@@ -224,6 +228,46 @@ describe('图纸标记服务', () => {
           { kind: MarkKind.Part, id: part.id, position: Point.from([0, 0]) },
           { kind: MarkKind.Part, id: part.id, position: Point.from([20, 0]) },
           { kind: MarkKind.PartPin, id: part.id, pin: 1, position: Point.from([40, 0]) },
+        ]);
+      });
+
+
+      it('删除器件后导线标记应该还原回 LinePoint', () => {
+        mapHash.setPartMark(part);
+        mapHash.setLineMark(line);
+        mapHash.deletePartMark(part);
+
+        expect(mapHash.getAllMarks()).toEqual([
+          {
+            kind: MarkKind.LinePoint,
+            id: line.id,
+            position: Point.from([40, 0]),
+            connection: { bottom: true },
+          },
+          {
+            kind: MarkKind.Line,
+            id: line.id,
+            position: Point.from([40, 20]),
+            connection: { top: true, bottom: true },
+          },
+          {
+            kind: MarkKind.Line,
+            id: line.id,
+            position: Point.from([40, 40]),
+            connection: { top: true, bottom: true },
+          },
+          {
+            kind: MarkKind.Line,
+            id: line.id,
+            position: Point.from([40, 60]),
+            connection: { top: true, right: true },
+          },
+          {
+            kind: MarkKind.LinePoint,
+            id: line.id,
+            position: Point.from([60, 60]),
+            connection: { left: true },
+          },
         ]);
       });
     });

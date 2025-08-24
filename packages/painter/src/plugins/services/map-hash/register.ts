@@ -4,29 +4,32 @@ import {
   IMapHashService,
   MarkMap,
 } from '../../../types';
-import * as Map from './map';
+import * as MapHash from './map';
 import * as MapMark from './mark';
 
 definePlugin(({ registerService }) => {
-  const markMap: MarkMap = {};
+  const markMap: MarkMap = new Map();
   const service: IMapHashService = {
     createFromData({ parts, lines }) {
       for (const part of parts) {
-        Map.setPartMark(part, markMap);
+        MapHash.setPartMark(part, markMap);
       }
       for (const line of lines) {
-        Map.setLineMark(line, markMap);
+        MapHash.setLineMark(line, markMap);
       }
     },
-    setPartMark: (data) => Map.setPartMark(data, markMap),
-    setLineMark: (data) => Map.setLineMark(data, markMap),
-    deletePartMark: (data) => Map.deletePartMark(data, markMap),
-    deleteLineMark: (data) => Map.deleteLineMark(data, markMap),
-    getAllMarks: () => Map.values(markMap),
-    has: (position) => Map.has(markMap, position),
-    get: (position) => Map.get(markMap, position),
-    set: (data) => Map.set(markMap, data),
-    delete: (position) => Map.remove(markMap, position),
+    clearAll() {
+      markMap.clear();
+    },
+    setPartMark: (data) => MapHash.setPartMark(data, markMap),
+    setLineMark: (data) => MapHash.setLineMark(data, markMap),
+    deletePartMark: (data) => MapHash.deletePartMark(data, markMap),
+    deleteLineMark: (data) => MapHash.deleteLineMark(data, markMap),
+    getAllMarks: () => MapHash.values(markMap),
+    has: (position) => MapHash.has(markMap, position),
+    get: (position) => MapHash.get(markMap, position),
+    set: (data) => MapHash.set(markMap, data),
+    delete: (position) => MapHash.remove(markMap, position),
     isLine: MapMark.isLine,
     isLinePoint: MapMark.isLinePoint,
     isLineCross: MapMark.isLineCross,

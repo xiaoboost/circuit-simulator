@@ -24,7 +24,7 @@ function toPoint(key: string) {
 }
 
 function getPoints(map: MarkMap) {
-  return Object.keys(map)
+  return Array.from(map.keys())
     .map((key: string) => toPoint(key))
     .sort((pre, next) => {
       if (pre[0] < next[0]) {
@@ -40,19 +40,19 @@ function getPoints(map: MarkMap) {
 }
 
 export function has(map: MarkMap, node: Point) {
-  return Boolean(map[toKey(node)]);
+  return map.has(toKey(node));
 }
 
 export function set(map: MarkMap, data: Mark) {
-  map[toKey(data.position)] = data;
+  map.set(toKey(data.position), data);
 }
 
 export function get<T extends Mark = Mark>(map: MarkMap, node: Point): T | undefined {
-  return map[toKey(node)] as T | undefined;
+  return map.get(toKey(node)) as T | undefined;
 }
 
 export function remove(map: MarkMap, node: Point) {
-  delete map[toKey(node)];
+  map.delete(toKey(node));
 }
 
 export function values(map: MarkMap) {
