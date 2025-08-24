@@ -112,7 +112,7 @@ export const data: StoreData = {
           rank: 'u',
         },
       ],
-      textDirection: Direction.Bottom,
+      textDirection: Direction.Left,
     },
     {
       kind: ElectronicKind.Resistance,
@@ -125,7 +125,7 @@ export const data: StoreData = {
           rank: 'k',
         },
       ],
-      textDirection: Direction.Top,
+      textDirection: Direction.Right,
     },
     {
       kind: ElectronicKind.CurrentMeter,

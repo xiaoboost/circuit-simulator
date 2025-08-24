@@ -22,7 +22,7 @@ export interface PartStoreData {
   /**
    * 文本方向
    *
-   * @description 这个方向是器件本身的视角
+   * @description 用户视角方向
    */
   textDirection: Direction;
 }

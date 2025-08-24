@@ -63,7 +63,8 @@ describe('变量观察服务', () => {
       const callback = vi.fn();
       variableObserver.observe(testSymbol1, callback);
       variableObserver.set(testSymbol1, 'new value');
-      expect(callback).toHaveBeenCalledWith('new value', undefined);
+      variableObserver.set(testSymbol1, 'new value22');
+      expect(callback).toHaveBeenCalledWith('new value22', 'new value');
     });
 
     it('相同值不应该触发回调', () => {
@@ -108,6 +109,26 @@ describe('变量观察服务', () => {
       unsubscribe();
       variableObserver.set(testSymbol1, 'value2');
       expect(callback).toHaveBeenCalledTimes(1); // 不应该再被调用
+    });
+
+    it('observe 不指定 key 时应该返回取消观察的函数', () => {
+      const callback = vi.fn();
+      const unsubscribe = variableObserver.observe(testSymbol1, callback);
+
+      variableObserver.set(testSymbol1, 'value1');
+      expect(callback).toHaveBeenCalledTimes(1);
+
+      unsubscribe();
+      variableObserver.set(testSymbol1, 'value2');
+      expect(callback).toHaveBeenCalledTimes(1); // 不应该再被调用
+    });
+
+    it('设置 undefined 应该正确设置值', () => {
+      const callback = vi.fn();
+      variableObserver.observe(testSymbol1, 'testKey', callback);
+      variableObserver.set(testSymbol1, 'testKey', 'test value');
+      variableObserver.set(testSymbol1, 'testKey', undefined);
+      expect(callback).toHaveBeenCalledWith(undefined, 'test value');
     });
   });
 

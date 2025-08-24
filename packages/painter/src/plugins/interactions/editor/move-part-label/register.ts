@@ -1,4 +1,9 @@
-import { Point, Direction } from '@circuit/algorithm';
+import {
+  Point,
+  Direction,
+  rotateVector,
+  invertRotateMatrix,
+} from '@circuit/algorithm';
 import { createPartReferenceTag as createPartTag } from '@circuit/electronics';
 import {
   STREAM_SERVICE,
@@ -39,7 +44,12 @@ definePlugin(({ registerHook, getService }) => {
       getService(CURSOR_SERVICE).set(ICursorKind.Dragging);
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
-      getService(VarService).set(KEY, getLabelKey(id), Point.from(movementInDrawerAcc));
+      const part = getService(STATE_CORE_SERVICE).getPart(id);
+      const varService = getService(VarService);
+      const invRotate = invertRotateMatrix(part.rotate);
+      const movementInPart = rotateVector(movementInDrawerAcc, invRotate);
+      const labelKey = getLabelKey(id);
+      varService.set(KEY, labelKey, movementInPart);
     },
     isEnd(event) {
       return getService(DRAG_SCENE_SERVICE)
@@ -51,16 +61,21 @@ definePlugin(({ registerHook, getService }) => {
       const stream = getService(STREAM_SERVICE);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);
-      const cursor = getService(CURSOR_SERVICE);
-      const newDirection = getPartNearestDirection(part, variableService.get(KEY, label)!);
       const partTag = createPartTag(part);
+      const cursor = getService(CURSOR_SERVICE);
+      const logger = getService(LOGGER_SERVICE);
+      /** 当前器件标记相对最开始时的偏移向量 */
+      const labelPositionInPart = variableService.get<Point>(KEY, label)!;
+      /** 偏移向量转为画布向量 */
+      const labelPosition = rotateVector(labelPositionInPart, part.rotate);
+      /** 由偏移向量计算得到最接近的最终方向 */
+      const newDirection = getPartNearestDirection(part, labelPosition);
 
       cursor.clear();
 
       // 文本方向未发生变化，清空临时数据
       if (newDirection === part.textDirection) {
-        variableService.set(KEY, label, undefined);
-        getService(LOGGER_SERVICE).info(LoggerName, `${partTag} 文本方向未发生变化`);
+        logger.info(LoggerName, `${partTag} 文本方向未发生变化`);
       }
       // 方向发生变化，提交修改
       else {
@@ -81,7 +96,7 @@ definePlugin(({ registerHook, getService }) => {
           },
         });
 
-        getService(LOGGER_SERVICE).info(LoggerName, message);
+        logger.info(LoggerName, message);
 
         // 等待器件文本修改时，一起提交
         stream

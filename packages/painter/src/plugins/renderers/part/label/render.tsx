@@ -9,7 +9,7 @@ import {
 } from '@circuit/algorithm';
 import { STREAM_SERVICE } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
   IPartRendererProps,
@@ -31,7 +31,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     textDirection,
     referenceTag,
   } = data;
-  const invRotate = invertRotateMatrix(rotate);
+  const invRotate = useMemo(() => invertRotateMatrix(rotate), [rotate]);
   const [scale] = useWatcher(useService(MAP_COORDINATE_SERVICE).scale);
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
@@ -95,38 +95,41 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     );
     /** 横轴居中对齐时的偏移量*/
     const xMiddleOffset = - textBoxRect.width / scale / 2;
+    /** 器件视角下的文本方向 */
+    const textDirectionByPart = rotateVector(
+      DirectionVectorSet[textDirection],
+      invRotate,
+    ).toDirection();
+    /** 当前方向的偏移量 */
+    const textBias = prototype.textBias[Direction[textDirectionByPart] as DirectionLabel] ?? 0;
 
-    // 当前方向的偏移量
-    const textBias = prototype.textBias[Direction[textDirection] as DirectionLabel] ?? 0;
-    const finalDirection = rotateVector(DirectionVectorSet[textDirection], rotate).toDirection();
-
-    if (finalDirection === Direction.Left) {
+    if (textDirection === Direction.Left) {
       setTextAnchor('end');
     }
-    else if (finalDirection === Direction.Right) {
+    else if (textDirection === Direction.Right) {
       setTextAnchor('start');
     }
     else {
       setTextAnchor('middle');
     }
 
-    if (finalDirection === Direction.Left) {
+    if (textDirection === Direction.Left) {
       newPosition[0] = - textBias;
       newPosition[1] = yMiddleOffset;
     }
-    else if (finalDirection === Direction.Right) {
+    else if (textDirection === Direction.Right) {
       newPosition[0] = textBias;
       newPosition[1] = yMiddleOffset;
     }
-    else if (finalDirection === Direction.Center) {
+    else if (textDirection === Direction.Center) {
       newPosition[0] = xMiddleOffset;
       newPosition[1] = yMiddleOffset;
     }
-    else if (finalDirection === Direction.Top) {
+    else if (textDirection === Direction.Top) {
       newPosition[0] = 0;
       newPosition[1] = - (textHeight + textSpaceHeight) * (textLineCount - 1) - textBias;
     }
-    else if (finalDirection === Direction.Bottom) {
+    else if (textDirection === Direction.Bottom) {
       newPosition[0] = 0;
       newPosition[1] = baselineOffset + textBias;
     }

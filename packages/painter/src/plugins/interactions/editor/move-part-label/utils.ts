@@ -1,9 +1,4 @@
-import {
-  Point,
-  rotateVector,
-  invertRotateMatrix,
-  getDirectionByLabel,
-} from '@circuit/algorithm';
+import { Point, getDirectionByLabel } from '@circuit/algorithm';
 import { getPartPrototype } from '@circuit/electronics';
 import { PartStructuredData, TextBias } from '@circuit/types';
 
@@ -21,5 +16,5 @@ export function getPartNearestDirection(data: PartStructuredData, position: Poin
   );
 
   // 将方向转为旋转角度
-  return rotateVector(direction, invertRotateMatrix(rotate)).toDirection();
+  return direction.toDirection();
 }

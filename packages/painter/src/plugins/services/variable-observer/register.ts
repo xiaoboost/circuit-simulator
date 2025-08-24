@@ -44,8 +44,8 @@ definePlugin(({ registerService }) => {
       else if (typeof key !== 'string') {
         setVal(DEFAULT_KEY, key);
       }
-      else if (newVal === undefined) {
-        // 如果 newVal 是 undefined，说明是 set(symbol, value) 的形式
+      // 如果只有两个参数，且 newVal 是 undefined，说明是 set(symbol, value) 的形式
+      else if (arguments.length === 2 && newVal === undefined) {
         setVal(DEFAULT_KEY, key);
       }
       else {

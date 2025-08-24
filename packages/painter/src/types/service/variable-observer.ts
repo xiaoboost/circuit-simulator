@@ -18,10 +18,20 @@ export type ObserverCb<T = unknown> = (newVal: T, oldVal: T) => void;
 export interface IVariableObserverService {
   /** 清除所有变量 */
   clear(): void;
-  /** 设置变量 */
+  /**
+   * 设置默认变量的值
+   */
   set<T>(symbol: symbol, newVal: T): void;
+  /**
+   * 设置变量
+   *
+   * @description 要设置值为空时，必须显式的给出`undefined`或者`null`值，不然会被重载为设置默认变量的值。
+   */
   set<T>(symbol: symbol, key: string, newVal: T): void;
-  set<T>(symbol: symbol, keyValues: [string, T][]): void;
+  /**
+   * 设置变量组
+   */
+  set<T>(symbol: symbol, keyValues: [key: string, value: T][]): void;
   /** 获取变量 */
   get<T>(symbol: symbol): T | undefined;
   get<T>(symbol: symbol, key: string): T | undefined;
