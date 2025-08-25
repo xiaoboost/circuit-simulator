@@ -4,53 +4,76 @@ import {
   ElectronicKind,
   StructuredData,
 } from '@circuit/types';
-import { describe, it, expect } from 'vitest';
+import {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  beforeEach,
+} from 'vitest';
 import {
   createDrawLineSearcher,
   PainterState,
   PIN_DRAW_EXPANDED_STYLE,
   PIN_DRAW_FIXED_STYLE,
 } from '../../../src/plugins/interactions/editor/utils';
-import { MAP_HASH_SERVICE, CONNECTION_SERVICE, Entity, EntityKind } from '../../../src/types';
+import {
+  MAP_HASH_SERVICE,
+  CONNECTION_SERVICE,
+  Entity,
+  EntityKind,
+  IMapHashService,
+  IConnectionService,
+} from '../../../src/types';
 import { registerPlugin, getPlugin } from '../../utils';
-
-async function createSearchEnv(data: StructuredData) {
-  const map = await getPlugin(MAP_HASH_SERVICE);
-  const connection = await getPlugin(CONNECTION_SERVICE);
-
-  map.createFromData(data);
-  connection.createFromData(data);
-
-  let hover: Entity | undefined;
-
-  const state: PainterState = {
-    ...map,
-    ...connection,
-    getHover: () => hover,
-    getPart: (id: string) => {
-      return data.parts.find(part => part.id === id);
-    },
-    getLine: (id: string) => {
-      return data.lines.find(line => line.id === id);
-    },
-    getConnection: (id: string, pin: number) => {
-      return connection.getConnections(id, pin);
-    },
-  };
-
-  return {
-    ...state,
-    setHover: (entity: Entity) => {
-      hover = entity;
-    },
-  };
-}
 
 describe('创建导线搜索路径', () => {
   registerPlugin([
     'services/map-hash/register.ts',
     'services/connection/register.ts',
   ]);
+
+  let map: IMapHashService;
+  let connection: IConnectionService;
+
+  beforeAll(async() => {
+    map = await getPlugin(MAP_HASH_SERVICE);
+    connection = await getPlugin(CONNECTION_SERVICE);
+  });
+
+  beforeEach(() => {
+    map.clearAll();
+    connection.clearAll();
+  });
+
+  async function createSearchEnv(data: StructuredData) {
+    map.createFromData(data);
+    connection.createFromData(data);
+
+    let hover: Entity | undefined;
+
+    const state: PainterState = {
+      ...map,
+      ...connection,
+      getHover: () => hover,
+      getPart: (id: string) => {
+        return data.parts.find(part => part.id === id);
+      },
+      getLine: (id: string) => {
+        return data.lines.find(line => line.id === id);
+      },
+      getConnection: (id: string, pin: number) => {
+        return connection.getConnections(id, pin);
+      },
+    };
+
+    return {
+      ...state,
+      setHover: (entity: Entity) => {
+        hover = entity;
+      },
+    };
+  }
 
   describe('器件引脚开始创建导线', () => {
     describe('终点在空白区域', () => {
