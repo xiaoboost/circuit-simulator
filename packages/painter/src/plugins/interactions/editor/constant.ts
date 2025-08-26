@@ -1,6 +1,5 @@
 export {
   PIN_STYLE_HOC_SCOPE,
-  STYLE_HOC_SCOPE,
   PATH_DISTORTION_HOC_SCOPE,
   MOVEMENT_HOC_SCOPE,
 } from '../../hoc-modules';
