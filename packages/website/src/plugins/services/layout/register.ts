@@ -11,7 +11,6 @@ import { LEFT_SIDEBAR_RENDER } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getService, getHook }) => {
   const service: ILayoutService = {
-    sidebarWidth: 300,
     leftSidebarActiveTab: new Watcher(''),
     rightSidebarCollapsed: new Watcher(false),
   };

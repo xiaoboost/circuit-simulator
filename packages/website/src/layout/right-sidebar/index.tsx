@@ -34,7 +34,6 @@ export const RightSidebar = React.memo(function RightSidebar() {
         : (
           <Sidebar
             title={render.title}
-            width={layoutService.sidebarWidth}
             onIcon={() => setIsCollapsed(true)}
             icon={<DoubleRight />}
             className={Styles.rightSidebar}

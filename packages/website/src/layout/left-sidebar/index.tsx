@@ -43,10 +43,7 @@ export const LeftSidebar = React.memo(function RightSidebar() {
         </div>
       </div>
       {sidebar && (
-        <Sidebar
-          title={sidebar.title}
-          width={layoutService.sidebarWidth}
-        >
+        <Sidebar title={sidebar.title}>
           <sidebar.Render />
         </Sidebar>
       )}

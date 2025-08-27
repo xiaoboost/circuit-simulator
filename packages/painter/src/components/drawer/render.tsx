@@ -11,7 +11,7 @@ import {
   CURSOR_SERVICE,
 } from '../../types';
 import * as Styles from './styles.less';
-import { useMouseListener } from './use';
+import { useMouseListener, usePosition } from './use';
 import { getBackgroundStyle, getCursorStyle } from './utils';
 
 export function Drawer() {
@@ -19,6 +19,7 @@ export function Drawer() {
   const [scale] = useWatcher(mapService.scale);
   const [position] = useWatcher(mapService.position);
   const domRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGGElement>(null);
   const layers = useHook(DRAW_LAYER_HOOK, 'asc');
   const { state } = useService(STATE_CORE_SERVICE);
   const cursorService = useService(CURSOR_SERVICE);
@@ -26,6 +27,7 @@ export function Drawer() {
   const [cursor] = useWatcher(cursorService.value);
 
   useMouseListener(domRef);
+  usePosition(svgRef);
 
   return (
     <div
@@ -37,7 +39,7 @@ export function Drawer() {
       }}
     >
       <svg height='100%' width='100%'>
-        <g transform={`translate(${position.join(',')}) scale(${scale})`}>
+        <g ref={svgRef}>
           {layers.map(({ name, Render }) => <Render key={name} parts={parts} lines={lines} />)}
         </g>
       </svg>

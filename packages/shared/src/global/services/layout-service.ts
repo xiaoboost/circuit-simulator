@@ -14,8 +14,6 @@ export const LAYOUT_SERVICE =
   createServiceKey<ILayoutService>('LayoutService');
 
 export interface ILayoutService {
-  /** 侧边栏宽度 */
-  readonly sidebarWidth: number;
   /** 左边栏活动标签页 */
   readonly leftSidebarActiveTab: Watcher<string>;
   /** 右侧边栏是否折叠 */

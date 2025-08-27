@@ -278,7 +278,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
     },
   });
 
-  function updateElementPosition(element: HTMLCanvasElement | null) {
+  function getElementPosition(element: HTMLCanvasElement | null) {
     if (!element) {
       throw new Error('画布监听元素不存在');
     }
@@ -309,8 +309,20 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
     offsetTop += window.pageYOffset;
     offsetLeft += window.pageXOffset;
 
-    // 计算相对于页面左上角绝对坐标
-    painterPosition = new Point(offsetLeft, offsetTop);
+    // 返回最新画布视口坐标
+    return new Point(offsetLeft, offsetTop);
+  }
+
+  function updateAndSerPainterPosition(element: HTMLCanvasElement | null) {
+    const oldPosition = Point.from(painterPosition);
+    const newPosition = getElementPosition(element);
+    const diffPosition = newPosition.add(oldPosition, -1);
+
+    // 用画布视口坐标的差值反向移动画布，保持画布在页面中的位置不变
+    if (!diffPosition.isZero()) {
+      painterPosition = newPosition;
+      service.setPosition(service.position.data.add(diffPosition, -1));
+    }
   }
 
   function startObserving() {
@@ -320,25 +332,25 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
 
     // 监听画布元素变化
     resizeObserver = new ResizeObserver(() => {
-      updateElementPosition(scaleRef.current);
+      updateAndSerPainterPosition(scaleRef.current);
     });
 
     // 监听 DOM 变化
     mutationObserver = new MutationObserver(() => {
-      updateElementPosition(scaleRef.current);
+      updateAndSerPainterPosition(scaleRef.current);
     });
 
     // 监听滚动事件
     window.addEventListener(
       'scroll',
-      () => updateElementPosition(scaleRef.current),
+      () => updateAndSerPainterPosition(scaleRef.current),
       { passive: true },
     );
 
     // 监听窗口大小变化
     window.addEventListener(
       'resize',
-      () => updateElementPosition(scaleRef.current),
+      () => updateAndSerPainterPosition(scaleRef.current),
       { passive: true },
     );
 
@@ -350,6 +362,9 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       attributes: true,
       attributeFilter: ['style', 'class'],
     });
+
+    // 初始化画布位置
+    painterPosition = getElementPosition(scaleRef.current);
   }
 
   function stopObserving() {
