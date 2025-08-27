@@ -3,8 +3,9 @@ import { LOGGER_SERVICE } from '@circuit/shared';
 import React, { useContext } from 'react';
 import { useInjectInstall, InjectContext } from '../../context';
 import { Header } from '../header';
+import { LeftSidebar } from '../left-sidebar';
 import { MainArea } from '../main-area';
-import { LeftSidebar, RightSidebar } from '../sidebar';
+import { RightSidebar } from '../right-sidebar';
 import { removeLoading } from './loading';
 import * as Styles from './styles.less';
 

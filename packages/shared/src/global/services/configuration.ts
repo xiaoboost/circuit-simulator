@@ -1,13 +1,6 @@
 import { createServiceKey } from '@circuit/inject';
 import type { Watcher } from '@circuit/reactive';
 
-/** 配置服务缓存数据 */
-export interface ConfigurationWatcherItemCache {
-  key: string;
-  watcher: Watcher<any>;
-  default: any;
-}
-
 /**
  * 配置服务
  *

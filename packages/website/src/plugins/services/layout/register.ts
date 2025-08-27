@@ -3,22 +3,34 @@ import {
   ILayoutService,
   LAYOUT_SERVICE,
   STORAGE_SERVICE,
-  ConfigurationWatcherItemCache,
+  IStorageItemConfig,
+  getStorage,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
+import { LEFT_SIDEBAR_RENDER } from '../../../types';
 
-definePlugin(({ registerService, registerHook, getService }) => {
+definePlugin(({ registerService, registerHook, getService, getHook }) => {
   const service: ILayoutService = {
     sidebarWidth: 300,
-    leftSidebarCollapsed: new Watcher(false),
+    leftSidebarActiveTab: new Watcher(''),
     rightSidebarCollapsed: new Watcher(false),
   };
 
-  const watcherCache: ConfigurationWatcherItemCache[] = [
+  const watcherCache: IStorageItemConfig[] = [
     {
       key: 'Layout.LeftSidebar.Collapsed',
-      watcher: service.leftSidebarCollapsed,
-      default: false,
+      watcher: service.leftSidebarActiveTab,
+      fromCache: (data: boolean) => {
+        if (!data) {
+          return '';
+        }
+
+        // 需要展开时，展开第一个标签页
+        const leftSideBarHooks = getHook(LEFT_SIDEBAR_RENDER);
+        return leftSideBarHooks[0].name ?? '';
+      },
+      toCache: (data: string) => Boolean(data),
+      default: '',
     },
     {
       key: 'Layout.RightSidebar.Collapsed',
@@ -32,21 +44,9 @@ definePlugin(({ registerService, registerHook, getService }) => {
 
   // 注册初始化，读取缓存
   registerHook(LIFE_CYCLE_HOOK, {
-    async afterPluginInit() {
-      const storageService = getService(STORAGE_SERVICE);
-
-      for (const { key, watcher, default: defaultVal } of watcherCache) {
-        const cacheVal = await storageService.get(key);
-        watcher.setData(cacheVal ?? defaultVal);
-      }
+    afterPluginInit() {
+      return getStorage(watcherCache, getService(STORAGE_SERVICE));
     },
-  });
-
-  // 配置写入缓存
-  watcherCache.forEach(({ key, watcher }) => {
-    watcher.observe((data) => {
-      getService(STORAGE_SERVICE).set(key, data);
-    });
   });
 
   // 卸载器

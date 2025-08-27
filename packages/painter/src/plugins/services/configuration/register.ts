@@ -1,5 +1,5 @@
 import { LIFE_CYCLE_HOOK } from '@circuit/inject';
-import { STORAGE_SERVICE, ConfigurationWatcherItemCache } from '@circuit/shared';
+import { STORAGE_SERVICE, IStorageItemConfig, getStorage } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   PartLabelVisibleKind,
@@ -17,7 +17,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
     visibleElectronicOutline: new Watcher(false),
   };
 
-  const watcherCache: ConfigurationWatcherItemCache[] = [
+  const watcherCache: IStorageItemConfig[] = [
     {
       key: 'Configuration.Painter.PartLabelVisible',
       watcher: service.partLabelVisible,
@@ -30,20 +30,9 @@ definePlugin(({ registerService, registerHook, getService }) => {
 
   // 注册初始化，读取缓存
   registerHook(LIFE_CYCLE_HOOK, {
-    async afterPluginInit() {
-      const storageService = getService(STORAGE_SERVICE);
-      for (const { key, watcher, default: defaultVal } of watcherCache) {
-        const cacheVal = await storageService.get(key);
-        watcher.setData(cacheVal ?? defaultVal);
-      }
+    afterPluginInit() {
+      return getStorage(watcherCache, getService(STORAGE_SERVICE));
     },
-  });
-
-  // 配置写入缓存
-  watcherCache.forEach(({ key, watcher }) => {
-    watcher.observe((data) => {
-      getService(STORAGE_SERVICE).set(key, data);
-    });
   });
 
   // 卸载器

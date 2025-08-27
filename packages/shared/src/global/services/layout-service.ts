@@ -16,8 +16,8 @@ export const LAYOUT_SERVICE =
 export interface ILayoutService {
   /** 侧边栏宽度 */
   readonly sidebarWidth: number;
-  /** 左侧边栏是否折叠 */
-  readonly leftSidebarCollapsed: Watcher<boolean>;
+  /** 左边栏活动标签页 */
+  readonly leftSidebarActiveTab: Watcher<string>;
   /** 右侧边栏是否折叠 */
   readonly rightSidebarCollapsed: Watcher<boolean>;
 }

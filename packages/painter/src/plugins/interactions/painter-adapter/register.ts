@@ -16,18 +16,18 @@ definePlugin(({ registerHook, getService }) => {
       const layoutService = getService(LAYOUT_SERVICE);
       const mapService = getService(MAP_COORDINATE_SERVICE);
 
-      layoutService.leftSidebarCollapsed.observe((isCollapsed) => {
+      layoutService.leftSidebarActiveTab.observe((activeTab) => {
         const position = mapService.position.data;
         // 1 是边框宽度
         const width = layoutService.sidebarWidth + 1;
 
-        // 左侧边栏折叠时，画布右移
-        if (isCollapsed) {
-          mapService.position.setData(position.add([width, 0]));
-        }
         // 左侧边栏展开时，画布左移
-        else {
+        if (activeTab) {
           mapService.position.setData(position.add([-width, 0]));
+        }
+        // 左侧边栏折叠时，画布右移
+        else {
+          mapService.position.setData(position.add([width, 0]));
         }
       });
     },

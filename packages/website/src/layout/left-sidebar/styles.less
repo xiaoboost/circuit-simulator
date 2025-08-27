@@ -1,0 +1,44 @@
+.left-sidebar-wrapper {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}
+
+.tab-list-wrapper {
+  height: 100%;
+  width: 48px;
+
+  .tab-list {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 6px;
+    padding: 6px;
+    border-right: 1px solid @color-border-light;
+  }
+
+  .tab-item {
+    height: 36px;
+    width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-size: 22px;
+    cursor: pointer;
+    color: @color-secondary-text;
+    transition: background-color, color 0.3s ease-in-out;
+
+    &:hover {
+      background-color: mix(@color-white, @color-black, 95%);
+    }
+
+    &.selected {
+      background-color: @color-primary-lighter;
+      color: @color-primary;
+    }
+  }
+}
