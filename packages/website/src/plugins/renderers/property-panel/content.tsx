@@ -6,7 +6,7 @@ import React from 'react';
 import { EmptyPropertyPanel, SinglePropertyPanel } from './components';
 import { useSelectedParts } from './utils';
 
-export function PropertyPanelContent() {
+export const PropertyPanelContent = React.memo(function PropertyPanelContent() {
   const { selected, isEmpty, isSingle, isSameKind } = useSelectedParts();
 
   if (isEmpty) {
@@ -22,4 +22,4 @@ export function PropertyPanelContent() {
   }
 
   return <div>属性面板内容</div>;
-}
+});

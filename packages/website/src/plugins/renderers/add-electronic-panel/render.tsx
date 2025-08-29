@@ -10,7 +10,7 @@ import { useService } from '../../../context';
 import * as Styles from './styles.less';
 import { getCategoryData } from './utils';
 
-export function AddElectronicPanelRender() {
+export const AddElectronicPanelRender = React.memo(function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
   const stream = useService(STREAM_SERVICE);
@@ -54,4 +54,4 @@ export function AddElectronicPanelRender() {
       </div>
     </>
   );
-}
+});
