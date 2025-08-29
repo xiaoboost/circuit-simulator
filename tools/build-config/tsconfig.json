@@ -1,0 +1,9 @@
+{
+  "extends": "@xiao-ai/tsconfig",
+  "include": ["src", "typings", "tests", "build"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "lib": ["DOM", "ESNext"]
+  }
+}

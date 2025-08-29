@@ -443,6 +443,9 @@ importers:
         specifier: 19.1.1
         version: 19.1.1(react@19.1.1)
     devDependencies:
+      '@circuit/build-config':
+        specifier: workspace:*
+        version: link:../../tools/build-config
       '@circuit/eslint-config':
         specifier: workspace:*
         version: link:../../tools/eslint-config
@@ -461,24 +464,57 @@ importers:
       '@types/react-dom':
         specifier: 19.1.7
         version: 19.1.7(@types/react@19.1.9)
-      '@types/webpack-bundle-analyzer':
-        specifier: 4.7.0
-        version: 4.7.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
       cross-env:
         specifier: 7.0.3
         version: 7.0.3
+      eslint:
+        specifier: 9.32.0
+        version: 9.32.0
+      rimraf:
+        specifier: 6.0.1
+        version: 6.0.1
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      tsx:
+        specifier: 4.20.3
+        version: 4.20.3
+      webpack:
+        specifier: 5.101.0
+        version: 5.101.0(webpack-cli@6.0.1)
+      webpack-cli:
+        specifier: 6.0.1
+        version: 6.0.1(webpack@5.101.0)
+
+  tools/build-config:
+    dependencies:
+      '@types/qs':
+        specifier: 6.14.0
+        version: 6.14.0
+      '@types/react':
+        specifier: 19.1.9
+        version: 19.1.9
+      '@types/react-dom':
+        specifier: 19.1.7
+        version: 19.1.7(@types/react@19.1.9)
+      '@types/webpack-bundle-analyzer':
+        specifier: 4.7.0
+        version: 4.7.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      '@xiao-ai/utils':
+        specifier: 1.6.7
+        version: 1.6.7
       css-loader:
         specifier: 7.1.2
         version: 7.1.2(webpack@5.101.0)
       css-minimizer-webpack-plugin:
         specifier: 7.0.2
         version: 7.0.2(webpack@5.101.0)
-      eslint:
-        specifier: 9.32.0
-        version: 9.32.0
       fork-ts-checker-webpack-plugin:
         specifier: 9.1.0
         version: 9.1.0(typescript@5.8.3)(webpack@5.101.0)
@@ -491,9 +527,6 @@ importers:
       mini-css-extract-plugin:
         specifier: 2.9.2
         version: 2.9.2(webpack@5.101.0)
-      rimraf:
-        specifier: 6.0.1
-        version: 6.0.1
       swc-loader:
         specifier: 0.2.6
         version: 0.2.6(@swc/core@1.13.3)(webpack@5.101.0)
@@ -503,15 +536,6 @@ importers:
       tsconfig-paths:
         specifier: 4.2.0
         version: 4.2.0
-      tslib:
-        specifier: 2.8.1
-        version: 2.8.1
-      tsx:
-        specifier: 4.20.3
-        version: 4.20.3
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
       webpack:
         specifier: 5.101.0
         version: 5.101.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
@@ -527,9 +551,31 @@ importers:
       webpack-progress-ora-plugin:
         specifier: 1.5.10
         version: 1.5.10(webpack@5.101.0)
-      worker-loader:
-        specifier: 3.0.8
-        version: 3.0.8(webpack@5.101.0)
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../typings
+      '@types/node':
+        specifier: 20.19.0
+        version: 20.19.0
+      eslint:
+        specifier: 9.32.0
+        version: 9.32.0
+      rimraf:
+        specifier: 6.0.1
+        version: 6.0.1
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      tsx:
+        specifier: 4.20.3
+        version: 4.20.3
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
 
   tools/eslint-config:
     devDependencies:
@@ -1812,9 +1858,6 @@ packages:
   bcrypt-pbkdf@1.0.2:
     resolution: {integrity: sha512-qeFIXtP4MSoi6NLqO12WfqARWWuCKi2Rn/9hJLEmtB5yTNr9DqFWkJRCf2qShWzPeAMRnOgCrq0sg/KLv5ES9w==}
 
-  big.js@5.2.2:
-    resolution: {integrity: sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==}
-
   bignumber.js@9.3.1:
     resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
 
@@ -2344,10 +2387,6 @@ packages:
 
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
-
-  emojis-list@3.0.0:
-    resolution: {integrity: sha512-/kyM18EfinwXZbno9FyUGeFh87KC8HRQBQGildHZbEuRyWFOmv1U10o9BBp8XVZDVNNuQKyIGIu5ZYAAXJ0V2Q==}
-    engines: {node: '>= 4'}
 
   encodeurl@1.0.2:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
@@ -3237,10 +3276,6 @@ packages:
   loader-runner@4.3.0:
     resolution: {integrity: sha512-3R/1M+yS3j5ou80Me59j7F9IMs4PXs3VqRrm0TU3AbKPxlmpoY1TNscJV/oGJXo8qCatFGTfDbY6W6ipGOYXfg==}
     engines: {node: '>=6.11.5'}
-
-  loader-utils@2.0.4:
-    resolution: {integrity: sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==}
-    engines: {node: '>=8.9.0'}
 
   localforage@1.10.0:
     resolution: {integrity: sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==}
@@ -4994,12 +5029,6 @@ packages:
     resolution: {integrity: sha512-BN22B5eaMMI9UMtjrGd5g5eCYPpCPDUy0FJXbYsaT5zYxjFOckS53SQDE3pWkVoWpHXVb3BrYcEN4Twa55B5cA==}
     engines: {node: '>=0.10.0'}
 
-  worker-loader@3.0.8:
-    resolution: {integrity: sha512-XQyQkIFeRVC7f7uRhFdNMe/iJOdO6zxAaR3EWbDp45v3mDhrTi+++oswKNxShUNjPC/1xUp5DB29YKLhFo129g==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      webpack: ^4.0.0 || ^5.0.0
-
   wrap-ansi@7.0.0:
     resolution: {integrity: sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==}
     engines: {node: '>=10'}
@@ -6097,13 +6126,13 @@ snapshots:
 
   '@webpack-cli/configtest@3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)':
     dependencies:
-      webpack: 5.101.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@5.2.2)(webpack@5.101.0)
+      webpack: 5.101.0(webpack-cli@6.0.1)
+      webpack-cli: 6.0.1(webpack@5.101.0)
 
   '@webpack-cli/info@3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)':
     dependencies:
-      webpack: 5.101.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@5.2.2)(webpack@5.101.0)
+      webpack: 5.101.0(webpack-cli@6.0.1)
+      webpack-cli: 6.0.1(webpack@5.101.0)
 
   '@webpack-cli/serve@3.0.1(webpack-cli@6.0.1)(webpack-dev-server@5.2.2)(webpack@5.101.0)':
     dependencies:
@@ -6111,6 +6140,11 @@ snapshots:
       webpack-cli: 6.0.1(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@5.2.2)(webpack@5.101.0)
     optionalDependencies:
       webpack-dev-server: 5.2.2(webpack-cli@6.0.1)(webpack@5.101.0)
+
+  '@webpack-cli/serve@3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)':
+    dependencies:
+      webpack: 5.101.0(webpack-cli@6.0.1)
+      webpack-cli: 6.0.1(webpack@5.101.0)
 
   '@xiao-ai/tsconfig@1.0.4': {}
 
@@ -6363,8 +6397,6 @@ snapshots:
     dependencies:
       tweetnacl: 0.14.5
     optional: true
-
-  big.js@5.2.2: {}
 
   bignumber.js@9.3.1: {}
 
@@ -6923,8 +6955,6 @@ snapshots:
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
-
-  emojis-list@3.0.0: {}
 
   encodeurl@1.0.2: {}
 
@@ -7979,12 +8009,6 @@ snapshots:
   lines-and-columns@1.2.4: {}
 
   loader-runner@4.3.0: {}
-
-  loader-utils@2.0.4:
-    dependencies:
-      big.js: 5.2.2
-      emojis-list: 3.0.0
-      json5: 2.2.3
 
   localforage@1.10.0:
     dependencies:
@@ -9522,6 +9546,15 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.13.3
 
+  terser-webpack-plugin@5.3.14(webpack@5.101.0):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.29
+      jest-worker: 27.5.1
+      schema-utils: 4.3.2
+      serialize-javascript: 6.0.2
+      terser: 5.43.1
+      webpack: 5.101.0(webpack-cli@6.0.1)
+
   terser@5.43.1:
     dependencies:
       '@jridgewell/source-map': 0.3.10
@@ -9862,6 +9895,23 @@ snapshots:
       webpack-bundle-analyzer: 4.10.2
       webpack-dev-server: 5.2.2(webpack-cli@6.0.1)(webpack@5.101.0)
 
+  webpack-cli@6.0.1(webpack@5.101.0):
+    dependencies:
+      '@discoveryjs/json-ext': 0.6.3
+      '@webpack-cli/configtest': 3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)
+      '@webpack-cli/info': 3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)
+      '@webpack-cli/serve': 3.0.1(webpack-cli@6.0.1)(webpack@5.101.0)
+      colorette: 2.0.20
+      commander: 12.1.0
+      cross-spawn: 7.0.6
+      envinfo: 7.14.0
+      fastest-levenshtein: 1.0.16
+      import-local: 3.2.0
+      interpret: 3.1.1
+      rechoir: 0.8.0
+      webpack: 5.101.0(webpack-cli@6.0.1)
+      webpack-merge: 6.0.1
+
   webpack-dev-middleware@7.4.2(webpack@5.101.0):
     dependencies:
       colorette: 2.0.20
@@ -9961,6 +10011,40 @@ snapshots:
       - esbuild
       - uglify-js
 
+  webpack@5.101.0(webpack-cli@6.0.1):
+    dependencies:
+      '@types/eslint-scope': 3.7.7
+      '@types/estree': 1.0.8
+      '@types/json-schema': 7.0.15
+      '@webassemblyjs/ast': 1.14.1
+      '@webassemblyjs/wasm-edit': 1.14.1
+      '@webassemblyjs/wasm-parser': 1.14.1
+      acorn: 8.15.0
+      acorn-import-phases: 1.0.4(acorn@8.15.0)
+      browserslist: 4.25.1
+      chrome-trace-event: 1.0.4
+      enhanced-resolve: 5.18.2
+      es-module-lexer: 1.7.0
+      eslint-scope: 5.1.1
+      events: 3.3.0
+      glob-to-regexp: 0.4.1
+      graceful-fs: 4.2.11
+      json-parse-even-better-errors: 2.3.1
+      loader-runner: 4.3.0
+      mime-types: 2.1.35
+      neo-async: 2.6.2
+      schema-utils: 4.3.2
+      tapable: 2.2.2
+      terser-webpack-plugin: 5.3.14(webpack@5.101.0)
+      watchpack: 2.4.4
+      webpack-sources: 3.3.3
+    optionalDependencies:
+      webpack-cli: 6.0.1(webpack@5.101.0)
+    transitivePeerDependencies:
+      - '@swc/core'
+      - esbuild
+      - uglify-js
+
   websocket-driver@0.7.4:
     dependencies:
       http-parser-js: 0.5.10
@@ -10037,12 +10121,6 @@ snapshots:
   wildcard@2.0.1: {}
 
   word-wrap@1.2.5: {}
-
-  worker-loader@3.0.8(webpack@5.101.0):
-    dependencies:
-      loader-utils: 2.0.4
-      schema-utils: 3.3.0
-      webpack: 5.101.0(@swc/core@1.13.3)(webpack-cli@6.0.1)
 
   wrap-ansi@7.0.0:
     dependencies:

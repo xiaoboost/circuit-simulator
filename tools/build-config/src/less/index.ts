@@ -7,11 +7,11 @@ export const transformers: Transformer[] = [
   importTsTransform,
 ];
 
-export async function transformLess(code: string, resourcePath: string) {
+export async function transformLess(code: string, rootDir: string, resourcePath: string) {
   let result = code;
 
   for (const transformer of transformers) {
-    result = await transformer(result, resourcePath);
+    result = await transformer(result, rootDir, resourcePath);
   }
 
   return result;

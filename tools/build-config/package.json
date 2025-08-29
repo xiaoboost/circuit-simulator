@@ -1,0 +1,52 @@
+{
+  "name": "@circuit/build-config",
+  "description": "构建配置",
+  "version": "2.0.0-alpha.0",
+  "author": "xiaoboost",
+  "license": "MIT",
+  "types": "src/index.ts",
+  "main": "src/index.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "scripts": {
+    "clear": "rimraf ./dist",
+    "lint:style": "eslint -c eslint.config.mjs",
+    "lint:fix": "eslint --fix -c eslint.config.mjs",
+    "lint": "pnpm run lint:style"
+  },
+  "dependencies": {
+    "@types/qs": "6.14.0",
+    "@types/react": "19.1.9",
+    "@types/react-dom": "19.1.7",
+    "@types/webpack-bundle-analyzer": "4.7.0",
+    "@xiao-ai/tsconfig": "1.0.4",
+    "@xiao-ai/utils": "1.6.7",
+    "css-loader": "7.1.2",
+    "css-minimizer-webpack-plugin": "7.0.2",
+    "fork-ts-checker-webpack-plugin": "9.1.0",
+    "html-webpack-plugin": "5.6.3",
+    "less-loader": "12.3.0",
+    "mini-css-extract-plugin": "2.9.2",
+    "swc-loader": "0.2.6",
+    "terser-webpack-plugin": "5.3.14",
+    "tsconfig-paths": "4.2.0",
+    "webpack": "5.101.0",
+    "webpack-bundle-analyzer": "4.10.2",
+    "webpack-cli": "6.0.1",
+    "webpack-dev-server": "5.2.2",
+    "webpack-progress-ora-plugin": "1.5.10"
+  },
+  "devDependencies": {
+    "@circuit/eslint-config": "workspace:*",
+    "@types/circuit": "workspace:*",
+    "@types/node": "20.19.0",
+    "eslint": "9.32.0",
+    "rimraf": "6.0.1",
+    "tslib": "2.8.1",
+    "tsx": "4.20.3",
+    "typescript": "5.8.3"
+  }
+}

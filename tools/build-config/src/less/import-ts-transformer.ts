@@ -38,7 +38,7 @@ export function convertToLessVariables(content: string): string {
   return result;
 }
 
-export const importTsTransform: Transformer = async (code, resourcePath) => {
+export const importTsTransform: Transformer = async (code, _, resourcePath) => {
   const imports = getImports(code);
 
   if (imports.length === 0) {

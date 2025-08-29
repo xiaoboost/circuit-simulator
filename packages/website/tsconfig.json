@@ -1,6 +1,6 @@
 {
   "extends": "@xiao-ai/tsconfig",
-  "include": ["src", "typings", "tests", "build"],
+  "include": ["src", "tests"],
   "exclude": ["node_modules", "dist"],
   "compilerOptions": {
     "baseUrl": ".",
