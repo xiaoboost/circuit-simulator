@@ -5,6 +5,7 @@ import { startLoading } from './src/styles/constant';
 export default buildConfig({
   mode: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
   version,
+  analyze: process.env.ANALYZE === 'true',
   rootDir: __dirname,
   outputDir: 'dist',
   entry: 'src/boot/index.ts',
