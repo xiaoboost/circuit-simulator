@@ -200,13 +200,15 @@ describe('变量观察服务', () => {
   });
 
   describe('清除功能', () => {
-    beforeEach(() => {
-      variableObserver.set(testSymbol1, 'key1', 'value1');
-      variableObserver.set(testSymbol2, 'key1', 'value2');
-    });
+    // 不在 beforeEach 中设置变量，让每个测试自己设置
 
     it('clear 应该清除所有变量和观察者', () => {
       const callback = vi.fn();
+
+      // 设置变量
+      variableObserver.set(testSymbol1, 'key1', 'value1');
+      variableObserver.set(testSymbol2, 'key1', 'value2');
+
       variableObserver.observe(testSymbol1, 'key1', callback);
 
       variableObserver.clear();
@@ -216,6 +218,116 @@ describe('变量观察服务', () => {
 
       variableObserver.set(testSymbol1, 'key1', 'new value');
       expect(callback).not.toHaveBeenCalled();
+    });
+
+    it('clearVariable(false) 不触发观察者回调', () => {
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+
+      // 设置变量
+      variableObserver.set(testSymbol1, 'key1', 'value1');
+      variableObserver.set(testSymbol1, 'key2', 'value2');
+
+      variableObserver.observe(testSymbol1, 'key1', callback1);
+      variableObserver.observe(testSymbol1, 'key2', callback2);
+
+      // 清除变量，默认不触发观察者回调
+      variableObserver.clearVariable(false);
+
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+      expect(variableObserver.get(testSymbol1, 'key2')).toBeUndefined();
+
+      // 观察者应该还在，设置新值时会触发回调
+      variableObserver.set(testSymbol1, 'key1', 'new value');
+      expect(callback1).toHaveBeenCalledWith('new value', undefined);
+
+      // 验证 callback2 没有被意外触发
+      expect(callback2).toHaveBeenCalledTimes(0);
+
+      // 设置 key2 的新值，验证观察者仍然工作
+      variableObserver.set(testSymbol1, 'key2', 'new value2');
+      expect(callback2).toHaveBeenCalledWith('new value2', undefined);
+    });
+
+    it('clearVariable() 默认应该触发所有观察者回调', () => {
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+      const callback3 = vi.fn();
+
+      // 设置变量
+      variableObserver.set(testSymbol1, 'key1', 'value1');
+      variableObserver.set(testSymbol1, 'key2', 'value2');
+      variableObserver.set(testSymbol2, 'key1', 'value3');
+
+      variableObserver.observe(testSymbol1, 'key1', callback1);
+      variableObserver.observe(testSymbol1, 'key2', callback2);
+      variableObserver.observe(testSymbol2, 'key1', callback3);
+
+      // 触发观察者回调
+      variableObserver.clearVariable();
+
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+      expect(variableObserver.get(testSymbol1, 'key2')).toBeUndefined();
+      expect(variableObserver.get(testSymbol2, 'key1')).toBeUndefined();
+
+      // 应该触发所有观察者回调，通知变量被清除
+      expect(callback1).toHaveBeenCalledWith(undefined, 'value1');
+      expect(callback2).toHaveBeenCalledWith(undefined, 'value2');
+      expect(callback3).toHaveBeenCalledWith(undefined, 'value3');
+
+      // 观察者应该还在，设置新值时会触发回调
+      variableObserver.set(testSymbol1, 'key1', 'new value');
+      expect(callback1).toHaveBeenCalledWith('new value', undefined);
+    });
+
+    it('clearVariable 应该正确处理嵌套的 Map 结构', () => {
+      // 测试多个 symbol 和多个 key 的情况
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+      const callback3 = vi.fn();
+
+      // 设置变量
+      variableObserver.set(testSymbol1, 'key1', 'value1');
+      variableObserver.set(testSymbol1, 'key2', 'value2');
+      variableObserver.set(testSymbol2, 'key1', 'value3');
+
+      variableObserver.observe(testSymbol1, 'key1', callback1);
+      variableObserver.observe(testSymbol1, 'key2', callback2);
+      variableObserver.observe(testSymbol2, 'key1', callback3);
+
+      variableObserver.clearVariable(true);
+
+      // 验证所有变量都被清除
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+      expect(variableObserver.get(testSymbol1, 'key2')).toBeUndefined();
+      expect(variableObserver.get(testSymbol2, 'key1')).toBeUndefined();
+
+      // 验证所有观察者都被触发
+      expect(callback1).toHaveBeenCalledWith(undefined, 'value1');
+      expect(callback2).toHaveBeenCalledWith(undefined, 'value2');
+      expect(callback3).toHaveBeenCalledWith(undefined, 'value3');
+    });
+
+    it('clearVariable 应该正确处理空变量表的情况', () => {
+      // 测试没有变量的情况
+      variableObserver.clearVariable();
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+
+      // 测试没有变量的情况下触发观察者
+      variableObserver.clearVariable(true);
+      // 不应该抛出错误
+    });
+
+    it('clearVariable 应该正确处理观察者为空的情况', () => {
+      // 设置变量但不添加观察者
+      variableObserver.set(testSymbol1, 'key1', 'value1');
+      variableObserver.set(testSymbol1, 'key2', 'value2');
+
+      // 应该能正常清除，不会抛出错误
+      variableObserver.clearVariable(true);
+
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+      expect(variableObserver.get(testSymbol1, 'key2')).toBeUndefined();
     });
   });
 
@@ -267,6 +379,26 @@ describe('变量观察服务', () => {
 
       variableObserver.set(testSymbol1, 'testKey', 'new value'); // 不同值
       expect(callback).toHaveBeenCalledWith('new value', 'value');
+    });
+
+    it('应该正确处理批量设置的边界情况', () => {
+      const callback = vi.fn();
+      variableObserver.observe(testSymbol1, 'key1', callback);
+
+      // 测试空数组
+      variableObserver.set(testSymbol1, []);
+      expect(variableObserver.get(testSymbol1, 'key1')).toBeUndefined();
+
+      // 测试无效的数组项
+      variableObserver.set(testSymbol1, [
+        ['key1', 'value1'],
+        ['key2'], // 缺少值
+        ['key3', 'value3'],
+      ]);
+
+      expect(variableObserver.get(testSymbol1, 'key1')).toBe('value1');
+      expect(variableObserver.get(testSymbol1, 'key2')).toBeUndefined();
+      expect(variableObserver.get(testSymbol1, 'key3')).toBe('value3');
     });
   });
 });

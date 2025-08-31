@@ -7,11 +7,27 @@ const DEFAULT_KEY = '_$default';
 definePlugin(({ registerService }) => {
   const variableMap = new Map<symbol, Map<string, any>>();
   const observerMap = new Map<symbol, Map<string, ObserverCb[]>>();
+
   const service: IVariableObserverService = {
     clear() {
       this.unObserve();
       variableMap.clear();
       observerMap.clear();
+    },
+    clearVariable(triggerWatcher = true) {
+      if (triggerWatcher) {
+        // 触发所有观察者，通知变量被清除
+        for (const [symbol, keyMap] of variableMap) {
+          for (const [key, value] of keyMap) {
+            const observers = observerMap.get(symbol)?.get(key);
+            if (observers) {
+              observers.forEach(callback => callback(undefined, value));
+            }
+          }
+        }
+      }
+
+      variableMap.clear();
     },
     get(symbol, key: string = DEFAULT_KEY) {
       return variableMap.get(symbol)?.get(key);
@@ -20,7 +36,7 @@ definePlugin(({ registerService }) => {
       const setVal = (key: string, val: any) => {
         const valTable = variableMap.get(symbol) ?? new Map();
 
-        if (!variableMap.get(symbol)) {
+        if (!variableMap.has(symbol)) {
           variableMap.set(symbol, valTable);
         }
 
@@ -65,11 +81,17 @@ definePlugin(({ registerService }) => {
         observerMap.set(symbol, observer);
       }
 
-      observer.set(key as string, [...(observer.get(key as string) ?? []), callback]);
+      const keyStr = key as string;
+      const callbackFn = callback as ObserverCb;
+
+      if (!observer.has(keyStr)) {
+        observer.set(keyStr, []);
+      }
+
+      observer.get(keyStr)!.push(callbackFn);
 
       return () => {
-        // 这里不能用 this
-        service.unObserve(symbol, key as string, callback as any);
+        service.unObserve(symbol, keyStr, callbackFn);
       };
     },
     unObserve(symbol?, key?, callback?) {
@@ -95,7 +117,7 @@ definePlugin(({ registerService }) => {
       }
 
       const cbList = observer.get(key as string) ?? [];
-      const index = cbList.indexOf(callback as any);
+      const index = cbList.indexOf(callback as ObserverCb);
 
       if (index !== -1) {
         cbList.splice(index, 1);

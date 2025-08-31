@@ -332,11 +332,15 @@ export function createDrawLineSearcher({
     }
   }
 
-  return (end, endBias = Point.from([0, 0])): SearchResult[] => {
+  const CreateLineSearch: PathSearcher =(end, endBias = Point.from([0, 0])): SearchResult[] => {
     getSearchStatus(end, endBias);
     getSearchPath();
     modifyPath(end);
 
     return result.slice();
   };
+
+  CreateLineSearch.getSearchPath = () => result.find((result) => 'path' in result)?.path ?? [];
+
+  return CreateLineSearch;
 }

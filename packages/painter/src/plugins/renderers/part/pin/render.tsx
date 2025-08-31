@@ -4,6 +4,7 @@ import {
   type IPartRendererProps,
   PIN_RENDERER,
   CONNECTION_SERVICE,
+  IPinRendererProps,
 } from '../../../../types';
 import { Pin } from './pin';
 
@@ -19,19 +20,28 @@ function PartPinRender({ data: { id }, prototype: { pins }, style }: IPartRender
     const connections = getConnections(id, index);
     const isSpace = !connections || connections.length === 0;
     const key = `${id}-${index}`;
-    return (
-      <Pin
-        key={key}
-        id={key}
-        parentId={id}
-        pinIndex={index}
-        position={position}
-        hoverR={4}
-        normalR={0}
-        style={style}
-        fill={isSpace ? '#fff' : undefined}
-      />
-    );
+    const props: IPinRendererProps = {
+      key,
+      id: key,
+      parentId: id,
+      pinIndex: index,
+      position: position,
+      hoverR: 4,
+      normalR: 0,
+      style,
+    };
+
+    if (isSpace) {
+      props.r = -1;
+      props.fill = '#fff';
+    }
+    else {
+      props.r = 2;
+    }
+
+    console.log('props', props);
+
+    return <Pin {...props} />;
   });
 }
 

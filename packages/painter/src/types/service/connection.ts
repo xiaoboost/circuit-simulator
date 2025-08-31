@@ -64,11 +64,16 @@ export interface IConnectionService {
 
   /**
    * 添加连接
+   *
+   * @description 创建双向连接关系
+   * @description 这里会确保源引脚和目标引脚存在
    */
   createConnection(id: string, pin: number, targetId: string, targetPin: number): void;
 
   /**
    * 移除连接
+   *
+   * @description 移除双向连接关系
    */
   removeConnection(id: string, pin: number, targetId: string, targetPin: number): void;
 }

@@ -43,7 +43,12 @@ export interface PainterState
 }
 
 /** 路径搜索器 */
-export type PathSearcher = (end: Point, bias?: Point) => SearchResult[];
+export interface PathSearcher {
+  /** 搜索函数 */
+  (end: Point, bias?: Point): SearchResult[];
+  /** 最后求得的导线路径 */
+  getSearchPath: () => PathWithPoint;
+}
 
 /** 导线路径结果 */
 export interface LinePathResult {

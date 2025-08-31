@@ -16,8 +16,15 @@ export const VARIABLE_OBSERVER_SERVICE =
 export type ObserverCb<T = unknown> = (newVal: T, oldVal: T) => void;
 
 export interface IVariableObserverService {
-  /** 清除所有变量 */
+  /** 清除所有变量和监听 */
   clear(): void;
+  /**
+   * 清除所有变量
+   *
+   * @description 仅仅是清除变量，观测器本身还在
+   * @param {boolean} [triggerWatcher] 是否触发观察回调，默认`true`
+   */
+  clearVariable(triggerWatcher?: boolean): void;
   /**
    * 设置默认变量的值
    */

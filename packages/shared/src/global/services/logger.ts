@@ -12,7 +12,7 @@ import { createServiceKey } from '@circuit/inject';
 export const LOGGER_SERVICE =
   createServiceKey<ILoggerService>('LoggerService');
 
-export type Message = string | (() => string);
+export type Message = string | number | (() => string | number);
 
 export interface ILoggerService {
   /**
