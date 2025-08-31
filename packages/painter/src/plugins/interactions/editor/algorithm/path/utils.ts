@@ -59,7 +59,8 @@ export function isSimilar(path1: PathWithPoint, path2: PathWithPoint) {
 
 /**
  * 终点（起点）指向某点
- *  - 导线节点数量少于`1`则忽略
+ *  - 导线节点数量少于等于`1`则忽略
+ *  - 导线节点数量等于`2`则会按照线段方向修正
  */
 export function endToPoint(input: PathWithPoint, mouse: Point, isEnd = true) {
   const path = input.slice();
@@ -71,6 +72,17 @@ export function endToPoint(input: PathWithPoint, mouse: Point, isEnd = true) {
   const last = isEnd ? path.length - 1 : 0;
   const prev = isEnd ? path.length - 2 : 1;
   const lastVector = new Point(path[prev], path[last]);
+
+  if (path.length === 2) {
+    if (lastVector.isHorizontal()) {
+      path[last] = Point.from([mouse[0], path[last][1]]);
+    }
+    else if (lastVector.isVertical()) {
+      path[last] = Point.from([path[last][0], mouse[1]]);
+    }
+
+    return path;
+  }
 
   if (lastVector.isHorizontal()) {
     path[prev] = Point.from([path[prev][0], mouse[1]]);

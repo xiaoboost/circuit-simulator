@@ -145,6 +145,71 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
+      it('单器件，单边宽度不超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该是两段线段', async() => {
+        const lineId = 'line-1';
+        const data: StructuredData = {
+          parts: [createPartByKind(ElectronicKind.Resistance)],
+          lines: [],
+        };
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId,
+          start: Point.from([40, 0]),
+          direction: DirectionVectorSet[Direction.Right],
+          painter: painterState,
+        });
+
+        const end = Point.from([35, -10]);
+
+        expect(search(end)).toEqual([
+          {
+            id: lineId,
+            pin: 1,
+            style: PIN_DRAW_EXPANDED_STYLE,
+          },
+          {
+            id: lineId,
+            path: [
+              Point.from([40, 0]),
+              Point.from([40, -10]),
+              Point.from([35, -10]),
+            ],
+          },
+        ]);
+      });
+
+      it('单器件，单边宽度超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该只有一条线段', async() => {
+        const lineId = 'line-1';
+        const data: StructuredData = {
+          parts: [createPartByKind(ElectronicKind.AcVoltageSource)],
+          lines: [],
+        };
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId,
+          start: Point.from([40, 0]),
+          direction: DirectionVectorSet[Direction.Right],
+          painter: painterState,
+        });
+
+        const end = Point.from([35, -10]);
+
+        expect(search(end)).toEqual([
+          {
+            id: lineId,
+            pin: 1,
+            style: PIN_DRAW_EXPANDED_STYLE,
+          },
+          {
+            id: lineId,
+            path: [
+              Point.from([40, 0]),
+              Point.from([40, -10]),
+            ],
+          },
+        ]);
+      });
+
       it('两个器件，另一个挡住了路径，终点在起点右侧空白处，此时路径应该是三段线段', async() => {
         const parts = createPartsByKind([
           ElectronicKind.Resistance,
