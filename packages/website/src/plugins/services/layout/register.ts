@@ -17,7 +17,7 @@ definePlugin(({ registerService, registerHook, getService, getHook }) => {
 
   const watcherCache: IStorageItemConfig[] = [
     {
-      key: 'Layout.LeftSidebar.Collapsed',
+      key: 'Layout.LeftSidebar.Active',
       watcher: service.leftSidebarActiveTab,
       fromCache: (data: boolean) => {
         if (!data) {
