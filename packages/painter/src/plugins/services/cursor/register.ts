@@ -30,14 +30,12 @@ definePlugin(({ registerService, registerHook, getService }) => {
     afterPluginInit() {
       getService(HOVER_SERVICE).status.observe((val) => {
         if (
-          !val ||
-          val.kind === EntityKind.Part
+          !val || val.kind === EntityKind.Part
         ) {
           defaultCursor = ICursorKind.Default;
         }
         else if (
-          val.kind === EntityKind.PartPin ||
-          val.kind === EntityKind.LinePin
+          val.kind === EntityKind.PartPin || val.kind === EntityKind.LinePin
         ) {
           defaultCursor = ICursorKind.DrawLine;
         }

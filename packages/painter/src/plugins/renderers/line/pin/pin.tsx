@@ -13,7 +13,7 @@ export const Pin = React.memo(function Pin(props: IPinRendererProps) {
   }
 
   const pinComponents = useMemo(
-    () => pinRenderers.map(core => composeHOC(core, hocHooks)),
+    () => pinRenderers.map((core) => composeHOC(core, hocHooks)),
     [pinRenderers, hocHooks],
   );
 

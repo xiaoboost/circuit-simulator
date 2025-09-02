@@ -1,4 +1,4 @@
-import { NumberRank } from '@circuit/algorithm';
+import { type NumberRank } from '@circuit/algorithm';
 
 /** 器件参数单位枚举 */
 export enum UnitType {
@@ -169,7 +169,7 @@ export interface MultiSelectPropertyDescription extends BasePropertyDescription 
 }
 
 /** 参数描述 */
-export type PropertyDescription =
-  | NumberPropertyDescription
-  | EnumPropertyDescription
-  | MultiSelectPropertyDescription;
+export type PropertyDescription
+  = | NumberPropertyDescription
+    | EnumPropertyDescription
+    | MultiSelectPropertyDescription;

@@ -62,7 +62,11 @@ describe('矩阵', () => {
 
     it('非2x2矩阵应该抛出异常', () => {
       expect(() => {
-        invertRotateMatrix([[0, 0, 0, 0]] as any);
+        invertRotateMatrix([
+          [
+            0, 0, 0, 0,
+          ],
+        ] as any);
       }).toThrow('输入必须是 2X2 矩阵');
     });
   });

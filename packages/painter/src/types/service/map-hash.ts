@@ -11,8 +11,8 @@ import { createServiceKey } from '../../context';
  * const mapService = useService(MAP_HASH_SERVICE);
  * ```
  */
-export const MAP_HASH_SERVICE =
-  createServiceKey<IMapHashService>('MapHash');
+export const MAP_HASH_SERVICE
+  = createServiceKey<IMapHashService>('MapHash');
 
 export interface ConnectionData {
   /** 左侧连通性 */
@@ -111,27 +111,27 @@ export interface PartPinMark extends Omit<BaseMark, 'connection'> {
 }
 
 /** 导线节点和导线节点 */
-export type LineAndLineMark =
-  | LineMark
-  | LinePointMark
-  | LineCoverMark
-  | LineCrossMark;
+export type LineAndLineMark
+  = | LineMark
+    | LinePointMark
+    | LineCoverMark
+    | LineCrossMark;
 
 /** 导线节点 */
-export type LineAndPointMark =
-  | LineMark
-  | LinePointMark
-  | LineCoverMark
-  | LineCrossMark
-  | PartPinLineMark;
+export type LineAndPointMark
+  = | LineMark
+    | LinePointMark
+    | LineCoverMark
+    | LineCrossMark
+    | PartPinLineMark;
 
 /** 连接点 */
-export type ConnectionPointMark =
-  | LinePointMark
-  | PartPinMark
-  | PartPinLineMark
-  | LinePointMark
-  | LineCrossMark;
+export type ConnectionPointMark
+  = | LinePointMark
+    | PartPinMark
+    | PartPinLineMark
+    | LinePointMark
+    | LineCrossMark;
 
 /** 节点集合 */
 export type Mark = LineAndPointMark | PartAndPinMark;

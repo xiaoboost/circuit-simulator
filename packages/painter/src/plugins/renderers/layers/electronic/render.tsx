@@ -42,12 +42,12 @@ export const Render = React.memo(
     const { parts: prevParts, lines: prevLines } = prev;
     const { parts: nextParts, lines: nextLines } = next;
     const isSameParts = (
-      prevParts.length === nextParts.length &&
-      prevParts.every((part, i) => part === nextParts[i])
+      prevParts.length === nextParts.length
+      && prevParts.every((part, i) => part === nextParts[i])
     );
     const isSameLines = (
-      prevLines.length === nextLines.length &&
-      prevLines.every((line, i) => line === nextLines[i])
+      prevLines.length === nextLines.length
+      && prevLines.every((line, i) => line === nextLines[i])
     );
 
     return isSameParts && isSameLines;

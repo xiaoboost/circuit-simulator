@@ -42,7 +42,9 @@ export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
     const cleanup: (() => void)[] = [];
 
     for (const [key, hooks] of eventGroups) {
-      const [eventType, capture, passive] = key.split(':');
+      const [
+        eventType, capture, passive,
+      ] = key.split(':');
       const isCapture = capture === 'capture';
       const isPassive = passive === 'passive';
       const sortedHooks = hooks.sort((a, b) => (a.hook.order ?? 0) - (b.hook.order ?? 0));

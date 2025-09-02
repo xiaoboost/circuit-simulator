@@ -483,11 +483,11 @@ describe('Point', () => {
   describe('around()', () => {
     it('距离限制为负数时应该只返回原点', () => {
       const point = new Point(5, -4);
-      const distanceLimit = (
-        (limit: number) =>
+      const distanceLimit
+        = (limit: number) =>
           (node: Point) =>
             (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
-      );
+      ;
 
       const ans = formatPointList(point.around(distanceLimit(-1), 5));
       expect(ans).toEqual(['5,-4']);
@@ -495,38 +495,44 @@ describe('Point', () => {
 
     it('距离限制为0时应该返回相邻点', () => {
       const point = new Point(5, -4);
-      const distanceLimit = (
-        (limit: number) =>
+      const distanceLimit
+        = (limit: number) =>
           (node: Point) =>
             (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
-      );
+      ;
 
       const ans = formatPointList(point.around(distanceLimit(0), 5));
-      expect(ans).toEqual(['5,1', '5,-9', '10,-4', '0,-4']);
+      expect(ans).toEqual([
+        '5,1', '5,-9', '10,-4', '0,-4',
+      ]);
     });
 
     it('距离限制为10时应该返回更多点', () => {
       const point = new Point(5, -4);
-      const distanceLimit = (
-        (limit: number) =>
+      const distanceLimit
+        = (limit: number) =>
           (node: Point) =>
             (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
-      );
+      ;
 
       const ans = formatPointList(point.around(distanceLimit(10), 5));
-      expect(ans).toEqual(['5,11', '5,-19', '20,-4', '-10,-4']);
+      expect(ans).toEqual([
+        '5,11', '5,-19', '20,-4', '-10,-4',
+      ]);
     });
 
     it('默认间距应该正确', () => {
       const point = new Point(5, -4);
-      const distanceLimit = (
-        (limit: number) =>
+      const distanceLimit
+        = (limit: number) =>
           (node: Point) =>
             (Math.abs(node[0] - point[0]) + Math.abs(node[1] - point[1]) > limit)
-      );
+      ;
 
       const ans = formatPointList(point.around(distanceLimit(10)));
-      expect(ans).toEqual(['5,7', '5,-15', '16,-4', '-6,-4']);
+      expect(ans).toEqual([
+        '5,7', '5,-15', '16,-4', '-6,-4',
+      ]);
     });
   });
 
@@ -543,7 +549,9 @@ describe('Point', () => {
       const end = new Point(8, 0);
       expect(
         formatPointList(start.toDestination(end, 1)),
-      ).toEqual(['5,0', '6,0', '7,0', '8,0']);
+      ).toEqual([
+        '5,0', '6,0', '7,0', '8,0',
+      ]);
     });
 
     it('步长为2时应该返回间隔点', () => {
@@ -551,7 +559,9 @@ describe('Point', () => {
       const end = new Point(8, 0);
       expect(
         formatPointList(start.toDestination(end, 2)),
-      ).toEqual(['5,0', '7,0', '9,0']);
+      ).toEqual([
+        '5,0', '7,0', '9,0',
+      ]);
     });
   });
 });

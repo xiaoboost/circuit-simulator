@@ -9,7 +9,7 @@ function LinePathRender({ data: { path }, style }: ILineRendererProps) {
 
   return (
     <path
-      stroke='currentColor'
+      stroke="currentColor"
       style={style}
       d={`M${path.map((n) => n.join(',')).join('L')}`}
     />
@@ -19,7 +19,7 @@ function LinePathRender({ data: { path }, style }: ILineRendererProps) {
 export const Render = React.memo(
   LinePathRender,
   ({ data: { path: prevPath } }, { data: { path: nextPath } }) => (
-    prevPath.length === nextPath.length &&
-    prevPath.every((prevPoint, index) => isEqualPoint(prevPoint, nextPath[index]))
+    prevPath.length === nextPath.length
+    && prevPath.every((prevPoint, index) => isEqualPoint(prevPoint, nextPath[index]))
   ),
 );

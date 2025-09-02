@@ -89,7 +89,9 @@ definePlugin(({ registerService }) => {
       editStack.length = stackPointer + 1;
 
       // 生成补丁
-      const [newState, patches, inversePatches] = produceWithPatches(state, patch);
+      const [
+        newState, patches, inversePatches,
+      ] = produceWithPatches(state, patch);
 
       // 修改操作补丁储存
       editStack.push({

@@ -60,7 +60,7 @@ export class ReadonlyWatcher<T> {
   computed<R>(computeFn: (value: T) => R): ReadonlyWatcher<R> {
     const computedWatcher = new ReadonlyWatcher(computeFn(this.data));
 
-    this.observe(current => {
+    this.observe((current) => {
       computedWatcher['_setData'](computeFn(current));
     });
 

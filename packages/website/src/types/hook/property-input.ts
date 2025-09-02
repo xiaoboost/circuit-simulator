@@ -20,7 +20,7 @@ export interface IPropertyInputProps<T = any, D extends object = object> {
 /** 属性输入渲染器 */
 export interface IPropertyInput<
   T = any,
-  D extends object = object
+  D extends object = object,
 > extends IRendererData<IPropertyInputProps<T, D>> {
   /** 渲染器匹配 */
   match: (property: D) => boolean;

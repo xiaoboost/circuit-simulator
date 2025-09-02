@@ -9,8 +9,8 @@ import { createServiceKey } from '../core';
  * const lifeCycle = useHook(LIFE_CYCLE_HOOK);
  * ```
  */
-export const LIFE_CYCLE_HOOK =
-  createServiceKey<ILifeCycle>('LifeCycle');
+export const LIFE_CYCLE_HOOK
+  = createServiceKey<ILifeCycle>('LifeCycle');
 
 /**
  * 生命周期

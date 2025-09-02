@@ -47,7 +47,9 @@ function getPaddingRect(
 /** 迭代器件内边框内所有节点 */
 function getPaddingPoint(data: PartStructuredData) {
   const { margin } = getPartPrototype(data.kind);
-  const [point1, point2, , point4] = getPaddingRect(data.position, margin, data.rotate);
+  const [
+    point1, point2, , point4,
+  ] = getPaddingRect(data.position, margin, data.rotate);
   const result: Point[] = [];
 
   for (const pointY of point1.toDestination(point4, 20)) {

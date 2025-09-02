@@ -1,6 +1,6 @@
 import { Direction } from '@circuit/algorithm';
 import {
-  ElectronicPrototype,
+  type ElectronicPrototype,
   ElectronicKind,
   ElectronicCategory,
   UnitType,
@@ -14,7 +14,9 @@ export const data: ElectronicPrototype = {
   textBias: {
     Center: 0,
   },
-  margin: [38, 32, 38, 32],
+  margin: [
+    38, 32, 38, 32,
+  ],
   properties: [
     {
       name: '开环增益',
@@ -32,7 +34,9 @@ export const data: ElectronicPrototype = {
       kind: PropertyKind.Number,
       unit: UnitType.Ohm,
       visibleInPainter: false,
-      ranks: ['G', 'M', 'k', ''],
+      ranks: [
+        'G', 'M', 'k', '',
+      ],
       default: {
         value: 80,
         rank: 'M',
@@ -43,7 +47,9 @@ export const data: ElectronicPrototype = {
       kind: PropertyKind.Number,
       unit: UnitType.Ohm,
       visibleInPainter: false,
-      ranks: ['', 'm', 'u'],
+      ranks: [
+        '', 'm', 'u',
+      ],
       default: {
         value: 60,
         rank: '',
@@ -55,7 +61,9 @@ export const data: ElectronicPrototype = {
       kind: PropertyKind.Number,
       unit: UnitType.Hertz,
       visibleInPainter: false,
-      ranks: ['k', 'M', 'G'],
+      ranks: [
+        'k', 'M', 'G',
+      ],
       default: {
         value: 40,
         rank: 'M',

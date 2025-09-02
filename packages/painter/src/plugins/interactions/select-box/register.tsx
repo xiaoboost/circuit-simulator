@@ -66,11 +66,11 @@ definePlugin(({ registerHook, getService }) => {
 
       if (
         // 没有悬停实体
-        !hoverService.status.data &&
+        !hoverService.status.data
         // 拖动服务判断可以启动
-        dragSceneService.isLeftMouseDownNoMovingNoScene(event) &&
+        && dragSceneService.isLeftMouseDownNoMovingNoScene(event)
         // 鼠标在画布上
-        (event.target as HTMLElement).tagName === 'svg'
+        && (event.target as HTMLElement).tagName === 'svg'
       ) {
         dragSceneService.trigger(SELECT_BOX_DRAG_SCENE_NAME, { event });
       }

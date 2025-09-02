@@ -9,8 +9,8 @@ import { createServiceKey } from '../../context';
  * const variableObserverService = useService(VARIABLE_OBSERVER_SERVICE);
  * ```
  */
-export const VARIABLE_OBSERVER_SERVICE =
-  createServiceKey<IVariableObserverService>('VariableObserverService');
+export const VARIABLE_OBSERVER_SERVICE
+  = createServiceKey<IVariableObserverService>('VariableObserverService');
 
 /** 观察回调 */
 export type ObserverCb<T = unknown> = (newVal: T, oldVal: T) => void;

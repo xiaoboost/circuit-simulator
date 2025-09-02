@@ -38,7 +38,7 @@ export function Drawer() {
         ...getCursorStyle(cursor),
       }}
     >
-      <svg height='100%' width='100%'>
+      <svg height="100%" width="100%">
         <g ref={svgRef}>
           {layers.map(({ name, Render }) => <Render key={name} parts={parts} lines={lines} />)}
         </g>

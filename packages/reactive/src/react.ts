@@ -66,18 +66,18 @@ export function useArrayWatcher<T>(watcher: Watcher<T[]>): [T[], ArrayActions<T>
     };
 
     return {
-      push: (...items) => update(current => [...current, ...items]),
-      pop: () => update(current => current.slice(0, -1)),
-      shift: () => update(current => current.slice(1)),
-      unshift: (...items) => update(current => [...items, ...current]),
+      push: (...items) => update((current) => [...current, ...items]),
+      pop: () => update((current) => current.slice(0, -1)),
+      shift: () => update((current) => current.slice(1)),
+      unshift: (...items) => update((current) => [...items, ...current]),
       splice: (start, deleteCount = 0, ...items) =>
-        update(current => {
+        update((current) => {
           const newArray = [...current];
           newArray.splice(start, deleteCount, ...items);
           return newArray;
         }),
-      remove: index => update(current => current.filter((_, i) => i !== index)),
-      update: (index, item) => update(current => {
+      remove: (index) => update((current) => current.filter((_, i) => i !== index)),
+      update: (index, item) => update((current) => {
         if (index < 0 || index >= current.length) {
           return current;
         }
@@ -86,9 +86,9 @@ export function useArrayWatcher<T>(watcher: Watcher<T[]>): [T[], ArrayActions<T>
         return newArray;
       }),
       clear: () => update(() => []),
-      map: mapper => update(current => current.map(mapper)),
-      filter: predicate => update(current => current.filter(predicate)),
-      sort: compareFn => update(current => [...current].sort(compareFn)),
+      map: (mapper) => update((current) => current.map(mapper)),
+      filter: (predicate) => update((current) => current.filter(predicate)),
+      sort: (compareFn) => update((current) => [...current].sort(compareFn)),
     };
   }, [watcher]);
 
@@ -101,17 +101,17 @@ export function useObjectWatcher<T extends object>(watcher: Watcher<T>): [T, Obj
     set: (key, value) => {
       watcher.setData({ ...watcher.data, [key]: value });
     },
-    setAll: obj => {
+    setAll: (obj) => {
       watcher.setData({ ...watcher.data, ...obj });
     },
-    remove: key => {
+    remove: (key) => {
       const { [key]: _, ...rest } = watcher.data;
       watcher.setData(rest as T);
     },
     clear: () => {
       watcher.setData({} as T);
     },
-    merge: obj => {
+    merge: (obj) => {
       watcher.setData({ ...watcher.data, ...obj });
     },
   }), [watcher]);

@@ -6,6 +6,6 @@ export const SelectedChange = Symbol('SelectedChange');
 export type SelectedChangePayload = Set<string>;
 
 /** 新建器件 */
-export const NewPart   = Symbol('NewPart');
+export const NewPart = Symbol('NewPart');
 /** 新建器件参数 */
 export type NewPartPayload = { kind: ElectronicKind };

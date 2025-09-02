@@ -45,7 +45,7 @@ export function MapHashDebugger() {
           key={`circle-${mark.kind}-${mark.position.join(',')}`}
           strokeWidth={3 / scale}
           stroke={nodeColor[mark.kind]}
-          fill='transparent'
+          fill="transparent"
           r={4}
           cx={mark.position[0]}
           cy={mark.position[1]}
@@ -53,7 +53,9 @@ export function MapHashDebugger() {
       ))}
       {/* 连接关系 */}
       {marks.map((mark) => {
-        const connectEnds = (['Left', 'Right', 'Top', 'Bottom'] as const)
+        const connectEnds = ([
+          'Left', 'Right', 'Top', 'Bottom',
+        ] as const)
           .filter((side) => {
             if ('connection' in mark) {
               return mark.connection[side.toLowerCase() as keyof ConnectionData];
@@ -99,7 +101,7 @@ export function MapHashDebugger() {
                 key={`path-${mark.kind}-${start.join(',')}-${end.join(',')}-${i}`}
                 strokeWidth={3 / scale}
                 stroke={nodeColor[mark.kind]}
-                fill='transparent'
+                fill="transparent"
                 d={`M ${end.join(',')} L ${start.join(',')}`}
               />
             ))}

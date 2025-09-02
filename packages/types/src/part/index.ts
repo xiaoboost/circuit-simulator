@@ -1,4 +1,4 @@
 export * from './property';
-export * from './data';
+export type * from './data';
 export * from './kind';
-export * from './part';
+export type * from './part';

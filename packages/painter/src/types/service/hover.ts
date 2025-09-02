@@ -10,8 +10,8 @@ import type { Entity } from '../types';
  * const hoverService = useService(HOVER_SERVICE);
  * ```
  */
-export const HOVER_SERVICE =
-  createServiceKey<IHoverService>('HoverService');
+export const HOVER_SERVICE
+  = createServiceKey<IHoverService>('HoverService');
 
 /** 鼠标悬停服务 */
 export interface IHoverService {

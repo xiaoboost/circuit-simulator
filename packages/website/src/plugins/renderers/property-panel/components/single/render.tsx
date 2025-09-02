@@ -37,7 +37,9 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
         }
       },
     });
-  }, [part, commit, logger]);
+  }, [
+    part, commit, logger,
+  ]);
 
   const changeProperty = useCallback((index: number, value: PropertyValue) => {
     const message = (
@@ -56,7 +58,9 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
         }
       },
     });
-  }, [part, properties, commit, logger]);
+  }, [
+    part, properties, commit, logger,
+  ]);
   const onError = useCallback((index: number, error: string) => {
     setErrors((prev) => {
       const newErrors = [...prev];
@@ -66,17 +70,17 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
   }, []);
   const onChangeHandlers = useMemo(() =>
     properties.map((_, index) => (value: PropertyValue) => changeProperty(index, value)),
-    [changeProperty, properties.length],
+  [changeProperty, properties.length],
   );
   const onErrorHandlers = useMemo(() =>
     properties.map((_, index) => (error: string) => onError(index, error)),
-    [onError, properties.length],
+  [onError, properties.length],
   );
 
   return (
     <>
-      <Form title='标识属性'>
-        <FormItem title='编号' error={idError}>
+      <Form title="标识属性">
+        <FormItem title="编号" error={idError}>
           <Input
             property={{ type: 'referenceTag' }}
             value={createPartTag(part)}
@@ -85,7 +89,7 @@ export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
           />
         </FormItem>
       </Form>
-      <Form title='电气特性'>
+      <Form title="电气特性">
         {properties.map((item, index) => (
           <FormItem title={item.name} key={item.name} error={errors[index]}>
             <Input

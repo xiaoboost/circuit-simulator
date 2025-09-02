@@ -26,8 +26,8 @@ export interface IEntityRegion {
  * const collisionService = useService(COLLISION_SERVICE);
  * ```
  */
-export const COLLISION_SERVICE =
-  createServiceKey<ICollisionService>('CollisionService');
+export const COLLISION_SERVICE
+  = createServiceKey<ICollisionService>('CollisionService');
 
 export interface ICollisionService {
   // ===== 实体管理 =====

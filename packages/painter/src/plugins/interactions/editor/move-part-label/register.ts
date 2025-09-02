@@ -80,8 +80,8 @@ definePlugin(({ registerHook, getService }) => {
       // 方向发生变化，提交修改
       else {
         const message = (
-          `移动器件 ${partTag} 文本，` +
-          `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
+          `移动器件 ${partTag} 文本，`
+          + `从 ${Direction[part.textDirection]} 到 ${Direction[newDirection]} 方向`
         );
 
         painterService.commit({

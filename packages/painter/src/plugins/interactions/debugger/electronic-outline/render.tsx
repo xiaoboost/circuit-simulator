@@ -30,7 +30,7 @@ export function ElectronicOutline() {
           y={rect.y}
           width={rect.width}
           height={rect.height}
-          stroke='black'
+          stroke="black"
           strokeWidth={OutlineWidth / scale}
         />
       ))}

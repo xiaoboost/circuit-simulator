@@ -1,6 +1,6 @@
 import { useContext, useMemo } from 'react';
 import { RootScope, InjectContext } from './context';
-import { ServiceTypeWithKey } from './types';
+import { type ServiceTypeWithKey } from './types';
 import { getHookWithScope, getServiceWithScope } from './utils';
 
 /** 获取服务 */
@@ -27,7 +27,9 @@ export function createReactHookWithScope(scope: symbol) {
       const context = useContext(InjectContext);
       return useMemo(() => {
         return getHookWithScope(key, scope, context, sort);
-      }, [key, scope, sort, context]);
+      }, [
+        key, scope, sort, context,
+      ]);
     },
   };
 }

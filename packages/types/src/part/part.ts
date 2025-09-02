@@ -1,6 +1,6 @@
-import { DirectionLabel, Direction, MarginBox } from '@circuit/algorithm';
-import { ElectronicKind, ElectronicCategory } from './kind';
-import { PropertyDescription } from './property';
+import { type DirectionLabel, type Direction, type MarginBox } from '@circuit/algorithm';
+import { type ElectronicKind, type ElectronicCategory } from './kind';
+import { type PropertyDescription } from './property';
 
 /** 文本偏移量 */
 export type TextBias = Partial<Record<DirectionLabel, number>>;

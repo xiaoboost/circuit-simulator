@@ -1,4 +1,4 @@
-import { IScopeContainer, ServiceTypeWithKey, IScopeManager } from './types';
+import { type IScopeContainer, type ServiceTypeWithKey, type IScopeManager } from './types';
 
 /** 能被排序的元素 */
 interface SortedItem {

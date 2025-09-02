@@ -1,4 +1,4 @@
-import ForkTsCheckerWebpackPlugin  from 'fork-ts-checker-webpack-plugin';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import Webpack from 'webpack';
@@ -10,8 +10,8 @@ import { resolve, build } from './utils';
 export function buildBaseConfig(config: BuildConfig) {
   const { mode, rootDir, entry, outputDir, version, template, tsConfig, meta } = config;
   const isDevelopment = mode === 'dev';
-  const banner =
-  `Project: Circuit Simulator
+  const banner
+    = `Project: Circuit Simulator
   Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
   Version: ${version}
@@ -33,9 +33,15 @@ export function buildBaseConfig(config: BuildConfig) {
       assetModuleFilename: 'assets/[name].[hash:20][ext]',
     },
     resolve: {
-      extensions: ['.tsx', '.ts', '.js', '.json', '.css'],
-      mainFiles: ['index.tsx', 'index.ts', 'index.js', 'index.css'],
-      mainFields: ['source', 'browser', 'module', 'main'],
+      extensions: [
+        '.tsx', '.ts', '.js', '.json', '.css',
+      ],
+      mainFiles: [
+        'index.tsx', 'index.ts', 'index.js', 'index.css',
+      ],
+      mainFields: [
+        'source', 'browser', 'module', 'main',
+      ],
     },
     module: {
       rules: [

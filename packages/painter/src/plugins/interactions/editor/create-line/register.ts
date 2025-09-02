@@ -50,10 +50,10 @@ definePlugin(({ registerHook, getService }) => {
       const hoverData = hover.status.data;
 
       if (
-        !dragSceneService.isLeftMouseDownNoMovingNoScene(event) ||
-        (
-          !hoverData ||
-          hoverData.kind !== EntityKind.PartPin
+        !dragSceneService.isLeftMouseDownNoMovingNoScene(event)
+        || (
+          !hoverData
+          || hoverData.kind !== EntityKind.PartPin
         )
       ) {
         return;

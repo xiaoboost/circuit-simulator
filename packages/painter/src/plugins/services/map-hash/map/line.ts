@@ -133,10 +133,10 @@ export function deleteLineMark(data: LineStructuredData, map: MarkMap) {
       }
 
       if (
-        mark &&
-        (
-          (('line' in mark) && mark.line !== line) ||
-          (('lines' in mark) && !mark.lines.includes(line))
+        mark
+        && (
+          (('line' in mark) && mark.line !== line)
+          || (('lines' in mark) && !mark.lines.includes(line))
         )
       ) {
         throw new Error('删除节点并非指定导线编号');

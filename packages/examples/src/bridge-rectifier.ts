@@ -1,9 +1,9 @@
 import { Direction } from '@circuit/algorithm';
-import { StoreData, ElectronicKind } from '@circuit/types';
+import { type StoreData, ElectronicKind } from '@circuit/types';
 
 export const data: StoreData = {
   version: '1.0.0',
-  parts:  [
+  parts: [
     {
       kind: ElectronicKind.Diode,
       referenceTag: '1',
@@ -162,19 +162,29 @@ export const data: StoreData = {
   ],
   lines: [
     {
-      path: [[580, 280], [580, 260], [640, 260]],
+      path: [
+        [580, 280], [580, 260], [640, 260],
+      ],
     },
     {
-      path: [[580, 360], [580, 380], [640, 380]],
+      path: [
+        [580, 360], [580, 380], [640, 380],
+      ],
     },
     {
-      path: [[700, 160], [700, 140], [780, 140]],
+      path: [
+        [700, 160], [700, 140], [780, 140],
+      ],
     },
     {
-      path: [[1040, 280], [1040, 140], [960, 140]],
+      path: [
+        [1040, 280], [1040, 140], [960, 140],
+      ],
     },
     {
-      path: [[1040, 360], [1040, 500], [960, 500]],
+      path: [
+        [1040, 360], [1040, 500], [960, 500],
+      ],
     },
     {
       path: [[780, 240], [780, 380]],

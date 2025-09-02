@@ -10,8 +10,8 @@ import { createServiceKey } from '../../context';
  * const tooltipActionHooks = useHook(COMPONENT_TOOLTIP_ACTION_HOOK);
  * ```
  */
-export const COMPONENT_TOOLTIP_ACTION_HOOK =
-  createServiceKey<IComponentTooltipAction>('ComponentTooltipAction');
+export const COMPONENT_TOOLTIP_ACTION_HOOK
+  = createServiceKey<IComponentTooltipAction>('ComponentTooltipAction');
 
 /**
  * 组件提示框按钮

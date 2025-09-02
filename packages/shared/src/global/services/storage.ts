@@ -9,8 +9,8 @@ import { createServiceKey } from '@circuit/inject';
  * const cacheService = useService(CACHE_SERVICE);
  * ```
  */
-export const STORAGE_SERVICE =
-  createServiceKey<IStorageService>('StorageService');
+export const STORAGE_SERVICE
+  = createServiceKey<IStorageService>('StorageService');
 
 export interface IStorageService {
   /** 设置储存 */

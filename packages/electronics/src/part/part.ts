@@ -3,17 +3,17 @@ import {
   DirectionVectorSet,
   Point,
   Direction,
-  DirectionLabel,
+  type DirectionLabel,
   isMatrixNotRotate,
   copyMatrix,
   Rotate,
   RotateMatrixSet,
 } from '@circuit/algorithm';
 import {
-  PartStoreData,
-  PartStructuredData,
-  PartPinData,
-  ElectronicKind,
+  type PartStoreData,
+  type PartStructuredData,
+  type PartPinData,
+  type ElectronicKind,
 } from '@circuit/types';
 import { nanoid } from 'nanoid';
 import {

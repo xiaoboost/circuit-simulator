@@ -1,11 +1,11 @@
 import { createServiceKey } from '@circuit/inject';
 import type { Watcher } from '@circuit/reactive';
 import {
-  PartStructuredData,
-  LineStructuredData,
-  ElectronicKind,
-  ElectronicPrototype,
-  StructuredData,
+  type PartStructuredData,
+  type LineStructuredData,
+  type ElectronicKind,
+  type ElectronicPrototype,
+  type StructuredData,
 } from '@circuit/types';
 
 /** 更新数据回调 */
@@ -30,8 +30,8 @@ export interface CommitData {
  * const stateService = useService(STATE_SERVICE);
  * ```
  */
-export const STATE_CORE_SERVICE =
-  createServiceKey<IStateCoreService>('StateCoreService');
+export const STATE_CORE_SERVICE
+  = createServiceKey<IStateCoreService>('StateCoreService');
 
 export interface IStateCoreService {
   /**

@@ -48,8 +48,8 @@ export function markMovableLines(
 
       // 导线两侧均有被选中导线，则当前导线也可移动
       if (
-        startConnection.some(hasConnection) &&
-        endConnection.some(hasConnection)
+        startConnection.some(hasConnection)
+        && endConnection.some(hasConnection)
       ) {
         movable.add(id);
 

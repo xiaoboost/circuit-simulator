@@ -40,8 +40,7 @@ export const RightSidebar = React.memo(function RightSidebar() {
           >
             <render.Render />
           </Sidebar>
-        )
-      }
+        )}
     </aside>
   );
 });

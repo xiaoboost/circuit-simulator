@@ -78,7 +78,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
   let watcher: Watcher<number[]>;
 
   beforeEach(() => {
-    watcher = new Watcher([1, 2, 3]);
+    watcher = new Watcher([
+      1, 2, 3,
+    ]);
   });
 
   afterEach(() => {
@@ -88,7 +90,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
   it('应该返回数组和操作函数', () => {
     const { result } = renderHook(() => useArrayWatcher(watcher));
 
-    expect(result.current[0]).toEqual([1, 2, 3]);
+    expect(result.current[0]).toEqual([
+      1, 2, 3,
+    ]);
     expect(typeof result.current[1].push).toBe('function');
     expect(typeof result.current[1].pop).toBe('function');
     expect(typeof result.current[1].shift).toBe('function');
@@ -109,7 +113,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].push(4, 5);
     });
 
-    expect(result.current[0]).toEqual([1, 2, 3, 4, 5]);
+    expect(result.current[0]).toEqual([
+      1, 2, 3, 4, 5,
+    ]);
   });
 
   it('应该从数组末尾移除项目', () => {
@@ -149,7 +155,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].unshift(0, -1);
     });
 
-    expect(result.current[0]).toEqual([0, -1, 1, 2, 3]);
+    expect(result.current[0]).toEqual([
+      0, -1, 1, 2, 3,
+    ]);
   });
 
   it('应该拼接数组', () => {
@@ -159,7 +167,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].splice(1, 1, 10);
     });
 
-    expect(result.current[0]).toEqual([1, 10, 3]);
+    expect(result.current[0]).toEqual([
+      1, 10, 3,
+    ]);
   });
 
   it('应该根据索引移除项目', () => {
@@ -179,7 +189,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].update(1, 20);
     });
 
-    expect(result.current[0]).toEqual([1, 20, 3]);
+    expect(result.current[0]).toEqual([
+      1, 20, 3,
+    ]);
   });
 
   it('当索引超出范围时不应该更新', () => {
@@ -189,7 +201,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].update(10, 100);
     });
 
-    expect(result.current[0]).toEqual([1, 2, 3]);
+    expect(result.current[0]).toEqual([
+      1, 2, 3,
+    ]);
   });
 
   it('应该映射数组', () => {
@@ -199,7 +213,9 @@ describe('useArrayWatcher 数组监听器钩子', () => {
       result.current[1].map((item, index) => item * 2 + index);
     });
 
-    expect(result.current[0]).toEqual([2, 5, 8]); // 1*2+0, 2*2+1, 3*2+2
+    expect(result.current[0]).toEqual([
+      2, 5, 8,
+    ]); // 1*2+0, 2*2+1, 3*2+2
   });
 
   it('应该过滤数组', () => {
@@ -213,23 +229,31 @@ describe('useArrayWatcher 数组监听器钩子', () => {
   });
 
   it('应该排序数组', () => {
-    const { result } = renderHook(() => useArrayWatcher(new Watcher([3, 1, 2])));
+    const { result } = renderHook(() => useArrayWatcher(new Watcher([
+      3, 1, 2,
+    ])));
 
     act(() => {
       result.current[1].sort();
     });
 
-    expect(result.current[0]).toEqual([1, 2, 3]);
+    expect(result.current[0]).toEqual([
+      1, 2, 3,
+    ]);
   });
 
   it('应该使用自定义比较器排序数组', () => {
-    const { result } = renderHook(() => useArrayWatcher(new Watcher([1, 2, 3])));
+    const { result } = renderHook(() => useArrayWatcher(new Watcher([
+      1, 2, 3,
+    ])));
 
     act(() => {
       result.current[1].sort((a, b) => b - a);
     });
 
-    expect(result.current[0]).toEqual([3, 2, 1]);
+    expect(result.current[0]).toEqual([
+      3, 2, 1,
+    ]);
   });
 });
 

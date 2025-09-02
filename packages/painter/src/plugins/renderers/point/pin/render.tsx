@@ -67,20 +67,20 @@ function PinRenderer(props: IPinRendererProps) {
     function isHover(entity: Entity | undefined) {
       return (
         (
-          entity?.kind === EntityKind.PartPin ||
-          entity?.kind === EntityKind.LinePin
-        ) &&
-        (
-          entity.id === parentId &&
-          entity.pin === pinIndex
+          entity?.kind === EntityKind.PartPin
+          || entity?.kind === EntityKind.LinePin
+        )
+        && (
+          entity.id === parentId
+          && entity.pin === pinIndex
         )
       );
     }
 
     function isEnableHover() {
       return (
-        !dragService.isDragging.data &&
-        !configuration.movePainterMode.data
+        !dragService.isDragging.data
+        && !configuration.movePainterMode.data
       );
     }
 
@@ -131,22 +131,22 @@ function PinRenderer(props: IPinRendererProps) {
       {...rest}
     >
       <circle
-        cx='0'
-        cy='0'
+        cx="0"
+        cy="0"
         r={actual}
         ref={circle}
-        stroke='currentColor'
+        stroke="currentColor"
       >
         <animate
           ref={animate}
-          fill='freeze'
-          attributeType='XML'
-          attributeName='r'
-          begin='indefinite'
+          fill="freeze"
+          attributeType="XML"
+          attributeName="r"
+          begin="indefinite"
           dur={`${duration}ms`}
-          calcMode='spline'
-          keyTimes='0; 1'
-          keySplines='0.2 1 1 1'
+          calcMode="spline"
+          keyTimes="0; 1"
+          keySplines="0.2 1 1 1"
         />
       </circle>
     </g>

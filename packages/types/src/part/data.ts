@@ -1,11 +1,11 @@
 import {
-  Point,
-  Position,
-  Direction,
-  RotateMatrix,
+  type Point,
+  type Position,
+  type Direction,
+  type RotateMatrix,
 } from '@circuit/algorithm';
-import { ElectronicKind } from './kind';
-import { PropertyValue } from './property';
+import { type ElectronicKind } from './kind';
+import { type PropertyValue } from './property';
 
 /** 器件原始数据 */
 export interface PartStoreData {

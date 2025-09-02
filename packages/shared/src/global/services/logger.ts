@@ -9,8 +9,8 @@ import { createServiceKey } from '@circuit/inject';
  * const loggerService = useService(LOGGER_SERVICE);
  * ```
  */
-export const LOGGER_SERVICE =
-  createServiceKey<ILoggerService>('LoggerService');
+export const LOGGER_SERVICE
+  = createServiceKey<ILoggerService>('LoggerService');
 
 export type Message = string | number | (() => string | number);
 
@@ -20,9 +20,9 @@ export interface ILoggerService {
    *
    * @description 只会在调试模式下打印
    */
-  debug(name: string,...messages: Message[]): void;
+  debug(name: string, ...messages: Message[]): void;
   /** 日志信息 */
-  info(name: string,...messages: Message[]): void;
+  info(name: string, ...messages: Message[]): void;
   /** 警告信息 */
   warn(name: string, ...messages: Message[]): void;
   /** 错误信息 */

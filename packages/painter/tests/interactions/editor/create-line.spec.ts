@@ -36,7 +36,7 @@ describe('创建导线搜索路径', () => {
   let map: IMapHashService;
   let connection: IConnectionService;
 
-  beforeAll(async() => {
+  beforeAll(async () => {
     map = await getPlugin(MAP_HASH_SERVICE);
     connection = await getPlugin(CONNECTION_SERVICE);
   });
@@ -57,10 +57,10 @@ describe('创建导线搜索路径', () => {
       ...connection,
       getHover: () => hover,
       getPart: (id: string) => {
-        return data.parts.find(part => part.id === id);
+        return data.parts.find((part) => part.id === id);
       },
       getLine: (id: string) => {
-        return data.lines.find(line => line.id === id);
+        return data.lines.find((line) => line.id === id);
       },
       getConnection: (id: string, pin: number) => {
         return connection.getConnections(id, pin);
@@ -77,7 +77,7 @@ describe('创建导线搜索路径', () => {
 
   describe('器件引脚开始创建导线', () => {
     describe('终点在空白区域', () => {
-      it('单器件，终点在起点左侧空白处，此时路径应该是两段线段', async() => {
+      it('单器件，终点在起点左侧空白处，此时路径应该是两段线段', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -111,7 +111,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('单器件，终点在起点右侧空白处，此时路径应该是两段线段', async() => {
+      it('单器件，终点在起点右侧空白处，此时路径应该是两段线段', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -145,7 +145,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('单器件，单边宽度不超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该是两段线段', async() => {
+      it('单器件，单边宽度不超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该是两段线段', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -178,7 +178,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('单器件，单边宽度超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该只有一条线段', async() => {
+      it('单器件，单边宽度超过20（一格的长度），终点在空白区域靠近器件内部，此时路径应该只有一条线段', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.AcVoltageSource)],
@@ -210,7 +210,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('两个器件，另一个挡住了路径，终点在起点右侧空白处，此时路径应该是三段线段', async() => {
+      it('两个器件，另一个挡住了路径，终点在起点右侧空白处，此时路径应该是三段线段', async () => {
         const parts = createPartsByKind([
           ElectronicKind.Resistance,
           ElectronicKind.Resistance,
@@ -257,7 +257,7 @@ describe('创建导线搜索路径', () => {
     });
 
     describe('终点在器件上', () => {
-      it('单器件，鼠标在起点引脚附近，此时的路径应该有两个起点坐标组成的路径，导线终点引脚是放大状态', async() => {
+      it('单器件，鼠标在起点引脚附近，此时的路径应该有两个起点坐标组成的路径，导线终点引脚是放大状态', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -296,7 +296,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('单器件，鼠标在器件上，但是更靠近起点，此时的路径应该有两个起点坐标组成的路径，导线终点引脚是放大状态', async() => {
+      it('单器件，鼠标在器件上，但是更靠近起点，此时的路径应该有两个起点坐标组成的路径，导线终点引脚是放大状态', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -334,7 +334,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('单器件，鼠标在器件上，但是更靠近器件的另一个坐标，此时的导线应该把两个引脚连接起来，导线终点引脚是缩小状态', async() => {
+      it('单器件，鼠标在器件上，但是更靠近器件的另一个坐标，此时的导线应该把两个引脚连接起来，导线终点引脚是缩小状态', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [createPartByKind(ElectronicKind.Resistance)],
@@ -374,7 +374,7 @@ describe('创建导线搜索路径', () => {
         ]);
       });
 
-      it('两个器件，鼠标在另一个器件上，此器件有空余引脚，导线会连接到鼠标更接近的引脚', async() => {
+      it('两个器件，鼠标在另一个器件上，此器件有空余引脚，导线会连接到鼠标更接近的引脚', async () => {
         const lineId = 'line-1';
         const data: StructuredData = {
           parts: [

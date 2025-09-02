@@ -10,8 +10,8 @@ export interface FormItemProps {
 
 export function Input<
   T = any,
-  D extends object = object
->({ onChange, onError,...rest }: IPropertyInputProps<T, D>) {
+  D extends object = object,
+>({ onChange, onError, ...rest }: IPropertyInputProps<T, D>) {
   const inputs = useHook(PROPERTY_INPUT);
   const onDebounceChange = useMemo(() => debounce(onChange, 500), [onChange]);
   const onDebounceError = useMemo(() => debounce(onError ?? (() => void 0), 500), [onError]);

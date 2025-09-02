@@ -195,7 +195,9 @@ describe('ReadonlyWatcher 只读状态监听器', () => {
       watcher['_setData'](5); // 重复值
       watcher['_setData'](10);
 
-      expect(values).toEqual([0, 5, 10]);
+      expect(values).toEqual([
+        0, 5, 10,
+      ]);
 
       subscription.unsubscribe();
     });

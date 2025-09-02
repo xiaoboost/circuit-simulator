@@ -1,3 +1,3 @@
 export * from './life-cycle';
-export * from './render';
+export type * from './render';
 export * from './hoc';

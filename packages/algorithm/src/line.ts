@@ -46,9 +46,9 @@ export function getPathCoverPoints(...lines: Path[]) {
     for (const verticalSegment of verticalSegments) {
       if (
         // 竖直线段的 X 轴坐标大于水平线段较大的 X 轴坐标
-        verticalSegment[0][0] > horizontalSegment[1][0] ||
+        verticalSegment[0][0] > horizontalSegment[1][0]
         // 水平线段的 Y 轴坐标大于竖直线段较大的 Y 轴坐标
-        horizontalSegment[0][1] > verticalSegment[1][1]
+        || horizontalSegment[0][1] > verticalSegment[1][1]
       ) {
         break;
       }
@@ -57,15 +57,15 @@ export function getPathCoverPoints(...lines: Path[]) {
       if (
         (
           // 竖直线段的 X 轴坐标小于水平线段较大的 X 轴坐标
-          verticalSegment[0][0] <= horizontalSegment[1][0] &&
+          verticalSegment[0][0] <= horizontalSegment[1][0]
           // 竖直线段的 X 轴坐标大于水平线段较小的 X 轴坐标
-          verticalSegment[0][0] >= horizontalSegment[0][0]
-        ) &&
-        (
+          && verticalSegment[0][0] >= horizontalSegment[0][0]
+        )
+        && (
           // 水平线段的 Y 轴坐标小于竖直线段较大的 Y 轴坐标
-          horizontalSegment[0][1] <= verticalSegment[1][1] &&
+          horizontalSegment[0][1] <= verticalSegment[1][1]
           // 水平线段的 Y 轴坐标大于竖直线段较小的 Y 轴坐标
-          horizontalSegment[0][1] >= verticalSegment[0][1]
+          && horizontalSegment[0][1] >= verticalSegment[0][1]
         )
       ) {
         // 交叠节点，取竖直线段的 X 轴坐标和水平线段的 Y 轴坐标

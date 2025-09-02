@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 
 /** 渲染器基础属性 */
 export interface IRendererData<T> {

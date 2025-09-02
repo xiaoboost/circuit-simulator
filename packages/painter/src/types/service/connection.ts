@@ -1,5 +1,6 @@
 import { createServiceKey } from '@circuit/inject';
-import { StructuredData } from '@circuit/types';
+import type { StructuredData } from '@circuit/types';
+import type { Watcher } from '@xiao-ai/utils';
 
 /**
  * 连接关系服务
@@ -10,8 +11,8 @@ import { StructuredData } from '@circuit/types';
  * const connectionService = useService(CONNECTION_SERVICE);
  * ```
  */
-export const CONNECTION_SERVICE =
-  createServiceKey<IConnectionService>('ConnectionService');
+export const CONNECTION_SERVICE
+  = createServiceKey<IConnectionService>('ConnectionService');
 
 /** 连接数据 */
 export interface IConnectionData {
@@ -44,7 +45,9 @@ export interface IConnectionService {
    */
   registerPin(deviceId: string, pin: number): void;
 
-  /** 清除所有数据 */
+  /**
+   * 清除所有数据
+   */
   clearAll(): void;
 
   /**
@@ -76,5 +79,11 @@ export interface IConnectionService {
    * @description 移除双向连接关系
    */
   removeConnection(id: string, pin: number, targetId: string, targetPin: number): void;
-}
 
+  // /**
+  //  * 获取器件连接关系的监听器
+  //  *
+  //  * @description 同一个器件只会有一个监听器
+  //  */
+  // getDeviceConnectionsWatcher(id: string): Watcher<IConnectionDataWithPin[]>;
+}

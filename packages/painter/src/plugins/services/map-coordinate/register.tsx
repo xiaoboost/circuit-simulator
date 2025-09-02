@@ -184,15 +184,15 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       const oldPosition = position.data;
 
       // 是否为触摸板双指移动（通常 deltaMode 为 0 且 deltaX/deltaY 较小）
-      const isTouchpadPan = event.deltaMode === 0 &&
-        Math.abs(event.deltaX) < 50 &&
-        Math.abs(event.deltaY) < 50 &&
-        !event.ctrlKey;
+      const isTouchpadPan = event.deltaMode === 0
+        && Math.abs(event.deltaX) < 50
+        && Math.abs(event.deltaY) < 50
+        && !event.ctrlKey;
 
       // 是否为触摸板双指缩放（通常 deltaMode 为 0 且 deltaY 较大）
-      const isTouchpadZoom = event.deltaMode === 0 &&
-        Math.abs(event.deltaY) >= 50 &&
-        !event.ctrlKey;
+      const isTouchpadZoom = event.deltaMode === 0
+        && Math.abs(event.deltaY) >= 50
+        && !event.ctrlKey;
 
       // 检测是否为鼠标滚轮缩放（通常 deltaMode 为 1 或 2）
       const isMouseWheel = event.deltaMode === 1 || event.deltaMode === 2;

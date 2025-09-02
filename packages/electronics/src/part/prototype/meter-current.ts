@@ -1,5 +1,5 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
+import { type ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
 
 export const data: ElectronicPrototype = {
   pre: 'IM',
@@ -9,7 +9,9 @@ export const data: ElectronicPrototype = {
     Top: 11,
     Bottom: 11,
   },
-  margin: [8, 12, 8, 12],
+  margin: [
+    8, 12, 8, 12,
+  ],
   properties: [],
   pins: [
     {

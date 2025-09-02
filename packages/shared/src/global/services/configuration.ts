@@ -10,8 +10,8 @@ import type { Watcher } from '@circuit/reactive';
  * const configurationService = useService(CONFIGURATION_SERVICE);
  * ```
  */
-export const CONFIGURATION_SERVICE =
-  createServiceKey<IConfigurationService>('ConfigurationService');
+export const CONFIGURATION_SERVICE
+  = createServiceKey<IConfigurationService>('ConfigurationService');
 
 export interface IConfigurationService {
   /** 打开调试日志 */

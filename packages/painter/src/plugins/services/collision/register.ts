@@ -42,7 +42,7 @@ definePlugin(({ registerService }) => {
     pointInEntities(point: Point) {
       const result: Entity[] = [];
       for (const region of map.values()) {
-        if (region.rects.some(rect => pointInRect(point, rect))) {
+        if (region.rects.some((rect) => pointInRect(point, rect))) {
           result.push(region.entity);
         }
       }
@@ -51,7 +51,7 @@ definePlugin(({ registerService }) => {
     rectInEntities(rect: Rect) {
       const result: Entity[] = [];
       for (const region of map.values()) {
-        if (region.rects.some(r => collision(r, rect))) {
+        if (region.rects.some((r) => collision(r, rect))) {
           result.push(region.entity);
         }
       }
@@ -110,10 +110,10 @@ definePlugin(({ registerService }) => {
       return this.getEntityRegion(id).flatMap((region) => region.rects);
     },
     getAllEntityRects() {
-      return Array.from(map.values()).flatMap(region => region.rects);
+      return Array.from(map.values()).flatMap((region) => region.rects);
     },
     getEntityBoundingBox(...ids: string[]) {
-      const rects = ids.flatMap(id => this.getEntityRects(id));
+      const rects = ids.flatMap((id) => this.getEntityRects(id));
 
       if (rects.length === 0) {
         return;

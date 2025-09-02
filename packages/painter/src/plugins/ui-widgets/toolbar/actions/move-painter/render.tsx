@@ -34,16 +34,16 @@ export const MoveModeRenderWithSpace = (spaceKeyDown: Watcher<boolean>) => {
 
     return (
       <>
-        <Tooltip title='编辑模式' destroyOnHidden>
+        <Tooltip title="编辑模式" destroyOnHidden>
           <Button
             onClick={onClickCursor}
             selected={!isMoveMode}
             disabled={isSpaceKeyDown}
           >
             <Cursor />
-        </Button>
+          </Button>
         </Tooltip>
-        <Tooltip title='移动模式' destroyOnHidden>
+        <Tooltip title="移动模式" destroyOnHidden>
           <Button
             onClick={onClickHand}
             selected={isMoveMode}

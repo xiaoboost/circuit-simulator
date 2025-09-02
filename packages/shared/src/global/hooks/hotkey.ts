@@ -18,7 +18,7 @@ export type HotKeyType = string | string[];
 export interface HotKeyOptions {
   keyup?: boolean | null;
   keydown?: boolean | null;
-  capture?: boolean
+  capture?: boolean;
   single?: boolean;
   element?: HTMLElement | null;
 }

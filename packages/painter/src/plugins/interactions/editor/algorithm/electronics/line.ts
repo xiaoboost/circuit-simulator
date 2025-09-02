@@ -14,9 +14,9 @@ export function removeRepeat(path: PathWithPoint) {
 
   for (let i = 0; i < newPath.length - 2; i++) {
     if (
-      ((newPath[i][0] === newPath[i + 1][0]) && (newPath[i + 1][0] === newPath[i + 2][0])) ||
-      ((newPath[i][1] === newPath[i + 1][1]) && (newPath[i + 1][1] === newPath[i + 2][1])) ||
-      ((newPath[i][0] === newPath[i + 1][0]) && (newPath[i][1] === newPath[i + 1][1]))
+      ((newPath[i][0] === newPath[i + 1][0]) && (newPath[i + 1][0] === newPath[i + 2][0]))
+      || ((newPath[i][1] === newPath[i + 1][1]) && (newPath[i + 1][1] === newPath[i + 2][1]))
+      || ((newPath[i][0] === newPath[i + 1][0]) && (newPath[i][1] === newPath[i + 1][1]))
     ) {
       newPath.splice(i + 1, 1);
       i -= 2;

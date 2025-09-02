@@ -25,8 +25,8 @@ export function DebuggerRender() {
 
   // 非本地或者没有设置链接条件，则不显示调试按钮
   if (
-    !location.hostname.includes('localhost') &&
-    !/(\?|&)debug=true(\?|&|$)/.test(location.search)
+    !location.hostname.includes('localhost')
+    && !/(\?|&)debug=true(\?|&|$)/.test(location.search)
   ) {
     return null;
   }

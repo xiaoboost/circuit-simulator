@@ -59,8 +59,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
       const hooks = getHook(DRAG_SCENE_HOOK).filter(({ name }) => {
         return (
-          (scene === '*' || name === scene) &&
-          sceneSet.has(name)
+          (scene === '*' || name === scene)
+          && sceneSet.has(name)
         );
       });
 
@@ -102,17 +102,17 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     },
     isLeftMouseDownNoMovingNoScene(event) {
       return (
-        event.button === 0 &&
-        event.type === 'mousedown' &&
-        this.size === 0 &&
-        !getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data
+        event.button === 0
+        && event.type === 'mousedown'
+        && this.size === 0
+        && !getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data
       );
     },
     isLeftMouseUpNoMovingHasScene(event, scene) {
       return (
-        event.button === 0 &&
-        event.type === 'mouseup' &&
-        sceneSet.has(scene)
+        event.button === 0
+        && event.type === 'mouseup'
+        && sceneSet.has(scene)
       );
     },
   };

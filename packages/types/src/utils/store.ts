@@ -1,5 +1,5 @@
-import { LineStructuredData, LineStoreData } from '../line';
-import { PartStructuredData, PartStoreData } from '../part';
+import { type LineStructuredData, type LineStoreData } from '../line';
+import { type PartStructuredData, type PartStoreData } from '../part';
 
 /** 元件总类别 */
 export type LineOrPartStructuredData = LineStructuredData | PartStructuredData;

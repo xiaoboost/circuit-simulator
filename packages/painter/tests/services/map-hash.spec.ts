@@ -231,7 +231,6 @@ describe('图纸标记服务', () => {
         ]);
       });
 
-
       it('删除器件后导线标记应该还原回 LinePoint', () => {
         mapHash.setPartMark(part);
         mapHash.setLineMark(line);
@@ -418,7 +417,9 @@ describe('图纸标记服务', () => {
           },
           {
             kind: MarkKind.LineCross,
-            lines: [line1.id, line2.id, line3.id],
+            lines: [
+              line1.id, line2.id, line3.id,
+            ],
             position: Point.from([0, 40]),
             connection: {
               right: true,
@@ -672,8 +673,8 @@ describe('图纸标记服务', () => {
         lines: ['line1', 'line2'],
         position: Point.from([0, 0]),
         connections: {
-          'line1': { top: true, bottom: true },
-          'line2': { left: true, right: true },
+          line1: { top: true, bottom: true },
+          line2: { left: true, right: true },
         },
       };
       expect(mapHash.isLineCover(lineCover)).toBe(true);
@@ -753,8 +754,8 @@ describe('图纸标记服务', () => {
         lines: ['line1', 'line2'],
         position: Point.from([0, 0]),
         connections: {
-          'line1': { top: true, bottom: true },
-          'line2': { left: true, right: true },
+          line1: { top: true, bottom: true },
+          line2: { left: true, right: true },
         },
       };
       expect(mapHash.isLineAndPoint(lineCover)).toBe(true);

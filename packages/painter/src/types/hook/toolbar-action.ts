@@ -10,8 +10,8 @@ import { createServiceKey } from '../../context';
  * const painterToolbarActionHooks = useHook(PAINTER_TOOLBAR_ACTION_HOOK);
  * ```
  */
-export const PAINTER_TOOLBAR_ACTION_HOOK =
-  createServiceKey<IPainterToolBarAction>('PainterToolBarAction');
+export const PAINTER_TOOLBAR_ACTION_HOOK
+  = createServiceKey<IPainterToolBarAction>('PainterToolBarAction');
 
 /**
  * 画布快捷操作按钮渲染器

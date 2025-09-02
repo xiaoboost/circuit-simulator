@@ -54,11 +54,11 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   // 更新器件说明文本
   useEffect(() => {
     if (
-      !properties ||
-      properties.length === 0 ||
-      !prototype.textBias ||
-      partLabelVisible === Kind.OnlyId ||
-      partLabelVisible === Kind.NotVisible
+      !properties
+      || properties.length === 0
+      || !prototype.textBias
+      || partLabelVisible === Kind.OnlyId
+      || partLabelVisible === Kind.NotVisible
     ) {
       setTexts([]);
       return;
@@ -85,16 +85,16 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     const textBoxRect = textRef.current.getBBox();
     /** 轴线偏移量 */
     const baselineOffset = Math.abs(textBoxRect.y / scale);
-    /** 纵轴居中对齐时的偏移量*/
+    /** 纵轴居中对齐时的偏移量 */
     const yMiddleOffset = (
       (
-        Math.abs(Math.abs(textBoxRect.y) - textBoxRect.height / 2) *
-        (textLineCount === 1 ? 1 : -1)
-      ) /
-      scale
+        Math.abs(Math.abs(textBoxRect.y) - textBoxRect.height / 2)
+        * (textLineCount === 1 ? 1 : -1)
+      )
+      / scale
     );
-    /** 横轴居中对齐时的偏移量*/
-    const xMiddleOffset = - textBoxRect.width / scale / 2;
+    /** 横轴居中对齐时的偏移量 */
+    const xMiddleOffset = -textBoxRect.width / scale / 2;
     /** 器件视角下的文本方向 */
     const textDirectionByPart = rotateVector(
       DirectionVectorSet[textDirection],
@@ -114,7 +114,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
 
     if (textDirection === Direction.Left) {
-      newPosition[0] = - textBias;
+      newPosition[0] = -textBias;
       newPosition[1] = yMiddleOffset;
     }
     else if (textDirection === Direction.Right) {
@@ -127,7 +127,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     }
     else if (textDirection === Direction.Top) {
       newPosition[0] = 0;
-      newPosition[1] = - (textHeight + textSpaceHeight) * (textLineCount - 1) - textBias;
+      newPosition[1] = -(textHeight + textSpaceHeight) * (textLineCount - 1) - textBias;
     }
     else if (textDirection === Direction.Bottom) {
       newPosition[0] = 0;
@@ -148,9 +148,9 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 
   if (
     // 不存在偏移量
-    !prototype.textBias ||
+    !prototype.textBias
     // 没有需要显示的文本
-    textLineCount === 0
+    || textLineCount === 0
   ) {
     return null;
   }
@@ -175,10 +175,12 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
         <text
           key={i}
           dy={
-            (textHeight + textSpaceHeight) *
-            (i + 1 - (visibleId ? 0 : 1))
+            (textHeight + textSpaceHeight)
+            * (i + 1 - (visibleId ? 0 : 1))
           }
-        >{text}</text>
+        >
+          {text}
+        </text>
       ))}
     </g>
   );
@@ -187,10 +189,10 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
 export const Render = React.memo(
   PartLabelRender,
   ({ data: prev }, { data: next }) => (
-    prev.kind === next.kind &&
-    prev.referenceTag === next.referenceTag &&
-    isMatrixEqual(prev.rotate, next.rotate) &&
-    prev.textDirection === next.textDirection &&
-    isEqual(prev.propertyValues, next.propertyValues)
+    prev.kind === next.kind
+    && prev.referenceTag === next.referenceTag
+    && isMatrixEqual(prev.rotate, next.rotate)
+    && prev.textDirection === next.textDirection
+    && isEqual(prev.propertyValues, next.propertyValues)
   ),
 );

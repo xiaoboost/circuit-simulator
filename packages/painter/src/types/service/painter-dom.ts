@@ -10,7 +10,7 @@ import { createServiceKey } from '../../context';
  * const painterHTMLElement = useService(PAINTER_HTML_ELEMENT);
  * ```
  */
-export const PAINTER_HTML_ELEMENT =
-  createServiceKey<IPainterHTMLElement>('PainterHTMLElement');
+export const PAINTER_HTML_ELEMENT
+  = createServiceKey<IPainterHTMLElement>('PainterHTMLElement');
 
 export type IPainterHTMLElement = RefObject<HTMLDivElement | null>;

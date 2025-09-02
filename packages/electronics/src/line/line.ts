@@ -1,5 +1,5 @@
-import { Point, PathWithPoint } from '@circuit/algorithm';
-import { LineStoreData, LineStructuredData } from '@circuit/types';
+import { Point, type PathWithPoint } from '@circuit/algorithm';
+import { type LineStoreData, type LineStructuredData } from '@circuit/types';
 import { nanoid } from 'nanoid';
 
 export function isLineId(id: string) {

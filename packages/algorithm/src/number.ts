@@ -3,13 +3,13 @@ import BigNumber from 'bignumber.js';
 
 /** 数字数量级简写 */
 enum RankEnum {
-  p = -12,
-  n = -9,
-  μ = -6,
-  m = -3,
-  k = 3,
-  M = 6,
-  G = 9,
+  'p' = -12,
+  'n' = -9,
+  'μ' = -6,
+  'm' = -3,
+  'k' = 3,
+  'M' = 6,
+  'G' = 9,
   '' = 0,
 }
 
@@ -38,9 +38,9 @@ export const shortNumberMatcher = /^\d+(?:\.\d+)?[puμnmkMG]$/;
 
 /** 所有数字匹配 */
 export const numberMatcher = new RegExp(
-  `${normalNumberMatcher.source}|` +
-  `${expNumberMatcher.source}|` +
-  `${shortNumberMatcher.source}`,
+  `${normalNumberMatcher.source}|`
+  + `${expNumberMatcher.source}|`
+  + `${shortNumberMatcher.source}`,
 );
 
 /** 简写数字编译 */
@@ -92,7 +92,9 @@ const unitMap: Record<NumberRank, string> = {
 };
 
 /** 所有数量级 */
-export const allRanks = ['G', 'M', 'k', '', 'm', 'u', 'n', 'p'] as NumberRank[];
+export const allRanks = [
+  'G', 'M', 'k', '', 'm', 'u', 'n', 'p',
+] as NumberRank[];
 
 /** 生成简写数字单位快捷选择列表选项 */
 export function shortUnitList(unit: string, isChinese?: boolean): SelectList;
@@ -112,7 +114,7 @@ export function shortUnitList(
   return ranks
     .map((origin) => {
       const rank = origin === 'μ' ? 'u' : origin;
-      const label = origin === 'u' ? 'μ': origin;
+      const label = origin === 'u' ? 'μ' : origin;
 
       return {
         label: isChinese

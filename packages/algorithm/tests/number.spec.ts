@@ -113,7 +113,9 @@ describe('toScientific()', () => {
 
 describe('shortUnitList()', () => {
   it('自定义单位列表应该正确生成', () => {
-    expect(shortUnitList(['G', 'm', 'μ'], 'x')).toEqual([
+    expect(shortUnitList([
+      'G', 'm', 'μ',
+    ], 'x')).toEqual([
       {
         label: 'Gx',
         value: 'G',
@@ -130,7 +132,9 @@ describe('shortUnitList()', () => {
   });
 
   it('中文标签应该正确生成', () => {
-    expect(shortUnitList(['G', 'm', 'μ'], 'yu', true)).toEqual([
+    expect(shortUnitList([
+      'G', 'm', 'μ',
+    ], 'yu', true)).toEqual([
       {
         label: '吉yu',
         value: 'G',

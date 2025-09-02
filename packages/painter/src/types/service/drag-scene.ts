@@ -10,8 +10,8 @@ import { createServiceKey, type Watcher } from '../../context';
  * const dragSceneService = useService(DRAG_SCENE_SERVICE);
  * ```
  */
-export const DRAG_SCENE_SERVICE =
-  createServiceKey<IDragSceneService>('DragSceneService');
+export const DRAG_SCENE_SERVICE
+  = createServiceKey<IDragSceneService>('DragSceneService');
 
 /** 场景触发参数 */
 export interface SceneTriggerPayload {

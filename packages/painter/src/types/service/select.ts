@@ -9,8 +9,8 @@ import { createServiceKey, Watcher } from '../../context';
  * const selectService = useService(SELECT_SERVICE);
  * ```
  */
-export const SELECT_SERVICE =
-  createServiceKey<ISelectService>('SelectService');
+export const SELECT_SERVICE
+  = createServiceKey<ISelectService>('SelectService');
 
 /** 选中服务 */
 export interface ISelectService {

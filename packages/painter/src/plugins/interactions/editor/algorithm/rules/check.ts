@@ -11,9 +11,9 @@ export function isValidNode(this: RulesContext, node: SearchNodeData): boolean {
   const status = painter.get(node.position);
 
   if (
-    painter.isPart(status) ||
-    painter.isPartPinLine(status) ||
-    painter.isPartPin(status)
+    painter.isPart(status)
+    || painter.isPartPinLine(status)
+    || painter.isPartPin(status)
   ) {
     return false;
   }

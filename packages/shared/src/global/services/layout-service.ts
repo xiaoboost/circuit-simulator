@@ -10,8 +10,8 @@ import type { Watcher } from '@circuit/reactive';
  * const layoutService = useService(LAYOUT_SERVICE);
  * ```
  */
-export const LAYOUT_SERVICE =
-  createServiceKey<ILayoutService>('LayoutService');
+export const LAYOUT_SERVICE
+  = createServiceKey<ILayoutService>('LayoutService');
 
 export interface ILayoutService {
   /** 左边栏活动标签页 */

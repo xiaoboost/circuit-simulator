@@ -20,11 +20,11 @@ export interface SearchNodeData {
 /** 节点搜索选项接口 */
 export interface AStarSearchOption {
   /** 起点 */
-  start: Point,
+  start: Point;
   /** 终点 */
-  end: Point,
+  end: Point;
   /** 初始方向 */
-  direction: Point,
+  direction: Point;
   /** 搜索规则 */
   rules: Rules;
   /**

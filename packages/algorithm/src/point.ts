@@ -73,9 +73,9 @@ export class Point {
    */
   isEqual(point: PointLike): boolean {
     return (
-      point.length === 2 &&
-      this[0] === point[0] &&
-      this[1] === point[1]
+      point.length === 2
+      && this[0] === point[0]
+      && this[1] === point[1]
     );
   }
 
@@ -100,6 +100,7 @@ export class Point {
     }
     return (sum);
   }
+
   /**
    * 乘法
    *  - 第一项将会调用 Point 构造函数生成实例，然后参与运算
@@ -121,6 +122,7 @@ export class Point {
     }
     return (sum);
   }
+
   /**
    * 向量乘法
    *
@@ -130,6 +132,7 @@ export class Point {
   product(vector: PointLike): number {
     return (this[0] * vector[0] + this[1] * vector[1]);
   }
+
   /**
    * 点旋转（乘以矩阵）
    * @param {Matrix} ma
@@ -141,6 +144,7 @@ export class Point {
       this[0] * ma[0][1] + this[1] * ma[1][1],
     );
   }
+
   /**
    * 返回对 x, y 坐标分别求绝对值后组成的新 Point 实例
    *
@@ -152,6 +156,7 @@ export class Point {
       Math.abs(this[1]),
     ));
   }
+
   /**
    * 返回 x, y 坐标分别单位化后组成的新 Point 实例
    *
@@ -163,6 +168,7 @@ export class Point {
       Math.sign(this[1]) * factor,
     ));
   }
+
   /**
    * 求 this 到 point 的几何距离
    *
@@ -175,6 +181,7 @@ export class Point {
       (this[1] - point[1]),
     );
   }
+
   /**
    * 求 this 到 point 的曼哈顿距离
    *
@@ -183,10 +190,11 @@ export class Point {
    */
   manhattanDistance(point: PointLike): number {
     return (
-      Math.abs(this[0] - point[0]) +
-      Math.abs(this[1] - point[1])
+      Math.abs(this[0] - point[0])
+      + Math.abs(this[1] - point[1])
     );
   }
+
   /**
    * 求 this 到线段的几何距离
    *
@@ -227,10 +235,11 @@ export class Point {
 
     // 计算点到投影点的距离
     return Math.sqrt(
-      (this[0] - projectionX) * (this[0] - projectionX) +
-      (this[1] - projectionY) * (this[1] - projectionY),
+      (this[0] - projectionX) * (this[0] - projectionX)
+      + (this[1] - projectionY) * (this[1] - projectionY),
     );
   }
+
   /**
    * 求 this 到线段的曼哈顿距离（针对横平竖直线段优化）
    *
@@ -242,7 +251,7 @@ export class Point {
 
     // 判断线段是水平还是垂直
     const isHorizontal = start[1] === end[1]; // y坐标相同
-    const isVertical = start[0] === end[0];   // x坐标相同
+    const isVertical = start[0] === end[0]; // x坐标相同
 
     if (isHorizontal) {
       // 水平线段：计算x方向的距离和y方向的距离
@@ -291,6 +300,7 @@ export class Point {
       this.manhattanDistance(end),
     );
   }
+
   /**
    * this 在`vector`上的投影向量
    *
@@ -300,6 +310,7 @@ export class Point {
   toProjection(vector: Point) {
     return vector.mul(this.product(vector) / vector.distance());
   }
+
   /**
    * 求与 this 平行且模为 factor 的向量
    *
@@ -310,6 +321,7 @@ export class Point {
     const scale = 1 / this.distance();
     return this.mul(scale * factor);
   }
+
   /**
    * this 顺时针旋转 90°
    *  - x 轴向右为正，y 轴向下为正
@@ -320,6 +332,7 @@ export class Point {
   toVertical() {
     return new Point(-this[1], this[0]);
   }
+
   /**
    * 获取点的方向
    */
@@ -358,6 +371,7 @@ export class Point {
       }
     }
   }
+
   /**
    * x, y 分别对 n 的余数四舍五入
    *
@@ -370,6 +384,7 @@ export class Point {
       Number.parseInt((this[1] / fixed).toFixed(), 10) * fixed,
     ));
   }
+
   /**
    * 对 x, y 分别除以 n, 然后四舍五入
    *
@@ -382,6 +397,7 @@ export class Point {
       Number.parseInt((this[1] / fixed).toFixed(), 10),
     ));
   }
+
   /**
    * x, y 分别对 n 的余数向下取整
    *
@@ -394,6 +410,7 @@ export class Point {
       Math.floor(this[1] / fixed) * fixed,
     ));
   }
+
   /**
    * x, y 分别对 n 的余数向下取整
    *
@@ -407,6 +424,7 @@ export class Point {
       Math.trunc(this[1] / fixed) * fixed,
     ));
   }
+
   /**
    * 对 x, y 分别除以 n, 然后向下取整
    *
@@ -419,6 +437,7 @@ export class Point {
       Math.floor(this[1] / fixed),
     ));
   }
+
   /**
    * 是否是零向量
    *
@@ -427,6 +446,7 @@ export class Point {
   isZero(): boolean {
     return (this[0] === 0 && this[1] === 0);
   }
+
   /**
    * 是否是整数点
    *
@@ -434,11 +454,12 @@ export class Point {
    */
   isInteger(): boolean {
     return (
-      this.length === 2 &&
-      Number.isInteger(this[0]) &&
-      Number.isInteger(this[1])
+      this.length === 2
+      && Number.isInteger(this[0])
+      && Number.isInteger(this[1])
     );
   }
+
   /**
    * 是否和输入向量平行
    *
@@ -448,6 +469,7 @@ export class Point {
   isParallelTo(vector: PointLike): boolean {
     return (this[0] * vector[1] === this[1] * vector[0]);
   }
+
   /**
    * 是否和输入向量垂直
    *
@@ -457,6 +479,7 @@ export class Point {
   isVerticalTo(vector: PointLike): boolean {
     return ((this[0] * vector[0] + this[1] * vector[1]) === 0);
   }
+
   /**
    * 是否和输入向量方向相同
    *
@@ -466,14 +489,15 @@ export class Point {
   isSameDirection(vector: PointLike): boolean {
     return (
       // 0 向量与任意向量的方向都相同
-      this.isZero() || (this.isZero.call(vector) as boolean) ||
+      this.isZero() || (this.isZero.call(vector) as boolean)
       // 非零向量
-      (
-        this.isParallelTo(vector) &&
-        (vector[0] * this[0] > 0 || vector[1] * this[1] > 0)
+      || (
+        this.isParallelTo(vector)
+        && (vector[0] * this[0] > 0 || vector[1] * this[1] > 0)
       )
     );
   }
+
   /**
    * 是否和输入向量方向相反
    *
@@ -483,14 +507,15 @@ export class Point {
   isOppositeDirection(vector: PointLike): boolean {
     return (
       // 0 向量与任意向量的方向都相反
-      this.isZero() || (this.isZero.call(vector) as boolean) ||
+      this.isZero() || (this.isZero.call(vector) as boolean)
       // 非零向量
-      (
-        this.isParallelTo(vector) &&
-        (vector[0] * this[0] < 0 || vector[1] * this[1] < 0)
+      || (
+        this.isParallelTo(vector)
+        && (vector[0] * this[0] < 0 || vector[1] * this[1] < 0)
       )
     );
   }
+
   /**
    * 是否在线段内
    *
@@ -503,39 +528,43 @@ export class Point {
     const toEnd = new Point(this, segment[1]);
 
     return (
-      toEnd.isZero() ||
-      toStart.isZero() ||
-      toStart.isOppositeDirection(toEnd)
+      toEnd.isZero()
+      || toStart.isZero()
+      || toStart.isOppositeDirection(toEnd)
     );
   }
+
   /**
    * 是轴向量
    */
   isAxis() {
     return (
-      (this[0] === 0 && this[1] !== 0) ||
-      (this[0] !== 0 && this[1] === 0)
+      (this[0] === 0 && this[1] !== 0)
+      || (this[0] !== 0 && this[1] === 0)
     );
   }
+
   /**
    * 是否是水平向量
    */
   isHorizontal() {
     return this[1] === 0;
   }
+
   /**
    * 是否是垂直向量
    */
   isVertical() {
     return this[0] === 0;
   }
+
   /**
    * 向着终点生成所有沿途节点
    *
    * @description 不包含当前节点
    * @description 若终点等于当前节点，则只迭代终点这一次
    */
-  *toDestination(end: PointLike, factor: number): Generator<Point, void, void> {
+  * toDestination(end: PointLike, factor: number): Generator<Point, void, void> {
     if (this.isEqual(end)) {
       yield this;
       return;
@@ -554,6 +583,7 @@ export class Point {
 
     yield current;
   }
+
   /**
    * 以 this 为中心点，过滤距离中心点距离为 factor 的所有点，返回使 predicate 输出 true 的点的集合
    *
@@ -568,8 +598,12 @@ export class Point {
       for (let i = 0; i < m; i++) {
         const x = i * factor, y = (m - i) * factor;
         const around = (x === 0)
-          ? [[0, y], [0, -y], [y, 0], [-y, 0]]
-          : [[x, y], [x, -y], [-x, y], [-x, -y]];
+          ? [
+            [0, y], [0, -y], [y, 0], [-y, 0],
+          ]
+          : [
+            [x, y], [x, -y], [-x, y], [-x, -y],
+          ];
 
         const points = around.map((n) => this.add(n));
 
@@ -582,6 +616,7 @@ export class Point {
     }
     return ans;
   }
+
   /**
    * 求 points 中与 this 距离最近的点
    *
@@ -598,6 +633,7 @@ export class Point {
         this.distance(pre) < this.distance(next) ? pre : next,
     ));
   }
+
   /**
    * 求 vectors 中与 this 夹角最小的向量
    *
@@ -611,9 +647,9 @@ export class Point {
 
     function cosAB(a: PointLike, b: PointLike): number {
       return (
-        Point.prototype.product.call(a, b) /
-        Point.prototype.distance.call(a, [0, 0]) /
-        Point.prototype.distance.call(b, [0, 0])
+        Point.prototype.product.call(a, b)
+        / Point.prototype.distance.call(a, [0, 0])
+        / Point.prototype.distance.call(b, [0, 0])
       );
     }
 
@@ -622,6 +658,7 @@ export class Point {
         cosAB(this, pre) > cosAB(this, next) ? pre : next,
     ));
   }
+
   /**
    * 以当前点为左上角，生成四方格坐标
    *
@@ -636,6 +673,7 @@ export class Point {
       new Point(this[0] + len, this[1] + len),
     ]);
   }
+
   /**
    * 将坐标用 str 连接成字符串
    *
@@ -645,6 +683,7 @@ export class Point {
   join(str = ',') {
     return `${this[0]}${str}${this[1]}`;
   }
+
   /**
    * map 迭代，同`Array.prototype.map`
    *

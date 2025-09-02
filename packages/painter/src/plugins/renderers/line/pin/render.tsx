@@ -30,7 +30,7 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
         pinIndex={i}
         style={style}
         position={position}
-        hoverR={isSpace ? 5: 4}
+        hoverR={isSpace ? 5 : 4}
         normalR={isSpace ? 2 : 1}
         fill={isSpace ? '#fff' : undefined}
       />
@@ -41,8 +41,8 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
 export const Render = React.memo(
   LinePinRender,
   ({ data: { path: prevPath } }, { data: { path: nextPath } }) => (
-    prevPath.length === nextPath.length &&
-    isEqualPoint(prevPath[0], nextPath[0]) &&
-    isEqualPoint(prevPath[prevPath.length - 1], nextPath[nextPath.length - 1])
+    prevPath.length === nextPath.length
+    && isEqualPoint(prevPath[0], nextPath[0])
+    && isEqualPoint(prevPath[prevPath.length - 1], nextPath[nextPath.length - 1])
   ),
 );

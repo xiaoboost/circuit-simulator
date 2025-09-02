@@ -9,7 +9,6 @@ function getImports(code: string) {
 
   let match: RegExpExecArray | null;
 
-
   while ((match = importRegex.exec(code))) {
     imports.push([match[0], match[1]]);
   }
@@ -25,7 +24,9 @@ export function convertToLessVariables(content: string): string {
   let match;
 
   while ((match = regex.exec(content)) !== null) {
-    const [, comment, variableName, value] = match;
+    const [
+      , comment, variableName, value,
+    ] = match;
     // 清理注释中的多余空格
     const cleanComment = comment.trim();
     // 处理值：如果是字符串（带引号），则去掉引号

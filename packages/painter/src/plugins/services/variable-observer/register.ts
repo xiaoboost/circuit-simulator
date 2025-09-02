@@ -21,7 +21,7 @@ definePlugin(({ registerService }) => {
           for (const [key, value] of keyMap) {
             const observers = observerMap.get(symbol)?.get(key);
             if (observers) {
-              observers.forEach(callback => callback(undefined, value));
+              observers.forEach((callback) => callback(undefined, value));
             }
           }
         }
@@ -44,7 +44,7 @@ definePlugin(({ registerService }) => {
 
         if (oldVal !== val) {
           valTable.set(key, val);
-          observerMap.get(symbol)?.get(key)?.forEach(cb => cb(val, oldVal));
+          observerMap.get(symbol)?.get(key)?.forEach((cb) => cb(val, oldVal));
         }
       };
 

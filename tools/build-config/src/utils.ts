@@ -21,6 +21,6 @@ export const build = buildTag();
  * 定位到项目根目录
  * @param {string} dir 路径
  */
-export const resolve = (rootDir: string,...dir: string[]) => {
+export const resolve = (rootDir: string, ...dir: string[]) => {
   return path.join(rootDir, ...dir).replace(/[\\/]/g, '/');
 };

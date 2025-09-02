@@ -15,5 +15,5 @@ export function buildDevConfig(config: BuildConfig) {
     static: false,
   };
 
-return  baseConfig;
+  return baseConfig;
 }

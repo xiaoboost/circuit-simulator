@@ -360,7 +360,9 @@ describe('变量观察服务', () => {
 
     it('应该处理对象和数组值', () => {
       const obj = { test: 'value' };
-      const arr = [1, 2, 3];
+      const arr = [
+        1, 2, 3,
+      ];
 
       variableObserver.set(testSymbol1, 'objKey', obj);
       variableObserver.set(testSymbol1, 'arrKey', arr);

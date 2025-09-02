@@ -1,6 +1,6 @@
-import { FC } from 'react';
+import { type FC } from 'react';
 import { createServiceKey } from '../core';
-import { IRendererData } from './render';
+import { type IRendererData } from './render';
 
 /**
  * 高阶组件渲染器
@@ -12,8 +12,8 @@ import { IRendererData } from './render';
  * const rendererHOCs = usePainterHook(RENDERER_HOC);
  * ```
  */
-export const RENDERER_HOC =
-  createServiceKey<IRendererHOC>('RendererHOC');
+export const RENDERER_HOC
+  = createServiceKey<IRendererHOC>('RendererHOC');
 
 /** 高阶渲染器参数 */
 export type PropsWithHocParams<T = object> = T & { $$key: string };

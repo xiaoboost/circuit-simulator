@@ -24,7 +24,7 @@ export function IdInputRender({ value, onError, onChange }: Props) {
   const [suffixError, setSuffixError] = useState(false);
   const restPartTags = useMemo(() => {
     return parts
-      .map(part => createPartTag(part))
+      .map((part) => createPartTag(part))
       .filter((id) => id !== value);
   }, [parts, value]);
 

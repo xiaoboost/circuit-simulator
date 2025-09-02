@@ -47,4 +47,3 @@ export function checkNodeInLineWhenDraw(this: RulesContext, node: SearchNodeData
     return (node2End.isOppositeDirection(junction));
   }
 }
-

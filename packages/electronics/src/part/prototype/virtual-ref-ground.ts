@@ -1,11 +1,13 @@
 import { Direction } from '@circuit/algorithm';
-import { ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
+import { type ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
 
 export const data: ElectronicPrototype = {
   pre: 'GND',
   kind: ElectronicKind.ReferenceGround,
   category: ElectronicCategory.Virtual,
-  margin: [10, 8, 8, 8],
+  margin: [
+    10, 8, 8, 8,
+  ],
   properties: [],
   pins: [
     {

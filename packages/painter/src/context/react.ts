@@ -7,7 +7,7 @@ import { FC } from 'react';
 
 /** 组合高阶渲染器 */
 export function composeHOC<T extends object>(core: IRendererData<T>, hooks: IRendererHOC<T>[]) {
-  const filteredHooks = hooks.filter(hook => !hook.use || hook.use(core));
+  const filteredHooks = hooks.filter((hook) => !hook.use || hook.use(core));
 
   let Component = core.Render as FC<PropsWithHocParams<T>>;
 

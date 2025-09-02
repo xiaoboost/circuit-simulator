@@ -38,9 +38,9 @@
     "@types/node": "20.19.0",
     "@types/react": "19.1.9",
     "@xiao-ai/tsconfig": "1.0.4",
-    "eslint": "9.32.0",
+    "eslint": "9.34.0",
     "rimraf": "6.0.1",
     "tslib": "2.8.1",
-    "typescript": "5.8.3"
+    "typescript": "5.9.2"
   }
 }

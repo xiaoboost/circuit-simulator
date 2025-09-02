@@ -26,7 +26,7 @@ export const Line = React.memo(function Line({ data }: ILineRendererProps) {
   }
 
   const lineComponents = useMemo(
-    () => lineRenderers.map(core => composeHOC(core, hocHooks)),
+    () => lineRenderers.map((core) => composeHOC(core, hocHooks)),
     [lineRenderers, hocHooks],
   );
 

@@ -1,5 +1,5 @@
 import { Direction } from '@circuit/algorithm';
-import { StoreData, ElectronicKind } from '@circuit/types';
+import { type StoreData, ElectronicKind } from '@circuit/types';
 
 export const data: StoreData = {
   version: '1.0.0',
@@ -190,7 +190,9 @@ export const data: StoreData = {
       path: [[660, 100], [700, 100]],
     },
     {
-      path: [[800, 120], [800, 100], [700, 100]],
+      path: [
+        [800, 120], [800, 100], [700, 100],
+      ],
     },
     {
       path: [[700, 140], [700, 100]],
@@ -214,7 +216,9 @@ export const data: StoreData = {
       path: [[940, 220], [1000, 220]],
     },
     {
-      path: [[1060, 300], [1060, 220], [1000, 220]],
+      path: [
+        [1060, 300], [1060, 220], [1000, 220],
+      ],
     },
     {
       path: [[1000, 220], [1000, 300]],
@@ -232,7 +236,9 @@ export const data: StoreData = {
       path: [[580, 320], [580, 280]],
     },
     {
-      path: [[520, 320], [520, 280], [580, 280]],
+      path: [
+        [520, 320], [520, 280], [580, 280],
+      ],
     },
     {
       path: [[580, 280], [600, 280]],
@@ -265,7 +271,9 @@ export const data: StoreData = {
       path: [[800, 460], [700, 460]],
     },
     {
-      path: [[1060, 380], [1060, 460], [1000, 460]],
+      path: [
+        [1060, 380], [1060, 460], [1000, 460],
+      ],
     },
     {
       path: [[1000, 460], [800, 460]],

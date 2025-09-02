@@ -9,8 +9,8 @@ import { createServiceKey, type Watcher } from '../../context';
  * const cursorService = useService(CURSOR_SERVICE);
  * ```
  */
-export const CURSOR_SERVICE =
-  createServiceKey<ICursorService>('CursorService');
+export const CURSOR_SERVICE
+  = createServiceKey<ICursorService>('CursorService');
 
 /** 指针类别 */
 export enum ICursorKind {

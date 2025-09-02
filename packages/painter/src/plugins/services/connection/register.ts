@@ -12,7 +12,7 @@ import { getConnections } from './utils';
 definePlugin(({ registerService }) => {
   const connections: IConnectionMap = new Map();
   const findConnectionIndex = (connections: IConnectionData[], target: IConnectionData): number => {
-    return connections.findIndex(conn => conn.id === target.id && conn.pin === target.pin);
+    return connections.findIndex((conn) => conn.id === target.id && conn.pin === target.pin);
   };
 
   const service: IConnectionService = {
@@ -69,7 +69,7 @@ definePlugin(({ registerService }) => {
         const pinConnections = deviceConnections.get(pin);
         if (pinConnections) {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
-          [...pinConnections].forEach(target => {
+          [...pinConnections].forEach((target) => {
             this.removeConnection(deviceId, pin, target.id, target.pin);
           });
           deviceConnections.delete(pin);
@@ -79,7 +79,7 @@ definePlugin(({ registerService }) => {
       else {
         deviceConnections.forEach((pinConnections, pin) => {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
-          [...pinConnections].forEach(target => {
+          [...pinConnections].forEach((target) => {
             this.removeConnection(deviceId, pin, target.id, target.pin);
           });
         });
@@ -95,7 +95,7 @@ definePlugin(({ registerService }) => {
 
       if (pin !== undefined) {
         const pinConnections = deviceConnections.get(pin);
-        return (pinConnections ? [...pinConnections] : []).map(connection => ({
+        return (pinConnections ? [...pinConnections] : []).map((connection) => ({
           ...connection,
           originPin: pin,
         }));
@@ -107,7 +107,7 @@ definePlugin(({ registerService }) => {
       for (const key of deviceConnections.keys()) {
         const pinConnections = deviceConnections.get(key);
         if (pinConnections) {
-          allConnections.push(...pinConnections.map(connection => ({
+          allConnections.push(...pinConnections.map((connection) => ({
             ...connection,
             originPin: key,
           })));

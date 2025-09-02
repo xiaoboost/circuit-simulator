@@ -183,8 +183,8 @@ definePlugin(({ registerService, getService }) => {
       }
 
       const rect = collision.getEntityBoundingBox(
-        ...parts.map(part => part.id),
-        ...lines.map(line => line.id),
+        ...parts.map((part) => part.id),
+        ...lines.map((line) => line.id),
       );
 
       if (!rect) {

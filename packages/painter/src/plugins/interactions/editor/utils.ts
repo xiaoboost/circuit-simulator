@@ -78,10 +78,12 @@ export function createSearchHook(varService: IVariableObserverService): SearchHo
       varService.set(DebugKey, { ...store });
     },
     expand(node) {
-      store!.expand = [...(store!.expand ?? []), {
-        point: node.position,
-        value: node.value,
-      }];
+      store!.expand = [
+        ...(store!.expand ?? []), {
+          point: node.position,
+          value: node.value,
+        },
+      ];
       varService.set(DebugKey, { ...store });
     },
     used(node) {

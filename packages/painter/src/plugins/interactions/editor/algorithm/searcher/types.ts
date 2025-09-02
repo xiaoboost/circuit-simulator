@@ -29,9 +29,9 @@ export const enum SearchMode {
 /** 画布状态 */
 export interface PainterState
   extends
-    IMapHashCoreService,
-    IMapHashMarkService,
-    IMapHashAssertService {
+  IMapHashCoreService,
+  IMapHashMarkService,
+  IMapHashAssertService {
   /** 鼠标覆盖状态 */
   getHover: () => Entity | undefined;
   /** 获取元件数据 */
@@ -73,9 +73,9 @@ export interface PinSizeResult {
 }
 
 /** 搜索结果 */
-export type SearchResult =
-  | LinePathResult
-  | PinSizeResult;
+export type SearchResult
+  = | LinePathResult
+    | PinSizeResult;
 
 /** 路径搜索器选项 */
 export interface PathSearcherOptions {

@@ -10,8 +10,8 @@ import { createServiceKey, type Watcher } from '../../context';
  * const viewportService = useService(VIEWPORT_SERVICE);
  * ```
  */
-export const VIEWPORT_SERVICE =
-  createServiceKey<IViewportService>('ViewportService');
+export const VIEWPORT_SERVICE
+  = createServiceKey<IViewportService>('ViewportService');
 
 export interface IViewport {
   /** 缩放比例 */

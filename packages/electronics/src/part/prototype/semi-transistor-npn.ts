@@ -1,6 +1,6 @@
 import { Direction } from '@circuit/algorithm';
 import {
-  ElectronicPrototype,
+  type ElectronicPrototype,
   ElectronicKind,
   ElectronicCategory,
   UnitType,
@@ -14,7 +14,9 @@ export const data: ElectronicPrototype = {
   textBias: {
     Right: 16,
   },
-  margin: [32, 32, 32, 12],
+  margin: [
+    32, 32, 32, 12,
+  ],
   properties: [
     {
       name: '电流放大倍数',

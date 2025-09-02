@@ -20,13 +20,15 @@ export function NumberInputRender({ value, onError, property, onChange }: Props)
     // 数量级只允许一个时，输入后缀为固定单位
     ? `${rankList[0]}${property.unit}`
     // 多个时为多选框
-    : <Select
-      options={shortUnitList(rankList, property.unit ?? '', false)}
-      value={value.rank}
-      onChange={(val) => {
-        onChange({ ...value, rank: val });
-      }}
-    />;
+    : (
+      <Select
+        options={shortUnitList(rankList, property.unit ?? '', false)}
+        value={value.rank}
+        onChange={(val) => {
+          onChange({ ...value, rank: val });
+        }}
+      />
+    );
 
   useEffect(() => {
     setNumber(String(value.value));

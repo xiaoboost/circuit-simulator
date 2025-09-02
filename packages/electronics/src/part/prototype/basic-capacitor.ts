@@ -1,6 +1,6 @@
 import { Direction } from '@circuit/algorithm';
 import {
-  ElectronicPrototype,
+  type ElectronicPrototype,
   ElectronicKind,
   ElectronicCategory,
   UnitType,
@@ -15,7 +15,9 @@ export const data: ElectronicPrototype = {
     Top: 22,
     Bottom: 22,
   },
-  margin: [18, 32, 18, 32],
+  margin: [
+    18, 32, 18, 32,
+  ],
   properties: [
     {
       name: '电容量',

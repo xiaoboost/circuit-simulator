@@ -51,21 +51,21 @@ export function isPartPinLine(mark?: Mark): mark is PartPinLineMark {
 /** 全导线节点断言 */
 export function isLineAndLine(mark?: Mark): mark is LineAndLineMark {
   return (
-    isLine(mark) ||
-    isLinePoint(mark) ||
-    isLineCover(mark) ||
-    isLineCross(mark)
+    isLine(mark)
+    || isLinePoint(mark)
+    || isLineCover(mark)
+    || isLineCross(mark)
   );
 }
 
 /** 导线节点和器件节点断言 */
 export function isLineAndPoint(mark?: Mark): mark is LineAndPointMark {
   return (
-    isLine(mark) ||
-    isLinePoint(mark) ||
-    isLineCover(mark) ||
-    isLineCross(mark) ||
-    isPartPinLine(mark)
+    isLine(mark)
+    || isLinePoint(mark)
+    || isLineCover(mark)
+    || isLineCross(mark)
+    || isPartPinLine(mark)
   );
 }
 

@@ -1,6 +1,6 @@
 import { Direction } from '@circuit/algorithm';
 import {
-  ElectronicPrototype,
+  type ElectronicPrototype,
   ElectronicKind,
   ElectronicCategory,
   UnitType,
@@ -15,7 +15,9 @@ export const data: ElectronicPrototype = {
     Left: 24,
     Right: 24,
   },
-  margin: [32, 24, 32, 24],
+  margin: [
+    32, 24, 32, 24,
+  ],
   properties: [
     {
       name: '峰值电压',
@@ -31,7 +33,9 @@ export const data: ElectronicPrototype = {
       kind: PropertyKind.Number,
       unit: UnitType.Hertz,
       visibleInPainter: true,
-      ranks: ['G', 'M', 'k', ''],
+      ranks: [
+        'G', 'M', 'k', '',
+      ],
       default: {
         value: 32,
       },
@@ -42,7 +46,9 @@ export const data: ElectronicPrototype = {
       kind: PropertyKind.Number,
       unit: UnitType.Volt,
       visibleInPainter: false,
-      ranks: ['k', '', 'm'],
+      ranks: [
+        'k', '', 'm',
+      ],
       default: {
         value: 0,
       },

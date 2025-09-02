@@ -10,8 +10,8 @@ import { createServiceKey, type Watcher } from '../../context';
  * const mapCoordinateService = useService(MAP_COORDINATE_SERVICE);
  * ```
  */
-export const MAP_COORDINATE_SERVICE =
-  createServiceKey<IMapCoordinateService>('MapCoordinateService');
+export const MAP_COORDINATE_SERVICE
+  = createServiceKey<IMapCoordinateService>('MapCoordinateService');
 
 /** 图纸坐标服务 */
 export interface IMapCoordinateService {

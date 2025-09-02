@@ -10,8 +10,8 @@ import type { EventStream } from '@circuit/reactive';
  * const streamService = useService(STREAM_SERVICE);
  * ```
  */
-export const STREAM_SERVICE =
-  createServiceKey<IStreamService>('StreamService');
+export const STREAM_SERVICE
+  = createServiceKey<IStreamService>('StreamService');
 
 export interface IStreamService {
   /** 获取或者创建流 */

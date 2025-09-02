@@ -103,7 +103,9 @@ describe('EventStream 事件流', () => {
       eventStream.emit(2);
       eventStream.emit(3);
 
-      expect(values).toEqual([1, 2, 3]);
+      expect(values).toEqual([
+        1, 2, 3,
+      ]);
 
       subscription.unsubscribe();
     });
@@ -216,7 +218,9 @@ describe('EventStream 事件流', () => {
         eventStream.emit(i);
       }
 
-      expect(values).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+      expect(values).toEqual([
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+      ]);
       unsubscribe();
     });
 

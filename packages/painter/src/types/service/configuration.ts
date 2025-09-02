@@ -9,8 +9,8 @@ import { createServiceKey, type Watcher } from '../../context';
  * const configurationService = useService(CONFIGURATION_SERVICE);
  * ```
  */
-export const PAINTER_CONFIGURATION_SERVICE =
-  createServiceKey<IPainterConfigurationService>('PainterConfigurationService');
+export const PAINTER_CONFIGURATION_SERVICE
+  = createServiceKey<IPainterConfigurationService>('PainterConfigurationService');
 
 /** 器件标签显示方式 */
 export enum PartLabelVisibleKind {

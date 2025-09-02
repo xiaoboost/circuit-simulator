@@ -1,4 +1,3 @@
-
 import { RotateMatrixSet } from './constant';
 import { Point } from './point';
 import { RotateMatrix, PointLike, Rotate } from './types';

@@ -26,7 +26,7 @@ export const Part = React.memo(function Part({ data, prototype }: IPartRendererP
   }
 
   const partComponents = useMemo(
-    () => partRenderers.map(core => composeHOC(core, hocHooks)),
+    () => partRenderers.map((core) => composeHOC(core, hocHooks)),
     [partRenderers, hocHooks],
   );
 
