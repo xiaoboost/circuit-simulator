@@ -130,7 +130,6 @@ export const data: StoreData = {
     {
       kind: ElectronicKind.CurrentMeter,
       referenceTag: 'out',
-      propertyValues: [],
       position: [840, 140],
       rotate: [[1, 0], [0, 1]],
       textDirection: Direction.Top,
@@ -138,7 +137,6 @@ export const data: StoreData = {
     {
       kind: ElectronicKind.VoltageMeter,
       referenceTag: 'out',
-      propertyValues: [],
       position: [1040, 320],
       rotate: [[1, 0], [0, 1]],
       textDirection: Direction.Right,
@@ -146,7 +144,6 @@ export const data: StoreData = {
     {
       kind: ElectronicKind.VoltageMeter,
       referenceTag: 'in',
-      propertyValues: [],
       position: [640, 320],
       rotate: [[1, 0], [0, 1]],
       textDirection: Direction.Right,
@@ -154,7 +151,6 @@ export const data: StoreData = {
     {
       kind: ElectronicKind.ReferenceGround,
       referenceTag: '1',
-      propertyValues: [],
       position: [700, 540],
       rotate: [[1, 0], [0, 1]],
       textDirection: Direction.Center,

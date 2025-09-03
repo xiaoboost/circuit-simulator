@@ -95,7 +95,6 @@ export const data: StoreData = {
       referenceTag: 'R4',
       position: [1160, 180],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Right,
     },
     {
@@ -103,7 +102,6 @@ export const data: StoreData = {
       referenceTag: 'R4',
       position: [960, 100],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Top,
     },
     {
@@ -111,7 +109,6 @@ export const data: StoreData = {
       referenceTag: '1',
       position: [740, 500],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Center,
     },
   ],

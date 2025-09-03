@@ -113,7 +113,11 @@ function PinRenderer(props: IPinRendererProps) {
       dragUnOb();
       moveUnOb();
     };
-  }, []);
+  }, [
+    hoverR,
+    normalR,
+    size,
+  ]);
 
   // 显式设置 r 值，此时需要强制指定大小
   useEffect(() => {

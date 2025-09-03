@@ -9,8 +9,9 @@ import {
 import { Pin } from './pin';
 
 function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
-  const { getConnections } = useService(CONNECTION_SERVICE);
+  const { useDeviceConnections } = useService(CONNECTION_SERVICE);
   const pinRenderers = useHook(PIN_RENDERER);
+  const connections = useDeviceConnections(id);
 
   if (path.length === 0 || pinRenderers.length === 0) {
     return null;
@@ -19,8 +20,8 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
   const pins = [path[0], path[path.length - 1]];
 
   return pins.map((position, i) => {
-    const connections = getConnections(id, i);
-    const isSpace = connections.length === 0;
+    const pinConnections = connections.filter((connection) => connection.originPin === i);
+    const isSpace = pinConnections.length === 0;
     const key = `${id}-${i}`;
     return (
       <Pin
@@ -31,7 +32,7 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
         style={style}
         position={position}
         hoverR={isSpace ? 5 : 4}
-        normalR={isSpace ? 2 : 1}
+        normalR={isSpace ? 3 : 2}
         fill={isSpace ? '#fff' : undefined}
       />
     );

@@ -1,23 +1,37 @@
 import { StructuredData } from '@circuit/types';
+import { isEqual } from '@xiao-ai/utils';
+import { useEffect, useState } from 'react';
 import { definePlugin } from '../../../context';
 import {
   CONNECTION_SERVICE,
   type IConnectionService,
   type IConnectionData,
   type IConnectionDataWithPin,
+  type ObserverCb,
 } from '../../../types';
 import { IConnectionMap } from './types';
 import { getConnections } from './utils';
 
 definePlugin(({ registerService }) => {
   const connections: IConnectionMap = new Map();
+  const observerMap = new Map<string, ObserverCb<IConnectionDataWithPin[]>[]>();
   const findConnectionIndex = (connections: IConnectionData[], target: IConnectionData): number => {
     return connections.findIndex((conn) => conn.id === target.id && conn.pin === target.pin);
+  };
+  const notifyObservers = (
+    id: string,
+    newConnections: IConnectionDataWithPin[],
+    oldConnections: IConnectionDataWithPin[],
+  ) => {
+    const observers = observerMap.get(id);
+    if (observers) {
+      observers.forEach((callback) => callback(newConnections, oldConnections));
+    }
   };
 
   const service: IConnectionService = {
     createFromData(data: StructuredData) {
-      this.clearAll();
+      service.clearAll();
 
       // 获取所有连接
       const connectionsList = getConnections(data);
@@ -30,7 +44,7 @@ definePlugin(({ registerService }) => {
 
         // 注册连接
         for (const connection of connections) {
-          this.registerPin(connection.id, connection.pin);
+          service.registerPin(connection.id, connection.pin);
         }
 
         // 相互建立连接关系
@@ -40,7 +54,7 @@ definePlugin(({ registerService }) => {
               continue;
             }
 
-            this.createConnection(connection.id, connection.pin, other.id, other.pin);
+            service.createConnection(connection.id, connection.pin, other.id, other.pin);
           }
         }
       }
@@ -56,6 +70,7 @@ definePlugin(({ registerService }) => {
     },
     clearAll() {
       connections.clear();
+      observerMap.clear();
     },
     removeDevice(deviceId: string, pin?: number) {
       if (!connections.has(deviceId)) {
@@ -70,7 +85,7 @@ definePlugin(({ registerService }) => {
         if (pinConnections) {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
           [...pinConnections].forEach((target) => {
-            this.removeConnection(deviceId, pin, target.id, target.pin);
+            service.removeConnection(deviceId, pin, target.id, target.pin);
           });
           deviceConnections.delete(pin);
         }
@@ -80,7 +95,7 @@ definePlugin(({ registerService }) => {
         deviceConnections.forEach((pinConnections, pin) => {
           // 复制一份连接数组，因为我们在遍历过程中会修改它
           [...pinConnections].forEach((target) => {
-            this.removeConnection(deviceId, pin, target.id, target.pin);
+            service.removeConnection(deviceId, pin, target.id, target.pin);
           });
         });
         connections.delete(deviceId);
@@ -117,10 +132,14 @@ definePlugin(({ registerService }) => {
       return allConnections;
     },
     createConnection(id: string, pin: number, targetId: string, targetPin: number) {
+      // 获取旧连接数据用于通知观察者
+      const oldConnections = service.getConnections(id);
+      const oldTargetConnections = service.getConnections(targetId);
+
       // 确保源引脚存在
-      this.registerPin(id, pin);
+      service.registerPin(id, pin);
       // 确保目标引脚存在
-      this.registerPin(targetId, targetPin);
+      service.registerPin(targetId, targetPin);
 
       const sourceConnections = connections.get(id)!.get(pin)!;
       const targetConnections = connections.get(targetId)!.get(targetPin)!;
@@ -133,8 +152,24 @@ definePlugin(({ registerService }) => {
       if (findConnectionIndex(targetConnections, targetSource) === -1) {
         targetConnections.push(targetSource);
       }
+
+      // 通知观察者连接数据变化
+      const newConnections = service.getConnections(id);
+      const newTargetConnections = service.getConnections(targetId);
+
+      if (!isEqual(newConnections, oldConnections)) {
+        notifyObservers(id, newConnections, oldConnections);
+      }
+
+      if (!isEqual(newTargetConnections, oldTargetConnections)) {
+        notifyObservers(targetId, newTargetConnections, oldTargetConnections);
+      }
     },
     removeConnection(id: string, pin: number, targetId: string, targetPin: number) {
+      // 获取旧连接数据用于通知观察者
+      const oldConnections = service.getConnections(id);
+      const oldTargetConnections = service.getConnections(targetId);
+
       // 移除源引脚连接
       const deviceConnections = connections.get(id);
       if (deviceConnections) {
@@ -160,6 +195,76 @@ definePlugin(({ registerService }) => {
           }
         }
       }
+
+      // 通知观察者连接数据变化
+      const newConnections = service.getConnections(id);
+      const newTargetConnections = service.getConnections(targetId);
+
+      if (!isEqual(newConnections, oldConnections)) {
+        notifyObservers(id, newConnections, oldConnections);
+      }
+
+      if (!isEqual(newTargetConnections, oldTargetConnections)) {
+        notifyObservers(targetId, newTargetConnections, oldTargetConnections);
+      }
+    },
+    isEmptyPin(id: string, pin: number): boolean {
+      const deviceConnections = connections.get(id);
+      if (!deviceConnections) {
+        return true;
+      }
+
+      const pinConnections = deviceConnections.get(pin);
+      return !pinConnections || pinConnections.length === 0;
+    },
+    observe(id: string, callback: ObserverCb<IConnectionDataWithPin[]>): () => void {
+      if (!observerMap.has(id)) {
+        observerMap.set(id, []);
+      }
+
+      const observers = observerMap.get(id)!;
+      observers.push(callback);
+
+      // 返回取消观察的函数
+      return () => {
+        const index = observers.indexOf(callback);
+        if (index !== -1) {
+          observers.splice(index, 1);
+        }
+      };
+    },
+    unObserve(id?: string, callback?: ObserverCb<IConnectionDataWithPin[]>): void {
+      if (!id && !callback) {
+        // 取消所有观察
+        observerMap.clear();
+        return;
+      }
+
+      if (!callback && typeof id === 'string') {
+        // 取消观察器件
+        observerMap.delete(id);
+        return;
+      }
+
+      // 取消观察回调
+      const observers = observerMap.get(id!);
+      if (observers) {
+        const index = observers.indexOf(callback!);
+        if (index !== -1) {
+          observers.splice(index, 1);
+        }
+      }
+    },
+    useDeviceConnections(id: string): IConnectionDataWithPin[] {
+      const [connections, setConnections] = useState<IConnectionDataWithPin[]>(() =>
+        service.getConnections(id),
+      );
+
+      useEffect(() => {
+        return service.observe(id, setConnections);
+      }, [id]);
+
+      return connections;
     },
   };
 
@@ -169,5 +274,6 @@ definePlugin(({ registerService }) => {
   // 卸载器
   return () => {
     service.clearAll();
+    observerMap.clear();
   };
 });

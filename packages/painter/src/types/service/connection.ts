@@ -1,6 +1,6 @@
 import { createServiceKey } from '@circuit/inject';
 import type { StructuredData } from '@circuit/types';
-import type { Watcher } from '@xiao-ai/utils';
+import type { ObserverCb } from './variable-observer';
 
 /**
  * 连接关系服务
@@ -35,11 +35,7 @@ export interface IPinConnection extends IConnectionData {
 }
 
 export interface IConnectionService {
-  /**
-   * 从原始数据创建连接关系
-   */
-  createFromData(data: StructuredData): void;
-
+  // ========== 核心接口 ==========
   /**
    * 注册引脚
    */
@@ -80,10 +76,38 @@ export interface IConnectionService {
    */
   removeConnection(id: string, pin: number, targetId: string, targetPin: number): void;
 
-  // /**
-  //  * 获取器件连接关系的监听器
-  //  *
-  //  * @description 同一个器件只会有一个监听器
-  //  */
-  // getDeviceConnectionsWatcher(id: string): Watcher<IConnectionDataWithPin[]>;
+  // ========== 业务接口 ==========
+  /**
+   * 元件引脚是否为空
+   */
+  isEmptyPin(id: string, pin: number): boolean;
+
+  /**
+   * 从原始数据创建连接关系
+   */
+  createFromData(data: StructuredData): void;
+
+  // ========== 发布订阅 ==========
+  /**
+   * 监听元件引脚连接关系
+   */
+  observe(id: string, callback: ObserverCb<IConnectionDataWithPin[]>): () => void;
+
+  /**
+   * 取消所有观察
+   */
+  unObserve(): void;
+  /**
+   * 取消观察器件
+   */
+  unObserve(id: string): void;
+  /**
+   * 取消观察回调
+   */
+  unObserve(id: string, callback: ObserverCb<IConnectionDataWithPin[]>): void;
+
+  /**
+   * React 订阅元件连接数据
+   */
+  useDeviceConnections(id: string): IConnectionDataWithPin[];
 }

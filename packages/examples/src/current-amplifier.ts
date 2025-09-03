@@ -55,7 +55,6 @@ export const data: StoreData = {
       referenceTag: '1',
       position: [500, 280],
       rotate: [[0, 1], [-1, 0]],
-      propertyValues: [],
       textDirection: Direction.Center,
     },
     {
@@ -75,7 +74,6 @@ export const data: StoreData = {
       referenceTag: 'in',
       position: [800, 280],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Top,
     },
     {
@@ -83,7 +81,6 @@ export const data: StoreData = {
       referenceTag: 'ap',
       position: [740, 200],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Top,
     },
     {
@@ -91,7 +88,6 @@ export const data: StoreData = {
       referenceTag: '2',
       position: [900, 480],
       rotate: [[1, 0], [0, 1]],
-      propertyValues: [],
       textDirection: Direction.Center,
     },
   ],
