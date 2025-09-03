@@ -1,13 +1,13 @@
 import { createPartReferenceTag } from '@circuit/electronics';
 import {
-  LOGGER_SERVICE,
-  STREAM_SERVICE,
+  ILoggerService,
+  IStreamService,
   GlobalStreamConstant as Constant,
   isSameSet,
-  STATE_CORE_SERVICE,
+  IStateCoreService,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
-import { SELECT_SERVICE, ISelectService } from '../../../types';
+import { ISelectService } from '../../../types';
 
 const LoggerName = '选择服务';
 
@@ -18,7 +18,7 @@ definePlugin(({ registerService, getService }) => {
     set(...ids) {
       if (ids.length > 0) {
         const getIdsString = () => {
-          const { state: { data: { parts, lines } } } = getService(STATE_CORE_SERVICE);
+          const { state: { data: { parts, lines } } } = getService(IStateCoreService);
           const lineIds = lines
             .filter((line) => ids.includes(line.id))
             .map((line) => line.id);
@@ -30,16 +30,16 @@ definePlugin(({ registerService, getService }) => {
           return [...lineIds, ...partIds].join(', ');
         };
 
-        getService(LOGGER_SERVICE).info(LoggerName, '设置选中元件', getIdsString);
+        getService(ILoggerService).info(LoggerName, '设置选中元件', getIdsString);
       }
       else {
-        getService(LOGGER_SERVICE).debug(LoggerName, '设置选中元件为空');
+        getService(ILoggerService).debug(LoggerName, '设置选中元件为空');
       }
 
       selected.setData(new Set(ids));
     },
     clear() {
-      getService(LOGGER_SERVICE).debug(LoggerName, '清空选中元件');
+      getService(ILoggerService).debug(LoggerName, '清空选中元件');
       selected.setData(new Set());
     },
   };
@@ -47,14 +47,14 @@ definePlugin(({ registerService, getService }) => {
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {
     if (!preSet || !isSameSet(preSet, nextSet)) {
-      getService(STREAM_SERVICE)
+      getService(IStreamService)
         .get<Constant.SelectedChangePayload>(Constant.SelectedChange)
         .emit(nextSet);
     }
   });
 
   // 注册选择器服务
-  registerService(SELECT_SERVICE, service);
+  registerService(ISelectService, service);
 
   return () => {
     selected.destroy();

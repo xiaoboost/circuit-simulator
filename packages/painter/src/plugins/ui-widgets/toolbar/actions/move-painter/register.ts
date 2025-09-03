@@ -1,10 +1,10 @@
-import { HOT_KEY_HOOK } from '@circuit/shared';
+import { IHotKeyHook } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../../../context';
 import {
-  PAINTER_TOOLBAR_ACTION_HOOK,
-  DRAG_SCENE_SERVICE,
-  CURSOR_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
+  IPainterToolBarActionHook,
+  IDragSceneService,
+  ICursorService,
+  IPainterConfigurationService,
 } from '../../../../../types';
 import { MoveModeRenderWithSpace } from './render';
 
@@ -15,7 +15,7 @@ definePlugin(({ registerHook, getService }) => {
   const MoveModeButton = MoveModeRenderWithSpace(spaceKeyDown);
 
   // 注册空格键按下状态
-  registerHook(HOT_KEY_HOOK, [
+  registerHook(IHotKeyHook, [
     {
       name: '切换为移动模式',
       key: 'space',
@@ -24,9 +24,9 @@ definePlugin(({ registerHook, getService }) => {
         keyup: false,
       },
       action: (ev) => {
-        const dragScene = getService(DRAG_SCENE_SERVICE);
-        const cursorService = getService(CURSOR_SERVICE);
-        const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
+        const dragScene = getService(IDragSceneService);
+        const cursorService = getService(ICursorService);
+        const configuration = getService(IPainterConfigurationService);
 
         // 空格按下时，强制切换到移动模式
         if (dragScene.size === 0 && !ev.repeat) {
@@ -44,9 +44,9 @@ definePlugin(({ registerHook, getService }) => {
         keyup: true,
       },
       action: () => {
-        const dragScene = getService(DRAG_SCENE_SERVICE);
-        const cursorService = getService(CURSOR_SERVICE);
-        const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
+        const dragScene = getService(IDragSceneService);
+        const cursorService = getService(ICursorService);
+        const configuration = getService(IPainterConfigurationService);
 
         // 空格抬起时，强制切换到鼠标模式
         // 如果此时在拖动，也进行强制转换
@@ -65,7 +65,7 @@ definePlugin(({ registerHook, getService }) => {
   ]);
 
   // 注册移动画布按钮
-  registerHook(PAINTER_TOOLBAR_ACTION_HOOK, {
+  registerHook(IPainterToolBarActionHook, {
     name: 'MoveModeButton',
     order: 1,
     Render: MoveModeButton,

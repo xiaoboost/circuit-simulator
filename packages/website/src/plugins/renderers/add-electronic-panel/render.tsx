@@ -1,6 +1,6 @@
 import { SearchOutlined } from '@circuit/icons';
 import {
-  STREAM_SERVICE,
+  IStreamService,
   GlobalStreamConstant as Constant,
 } from '@circuit/shared';
 import { ElectronicKind } from '@circuit/types';
@@ -13,7 +13,7 @@ import { getCategoryData } from './utils';
 export const AddElectronicPanelRender = React.memo(function AddElectronicPanelRender() {
   const [filter, setFilter] = useState('');
   const categoryData = useMemo(() => getCategoryData(filter), [filter]);
-  const stream = useService(STREAM_SERVICE);
+  const stream = useService(IStreamService);
   const onSelect = (kind: ElectronicKind) => {
     // 触发创建器件事件
     stream.get<Constant.NewPartPayload>(Constant.NewPart).emit({

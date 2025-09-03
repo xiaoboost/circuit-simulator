@@ -1,4 +1,4 @@
-import { RENDERER_HOC } from '@circuit/shared';
+import { IRendererHOC } from '@circuit/shared';
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useMemo } from 'react';
 import {
@@ -8,16 +8,16 @@ import {
   useService,
 } from '../../../../context';
 import {
-  PART_RENDERER,
-  SELECT_SERVICE,
+  IPartRendererHook,
+  ISelectService,
   IPartRendererProps,
 } from '../../../../types';
 import * as Styles from './styles.less';
 
 export const Part = React.memo(function Part({ data, prototype }: IPartRendererProps) {
-  const selectService = useService(SELECT_SERVICE);
-  const partRenderers = useHook(PART_RENDERER, 'asc');
-  const hocHooks = useHook(RENDERER_HOC, 'asc');
+  const selectService = useService(ISelectService);
+  const partRenderers = useHook(IPartRendererHook, 'asc');
+  const hocHooks = useHook(IRendererHOC, 'asc');
   const [selectedIds] = useWatcher(selectService.value);
 
   // 如果元件没有渲染器，则不渲染

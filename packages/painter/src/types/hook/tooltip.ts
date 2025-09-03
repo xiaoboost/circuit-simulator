@@ -10,8 +10,8 @@ import { createServiceKey } from '../../context';
  * const tooltipActionHooks = useHook(COMPONENT_TOOLTIP_ACTION_HOOK);
  * ```
  */
-export const COMPONENT_TOOLTIP_ACTION_HOOK
-  = createServiceKey<IComponentTooltipAction>('ComponentTooltipAction');
+export const IComponentTooltipActionHook
+  = createServiceKey<IComponentTooltipActionHook>('IComponentTooltipActionHook');
 
 /**
  * 组件提示框按钮
@@ -19,7 +19,7 @@ export const COMPONENT_TOOLTIP_ACTION_HOOK
  * @description 组件的浮动提示框按钮，可以对不同组件显示不同的按钮。
  * @description 如果当前组件所有按钮都返回了`null`，表示当前组件没有提示框按钮，整个提示框都不会显示。
  */
-export interface IComponentTooltipAction {
+export interface IComponentTooltipActionHook {
   /**
    * 按钮名称
    *

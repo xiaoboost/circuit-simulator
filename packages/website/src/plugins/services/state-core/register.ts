@@ -1,5 +1,5 @@
 import { Electronics } from '@circuit/electronics';
-import { STATE_CORE_SERVICE, IStateCoreService } from '@circuit/shared';
+import { IStateCoreService } from '@circuit/shared';
 import { LineStructuredData, PartStructuredData, StructuredData as State } from '@circuit/types';
 import { message } from 'antd';
 import {
@@ -165,7 +165,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册状态核心服务
-  registerService(STATE_CORE_SERVICE, service);
+  registerService(IStateCoreService, service);
 
   return () => {
     service.state.destroy();

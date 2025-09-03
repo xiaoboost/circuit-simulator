@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
-import { LIFE_CYCLE_HOOK, type ILifeCycle } from '../builtin';
+import { ILifeCycleHook } from '../builtin';
 import { PluginMetaInfos, ScopeMetaInfos, InjectContext, RootScope } from './context';
 import { type IScopeContainer, type IScopeManager } from './types';
 import { getServiceWithScope, getHookWithScope, getScopeList } from './utils';
@@ -82,7 +82,7 @@ async function runPluginAfterInit(manager: IScopeManager) {
   const list = getScopeList(manager.get(RootScope)!);
 
   for (const { context: { HookMap } } of list) {
-    const lifeCycleHooks = (HookMap.get(LIFE_CYCLE_HOOK) ?? []) as ILifeCycle[];
+    const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
     await Promise.all(lifeCycleHooks.map((i) => i.afterPluginInit?.()));
   }
 }

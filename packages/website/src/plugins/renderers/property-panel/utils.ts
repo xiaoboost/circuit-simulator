@@ -1,6 +1,6 @@
 import {
-  STATE_CORE_SERVICE,
-  STREAM_SERVICE,
+  IStateCoreService,
+  IStreamService,
   GlobalStreamConstant as Stream,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
@@ -9,8 +9,8 @@ import { useService } from '../../../context';
 
 export function useSelectedParts() {
   const [selected, setSelected] = useState<PartStructuredData[]>([]);
-  const stateCore = useService(STATE_CORE_SERVICE);
-  const selectedSteam = useService(STREAM_SERVICE)
+  const stateCore = useService(IStateCoreService);
+  const selectedSteam = useService(IStreamService)
     .get<Stream.SelectedChangePayload>(Stream.SelectedChange);
 
   useEffect(() => {

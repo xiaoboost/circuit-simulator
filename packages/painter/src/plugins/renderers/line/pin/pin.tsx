@@ -1,11 +1,11 @@
-import { RENDERER_HOC } from '@circuit/shared';
+import { IRendererHOC } from '@circuit/shared';
 import React, { useMemo } from 'react';
 import { composeHOC, useHook } from '../../../../context';
-import { PIN_RENDERER, IPinRendererProps } from '../../../../types';
+import { IPinRendererHook, IPinRendererProps } from '../../../../types';
 
 export const Pin = React.memo(function Pin(props: IPinRendererProps) {
-  const pinRenderers = useHook(PIN_RENDERER, 'asc');
-  const hocHooks = useHook(RENDERER_HOC, 'asc');
+  const pinRenderers = useHook(IPinRendererHook, 'asc');
+  const hocHooks = useHook(IRendererHOC, 'asc');
 
   // 如果引脚没有渲染器，则不渲染
   if (pinRenderers.length === 0) {

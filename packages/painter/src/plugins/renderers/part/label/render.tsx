@@ -7,15 +7,15 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
-import { STREAM_SERVICE } from '@circuit/shared';
+import { IStreamService } from '@circuit/shared';
 import { isEqual } from '@xiao-ai/utils';
 import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
   IPartRendererProps,
-  MAP_COORDINATE_SERVICE,
-  DRAG_SCENE_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
+  IMapCoordinateService,
+  IDragSceneService,
+  IPainterConfigurationService,
   PartLabelVisibleKind as Kind,
   PainterStreamConstant as Constant,
 } from '../../../../types';
@@ -32,14 +32,14 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     referenceTag,
   } = data;
   const invRotate = useMemo(() => invertRotateMatrix(rotate), [rotate]);
-  const [scale] = useWatcher(useService(MAP_COORDINATE_SERVICE).scale);
+  const [scale] = useWatcher(useService(IMapCoordinateService).scale);
   const textRef = useRef<SVGTextElement>(null);
   const [position, setPosition] = useState(new Point(0, 0));
   const [texts, setTexts] = useState<string[]>([]);
-  const stream = useService(STREAM_SERVICE)
+  const stream = useService(IStreamService)
     .get<Constant.PartLabelChangedPayload>(Constant.PartLabelChanged);
-  const dragService = useService(DRAG_SCENE_SERVICE);
-  const configurationService = useService(PAINTER_CONFIGURATION_SERVICE);
+  const dragService = useService(IDragSceneService);
+  const configurationService = useService(IPainterConfigurationService);
   const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
   const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);

@@ -1,5 +1,5 @@
 import { RootScope } from '@circuit/inject';
-import { LOGGER_SERVICE } from '@circuit/shared';
+import { ILoggerService } from '@circuit/shared';
 import React, { useContext } from 'react';
 import { useInjectInstall, InjectContext } from '../../context';
 import { Header } from '../header';
@@ -15,7 +15,7 @@ function Layout() {
     setTimeout(() => {
       removeLoading();
       // 直接子外面用 useService 是不行的，因为只有初始化完成之后才能拿到服务
-      context.get(RootScope)?.context.ServiceMap.get(LOGGER_SERVICE)?.info('基座', '初始化完成');
+      context.get(RootScope)?.context.ServiceMap.get(ILoggerService)?.info('基座', '初始化完成');
 
       if (process.env.NODE_ENV === 'development') {
         (window as any).$InjectionContext = context;

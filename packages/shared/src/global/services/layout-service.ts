@@ -7,10 +7,10 @@ import type { Watcher } from '@circuit/reactive';
  * @description 该服务用于获取布局信息
  * @example
  * ```ts
- * const layoutService = useService(LAYOUT_SERVICE);
+ * const layoutService = useService(ILayoutService);
  * ```
  */
-export const LAYOUT_SERVICE
+export const ILayoutService
   = createServiceKey<ILayoutService>('LayoutService');
 
 export interface ILayoutService {

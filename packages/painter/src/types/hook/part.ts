@@ -8,10 +8,10 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于单个器件的渲染
  * @example
  * ```ts
- * const partRendererHooks = useHook(PART_RENDERER);
+ * const partRendererHooks = useHook(IPartRendererHook);
  * ```
  */
-export const PART_RENDERER = createServiceKey<IPartRenderer>('PartRenderer');
+export const IPartRendererHook = createServiceKey<IPartRendererHook>('IPartRendererHook');
 
 /** 器件渲染器输入参数 */
 export interface IPartRendererProps extends React.SVGProps<SVGElement> {
@@ -22,4 +22,4 @@ export interface IPartRendererProps extends React.SVGProps<SVGElement> {
 }
 
 /** 器件渲染器 */
-export type IPartRenderer = IRendererData<IPartRendererProps>;
+export type IPartRendererHook = IRendererData<IPartRendererProps>;

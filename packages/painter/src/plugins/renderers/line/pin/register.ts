@@ -1,10 +1,10 @@
 import { definePlugin } from '../../../../context';
-import { LINE_RENDERER } from '../../../../types';
+import { ILineRendererHook } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册导线引脚渲染器
-  registerHook(LINE_RENDERER, {
+  registerHook(ILineRendererHook, {
     name: 'LinePinLayerRenderer',
     order: 4,
     Render,

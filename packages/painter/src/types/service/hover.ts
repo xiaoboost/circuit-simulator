@@ -7,10 +7,10 @@ import type { Entity } from '../types';
  * @description 该服务用于获取鼠标悬停功能
  * @example
  * ```ts
- * const hoverService = useService(HOVER_SERVICE);
+ * const hoverService = useService(IHoverService);
  * ```
  */
-export const HOVER_SERVICE
+export const IHoverService
   = createServiceKey<IHoverService>('HoverService');
 
 /** 鼠标悬停服务 */

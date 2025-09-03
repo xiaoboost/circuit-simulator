@@ -1,4 +1,4 @@
-// import { STATE_CORE_SERVICE } from '@circuit/shared';
+// import { IStateCoreService } from '@circuit/shared';
 // import { PartStructuredData } from '@circuit/types';
 import React from 'react';
 // import { useHook, useService } from '../../../context';

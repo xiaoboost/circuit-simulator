@@ -1,9 +1,8 @@
-import { LIFE_CYCLE_HOOK } from '@circuit/inject';
-import { STORAGE_SERVICE, IStorageItemConfig, getStorage } from '@circuit/shared';
+import { ILifeCycleHook } from '@circuit/inject';
+import { IStorageService, IStorageItemConfig, getStorage } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   PartLabelVisibleKind,
-  PAINTER_CONFIGURATION_SERVICE,
   IPainterConfigurationService,
 } from '../../../types';
 
@@ -26,12 +25,12 @@ definePlugin(({ registerService, registerHook, getService }) => {
   ];
 
   // 注册配置服务
-  registerService(PAINTER_CONFIGURATION_SERVICE, service);
+  registerService(IPainterConfigurationService, service);
 
   // 注册初始化，读取缓存
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      return getStorage(watcherCache, getService(STORAGE_SERVICE));
+      return getStorage(watcherCache, getService(IStorageService));
     },
   });
 

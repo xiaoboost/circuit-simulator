@@ -6,10 +6,10 @@ import { createServiceKey } from '../../context';
  * @description 该服务用于获取变量功能
  * @example
  * ```ts
- * const variableObserverService = useService(VARIABLE_OBSERVER_SERVICE);
+ * const variableObserverService = useService(IVariableObserverService);
  * ```
  */
-export const VARIABLE_OBSERVER_SERVICE
+export const IVariableObserverService
   = createServiceKey<IVariableObserverService>('VariableObserverService');
 
 /** 观察回调 */

@@ -1,20 +1,20 @@
 import { UndoOutlined as Undo, RedoOutlined as Redo } from '@circuit/icons';
 import {
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
+  ILoggerService,
+  IStateCoreService,
 } from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
-import { SELECT_SERVICE } from '../../../../../types';
+import { ISelectService } from '../../../../../types';
 import { Button } from '../../components';
 
 const LoggerName = '快捷操作';
 
 export function EditorRender() {
-  const logger = useService(LOGGER_SERVICE);
-  const painter = useService(STATE_CORE_SERVICE);
-  const select = useService(SELECT_SERVICE);
+  const logger = useService(ILoggerService);
+  const painter = useService(IStateCoreService);
+  const select = useService(ISelectService);
   const [canUndo] = useWatcher(painter.canUndo);
   const [canRedo] = useWatcher(painter.canRedo);
   const onUndo = () => {

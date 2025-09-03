@@ -1,6 +1,6 @@
 import { Point } from '@circuit/algorithm';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { MAP_COORDINATE_SERVICE, IMapCoordinateService } from '../../src/types';
+import { IMapCoordinateService, IMapCoordinateService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('图纸坐标服务', () => {
@@ -12,7 +12,7 @@ describe('图纸坐标服务', () => {
   let mapCoordinate: IMapCoordinateService;
 
   beforeAll(async () => {
-    mapCoordinate = await getPlugin(MAP_COORDINATE_SERVICE);
+    mapCoordinate = await getPlugin(IMapCoordinateService);
   });
 
   // 恢复初始状态

@@ -1,4 +1,4 @@
-import { HOT_KEY_HOOK, HotKeyOptions } from '@circuit/shared';
+import { IHotKeyHook, HotKeyOptions } from '@circuit/shared';
 import hotkeys from 'hotkeys-js';
 import { useEffect, RefObject } from 'react';
 import { useHook } from '../../../context';
@@ -9,7 +9,7 @@ import { useHook } from '../../../context';
  * @description 画布的事件
  */
 export function useKeyboardListener(painterRef: RefObject<HTMLDivElement | null>) {
-  const hotkeyHooks = useHook(HOT_KEY_HOOK);
+  const hotkeyHooks = useHook(IHotKeyHook);
   const getKey = (key: string | string[]) => Array.isArray(key) ? key.join(', ') : key;
 
   useEffect(() => {

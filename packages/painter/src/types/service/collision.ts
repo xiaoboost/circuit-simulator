@@ -23,10 +23,10 @@ export interface IEntityRegion {
  * @description 该服务用于获取碰撞检测配置
  * @example
  * ```ts
- * const collisionService = useService(COLLISION_SERVICE);
+ * const collisionService = useService(ICollisionService);
  * ```
  */
-export const COLLISION_SERVICE
+export const ICollisionService
   = createServiceKey<ICollisionService>('CollisionService');
 
 export interface ICollisionService {

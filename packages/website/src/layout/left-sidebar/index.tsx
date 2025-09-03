@@ -1,4 +1,4 @@
-import { LAYOUT_SERVICE } from '@circuit/shared';
+import { ILayoutService } from '@circuit/shared';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
@@ -9,7 +9,7 @@ import * as Styles from './styles.less';
 
 export const LeftSidebar = React.memo(function RightSidebar() {
   const renders = useHook(LEFT_SIDEBAR_RENDER);
-  const layoutService = useService(LAYOUT_SERVICE);
+  const layoutService = useService(ILayoutService);
   const [activeTab, setActiveTab] = useWatcher(layoutService.leftSidebarActiveTab);
   const sidebar = useMemo(() => {
     return renders.find((item) => item.name === activeTab);

@@ -3,7 +3,7 @@ import {
   joinPartReferenceTag as joinPartTag,
   parsePartReferenceTag as parsePartTag,
 } from '@circuit/electronics';
-import { STATE_CORE_SERVICE } from '@circuit/shared';
+import { IStateCoreService } from '@circuit/shared';
 import { Input } from 'antd';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useService } from '../../../../context';
@@ -18,7 +18,7 @@ export interface Descriptor {
 }
 
 export function IdInputRender({ value, onError, onChange }: Props) {
-  const { state: { data: { parts } } } = useService(STATE_CORE_SERVICE);
+  const { state: { data: { parts } } } = useService(IStateCoreService);
   const [prefix, setPrefix] = useState('');
   const [suffix, setSuffix] = useState('');
   const [suffixError, setSuffixError] = useState(false);

@@ -1,6 +1,6 @@
 import { definePlugin } from '../../../context';
 import {
-  MAP_HASH_SERVICE,
+  IMapHashMarkService,
   IMapHashService,
   MarkMap,
 } from '../../../types';
@@ -52,5 +52,5 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册图纸服务
-  registerService(MAP_HASH_SERVICE, service);
+  registerService(IMapHashMarkService, service);
 });

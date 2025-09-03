@@ -3,14 +3,14 @@
 // import { useHook, useService } from '../../../../context';
 import {
   IDrawLayerProps,
-  // POINT_RENDERER,
-  // MAP_HASH_SERVICE,
+  // IPointRendererHook,
+  // IMapHashMarkService,
 } from '../../../../types';
 
 export function PointLayerRender(_: IDrawLayerProps) {
   return null;
-  // const pointRenderers = useHook(POINT_RENDERER, 'asc');
-  // const { markService: mapMark } = useService(MAP_HASH_SERVICE);
+  // const pointRenderers = useHook(IPointRendererHook, 'asc');
+  // const { markService: mapMark } = useService(IMapHashMarkService);
   // const points = Array.from(mapMark.values()).filter((mark) => mark.kind === MarkKind.LineCover);
 
   // if (pointRenderers.length === 0 || points.length === 0) {

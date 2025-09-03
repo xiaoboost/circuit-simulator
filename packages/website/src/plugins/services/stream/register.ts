@@ -1,5 +1,5 @@
 import { EventStream } from '@circuit/reactive';
-import { STREAM_SERVICE, IStreamService } from '@circuit/shared';
+import { IStreamService } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 
 definePlugin(({ registerService }) => {
@@ -24,7 +24,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册事件流服务
-  registerService(STREAM_SERVICE, service);
+  registerService(IStreamService, service);
 
   // 卸载器
   return () => {

@@ -1,12 +1,11 @@
 import { type Rect, Point } from '@circuit/algorithm';
-import { LOGGER_SERVICE, STATE_CORE_SERVICE } from '@circuit/shared';
+import { ILoggerService, IStateCoreService } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
-  VIEWPORT_SERVICE,
   IViewportService,
   IViewport,
-  MAP_COORDINATE_SERVICE,
-  COLLISION_SERVICE,
+  IMapCoordinateService,
+  ICollisionService,
 } from '../../../types';
 
 const LoggerName = '视图服务';
@@ -22,7 +21,7 @@ definePlugin(({ registerService, getService }) => {
   function calculateRectFocus(
     rect: Rect,
     padding: number,
-    scaleService = getService(MAP_COORDINATE_SERVICE),
+    scaleService = getService(IMapCoordinateService),
   ) {
     const { width: viewportWidth, height: viewportHeight } = scaleService.getCurrentViewportRect();
     const scaleX = (viewportWidth - padding * 2) / rect.width;
@@ -44,7 +43,7 @@ definePlugin(({ registerService, getService }) => {
     targetPosition: Point,
     targetScale: number,
     duration: number,
-    scaleService = getService(MAP_COORDINATE_SERVICE),
+    scaleService = getService(IMapCoordinateService),
   ) {
     if (duration <= 0) {
       scaleService.setScale(targetScale);
@@ -94,7 +93,7 @@ definePlugin(({ registerService, getService }) => {
     service.isAnimating.setData(false);
   }
 
-  function captureCurrentViewState(scaleService = getService(MAP_COORDINATE_SERVICE)) {
+  function captureCurrentViewState(scaleService = getService(IMapCoordinateService)) {
     previousViewState = {
       position: Point.from(scaleService.position.data),
       scale: scaleService.scale.data,
@@ -106,8 +105,8 @@ definePlugin(({ registerService, getService }) => {
     async focusOnElectronic(id, padding = 40, duration = 300) {
       stopAnimation();
 
-      const logger = getService(LOGGER_SERVICE);
-      const collisionService = getService(COLLISION_SERVICE);
+      const logger = getService(ILoggerService);
+      const collisionService = getService(ICollisionService);
       const rect = collisionService.getEntityBoundingBox(id);
 
       logger.info(LoggerName, `试图聚焦到元件: ${id}`);
@@ -122,8 +121,8 @@ definePlugin(({ registerService, getService }) => {
     async focusOnPosition(position, type, scale, duration = 300) {
       stopAnimation();
 
-      const logger = getService(LOGGER_SERVICE);
-      const mapCoordinateService = getService(MAP_COORDINATE_SERVICE);
+      const logger = getService(ILoggerService);
+      const mapCoordinateService = getService(IMapCoordinateService);
       const inputScale = scale ?? mapCoordinateService.scale.data ?? 1;
       const targetScale = mapCoordinateService.clampScale(inputScale);
 
@@ -159,8 +158,8 @@ definePlugin(({ registerService, getService }) => {
     async focusOnRect(rect, padding = 40, duration = 300) {
       stopAnimation();
 
-      const logger = getService(LOGGER_SERVICE);
-      const mapCoordinateService = getService(MAP_COORDINATE_SERVICE);
+      const logger = getService(ILoggerService);
+      const mapCoordinateService = getService(IMapCoordinateService);
       const { position, scale } = calculateRectFocus(rect, padding, mapCoordinateService);
 
       logger.info(LoggerName, `试图聚焦到矩形: ${rect.x}, ${rect.y}, ${rect.width}, ${rect.height}`);
@@ -173,9 +172,9 @@ definePlugin(({ registerService, getService }) => {
     async fitPainter(padding, duration = 300) {
       stopAnimation();
 
-      const logger = getService(LOGGER_SERVICE);
-      const collision = getService(COLLISION_SERVICE);
-      const { state: { data: { parts, lines } } } = getService(STATE_CORE_SERVICE);
+      const logger = getService(ILoggerService);
+      const collision = getService(ICollisionService);
+      const { state: { data: { parts, lines } } } = getService(IStateCoreService);
 
       if (parts.length === 0 && lines.length === 0) {
         logger.warn(LoggerName, '没有实体，无法执行适应画布操作');
@@ -211,7 +210,7 @@ definePlugin(({ registerService, getService }) => {
   };
 
   // 注册选择器服务
-  registerService(VIEWPORT_SERVICE, service);
+  registerService(IViewportService, service);
 
   return () => {
     service.isAnimating.destroy();

@@ -2,7 +2,7 @@ import {
   DoubleLeftOutlined as DoubleLeft,
   DoubleRightOutlined as DoubleRight,
 } from '@circuit/icons';
-import { LAYOUT_SERVICE } from '@circuit/shared';
+import { ILayoutService } from '@circuit/shared';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Button } from 'antd';
 import React from 'react';
@@ -14,7 +14,7 @@ import * as Styles from './styles.less';
 export const RightSidebar = React.memo(function RightSidebar() {
   // TODO: 目前只有一个
   const render = useHook(RIGHT_SIDEBAR_RENDER)[0];
-  const layoutService = useService(LAYOUT_SERVICE);
+  const layoutService = useService(ILayoutService);
   const [isCollapsed, setIsCollapsed] = useWatcher(layoutService.rightSidebarCollapsed);
 
   return (

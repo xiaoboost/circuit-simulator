@@ -6,16 +6,16 @@ import { createServiceKey } from '../core';
  * @description 该钩子将用于实现画布的生命周期
  * @example
  * ```ts
- * const lifeCycle = useHook(LIFE_CYCLE_HOOK);
+ * const lifeCycle = useHook(ILifeCycleHook);
  * ```
  */
-export const LIFE_CYCLE_HOOK
-  = createServiceKey<ILifeCycle>('LifeCycle');
+export const ILifeCycleHook
+  = createServiceKey<ILifeCycleHook>('ILifeCycleHook');
 
 /**
  * 生命周期
  */
-export interface ILifeCycle {
+export interface ILifeCycleHook {
   /**
    * 插件初始化之后
    *

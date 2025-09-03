@@ -8,7 +8,6 @@ import { LineOrPartStructuredData } from '@circuit/types';
 import { definePlugin } from '../../../context';
 import {
   ICollisionService,
-  COLLISION_SERVICE,
   IEntityRegion,
   Entity,
 } from '../../../types';
@@ -150,7 +149,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册碰撞服务
-  registerService(COLLISION_SERVICE, service);
+  registerService(ICollisionService, service);
 
   return () => {
     service.clearAll();

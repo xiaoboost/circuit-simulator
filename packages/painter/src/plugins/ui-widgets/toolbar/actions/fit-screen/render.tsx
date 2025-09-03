@@ -1,14 +1,14 @@
 import { FitScreen } from '@circuit/icons';
-import { STATE_CORE_SERVICE } from '@circuit/shared';
+import { IStateCoreService } from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
-import { VIEWPORT_SERVICE } from '../../../../../types';
+import { IViewportService } from '../../../../../types';
 import { Button } from '../../components';
 
 export const FitScreenButton = () => {
-  const viewport = useService(VIEWPORT_SERVICE);
-  const stateCore = useService(STATE_CORE_SERVICE);
+  const viewport = useService(IViewportService);
+  const stateCore = useService(IStateCoreService);
   const [isEmptyPainter] = useWatcher(stateCore.isEmpty);
   const onFitScreen = () => {
     viewport.fitPainter(40);

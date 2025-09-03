@@ -6,10 +6,10 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取鼠标指针变换功能
  * @example
  * ```ts
- * const cursorService = useService(CURSOR_SERVICE);
+ * const cursorService = useService(ICursorService);
  * ```
  */
-export const CURSOR_SERVICE
+export const ICursorService
   = createServiceKey<ICursorService>('CursorService');
 
 /** 指针类别 */

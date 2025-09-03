@@ -8,10 +8,10 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于单个引脚的渲染
  * @example
  * ```ts
- * const pinRendererHooks = useHook(PIN_RENDERER);
+ * const pinRendererHooks = useHook(IPinRendererHook);
  * ```
  */
-export const PIN_RENDERER = createServiceKey<IPinRenderer>('PinRenderer');
+export const IPinRendererHook = createServiceKey<IPinRendererHook>('IPinRendererHook');
 
 /** 引脚渲染器输入参数 */
 export interface IPinRendererProps extends React.SVGProps<SVGCircleElement> {
@@ -70,4 +70,4 @@ export interface IPinRendererProps extends React.SVGProps<SVGCircleElement> {
 }
 
 /** 引脚渲染器 */
-export type IPinRenderer = IRendererData<IPinRendererProps>;
+export type IPinRendererHook = IRendererData<IPinRendererProps>;

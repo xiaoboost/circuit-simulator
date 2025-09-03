@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
 import {
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
+  ILoggerService,
+  IStateCoreService,
 } from '@circuit/shared';
 import React, { memo } from 'react';
 import {
@@ -11,16 +11,16 @@ import {
   useService,
 } from '../../../context';
 import {
-  DRAW_LAYER_HOOK,
-  MAP_COORDINATE_SERVICE,
-  DRAG_SCENE_HOOK,
-  DRAG_SCENE_SERVICE,
-  SELECT_SERVICE,
-  EVENT_LISTENER_HOOK,
-  COLLISION_SERVICE,
-  CURSOR_SERVICE,
+  IDrawLayerHook,
+  IMapCoordinateService,
+  IDragSceneHook,
+  IDragSceneService,
+  ISelectService,
+  IEventListenerHook,
+  ICollisionService,
+  ICursorService,
   ICursorKind,
-  HOVER_SERVICE,
+  IHoverService,
 } from '../../../types';
 import {
   SELECT_BOX_WIDTH,
@@ -40,7 +40,7 @@ definePlugin(({ registerHook, getService }) => {
 
   // 选择框组件
   function SelectBox() {
-    const [scale] = useWatcher(useService(MAP_COORDINATE_SERVICE).scale);
+    const [scale] = useWatcher(useService(IMapCoordinateService).scale);
     const [startPosition] = useWatcher(start);
     const [endPosition] = useWatcher(end);
 
@@ -59,10 +59,10 @@ definePlugin(({ registerHook, getService }) => {
   }
 
   // 注册选择框启动事件
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     onMouseDown(event) {
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const hoverService = getService(HOVER_SERVICE);
+      const dragSceneService = getService(IDragSceneService);
+      const hoverService = getService(IHoverService);
 
       if (
         // 没有悬停实体
@@ -78,24 +78,24 @@ definePlugin(({ registerHook, getService }) => {
   });
 
   // 注册选择框场景
-  registerHook(DRAG_SCENE_HOOK, {
+  registerHook(IDragSceneHook, {
     name: SELECT_BOX_DRAG_SCENE_NAME,
     isEnd(event) {
-      return getService(DRAG_SCENE_SERVICE)
+      return getService(IDragSceneService)
         .isLeftMouseUpNoMovingHasScene(event, SELECT_BOX_DRAG_SCENE_NAME);
     },
     onDragMove(event) {
       end.setData(Point.from(event.positionInDrawer));
 
       if (start.data.distance(end.data) > SELECT_BOX_MIN_MOVE_DISTANCE) {
-        getService(CURSOR_SERVICE).set(ICursorKind.SelectBox);
+        getService(ICursorService).set(ICursorKind.SelectBox);
       }
     },
     afterStart(startPayload) {
       // 打印日志
-      getService(LOGGER_SERVICE).debug(LoggerName, '开始多选框选择');
+      getService(ILoggerService).debug(LoggerName, '开始多选框选择');
       // 启动后清除选中
-      getService(SELECT_SERVICE).clear();
+      getService(ISelectService).clear();
       // 设置启动坐标
       const position = Point.from(startPayload!.event!.positionInDrawer);
       start.setData(position);
@@ -106,8 +106,8 @@ definePlugin(({ registerHook, getService }) => {
         throw new Error('选择框事件中没有位置信息，请检查代码逻辑是否正常');
       }
 
-      const logger = getService(LOGGER_SERVICE);
-      const cursorService = getService(CURSOR_SERVICE);
+      const logger = getService(ILoggerService);
+      const cursorService = getService(ICursorService);
       const { positionInDrawer: startPosition } = startPayload.event;
       const { positionInDrawer: endPosition } = endPayload.event;
 
@@ -119,10 +119,10 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const painterService = getService(STATE_CORE_SERVICE);
+      const painterService = getService(IStateCoreService);
       const { state: { data: { parts, lines } } } = painterService;
-      const selectService = getService(SELECT_SERVICE);
-      const collisionService = getService(COLLISION_SERVICE);
+      const selectService = getService(ISelectService);
+      const collisionService = getService(ICollisionService);
       const ids = collisionService.getElectronicsInRect({
         x: Math.min(startPosition[0], endPosition[0]),
         y: Math.min(startPosition[1], endPosition[1]),
@@ -143,14 +143,14 @@ definePlugin(({ registerHook, getService }) => {
       selectService.set(...partIds, ...lineIds);
     },
     onCancel() {
-      getService(CURSOR_SERVICE).clear();
+      getService(ICursorService).clear();
       start.setData(Point.Zero());
       end.setData(Point.Zero());
     },
   });
 
   // 注册选择框组件
-  registerHook(DRAW_LAYER_HOOK, {
+  registerHook(IDrawLayerHook, {
     name: 'SelectBoxLayer',
     order: 4,
     Render: memo(SelectBox),

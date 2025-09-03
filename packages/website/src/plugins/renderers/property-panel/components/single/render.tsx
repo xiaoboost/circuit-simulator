@@ -3,7 +3,7 @@ import {
   parsePartReferenceTag as parsePartTag,
   getPartPrototype,
 } from '@circuit/electronics';
-import { STATE_CORE_SERVICE, LOGGER_SERVICE } from '@circuit/shared';
+import { IStateCoreService, ILoggerService } from '@circuit/shared';
 import { PartStructuredData, PropertyValue } from '@circuit/types';
 import React, { useState, useCallback, useMemo } from 'react';
 import { useService } from '../../../../../context';
@@ -19,8 +19,8 @@ const LoggerName = '单器件属性面板';
 
 export function SinglePropertyPanel({ part }: SinglePropertyPanelProps) {
   const [idError, setIdError] = useState('');
-  const { commit } = useService(STATE_CORE_SERVICE);
-  const logger = useService(LOGGER_SERVICE);
+  const { commit } = useService(IStateCoreService);
+  const logger = useService(ILoggerService);
   const { properties } = getPartPrototype(part.kind);
   const [errors, setErrors] = useState<string[]>([]);
   const changeTag = useCallback((value: string) => {

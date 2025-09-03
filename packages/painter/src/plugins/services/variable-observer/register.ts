@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { definePlugin } from '../../../context';
-import { VARIABLE_OBSERVER_SERVICE, IVariableObserverService, ObserverCb } from '../../../types';
+import { IVariableObserverService, ObserverCb } from '../../../types';
 
 const DEFAULT_KEY = '_$default';
 
@@ -135,7 +135,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册变量服务
-  registerService(VARIABLE_OBSERVER_SERVICE, service);
+  registerService(IVariableObserverService, service);
 
   return () => {
     service.clear();

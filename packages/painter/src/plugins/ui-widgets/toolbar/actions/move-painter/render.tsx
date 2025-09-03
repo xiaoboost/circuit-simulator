@@ -3,17 +3,17 @@ import { Tooltip } from 'antd';
 import React from 'react';
 import { useService, useWatcher, Watcher } from '../../../../../context';
 import {
-  DRAG_SCENE_SERVICE,
-  CURSOR_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
+  IDragSceneService,
+  ICursorService,
+  IPainterConfigurationService,
 } from '../../../../../types';
 import { Button } from '../../components';
 
 export const MoveModeRenderWithSpace = (spaceKeyDown: Watcher<boolean>) => {
   return function MoveModeRender() {
-    const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
-    const dragScene = useService(DRAG_SCENE_SERVICE);
-    const cursorService = useService(CURSOR_SERVICE);
+    const configuration = useService(IPainterConfigurationService);
+    const dragScene = useService(IDragSceneService);
+    const cursorService = useService(ICursorService);
     const [isMoveMode, setIsMoveMode] = useWatcher(configuration.movePainterMode);
     const [isSpaceKeyDown] = useWatcher(spaceKeyDown);
     const onClickCursor = () => {

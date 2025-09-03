@@ -8,10 +8,10 @@ import type { ObserverCb } from './variable-observer';
  * @description 该服务用于获取连接关系服务
  * @example
  * ```ts
- * const connectionService = useService(CONNECTION_SERVICE);
+ * const connectionService = useService(IConnectionService);
  * ```
  */
-export const CONNECTION_SERVICE
+export const IConnectionService
   = createServiceKey<IConnectionService>('ConnectionService');
 
 /** 连接数据 */

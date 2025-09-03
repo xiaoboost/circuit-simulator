@@ -4,10 +4,10 @@ import {
   createPartReferenceTag as createPartTag,
 } from '@circuit/electronics';
 import {
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
-  LIFE_CYCLE_HOOK,
-  STREAM_SERVICE,
+  ILoggerService,
+  IStateCoreService,
+  ILifeCycleHook,
+  IStreamService,
   GlobalStreamConstant as Constant,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
@@ -15,14 +15,14 @@ import { message } from 'antd';
 import { definePlugin } from '../../../../context';
 import {
   DragSceneHookPayload,
-  DRAG_SCENE_HOOK,
-  SELECT_SERVICE,
-  DRAG_SCENE_SERVICE,
-  MAP_HASH_SERVICE,
-  COLLISION_SERVICE,
-  VARIABLE_OBSERVER_SERVICE,
-  PAINTER_HTML_ELEMENT,
-  PAINTER_CONFIGURATION_SERVICE,
+  IDragSceneHook,
+  ISelectService,
+  IDragSceneService,
+  IMapHashMarkService,
+  ICollisionService,
+  IVariableObserverService,
+  IPainterHTMLElement,
+  IPainterConfigurationService,
 } from '../../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
 
@@ -37,19 +37,19 @@ interface StartPayloadType extends DragSceneHookPayload {
 
 definePlugin(({ registerHook, getService }) => {
   const setPosition = (id: string, position?: Point) => {
-    getService(VARIABLE_OBSERVER_SERVICE).set(KEY, [
+    getService(IVariableObserverService).set(KEY, [
       [getBodyKey(id), position],
       [getLabelKey(id), position],
     ]);
   };
 
   // 全局监听创建的器件
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      const stateCore = getService(STATE_CORE_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
-      const dragScene = getService(DRAG_SCENE_SERVICE);
-      const stream = getService(STREAM_SERVICE);
+      const stateCore = getService(IStateCoreService);
+      const logger = getService(ILoggerService);
+      const dragScene = getService(IDragSceneService);
+      const stream = getService(IStreamService);
       const newPartStream = stream.get<Constant.NewPartPayload>(Constant.NewPart);
 
       newPartStream.subscribe((payload) => {
@@ -57,7 +57,7 @@ definePlugin(({ registerHook, getService }) => {
           return;
         }
 
-        if (getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data) {
+        if (getService(IPainterConfigurationService).movePainterMode.data) {
           const msg = '移动图纸模式下不能创建器件';
           logger.info(LoggerName, msg);
           message.warning(msg);
@@ -76,20 +76,20 @@ definePlugin(({ registerHook, getService }) => {
   });
 
   // 创建的拖动场景
-  registerHook(DRAG_SCENE_HOOK, {
+  registerHook(IDragSceneHook, {
     name: CreatePartSceneName,
     afterStart({ part }: StartPayloadType) {
       // 打印日志
-      getService(LOGGER_SERVICE).info(LoggerName, '开始创建器件', createPartTag(part));
+      getService(ILoggerService).info(LoggerName, '开始创建器件', createPartTag(part));
       // 清空选中
-      getService(SELECT_SERVICE).clear();
+      getService(ISelectService).clear();
       // 下一帧时页面焦点设置为画布元素，不直接设置主要是为了规避浏览器事件系统的干扰
       requestAnimationFrame(() => {
-        getService(PAINTER_HTML_ELEMENT)?.current?.focus({ preventScroll: true });
+        getService(IPainterHTMLElement)?.current?.focus({ preventScroll: true });
       });
     },
     onFirstDragMove({ positionInDrawer }, payload) {
-      getService(STATE_CORE_SERVICE).draft((state) => {
+      getService(IStateCoreService).draft((state) => {
         state.parts.push({
           ...payload.part,
           position: Point.from(positionInDrawer),
@@ -97,20 +97,20 @@ definePlugin(({ registerHook, getService }) => {
       });
     },
     onDragMove({ positionInDrawer }, payload: StartPayloadType) {
-      if (getService(DRAG_SCENE_SERVICE).onlyHas(CreatePartSceneName)) {
+      if (getService(IDragSceneService).onlyHas(CreatePartSceneName)) {
         setPosition(payload.part.id, positionInDrawer);
-        getService(LOGGER_SERVICE).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
+        getService(ILoggerService).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
       }
     },
     isEnd(event) {
-      return getService(DRAG_SCENE_SERVICE)
+      return getService(IDragSceneService)
         .isLeftMouseUpNoMovingHasScene(event, CreatePartSceneName);
     },
     afterEnd({ part }: StartPayloadType, endPayload) {
-      const painterService = getService(STATE_CORE_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
-      const mapService = getService(MAP_HASH_SERVICE);
-      const collisionService = getService(COLLISION_SERVICE);
+      const painterService = getService(IStateCoreService);
+      const logger = getService(ILoggerService);
+      const mapService = getService(IMapHashMarkService);
+      const collisionService = getService(ICollisionService);
       const currentPosition = endPayload?.event?.positionInDrawer?.round(20);
 
       if (!currentPosition) {
@@ -148,8 +148,8 @@ definePlugin(({ registerHook, getService }) => {
       logger.info(LoggerName, '结束创建器件', partTag);
     },
     onCancel({ part }: StartPayloadType) {
-      const painterService = getService(STATE_CORE_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
+      const painterService = getService(IStateCoreService);
+      const logger = getService(ILoggerService);
       logger.info(LoggerName, '取消创建器件', createPartTag(part));
       painterService.dropDraft();
     },

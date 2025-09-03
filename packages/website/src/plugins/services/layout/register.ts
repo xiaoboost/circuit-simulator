@@ -1,8 +1,7 @@
-import { LIFE_CYCLE_HOOK } from '@circuit/inject';
+import { ILifeCycleHook } from '@circuit/inject';
 import {
   ILayoutService,
-  LAYOUT_SERVICE,
-  STORAGE_SERVICE,
+  IStorageService,
   IStorageItemConfig,
   getStorage,
 } from '@circuit/shared';
@@ -39,12 +38,12 @@ definePlugin(({ registerService, registerHook, getService, getHook }) => {
   ];
 
   // 注册配置服务
-  registerService(LAYOUT_SERVICE, service);
+  registerService(ILayoutService, service);
 
   // 注册初始化，读取缓存
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      return getStorage(watcherCache, getService(STORAGE_SERVICE));
+      return getStorage(watcherCache, getService(IStorageService));
     },
   });
 

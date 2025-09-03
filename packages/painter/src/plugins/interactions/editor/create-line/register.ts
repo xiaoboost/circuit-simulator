@@ -1,25 +1,25 @@
 import { Point, type PathWithPoint } from '@circuit/algorithm';
 import { createLine, getPartPin, createPartReferenceTag } from '@circuit/electronics';
 import {
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
+  ILoggerService,
+  IStateCoreService,
 } from '@circuit/shared';
 import { LineStructuredData } from '@circuit/types';
 import { definePlugin } from '../../../../context';
 import {
   DragSceneHookPayload,
-  EVENT_LISTENER_HOOK,
-  HOVER_SERVICE,
-  DRAG_SCENE_HOOK,
-  SELECT_SERVICE,
-  DRAG_SCENE_SERVICE,
-  MAP_HASH_SERVICE,
+  IEventListenerHook,
+  IHoverService,
+  IDragSceneHook,
+  ISelectService,
+  IDragSceneService,
+  IMapHashMarkService,
   EntityKind,
-  CONNECTION_SERVICE,
-  CURSOR_SERVICE,
+  IConnectionService,
+  ICursorService,
   ICursorKind,
-  COLLISION_SERVICE,
-  VARIABLE_OBSERVER_SERVICE,
+  ICollisionService,
+  IVariableObserverService,
 } from '../../../../types';
 import {
   type PathSearcher,
@@ -42,11 +42,11 @@ interface StartPayloadType extends DragSceneHookPayload {
 
 definePlugin(({ registerHook, getService }) => {
   // 注册创建导线场景
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     order: 5,
     onMouseDown(event) {
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const hover = getService(HOVER_SERVICE);
+      const dragSceneService = getService(IDragSceneService);
+      const hover = getService(IHoverService);
       const hoverData = hover.status.data;
 
       if (
@@ -59,9 +59,9 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const state = getService(STATE_CORE_SERVICE);
-      const connection = getService(CONNECTION_SERVICE);
-      const map = getService(MAP_HASH_SERVICE);
+      const state = getService(IStateCoreService);
+      const connection = getService(IConnectionService);
+      const map = getService(IMapHashMarkService);
       const part = state.getPart(hoverData.id);
       const pin = getPartPin(part, hoverData.pin);
       const line = createLine(pin.position);
@@ -70,7 +70,7 @@ definePlugin(({ registerHook, getService }) => {
         start: pin.position,
         direction: pin.direction,
         painter: painterStateGetter(hover, state, connection, map),
-        hook: createSearchHook(getService(VARIABLE_OBSERVER_SERVICE)),
+        hook: createSearchHook(getService(IVariableObserverService)),
       });
 
       // 创建导线草稿
@@ -93,10 +93,10 @@ definePlugin(({ registerHook, getService }) => {
   });
 
   // 创建的拖动场景
-  registerHook(DRAG_SCENE_HOOK, {
+  registerHook(IDragSceneHook, {
     name: CreateLineSceneName,
     afterStart({ line, start, search, event }: StartPayloadType) {
-      const logger = getService(LOGGER_SERVICE);
+      const logger = getService(ILoggerService);
 
       if (!event) {
         const msg = '创建导线事件触发时，必须传入鼠标事件';
@@ -104,7 +104,7 @@ definePlugin(({ registerHook, getService }) => {
         throw new Error(msg);
       }
 
-      const varService = getService(VARIABLE_OBSERVER_SERVICE);
+      const varService = getService(IVariableObserverService);
 
       // 打印日志
       logger.info(
@@ -114,9 +114,9 @@ definePlugin(({ registerHook, getService }) => {
         `新导线编号 ${line.id}`,
       );
       // 选中导线
-      getService(SELECT_SERVICE).set(line.id);
+      getService(ISelectService).set(line.id);
       // 设置鼠标样式
-      getService(CURSOR_SERVICE).set(ICursorKind.DrawLine);
+      getService(ICursorService).set(ICursorKind.DrawLine);
       // 初始化导线路径和初始化样式
       setSearchResult(varService, [
         ...search(event.positionInDrawer),
@@ -135,20 +135,20 @@ definePlugin(({ registerHook, getService }) => {
       ]);
     },
     onDragMove({ positionInDrawer, movement }, { search }: StartPayloadType) {
-      setSearchResult(getService(VARIABLE_OBSERVER_SERVICE), search(positionInDrawer, movement));
+      setSearchResult(getService(IVariableObserverService), search(positionInDrawer, movement));
     },
     isEnd(event) {
-      return getService(DRAG_SCENE_SERVICE)
+      return getService(IDragSceneService)
         .isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName);
     },
     afterEnd({ line, search, start }: StartPayloadType) {
-      const mapHash = getService(MAP_HASH_SERVICE);
-      const collision = getService(COLLISION_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
-      const state = getService(STATE_CORE_SERVICE);
-      const connection = getService(CONNECTION_SERVICE);
-      const cursor = getService(CURSOR_SERVICE);
-      const varService = getService(VARIABLE_OBSERVER_SERVICE);
+      const mapHash = getService(IMapHashMarkService);
+      const collision = getService(ICollisionService);
+      const logger = getService(ILoggerService);
+      const state = getService(IStateCoreService);
+      const connection = getService(IConnectionService);
+      const cursor = getService(ICursorService);
+      const varService = getService(IVariableObserverService);
 
       /** 导线路径 */
       const linePath = search.getSearchPath().map((point) => point.round(20));

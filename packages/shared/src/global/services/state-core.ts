@@ -30,7 +30,7 @@ export interface CommitData {
  * const stateService = useService(STATE_SERVICE);
  * ```
  */
-export const STATE_CORE_SERVICE
+export const IStateCoreService
   = createServiceKey<IStateCoreService>('StateCoreService');
 
 export interface IStateCoreService {

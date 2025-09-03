@@ -2,14 +2,14 @@ import React from 'react';
 import { useService, useHook } from '../../../../context';
 import {
   type IPartRendererProps,
-  PIN_RENDERER,
-  CONNECTION_SERVICE,
+  IPinRendererHook,
+  IConnectionService,
 } from '../../../../types';
 import { Pin } from './pin';
 
 function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps) {
-  const { useDeviceConnections } = useService(CONNECTION_SERVICE);
-  const pinRenderers = useHook(PIN_RENDERER);
+  const { useDeviceConnections } = useService(IConnectionService);
+  const pinRenderers = useHook(IPinRendererHook);
   const connections = useDeviceConnections(id);
 
   if (pins.length === 0 || pinRenderers.length === 0) {

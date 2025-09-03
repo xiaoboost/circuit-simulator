@@ -1,9 +1,9 @@
 import { definePlugin } from '../../../../context';
-import { DRAW_LAYER_HOOK } from '../../../../types';
+import { IDrawLayerHook } from '../../../../types';
 import { ElectronicOutline } from './render';
 
 definePlugin(({ registerHook }) => {
-  registerHook(DRAW_LAYER_HOOK, {
+  registerHook(IDrawLayerHook, {
     name: 'electronic-outline',
     order: 20,
     Render: ElectronicOutline,

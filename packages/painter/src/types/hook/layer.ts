@@ -9,10 +9,10 @@ import { createServiceKey } from '../../context';
  * @description 视图层从 DOM 上来说是高于绘图层的，视图层不会随着画布变化而变化
  * @example
  * ```ts
- * const viewLayerHooks = useHook(VIEW_LAYER_HOOK);
+ * const viewLayerHooks = useHook(IViewLayerHook);
  * ```
  */
-export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
+export const IViewLayerHook = createServiceKey<IViewLayerHook>('IViewLayerHook');
 
 /**
  * 绘图层实现钩子
@@ -21,10 +21,10 @@ export const VIEW_LAYER_HOOK = createServiceKey<IViewLayer>('ViewLayer');
  * @description 绘图层从 DOM 上来说是低于绘图层的，绘图层会随着画布变化而变化，并且其内部应该是 SVG 元素
  * @example
  * ```ts
- * const drawLayerHooks = useHook(DRAW_LAYER_HOOK);
+ * const drawLayerHooks = useHook(IDrawLayerHook);
  * ```
  */
-export const DRAW_LAYER_HOOK = createServiceKey<IDrawLayer>('DrawLayer');
+export const IDrawLayerHook = createServiceKey<IDrawLayerHook>('IDrawLayerHook');
 
 interface BaseLayer {
   /**
@@ -42,7 +42,7 @@ interface BaseLayer {
 }
 
 /** 画布视图图层 */
-export interface IViewLayer extends BaseLayer {
+export interface IViewLayerHook extends BaseLayer {
   /**
    * 渲染组件
    *
@@ -60,7 +60,7 @@ export interface IDrawLayerProps {
 }
 
 /** 画布绘图图层 */
-export interface IDrawLayer extends BaseLayer {
+export interface IDrawLayerHook extends BaseLayer {
   /**
    * 渲染组件
    *

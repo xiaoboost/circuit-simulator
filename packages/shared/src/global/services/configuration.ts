@@ -7,10 +7,10 @@ import type { Watcher } from '@circuit/reactive';
  * @description 该服务用于获取配置
  * @example
  * ```ts
- * const configurationService = useService(CONFIGURATION_SERVICE);
+ * const configurationService = useService(IConfigurationService);
  * ```
  */
-export const CONFIGURATION_SERVICE
+export const IConfigurationService
   = createServiceKey<IConfigurationService>('ConfigurationService');
 
 export interface IConfigurationService {

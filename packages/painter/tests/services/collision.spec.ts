@@ -2,7 +2,7 @@ import { Point, RotateMatrixSet, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { COLLISION_SERVICE, ICollisionService } from '../../src/types';
+import { ICollisionService, ICollisionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('碰撞服务', () => {
@@ -13,7 +13,7 @@ describe('碰撞服务', () => {
   let line: LineStructuredData;
 
   beforeAll(async () => {
-    collision = await getPlugin(COLLISION_SERVICE);
+    collision = await getPlugin(ICollisionService);
   });
 
   beforeEach(() => {

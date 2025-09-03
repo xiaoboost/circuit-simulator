@@ -8,10 +8,10 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于单个导线的渲染
  * @example
  * ```ts
- * const lineRendererHooks = useHook(LINE_RENDERER);
+ * const lineRendererHooks = useHook(ILineRendererHook);
  * ```
  */
-export const LINE_RENDERER = createServiceKey<ILineRenderer>('LineRenderer');
+export const ILineRendererHook = createServiceKey<ILineRendererHook>('ILineRendererHook');
 
 /** 画布图层渲染器输入参数 */
 export interface ILineRendererProps extends React.SVGProps<SVGElement> {
@@ -20,4 +20,4 @@ export interface ILineRendererProps extends React.SVGProps<SVGElement> {
 }
 
 /** 导线渲染器 */
-export type ILineRenderer = IRendererData<ILineRendererProps>;
+export type ILineRendererHook = IRendererData<ILineRendererProps>;

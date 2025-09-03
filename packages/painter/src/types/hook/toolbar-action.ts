@@ -7,18 +7,18 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于画布快捷操作的实现
  * @example
  * ```ts
- * const painterToolbarActionHooks = useHook(PAINTER_TOOLBAR_ACTION_HOOK);
+ * const painterToolbarActionHooks = useHook(IPainterToolBarActionHook);
  * ```
  */
-export const PAINTER_TOOLBAR_ACTION_HOOK
-  = createServiceKey<IPainterToolBarAction>('PainterToolBarAction');
+export const IPainterToolBarActionHook
+  = createServiceKey<IPainterToolBarActionHook>('IPainterToolBarActionHook');
 
 /**
  * 画布快捷操作按钮渲染器
  *
  * @description 如果当前组件所有按钮都返回了`null`，表示当前组件没有提示框按钮，整个提示框都不会显示。
  */
-export interface IPainterToolBarAction {
+export interface IPainterToolBarActionHook {
   /**
    * 按钮名称
    *

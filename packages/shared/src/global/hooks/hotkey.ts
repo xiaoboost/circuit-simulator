@@ -6,10 +6,10 @@ import { createServiceKey } from '@circuit/inject';
  * @description 该钩子将用于实现键盘快捷键功能
  * @example
  * ```ts
- * const hotKeyHooks = useHook(HOT_KEY_HOOK);
+ * const hotKeyHooks = useHook(IHotKeyHook);
  * ```
  */
-export const HOT_KEY_HOOK = createServiceKey<IHotKey | IHotKey[]>('HotKey');
+export const IHotKeyHook = createServiceKey<IHotKey | IHotKey[]>('HotKey');
 
 /** 快捷键类型 */
 export type HotKeyType = string | string[];

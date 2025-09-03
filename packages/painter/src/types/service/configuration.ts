@@ -6,10 +6,10 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取画布配置
  * @example
  * ```ts
- * const configurationService = useService(CONFIGURATION_SERVICE);
+ * const configurationService = useService(IConfigurationService);
  * ```
  */
-export const PAINTER_CONFIGURATION_SERVICE
+export const IPainterConfigurationService
   = createServiceKey<IPainterConfigurationService>('PainterConfigurationService');
 
 /** 器件标签显示方式 */

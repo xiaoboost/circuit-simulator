@@ -1,16 +1,15 @@
 import { Point } from '@circuit/algorithm';
-import { HOT_KEY_HOOK } from '@circuit/shared';
+import { IHotKeyHook } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   DragMouseEvent,
   DragMoveEvent,
   DragSceneHookPayload,
   IDragSceneService,
-  DRAG_SCENE_SERVICE,
-  DRAG_SCENE_HOOK,
-  EVENT_LISTENER_HOOK,
-  MAP_COORDINATE_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
+  IDragSceneHook,
+  IEventListenerHook,
+  IMapCoordinateService,
+  IPainterConfigurationService,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
@@ -38,7 +37,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         : payload as any;
 
       // 触发之后立即运行
-      getHook(DRAG_SCENE_HOOK)
+      getHook(IDragSceneHook)
         .find(({ name }) => name === scene)
         ?.afterStart?.(startPayload);
 
@@ -57,7 +56,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         return;
       }
 
-      const hooks = getHook(DRAG_SCENE_HOOK).filter(({ name }) => {
+      const hooks = getHook(IDragSceneHook).filter(({ name }) => {
         return (
           (scene === '*' || name === scene)
           && sceneSet.has(name)
@@ -105,7 +104,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         event.button === 0
         && event.type === 'mousedown'
         && this.size === 0
-        && !getService(PAINTER_CONFIGURATION_SERVICE).movePainterMode.data
+        && !getService(IPainterConfigurationService).movePainterMode.data
       );
     },
     isLeftMouseUpNoMovingHasScene(event, scene) {
@@ -118,7 +117,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   };
 
   function getDragMouseEvent(event: MouseEvent) {
-    const mapService = getService(MAP_COORDINATE_SERVICE);
+    const mapService = getService(IMapCoordinateService);
     const mousePosition = mapService.screenToViewPosition(Point.from([event.pageX, event.pageY]));
     const positionInDrawer = mapService.viewToMapPosition(mousePosition);
     const dragMouseEvent: DragMouseEvent = new Proxy(event, {
@@ -142,7 +141,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       return;
     }
 
-    const dragHook = getHook(DRAG_SCENE_HOOK);
+    const dragHook = getHook(IDragSceneHook);
     // 正在进行中的场景
     const hooks = dragHook.filter((hook) => service.has(hook.name));
 
@@ -179,7 +178,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   let lastMousePosition: Point | null = null;
 
   // 注册原始事件钩子
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     onClick(event) {
       endCb(event);
     },
@@ -201,16 +200,16 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   });
 
   // 注册拖拽场景实现钩子
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     // 这个事件的优先级较低
     order: 10,
     onMouseMove(event) {
       if (service.size !== 0) {
-        const dragHook = getHook(DRAG_SCENE_HOOK);
+        const dragHook = getHook(IDragSceneHook);
         const hooks = dragHook.filter((hook) => service.has(hook.name));
 
         if (hooks.length !== 0) {
-          const map = getService(MAP_COORDINATE_SERVICE);
+          const map = getService(IMapCoordinateService);
           const movement = lastMousePosition
             ? new Point(event.pageX, event.pageY).add(lastMousePosition, -1)
             : new Point(0, 0);
@@ -263,7 +262,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   });
 
   // 键盘按下`Esc`时取消拖拽事件钩子
-  registerHook(HOT_KEY_HOOK, {
+  registerHook(IHotKeyHook, {
     key: 'esc',
     name: '取消拖拽事件',
     action: () => {
@@ -272,5 +271,5 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   });
 
   // 注册鼠标拖动服务
-  registerService(DRAG_SCENE_SERVICE, service);
+  registerService(IDragSceneService, service);
 });

@@ -1,18 +1,18 @@
 import React from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
-  PAINTER_CONFIGURATION_SERVICE,
-  COLLISION_SERVICE,
-  MAP_COORDINATE_SERVICE,
+  IPainterConfigurationService,
+  ICollisionService,
+  IMapCoordinateService,
 } from '../../../../types';
 
 const OutlineWidth = 2;
 
 export function ElectronicOutline() {
-  const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
+  const configuration = useService(IPainterConfigurationService);
   const [electronicOutline] = useWatcher(configuration.visibleElectronicOutline);
-  const collisionService = useService(COLLISION_SERVICE);
-  const mapService = useService(MAP_COORDINATE_SERVICE);
+  const collisionService = useService(ICollisionService);
+  const mapService = useService(IMapCoordinateService);
   const [scale] = useWatcher(mapService.scale);
 
   if (!electronicOutline) {

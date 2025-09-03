@@ -2,8 +2,8 @@ import type { PathWithPoint } from '@circuit/algorithm';
 import React, { useEffect, useRef } from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
-  PAINTER_CONFIGURATION_SERVICE,
-  VARIABLE_OBSERVER_SERVICE,
+  IPainterConfigurationService,
+  IVariableObserverService,
 } from '../../../../types';
 import {
   PATH_SEARCH_POINTS_STATE,
@@ -55,9 +55,9 @@ function draw(data: PathSearchPointData, dom: SVGGElement) {
 }
 
 export function PathSearchDebugger() {
-  const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
+  const configuration = useService(IPainterConfigurationService);
   const [openLineSearchDebugger] = useWatcher(configuration.openLineSearchDebugger);
-  const { observe } = useService(VARIABLE_OBSERVER_SERVICE);
+  const { observe } = useService(IVariableObserverService);
   const drawRef = useRef<SVGGElement>(null);
 
   useEffect(() => {

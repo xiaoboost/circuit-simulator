@@ -1,7 +1,7 @@
 import { InjectContext } from '@circuit/inject';
 import { RefObject, useContext } from 'react';
 import { PainterScope } from '../../../context';
-import { PAINTER_HTML_ELEMENT } from '../../../types';
+import { IPainterHTMLElement } from '../../../types';
 
 /** 画布原始 DOM 引用服务 */
 export function usePainterRefService(painterRef: RefObject<HTMLDivElement | null>) {
@@ -9,7 +9,7 @@ export function usePainterRefService(painterRef: RefObject<HTMLDivElement | null
   const ServiceMap = scopeContainer?.context?.ServiceMap;
 
   // TODO: 不能放到 useEffect 中，那样的时序太晚了，之后再研究下怎么搞吧
-  if (ServiceMap && !ServiceMap.has(PAINTER_HTML_ELEMENT)) {
-    ServiceMap.set(PAINTER_HTML_ELEMENT, painterRef);
+  if (ServiceMap && !ServiceMap.has(IPainterHTMLElement)) {
+    ServiceMap.set(IPainterHTMLElement, painterRef);
   }
 }

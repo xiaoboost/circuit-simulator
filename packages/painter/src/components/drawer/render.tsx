@@ -1,4 +1,4 @@
-import { STATE_CORE_SERVICE } from '@circuit/shared';
+import { IStateCoreService } from '@circuit/shared';
 import React, { useRef } from 'react';
 import {
   useService,
@@ -6,23 +6,23 @@ import {
   useWatcher,
 } from '../../context';
 import {
-  MAP_COORDINATE_SERVICE,
-  DRAW_LAYER_HOOK,
-  CURSOR_SERVICE,
+  IMapCoordinateService,
+  IDrawLayerHook,
+  ICursorService,
 } from '../../types';
 import * as Styles from './styles.less';
 import { useMouseListener, usePosition } from './use';
 import { getBackgroundStyle, getCursorStyle } from './utils';
 
 export function Drawer() {
-  const mapService = useService(MAP_COORDINATE_SERVICE);
+  const mapService = useService(IMapCoordinateService);
   const [scale] = useWatcher(mapService.scale);
   const [position] = useWatcher(mapService.position);
   const domRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGGElement>(null);
-  const layers = useHook(DRAW_LAYER_HOOK, 'asc');
-  const { state } = useService(STATE_CORE_SERVICE);
-  const cursorService = useService(CURSOR_SERVICE);
+  const layers = useHook(IDrawLayerHook, 'asc');
+  const { state } = useService(IStateCoreService);
+  const cursorService = useService(ICursorService);
   const [{ parts, lines }] = useWatcher(state);
   const [cursor] = useWatcher(cursorService.value);
 

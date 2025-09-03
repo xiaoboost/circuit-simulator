@@ -1,10 +1,10 @@
 import { definePlugin } from '../../../../context';
-import { DRAW_LAYER_HOOK } from '../../../../types';
+import { IDrawLayerHook } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册元件渲染层
-  registerHook(DRAW_LAYER_HOOK, {
+  registerHook(IDrawLayerHook, {
     name: 'ElectronicLayer',
     order: 1,
     Render,

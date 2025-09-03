@@ -2,7 +2,7 @@ import { Point } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { CONNECTION_SERVICE, IConnectionService } from '../../src/types';
+import { IConnectionService, IConnectionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('连接服务', () => {
@@ -16,7 +16,7 @@ describe('连接服务', () => {
   ]);
 
   beforeAll(async () => {
-    connection = await getPlugin(CONNECTION_SERVICE);
+    connection = await getPlugin(IConnectionService);
   });
 
   beforeEach(() => {

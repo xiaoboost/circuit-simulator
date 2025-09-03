@@ -6,18 +6,18 @@ import {
 } from '@circuit/algorithm';
 import { createPartReferenceTag as createPartTag } from '@circuit/electronics';
 import {
-  STREAM_SERVICE,
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
+  IStreamService,
+  ILoggerService,
+  IStateCoreService,
 } from '@circuit/shared';
 import { definePlugin } from '../../../../context';
 import {
-  DRAG_SCENE_SERVICE,
-  DRAG_SCENE_HOOK,
-  SELECT_SERVICE,
-  CURSOR_SERVICE,
+  IDragSceneService,
+  IDragSceneHook,
+  ISelectService,
+  ICursorService,
   ICursorKind,
-  VARIABLE_OBSERVER_SERVICE as VarService,
+  IVariableObserverService as VarService,
   PainterStreamConstant as Constant,
 } from '../../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
@@ -32,19 +32,19 @@ interface Payload {
 }
 
 definePlugin(({ registerHook, getService }) => {
-  registerHook(DRAG_SCENE_HOOK, {
+  registerHook(IDragSceneHook, {
     name: MoveDragSceneName,
     afterStart({ id }: Payload) {
-      getService(LOGGER_SERVICE).info(LoggerName, '开始移动器件信息文本', id);
+      getService(ILoggerService).info(LoggerName, '开始移动器件信息文本', id);
       // 设置选中
-      getService(SELECT_SERVICE).set(id);
+      getService(ISelectService).set(id);
       // 偏移数据清零
       getService(VarService).set(KEY, getLabelKey(id), new Point(0, 0));
       // 设置鼠标指针
-      getService(CURSOR_SERVICE).set(ICursorKind.Dragging);
+      getService(ICursorService).set(ICursorKind.Dragging);
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
-      const part = getService(STATE_CORE_SERVICE).getPart(id);
+      const part = getService(IStateCoreService).getPart(id);
       const varService = getService(VarService);
       const invRotate = invertRotateMatrix(part.rotate);
       const movementInPart = rotateVector(movementInDrawerAcc, invRotate);
@@ -52,18 +52,18 @@ definePlugin(({ registerHook, getService }) => {
       varService.set(KEY, labelKey, movementInPart);
     },
     isEnd(event) {
-      return getService(DRAG_SCENE_SERVICE)
+      return getService(IDragSceneService)
         .isLeftMouseUpNoMovingHasScene(event, MoveDragSceneName);
     },
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);
-      const painterService = getService(STATE_CORE_SERVICE);
-      const stream = getService(STREAM_SERVICE);
+      const painterService = getService(IStateCoreService);
+      const stream = getService(IStreamService);
       const variableService = getService(VarService);
       const part = painterService.getPart(id);
       const partTag = createPartTag(part);
-      const cursor = getService(CURSOR_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
+      const cursor = getService(ICursorService);
+      const logger = getService(ILoggerService);
       /** 当前器件标记相对最开始时的偏移向量 */
       const labelPositionInPart = variableService.get<Point>(KEY, label)!;
       /** 偏移向量转为画布向量 */

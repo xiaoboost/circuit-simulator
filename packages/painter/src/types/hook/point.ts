@@ -8,10 +8,10 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于单个节点的渲染
  * @example
  * ```ts
- * const pointRendererHooks = useHook(POINT_RENDERER);
+ * const pointRendererHooks = useHook(IPointRendererHook);
  * ```
  */
-export const POINT_RENDERER = createServiceKey<IPointRenderer>('PointRenderer');
+export const IPointRendererHook = createServiceKey<IPointRendererHook>('IPointRendererHook');
 
 /** 节点渲染器输入参数 */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
@@ -21,4 +21,4 @@ export interface IPointRendererProps {
 }
 
 /** 器件渲染器 */
-export type IPointRenderer = IRendererData<IPointRendererProps>;
+export type IPointRendererHook = IRendererData<IPointRendererProps>;

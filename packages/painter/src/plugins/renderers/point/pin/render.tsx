@@ -3,9 +3,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useService } from '../../../../context';
 import {
   IPinRendererProps,
-  DRAG_SCENE_SERVICE,
-  HOVER_SERVICE,
-  PAINTER_CONFIGURATION_SERVICE,
+  IDragSceneService,
+  IHoverService,
+  IPainterConfigurationService,
   EntityKind,
   Entity,
 } from '../../../../types';
@@ -13,9 +13,9 @@ import {
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);
   const animate = useRef<SVGAnimationElement>(null);
-  const dragService = useService(DRAG_SCENE_SERVICE);
-  const hoverService = useService(HOVER_SERVICE);
-  const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
+  const dragService = useService(IDragSceneService);
+  const hoverService = useService(IHoverService);
+  const configuration = useService(IPainterConfigurationService);
   const [actual, setActual] = useState(0);
   const {
     // 这只是为了满足类型，实际上不需要

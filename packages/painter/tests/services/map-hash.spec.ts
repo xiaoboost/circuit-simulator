@@ -3,7 +3,7 @@ import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import {
-  MAP_HASH_SERVICE,
+  IMapHashMarkService,
   MarkKind,
   IMapHashService,
   LineMark,
@@ -23,7 +23,7 @@ describe('图纸标记服务', () => {
   let mapHash: IMapHashService;
 
   beforeAll(async () => {
-    mapHash = await getPlugin(MAP_HASH_SERVICE);
+    mapHash = await getPlugin(IMapHashMarkService);
   });
 
   beforeEach(() => {

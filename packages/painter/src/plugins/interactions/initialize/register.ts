@@ -1,32 +1,32 @@
 import {
-  LOGGER_SERVICE,
-  STATE_CORE_SERVICE,
-  LIFE_CYCLE_HOOK,
+  ILoggerService,
+  IStateCoreService,
+  ILifeCycleHook,
 } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
-  COLLISION_SERVICE,
-  MAP_HASH_SERVICE,
-  CONNECTION_SERVICE,
+  ICollisionService,
+  IMapHashMarkService,
+  IConnectionService,
 } from '../../../types';
 
 const LoggerName = '画布';
 
 definePlugin(({ registerHook, getService }) => {
   // 画布初始化
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      const { state: { data } } = getService(STATE_CORE_SERVICE);
-      const logger = getService(LOGGER_SERVICE);
+      const { state: { data } } = getService(IStateCoreService);
+      const logger = getService(ILoggerService);
 
       if (data.lines.length === 0 && data.parts.length === 0) {
         logger.info(LoggerName, '初始化数据为空，跳过初始化');
         return;
       }
 
-      const mapHashService = getService(MAP_HASH_SERVICE);
-      const collisionService = getService(COLLISION_SERVICE);
-      const connectionService = getService(CONNECTION_SERVICE);
+      const mapHashService = getService(IMapHashMarkService);
+      const collisionService = getService(ICollisionService);
+      const connectionService = getService(IConnectionService);
 
       // 初始化碰撞系统
       collisionService.createFromData(data);

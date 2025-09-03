@@ -1,12 +1,12 @@
-import { LIFE_CYCLE_HOOK } from '@circuit/shared';
+import { ILifeCycleHook } from '@circuit/shared';
 import { definePlugin } from '../../../context';
-import { VIEWPORT_SERVICE } from '../../../types';
+import { IViewportService } from '../../../types';
 
 definePlugin(({ registerHook, getService }) => {
   // 画布初始化时自动适应屏幕
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPainterMounted() {
-      getService(VIEWPORT_SERVICE).fitPainter(40, -1);
+      getService(IViewportService).fitPainter(40, -1);
     },
   });
 });

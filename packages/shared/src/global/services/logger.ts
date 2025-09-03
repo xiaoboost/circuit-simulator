@@ -6,10 +6,10 @@ import { createServiceKey } from '@circuit/inject';
  * @description 该服务用于获取日志功能
  * @example
  * ```ts
- * const loggerService = useService(LOGGER_SERVICE);
+ * const loggerService = useService(ILoggerService);
  * ```
  */
-export const LOGGER_SERVICE
+export const ILoggerService
   = createServiceKey<ILoggerService>('LoggerService');
 
 export type Message = string | number | (() => string | number);

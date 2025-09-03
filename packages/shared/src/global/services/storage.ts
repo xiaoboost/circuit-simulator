@@ -9,7 +9,7 @@ import { createServiceKey } from '@circuit/inject';
  * const cacheService = useService(CACHE_SERVICE);
  * ```
  */
-export const STORAGE_SERVICE
+export const IStorageService
   = createServiceKey<IStorageService>('StorageService');
 
 export interface IStorageService {

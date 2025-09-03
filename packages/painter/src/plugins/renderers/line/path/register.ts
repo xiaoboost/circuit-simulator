@@ -1,10 +1,10 @@
 import { definePlugin } from '../../../../context';
-import { LINE_RENDERER } from '../../../../types';
+import { ILineRendererHook } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册导线渲染器
-  registerHook(LINE_RENDERER, {
+  registerHook(ILineRendererHook, {
     name: 'LinePathRenderer',
     order: 1,
     Render,

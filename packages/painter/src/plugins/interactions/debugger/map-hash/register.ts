@@ -1,9 +1,9 @@
 import { definePlugin } from '../../../../context';
-import { DRAW_LAYER_HOOK } from '../../../../types';
+import { IDrawLayerHook } from '../../../../types';
 import { MapHashDebugger } from './render';
 
 definePlugin(({ registerHook }) => {
-  registerHook(DRAW_LAYER_HOOK, {
+  registerHook(IDrawLayerHook, {
     name: 'map-hash-debugger',
     order: 30,
     Render: MapHashDebugger,

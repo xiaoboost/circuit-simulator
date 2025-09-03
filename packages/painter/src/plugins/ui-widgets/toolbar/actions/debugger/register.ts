@@ -1,10 +1,10 @@
 import { definePlugin } from '../../../../../context';
-import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../../types';
+import { IPainterToolBarActionHook } from '../../../../../types';
 import { DebuggerRender as Render } from './render';
 
 definePlugin(({ registerHook }) => {
   // 注册调试按钮
-  registerHook(PAINTER_TOOLBAR_ACTION_HOOK, {
+  registerHook(IPainterToolBarActionHook, {
     name: 'DebuggerModeButton',
     order: 0,
     Render,

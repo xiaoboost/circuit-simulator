@@ -6,11 +6,10 @@ import {
 } from '@circuit/electronics';
 import Examples from '@circuit/examples';
 import {
-  STORAGE_SERVICE,
   IStorageService,
-  STATE_CORE_SERVICE,
-  LOGGER_SERVICE,
-  LIFE_CYCLE_HOOK,
+  IStateCoreService,
+  ILoggerService,
+  ILifeCycleHook,
 } from '@circuit/shared';
 import { PartStructuredData, LineStructuredData, StructuredData, StoreData } from '@circuit/types';
 import { isString } from '@xiao-ai/utils';
@@ -80,10 +79,10 @@ function getStoreByCache(cache: IStorageService): Promise<StoreData> {
 const LoggerName = '基座';
 
 definePlugin(({ registerHook, getService }) => {
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      const storage = getService(STORAGE_SERVICE);
-      const stateCore = getService(STATE_CORE_SERVICE);
+      const storage = getService(IStorageService);
+      const stateCore = getService(IStateCoreService);
 
       return getStoreByExample()
         .then((data) => {
@@ -96,7 +95,7 @@ definePlugin(({ registerHook, getService }) => {
             return;
           }
 
-          getService(LOGGER_SERVICE).info(LoggerName, '初始化加载图纸数据');
+          getService(ILoggerService).info(LoggerName, '初始化加载图纸数据');
 
           stateCore.commit({
             name: '图纸初始化',

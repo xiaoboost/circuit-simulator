@@ -6,13 +6,13 @@ import { createServiceKey } from '../../context';
  * @description 该钩子将用于监听原始 DOM 事件
  * @example
  * ```ts
- * const eventListenerHooks = useHook(EVENT_LISTENER_HOOK);
+ * const eventListenerHooks = useHook(IEventListenerHook);
  * ```
  */
-export const EVENT_LISTENER_HOOK = createServiceKey<IEventListener>('EventListener');
+export const IEventListenerHook = createServiceKey<IEventListenerHook>('IEventListenerHook');
 
 /** 原生事件监听 */
-export interface IEventListener {
+export interface IEventListenerHook {
   /**
    * 事件监听的顺序
    *

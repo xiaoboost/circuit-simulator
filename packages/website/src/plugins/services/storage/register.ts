@@ -1,4 +1,4 @@
-import { STORAGE_SERVICE, IStorageService } from '@circuit/shared';
+import { IStorageService } from '@circuit/shared';
 import LocalForage from 'localforage';
 import { definePlugin } from '../../../context';
 
@@ -15,5 +15,5 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册持久化储存服务
-  registerService(STORAGE_SERVICE, service);
+  registerService(IStorageService, service);
 });

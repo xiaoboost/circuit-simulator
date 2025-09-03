@@ -1,10 +1,10 @@
 import { RefObject, useEffect } from 'react';
 import { useHook } from '../../../context';
-import { EVENT_LISTENER_HOOK, IEventListener } from '../../../types';
+import { IEventListenerHook } from '../../../types';
 
 /** 事件监听器 */
 export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
-  const events = useHook(EVENT_LISTENER_HOOK);
+  const events = useHook(IEventListenerHook);
 
   useEffect(() => {
     if (!ref.current) {
@@ -23,11 +23,11 @@ export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
     ];
 
     // 按照参数组合分组事件监听器
-    const eventGroups = new Map<string, { hook: IEventListener; listener: string }[]>();
+    const eventGroups = new Map<string, { hook: IEventListenerHook; listener: string }[]>();
 
     for (const { event, listener } of eventMapping) {
       for (const hook of events) {
-        if (hook[listener as keyof IEventListener]) {
+        if (hook[listener as keyof IEventListenerHook]) {
           const key = `${event}:${hook.capture ? 'capture' : ''}:${hook.passive ? 'passive' : ''}`;
 
           if (!eventGroups.has(key)) {
@@ -50,7 +50,7 @@ export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
       const sortedHooks = hooks.sort((a, b) => (a.hook.order ?? 0) - (b.hook.order ?? 0));
       const handler = (event: Event) => {
         for (const { hook, listener } of sortedHooks) {
-          const cb = hook[listener as keyof IEventListener];
+          const cb = hook[listener as keyof IEventListenerHook];
 
           if (typeof cb === 'function') {
             cb(event as any);

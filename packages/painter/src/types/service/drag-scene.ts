@@ -7,10 +7,10 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取鼠标指针变换功能
  * @example
  * ```ts
- * const dragSceneService = useService(DRAG_SCENE_SERVICE);
+ * const dragSceneService = useService(IDragSceneService);
  * ```
  */
-export const DRAG_SCENE_SERVICE
+export const IDragSceneService
   = createServiceKey<IDragSceneService>('DragSceneService');
 
 /** 场景触发参数 */

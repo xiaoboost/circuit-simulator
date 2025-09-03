@@ -1,10 +1,9 @@
-import { LIFE_CYCLE_HOOK } from '@circuit/shared';
+import { ILifeCycleHook } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   ICursorService,
   ICursorKind,
-  CURSOR_SERVICE,
-  HOVER_SERVICE,
+  IHoverService,
   EntityKind,
 } from '../../../types';
 
@@ -26,9 +25,9 @@ definePlugin(({ registerService, registerHook, getService }) => {
   };
 
   // 监听 Hover 状态
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPluginInit() {
-      getService(HOVER_SERVICE).status.observe((val) => {
+      getService(IHoverService).status.observe((val) => {
         if (
           !val || val.kind === EntityKind.Part
         ) {
@@ -47,7 +46,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
   });
 
   // 注册鼠标指针服务
-  registerService(CURSOR_SERVICE, service);
+  registerService(ICursorService, service);
 
   // 卸载器
   return () => {

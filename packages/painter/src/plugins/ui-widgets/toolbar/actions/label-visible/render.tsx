@@ -2,7 +2,7 @@ import { Text } from '@circuit/icons';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
-import { PAINTER_CONFIGURATION_SERVICE } from '../../../../../types';
+import { IPainterConfigurationService } from '../../../../../types';
 import { Button } from '../../components';
 import { ToolbarMenuOffset } from '../../constant';
 
@@ -10,7 +10,7 @@ export function LabelVisibleRender() {
   const {
     PartLabelVisibleKind: Kind,
     partLabelVisible: visible,
-  } = useService(PAINTER_CONFIGURATION_SERVICE);
+  } = useService(IPainterConfigurationService);
   const [labelVisible, setLabelVisible] = useWatcher(visible);
 
   const items: MenuProps['items'] = [

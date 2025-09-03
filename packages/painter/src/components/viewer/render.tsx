@@ -1,10 +1,10 @@
 import React from 'react';
 import { useHook } from '../../context';
-import { VIEW_LAYER_HOOK } from '../../types';
+import { IViewLayerHook } from '../../types';
 import * as Styles from './styles.less';
 
 export const Viewer = React.memo(function Viewer() {
-  const viewers = useHook(VIEW_LAYER_HOOK, 'asc');
+  const viewers = useHook(IViewLayerHook, 'asc');
 
   // 没有视图图层时不渲染
   if (viewers.length === 0) {

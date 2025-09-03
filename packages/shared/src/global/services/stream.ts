@@ -7,10 +7,10 @@ import type { EventStream } from '@circuit/reactive';
  * @description 该服务提供了事件流服务
  * @example
  * ```ts
- * const streamService = useService(STREAM_SERVICE);
+ * const streamService = useService(IStreamService);
  * ```
  */
-export const STREAM_SERVICE
+export const IStreamService
   = createServiceKey<IStreamService>('StreamService');
 
 export interface IStreamService {

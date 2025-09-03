@@ -1,9 +1,9 @@
 import { definePlugin } from '../../../../../context';
-import { PAINTER_TOOLBAR_ACTION_HOOK } from '../../../../../types';
+import { IPainterToolBarActionHook } from '../../../../../types';
 import { LabelVisibleRender as Render } from './render';
 
 definePlugin(({ registerHook }) => {
-  registerHook(PAINTER_TOOLBAR_ACTION_HOOK, {
+  registerHook(IPainterToolBarActionHook, {
     name: 'LabelVisibleButton',
     order: 2,
     Render,

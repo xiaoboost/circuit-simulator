@@ -1,18 +1,16 @@
 import {
-  LOGGER_SERVICE,
-  CONFIGURATION_SERVICE,
   ILoggerService,
+  IConfigurationService,
   Message,
 } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 
 const getLoggerStyle = (color: string) => {
-  // eslint-disable-next-line
   return `color: white; font-style: normal; background-color: ${color}; border-radius: 4px; padding: 2px`;
 };
 
 definePlugin(({ registerService, getService }) => {
-  const isDebugMode = () => getService(CONFIGURATION_SERVICE).openDebugLog.data;
+  const isDebugMode = () => getService(IConfigurationService).openDebugLog.data;
   const getMessage = (messages: Message[]) => {
     return messages.map((message) => {
       return typeof message === 'function' ? message() : message;
@@ -49,5 +47,5 @@ definePlugin(({ registerService, getService }) => {
   };
 
   // 注册日志服务
-  registerService(LOGGER_SERVICE, service);
+  registerService(ILoggerService, service);
 });

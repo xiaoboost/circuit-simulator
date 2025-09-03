@@ -3,8 +3,7 @@ import { isEqual } from '@xiao-ai/utils';
 import { useEffect, useState } from 'react';
 import { definePlugin } from '../../../context';
 import {
-  CONNECTION_SERVICE,
-  type IConnectionService,
+  IConnectionService,
   type IConnectionData,
   type IConnectionDataWithPin,
   type ObserverCb,
@@ -269,7 +268,7 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册服务
-  registerService(CONNECTION_SERVICE, service);
+  registerService(IConnectionService, service);
 
   // 卸载器
   return () => {

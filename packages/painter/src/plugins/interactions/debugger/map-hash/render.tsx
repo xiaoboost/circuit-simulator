@@ -3,9 +3,9 @@ import { isDef } from '@xiao-ai/utils';
 import React from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
-  PAINTER_CONFIGURATION_SERVICE,
-  MAP_HASH_SERVICE,
-  MAP_COORDINATE_SERVICE,
+  IPainterConfigurationService,
+  IMapHashMarkService,
+  IMapCoordinateService,
   MarkKind,
   ConnectionData,
 } from '../../../../types';
@@ -21,10 +21,10 @@ const nodeColor: Record<MarkKind, string> = {
 };
 
 export function MapHashDebugger() {
-  const configuration = useService(PAINTER_CONFIGURATION_SERVICE);
+  const configuration = useService(IPainterConfigurationService);
   const [openMapMarkDebugger] = useWatcher(configuration.openMapMarkDebugger);
-  const mapHashService = useService(MAP_HASH_SERVICE);
-  const mapService = useService(MAP_COORDINATE_SERVICE);
+  const mapHashService = useService(IMapHashMarkService);
+  const mapService = useService(IMapCoordinateService);
   const [scale] = useWatcher(mapService.scale);
 
   if (!openMapMarkDebugger) {

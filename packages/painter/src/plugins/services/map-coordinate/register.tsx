@@ -1,16 +1,15 @@
 import { Point } from '@circuit/algorithm';
-import { LIFE_CYCLE_HOOK } from '@circuit/shared';
+import { ILifeCycleHook } from '@circuit/shared';
 import React, { RefObject } from 'react';
 import { definePlugin, Watcher } from '../../../context';
 import {
   IMapCoordinateService,
-  CURSOR_SERVICE,
-  DRAG_SCENE_SERVICE,
-  MAP_COORDINATE_SERVICE,
-  EVENT_LISTENER_HOOK,
-  DRAG_SCENE_HOOK,
-  VIEW_LAYER_HOOK,
-  PAINTER_CONFIGURATION_SERVICE,
+  ICursorService,
+  IDragSceneService,
+  IEventListenerHook,
+  IDragSceneHook,
+  IViewLayerHook,
+  IPainterConfigurationService,
 } from '../../../types';
 
 definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
@@ -145,7 +144,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   };
 
   // 注册鼠标拖动启动事件
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     order: 0,
     onMouseDown(event) {
       // 非左键或者鼠标按下事件不处理
@@ -153,8 +152,8 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
         return;
       }
 
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
-      const configurationService = getService(PAINTER_CONFIGURATION_SERVICE);
+      const dragSceneService = getService(IDragSceneService);
+      const configurationService = getService(IPainterConfigurationService);
 
       // 当前场景不为空或者不是移动模式时不处理
       if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
@@ -166,12 +165,12 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   });
 
   // 注册滚轮缩放事件
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     order: 1,
     capture: true,
     passive: true,
     onWheel(event) {
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+      const dragSceneService = getService(IDragSceneService);
 
       // 当前场景不为空时不处理
       if (dragSceneService.isDragging.data) {
@@ -224,11 +223,11 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   });
 
   // 注册鼠标拖动背景事件
-  registerHook(DRAG_SCENE_HOOK, {
+  registerHook(IDragSceneHook, {
     name: DragSceneName,
     isEnd(event) {
-      const configuration = getService(PAINTER_CONFIGURATION_SERVICE);
-      const dragSceneService = getService(DRAG_SCENE_SERVICE);
+      const configuration = getService(IPainterConfigurationService);
+      const dragSceneService = getService(IDragSceneService);
 
       // 不是移动模式时直接停止
       if (!configuration.movePainterMode.data) {
@@ -241,12 +240,12 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       service.setPosition(service.position.data.add(event.movement));
     },
     afterStart() {
-      const cursorService = getService(CURSOR_SERVICE);
+      const cursorService = getService(ICursorService);
       cursorService.set(cursorService.kind.Dragging);
     },
     afterEnd() {
-      const cursorService = getService(CURSOR_SERVICE);
-      const configurationService = getService(PAINTER_CONFIGURATION_SERVICE);
+      const cursorService = getService(ICursorService);
+      const configurationService = getService(IPainterConfigurationService);
 
       if (configurationService.movePainterMode.data) {
         cursorService.set(cursorService.kind.Drag);
@@ -258,7 +257,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   });
 
   // 注册画布监听元素
-  registerHook(VIEW_LAYER_HOOK, {
+  registerHook(IViewLayerHook, {
     name: 'PainterScaleDom',
     order: 0,
     Render() {
@@ -380,14 +379,14 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   }
 
   // 注册生命周期
-  registerHook(LIFE_CYCLE_HOOK, {
+  registerHook(ILifeCycleHook, {
     afterPainterMounted() {
       startObserving();
     },
   });
 
   // 注册图纸坐标服务
-  registerService(MAP_COORDINATE_SERVICE, service);
+  registerService(IMapCoordinateService, service);
 
   // 卸载器
   return () => {

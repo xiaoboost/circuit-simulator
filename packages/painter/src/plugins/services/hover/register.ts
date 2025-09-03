@@ -1,12 +1,11 @@
 import { Point } from '@circuit/algorithm';
-import { LOGGER_SERVICE } from '@circuit/shared';
+import { ILoggerService } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   IHoverService,
-  HOVER_SERVICE,
-  EVENT_LISTENER_HOOK,
-  MAP_COORDINATE_SERVICE,
-  COLLISION_SERVICE,
+  IEventListenerHook,
+  IMapCoordinateService,
+  ICollisionService,
   EntityKind,
   Entity,
 } from '../../../types';
@@ -41,14 +40,14 @@ definePlugin(({ registerService, registerHook, getService }) => {
     }
   };
 
-  registerHook(EVENT_LISTENER_HOOK, {
+  registerHook(IEventListenerHook, {
     order: 1,
     onMouseMove(event) {
-      const collisionService = getService(COLLISION_SERVICE);
-      const mapService = getService(MAP_COORDINATE_SERVICE);
+      const collisionService = getService(ICollisionService);
+      const mapService = getService(IMapCoordinateService);
       const positionInDrawer = mapService.screenToMapPosition(new Point(event.pageX, event.pageY));
       const collision = collisionService.pointInEntities(positionInDrawer);
-      const logger = getService(LOGGER_SERVICE);
+      const logger = getService(ILoggerService);
 
       if (collision.length === 0) {
         service.status.setData(undefined);
@@ -82,7 +81,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
   });
 
   // 注册鼠标悬停服务
-  registerService(HOVER_SERVICE, service);
+  registerService(IHoverService, service);
 
   return () => {
     service.status.destroy();

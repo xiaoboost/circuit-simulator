@@ -1,20 +1,20 @@
 import { PlusOutlined as Add, MinusOutlined as Minus } from '@circuit/icons';
-import { LOGGER_SERVICE } from '@circuit/shared';
+import { ILoggerService } from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
 import {
-  MAP_COORDINATE_SERVICE,
-  DRAG_SCENE_SERVICE,
+  IMapCoordinateService,
+  IDragSceneService,
 } from '../../../../../types';
 import { Button, Divider } from '../../components';
 
 const LoggerName = '快捷操作';
 
 export function ScaleRender() {
-  const dragScene = useService(DRAG_SCENE_SERVICE);
-  const mapService = useService(MAP_COORDINATE_SERVICE);
-  const logger = useService(LOGGER_SERVICE);
+  const dragScene = useService(IDragSceneService);
+  const mapService = useService(IMapCoordinateService);
+  const logger = useService(ILoggerService);
   const [scale] = useWatcher(mapService.scale);
   const [isDragging] = useWatcher(dragScene.isDragging);
   const isScaleMax = scale >= mapService.ScaleMax;

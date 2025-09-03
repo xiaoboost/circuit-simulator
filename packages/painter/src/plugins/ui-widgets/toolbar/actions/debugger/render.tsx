@@ -1,10 +1,10 @@
 import { Debugger } from '@circuit/icons';
-import { CONFIGURATION_SERVICE } from '@circuit/shared';
+import { IConfigurationService } from '@circuit/shared';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
 import { useService, useWatcher } from '../../../../../context';
-import { PAINTER_CONFIGURATION_SERVICE } from '../../../../../types';
+import { IPainterConfigurationService } from '../../../../../types';
 import { Button, Divider } from '../../components';
 import { ToolbarMenuOffset } from '../../constant';
 import * as Styles from './styles.less';
@@ -12,12 +12,12 @@ import * as Styles from './styles.less';
 export function DebuggerRender() {
   const {
     openDebugLog,
-  } = useService(CONFIGURATION_SERVICE);
+  } = useService(IConfigurationService);
   const {
     openMapMarkDebugger,
     openLineSearchDebugger,
     visibleElectronicOutline,
-  } = useService(PAINTER_CONFIGURATION_SERVICE);
+  } = useService(IPainterConfigurationService);
   const [log, setLog] = useWatcher(openDebugLog);
   const [mapMark, setMapMark] = useWatcher(openMapMarkDebugger);
   const [lineSearch, setLineSearch] = useWatcher(openLineSearchDebugger);

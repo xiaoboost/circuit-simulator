@@ -1,12 +1,12 @@
 import { getPartPrototype } from '@circuit/electronics';
 import React from 'react';
 import { useWatcher, useService } from '../../../../context';
-import { IDrawLayerProps, SELECT_SERVICE } from '../../../../types';
+import { IDrawLayerProps, ISelectService } from '../../../../types';
 import { Line } from './line';
 import { Part } from './part';
 
 function ElectronicLayerRender({ parts, lines }: IDrawLayerProps) {
-  const selectService = useService(SELECT_SERVICE);
+  const selectService = useService(ISelectService);
   const [selectedIds] = useWatcher(selectService.value);
 
   // 如果元件和导线都没有数据，则不渲染

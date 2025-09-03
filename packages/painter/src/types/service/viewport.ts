@@ -7,10 +7,10 @@ import { createServiceKey, type Watcher } from '../../context';
  * @description 该服务用于获取视口镜头的转换和计算功能
  * @example
  * ```ts
- * const viewportService = useService(VIEWPORT_SERVICE);
+ * const viewportService = useService(IViewportService);
  * ```
  */
-export const VIEWPORT_SERVICE
+export const IViewportService
   = createServiceKey<IViewportService>('ViewportService');
 
 export interface IViewport {

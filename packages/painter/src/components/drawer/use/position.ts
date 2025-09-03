@@ -1,9 +1,9 @@
 import { RefObject, useEffect } from 'react';
 import { useService } from '../../../context';
-import { MAP_COORDINATE_SERVICE } from '../../../types';
+import { IMapCoordinateService } from '../../../types';
 
 export function usePosition(ref: RefObject<SVGGElement | null>) {
-  const mapService = useService(MAP_COORDINATE_SERVICE);
+  const mapService = useService(IMapCoordinateService);
 
   useEffect(() => {
     if (!ref.current) {
