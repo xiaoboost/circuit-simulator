@@ -164,6 +164,10 @@ definePlugin(({ registerHook, getService }) => {
 
       const { commitState: { data: { parts, lines } }, commit } = state;
       const endInPartPin = findPartPin(endPoint, parts);
+      const newLineData: LineStructuredData = {
+        id: line.id,
+        path: linePath,
+      };
 
       // 终点在器件引脚上
       if (endInPartPin) {
@@ -175,43 +179,37 @@ definePlugin(({ registerHook, getService }) => {
           return;
         }
 
-        const newLineData = {
-          id: line.id,
-          path: linePath,
-        };
-
-        // 提交新导线
-        commit({
-          name: `创建导线 ${line.id}`,
-          description: `创建导线 ${line.id}，终点在器件引脚上`,
-          patch({ lines }) {
-            lines.push(newLineData);
-          },
-        });
-
-        // 设置导线图纸数据
-        mapHash.setLineMark(newLineData);
-        // 设置碰撞数据
-        collision.setEntity(newLineData);
         // 设置连接关系
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
         connection.createConnection(newLineData.id, 1, endInPartPin.id, endInPartPin.pin);
-        // 清除鼠标样式
-        cursor.clear();
-        // 清除临时变量
-        varService.clearVariable();
-        // 打印结束日志
-        logger.info(LoggerName, '结束创建导线', newLineData.id);
-        return;
+      }
+      // 终点在导线上
+      // 终点在空位置
+      else {
+        // 空位置需要设置起点的连接关系
+        connection.createConnection(start.id, start.pin, newLineData.id, 0);
       }
 
-      // 终点在导线上
+      // TODO: 放下的时候，导线节点会闪一下半径 7，感觉可能是时序问题，需要检查一下
 
-      // 终点在空位置
-
-      // 其余状态一律报错
-      logger.error(LoggerName, '导线路径计算错误：', linePath.join(' -> '));
-      state.dropDraft();
+      // 清除鼠标样式
+      cursor.clear();
+      // 清除临时变量
+      varService.clearVariable();
+      // 设置导线图纸数据
+      mapHash.setLineMark(newLineData);
+      // 设置碰撞数据
+      collision.setEntity(newLineData);
+      // 提交新导线
+      commit({
+        name: `创建导线 ${line.id}`,
+        description: `创建导线 ${line.id}，终点在器件引脚上`,
+        patch({ lines }) {
+          lines.push(newLineData);
+        },
+      });
+      // 打印结束日志
+      logger.info(LoggerName, '结束创建导线', newLineData.id);
     },
   });
 });

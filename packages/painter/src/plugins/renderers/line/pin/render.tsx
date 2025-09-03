@@ -31,8 +31,9 @@ function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {
         pinIndex={i}
         style={style}
         position={position}
-        hoverR={isSpace ? 5 : 4}
+        hoverR={isSpace ? 6 : 4}
         normalR={isSpace ? 3 : 2}
+        strokeDasharray={isSpace ? '1.5 4' : undefined}
         fill={isSpace ? '#fff' : undefined}
       />
     );
