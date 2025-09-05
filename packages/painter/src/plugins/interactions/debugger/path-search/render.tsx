@@ -19,12 +19,10 @@ function draw(data: PathSearchPointData, dom: SVGGElement) {
   };
 
   const appendPath = (data: PathWithPoint, color: string) => {
-    // eslint-disable-next-line
     content += `<path d="M${data.map((n) => n.join(',')).join('L')}" stroke="${color}" fill="transparent" />`;
   };
 
   const appendText = (x: number, y: number, fill: string, text: string) => {
-    // eslint-disable-next-line
     content += `<text x="${x}" y="${y}" fill="${fill}" font-size="10" stroke-width="0.5">${text}</text>`;
   };
 
