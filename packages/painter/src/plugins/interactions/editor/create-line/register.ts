@@ -1,5 +1,9 @@
 import { Point, type PathWithPoint } from '@circuit/algorithm';
-import { createLine, getPartPin, createPartReferenceTag } from '@circuit/electronics';
+import {
+  getPartPin,
+  createLineByPath,
+  createPartReferenceTag,
+} from '@circuit/electronics';
 import {
   ILoggerService,
   IStateCoreService,
@@ -64,7 +68,7 @@ definePlugin(({ registerHook, getService }) => {
       const map = getService(IMapHashMarkService);
       const part = state.getPart(hoverData.id);
       const pin = getPartPin(part, hoverData.pin);
-      const line = createLine(pin.position);
+      const line = createLineByPath([pin.position]);
       const search = createSearcher({
         lineId: line.id,
         start: pin.position,
@@ -151,6 +155,7 @@ definePlugin(({ registerHook, getService }) => {
       const connection = getService(IConnectionService);
       const cursor = getService(ICursorService);
       const varService = getService(IVariableObserverService);
+      const select = getService(ISelectService);
 
       /** 导线路径 */
       const linePath = search.getSearchPath().map((point) => point.round(20));
@@ -166,10 +171,8 @@ definePlugin(({ registerHook, getService }) => {
 
       const { commitState: { data: { parts, lines } }, commit } = state;
       const endInPartPin = findPartPin(endPoint, parts);
-      const newLineData: LineStructuredData = {
-        id: line.id,
-        path: linePath,
-      };
+      // 不沿用旧导线编号，是为了规避旧编号各种临时状态带来的干扰
+      const newLineData: LineStructuredData = createLineByPath(linePath);
 
       // 终点在器件引脚上
       if (endInPartPin) {
@@ -180,8 +183,6 @@ definePlugin(({ registerHook, getService }) => {
           state.dropDraft();
           return;
         }
-
-        // TODO: 放下的时候，导线节点会闪一下半径 7，感觉可能是时序问题，需要检查一下
 
         // 设置连接关系
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
@@ -194,6 +195,8 @@ definePlugin(({ registerHook, getService }) => {
         mapHash.setLineMark(newLineData);
         // 设置碰撞数据
         collision.setEntity(newLineData);
+        // 设置选中
+        select.set(newLineData.id);
         // 提交新导线
         commit({
           name: `创建导线 ${line.id}`,
