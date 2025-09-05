@@ -73,12 +73,6 @@ export interface IDragSceneHook {
   /** 场景类型 */
   name: string;
   /**
-   * 场景结束
-   *
-   * @description 所有鼠标事件都会注入这里，当返回`true`时，表示该场景结束
-   */
-  isEnd(event: DragMouseEvent): boolean | undefined;
-  /**
    * 场景开始
    *
    * @description 首次移动之前
@@ -98,11 +92,19 @@ export interface IDragSceneHook {
    */
   onDragMove(event: DragMoveEvent, payload: DragSceneHookPayload): void;
   /**
+   * 场景结束前
+   */
+  beforeEnd?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
+  /**
    * 场景结束
    */
   afterEnd?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
   /**
+   * 取消场景前
+   */
+  beforeCancel?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
+  /**
    * 取消场景
    */
-  onCancel?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
+  afterCancel?(startPayload?: DragSceneHookPayload, endPayload?: DragSceneHookPayload): void;
 }

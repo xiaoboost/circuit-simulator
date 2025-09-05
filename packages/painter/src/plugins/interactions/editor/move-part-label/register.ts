@@ -17,6 +17,7 @@ import {
   ISelectService,
   ICursorService,
   ICursorKind,
+  IEventListenerHook,
   IVariableObserverService as VarService,
   PainterStreamConstant as Constant,
 } from '../../../../types';
@@ -32,6 +33,16 @@ interface Payload {
 }
 
 definePlugin(({ registerHook, getService }) => {
+  registerHook(IEventListenerHook, {
+    order: 5,
+    onMouseUp(event) {
+      const dragSceneService = getService(IDragSceneService);
+      if (dragSceneService.isLeftMouseUpNoMovingHasScene(event, MoveDragSceneName)) {
+        dragSceneService.triggerEnd(MoveDragSceneName, { event });
+      }
+    },
+  });
+
   registerHook(IDragSceneHook, {
     name: MoveDragSceneName,
     afterStart({ id }: Payload) {
@@ -50,10 +61,6 @@ definePlugin(({ registerHook, getService }) => {
       const movementInPart = rotateVector(movementInDrawerAcc, invRotate);
       const labelKey = getLabelKey(id);
       varService.set(KEY, labelKey, movementInPart);
-    },
-    isEnd(event) {
-      return getService(IDragSceneService)
-        .isLeftMouseUpNoMovingHasScene(event, MoveDragSceneName);
     },
     afterEnd({ id }: Payload) {
       const label = getLabelKey(id);

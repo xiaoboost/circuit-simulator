@@ -23,6 +23,7 @@ import {
   IVariableObserverService,
   IPainterHTMLElement,
   IPainterConfigurationService,
+  IEventListenerHook,
 } from '../../../../types';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
 
@@ -75,6 +76,16 @@ definePlugin(({ registerHook, getService }) => {
     },
   });
 
+  // 注册创建器件触发器
+  registerHook(IEventListenerHook, {
+    onMouseUp(event) {
+      const dragSceneService = getService(IDragSceneService);
+      if (dragSceneService.isLeftMouseUpNoMovingHasScene(event, CreatePartSceneName)) {
+        dragSceneService.triggerEnd(CreatePartSceneName, { event });
+      }
+    },
+  });
+
   // 创建的拖动场景
   registerHook(IDragSceneHook, {
     name: CreatePartSceneName,
@@ -101,10 +112,6 @@ definePlugin(({ registerHook, getService }) => {
         setPosition(payload.part.id, positionInDrawer);
         getService(ILoggerService).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
       }
-    },
-    isEnd(event) {
-      return getService(IDragSceneService)
-        .isLeftMouseUpNoMovingHasScene(event, CreatePartSceneName);
     },
     afterEnd({ part }: StartPayloadType, endPayload) {
       const painterService = getService(IStateCoreService);
@@ -147,7 +154,7 @@ definePlugin(({ registerHook, getService }) => {
       collisionService.setEntity(newPart);
       logger.info(LoggerName, '结束创建器件', partTag);
     },
-    onCancel({ part }: StartPayloadType) {
+    afterCancel({ part }: StartPayloadType) {
       const painterService = getService(IStateCoreService);
       const logger = getService(ILoggerService);
       logger.info(LoggerName, '取消创建器件', createPartTag(part));

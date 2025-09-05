@@ -75,15 +75,17 @@ definePlugin(({ registerHook, getService }) => {
         dragSceneService.trigger(SELECT_BOX_DRAG_SCENE_NAME, { event });
       }
     },
+    onMouseUp(event) {
+      const dragSceneService = getService(IDragSceneService);
+      if (dragSceneService.isLeftMouseUpNoMovingHasScene(event, SELECT_BOX_DRAG_SCENE_NAME)) {
+        dragSceneService.triggerEnd(SELECT_BOX_DRAG_SCENE_NAME, { event });
+      }
+    },
   });
 
   // 注册选择框场景
   registerHook(IDragSceneHook, {
     name: SELECT_BOX_DRAG_SCENE_NAME,
-    isEnd(event) {
-      return getService(IDragSceneService)
-        .isLeftMouseUpNoMovingHasScene(event, SELECT_BOX_DRAG_SCENE_NAME);
-    },
     onDragMove(event) {
       end.setData(Point.from(event.positionInDrawer));
 
@@ -142,7 +144,7 @@ definePlugin(({ registerHook, getService }) => {
       end.setData(Point.Zero());
       selectService.set(...partIds, ...lineIds);
     },
-    onCancel() {
+    afterCancel() {
       getService(ICursorService).clear();
       start.setData(Point.Zero());
       end.setData(Point.Zero());

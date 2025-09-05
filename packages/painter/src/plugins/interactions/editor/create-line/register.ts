@@ -41,7 +41,7 @@ interface StartPayloadType extends DragSceneHookPayload {
 }
 
 definePlugin(({ registerHook, getService }) => {
-  // 注册创建导线场景
+  // 注册创建导线场景触发器
   registerHook(IEventListenerHook, {
     order: 5,
     onMouseDown(event) {
@@ -90,6 +90,12 @@ definePlugin(({ registerHook, getService }) => {
         },
       });
     },
+    onMouseUp(event) {
+      const dragSceneService = getService(IDragSceneService);
+      if (dragSceneService.isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName)) {
+        dragSceneService.triggerEnd(CreateLineSceneName, { event });
+      }
+    },
   });
 
   // 创建的拖动场景
@@ -137,11 +143,7 @@ definePlugin(({ registerHook, getService }) => {
     onDragMove({ positionInDrawer, movement }, { search }: StartPayloadType) {
       setSearchResult(getService(IVariableObserverService), search(positionInDrawer, movement));
     },
-    isEnd(event) {
-      return getService(IDragSceneService)
-        .isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName);
-    },
-    afterEnd({ line, search, start }: StartPayloadType) {
+    beforeEnd({ line, search, start }: StartPayloadType) {
       const mapHash = getService(IMapHashMarkService);
       const collision = getService(ICollisionService);
       const logger = getService(ILoggerService);
@@ -179,9 +181,29 @@ definePlugin(({ registerHook, getService }) => {
           return;
         }
 
+        // TODO: 放下的时候，导线节点会闪一下半径 7，感觉可能是时序问题，需要检查一下
+
         // 设置连接关系
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
         connection.createConnection(newLineData.id, 1, endInPartPin.id, endInPartPin.pin);
+        // 清除鼠标样式
+        cursor.clear();
+        // 清除临时变量
+        varService.clearVariable();
+        // 设置导线图纸数据
+        mapHash.setLineMark(newLineData);
+        // 设置碰撞数据
+        collision.setEntity(newLineData);
+        // 提交新导线
+        commit({
+          name: `创建导线 ${line.id}`,
+          description: `创建导线 ${line.id}，终点在器件引脚上`,
+          patch({ lines }) {
+            lines.push(newLineData);
+          },
+        });
+        // 打印结束日志
+        logger.info(LoggerName, '结束创建导线', newLineData.id);
       }
       // 终点在导线上
       // 终点在空位置
@@ -189,27 +211,6 @@ definePlugin(({ registerHook, getService }) => {
         // 空位置需要设置起点的连接关系
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
       }
-
-      // TODO: 放下的时候，导线节点会闪一下半径 7，感觉可能是时序问题，需要检查一下
-
-      // 清除鼠标样式
-      cursor.clear();
-      // 清除临时变量
-      varService.clearVariable();
-      // 设置导线图纸数据
-      mapHash.setLineMark(newLineData);
-      // 设置碰撞数据
-      collision.setEntity(newLineData);
-      // 提交新导线
-      commit({
-        name: `创建导线 ${line.id}`,
-        description: `创建导线 ${line.id}，终点在器件引脚上`,
-        patch({ lines }) {
-          lines.push(newLineData);
-        },
-      });
-      // 打印结束日志
-      logger.info(LoggerName, '结束创建导线', newLineData.id);
     },
   });
 });

@@ -1,5 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { IHotKeyHook } from '@circuit/shared';
+import { IHotKeyHook, nextFrame } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   DragMouseEvent,
@@ -62,39 +62,31 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
           && sceneSet.has(name)
         );
       });
-
-      Promise.resolve()
-        // 先删除场景记录
-        .then(() => {
-          hooks.forEach(({ name }) => {
-            sceneSet.delete(name);
-            isMovedMap.delete(name);
-            service.isDragging.setData(sceneSet.size !== 0);
-          });
-        })
-        // 触发结束/取消事件
-        .then(() => {
-          const hookKey = payload?.esc ? 'onCancel' : 'afterEnd';
-
-          hooks.forEach(({ name, [hookKey]: hook }) => {
-            const triggerPayload = triggerPayloadMap.get(name);
-            const endPayload: DragSceneHookPayload | undefined = payload?.event
-              ? {
-                ...payload,
-                event: getDragMouseEvent(payload.event),
-              }
-              : payload as any;
-
-            hook?.(triggerPayload, endPayload);
-          });
-        })
-        // 最后删除记录数据
-        .then(() => {
-          hooks.forEach(({ name }) => {
-            triggerPayloadMap.delete(name);
-            startPositionMap.delete(name);
-          });
+      const beforeKey = payload?.esc ? 'beforeCancel' : 'beforeEnd';
+      const afterKey = payload?.esc ? 'afterCancel' : 'afterEnd';
+      const endPayload = payload?.event
+        ? { ...payload, event: getDragMouseEvent(payload.event) }
+        : payload as any;
+      const startPayload = hooks.map(({ name }) => triggerPayloadMap.get(name));
+      const run = (key: typeof beforeKey | typeof afterKey) => {
+        return Promise.all(hooks.map(({ [key]: hook }, index) => {
+          hook?.(startPayload[index], endPayload);
+        }));
+      };
+      const clear = () => {
+        hooks.forEach(({ name }) => {
+          sceneSet.delete(name);
+          isMovedMap.delete(name);
+          triggerPayloadMap.delete(name);
+          startPositionMap.delete(name);
+          service.isDragging.setData(sceneSet.size !== 0);
         });
+      };
+
+      nextFrame()
+        .then(() => run(beforeKey))
+        .then(() => clear())
+        .then(() => run(afterKey));
     },
     onlyHas(scene) {
       return sceneSet.size === 1 && sceneSet.has(scene);
@@ -136,68 +128,12 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     return dragMouseEvent;
   }
 
-  function endCb(event: MouseEvent) {
-    if (service.size === 0) {
-      return;
-    }
-
-    const dragHook = getHook(IDragSceneHook);
-    // 正在进行中的场景
-    const hooks = dragHook.filter((hook) => service.has(hook.name));
-
-    if (hooks.length === 0) {
-      return;
-    }
-
-    const dragMouseEvent = getDragMouseEvent(event);
-
-    for (const hook of hooks) {
-      const isEnd = hook.isEnd(dragMouseEvent);
-      const triggerPayload = triggerPayloadMap.get(hook.name);
-
-      if (isEnd) {
-        // 先移除场景，再触发结束事件
-        Promise.resolve()
-          .then(() => {
-            sceneSet.delete(hook.name);
-            isMovedMap.delete(hook.name);
-            triggerPayloadMap.delete(hook.name);
-            startPositionMap.delete(hook.name);
-            service.isDragging.setData(sceneSet.size !== 0);
-          })
-          .then(() => hook.afterEnd?.(triggerPayload, { event: dragMouseEvent }));
-      }
-    }
-  }
-
   /**
    * 上个鼠标位置
    *
    * @description 这里是画布位置
    */
   let lastMousePosition: Point | null = null;
-
-  // 注册原始事件钩子
-  registerHook(IEventListenerHook, {
-    onClick(event) {
-      endCb(event);
-    },
-    onDblClick(event) {
-      endCb(event);
-    },
-    onMouseDown(event) {
-      endCb(event);
-    },
-    onMouseUp(event) {
-      endCb(event);
-    },
-    onMouseEnter(event) {
-      endCb(event);
-    },
-    onMouseLeave(event) {
-      endCb(event);
-    },
-  });
 
   // 注册拖拽场景实现钩子
   registerHook(IEventListenerHook, {

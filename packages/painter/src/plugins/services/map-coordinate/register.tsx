@@ -156,11 +156,24 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       const configurationService = getService(IPainterConfigurationService);
 
       // 当前场景不为空或者不是移动模式时不处理
-      if (dragSceneService.size !== 0 || !configurationService.movePainterMode.data) {
+      if (dragSceneService.isDragging.data || !configurationService.movePainterMode.data) {
         return;
       }
 
       dragSceneService.trigger(DragSceneName, { event });
+    },
+    onMouseUp(event) {
+      const configuration = getService(IPainterConfigurationService);
+      const dragSceneService = getService(IDragSceneService);
+
+      if (
+        // 不是移动模式时直接停止
+        !configuration.movePainterMode.data
+        // 鼠标抬起时场景存在
+        || dragSceneService.isLeftMouseUpNoMovingHasScene(event, DragSceneName)
+      ) {
+        dragSceneService.triggerEnd(DragSceneName, { event });
+      }
     },
   });
 
@@ -182,21 +195,45 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       const oldScale = scale.data;
       const oldPosition = position.data;
 
-      // 是否为触摸板双指移动（通常 deltaMode 为 0 且 deltaX/deltaY 任意一个非 0）
-      const isTouchpadPan
-        = event.deltaMode === 0
-          && (event.deltaX !== 0 || event.deltaY !== 0)
-          && !event.ctrlKey;
+      /**
+       * 双指缩放
+       */
+      const isTouchpadZoom = event.ctrlKey;
 
-      // 是否为触摸板双指缩放（通常 deltaMode 为 0 且 deltaX/deltaY 绝对值为 0）
-      const isTouchpadZoom
-        = event.deltaMode === 0
-          && Math.abs(event.deltaX) === 0
-          && Math.abs(event.deltaY) === 0
-          && !event.ctrlKey;
+      /**
+       * 鼠标滚轮
+       *
+       * @description 鼠标滚轮的判断基于以下特征：
+       * 1. deltaMode 为 1 或 2（行或页单位）
+       * 2. 或者 deltaMode 为 0 但只有 deltaY 有较大值
+       * 3. 且不是 Ctrl 键（Ctrl+滚轮通常是缩放）
+       */
+      const isMouseWheel = (
+        !event.ctrlKey
+        && (
+          event.deltaMode === 1
+          || event.deltaMode === 2
+          || (
+            event.deltaMode === 0
+            && event.deltaX === 0
+            && Math.abs(event.deltaY) > 80
+          )
+        )
+      );
 
-      // 检测是否为鼠标滚轮缩放（通常 deltaMode 为 1 或 2）
-      const isMouseWheel = event.deltaMode === 1 || event.deltaMode === 2;
+      /**
+       * 触摸板双指移动
+       *
+       * @description 触摸板平移的特征：
+       * 1. deltaMode 为 0（像素单位）
+       * 2. 有 deltaX 或 deltaY 值
+       * 3. 不是 Ctrl 键
+       * 4. 不是鼠标滚轮
+       */
+      const isTouchpadPan = !event.ctrlKey
+        && event.deltaMode === 0
+        && (event.deltaX !== 0 || event.deltaY !== 0)
+        && !isMouseWheel;
 
       // 触摸板双指移动 - 平移画布
       if (isTouchpadPan) {
@@ -205,7 +242,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       }
 
       // 触摸板双指缩放或鼠标滚轮缩放
-      if (isTouchpadZoom || isMouseWheel || event.ctrlKey) {
+      if (isTouchpadZoom || isMouseWheel) {
         if (event.deltaY > 0) {
           service.zoomOut();
         }
@@ -227,17 +264,6 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   // 注册鼠标拖动背景事件
   registerHook(IDragSceneHook, {
     name: DragSceneName,
-    isEnd(event) {
-      const configuration = getService(IPainterConfigurationService);
-      const dragSceneService = getService(IDragSceneService);
-
-      // 不是移动模式时直接停止
-      if (!configuration.movePainterMode.data) {
-        return true;
-      }
-
-      return dragSceneService.isLeftMouseUpNoMovingHasScene(event, DragSceneName);
-    },
     onDragMove(event) {
       service.setPosition(service.position.data.add(event.movement));
     },
