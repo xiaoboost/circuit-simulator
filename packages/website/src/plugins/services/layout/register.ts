@@ -18,8 +18,9 @@ definePlugin(({ registerService, registerHook, getService, getHook }) => {
     {
       key: 'Layout.LeftSidebar.Active',
       watcher: service.leftSidebarActiveTab,
-      fromCache: (data: boolean) => {
-        if (!data) {
+      fromCache: (data: boolean | undefined) => {
+        // 当且仅当数据为 false 时，才不展开
+        if (data === false) {
           return '';
         }
 
