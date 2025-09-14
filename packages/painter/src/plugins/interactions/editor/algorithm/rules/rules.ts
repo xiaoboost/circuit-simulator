@@ -1,16 +1,8 @@
+import { Point } from '@circuit/algorithm';
 import { SearchMode } from '../searcher';
-import {
-  isValidNode,
-} from './check';
-import {
-  toPointCost,
-  toLineCost,
-} from './cost';
-import {
-  isEndPoint,
-  isInEndLines,
-  // checkNodeInLineWhenDraw,
-} from './end';
+import { isValidNode } from './check';
+import { toPointCost } from './cost';
+import { isEndPoint, isInEndLines } from './end';
 import type {
   Rules,
   RulesOptions,
@@ -24,29 +16,26 @@ const ThrowError = () => {
 
 /** 创建搜索规则 */
 export function createRules(options: RulesOptions): Rules {
+  const { start, end, direction, painter, mode } = options;
   const context: RulesContext = {
-    ...options,
+    start,
+    direction,
+    painter,
+    mode,
+    end,
     endLines: [],
   };
   const rules: Rules = {
     cost: ThrowError,
     check: ThrowError,
     isEnd: ThrowError,
+    getEnd: () => end ?? Point.Zero(),
   };
-
-  const { mode, end, painter } = options;
 
   // 线对齐模式
   if (mode === SearchMode.DrawAlignLine) {
-    const endLines = getSegment(painter, end);
-
-    if (!endLines || endLines.length === 0) {
-      throw new Error('终点不在导线上');
-    }
-
-    context.endLines = endLines;
-
-    rules.cost = toLineCost.bind(context);
+    context.endLines = getSegment(painter, end);
+    rules.cost = toPointCost.bind(context);
     rules.check = isValidNode.bind(context);
     rules.isEnd = isInEndLines.bind(context);
   }

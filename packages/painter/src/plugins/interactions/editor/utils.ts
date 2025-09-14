@@ -79,7 +79,8 @@ export function createSearchHook(varService: IVariableObserverService): SearchHo
     },
     expand(node) {
       store!.expand = [
-        ...(store!.expand ?? []), {
+        ...(store!.expand ?? []),
+        {
           point: node.position,
           value: node.value,
         },
@@ -88,7 +89,6 @@ export function createSearchHook(varService: IVariableObserverService): SearchHo
     },
     used(node) {
       store!.current = node.position;
-      store!.expand = undefined;
       varService.set(DebugKey, { ...store });
     },
     afterEnd() {

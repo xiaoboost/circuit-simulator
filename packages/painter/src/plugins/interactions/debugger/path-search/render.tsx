@@ -18,8 +18,8 @@ function draw(data: PathSearchPointData, dom: SVGGElement) {
     content += `<circle cx="${cx}" cy="${cy}" fill="${fill}" r="4" />`;
   };
 
-  const appendPath = (data: PathWithPoint, color: string) => {
-    content += `<path d="M${data.map((n) => n.join(',')).join('L')}" stroke="${color}" fill="transparent" />`;
+  const appendPath = (data: PathWithPoint, color: string, width = 2) => {
+    content += `<path d="M${data.map((n) => n.join(',')).join('L')}" stroke="${color}" fill="transparent" stroke-width="${width}" />`;
   };
 
   const appendText = (x: number, y: number, fill: string, text: string) => {
@@ -64,7 +64,7 @@ export function PathSearchDebugger() {
     }
 
     return observe<PathSearchPointData>(PATH_SEARCH_POINTS_STATE, (data) => {
-      draw(data, drawRef.current!);
+      draw(data ?? {}, drawRef.current!);
     });
   }, [openLineSearchDebugger, drawRef.current]);
 

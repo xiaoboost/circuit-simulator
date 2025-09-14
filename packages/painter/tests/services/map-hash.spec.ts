@@ -13,7 +13,7 @@ import {
   PartPinLineMark,
   PartPinMark,
   PartMark,
-  LineAndPointMark,
+  LineAndLineMark,
 } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
@@ -879,9 +879,9 @@ describe('图纸标记服务', () => {
         const node2 = Point.from([0, 20]);
         const node3 = Point.from([0, 40]);
 
-        const mark1 = mapHash.get(node1) as LineAndPointMark;
-        const mark2 = mapHash.get(node2) as LineAndPointMark;
-        const mark3 = mapHash.get(node3) as LineAndPointMark;
+        const mark1 = mapHash.get(node1) as LineAndLineMark;
+        const mark2 = mapHash.get(node2) as LineAndLineMark;
+        const mark3 = mapHash.get(node3) as LineAndLineMark;
 
         expect(mapHash.hasConnect(mark1, node1)).toBe(false);
         expect(mapHash.hasConnect(mark1, node2)).toBe(true);
@@ -1044,25 +1044,25 @@ describe('图纸标记服务', () => {
           ]));
         });
         it('前进方向为导线方向时，前进到导线终点', () => {
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const vector = Point.from([0, 1]);
           const end = mapHash.alongLineAndVector(mark, vector);
           expect(end.position).toStrictEqual(Point.from([0, 100]));
         });
         it('前进方向为导线反方向时，前进到导线起点', () => {
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const vector = Point.from([0, -1]);
           const end = mapHash.alongLineAndVector(mark, vector);
           expect(end.position).toStrictEqual(Point.from([0, 0]));
         });
         it('前进方向不是导线反方向时，结果为起点本身', () => {
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const vector = Point.from([1, 0]);
           const end = mapHash.alongLineAndVector(mark, vector);
           expect(end.position).toStrictEqual(Point.from([0, 20]));
         });
         it('前进方向为导线方向时，并输入终点时，结果为输入终点', () => {
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const inputEnd = Point.from([0, 80]);
           const vector = Point.from([0, 1]);
           const end = mapHash.alongLineAndVector(mark, vector, inputEnd);
@@ -1077,7 +1077,7 @@ describe('图纸标记服务', () => {
           Point.from([100, 120]),
         ]));
 
-        const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+        const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
         const vector = Point.from([0, 1]);
         const end = mapHash.alongLineAndVector(mark, vector);
         expect(end.position).toStrictEqual(Point.from([0, 120]));
@@ -1097,7 +1097,7 @@ describe('图纸标记服务', () => {
           Point.from([60, 60]),
         ]));
 
-        const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+        const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
         const vector = Point.from([0, 1]);
         const end = mapHash.alongLineAndVector(mark, vector);
         expect(end.position).toStrictEqual(Point.from([0, 120]));
@@ -1114,7 +1114,7 @@ describe('图纸标记服务', () => {
             Point.from([40, 60]),
           ]));
 
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const vector = Point.from([0, 1]);
           const end = mapHash.alongLineAndVector(mark, vector);
           expect(end.position).toStrictEqual(Point.from([0, 120]));
@@ -1132,11 +1132,24 @@ describe('图纸标记服务', () => {
             Point.from([40, 60]),
           ]));
 
-          const mark = mapHash.get(Point.from([0, 20])) as LineAndPointMark;
+          const mark = mapHash.get(Point.from([0, 20])) as LineAndLineMark;
           const vector = Point.from([0, 1]);
           const end = mapHash.alongLineAndVector(mark, vector);
           expect(end.position).toStrictEqual(Point.from([0, 60]));
         });
+      });
+
+      it('导线端点是器件引脚时，需要排除器件引脚', () => {
+        mapHash.setPartMark(createPartByKind(ElectronicKind.Resistance));
+        mapHash.setLineMark(createLineByPath([
+          Point.from([40, 0]),
+          Point.from([200, 0]),
+        ]));
+
+        const mark = mapHash.get(Point.from([200, 0])) as LineAndLineMark;
+        const vector = Point.from([-1, 0]);
+        const end = mapHash.alongLineAndVector(mark, vector);
+        expect(end.position).toStrictEqual(Point.from([60, 0]));
       });
     });
   });

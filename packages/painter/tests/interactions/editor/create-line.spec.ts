@@ -1,5 +1,5 @@
 import { Point, Direction, DirectionVectorSet } from '@circuit/algorithm';
-import { createPartByKind, createPartsByKind } from '@circuit/electronics';
+import { createPartByKind, createPartsByKind, createLineByPath } from '@circuit/electronics';
 import {
   ElectronicKind,
   StructuredData,
@@ -23,7 +23,6 @@ import {
   Entity,
   EntityKind,
   IMapHashService,
-  IConnectionService,
 } from '../../../src/types';
 import { registerPlugin, getPlugin } from '../../utils';
 
@@ -422,6 +421,51 @@ describe('创建导线搜索路径', () => {
       // TODO: 还缺器件没有空余引脚的情况
     });
 
-    // TODO: 还缺器件在导线上的情况
+    describe('终点在导线上', () => {
+      it('两个器件+空导线，导线终点在空的导线节点上，直接对齐此空节点，并且导线终点引脚是缩小状态', async () => {
+        const data: StructuredData = {
+          parts: [
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+          ],
+          lines: [createLineByPath([Point.from([40, 0]), Point.from([100, 0])])],
+        };
+
+        const line2Id = 'line-2';
+        const line1 = data.lines[0];
+        const part2 = data.parts[1];
+        part2.position = Point.from([200, 200]);
+
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId: line2Id,
+          start: Point.from([160, 200]),
+          direction: DirectionVectorSet[Direction.Left],
+          painter: painterState,
+        });
+
+        painterState.setHover({
+          id: line1.id,
+          pin: 1,
+          kind: EntityKind.LinePin,
+        });
+
+        expect(search(Point.from([102, 2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 200]),
+              Point.from([100, 200]),
+              Point.from([100, 0]),
+            ],
+          },
+        ]);
+      });
+    });
   });
 });

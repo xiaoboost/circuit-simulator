@@ -1,5 +1,5 @@
-import { Point } from '@circuit/algorithm';
-import { PartStructuredData, LineStructuredData, StructuredData } from '@circuit/types';
+import type { Point } from '@circuit/algorithm';
+import type { PartStructuredData, LineStructuredData, StructuredData } from '@circuit/types';
 import { createServiceKey } from '../../context';
 
 /**
@@ -119,10 +119,7 @@ export type LineAndLineMark
 
 /** 导线节点 */
 export type LineAndPointMark
-  = | LineMark
-    | LinePointMark
-    | LineCoverMark
-    | LineCrossMark
+  = | LineAndLineMark
     | PartPinLineMark;
 
 /** 连接点 */
@@ -207,8 +204,12 @@ export interface IMapHashMarkService {
   isNoConnect(data: Mark): boolean;
   /** 前后位置和当前节点是否连通 */
   inStraightLine(data: LineCoverMark, next: Point, pre: Point): boolean;
-  /** 沿着导线前进 */
-  alongLineAndVector(data: LineAndPointMark, vector: Point, end?: Point): LineAndPointMark;
+  /**
+   * 沿着导线前进
+   *
+   * @description 会排除器件引脚
+   */
+  alongLineAndVector(data: LineAndLineMark, vector: Point, end?: Point): LineAndLineMark;
 }
 
 /** 图纸服务 */

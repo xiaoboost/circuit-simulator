@@ -1,4 +1,4 @@
-import { Point, PathWithPoint } from '@circuit/algorithm';
+import type { Point, PathWithPoint } from '@circuit/algorithm';
 
 /** 导线搜索节点 */
 export const PATH_SEARCH_POINTS_STATE = Symbol('PATH_SEARCH_POINTS');

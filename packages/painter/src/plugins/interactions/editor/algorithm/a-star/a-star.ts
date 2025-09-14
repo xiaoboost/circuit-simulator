@@ -26,7 +26,6 @@ function newNode(node: SearchNodeData, index: Rotate): SearchNodeData {
 /** A* 单点寻路 */
 export function aStarSearch({
   start,
-  end,
   direction,
   rules,
   hook,
@@ -45,7 +44,7 @@ export function aStarSearch({
   first.value = rules.cost(first);
   stack.push(first);
 
-  hook?.start?.(start, end, direction);
+  hook?.start?.(start, rules.getEnd());
 
   // 终点状态
   let endStatus: SearchNodeData | undefined = void 0;
@@ -95,7 +94,7 @@ export function aStarSearch({
   }
 
   if (!endStatus) {
-    return [start, end];
+    throw new Error('A* 搜索，没有找到终点');
   }
 
   // 终点回溯，生成路径
@@ -109,9 +108,9 @@ export function aStarSearch({
   way.push(start);
   way.reverse();
 
-  // 如果路径只有起点，则添加终点，保持路径长度为 2
+  // 如果路径只有起点，则重复添加起点，保持路径长度为 2
   if (way.length === 1) {
-    way.push(end);
+    way.push(start);
   }
 
   hook?.end?.(way);

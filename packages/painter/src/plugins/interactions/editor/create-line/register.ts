@@ -1,4 +1,3 @@
-import { Point, type PathWithPoint } from '@circuit/algorithm';
 import {
   getPartPin,
   createLineByPath,
@@ -29,6 +28,8 @@ import {
   type PathSearcher,
   type PartWithPin,
   findPartPin,
+  findLinePinAndIndex,
+  removeRepeat,
 } from '../algorithm';
 import { PIN_DRAW_FIXED_STYLE } from '../constant';
 import { painterStateGetter, createSearchHook, setSearchResult } from '../utils';
@@ -171,6 +172,7 @@ definePlugin(({ registerHook, getService }) => {
 
       const { commitState: { data: { parts, lines } }, commit } = state;
       const endInPartPin = findPartPin(endPoint, parts);
+      const endInLinePinAndIndex = findLinePinAndIndex(endPoint, lines);
       // 不沿用旧导线编号，是为了规避旧编号各种临时状态带来的干扰
       const newLineData: LineStructuredData = createLineByPath(linePath);
 
@@ -187,16 +189,10 @@ definePlugin(({ registerHook, getService }) => {
         // 设置连接关系
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
         connection.createConnection(newLineData.id, 1, endInPartPin.id, endInPartPin.pin);
-        // 清除鼠标样式
-        cursor.clear();
-        // 清除临时变量
-        varService.clearVariable();
         // 设置导线图纸数据
         mapHash.setLineMark(newLineData);
         // 设置碰撞数据
         collision.setEntity(newLineData);
-        // 设置选中
-        select.set(newLineData.id);
         // 提交新导线
         commit({
           name: `创建导线 ${line.id}`,
@@ -205,15 +201,91 @@ definePlugin(({ registerHook, getService }) => {
             lines.push(newLineData);
           },
         });
-        // 打印结束日志
-        logger.info(LoggerName, '结束创建导线', newLineData.id);
       }
       // 终点在导线上
+      else if (endInLinePinAndIndex) {
+        if (Array.isArray(endInLinePinAndIndex)) {
+          // 在空导线引脚上，合并导线
+          if (endInLinePinAndIndex.length === 1) {
+            const { id: mergedLineId, pin: mergedLinePin } = endInLinePinAndIndex[0];
+            const mergedLine = lines.find((item) => item.id === mergedLineId);
+
+            if (!mergedLine) {
+              throw new Error(`合并的导线 ${mergedLineId} 不存在`);
+            }
+
+            const mergedLinePath = mergedLine.path.slice();
+            const mergedLineConnection = connection.getConnections(mergedLineId, 1 - mergedLinePin);
+
+            // 因为要顺序连接，所以这里需要反转
+            if (mergedLinePin === 1) {
+              mergedLinePath.reverse();
+            }
+
+            // 合并，并去除重复节点
+            newLineData.path = removeRepeat([
+              ...newLineData.path,
+              ...mergedLinePath,
+            ]);
+
+            // 移除旧导线相关数据
+            connection.removeDevice(mergedLineId);
+            collision.removeEntity(mergedLineId);
+            mapHash.deleteLineMark(mergedLine);
+            // 设置新导线相关数据
+            connection.createConnection(newLineData.id, 0, start.id, start.pin);
+            mergedLineConnection.forEach((data) => {
+              connection.createConnection(newLineData.id, 1, data.id, data.pin);
+            });
+            collision.setEntity(newLineData);
+            mapHash.setLineMark(newLineData);
+
+            // 提交新导线，且删除旧导线
+            commit({
+              name: `创建导线 ${line.id}`,
+              description: `创建导线 ${line.id}，并合并导线 ${mergedLineId}`,
+              patch({ lines }) {
+                lines.push(newLineData);
+                lines.splice(lines.findIndex((item) => item.id === mergedLineId), 1);
+              },
+            });
+          }
+          // 在导线交错节点上，连接导线
+          else {
+            // TODO:
+          }
+        }
+        // 在导线线段上，分割导线
+        else {
+          // TODO:
+        }
+      }
       // 终点在空位置
       else {
         // 空位置需要设置起点的连接关系
-        connection.createConnection(start.id, start.pin, newLineData.id, 0);
+        connection.createConnection(newLineData.id, 0, start.id, start.pin);
+        // 设置导线图纸数据
+        mapHash.setLineMark(newLineData);
+        // 设置碰撞数据
+        collision.setEntity(newLineData);
+        // 提交新导线
+        commit({
+          name: `创建导线 ${line.id}`,
+          description: `创建导线 ${line.id}，终点在器件引脚上`,
+          patch({ lines }) {
+            lines.push(newLineData);
+          },
+        });
       }
+
+      // 清除鼠标样式
+      cursor.clear();
+      // 清除临时变量
+      varService.clearVariable();
+      // 设置选中
+      select.set(newLineData.id);
+      // 打印结束日志
+      logger.info(LoggerName, '结束创建导线', newLineData.id);
     },
   });
 });

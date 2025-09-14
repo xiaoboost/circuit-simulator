@@ -10,6 +10,8 @@ export interface Rules {
   check: Check;
   /** 是否是终点 */
   isEnd: IsEnd;
+  /** 终点数据 */
+  getEnd(): Point;
 }
 
 /** 搜索规则上下文 */
@@ -28,7 +30,7 @@ export interface RulesOptions {
 
 /** 搜索规则上下文 */
 export interface RulesContext extends RulesOptions {
-  /** 终点等效线段 */
+  /** 终线 */
   endLines: SegmentWithPoint[];
 }
 

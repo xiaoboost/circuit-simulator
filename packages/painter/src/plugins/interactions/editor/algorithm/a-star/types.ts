@@ -21,8 +21,6 @@ export interface SearchNodeData {
 export interface AStarSearchOption {
   /** 起点 */
   start: Point;
-  /** 终点 */
-  end: Point;
   /** 初始方向 */
   direction: Point;
   /** 搜索规则 */
@@ -40,7 +38,7 @@ export interface AStarSearchOption {
 /** 搜索钩子函数 */
 export interface SearchHook {
   /** 开始搜索 */
-  start?(start: Point, end: Point, direction: Point): void;
+  start?(start: Point, end: Point): void;
   /** 结束搜索 */
   end?(path: PathWithPoint): void;
   /** 待扩展节点 */

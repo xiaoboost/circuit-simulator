@@ -4,6 +4,7 @@ import {
   type PathWithPoint,
   type SegmentWithPoint,
 } from '@circuit/algorithm';
+import type { LineStructuredData } from '@circuit/types';
 
 /**
  * 去除节点冗余
@@ -128,4 +129,57 @@ export function standardize(path: PathWithPoint) {
 /** 导线坐标整体偏移 */
 export function move(path: PathWithPoint, bias: PointLike) {
   return path.map((item) => item.add(bias));
+}
+
+/** 导线引脚 */
+export interface LineWithPin {
+  /** 导线编号 */
+  id: string;
+  /** 导线引脚 */
+  pin: number;
+}
+
+export interface LineWithIndex {
+  /** 导线编号 */
+  id: string;
+  /** 导线线段索引 */
+  index: number;
+}
+
+export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
+  const pins: LineWithPin[] = [];
+  let index: LineWithIndex | undefined;
+
+  for (const line of lines) {
+    if (line.path[0].isEqual(point)) {
+      pins.push({
+        id: line.id,
+        pin: 0,
+      });
+      continue;
+    }
+
+    if (line.path[line.path.length - 1].isEqual(point)) {
+      pins.push({
+        id: line.id,
+        pin: 1,
+      });
+      continue;
+    }
+
+    for (let i = 0; i < line.path.length - 1; i++) {
+      const segment = [line.path[i], line.path[i + 1]];
+
+      if (point.isInLine(segment)) {
+        index = {
+          id: line.id,
+          index: i,
+        };
+
+        return index;
+      }
+    }
+  }
+
+  return pins.length > 0 ? pins : undefined;
 }

@@ -6,6 +6,7 @@ import {
   LineCrossMark,
   LinePointMark,
   PartPinMark,
+  LineAndLineMark,
   PartPinLineMark,
   MarkKind,
   Mark,
@@ -19,6 +20,7 @@ import {
   isLineCover,
   isLineCross,
   isLinePoint,
+  isLineAndLine,
   isPartPinLine,
   isLineAndPoint,
 } from './asserts';
@@ -277,7 +279,7 @@ export function inStraightLine(data: LineCoverMark, next: Point, pre: Point) {
 }
 
 export function alongLineAndVector(
-  data: LineAndPointMark,
+  data: LineAndLineMark,
   vector: PointInput,
   map: MarkMap,
   end?: Point,
@@ -285,11 +287,11 @@ export function alongLineAndVector(
   const uVector = Point.from(vector).sign(20);
 
   let index = 0;
-  let current: LineAndPointMark = data;
+  let current: LineAndLineMark = data;
   let next = Map.get(map, current.position.add(uVector));
 
   // 当前点没有到达终点，还在导线所在直线内部，那就前进
-  while (next && (end ? !current.position.isEqual(end) : true)) {
+  while (isLineAndLine(next) && (end ? !current.position.isEqual(end) : true)) {
     if (process.env.NODE_ENV === 'development') {
       index++;
       if (index > 500) {
@@ -301,7 +303,7 @@ export function alongLineAndVector(
       const pre = current.position.add(uVector, -1);
 
       if (inStraightLine(current, next.position, pre)) {
-        current = next as LineAndPointMark;
+        current = next;
         next = Map.get(map, current.position.add(uVector));
       }
       else {
@@ -310,7 +312,7 @@ export function alongLineAndVector(
     }
     else {
       if (hasConnect(current, next.position)) {
-        current = next as LineAndPointMark;
+        current = next;
         next = Map.get(map, current.position.add(uVector));
       }
       else {

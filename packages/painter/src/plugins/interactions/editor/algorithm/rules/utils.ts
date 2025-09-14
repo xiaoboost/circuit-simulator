@@ -1,4 +1,9 @@
-import { Point, Direction, DirectionVectorSet, SegmentWithPoint } from '@circuit/algorithm';
+import {
+  Point,
+  Direction,
+  DirectionVectorSet,
+  SegmentWithPoint as Segment,
+} from '@circuit/algorithm';
 import type { SearchNodeData } from '../a-star';
 import type { PainterState } from '../searcher';
 
@@ -15,11 +20,11 @@ export function getPart(painter: PainterState, node: Point) {
 export function getSegment(painter: PainterState, node: Point) {
   const data = painter.get(node);
 
-  if (!data || !painter.isLineAndPoint(data)) {
-    return;
+  if (!data || !painter.isLineAndLine(data)) {
+    return [];
   }
 
-  const ans: SegmentWithPoint[] = [];
+  const ans: Segment[] = [];
 
   for (let i = 0; i < 2; i++) {
     const directors = [
@@ -35,7 +40,7 @@ export function getSegment(painter: PainterState, node: Point) {
     ];
 
     if (!limit[0].position.isEqual(limit[1].position)) {
-      ans.push(limit.map(({ position }) => position) as SegmentWithPoint);
+      ans.push(limit.map(({ position }) => position) as Segment);
     }
   }
 
