@@ -2,7 +2,7 @@ import { Point, RotateMatrixSet, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { ICollisionService, ICollisionService } from '../../src/types';
+import { ICollisionService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('碰撞服务', () => {

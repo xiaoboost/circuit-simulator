@@ -1,6 +1,6 @@
 import { renderHook } from '@circuit/test-toolkit';
 import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
-import { IVariableObserverService, IVariableObserverService } from '../../src/types';
+import { IVariableObserverService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('变量观察服务', () => {
