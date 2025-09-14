@@ -1,4 +1,5 @@
-import { ILifeCycleHook } from '@circuit/shared';
+import { Point } from '@circuit/algorithm';
+import { ILifeCycleHook, IStateCoreService } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
 import {
   ICursorService,
@@ -37,6 +38,14 @@ definePlugin(({ registerService, registerHook, getService }) => {
           val.kind === EntityKind.PartPin || val.kind === EntityKind.LinePin
         ) {
           defaultCursor = ICursorKind.DrawLine;
+        }
+        else if (val.kind === EntityKind.Line) {
+          const line = getService(IStateCoreService).getLine(val.id);
+          const lineSegmentVector = new Point(line.path[val.index], line.path[val.index + 1]);
+
+          defaultCursor = lineSegmentVector.isHorizontal()
+            ? ICursorKind.ResizeNS
+            : ICursorKind.ResizeEW;
         }
 
         // 外部设置地指针优先级更高
