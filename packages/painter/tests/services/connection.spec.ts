@@ -358,5 +358,124 @@ describe('连接服务', () => {
         ]);
       });
     });
+
+    describe('swapConnections', () => {
+      beforeEach(() => {
+        connection.registerPin('device1', 0);
+        connection.registerPin('device1', 1);
+        connection.registerPin('device2', 0);
+        connection.registerPin('device2', 1);
+        connection.registerPin('device3', 0);
+        connection.registerPin('device3', 1);
+      });
+
+      it('应该能交换两个引脚的所有连接', () => {
+        // 建立初始连接
+        connection.createConnection('device1', 0, 'device2', 0);
+        connection.createConnection('device1', 0, 'device3', 0);
+        connection.createConnection('device1', 1, 'device2', 1);
+
+        // 验证初始状态
+        expect(connection.getConnections('device1', 0)).toEqual([{ id: 'device2', pin: 0, originPin: 0 }, { id: 'device3', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device1', 1)).toEqual([{ id: 'device2', pin: 1, originPin: 1 }]);
+
+        // 交换 device1 的引脚 0 和 1
+        connection.swapConnections('device1', 0, 'device1', 1);
+
+        // 验证交换后的状态
+        expect(connection.getConnections('device1', 0)).toEqual([{ id: 'device2', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device1', 1)).toEqual([{ id: 'device2', pin: 0, originPin: 1 }, { id: 'device3', pin: 0, originPin: 1 }]);
+
+        // 验证其他设备的连接也相应更新
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device1', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device2', 1)).toEqual([{ id: 'device1', pin: 0, originPin: 1 }]);
+        expect(connection.getConnections('device3', 0)).toEqual([{ id: 'device1', pin: 1, originPin: 0 }]);
+      });
+
+      it('应该能交换不同器件的引脚连接', () => {
+        // 建立初始连接
+        connection.createConnection('device1', 0, 'device3', 0);
+        connection.createConnection('device1', 1, 'device3', 1);
+        connection.createConnection('device2', 0, 'device3', 0);
+
+        // 交换 device1 引脚 0 和 device2 引脚 0
+        connection.swapConnections('device1', 0, 'device2', 0);
+
+        // 验证交换后的状态
+        expect(connection.getConnections('device1', 0)).toEqual([{ id: 'device3', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device3', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device1', 1)).toEqual([{ id: 'device3', pin: 1, originPin: 1 }]);
+
+        // 验证 device3 的连接更新
+        const device3Connections = connection.getConnections('device3');
+        expect(device3Connections).toHaveLength(3);
+        expect(device3Connections).toEqual(
+          expect.arrayContaining([
+            { id: 'device1', pin: 0, originPin: 0 },
+            { id: 'device2', pin: 0, originPin: 0 },
+            { id: 'device1', pin: 1, originPin: 1 },
+          ]),
+        );
+      });
+
+      it('交换空引脚应该不会出错', () => {
+        // device1 引脚 0 和 device2 引脚 0 都没有连接
+        expect(connection.getConnections('device1', 0)).toEqual([]);
+        expect(connection.getConnections('device2', 0)).toEqual([]);
+
+        // 交换空引脚
+        connection.swapConnections('device1', 0, 'device2', 0);
+
+        // 验证交换后仍然为空
+        expect(connection.getConnections('device1', 0)).toEqual([]);
+        expect(connection.getConnections('device2', 0)).toEqual([]);
+      });
+
+      it('交换一个空引脚和一个有连接的引脚', () => {
+        // device1 引脚 0 有连接，device2 引脚 0 没有连接
+        connection.createConnection('device1', 0, 'device3', 0);
+
+        // 交换
+        connection.swapConnections('device1', 0, 'device2', 0);
+
+        // 验证 device1 引脚 0 现在没有连接
+        expect(connection.getConnections('device1', 0)).toEqual([]);
+        // 验证 device2 引脚 0 现在有连接
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device3', pin: 0, originPin: 0 }]);
+        // 验证 device3 的连接更新
+        expect(connection.getConnections('device3', 0)).toEqual([{ id: 'device2', pin: 0, originPin: 0 }]);
+      });
+
+      it('应该能正确处理自连接的情况', () => {
+        // 创建自连接
+        connection.createConnection('device1', 0, 'device1', 1);
+
+        // 交换引脚
+        connection.swapConnections('device1', 0, 'device1', 1);
+
+        // 验证自连接仍然存在
+        expect(connection.getConnections('device1', 0)).toEqual([{ id: 'device1', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device1', 1)).toEqual([{ id: 'device1', pin: 0, originPin: 1 }]);
+      });
+
+      it('交换后应该保持双向连接的完整性', () => {
+        // 建立复杂连接网络
+        connection.createConnection('device1', 0, 'device2', 0);
+        connection.createConnection('device1', 0, 'device3', 0);
+        connection.createConnection('device2', 1, 'device3', 1);
+
+        // 交换 device1 引脚 0 和 device2 引脚 1
+        connection.swapConnections('device1', 0, 'device2', 1);
+
+        // 验证所有双向连接都正确更新
+        expect(connection.getConnections('device1', 0)).toEqual([{ id: 'device3', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device2', 1)).toEqual([{ id: 'device2', pin: 0, originPin: 1 }, { id: 'device3', pin: 0, originPin: 1 }]);
+
+        // 验证反向连接
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device2', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device3', 0)).toEqual([{ id: 'device2', pin: 1, originPin: 0 }]);
+        expect(connection.getConnections('device3', 1)).toEqual([{ id: 'device1', pin: 0, originPin: 1 }]);
+      });
+    });
   });
 });

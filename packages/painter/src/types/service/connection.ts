@@ -87,6 +87,11 @@ export interface IConnectionService {
    */
   createFromData(data: StructuredData): void;
 
+  /**
+   * 交换两个引脚的连接关系
+   */
+  swapConnections(id: string, pin: number, targetId: string, targetPin: number): void;
+
   // ========== 发布订阅 ==========
   /**
    * 监听元件引脚连接关系

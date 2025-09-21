@@ -216,6 +216,57 @@ definePlugin(({ registerService }) => {
       const pinConnections = deviceConnections.get(pin);
       return !pinConnections || pinConnections.length === 0;
     },
+    swapConnections(id: string, pin: number, targetId: string, targetPin: number) {
+      // 获取两个引脚的所有连接
+      const sourceConnections = service.getConnections(id, pin);
+      const targetConnections = service.getConnections(targetId, targetPin);
+
+      // 获取旧连接数据用于通知观察者
+      const oldSourceConnections = [...sourceConnections];
+      const oldTargetConnections = [...targetConnections];
+
+      // 移除两个引脚的所有现有连接
+      for (const connection of sourceConnections) {
+        service.removeConnection(id, pin, connection.id, connection.pin);
+      }
+      for (const connection of targetConnections) {
+        service.removeConnection(targetId, targetPin, connection.id, connection.pin);
+      }
+
+      // 交换连接关系
+      // 将原来连接到 source 的连接转移到 target
+      for (const connection of oldSourceConnections) {
+        // 如果是自连接，需要特殊处理
+        if (connection.id === id && connection.pin === pin) {
+          // 原来的自连接 source -> source，现在变成 target -> target
+          service.createConnection(targetId, targetPin, targetId, targetPin);
+        }
+        else if (connection.id === targetId && connection.pin === targetPin) {
+          // 原来的连接 source -> target，现在变成 target -> source
+          service.createConnection(targetId, targetPin, id, pin);
+        }
+        else {
+          // 其他连接，从 source 转移到 target
+          service.createConnection(targetId, targetPin, connection.id, connection.pin);
+        }
+      }
+      // 将原来连接到 target 的连接转移到 source
+      for (const connection of oldTargetConnections) {
+        // 如果是自连接，需要特殊处理
+        if (connection.id === targetId && connection.pin === targetPin) {
+          // 原来的自连接 target -> target，现在变成 source -> source
+          service.createConnection(id, pin, id, pin);
+        }
+        else if (connection.id === id && connection.pin === pin) {
+          // 原来的连接 target -> source，现在变成 source -> target
+          service.createConnection(id, pin, targetId, targetPin);
+        }
+        else {
+          // 其他连接，从 target 转移到 source
+          service.createConnection(id, pin, connection.id, connection.pin);
+        }
+      }
+    },
     observe(id: string, callback: ObserverCb<IConnectionDataWithPin[]>): () => void {
       if (!observerMap.has(id)) {
         observerMap.set(id, []);
