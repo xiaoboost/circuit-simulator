@@ -29,4 +29,5 @@ export const PIN_DRAW_EXPANDED_STYLE = {
 export const PIN_DRAW_FIXED_STYLE = {
   r: PIN_RADIUS_COLLAPSED,
   fill: 'currentColor',
+  strokeDasharray: '',
 } as const;

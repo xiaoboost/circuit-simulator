@@ -1,4 +1,4 @@
-import { Point, Direction, DirectionVectorSet } from '@circuit/algorithm';
+import { Point, Direction, DirectionVectorSet, RotateMatrixSet, rotateMatrix, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createPartsByKind, createLineByPath } from '@circuit/electronics';
 import {
   ElectronicKind,
@@ -462,6 +462,305 @@ describe('创建导线搜索路径', () => {
               Point.from([160, 200]),
               Point.from([100, 200]),
               Point.from([100, 0]),
+            ],
+          },
+        ]);
+      });
+
+      it('三个器件+一个已连接导线，已连接导线是水平方向，搜索导线有两个线段，导线最后的线段会对齐已有导线', async () => {
+        const data: StructuredData = {
+          parts: [
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+          ],
+          lines: [createLineByPath([Point.from([40, 0]), Point.from([160, 0])])],
+        };
+
+        const line2Id = 'line-2';
+        const line1 = data.lines[0];
+        const part2 = data.parts[1];
+        const part3 = data.parts[2];
+
+        part2.position = Point.from([200, 0]);
+        part3.position = Point.from([400, 400]);
+
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId: line2Id,
+          start: Point.from([360, 400]),
+          direction: DirectionVectorSet[Direction.Left],
+          painter: painterState,
+        });
+
+        painterState.setHover({
+          id: line1.id,
+          index: 0,
+          kind: EntityKind.Line,
+        });
+
+        // 初始对齐
+        expect(search(Point.from([102, 2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([360, 400]),
+              Point.from([102, 400]),
+              Point.from([102, 0]),
+            ],
+          },
+        ]);
+
+        // 鼠标移动后再次对齐
+        expect(search(Point.from([112, -2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([360, 400]),
+              Point.from([112, 400]),
+              Point.from([112, 0]),
+            ],
+          },
+        ]);
+      });
+
+      it('三个器件+一个已连接导线，已连接导线是竖直方向，搜索导线有两个线段，导线最后的线段会对齐已有导线', async () => {
+        const data: StructuredData = {
+          parts: [
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+          ],
+          lines: [createLineByPath([Point.from([40, 0]), Point.from([40, 200])])],
+        };
+
+        const line2Id = 'line-2';
+        const line1 = data.lines[0];
+        const part2 = data.parts[1];
+        const part3 = data.parts[2];
+
+        part2.position = Point.from([0, 200]);
+        part3.position = Point.from([400, 400]);
+        part3.rotate = rotateMatrix(part3.rotate, RotateMatrixSet[Rotate.Clockwise]);
+
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId: line2Id,
+          start: Point.from([400, 360]),
+          direction: DirectionVectorSet[Direction.Top],
+          painter: painterState,
+        });
+
+        painterState.setHover({
+          id: line1.id,
+          index: 0,
+          kind: EntityKind.Line,
+        });
+
+        // 初始对齐
+        expect(search(Point.from([42, 102]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([400, 360]),
+              Point.from([400, 102]),
+              Point.from([40, 102]),
+            ],
+          },
+        ]);
+
+        // 鼠标移动后再次对齐
+        expect(search(Point.from([38, 112]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([400, 360]),
+              Point.from([400, 112]),
+              Point.from([40, 112]),
+            ],
+          },
+        ]);
+      });
+
+      it('三个器件+一个已连接导线，已连接导线是水平方向，搜索导线有两个线段，此时导线搜索只有一个线段', async () => {
+        const data: StructuredData = {
+          parts: [
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+          ],
+          lines: [createLineByPath([Point.from([40, 0]), Point.from([40, 200])])],
+        };
+
+        const line2Id = 'line-2';
+        const line1 = data.lines[0];
+        const part2 = data.parts[1];
+        const part3 = data.parts[2];
+
+        part2.position = Point.from([0, 200]);
+        part3.position = Point.from([200, 100]);
+
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId: line2Id,
+          start: Point.from([160, 100]),
+          direction: DirectionVectorSet[Direction.Left],
+          painter: painterState,
+        });
+
+        painterState.setHover({
+          id: line1.id,
+          index: 0,
+          kind: EntityKind.Line,
+        });
+
+        // 初始对齐
+        expect(search(Point.from([42, 102]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([40, 100]),
+            ],
+          },
+        ]);
+
+        // 鼠标移动后再次对齐
+        expect(search(Point.from([42, 162]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([40, 100]),
+            ],
+          },
+        ]);
+
+        // 鼠标移动后再次对齐
+        expect(search(Point.from([42, 22]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([40, 100]),
+            ],
+          },
+        ]);
+      });
+
+      it('三个器件+一个已连接导线，已连接导线是水平方向，搜索导线是从有两个线段，即将变为只有一个线段的途中，此时也是有两个线段', async () => {
+        const data: StructuredData = {
+          parts: [
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+            createPartByKind(ElectronicKind.Resistance),
+          ],
+          lines: [createLineByPath([Point.from([40, 0]), Point.from([260, 0])])],
+        };
+
+        const line2Id = 'line-2';
+        const line1 = data.lines[0];
+        const part2 = data.parts[1];
+        const part3 = data.parts[2];
+
+        part2.position = Point.from([300, 0]);
+        part3.position = Point.from([200, 100]);
+
+        const painterState = await createSearchEnv(data);
+        const search = createDrawLineSearcher({
+          lineId: line2Id,
+          start: Point.from([160, 100]),
+          direction: DirectionVectorSet[Direction.Left],
+          painter: painterState,
+        });
+
+        painterState.setHover({
+          id: line1.id,
+          index: 0,
+          kind: EntityKind.Line,
+        });
+
+        // 初始对齐
+        expect(search(Point.from([102, 2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([102, 100]),
+              Point.from([102, 0]),
+            ],
+          },
+        ]);
+
+        // 右移至即将变化为只有一个线段时
+        expect(search(Point.from([158, 2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([158, 100]),
+              Point.from([158, 0]),
+            ],
+          },
+        ]);
+
+        // 右移至只有一个线段时
+        expect(search(Point.from([200, 2]))).toEqual([
+          {
+            id: line2Id,
+            pin: 1,
+            style: PIN_DRAW_FIXED_STYLE,
+          },
+          {
+            id: line2Id,
+            path: [
+              Point.from([160, 100]),
+              Point.from([160, 0]),
             ],
           },
         ]);

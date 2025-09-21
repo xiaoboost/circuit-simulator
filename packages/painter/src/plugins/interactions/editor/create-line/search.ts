@@ -1,4 +1,4 @@
-import { Point, type PathWithPoint, type SegmentWithPoint } from '@circuit/algorithm';
+import { Point, type PathWithPoint } from '@circuit/algorithm';
 import { getPartPins, getIndexVector } from '@circuit/electronics';
 import { isDef } from '@xiao-ai/utils';
 import {
@@ -11,7 +11,6 @@ import {
   removeRepeat,
   endToPoint,
   endToLine,
-  getSegment,
 } from '../algorithm';
 import {
   EntityKind,
@@ -267,51 +266,40 @@ export function createDrawLineSearcher({
     }
     // 对齐导线的情况下，修饰导线
     else if (searchMode === SearchMode.DrawAlignLine) {
-      // const endRound = end.round();
-      // const endMark = painter.get(endRound)!;
-      // const endRoundWay = cache.get(endRound.join(','))!;
-      // // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
-      // const roundSet = endList.filter((node) => {
-      //   if (painter.isLineAndPoint(endMark)) {
-      //     return painter.hasConnect(endMark, node)
-      //       ? painter.isPartPinLine(painter.get(node))
-      //       : false;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      // });
+      const endRound = end.round();
+      const endMark = painter.get(endRound)!;
+      const endRoundWay = cache.get(endRound)!;
+      // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
+      const roundSet = painter.isLineAndLine(endMark)
+        ? endList.filter((node) => !endRound.isEqual(node) && painter.hasConnect(endMark, node))
+        : [];
 
-      // if (roundSet.length > 0) {
-      //   /** 交集中离鼠标最近的点 */
-      //   const closest = end.closest(roundSet);
-      //   const similarPath = cache.get(closest.join(','));
-      //   // 导线形状相似
-      //   if (similarPath && isSimilar(endRoundWay, similarPath)) {
-      //     result.push({
-      //       id: lineId,
-      //       path: endToLine(endRoundWay, [endRound, closest], end),
-      //     });
+      if (roundSet.length > 0) {
+        const closest = end.closest(roundSet);
+        const endSegmentVector = endRound.add(closest, -1);
+        const lastVector = getIndexVector(endRoundWay, endRoundWay.length - 2);
 
-      //     result.push({
-      //       id: lineId,
-      //       pin: 1,
-      //       style: PIN_DRAW_EXPANDED_STYLE,
-      //     });
-      //   }
-      //   else {
-      //     result.push({
-      //       id: lineId,
-      //       path: endToPoint(endRoundWay, end),
-      //     });
-      //   }
-      // }
-      // else {
-      //   result.push({
-      //     id: lineId,
-      //     path: endToPoint(endRoundWay, end),
-      //   });
-      // }
+        if (endSegmentVector.isVerticalTo(lastVector)) {
+          const closestEndPath = cache.get(closest)!;
+          const endPath = closestEndPath.length >= endRoundWay.length
+            ? closestEndPath
+            : endRoundWay;
+
+          result.push({
+            id: lineId,
+            path: endToLine(endPath, [endRound, closest], end),
+          });
+        }
+        else {
+          throw new Error('未实现');
+        }
+      }
+      else {
+        result.push({
+          id: lineId,
+          path: endToPoint(endRoundWay, end),
+        });
+      }
     }
     // 普通终点
     else {

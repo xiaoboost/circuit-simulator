@@ -11,7 +11,7 @@ import type { LineStructuredData } from '@circuit/types';
  *  - 相邻三点共线或者相邻两点相等
  */
 export function removeRepeat(path: PathWithPoint) {
-  const newPath = path.slice();
+  const newPath = path.map((v) => Point.from(v));
 
   for (let i = 0; i < newPath.length - 2; i++) {
     if (
@@ -64,7 +64,7 @@ export function isSimilar(path1: PathWithPoint, path2: PathWithPoint) {
  *  - 导线节点数量等于`2`则会按照线段方向修正
  */
 export function endToPoint(input: PathWithPoint, mouse: Point, isEnd = true) {
-  const path = input.slice();
+  const path = input.map((v) => Point.from(v));
 
   if (path.length <= 1) {
     return path;
@@ -107,16 +107,16 @@ export function endToLine(
   segment: SegmentWithPoint,
   mouse: Point,
 ) {
-  const path = input.slice();
+  const path = input.map((v) => Point.from(v));
 
   if (path.length < 3) {
     return path;
   }
 
-  const byMouse = segment[0][0] === segment[1][0] ? 1 : 0;
+  const byMouseMain = new Point(segment[0], segment[1]).isHorizontal() ? 0 : 1;
 
-  path[path.length - 2][byMouse] = mouse[byMouse];
-  path[path.length - 1][byMouse] = mouse[byMouse];
+  path[path.length - 2][byMouseMain] = mouse[byMouseMain];
+  path[path.length - 1][byMouseMain] = mouse[byMouseMain];
 
   return path;
 }
