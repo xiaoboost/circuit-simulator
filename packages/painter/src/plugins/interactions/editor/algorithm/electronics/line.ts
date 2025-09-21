@@ -4,14 +4,17 @@ import {
   type PathWithPoint,
   type SegmentWithPoint,
 } from '@circuit/algorithm';
+import { copyLine } from '@circuit/electronics';
 import type { LineStructuredData } from '@circuit/types';
 
 /**
  * 去除节点冗余
  *  - 相邻三点共线或者相邻两点相等
+ *
+ * @description 返回新导线
  */
 export function removeRepeat(path: PathWithPoint) {
-  const newPath = path.map((v) => Point.from(v));
+  const newPath = copyLine(path);
 
   for (let i = 0; i < newPath.length - 2; i++) {
     if (
@@ -64,7 +67,7 @@ export function isSimilar(path1: PathWithPoint, path2: PathWithPoint) {
  *  - 导线节点数量等于`2`则会按照线段方向修正
  */
 export function endToPoint(input: PathWithPoint, mouse: Point, isEnd = true) {
-  const path = input.map((v) => Point.from(v));
+  const path = copyLine(input);
 
   if (path.length <= 1) {
     return path;
@@ -107,7 +110,7 @@ export function endToLine(
   segment: SegmentWithPoint,
   mouse: Point,
 ) {
-  const path = input.map((v) => Point.from(v));
+  const path = copyLine(input);
 
   if (path.length < 3) {
     return path;

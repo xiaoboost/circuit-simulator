@@ -5,10 +5,8 @@ import { RotateMatrix, PointLike, Rotate } from './types';
 /** 旋转矩阵的逆矩阵 */
 export function invertRotateMatrix(matrix: RotateMatrix): RotateMatrix {
   // 验证矩阵维度
-  if (process.env.NODE_ENV === 'development') {
-    if (matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
-      throw new Error('输入必须是 2X2 矩阵');
-    }
+  if (matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
+    throw new Error('输入必须是 2X2 矩阵');
   }
 
   // 提取矩阵元素
@@ -37,13 +35,11 @@ export function rotateVector(vector: PointLike, rotate: RotateMatrix): Point {
 /** 矩阵旋转 */
 export function rotateMatrix(matrix: RotateMatrix, rotate: RotateMatrix): RotateMatrix {
   // 验证矩阵维度
-  if (process.env.NODE_ENV === 'development') {
-    if (matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
-      throw new Error('输入矩阵必须是 2X2 矩阵');
-    }
-    if (rotate.length !== 2 || rotate[0].length !== 2 || rotate[1].length !== 2) {
-      throw new Error('旋转矩阵必须是 2X2 矩阵');
-    }
+  if (matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
+    throw new Error('输入矩阵必须是 2X2 矩阵');
+  }
+  if (rotate.length !== 2 || rotate[0].length !== 2 || rotate[1].length !== 2) {
+    throw new Error('旋转矩阵必须是 2X2 矩阵');
   }
 
   const [[a, b], [c, d]] = matrix;

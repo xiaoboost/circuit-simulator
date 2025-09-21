@@ -70,6 +70,14 @@ export interface IConnectionService {
   createConnection(id: string, pin: number, targetId: string, targetPin: number): void;
 
   /**
+   * 批量添加连接
+   *
+   * @description 创建双向连接关系
+   * @description 这里会确保源引脚和目标引脚存在
+   */
+  createConnections(id: string, pin: number, targets: IConnectionData[]): void;
+
+  /**
    * 移除连接
    *
    * @description 移除双向连接关系

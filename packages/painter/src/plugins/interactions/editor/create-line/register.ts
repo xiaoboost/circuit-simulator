@@ -214,18 +214,17 @@ definePlugin(({ registerHook, getService }) => {
               throw new Error(`合并的导线 ${mergedLineId} 不存在`);
             }
 
-            const mergedLinePath = mergedLine.path.slice();
             const mergedLineConnection = connection.getConnections(mergedLineId, 1 - mergedLinePin);
 
             // 因为要顺序连接，所以这里需要反转
             if (mergedLinePin === 1) {
-              mergedLinePath.reverse();
+              mergedLine.path.reverse();
             }
 
             // 合并，并去除重复节点
             newLineData.path = removeRepeat([
               ...newLineData.path,
-              ...mergedLinePath,
+              ...mergedLine.path,
             ]);
 
             // 移除旧导线相关数据
@@ -234,9 +233,7 @@ definePlugin(({ registerHook, getService }) => {
             mapHash.deleteLineMark(mergedLine);
             // 设置新导线相关数据
             connection.createConnection(newLineData.id, 0, start.id, start.pin);
-            mergedLineConnection.forEach((data) => {
-              connection.createConnection(newLineData.id, 1, data.id, data.pin);
-            });
+            connection.createConnections(newLineData.id, 1, mergedLineConnection);
             collision.setEntity(newLineData);
             mapHash.setLineMark(newLineData);
 
@@ -252,12 +249,90 @@ definePlugin(({ registerHook, getService }) => {
           }
           // 在导线交错节点上，连接导线
           else {
-            // TODO:
+            // 设置导线相关数据
+            connection.createConnection(newLineData.id, 0, start.id, start.pin);
+            connection.createConnections(newLineData.id, 1, endInLinePinAndIndex);
+            collision.setEntity(newLineData);
+            mapHash.setLineMark(newLineData);
+
+            // 提交新导线，且删除旧导线
+            commit({
+              name: `创建导线 ${line.id}`,
+              description: `创建导线 ${line.id}`,
+              patch({ lines }) {
+                lines.push(newLineData);
+              },
+            });
           }
         }
         // 在导线线段上，分割导线
         else {
-          // TODO:
+          const { id: splitLineId, index: splitIndex } = endInLinePinAndIndex;
+          const splitLine = lines.find((item) => item.id === splitLineId);
+
+          if (!splitLine) {
+            throw new Error(`拆分的导线 ${splitLine} 不存在`);
+          }
+
+          const splitLine1Path = splitLine.path.slice(0, splitIndex + 1);
+          const splitLine2Path = splitLine.path.slice(splitIndex + 1);
+
+          splitLine1Path.push(endPoint);
+          splitLine2Path.unshift(endPoint);
+
+          const splitLine1 = createLineByPath(splitLine1Path);
+          const splitLine2 = createLineByPath(splitLine2Path);
+          const crossConnections = [
+            {
+              id: splitLineId,
+              pin: 1,
+            },
+            {
+              id: splitLineId,
+              pin: 0,
+            },
+            {
+              id: newLineData.id,
+              pin: 1,
+            },
+          ];
+
+          splitLine1.path = removeRepeat(splitLine1.path);
+          splitLine2.path = removeRepeat(splitLine2.path);
+
+          // 新导线起点的连接是旧导线的起点连接
+          connection.createConnections(splitLine1.id, 0, connection.getConnections(splitLineId, 0));
+          // 新导线终点的连接是旧导线的终点连接
+          connection.createConnections(splitLine2.id, 1, connection.getConnections(splitLineId, 1));
+          // 设置三个导线的连接
+          connection.createConnections(splitLine1.id, 1, crossConnections);
+          connection.createConnections(splitLine2.id, 0, crossConnections);
+          connection.createConnections(newLineData.id, 1, crossConnections);
+          connection.createConnection(newLineData.id, 0, start.id, start.pin);
+
+          // 移除旧导线相关信息
+          connection.removeDevice(splitLineId);
+          collision.removeEntity(splitLineId);
+          mapHash.deleteLineMark(splitLine);
+          // 设置新导线相关信息
+          collision.setEntity(splitLine1);
+          mapHash.setLineMark(splitLine1);
+          collision.setEntity(splitLine2);
+          mapHash.setLineMark(splitLine2);
+          collision.setEntity(newLineData);
+          mapHash.setLineMark(newLineData);
+
+          // 提交新导线，且删除旧导线
+          commit({
+            name: `创建导线 ${line.id}`,
+            description: `创建导线 ${line.id}，并拆分旧导线 ${splitLine.id}，拆分出来的导线为 ${splitLine1.id} 和 ${splitLine2.id}`,
+            patch({ lines }) {
+              lines.push(newLineData);
+              lines.push(splitLine1);
+              lines.push(splitLine2);
+              lines.splice(lines.findIndex((item) => item.id === splitLineId), 1);
+            },
+          });
         }
       }
       // 终点在空位置

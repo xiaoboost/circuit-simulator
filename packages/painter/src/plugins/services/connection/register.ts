@@ -131,6 +131,11 @@ definePlugin(({ registerService }) => {
       return allConnections;
     },
     createConnection(id: string, pin: number, targetId: string, targetPin: number) {
+      // 排除掉引脚自链接
+      if (id === targetId && pin === targetPin) {
+        return;
+      }
+
       // 获取旧连接数据用于通知观察者
       const oldConnections = service.getConnections(id);
       const oldTargetConnections = service.getConnections(targetId);
@@ -162,6 +167,11 @@ definePlugin(({ registerService }) => {
 
       if (!isEqual(newTargetConnections, oldTargetConnections)) {
         notifyObservers(targetId, newTargetConnections, oldTargetConnections);
+      }
+    },
+    createConnections(id: string, pin: number, targets: IConnectionData[]) {
+      for (const target of targets) {
+        service.createConnection(id, pin, target.id, target.pin);
       }
     },
     removeConnection(id: string, pin: number, targetId: string, targetPin: number) {

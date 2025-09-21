@@ -183,7 +183,7 @@ describe('连接服务', () => {
         expect(connection.getConnections('device2', 0)).toHaveLength(1);
       });
 
-      it('应该能创建自连接（同一器件的不同引脚）', () => {
+      it('应该能创建器件自连接（同一器件的不同引脚）', () => {
         connection.createConnection('device1', 0, 'device1', 1);
 
         expect(connection.getConnections('device1', 0)).toEqual([
@@ -201,6 +201,217 @@ describe('连接服务', () => {
             originPin: 1,
           },
         ]);
+      });
+
+      it('应该排除引脚自连接', () => {
+        // 尝试创建引脚自连接
+        connection.createConnection('device1', 0, 'device1', 0);
+
+        // 验证没有创建任何连接
+        expect(connection.getConnections('device1', 0)).toEqual([]);
+      });
+
+      it('排除引脚自连接时不应该触发观察者通知', () => {
+        let observerCalled = false;
+        const unsubscribe = connection.observe('device1', () => {
+          observerCalled = true;
+        });
+
+        // 注册引脚
+        connection.registerPin('device1', 0);
+
+        // 尝试创建引脚自连接
+        connection.createConnection('device1', 0, 'device1', 0);
+
+        // 验证观察者没有被调用
+        expect(observerCalled).toBe(false);
+
+        unsubscribe();
+      });
+    });
+
+    describe('createConnections', () => {
+      beforeEach(() => {
+        connection.registerPin('device1', 0);
+        connection.registerPin('device1', 1);
+        connection.registerPin('device2', 0);
+        connection.registerPin('device2', 1);
+        connection.registerPin('device3', 0);
+        connection.registerPin('device3', 1);
+      });
+
+      it('应该能批量创建多个连接', () => {
+        const targets = [
+          { id: 'device2', pin: 0 },
+          { id: 'device3', pin: 0 },
+        ];
+
+        connection.createConnections('device1', 0, targets);
+
+        // 检查 device1 引脚 0 连接到多个设备
+        expect(connection.getConnections('device1', 0)).toEqual([
+          {
+            id: 'device2',
+            pin: 0,
+            originPin: 0,
+          },
+          {
+            id: 'device3',
+            pin: 0,
+            originPin: 0,
+          },
+        ]);
+
+        // 检查反向连接
+        expect(connection.getConnections('device2', 0)).toEqual([
+          {
+            id: 'device1',
+            pin: 0,
+            originPin: 0,
+          },
+        ]);
+        expect(connection.getConnections('device3', 0)).toEqual([
+          {
+            id: 'device1',
+            pin: 0,
+            originPin: 0,
+          },
+        ]);
+      });
+
+      it('应该能处理空目标数组', () => {
+        connection.createConnections('device1', 0, []);
+
+        expect(connection.getConnections('device1', 0)).toEqual([]);
+      });
+
+      it('应该能处理包含重复目标的数组', () => {
+        const targets = [
+          { id: 'device2', pin: 0 },
+          { id: 'device2', pin: 0 }, // 重复
+          { id: 'device3', pin: 0 },
+        ];
+
+        connection.createConnections('device1', 0, targets);
+
+        // 重复的连接应该被去重
+        expect(connection.getConnections('device1', 0)).toEqual([
+          {
+            id: 'device2',
+            pin: 0,
+            originPin: 0,
+          },
+          {
+            id: 'device3',
+            pin: 0,
+            originPin: 0,
+          },
+        ]);
+      });
+
+      it('应该能处理包含自连接的目标数组', () => {
+        const targets = [
+          { id: 'device1', pin: 1 }, // 自连接
+          { id: 'device2', pin: 0 },
+        ];
+
+        connection.createConnections('device1', 0, targets);
+
+        expect(connection.getConnections('device1', 0)).toEqual([
+          {
+            id: 'device1',
+            pin: 1,
+            originPin: 0,
+          },
+          {
+            id: 'device2',
+            pin: 0,
+            originPin: 0,
+          },
+        ]);
+
+        expect(connection.getConnections('device1', 1)).toEqual([
+          {
+            id: 'device1',
+            pin: 0,
+            originPin: 1,
+          },
+        ]);
+      });
+
+      it('应该能处理复杂的目标数组', () => {
+        const targets = [
+          { id: 'device2', pin: 0 },
+          { id: 'device2', pin: 1 },
+          { id: 'device3', pin: 0 },
+          { id: 'device3', pin: 1 },
+        ];
+
+        connection.createConnections('device1', 0, targets);
+
+        // 验证 device1 引脚 0 的所有连接
+        const device1Connections = connection.getConnections('device1', 0);
+        expect(device1Connections).toHaveLength(4);
+        expect(device1Connections).toEqual(
+          expect.arrayContaining([
+            { id: 'device2', pin: 0, originPin: 0 },
+            { id: 'device2', pin: 1, originPin: 0 },
+            { id: 'device3', pin: 0, originPin: 0 },
+            { id: 'device3', pin: 1, originPin: 0 },
+          ]),
+        );
+
+        // 验证反向连接
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device1', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device2', 1)).toEqual([{ id: 'device1', pin: 0, originPin: 1 }]);
+        expect(connection.getConnections('device3', 0)).toEqual([{ id: 'device1', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device3', 1)).toEqual([{ id: 'device1', pin: 0, originPin: 1 }]);
+      });
+
+      it('应该能与其他连接方法配合使用', () => {
+        // 先创建一些连接
+        connection.createConnection('device1', 1, 'device2', 1);
+
+        // 使用 createConnections 创建更多连接
+        const targets = [
+          { id: 'device2', pin: 0 },
+          { id: 'device3', pin: 0 },
+        ];
+        connection.createConnections('device1', 0, targets);
+
+        // 验证所有连接都正确建立
+        expect(connection.getConnections('device1')).toEqual([
+          { id: 'device2', pin: 0, originPin: 0 },
+          { id: 'device3', pin: 0, originPin: 0 },
+          { id: 'device2', pin: 1, originPin: 1 },
+        ]);
+
+        expect(connection.getConnections('device2')).toEqual([
+          { id: 'device1', pin: 0, originPin: 0 },
+          { id: 'device1', pin: 1, originPin: 1 },
+        ]);
+
+        expect(connection.getConnections('device3')).toEqual([{ id: 'device1', pin: 0, originPin: 0 }]);
+      });
+
+      it('应该排除目标数组中的引脚自连接', () => {
+        const targets = [
+          { id: 'device1', pin: 0 }, // 引脚自连接，应该被排除
+          { id: 'device2', pin: 0 },
+          { id: 'device3', pin: 0 },
+        ];
+
+        connection.createConnections('device1', 0, targets);
+
+        // 验证只创建了有效的连接，排除了引脚自连接
+        expect(connection.getConnections('device1', 0)).toEqual([
+          { id: 'device2', pin: 0, originPin: 0 },
+          { id: 'device3', pin: 0, originPin: 0 },
+        ]);
+
+        // 验证反向连接
+        expect(connection.getConnections('device2', 0)).toEqual([{ id: 'device1', pin: 0, originPin: 0 }]);
+        expect(connection.getConnections('device3', 0)).toEqual([{ id: 'device1', pin: 0, originPin: 0 }]);
       });
     });
 
