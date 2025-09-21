@@ -7,3 +7,4 @@ export * from './point';
 export * from './tooltip';
 export * from './pin';
 export * from './toolbar-action';
+export * from './context-menu';

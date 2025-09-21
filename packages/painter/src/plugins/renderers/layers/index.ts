@@ -1,2 +1,2 @@
-import './point';
 import './electronic';
+import './toolbar';

@@ -1,13 +1,13 @@
 import { Cursor, Hand } from '@circuit/icons';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { useService, useWatcher, Watcher } from '../../../../../context';
+import { useService, useWatcher, Watcher } from '../../../../context';
 import {
   IDragSceneService,
   ICursorService,
   IPainterConfigurationService,
-} from '../../../../../types';
-import { Button } from '../../components';
+} from '../../../../types';
+import { Button } from '../components';
 
 export const MoveModeRenderWithSpace = (spaceKeyDown: Watcher<boolean>) => {
   return function MoveModeRender() {

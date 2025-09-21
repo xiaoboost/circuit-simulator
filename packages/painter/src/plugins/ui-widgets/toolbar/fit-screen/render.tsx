@@ -2,9 +2,9 @@ import { FitScreen } from '@circuit/icons';
 import { IStateCoreService } from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../../context';
-import { IViewportService } from '../../../../../types';
-import { Button } from '../../components';
+import { useService, useWatcher } from '../../../../context';
+import { IViewportService } from '../../../../types';
+import { Button } from '../components';
 
 export const FitScreenButton = () => {
   const viewport = useService(IViewportService);

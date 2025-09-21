@@ -10,11 +10,12 @@ export function Render() {
     return null;
   }
 
-  return (
-    <div className={Styles.toolbar}>
-      {actions.map(({ name, Render }) => (
-        <Render key={name} />
-      ))}
-    </div>
-  );
+  const renderedActions = actions.map(({ name, Render }) => <Render key={name} />);
+  const hasVisibleActions = React.Children.toArray(renderedActions).some((child) => child !== null);
+
+  if (!hasVisibleActions) {
+    return null;
+  }
+
+  return <div className={Styles.toolbar}>{renderedActions}</div>;
 }

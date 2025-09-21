@@ -5,9 +5,9 @@ import {
 } from '@circuit/shared';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../../context';
-import { ISelectService } from '../../../../../types';
-import { Button } from '../../components';
+import { useService, useWatcher } from '../../../../context';
+import { ISelectService } from '../../../../types';
+import { Button } from '../components';
 
 const LoggerName = '快捷操作';
 

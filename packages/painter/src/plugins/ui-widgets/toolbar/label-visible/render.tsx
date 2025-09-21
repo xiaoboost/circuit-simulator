@@ -1,10 +1,10 @@
 import { Text } from '@circuit/icons';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../../context';
-import { IPainterConfigurationService } from '../../../../../types';
-import { Button } from '../../components';
-import { ToolbarMenuOffset } from '../../constant';
+import { useService, useWatcher } from '../../../../context';
+import { IPainterConfigurationService } from '../../../../types';
+import { Button } from '../components';
+import { ToolbarMenuOffset } from '../constant';
 
 export function LabelVisibleRender() {
   const {

@@ -1,5 +1,5 @@
-import { definePlugin } from '../../../../../context';
-import { IPainterToolBarActionHook } from '../../../../../types';
+import { definePlugin } from '../../../../context';
+import { IPainterToolBarActionHook } from '../../../../types';
 import { FitScreenButton } from './render';
 
 definePlugin(({ registerHook }) => {

@@ -1,11 +1,11 @@
 import { IHotKeyHook } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../../../context';
+import { definePlugin, Watcher } from '../../../../context';
 import {
   IPainterToolBarActionHook,
   IDragSceneService,
   ICursorService,
   IPainterConfigurationService,
-} from '../../../../../types';
+} from '../../../../types';
 import { MoveModeRenderWithSpace } from './render';
 
 definePlugin(({ registerHook, getService }) => {
