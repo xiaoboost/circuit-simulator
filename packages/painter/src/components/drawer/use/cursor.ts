@@ -1,21 +1,10 @@
-import { Point } from '@circuit/algorithm';
-import { ICursorKind } from '../../types';
+import { useService, useWatcher } from '../../../context';
+import { ICursorKind, ICursorService } from '../../../types';
 
-import IconDrawLine from './assets/draw-line.svg';
-import IconSelectBox from './assets/select-box.svg';
+import IconDrawLine from '../assets/draw-line.svg';
+import IconSelectBox from '../assets/select-box.svg';
 
-export function getBackgroundStyle(scale: number, position: Point): React.CSSProperties {
-  const size = scale * 20;
-  const biasX = position[0] % size;
-  const biasY = position[1] % size;
-
-  return {
-    backgroundSize: `${size}px`,
-    backgroundPosition: `${biasX}px ${biasY}px`,
-  };
-}
-
-export function getCursorStyle(cursor: ICursorKind): React.CSSProperties {
+function getCursorStyle(cursor: ICursorKind): React.CSSProperties {
   switch (cursor) {
     case ICursorKind.Default:
       return {
@@ -56,4 +45,10 @@ export function getCursorStyle(cursor: ICursorKind): React.CSSProperties {
     default:
       return {};
   }
+}
+
+export function useCursorStyle() {
+  const cursorService = useService(ICursorService);
+  const [cursor] = useWatcher(cursorService.value);
+  return getCursorStyle(cursor);
 }
