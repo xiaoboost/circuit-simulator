@@ -1,11 +1,11 @@
 import React from 'react';
 import { definePlugin } from '../../../context';
-import { RIGHT_SIDEBAR_RENDER } from '../../../types';
+import { IRightSidebarRender } from '../../../types';
 import { PropertyPanelTitle } from './components';
 import { PropertyPanelContent } from './content';
 
 definePlugin(({ registerHook }) => {
-  registerHook(RIGHT_SIDEBAR_RENDER, {
+  registerHook(IRightSidebarRender, {
     name: 'propertyPanel',
     order: 1,
     title: <PropertyPanelTitle />,

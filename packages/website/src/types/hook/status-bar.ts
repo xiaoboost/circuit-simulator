@@ -3,7 +3,7 @@ import { createServiceKey, IRendererData } from '@circuit/inject';
 /**
  * 状态栏渲染器
  */
-export const STATUS_BAR_RENDER = createServiceKey<IStatusBarRender>('StatusBarRender');
+export const IStatusBarRender = createServiceKey<IStatusBarRender>('StatusBarRender');
 
 /** 顶栏渲染器 */
 export interface IStatusBarRender extends IRendererData<object> {

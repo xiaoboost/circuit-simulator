@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 /**
  * 右侧边栏渲染器
  */
-export const RIGHT_SIDEBAR_RENDER = createServiceKey<IRightSidebarRender>('RightSidebarRender');
+export const IRightSidebarRender = createServiceKey<IRightSidebarRender>('RightSidebarRender');
 
 /** 导线渲染器 */
 export interface IRightSidebarRender extends IRendererData<object> {

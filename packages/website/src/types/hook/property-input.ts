@@ -3,7 +3,7 @@ import { createServiceKey, IRendererData } from '@circuit/inject';
 /**
  * 属性输入渲染器
  */
-export const PROPERTY_INPUT = createServiceKey<IPropertyInput>('PropertyInput');
+export const IPropertyInput = createServiceKey<IPropertyInput>('PropertyInput');
 
 /** 属性输入组件属性 */
 export interface IPropertyInputProps<T = any, D extends object = object> {

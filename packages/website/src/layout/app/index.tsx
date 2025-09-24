@@ -5,6 +5,7 @@ import { useInjectInstall, InjectContext } from '../../context';
 import { Header } from '../header';
 import { LeftSidebar } from '../left-sidebar';
 import { MainArea } from '../main-area';
+import { Overlay } from '../overlay';
 import { RightSidebar } from '../right-sidebar';
 import { removeLoading } from './loading';
 import * as Styles from './styles.less';
@@ -35,6 +36,7 @@ function Layout() {
         <MainArea />
         <RightSidebar />
       </div>
+      <Overlay />
     </article>
   );
 }

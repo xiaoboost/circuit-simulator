@@ -2,7 +2,7 @@
 // import { PartStructuredData } from '@circuit/types';
 import React from 'react';
 // import { useHook, useService } from '../../../context';
-// import { PROPERTY_INPUT } from '../../../types';
+// import { IPropertyInputProps } from '../../../types';
 import { EmptyPropertyPanel, SinglePropertyPanel } from './components';
 import { useSelectedParts } from './utils';
 

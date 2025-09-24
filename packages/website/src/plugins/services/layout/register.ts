@@ -6,7 +6,7 @@ import {
   getStorage,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
-import { LEFT_SIDEBAR_RENDER } from '../../../types';
+import { ILeftSidebarRender } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getService, getHook }) => {
   const service: ILayoutService = {
@@ -25,7 +25,7 @@ definePlugin(({ registerService, registerHook, getService, getHook }) => {
         }
 
         // 需要展开时，展开第一个标签页
-        const leftSideBarHooks = getHook(LEFT_SIDEBAR_RENDER);
+        const leftSideBarHooks = getHook(ILeftSidebarRender);
         return leftSideBarHooks[0].name ?? '';
       },
       toCache: (data: string) => Boolean(data),

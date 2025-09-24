@@ -1,9 +1,9 @@
 import { Painter } from '@circuit/painter';
 import { definePlugin } from '../../../context';
-import { MAIN_AREA_RENDER } from '../../../types';
+import { IMainAreaRender } from '../../../types';
 
 definePlugin(({ registerHook }) => {
-  registerHook(MAIN_AREA_RENDER, {
+  registerHook(IMainAreaRender, {
     name: 'painter',
     order: 1,
     Render: Painter,

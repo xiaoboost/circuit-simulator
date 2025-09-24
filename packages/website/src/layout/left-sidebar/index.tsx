@@ -3,12 +3,12 @@ import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
 import { useHook, useService, useWatcher } from '../../context';
-import { LEFT_SIDEBAR_RENDER } from '../../types';
+import { ILeftSidebarRender } from '../../types';
 import { Sidebar } from '../right-sidebar/sidebar';
 import * as Styles from './styles.less';
 
 export const LeftSidebar = React.memo(function RightSidebar() {
-  const renders = useHook(LEFT_SIDEBAR_RENDER);
+  const renders = useHook(ILeftSidebarRender);
   const layoutService = useService(ILayoutService);
   const [activeTab, setActiveTab] = useWatcher(layoutService.leftSidebarActiveTab);
   const sidebar = useMemo(() => {
