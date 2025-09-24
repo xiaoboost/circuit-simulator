@@ -9,3 +9,5 @@ export const ScopeMetaInfos = new Map<symbol, symbol[]>();
 export const PluginMetaInfos = new Map<PluginInstaller, IPluginMeta>();
 /** 上下文标记 */
 export const InjectContext = createContext<IScopeManager>(new Map());
+/** 测试用的全局命名空间 */
+export const TestGlobalNamespace = '__TEST_CONFIG__';

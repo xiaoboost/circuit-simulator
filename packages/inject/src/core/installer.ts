@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react';
 import { ILifeCycleHook } from '../builtin';
-import { PluginMetaInfos, ScopeMetaInfos, InjectContext, RootScope } from './context';
-import { type IScopeContainer, type IScopeManager } from './types';
+import { PluginMetaInfos, ScopeMetaInfos, InjectContext, RootScope, TestGlobalNamespace } from './context';
+import type { IScopeContainer, IScopeManager, IPluginScopeRegister } from './types';
 import { getServiceWithScope, getHookWithScope, getScopeList } from './utils';
 
 function createScopeData(
@@ -49,6 +49,22 @@ function createScope(scopeMeta: typeof ScopeMetaInfos, manager: IScopeManager) {
 }
 
 function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeManager) {
+  const getRegister = (scope: symbol): IPluginScopeRegister => {
+    const scopeContainer = manager.get(scope);
+
+    if (!scopeContainer) {
+      throw new Error(`在注册插件时未找到 ${String(scope)} 对应作用域`);
+    }
+
+    const { context } = scopeContainer;
+    return {
+      registerService: (key, service) => context.ServiceMap.set(key, service),
+      registerHook: (key, hook) => {
+        context.HookMap.set(key, [...(context.HookMap.get(key) ?? []), hook]);
+      },
+    };
+  };
+
   for (const { installer, scope } of pluginMetaInfos.values()) {
     const scopeContainer = manager.get(scope);
 
@@ -60,14 +76,18 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
     const uninstaller = installer({
       getService: (key) => getServiceWithScope(key, scope, manager),
       getHook: (key) => getHookWithScope(key, scope, manager),
-      registerService: (key, service) => context.ServiceMap.set(key, service),
-      registerHook: (key, hook) => {
-        context.HookMap.set(key, [...(context.HookMap.get(key) ?? []), hook]);
-      },
       getTestConfig(key) {
         return process.env.NODE_ENV === 'test'
-          ? (globalThis as any)?.__TEST_CONFIG__?.[key]
+          ? (globalThis as any)?.[TestGlobalNamespace]?.[key]
           : undefined;
+      },
+      ...getRegister(scope),
+
+      root() {
+        return getRegister(RootScope);
+      },
+      parent() {
+        return scopeContainer.parent ? getRegister(scopeContainer.parent.scope) : undefined;
       },
     });
 

@@ -23,18 +23,31 @@ export interface IPluginMeta {
   installer: PluginInstaller;
 }
 
-/** 插件注册上下文 */
-export interface IPluginInstallerContext {
-  /** 获取当前服务 */
-  getService<T>(key: ServiceTypeWithKey<T>): T;
-  /** 获取当前钩子 */
-  getHook<T>(key: ServiceTypeWithKey<T>): T[];
+/** 容器注册方法 */
+export interface IPluginScopeRegister {
   /** 注册服务 */
   registerService<T>(key: ServiceTypeWithKey<T>, service: T): void;
   /** 注册钩子 */
   registerHook<T>(key: ServiceTypeWithKey<T>, hook: T): void;
+}
+
+/** 插件注册上下文 */
+export interface IPluginInstallerContext extends IPluginScopeRegister {
+  /** 获取当前服务 */
+  getService<T>(key: ServiceTypeWithKey<T>): T;
+  /** 获取当前钩子 */
+  getHook<T>(key: ServiceTypeWithKey<T>): T[];
   /** 获取测试时配置 */
   getTestConfig<T = any>(key: string): T;
+
+  /** 根节点上下文 */
+  root(): IPluginScopeRegister;
+  /**
+   * 上级容器上下文
+   *
+   * @description 如果当前是根节点，则返回`undefined`
+   */
+  parent(): IPluginScopeRegister | undefined;
 }
 
 /** 上下文储存 */

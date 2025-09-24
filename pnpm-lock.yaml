@@ -198,6 +198,9 @@ importers:
       typescript:
         specifier: 5.9.2
         version: 5.9.2
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/node@20.19.0)(jsdom@13.2.0)(less@4.4.0)(terser@5.43.1)(tsx@4.20.3)
 
   packages/painter:
     dependencies:
