@@ -61,7 +61,7 @@ describe('DI 系统', () => {
       expect(fromChild).toBe(service);
     });
 
-    it('子作用域应聚合自身与父作用域钩子并按 order 升序', async () => {
+    it('子作用域仅返回当前作用域钩子（不包含父作用域）', async () => {
       const key = createServiceKey('HookAgg');
       const child = createScopeSymbol('Child3', RootScope);
       const defineChildPlugin = createPluginDefinitionWithScope(child);
@@ -77,9 +77,8 @@ describe('DI 系统', () => {
       });
 
       const hooksInChild = await getPluginHooks(key, child);
-      expect(hooksInChild.length).toBe(2);
+      expect(hooksInChild.length).toBe(1);
       expect(hooksInChild[0]).toBe(childHook);
-      expect(hooksInChild[1]).toBe(rootHook);
     });
 
     it('父作用域不应该获取到仅在子作用域注册的服务', async () => {
@@ -138,7 +137,7 @@ describe('DI 系统', () => {
       expect(got).toBe(v2);
     });
 
-    it('钩子可按降序获取', async () => {
+    it('钩子可按降序获取（仅当前作用域）', async () => {
       const key = createServiceKey('OrderHook');
       const child = createScopeSymbol('OrderChild', RootScope);
       const defineChild = createPluginDefinitionWithScope(child);
@@ -155,14 +154,12 @@ describe('DI 系统', () => {
         registerHook(key, child2);
       });
       const hooksDesc = await getPluginHooks(key, child, 'desc');
-      expect(hooksDesc.length).toBe(4);
-      expect(hooksDesc[0]).toBe(root3);
-      expect(hooksDesc[1]).toBe(child2);
-      expect(hooksDesc[2]).toBe(child1);
-      expect(hooksDesc[3]).toBe(root0);
+      expect(hooksDesc.length).toBe(2);
+      expect(hooksDesc[0]).toBe(child2);
+      expect(hooksDesc[1]).toBe(child1);
     });
 
-    it('多级作用域继承与优先级（服务最近优先，钩子合并）', async () => {
+    it('多级作用域继承与优先级（服务最近优先，钩子不合并）', async () => {
       const Parent = createScopeSymbol('MSParent', RootScope);
       const Child = createScopeSymbol('MSChild', Parent);
       const Grand = createScopeSymbol('MSGrand', Child);
@@ -189,10 +186,7 @@ describe('DI 系统', () => {
       const srvFromGrand = await getPluginService(srvKey, Grand);
       expect(srvFromGrand).toBe(srvParent);
       const hooksFromGrand = await getPluginHooks(hookKey, Grand);
-      expect(hooksFromGrand.length).toBe(3);
-      expect(hooksFromGrand[0]).toBe(hookChild);
-      expect(hooksFromGrand[1]).toBe(hookParent);
-      expect(hooksFromGrand[2]).toBe(hookRoot);
+      expect(hooksFromGrand.length).toBe(0);
     });
 
     it('插件卸载时调用 uninstaller，并在重新挂载后重新注册', async () => {

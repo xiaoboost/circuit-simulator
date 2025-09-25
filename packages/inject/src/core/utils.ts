@@ -51,21 +51,13 @@ export function getHookWithScope<T>(
   ScopeManager: IScopeManager,
   sort: 'asc' | 'desc' = 'asc',
 ): T[] {
-  let scopeContainer = ScopeManager.get(scope);
+  const scopeContainer = ScopeManager.get(scope);
 
   if (!scopeContainer) {
     throw new Error(`未找到 ${String(scope)} 作用域`);
   }
 
-  let hooks = scopeContainer.context.HookMap.get(key) ?? [];
-
-  // 逐级向上查找
-  while (scopeContainer.parent) {
-    scopeContainer = scopeContainer.parent;
-    hooks = hooks.concat(scopeContainer.context.HookMap.get(key) ?? []);
-  }
-
-  return hooks.sort(createSorter(sort));
+  return (scopeContainer.context.HookMap.get(key) ?? []).sort(createSorter(sort));
 }
 
 /** 先序遍历作用域树 */
