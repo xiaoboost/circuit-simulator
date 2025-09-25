@@ -7,10 +7,27 @@ import { LeftSidebar } from '../left-sidebar';
 import { MainArea } from '../main-area';
 import { Overlay } from '../overlay';
 import { RightSidebar } from '../right-sidebar';
+import { useHotkeyDriver } from './driver';
 import { removeLoading } from './loading';
 import * as Styles from './styles.less';
 
 function Layout() {
+  useHotkeyDriver();
+
+  return (
+    <article className={Styles.layout}>
+      <Header />
+      <div className={Styles.container}>
+        <LeftSidebar />
+        <MainArea />
+        <RightSidebar />
+      </div>
+      <Overlay />
+    </article>
+  );
+}
+
+function Initialization() {
   const context = useContext(InjectContext);
   const { isInitialized } = useInjectInstall(() => {
     setTimeout(() => {
@@ -28,23 +45,13 @@ function Layout() {
     return null;
   }
 
-  return (
-    <article className={Styles.layout}>
-      <Header />
-      <div className={Styles.container}>
-        <LeftSidebar />
-        <MainArea />
-        <RightSidebar />
-      </div>
-      <Overlay />
-    </article>
-  );
+  return <Layout />;
 }
 
 export function App() {
   return (
     <InjectContext.Provider value={new Map()}>
-      <Layout />
+      <Initialization />
     </InjectContext.Provider>
   );
 }

@@ -34,6 +34,7 @@
     "antd": "5.26.7",
     "core-js": "3.44.0",
     "debounce": "2.2.0",
+    "hotkeys-js": "3.13.15",
     "immer": "10.1.1",
     "localforage": "1.10.0",
     "qs": "6.14.0",

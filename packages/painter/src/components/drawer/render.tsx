@@ -8,13 +8,13 @@ import {
 import {
   IDrawLayerHook,
 } from '../../types';
-import * as Styles from './styles.less';
 import {
   useMouseListener,
   usePosition,
   useBackgroundStyle,
   useCursorStyle,
-} from './use';
+} from './driver';
+import * as Styles from './styles.less';
 
 export function Drawer() {
   const domRef = useRef<HTMLDivElement>(null);

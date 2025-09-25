@@ -430,6 +430,9 @@ importers:
       debounce:
         specifier: 2.2.0
         version: 2.2.0
+      hotkeys-js:
+        specifier: 3.13.15
+        version: 3.13.15
       immer:
         specifier: 10.1.1
         version: 10.1.1

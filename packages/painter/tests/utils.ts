@@ -1,5 +1,5 @@
 import path from 'path';
-import { PluginMetaInfos, ScopeMetaInfos } from '@circuit/inject/core/context';
+import { PluginMetaInfos, ScopeMetaInfos, TestGlobalNamespace } from '@circuit/inject/core/context';
 import { useInjectInstall } from '@circuit/inject/core/installer';
 import { ServiceTypeWithKey } from '@circuit/inject/core/types';
 import { renderHook, waitForStateBe } from '@circuit/test-toolkit';
@@ -20,12 +20,12 @@ export function registerPlugin(file: string | string[], testConfig: Record<strin
     else {
       await resolveRegister(file);
     }
-    (globalThis as any).__TEST_CONFIG__ = testConfig;
+    (globalThis as any)[TestGlobalNamespace] = testConfig;
   });
 
   afterAll(async () => {
     await clearRegister();
-    delete (globalThis as any).__TEST_CONFIG__;
+    delete (globalThis as any)[TestGlobalNamespace];
   });
 }
 
@@ -41,19 +41,6 @@ export async function getPlugin<T>(key: ServiceTypeWithKey<T>): Promise<T> {
   const { result: { current: service } } = renderHook(() => useService(key));
   console.error = originalError;
   return service;
-}
-
-export function getPluginWithHook<T>(file: string, key: ServiceTypeWithKey<T>): Promise<T> {
-  return new Promise((resolve) => {
-    beforeAll(() => {
-      resolveRegister(file);
-      getPlugin(key).then((service) => {
-        resolve(service);
-      });
-    });
-
-    afterAll(() => clearRegister());
-  });
 }
 
 export function clearRegister() {

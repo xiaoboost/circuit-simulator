@@ -2,12 +2,12 @@ import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useRef } from 'react';
 import { Drawer } from '../drawer';
 import { Viewer } from '../viewer';
-import * as Styles from './styles.less';
 import {
-  useKeyboardListener,
+  useHotkeyDriver,
   usePainterRefService,
   usePainterInit,
-} from './use';
+} from './driver';
+import * as Styles from './styles.less';
 
 /** 画布组件参数 */
 export interface PainterProps {
@@ -22,7 +22,7 @@ export const Painter = React.memo(function Painter(props: PainterProps) {
 
   usePainterInit();
   usePainterRefService(painterRef);
-  useKeyboardListener(painterRef);
+  useHotkeyDriver(painterRef);
 
   return (
     <main
