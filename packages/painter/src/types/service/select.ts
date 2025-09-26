@@ -18,6 +18,8 @@ export interface ISelectService {
   readonly value: Watcher<Set<string>>;
   /** 设置选中内容 */
   set(...ids: string[]): void;
+  /** 添加选中内容 */
+  add(...ids: string[]): void;
   /** 清空选中内容 */
   clear(): void;
 }

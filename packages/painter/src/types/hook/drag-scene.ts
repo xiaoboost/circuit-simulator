@@ -53,6 +53,10 @@ export interface DragSceneHookPayload {
    * @description 手动触发时如果传入了事件参数，这里会将其包装成画布自己的拖动事件
    */
   event?: DragMouseEvent;
+  /**
+   * 结束回调时是否已经移动过
+   */
+  isMoved?: boolean;
   /** 其他参数 */
   [key: string]: any;
 }

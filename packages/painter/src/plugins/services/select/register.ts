@@ -17,19 +17,6 @@ definePlugin(({ registerService, getService }) => {
     value: selected,
     set(...ids) {
       if (ids.length > 0) {
-        const getIdsString = () => {
-          const { state: { data: { parts, lines } } } = getService(IStateCoreService);
-          const lineIds = lines
-            .filter((line) => ids.includes(line.id))
-            .map((line) => line.id);
-
-          const partIds = parts
-            .filter((part) => ids.includes(part.id))
-            .map((part) => createPartReferenceTag(part));
-
-          return [...lineIds, ...partIds].join(', ');
-        };
-
         getService(ILoggerService).info(LoggerName, '设置选中元件', getIdsString);
       }
       else {
@@ -38,11 +25,27 @@ definePlugin(({ registerService, getService }) => {
 
       selected.setData(new Set(ids));
     },
+    add(...ids) {
+      service.set(...selected.data.values(), ...ids);
+    },
     clear() {
       getService(ILoggerService).debug(LoggerName, '清空选中元件');
       selected.setData(new Set());
     },
   };
+
+  function getIdsString(...ids: string[]) {
+    const { state: { data: { parts, lines } } } = getService(IStateCoreService);
+    const lineIds = lines
+      .filter((line) => ids.includes(line.id))
+      .map((line) => line.id);
+
+    const partIds = parts
+      .filter((part) => ids.includes(part.id))
+      .map((part) => createPartReferenceTag(part));
+
+    return [...lineIds, ...partIds].join(', ');
+  }
 
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {

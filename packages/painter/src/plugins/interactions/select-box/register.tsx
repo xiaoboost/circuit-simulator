@@ -86,22 +86,20 @@ definePlugin(({ registerHook, getService }) => {
   // 注册选择框场景
   registerHook(IDragSceneHook, {
     name: SELECT_BOX_DRAG_SCENE_NAME,
+    onFirstDragMove(_, startPayload) {
+      // 打印日志
+      getService(ILoggerService).debug(LoggerName, '开始多选框选择');
+      // 设置启动坐标
+      const position = Point.from(startPayload!.event!.positionInDrawer);
+      start.setData(position);
+      end.setData(position);
+    },
     onDragMove(event) {
       end.setData(Point.from(event.positionInDrawer));
 
       if (start.data.distance(end.data) > SELECT_BOX_MIN_MOVE_DISTANCE) {
         getService(ICursorService).set(ICursorKind.SelectBox);
       }
-    },
-    afterStart(startPayload) {
-      // 打印日志
-      getService(ILoggerService).debug(LoggerName, '开始多选框选择');
-      // 启动后清除选中
-      getService(ISelectService).clear();
-      // 设置启动坐标
-      const position = Point.from(startPayload!.event!.positionInDrawer);
-      start.setData(position);
-      end.setData(position);
     },
     afterEnd(startPayload, endPayload) {
       if (!startPayload?.event || !endPayload?.event) {

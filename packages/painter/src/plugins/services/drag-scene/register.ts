@@ -64,9 +64,10 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       });
       const beforeKey = payload?.esc ? 'beforeCancel' : 'beforeEnd';
       const afterKey = payload?.esc ? 'afterCancel' : 'afterEnd';
+      const isMoved = isMovedMap.get(scene);
       const endPayload = payload?.event
-        ? { ...payload, event: getDragMouseEvent(payload.event) }
-        : payload as any;
+        ? { ...payload, isMoved, event: getDragMouseEvent(payload.event) }
+        : { ...payload, isMoved } as any;
       const startPayload = hooks.map(({ name }) => triggerPayloadMap.get(name));
       const run = (key: typeof beforeKey | typeof afterKey) => {
         return Promise.all(hooks.map(({ [key]: hook }, index) => {
@@ -181,13 +182,15 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
                 },
               }) as any;
 
-              // 这里必须是等于 false
-              if (isMovedMap.get(hook.name) === false && hook.onFirstDragMove) {
+              if (!isMovedMap.get(hook.name) && hook.onFirstDragMove) {
                 hook.onFirstDragMove(dragMoveEvent, payload);
               }
               else {
                 hook.onDragMove(dragMoveEvent, payload);
               }
+
+              // 只要移动过，这里就要设置为 true
+              isMovedMap.set(hook.name, true);
             }
           }
         }
