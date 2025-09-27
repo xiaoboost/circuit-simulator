@@ -1,6 +1,5 @@
 import { definePlugin } from '../../../context';
 import {
-  IMapHashMarkService,
   IMapHashService,
   MarkMap,
 } from '../../../types';
@@ -52,5 +51,5 @@ definePlugin(({ registerService }) => {
   };
 
   // 注册图纸服务
-  registerService(IMapHashMarkService, service);
+  registerService(IMapHashService, service);
 });

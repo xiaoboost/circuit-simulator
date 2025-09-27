@@ -18,7 +18,7 @@ import {
   IDragSceneHook,
   ISelectService,
   IDragSceneService,
-  IMapHashMarkService,
+  IMapHashService,
   ICollisionService,
   IVariableObserverService,
   IPainterHTMLElement,
@@ -115,7 +115,7 @@ definePlugin(({ registerHook, getService }) => {
     afterEnd({ part }: StartPayloadType, endPayload) {
       const painterService = getService(IStateCoreService);
       const logger = getService(ILoggerService);
-      const mapService = getService(IMapHashMarkService);
+      const mapService = getService(IMapHashService);
       const collisionService = getService(ICollisionService);
       const currentPosition = endPayload?.event?.positionInDrawer?.round(20);
 

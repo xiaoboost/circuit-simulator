@@ -1,0 +1,25 @@
+.contextMenu {
+  position: absolute;
+  width: 260px;
+  height: auto;
+  padding: 8px;
+  z-index: 999;
+  pointer-events: auto;
+  border: 1px solid @color-border-base;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px 2px mix(@color-white, @color-black, 85%);
+  background-color: fade(@color-white, 40%);
+  backdrop-filter: blur(10px);
+  gap: 4px;
+}
+
+.divider {
+  height: 1px;
+  width: 100%;
+  background-color: mix(@color-white, @color-black, 85%);
+  margin: 2px -2px;
+}

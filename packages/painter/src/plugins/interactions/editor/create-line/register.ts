@@ -16,7 +16,7 @@ import {
   IDragSceneHook,
   ISelectService,
   IDragSceneService,
-  IMapHashMarkService,
+  IMapHashService,
   EntityKind,
   IConnectionService,
   ICursorService,
@@ -66,7 +66,7 @@ definePlugin(({ registerHook, getService }) => {
 
       const state = getService(IStateCoreService);
       const connection = getService(IConnectionService);
-      const map = getService(IMapHashMarkService);
+      const map = getService(IMapHashService);
       const part = state.getPart(hoverData.id);
       const pin = getPartPin(part, hoverData.pin);
       const line = createLineByPath([pin.position]);
@@ -149,7 +149,7 @@ definePlugin(({ registerHook, getService }) => {
       setSearchResult(getService(IVariableObserverService), search(positionInDrawer, movement));
     },
     beforeEnd({ line, search, start }: StartPayloadType) {
-      const mapHash = getService(IMapHashMarkService);
+      const mapHash = getService(IMapHashService);
       const collision = getService(ICollisionService);
       const logger = getService(ILoggerService);
       const state = getService(IStateCoreService);

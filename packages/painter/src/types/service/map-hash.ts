@@ -8,10 +8,10 @@ import { createServiceKey } from '../../context';
  * @description 图纸服务，该服务主要是提供图纸相关服务，比如元件连接关系等。
  * @example
  * ```ts
- * const mapService = useService(IMapHashMarkService);
+ * const mapService = useService(IMapHashService);
  * ```
  */
-export const IMapHashMarkService
+export const IMapHashService
   = createServiceKey<IMapHashService>('MapHash');
 
 export interface ConnectionData {

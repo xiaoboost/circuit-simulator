@@ -6,7 +6,7 @@ import {
 import { definePlugin } from '../../../context';
 import {
   ICollisionService,
-  IMapHashMarkService,
+  IMapHashService,
   IConnectionService,
 } from '../../../types';
 
@@ -24,7 +24,7 @@ definePlugin(({ registerHook, getService }) => {
         return;
       }
 
-      const mapHashService = getService(IMapHashMarkService);
+      const mapHashService = getService(IMapHashService);
       const collisionService = getService(ICollisionService);
       const connectionService = getService(IConnectionService);
 

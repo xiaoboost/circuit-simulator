@@ -15,7 +15,7 @@ export const IPainterContextMenuItemHook
 
 export interface IPainterContextMenuItemProps {
   /** 关闭菜单 */
-  onHide?(): void;
+  onHide(): void;
 }
 
 export enum IPainterContextMenuItemCategory {

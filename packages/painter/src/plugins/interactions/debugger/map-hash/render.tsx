@@ -4,7 +4,7 @@ import React from 'react';
 import { useService, useWatcher } from '../../../../context';
 import {
   IPainterConfigurationService,
-  IMapHashMarkService,
+  IMapHashService,
   IMapCoordinateService,
   MarkKind,
   ConnectionData,
@@ -23,7 +23,7 @@ const nodeColor: Record<MarkKind, string> = {
 export function MapHashDebugger() {
   const configuration = useService(IPainterConfigurationService);
   const [openMapMarkDebugger] = useWatcher(configuration.openMapMarkDebugger);
-  const mapHashService = useService(IMapHashMarkService);
+  const mapHashService = useService(IMapHashService);
   const mapService = useService(IMapCoordinateService);
   const [scale] = useWatcher(mapService.scale);
 
