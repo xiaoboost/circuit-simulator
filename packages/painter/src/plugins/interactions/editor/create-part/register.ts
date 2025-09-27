@@ -103,15 +103,14 @@ definePlugin(({ registerHook, getService }) => {
       getService(IStateCoreService).draft((state) => {
         state.parts.push({
           ...payload.part,
-          position: Point.from(positionInDrawer),
+          position: Point.from(0),
         });
       });
+      setPosition(payload.part.id, positionInDrawer);
     },
     onDragMove({ positionInDrawer }, payload: StartPayloadType) {
-      if (getService(IDragSceneService).onlyHas(CreatePartSceneName)) {
-        setPosition(payload.part.id, positionInDrawer);
-        getService(ILoggerService).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
-      }
+      setPosition(payload.part.id, positionInDrawer);
+      getService(ILoggerService).debug(LoggerName, '移动创建中的器件', positionInDrawer.join());
     },
     afterEnd({ part }: StartPayloadType, endPayload) {
       const painterService = getService(IStateCoreService);
