@@ -1,19 +1,19 @@
 import React, { useEffect, useRef, useLayoutEffect } from 'react';
 import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
-  IPainterContextMenuItemHook,
-  IPainterContextMenuItemCategory,
-  IPainterContextMenuService,
+  IContextMenuItemHook,
+  IContextMenuItemCategory,
+  IContextMenuService,
 } from '../../../../types';
 import { Divider } from './driver';
 import * as Styles from './styles.less';
 
-const categories = [IPainterContextMenuItemCategory.Edit];
+const categories = [IContextMenuItemCategory.Edit];
 
 export function Render() {
   const ref = useRef<HTMLDivElement>(null);
-  const actions = useHook(IPainterContextMenuItemHook, 'asc');
-  const contextMenuService = useService(IPainterContextMenuService);
+  const actions = useHook(IContextMenuItemHook, 'asc');
+  const contextMenuService = useService(IContextMenuService);
   const [visible, setVisible] = useWatcher(contextMenuService.visible);
   const [position] = useWatcher(contextMenuService.position);
 

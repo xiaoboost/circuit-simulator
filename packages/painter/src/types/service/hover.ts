@@ -17,4 +17,10 @@ export const IHoverService
 export interface IHoverService {
   /** 当前悬停状态 */
   status: Watcher<Entity | undefined>;
+  /**
+   * 立即更新悬停状态
+   *
+   * @description 通常在画布变更而鼠标没有活动的时候调用
+   */
+  update(): void;
 }

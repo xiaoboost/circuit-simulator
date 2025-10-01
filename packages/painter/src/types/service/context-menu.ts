@@ -2,11 +2,11 @@ import { Point } from '@circuit/algorithm';
 import { createServiceKey, type Watcher } from '../../context';
 
 /** 右键菜单服务键 */
-export const IPainterContextMenuService
-  = createServiceKey<IPainterContextMenuService>('PainterContextMenuService');
+export const IContextMenuService
+  = createServiceKey<IContextMenuService>('PainterContextMenuService');
 
 /** 右键菜单服务 */
-export interface IPainterContextMenuService {
+export interface IContextMenuService {
   /** 是否显示 */
   visible: Watcher<boolean>;
   /** 显示位置 */

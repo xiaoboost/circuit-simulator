@@ -13,39 +13,12 @@ import {
 const LoggerName = '悬停服务';
 
 definePlugin(({ registerService, registerHook, getService }) => {
+  let positionInDrawer = Point.Zero();
+
   const service: IHoverService = {
     status: new Watcher<Entity | undefined>(undefined),
-  };
-
-  /** EntityKind 优先级 */
-  const entityKindPriority = {
-    [EntityKind.LinePin]: 0,
-    [EntityKind.Line]: 1,
-    [EntityKind.PartPin]: 2,
-    [EntityKind.Part]: 3,
-  };
-
-  const getEntityText = (entity: Entity) => {
-    if (entity.kind === EntityKind.Part) {
-      return `元件 ${entity.id}`;
-    }
-    else if (entity.kind === EntityKind.Line) {
-      return `导线 ${entity.id} 第 ${entity.index} 段`;
-    }
-    else if (entity.kind === EntityKind.PartPin) {
-      return `元件 ${entity.id} 引脚 ${entity.pin}`;
-    }
-    else {
-      return `导线 ${entity.id} ${entity.pin === 0 ? '起点' : '终点'}`;
-    }
-  };
-
-  registerHook(IEventListenerHook, {
-    order: 1,
-    onMouseMove(event) {
+    update() {
       const collisionService = getService(ICollisionService);
-      const mapService = getService(IMapCoordinateService);
-      const positionInDrawer = mapService.screenToMapPosition(new Point(event.pageX, event.pageY));
       const collision = collisionService.pointInEntities(positionInDrawer);
       const logger = getService(ILoggerService);
 
@@ -77,6 +50,38 @@ definePlugin(({ registerService, registerHook, getService }) => {
       // 设置优先级最高的实体为当前悬停状态
       service.status.setData(sorted[0]);
       logger.debug(LoggerName, '悬停实体', getEntityText(sorted[0]));
+    },
+  };
+
+  /** EntityKind 优先级 */
+  const entityKindPriority = {
+    [EntityKind.LinePin]: 0,
+    [EntityKind.Line]: 1,
+    [EntityKind.PartPin]: 2,
+    [EntityKind.Part]: 3,
+  };
+
+  const getEntityText = (entity: Entity) => {
+    if (entity.kind === EntityKind.Part) {
+      return `元件 ${entity.id}`;
+    }
+    else if (entity.kind === EntityKind.Line) {
+      return `导线 ${entity.id} 第 ${entity.index} 段`;
+    }
+    else if (entity.kind === EntityKind.PartPin) {
+      return `元件 ${entity.id} 引脚 ${entity.pin}`;
+    }
+    else {
+      return `导线 ${entity.id} ${entity.pin === 0 ? '起点' : '终点'}`;
+    }
+  };
+
+  registerHook(IEventListenerHook, {
+    order: 1,
+    onMouseMove(event) {
+      const mapService = getService(IMapCoordinateService);
+      positionInDrawer = mapService.screenToMapPosition(new Point(event.pageX, event.pageY));
+      service.update();
     },
   });
 

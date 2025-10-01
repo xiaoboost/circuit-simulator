@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
 import { IOverlayRender, IHotKeyHook } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../../context';
-import { IEventListenerHook, IDragSceneService, IPainterContextMenuService } from '../../../../types';
+import { IEventListenerHook, IDragSceneService, IContextMenuService } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook, getService, root }) => {
@@ -17,7 +17,7 @@ definePlugin(({ registerHook, getService, root }) => {
   });
 
   // 注册服务
-  registerServiceInRoot(IPainterContextMenuService, {
+  registerServiceInRoot(IContextMenuService, {
     visible,
     position,
     openAt(point: Point) {
@@ -46,7 +46,7 @@ definePlugin(({ registerHook, getService, root }) => {
       const { isDragging } = getService(IDragSceneService);
 
       if (!isDragging.data && event.button === 2) {
-        getService(IPainterContextMenuService).openAt(new Point(event.pageX, event.pageY));
+        getService(IContextMenuService).openAt(new Point(event.pageX, event.pageY));
       }
     },
   });

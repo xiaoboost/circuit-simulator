@@ -10,15 +10,15 @@ import { createServiceKey } from '../../context';
  * const painterContextMenuHooks = useHook(IPainterContextMenuHook);
  * ```
  */
-export const IPainterContextMenuItemHook
-  = createServiceKey<IPainterContextMenuItemHook>('IPainterContextMenuHook');
+export const IContextMenuItemHook
+  = createServiceKey<IContextMenuItemHook>('IPainterContextMenuHook');
 
-export interface IPainterContextMenuItemProps {
+export interface IContextMenuItemProps {
   /** 关闭菜单 */
   onHide(): void;
 }
 
-export enum IPainterContextMenuItemCategory {
+export enum IContextMenuItemCategory {
   /** 编辑 */
   Edit,
 }
@@ -28,7 +28,7 @@ export enum IPainterContextMenuItemCategory {
  *
  * @description 如果当前所有菜单项都返回了`null`，则不显示右键菜单。
  */
-export interface IPainterContextMenuItemHook {
+export interface IContextMenuItemHook {
   /**
    * 菜单项名称
    *
@@ -40,7 +40,7 @@ export interface IPainterContextMenuItemHook {
    *
    * @description 用于分类，不同的分类菜单项之间将会有个分割线
    */
-  category: IPainterContextMenuItemCategory;
+  category: IContextMenuItemCategory;
   /**
    * 菜单项排序
    *
@@ -52,5 +52,5 @@ export interface IPainterContextMenuItemHook {
    *
    * @description 菜单项事件、是否显示等情况，都在组件内自由控制。
    */
-  Render(props: IPainterContextMenuItemProps): ReactNode;
+  Render(props: IContextMenuItemProps): ReactNode;
 }

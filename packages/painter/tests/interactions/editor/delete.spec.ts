@@ -178,6 +178,54 @@ describe('删除导线测试', () => {
       });
     });
 
+    it('删除单个连接了导线的导线，合并剩余导线，T 型，合并导线的其中一端是交错节点', () => {
+      const parts = createPartsByKind([ElectronicKind.Resistance]);
+      const lines = [
+        createLineByPath([Point.from([0, -100]), Point.from([0, 0])]),
+        createLineByPath([Point.from([0, 100]), Point.from([0, 0])]),
+        createLineByPath([Point.from([0, 0]), Point.from([100, 0])]),
+        createLineByPath([Point.from([100, 0]), Point.from([160, 0])]),
+        createLineByPath([Point.from([100, 0]), Point.from([100, 100])]),
+      ];
+      const data = {
+        parts: parts,
+        lines: lines,
+      };
+      const selected = new Set([lines[4].id]);
+
+      parts[0].position = Point.from([200, 0]);
+
+      const plan = planDeleteAndMerge(data, selected);
+      const newLine = createLineByPath([Point.from([0, 0]), Point.from([160, 0])]);
+
+      expectDeletePlan(plan, {
+        addedLines: [newLine],
+        mergedRemovedLineIds: [lines[2].id, lines[3].id],
+        removedIds: [lines[4].id],
+        addLineConnections: [
+          {
+            id: newLine.id,
+            pin0: [
+              {
+                id: lines[0].id,
+                pin: 1,
+              },
+              {
+                id: lines[1].id,
+                pin: 1,
+              },
+            ],
+            pin1: [
+              {
+                id: parts[0].id,
+                pin: 0,
+              },
+            ],
+          },
+        ],
+      });
+    });
+
     it('删除两个连接了导线的导线，合并两次剩余导线，H 型', () => {
       const parts = createPartsByKind([
         ElectronicKind.Diode,
