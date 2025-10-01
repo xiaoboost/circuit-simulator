@@ -1,7 +1,7 @@
 import { DeleteOutlined } from '@circuit/icons';
 import { IStateCoreService, ILoggerService } from '@circuit/shared';
 import React, { useCallback } from 'react';
-import { useService, useHotKey } from '../../../../context';
+import { useService } from '../../../../context';
 import {
   IPainterContextMenuItemProps,
   IHoverService,
@@ -74,16 +74,6 @@ export function DeleteRender(props: IPainterContextMenuItemProps) {
     // 关闭右键菜单
     props.onHide();
   }, []);
-
-  useHotKey({
-    key: 'backspace,del',
-    name: '删除',
-    action: () => {
-      if (isHoverElectronic) {
-        deleteCallback();
-      }
-    },
-  });
 
   // 鼠标没有悬停在任何元件上时，不显示删除按钮
   if (!isHoverElectronic) {

@@ -1,11 +1,11 @@
 import { Point } from '@circuit/algorithm';
 import { IOverlayRender, IHotKeyHook } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../../context';
-import { IEventListenerHook, IDragSceneService } from '../../../../types';
-import { RenderWithWatcher } from './render';
+import { IEventListenerHook, IDragSceneService, IPainterContextMenuService } from '../../../../types';
+import { Render } from './render';
 
 definePlugin(({ registerHook, getService, root }) => {
-  const { registerHook: registerHookInRoot } = root();
+  const { registerHook: registerHookInRoot, registerService: registerServiceInRoot } = root();
   const visible = new Watcher<boolean>(false);
   const position = new Watcher<Point>(new Point(0, 0));
 
@@ -13,7 +13,20 @@ definePlugin(({ registerHook, getService, root }) => {
   registerHookInRoot(IOverlayRender, {
     name: 'ContextMenuLayer',
     order: 0,
-    Render: RenderWithWatcher(visible, position),
+    Render,
+  });
+
+  // 注册服务
+  registerServiceInRoot(IPainterContextMenuService, {
+    visible,
+    position,
+    openAt(point: Point) {
+      visible.setData(true);
+      position.setData(point);
+    },
+    close() {
+      visible.setData(false);
+    },
   });
 
   // 注册关闭菜单事件
@@ -33,8 +46,7 @@ definePlugin(({ registerHook, getService, root }) => {
       const { isDragging } = getService(IDragSceneService);
 
       if (!isDragging.data && event.button === 2) {
-        visible.setData(true);
-        position.setData(new Point(event.pageX, event.pageY));
+        getService(IPainterContextMenuService).openAt(new Point(event.pageX, event.pageY));
       }
     },
   });

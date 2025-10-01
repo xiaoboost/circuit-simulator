@@ -10,3 +10,4 @@ export * from './hover';
 export * from './configuration';
 export * from './connection';
 export * from './viewport';
+export * from './context-menu';
