@@ -190,7 +190,7 @@ definePlugin(({ registerHook, getService }) => {
         connection.createConnection(start.id, start.pin, newLineData.id, 0);
         connection.createConnection(newLineData.id, 1, endInPartPin.id, endInPartPin.pin);
         // 设置导线图纸数据
-        mapHash.setLineMark(newLineData);
+        mapHash.setMark(newLineData);
         // 设置碰撞数据
         collision.setEntity(newLineData);
         // 提交新导线
@@ -230,12 +230,12 @@ definePlugin(({ registerHook, getService }) => {
             // 移除旧导线相关数据
             connection.removeDevice(mergedLineId);
             collision.removeEntity(mergedLineId);
-            mapHash.deleteLineMark(mergedLine);
+            mapHash.removeMark(mergedLine);
             // 设置新导线相关数据
             connection.createConnection(newLineData.id, 0, start.id, start.pin);
             connection.createConnections(newLineData.id, 1, mergedLineConnection);
             collision.setEntity(newLineData);
-            mapHash.setLineMark(newLineData);
+            mapHash.setMark(newLineData);
 
             // 提交新导线，且删除旧导线
             commit({
@@ -253,7 +253,7 @@ definePlugin(({ registerHook, getService }) => {
             connection.createConnection(newLineData.id, 0, start.id, start.pin);
             connection.createConnections(newLineData.id, 1, endInLinePinAndIndex);
             collision.setEntity(newLineData);
-            mapHash.setLineMark(newLineData);
+            mapHash.setMark(newLineData);
 
             // 提交新导线，且删除旧导线
             commit({
@@ -313,14 +313,14 @@ definePlugin(({ registerHook, getService }) => {
           // 移除旧导线相关信息
           connection.removeDevice(splitLineId);
           collision.removeEntity(splitLineId);
-          mapHash.deleteLineMark(splitLine);
+          mapHash.removeMark(splitLine);
           // 设置新导线相关信息
           collision.setEntity(splitLine1);
-          mapHash.setLineMark(splitLine1);
+          mapHash.setMark(splitLine1);
           collision.setEntity(splitLine2);
-          mapHash.setLineMark(splitLine2);
+          mapHash.setMark(splitLine2);
           collision.setEntity(newLineData);
-          mapHash.setLineMark(newLineData);
+          mapHash.setMark(newLineData);
 
           // 提交新导线，且删除旧导线
           commit({
@@ -340,7 +340,7 @@ definePlugin(({ registerHook, getService }) => {
         // 空位置需要设置起点的连接关系
         connection.createConnection(newLineData.id, 0, start.id, start.pin);
         // 设置导线图纸数据
-        mapHash.setLineMark(newLineData);
+        mapHash.setMark(newLineData);
         // 设置碰撞数据
         collision.setEntity(newLineData);
         // 提交新导线

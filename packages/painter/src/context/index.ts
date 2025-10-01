@@ -7,6 +7,7 @@ import {
 
 export {
   createServiceKey,
+  createSorter,
 } from '@circuit/inject';
 
 export {

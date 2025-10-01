@@ -14,6 +14,7 @@ import {
   type PartStructuredData,
   type PartPinData,
   type ElectronicKind,
+  type LineOrPartStructuredData,
 } from '@circuit/types';
 import { nanoid } from 'nanoid';
 import {
@@ -21,6 +22,16 @@ import {
   ElectronicCategoryName,
 } from './constant';
 import { Electronics } from './prototype';
+
+/** 器件类型 */
+export function isPart(electronic: LineOrPartStructuredData): electronic is PartStructuredData {
+  return 'kind' in electronic && 'referenceTag' in electronic && isPartId(electronic.id);
+}
+
+/** 器件编号 */
+export function isPartId(id: string) {
+  return /^_\$[pP]art_.+$/.test(id);
+}
 
 /** 创建引用编号 */
 function createRefTag(pre: string, ids: string[]): string {

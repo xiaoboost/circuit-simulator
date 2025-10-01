@@ -35,8 +35,10 @@ export interface IEventListenerHook {
    */
   capture?: boolean;
 
-  /** 点击事件 */
+  /** 左键点击事件 */
   onClick?(event: MouseEvent): void;
+  /** 右键点击事件 */
+  onRightClick?(event: MouseEvent): void;
   /** 双击事件 */
   onDblClick?(event: MouseEvent): void;
   /** 鼠标按下事件 */

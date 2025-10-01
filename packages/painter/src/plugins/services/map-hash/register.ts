@@ -1,3 +1,4 @@
+import { isPart } from '@circuit/electronics';
 import { definePlugin } from '../../../context';
 import {
   IMapHashService,
@@ -20,10 +21,22 @@ definePlugin(({ registerService }) => {
     clearAll() {
       markMap.clear();
     },
-    setPartMark: (data) => MapHash.setPartMark(data, markMap),
-    setLineMark: (data) => MapHash.setLineMark(data, markMap),
-    deletePartMark: (data) => MapHash.deletePartMark(data, markMap),
-    deleteLineMark: (data) => MapHash.deleteLineMark(data, markMap),
+    setMark(data) {
+      if (isPart(data)) {
+        MapHash.setPartMark(data, markMap);
+      }
+      else {
+        MapHash.setLineMark(data, markMap);
+      }
+    },
+    removeMark(data) {
+      if (isPart(data)) {
+        MapHash.deletePartMark(data, markMap);
+      }
+      else {
+        MapHash.deleteLineMark(data, markMap);
+      }
+    },
     getAllMarks: () => MapHash.values(markMap),
     has: (position) => MapHash.has(markMap, position),
     get: (position) => MapHash.get(markMap, position),

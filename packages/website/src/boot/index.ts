@@ -1,6 +1,5 @@
 import '../styles';
 import '../plugins';
-import './native';
 import './polyfill';
 import '@ant-design/v5-patch-for-react-19';
 

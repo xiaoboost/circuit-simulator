@@ -3,7 +3,11 @@ import {
   IRendererData,
   PropsWithHocParams,
 } from '@circuit/inject';
-import { FC } from 'react';
+import { IHotKey, HotKeyOptions } from '@circuit/shared';
+import Hotkey from 'hotkeys-js';
+import { FC, useEffect } from 'react';
+import { IPainterHTMLElement } from '../types';
+import { useService } from './index';
 
 /** 组合高阶渲染器 */
 export function composeHOC<T extends object>(core: IRendererData<T>, hooks: IRendererHOC<T>[]) {
@@ -19,4 +23,28 @@ export function composeHOC<T extends object>(core: IRendererData<T>, hooks: IRen
     Component,
     getKey: core.getKey,
   };
+}
+
+export function useHotKey(key: IHotKey) {
+  const painterEl = useService(IPainterHTMLElement);
+
+  useEffect(() => {
+    if (!painterEl.current) {
+      return;
+    }
+
+    const opt: HotKeyOptions = {
+      keyup: false,
+      keydown: true,
+      capture: false,
+      ...key.options,
+      element: painterEl.current,
+    };
+
+    Hotkey(key.key, opt, key.action);
+
+    return () => {
+      Hotkey.unbind(key.key, key.action);
+    };
+  }, [painterEl.current]);
 }

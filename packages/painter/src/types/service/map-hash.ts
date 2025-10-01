@@ -180,14 +180,10 @@ export interface IMapHashAssertService {
 export interface IMapHashBusinessService {
   /** 从初始数据创建图纸记录 */
   createFromData(data: StructuredData): void;
-  /** 设置器件标记 */
-  setPartMark(data: PartStructuredData): void;
-  /** 设置导线标记 */
-  setLineMark(data: LineStructuredData): void;
+  /** 设置标记 */
+  setMark(data: PartStructuredData | LineStructuredData): void;
   /** 删除器件标记 */
-  deletePartMark(data: PartStructuredData): void;
-  /** 删除导线标记 */
-  deleteLineMark(data: LineStructuredData): void;
+  removeMark(data: PartStructuredData | LineStructuredData): void;
 }
 
 /** 图纸服务标记数据方法 */

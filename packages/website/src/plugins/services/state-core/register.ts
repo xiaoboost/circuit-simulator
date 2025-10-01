@@ -1,4 +1,4 @@
-import { Electronics } from '@circuit/electronics';
+import { Electronics, isPartId } from '@circuit/electronics';
 import { IStateCoreService } from '@circuit/shared';
 import { LineStructuredData, PartStructuredData, StructuredData as State } from '@circuit/types';
 import { message } from 'antd';
@@ -65,6 +65,17 @@ definePlugin(({ registerService }) => {
       }
 
       return result;
+    },
+    getElectronic(id) {
+      const electronic = isPartId(id)
+        ? state.parts.find((item) => item.id === id)
+        : state.lines.find((item) => item.id === id);
+
+      if (!electronic) {
+        throw new Error(`无法获取元件: ${id}`);
+      }
+
+      return electronic;
     },
     getPart(id) {
       const result = state.parts.find((item) => item.id === id);

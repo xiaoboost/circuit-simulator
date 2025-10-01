@@ -18,11 +18,10 @@ import {
   PIN_DRAW_FIXED_STYLE,
 } from '../../../src/plugins/interactions/editor/utils';
 import {
-  IMapHashMarkService,
+  IMapHashService,
   IConnectionService,
   Entity,
   EntityKind,
-  IMapHashService,
 } from '../../../src/types';
 import { registerPlugin, getPlugin } from '../../utils';
 
@@ -36,7 +35,7 @@ describe('创建导线搜索路径', () => {
   let connection: IConnectionService;
 
   beforeAll(async () => {
-    map = await getPlugin(IMapHashMarkService);
+    map = await getPlugin(IMapHashService);
     connection = await getPlugin(IConnectionService);
   });
 

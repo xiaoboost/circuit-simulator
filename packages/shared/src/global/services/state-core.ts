@@ -6,6 +6,7 @@ import {
   type ElectronicKind,
   type ElectronicPrototype,
   type StructuredData,
+  type LineOrPartStructuredData,
 } from '@circuit/types';
 
 /** 更新数据回调 */
@@ -54,6 +55,8 @@ export interface IStateCoreService {
   readonly isEmpty: Watcher<boolean>;
   /** 获取器件原型 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
+  /** 获取元件 */
+  getElectronic(id: string): Readonly<LineOrPartStructuredData>;
   /** 获取器件 */
   getPart(id: string): Readonly<PartStructuredData>;
   /** 获取导线 */

@@ -14,6 +14,7 @@ export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {
     const eventMapping = [
       { event: 'wheel', listener: 'onWheel' },
       { event: 'click', listener: 'onClick' },
+      { event: 'contextmenu', listener: 'onRightClick' },
       { event: 'dblclick', listener: 'onDblClick' },
       { event: 'mousedown', listener: 'onMouseDown' },
       { event: 'mouseup', listener: 'onMouseUp' },

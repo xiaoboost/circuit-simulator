@@ -1,4 +1,3 @@
-import './hotkey';
 import './select-box';
 import './initialize';
 import './editor';

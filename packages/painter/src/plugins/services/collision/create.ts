@@ -8,6 +8,7 @@ import {
 import {
   getPartPrototype,
   getPartPins,
+  isPart,
   LINE_THICKNESS,
   PIN_SIZE,
 } from '@circuit/electronics';
@@ -154,10 +155,7 @@ function getLineRegion({ path, id }: LineStructuredData): IEntityRegion[] {
  * @returns 碰撞矩形
  */
 export function getRectByEntity(entity: LineOrPartStructuredData): IEntityRegion[] {
-  if ('kind' in entity) {
-    return getPartRegion(entity);
-  }
-  else {
-    return getLineRegion(entity);
-  }
+  return isPart(entity)
+    ? getPartRegion(entity)
+    : getLineRegion(entity);
 }

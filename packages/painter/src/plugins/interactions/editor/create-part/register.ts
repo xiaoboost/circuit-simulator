@@ -149,7 +149,7 @@ definePlugin(({ registerHook, getService }) => {
       });
 
       setPosition(part.id, undefined);
-      mapService.setPartMark(newPart);
+      mapService.setMark(newPart);
       collisionService.setEntity(newPart);
       logger.info(LoggerName, '结束创建器件', partTag);
     },

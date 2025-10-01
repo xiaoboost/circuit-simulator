@@ -5,6 +5,11 @@ export {
 } from './define';
 
 export {
+  type SortedItem,
+  createSorter,
+} from './utils';
+
+export {
   useServiceWithScope,
   useHookWithScope,
   createReactHookWithScope,

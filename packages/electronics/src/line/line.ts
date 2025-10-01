@@ -3,7 +3,7 @@ import { type LineStoreData, type LineStructuredData } from '@circuit/types';
 import { nanoid } from 'nanoid';
 
 export function isLineId(id: string) {
-  return /^_\$[lL]ine_\d+$/.test(id);
+  return /^_\$[lL]ine_.+$/.test(id);
 }
 
 function createLineId() {

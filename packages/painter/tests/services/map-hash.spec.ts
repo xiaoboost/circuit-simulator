@@ -3,7 +3,6 @@ import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import {
-  IMapHashMarkService,
   MarkKind,
   IMapHashService,
   LineMark,
@@ -23,7 +22,7 @@ describe('图纸标记服务', () => {
   let mapHash: IMapHashService;
 
   beforeAll(async () => {
-    mapHash = await getPlugin(IMapHashMarkService);
+    mapHash = await getPlugin(IMapHashService);
   });
 
   beforeEach(() => {
@@ -33,14 +32,14 @@ describe('图纸标记服务', () => {
   describe('核心服务方法', () => {
     it('has 方法应该正确判断位置是否存在标记', () => {
       const part = createPartByKind(ElectronicKind.Resistance);
-      mapHash.setPartMark(part);
+      mapHash.setMark(part);
       expect(mapHash.has(Point.from([0, 0]))).toBe(true);
       expect(mapHash.has(Point.from([100, 100]))).toBe(false);
     });
 
     it('get 方法应该正确获取指定位置的标记', () => {
       const part = createPartByKind(ElectronicKind.Resistance);
-      mapHash.setPartMark(part);
+      mapHash.setMark(part);
       const mark = mapHash.get(Point.from([0, 0]));
       expect(mark).toBeDefined();
       expect(mark?.kind).toBe(MarkKind.Part);
@@ -61,7 +60,7 @@ describe('图纸标记服务', () => {
 
     it('delete 方法应该正确删除指定位置的标记', () => {
       const part = createPartByKind(ElectronicKind.Resistance);
-      mapHash.setPartMark(part);
+      mapHash.setMark(part);
       expect(mapHash.has(Point.from([0, 0]))).toBe(true);
       mapHash.delete(Point.from([0, 0]));
       expect(mapHash.has(Point.from([0, 0]))).toBe(false);
@@ -77,7 +76,7 @@ describe('图纸标记服务', () => {
       });
 
       it('设置器件标记应该生成正确的标记', () => {
-        mapHash.setPartMark(part);
+        mapHash.setMark(part);
         expect(mapHash.getAllMarks()).toEqual([
           { kind: MarkKind.PartPin, id: part.id, pin: 0, position: Point.from([-40, 0]) },
           { kind: MarkKind.Part, id: part.id, position: Point.from([-20, 0]) },
@@ -88,8 +87,8 @@ describe('图纸标记服务', () => {
       });
 
       it('删除器件标记应该清空相关标记', () => {
-        mapHash.setPartMark(part);
-        mapHash.deletePartMark(part);
+        mapHash.setMark(part);
+        mapHash.removeMark(part);
         expect(mapHash.getAllMarks()).toEqual([]);
       });
     });
@@ -106,7 +105,7 @@ describe('图纸标记服务', () => {
       });
 
       it('设置导线标记应该生成正确的标记', () => {
-        mapHash.setLineMark(line);
+        mapHash.setMark(line);
         expect(mapHash.getAllMarks()).toEqual([
           {
             kind: 1,
@@ -154,8 +153,8 @@ describe('图纸标记服务', () => {
       });
 
       it('删除导线标记应该清空相关标记', () => {
-        mapHash.setLineMark(line);
-        mapHash.deleteLineMark(line);
+        mapHash.setMark(line);
+        mapHash.removeMark(line);
         expect(mapHash.getAllMarks()).toEqual([]);
       });
     });
@@ -174,8 +173,8 @@ describe('图纸标记服务', () => {
       });
 
       it('器件和导线相连时应该生成 PartPinLine 标记', () => {
-        mapHash.setPartMark(part);
-        mapHash.setLineMark(line);
+        mapHash.setMark(part);
+        mapHash.setMark(line);
 
         expect(mapHash.getAllMarks()).toEqual([
           { kind: MarkKind.PartPin, id: part.id, pin: 0, position: Point.from([-40, 0]) },
@@ -218,9 +217,9 @@ describe('图纸标记服务', () => {
       });
 
       it('删除导线后器件节点标记应该还原回 PartPin', () => {
-        mapHash.setPartMark(part);
-        mapHash.setLineMark(line);
-        mapHash.deleteLineMark(line);
+        mapHash.setMark(part);
+        mapHash.setMark(line);
+        mapHash.removeMark(line);
 
         expect(mapHash.getAllMarks()).toEqual([
           { kind: MarkKind.PartPin, id: part.id, pin: 0, position: Point.from([-40, 0]) },
@@ -232,9 +231,9 @@ describe('图纸标记服务', () => {
       });
 
       it('删除器件后导线标记应该还原回 LinePoint', () => {
-        mapHash.setPartMark(part);
-        mapHash.setLineMark(line);
-        mapHash.deletePartMark(part);
+        mapHash.setMark(part);
+        mapHash.setMark(line);
+        mapHash.removeMark(part);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -287,8 +286,8 @@ describe('图纸标记服务', () => {
       });
 
       it('导线相互连接时应该生成 LineCross 标记', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -338,9 +337,9 @@ describe('图纸标记服务', () => {
       });
 
       it('删除某个导线后，剩下的导线标记应该还原为导线节点', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
-        mapHash.deleteLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
+        mapHash.removeMark(line2);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -393,9 +392,9 @@ describe('图纸标记服务', () => {
       });
 
       it('导线相互连接时应该生成 LineCross 标记', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
-        mapHash.setLineMark(line3);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
+        mapHash.setMark(line3);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -465,10 +464,10 @@ describe('图纸标记服务', () => {
       });
 
       it('删除某个导线后，剩下的导线标记应该保持不变', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
-        mapHash.setLineMark(line3);
-        mapHash.deleteLineMark(line3);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
+        mapHash.setMark(line3);
+        mapHash.removeMark(line3);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -534,8 +533,8 @@ describe('图纸标记服务', () => {
       });
 
       it('导线相互覆盖时应该生成 LineCover 标记', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -589,9 +588,9 @@ describe('图纸标记服务', () => {
       });
 
       it('删除某个导线后，剩下的导线标记应该恢复为导线节点', () => {
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
-        mapHash.deleteLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
+        mapHash.removeMark(line2);
 
         expect(mapHash.getAllMarks()).toEqual([
           {
@@ -800,7 +799,7 @@ describe('图纸标记服务', () => {
           Point.from([0, 0]),
           Point.from([0, 40]),
         ]);
-        mapHash.setLineMark(line);
+        mapHash.setMark(line);
         const mark = mapHash.get(Point.from([0, 20]));
         expect(mapHash.hasLine(mark as any, line.id)).toBe(true);
         expect(mapHash.hasLine(mark as any, 'non-existent-line')).toBe(false);
@@ -815,8 +814,8 @@ describe('图纸标记服务', () => {
           Point.from([0, 40]),
           Point.from([40, 40]),
         ]);
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const mark1 = mapHash.get(Point.from([0, 40])) as LineCrossMark;
         const mark2 = mapHash.get(Point.from([0, 20])) as LineMark;
@@ -845,8 +844,8 @@ describe('图纸标记服务', () => {
           Point.from([20, 20]),
         ]);
 
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const mark1 = mapHash.get(Point.from([0, 20])) as LineCoverMark;
         const mark2 = mapHash.get(Point.from([0, 40])) as LinePointMark;
@@ -873,7 +872,7 @@ describe('图纸标记服务', () => {
           Point.from([0, 40]),
         ]);
 
-        mapHash.setLineMark(line);
+        mapHash.setMark(line);
 
         const node1 = Point.from([0, 0]);
         const node2 = Point.from([0, 20]);
@@ -906,8 +905,8 @@ describe('图纸标记服务', () => {
           Point.from([40, 40]),
         ]);
 
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const mark1 = mapHash.get(Point.from([0, 40])) as LineCrossMark;
         const node1 = Point.from([0, 0]);
@@ -931,8 +930,8 @@ describe('图纸标记服务', () => {
           Point.from([20, 20]),
         ]);
 
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const mark1 = mapHash.get(Point.from([0, 20])) as LineCoverMark;
         const node1 = Point.from([0, 0]);
@@ -951,15 +950,15 @@ describe('图纸标记服务', () => {
       let line: LineStructuredData;
 
       beforeEach(() => {
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 40]),
           Point.from([0, 0]),
         ]));
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 40]),
           Point.from([0, 80]),
         ]));
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 40]),
           Point.from([40, 40]),
         ]));
@@ -967,7 +966,7 @@ describe('图纸标记服务', () => {
           Point.from([0, 40]),
           Point.from([-40, 40]),
         ]);
-        mapHash.setLineMark(line);
+        mapHash.setMark(line);
       });
 
       it('全交叉节点', () => {
@@ -976,7 +975,7 @@ describe('图纸标记服务', () => {
       });
 
       it('删除某个导线后，节点变成非全交叉节点', () => {
-        mapHash.deleteLineMark(line);
+        mapHash.removeMark(line);
         const mark = mapHash.get(Point.from([0, 40])) as LineCrossMark;
         expect(mapHash.isFullCross(mark)).toBe(false);
       });
@@ -993,8 +992,8 @@ describe('图纸标记服务', () => {
           Point.from([20, 20]),
         ]);
 
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const coverMark = mapHash.get(Point.from([0, 20])) as LineCoverMark;
         const node1 = Point.from([0, 0]);
@@ -1019,8 +1018,8 @@ describe('图纸标记服务', () => {
           Point.from([0, 40]),
         ]);
 
-        mapHash.setLineMark(line1);
-        mapHash.setLineMark(line2);
+        mapHash.setMark(line1);
+        mapHash.setMark(line2);
 
         const coverMark = mapHash.get(Point.from([0, 20])) as LineCoverMark;
         const node1 = Point.from([0, 0]);
@@ -1038,7 +1037,7 @@ describe('图纸标记服务', () => {
     describe('alongLineAndVector 方法', () => {
       describe('单直导线节点前进', () => {
         beforeEach(() => {
-          mapHash.setLineMark(createLineByPath([
+          mapHash.setMark(createLineByPath([
             Point.from([0, 0]),
             Point.from([0, 100]),
           ]));
@@ -1071,7 +1070,7 @@ describe('图纸标记服务', () => {
       });
 
       it('单直角导线，终点是导线拐点', () => {
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 0]),
           Point.from([0, 120]),
           Point.from([100, 120]),
@@ -1084,15 +1083,15 @@ describe('图纸标记服务', () => {
       });
 
       it('导线含有交错节点时，终点将会经过交错节点', () => {
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 0]),
           Point.from([0, 60]),
         ]));
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 60]),
           Point.from([0, 120]),
         ]));
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createLineByPath([
           Point.from([0, 60]),
           Point.from([60, 60]),
         ]));
@@ -1105,11 +1104,11 @@ describe('图纸标记服务', () => {
 
       describe('导线含有交叠节点时', () => {
         it('含有十字交叠节点时，终点将会经过交叠节点', () => {
-          mapHash.setLineMark(createLineByPath([
+          mapHash.setMark(createLineByPath([
             Point.from([0, 0]),
             Point.from([0, 120]),
           ]));
-          mapHash.setLineMark(createLineByPath([
+          mapHash.setMark(createLineByPath([
             Point.from([-40, 60]),
             Point.from([40, 60]),
           ]));
@@ -1121,12 +1120,12 @@ describe('图纸标记服务', () => {
         });
 
         it('含有直角交叠节点时，终点将会停在交叠节点', () => {
-          mapHash.setLineMark(createLineByPath([
+          mapHash.setMark(createLineByPath([
             Point.from([-40, 60]),
             Point.from([0, 60]),
             Point.from([0, 0]),
           ]));
-          mapHash.setLineMark(createLineByPath([
+          mapHash.setMark(createLineByPath([
             Point.from([0, 120]),
             Point.from([0, 60]),
             Point.from([40, 60]),
@@ -1140,8 +1139,8 @@ describe('图纸标记服务', () => {
       });
 
       it('导线端点是器件引脚时，需要排除器件引脚', () => {
-        mapHash.setPartMark(createPartByKind(ElectronicKind.Resistance));
-        mapHash.setLineMark(createLineByPath([
+        mapHash.setMark(createPartByKind(ElectronicKind.Resistance));
+        mapHash.setMark(createLineByPath([
           Point.from([40, 0]),
           Point.from([200, 0]),
         ]));

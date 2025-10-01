@@ -1,19 +1,21 @@
 import { Point } from '@circuit/algorithm';
-import { createSorter } from '@circuit/shared';
 import React, { useEffect, useRef, useLayoutEffect } from 'react';
-import { useHook, Watcher, useWatcher } from '../../../../context';
-import { IPainterContextMenuItemHook, IPainterContextMenuItemCategory } from '../../../../types';
+import { useHook, useWatcher, Watcher, createSorter } from '../../../../context';
+import {
+  IPainterContextMenuItemHook,
+  IPainterContextMenuItemCategory,
+} from '../../../../types';
 import { Divider } from './driver';
 import * as Styles from './styles.less';
 
 const categories = [IPainterContextMenuItemCategory.Edit];
 
-export function RenderWithVisible(visible: Watcher<boolean>, $position: Watcher<Point>) {
+export function RenderWithWatcher($visible: Watcher<boolean>, $position: Watcher<Point>) {
   return function Render() {
-    const [isVisible, setVisible] = useWatcher(visible);
-    const [position] = useWatcher($position);
     const ref = useRef<HTMLDivElement>(null);
     const actions = useHook(IPainterContextMenuItemHook, 'asc');
+    const [visible, setVisible] = useWatcher($visible);
+    const [position] = useWatcher($position);
 
     useEffect(() => {
       const closeContextMenu = (event: MouseEvent) => {
@@ -35,13 +37,13 @@ export function RenderWithVisible(visible: Watcher<boolean>, $position: Watcher<
 
     useLayoutEffect(() => {
       // 没有子元素时，直接不显示
-      if (isVisible && ref.current && ref.current.children.length === 0) {
+      if (visible && ref.current && ref.current.children.length === 0) {
         ref.current.style.display = 'none';
         setVisible(false);
       }
-    }, [ref.current, isVisible]);
+    }, [ref.current, visible]);
 
-    if (!isVisible || actions.length === 0) {
+    if (!visible || actions.length === 0) {
       return;
     }
 

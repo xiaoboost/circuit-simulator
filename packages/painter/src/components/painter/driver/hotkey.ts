@@ -10,7 +10,6 @@ import { useHook } from '../../../context';
  */
 export function useHotkeyDriver(painterRef: RefObject<HTMLDivElement | null>) {
   const hotkeyHooks = useHook(IHotKeyHook);
-  const getKey = (key: string | string[]) => Array.isArray(key) ? key.join(', ') : key;
 
   useEffect(() => {
     if (!painterRef.current) {
@@ -28,7 +27,7 @@ export function useHotkeyDriver(painterRef: RefObject<HTMLDivElement | null>) {
           element: painterRef.current,
         };
 
-        hotkeys(getKey(key), opt, action);
+        hotkeys(key, opt, action);
       });
     });
 
@@ -36,7 +35,7 @@ export function useHotkeyDriver(painterRef: RefObject<HTMLDivElement | null>) {
       hotkeyHooks.forEach((hook) => {
         const keys = Array.isArray(hook) ? hook : [hook];
         keys.forEach(({ key, action }) => {
-          hotkeys.unbind(getKey(key), action);
+          hotkeys.unbind(key, action);
         });
       });
     };

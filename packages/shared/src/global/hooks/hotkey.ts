@@ -12,7 +12,7 @@ import { createServiceKey } from '@circuit/inject';
 export const IHotKeyHook = createServiceKey<IHotKey | IHotKey[]>('HotKey');
 
 /** 快捷键类型 */
-export type HotKeyType = string | string[];
+export type HotKeyType = string;
 
 /** 快捷键回调配置 */
 export interface HotKeyOptions {
