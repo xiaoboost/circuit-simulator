@@ -1,13 +1,11 @@
 import { Point } from '@circuit/algorithm';
 import { IOverlayRender, IHotKeyHook } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../../context';
+import { definePlugin } from '../../../../context';
 import { IEventListenerHook, IDragSceneService, IContextMenuService } from '../../../../types';
 import { Render } from './render';
 
 definePlugin(({ registerHook, getService, root }) => {
-  const { registerHook: registerHookInRoot, registerService: registerServiceInRoot } = root();
-  const visible = new Watcher<boolean>(false);
-  const position = new Watcher<Point>(new Point(0, 0));
+  const { registerHook: registerHookInRoot } = root();
 
   // 注册右键菜单渲染层到根作用域
   registerHookInRoot(IOverlayRender, {
@@ -16,25 +14,12 @@ definePlugin(({ registerHook, getService, root }) => {
     Render,
   });
 
-  // 注册服务
-  registerServiceInRoot(IContextMenuService, {
-    visible,
-    position,
-    openAt(point: Point) {
-      visible.setData(true);
-      position.setData(point);
-    },
-    close() {
-      visible.setData(false);
-    },
-  });
-
   // 注册关闭菜单事件
   registerHookInRoot(IHotKeyHook, {
     key: 'esc',
     name: '关闭右键菜单',
     action: () => {
-      visible.setData(false);
+      getService(IContextMenuService).close();
     },
   });
 

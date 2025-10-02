@@ -9,3 +9,4 @@ import './configuration';
 import './hover';
 import './connection';
 import './viewport';
+import './context-menu';
