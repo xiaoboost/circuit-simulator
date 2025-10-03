@@ -27,10 +27,10 @@ definePlugin(({ registerHook, getService, root }) => {
   registerHook(IEventListenerHook, {
     // 需要给 Select 服务之后运行
     order: 99,
-    onMouseDown(event) {
+    onRightClick(event) {
       const { isDragging } = getService(IDragSceneService);
 
-      if (!isDragging.data && event.button === 2) {
+      if (!isDragging.data) {
         getService(IContextMenuService).openAt(new Point(event.pageX, event.pageY));
       }
     },

@@ -16,6 +16,8 @@ export const ISelectService
 export interface ISelectService {
   /** 选中内容 */
   readonly value: Watcher<Set<string>>;
+  /** 未选中任何内容 */
+  isEmpty(): boolean;
   /** 设置选中内容 */
   set(...ids: string[]): void;
   /** 添加选中内容 */

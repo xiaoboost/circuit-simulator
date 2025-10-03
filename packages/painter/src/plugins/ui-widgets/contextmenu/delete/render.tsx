@@ -24,7 +24,6 @@ export function DeleteRender() {
   const mapService = useService(IMapHashService);
   const contextMenuService = useService(IContextMenuService);
   const cursorService = useService(ICursorService);
-  const isHoverElectronic = Boolean(hoverService.status.data);
   const deleteCallback = useCallback(() => {
     planDeleteAndMergeWithService({
       hoverService,
@@ -38,11 +37,6 @@ export function DeleteRender() {
       contextMenuService,
     });
   }, []);
-
-  // 鼠标没有悬停在任何元件上时，不显示删除按钮
-  if (!isHoverElectronic) {
-    return null;
-  }
 
   return (
     <Button

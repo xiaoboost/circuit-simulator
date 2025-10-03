@@ -12,12 +12,14 @@ import {
   IContextMenuItemCategory as Category } from '../../../../types';
 import { planDeleteAndMergeWithService } from './action';
 import { DeleteRender as Render } from './render';
+import { visible } from './visible';
 
 definePlugin(({ registerHook, getService }) => {
   registerHook(IContextMenuItemHook, {
     name: 'DeleteButton',
     order: 2,
     category: Category.Edit,
+    visible,
     Render,
   });
 

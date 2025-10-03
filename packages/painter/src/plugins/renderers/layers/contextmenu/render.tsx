@@ -1,14 +1,17 @@
-import React, { useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
   IContextMenuItemHook,
   IContextMenuItemCategory,
   IContextMenuService,
+  IContextMenuItemVisibleProps,
+  IHoverService,
+  ISelectService,
 } from '../../../../types';
 import { Divider } from './driver';
 import * as Styles from './styles.less';
 
-const categories = [IContextMenuItemCategory.Edit];
+const categories = [IContextMenuItemCategory.Visual, IContextMenuItemCategory.Edit];
 
 export function Render() {
   const ref = useRef<HTMLDivElement>(null);
@@ -16,6 +19,8 @@ export function Render() {
   const contextMenuService = useService(IContextMenuService);
   const [visible, setVisible] = useWatcher(contextMenuService.visible);
   const [position] = useWatcher(contextMenuService.position);
+  const hoverService = useService(IHoverService);
+  const selectService = useService(ISelectService);
 
   useEffect(() => {
     const closeContextMenu = (event: MouseEvent) => {
@@ -35,33 +40,39 @@ export function Render() {
     };
   }, []);
 
-  useLayoutEffect(() => {
-    // 没有子元素时，直接不显示
-    if (visible && ref.current && ref.current.children.length === 0) {
-      ref.current.style.display = 'none';
-      setVisible(false);
-    }
-  }, [ref.current, visible]);
-
   if (!visible || actions.length === 0) {
     return;
   }
+
+  const visibleProps: IContextMenuItemVisibleProps = {
+    hover: hoverService,
+    select: selectService,
+  };
 
   const rendered = categories
     .map((category) => {
       return actions
         .filter((action) => action.category === category)
         .sort(createSorter('asc'))
-        .map(({ name, Render }) => (
-          <Render
-            key={name}
-            onHide={() => setVisible(false)}
-          />
+        .map(({ name, Render, visible }) => (
+          visible(visibleProps) && (
+            <Render
+              key={name}
+              onHide={() => setVisible(false)}
+            />
+          )
         ))
-        .concat(<Divider />);
+        .filter((item) => item !== false);
     })
+    .filter((item) => item.length > 0)
+    .map((item) => item.concat(<Divider />))
     .flat()
     .slice(0, -1);
+
+  // 什么都没有，直接不渲染
+  if (rendered.length === 0) {
+    return;
+  }
 
   return (
     <div

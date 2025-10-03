@@ -1,1 +1,2 @@
 import './delete';
+import './rotate';

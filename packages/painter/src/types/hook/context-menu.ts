@@ -1,5 +1,6 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { createServiceKey } from '../../context';
+import type { IHoverService, ISelectService } from '../service';
 
 /**
  * 右键菜单项钩子
@@ -21,6 +22,13 @@ export interface IContextMenuItemProps {
 export enum IContextMenuItemCategory {
   /** 编辑 */
   Edit,
+  /** 视觉 */
+  Visual,
+}
+
+export interface IContextMenuItemVisibleProps {
+  hover: IHoverService;
+  select: ISelectService;
 }
 
 /**
@@ -47,6 +55,12 @@ export interface IContextMenuItemHook {
    * @description 数字越小越在上面
    */
   order?: number;
+  /**
+   * 菜单项是否可见
+   *
+   * @description 用于控制菜单项的显示与隐藏
+   */
+  visible(props: IContextMenuItemVisibleProps): boolean;
   /**
    * 菜单项图标组件
    *

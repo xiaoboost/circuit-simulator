@@ -15,6 +15,9 @@ definePlugin(({ registerService, getService }) => {
   const selected = new Watcher(new Set<string>());
   const service: ISelectService = {
     value: selected,
+    isEmpty() {
+      return selected.data.size === 0;
+    },
     set(...ids) {
       if (ids.length > 0) {
         getService(ILoggerService).info(LoggerName, '设置选中元件', getIdsString);

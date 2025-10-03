@@ -6,3 +6,5 @@ export * from './text';
 export * from './hand';
 export * from './empty';
 export * from './fit-screen';
+export * from './flip-horizontally';
+export * from './flip-vertically';
