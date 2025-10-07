@@ -39,6 +39,7 @@ export function RotateRender() {
 
   return (
     <Dropdown
+      dropdownKey="rotate"
       list={[
         {
           key: TransformDirection.Right,

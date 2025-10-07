@@ -7,7 +7,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 按钮内容 */
   children: React.ReactNode;
   /** 按钮副文本 */
-  subText?: string;
+  subText?: React.ReactNode;
 }
 
 export function Button(props: ButtonProps) {
