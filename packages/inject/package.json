@@ -31,14 +31,14 @@
   },
   "dependencies": {
     "@xiao-ai/utils": "1.6.7",
-    "react": "19.1.1"
+    "react": "19.2.0"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
     "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.19.0",
-    "@types/react": "19.1.9",
+    "@types/react": "19.2.2",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.34.0",
     "rimraf": "6.0.1",

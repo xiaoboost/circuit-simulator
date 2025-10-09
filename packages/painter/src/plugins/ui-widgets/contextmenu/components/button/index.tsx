@@ -6,15 +6,15 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: React.ReactNode;
   /** 按钮内容 */
   children: React.ReactNode;
-  /** 按钮副文本 */
-  subText?: React.ReactNode;
+  /** 按钮附加内容 */
+  addonAfter?: React.ReactNode;
 }
 
 export function Button(props: ButtonProps) {
   const {
     icon,
     children,
-    subText,
+    addonAfter,
     className,
     onClick,
     onMouseEnter,
@@ -46,7 +46,7 @@ export function Button(props: ButtonProps) {
         <span className={Styles.icon}>{icon}</span>
         <span className={Styles.text}>{children}</span>
       </span>
-      {subText && <span className={Styles.subText}>{subText}</span>}
+      {addonAfter && <span className={Styles.addonAfter}>{addonAfter}</span>}
     </div>
   );
 }

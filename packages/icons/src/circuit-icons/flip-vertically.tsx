@@ -10,9 +10,9 @@ export function FlipVertically() {
       viewBox="0 0 48 48"
       fill="none"
     >
-      <path d="M42 24L6 24" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M14 4L36 16H14V4Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
-      <path d="M14 44V32H36L14 44Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+      <path d="M42 24L6 24" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14 4L36 16H14V4Z" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M14 44V32H36L14 44Z" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
     </svg>
   );
 }

@@ -41,7 +41,7 @@ export function DeleteRender() {
   return (
     <Button
       icon={<DeleteOutlined />}
-      subText="Delete"
+      addonAfter="Delete"
       onClick={deleteCallback}
     >
       删除

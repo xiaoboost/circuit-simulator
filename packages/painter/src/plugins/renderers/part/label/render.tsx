@@ -41,7 +41,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
   const dragService = useService(IDragSceneService);
   const configurationService = useService(IPainterConfigurationService);
   const [partLabelVisible] = useWatcher(configurationService.partLabelVisible);
-  const [textAnchor, setTextAnchor] = useState<React.CSSProperties['textAnchor']>('middle');
+  const [textAnchor, setTextAnchor] = useState<React.SVGProps<SVGGElement>['textAnchor']>('middle');
   const textLineCount = getTextLineCount(partLabelVisible, texts);
 
   // 触发移动器件文本

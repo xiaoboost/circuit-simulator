@@ -14,7 +14,7 @@ import * as Styles from './styles.less';
 const categories = [IContextMenuItemCategory.Visual, IContextMenuItemCategory.Edit];
 
 export function Render() {
-  const ref = useRef<HTMLDivElement>(null);
+  const domRef = useRef<HTMLDivElement>(null);
   const actions = useHook(IContextMenuItemHook, 'asc');
   const contextMenuService = useService(IContextMenuService);
   const [visible, setVisible] = useWatcher(contextMenuService.visible);
@@ -26,8 +26,8 @@ export function Render() {
     const closeContextMenu = (event: MouseEvent) => {
       if (
         event.button === 0
-        && ref.current
-        && !ref.current.contains(event.target as Node)
+        && domRef.current
+        && !domRef.current.contains(event.target as Node)
       ) {
         setVisible(false);
       }
@@ -65,7 +65,7 @@ export function Render() {
         .filter((item) => item !== false);
     })
     .filter((item) => item.length > 0)
-    .map((item) => item.concat(<Divider />))
+    .map((item) => item.concat(<Divider key={Date.now()} />))
     .flat()
     .slice(0, -1);
 
@@ -76,7 +76,7 @@ export function Render() {
 
   return (
     <div
-      ref={ref}
+      ref={domRef}
       className={Styles.contextMenu}
       style={{ left: position[0], top: position[1] }}
     >

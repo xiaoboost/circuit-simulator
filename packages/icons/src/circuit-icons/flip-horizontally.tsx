@@ -10,9 +10,9 @@ export function FlipHorizontally() {
       viewBox="0 0 48 48"
       fill="none"
     >
-      <path d="M24 6V42" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-      <path d="M4 34L16 12V34H4Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
-      <path d="M44 34H32V12L44 34Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linejoin="round" />
+      <path d="M24 6V42" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 34L16 12V34H4Z" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M44 34H32V12L44 34Z" fill="none" stroke="currentColor" strokeWidth="4" strokeLinejoin="round" />
     </svg>
   );
 }
