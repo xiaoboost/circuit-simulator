@@ -33,6 +33,7 @@
     "@circuit/reactive": "workspace:*",
     "@circuit/shared": "workspace:*",
     "@circuit/types": "workspace:*",
+    "@floating-ui/dom": "1.7.4",
     "@xiao-ai/utils": "1.6.7",
     "antd": "5.26.7",
     "hotkeys-js": "3.13.15",

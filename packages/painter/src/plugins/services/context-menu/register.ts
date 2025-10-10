@@ -1,27 +1,29 @@
 import { Point } from '@circuit/algorithm';
+import type { Placement } from '@floating-ui/dom';
 import { definePlugin, Watcher } from '../../../context';
 import { IContextMenuService } from '../../../types';
 
 definePlugin(({ registerService }) => {
-  const visible = new Watcher<boolean>(false);
-  const position = new Watcher<Point>(new Point(0, 0));
-
   const service: IContextMenuService = {
-    visible,
-    position,
+    visible: new Watcher<boolean>(false),
+    position: new Watcher<Point>(new Point(0, 0)),
+    placement: new Watcher<Placement>('right-start'),
+    openDropdown: new Watcher(''),
     openAt(point: Point) {
-      visible.setData(true);
-      position.setData(point);
+      service.visible.setData(true);
+      service.position.setData(point);
     },
     close() {
-      visible.setData(false);
+      service.visible.setData(false);
     },
   };
 
   registerService(IContextMenuService, service);
 
   return () => {
-    visible.destroy();
-    position.destroy();
+    service.visible.destroy();
+    service.position.destroy();
+    service.placement.destroy();
+    service.openDropdown.destroy();
   };
 });

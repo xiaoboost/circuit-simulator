@@ -85,6 +85,11 @@ export function Dropdown<T extends string>(props: DropdownProps<T>) {
     setVisible(false);
   };
 
+  // 如果浮层容器不存在，则不渲染
+  if (!PopoverContainer.current) {
+    return null;
+  }
+
   const menus = (
     <div
       className={scl(styles.dropdownContainer, props.dropdownClassName)}
@@ -117,7 +122,7 @@ export function Dropdown<T extends string>(props: DropdownProps<T>) {
   return (
     <Button icon={props.icon} addonAfter={<RightOutlined />}>
       {props.children}
-      {visible && createPortal(menus, PopoverContainer.current!)}
+      {visible && createPortal(menus, PopoverContainer.current)}
     </Button>
   );
 }

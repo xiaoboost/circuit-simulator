@@ -1,3 +1,4 @@
+import { computePosition, flip } from '@floating-ui/dom';
 import React, { useEffect, useRef } from 'react';
 import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
@@ -14,20 +15,21 @@ import * as Styles from './styles.less';
 const categories = [IContextMenuItemCategory.Visual, IContextMenuItemCategory.Edit];
 
 export function Render() {
-  const domRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const actions = useHook(IContextMenuItemHook, 'asc');
   const contextMenuService = useService(IContextMenuService);
   const [visible, setVisible] = useWatcher(contextMenuService.visible);
   const [position] = useWatcher(contextMenuService.position);
   const hoverService = useService(IHoverService);
   const selectService = useService(ISelectService);
+  const anchorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const closeContextMenu = (event: MouseEvent) => {
       if (
         event.button === 0
-        && domRef.current
-        && !domRef.current.contains(event.target as Node)
+        && menuRef.current
+        && !menuRef.current.contains(event.target as Node)
       ) {
         setVisible(false);
       }
@@ -39,6 +41,23 @@ export function Render() {
       document.body.removeEventListener('mousedown', closeContextMenu);
     };
   }, []);
+
+  useEffect(() => {
+    if (!anchorRef.current || !menuRef.current || !visible) {
+      return;
+    }
+
+    computePosition(anchorRef.current, menuRef.current, {
+      placement: contextMenuService.placement.data,
+      middleware: [flip({ padding: 8 })],
+    }).then(({ x, y, placement }) => {
+      contextMenuService.placement.setData(placement);
+      menuRef.current!.style.left = `${x}px`;
+      menuRef.current!.style.top = `${y}px`;
+    });
+  }, [
+    anchorRef.current, position, visible,
+  ]);
 
   if (!visible || actions.length === 0) {
     return;
@@ -75,12 +94,18 @@ export function Render() {
   }
 
   return (
-    <div
-      ref={domRef}
-      className={Styles.contextMenu}
-      style={{ left: position[0], top: position[1] }}
-    >
-      {rendered}
-    </div>
+    <>
+      <div
+        ref={anchorRef}
+        className={Styles.anchor}
+        style={{ left: position[0], top: position[1] }}
+      />
+      <div
+        ref={menuRef}
+        className={Styles.contextMenu}
+      >
+        {rendered}
+      </div>
+    </>
   );
 }
