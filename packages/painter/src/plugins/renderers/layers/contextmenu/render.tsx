@@ -1,5 +1,5 @@
 import { computePosition, flip } from '@floating-ui/dom';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
   IContextMenuItemHook,
@@ -24,6 +24,7 @@ export function Render() {
   const selectService = useService(ISelectService);
   const anchorRef = useRef<HTMLDivElement>(null);
 
+  // 关闭菜单事件
   useEffect(() => {
     const closeContextMenu = (event: MouseEvent) => {
       if (
@@ -42,22 +43,30 @@ export function Render() {
     };
   }, []);
 
-  useEffect(() => {
+  // 计算菜单位置
+  useLayoutEffect(() => {
     if (!anchorRef.current || !menuRef.current || !visible) {
       return;
     }
 
     computePosition(anchorRef.current, menuRef.current, {
-      placement: contextMenuService.placement.data,
+      placement: 'right-start',
       middleware: [flip({ padding: 8 })],
-    }).then(({ x, y, placement }) => {
-      contextMenuService.placement.setData(placement);
+    }).then(({ x, y }) => {
       menuRef.current!.style.left = `${x}px`;
       menuRef.current!.style.top = `${y}px`;
     });
   }, [
     anchorRef.current, position, visible,
   ]);
+
+  // 关闭菜单时，清空下拉菜单
+  useEffect(() => {
+    // 初始化下拉菜单
+    if (!visible) {
+      contextMenuService.openDropdown.setData('');
+    }
+  }, [visible]);
 
   if (!visible || actions.length === 0) {
     return;

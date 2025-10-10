@@ -8,6 +8,8 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   /** 按钮附加内容 */
   addonAfter?: React.ReactNode;
+  /** 按钮 DOM 引用 */
+  domRef?: React.RefObject<HTMLDivElement | null>;
 }
 
 export function Button(props: ButtonProps) {
@@ -26,6 +28,7 @@ export function Button(props: ButtonProps) {
     style,
     tabIndex,
     role,
+    domRef,
   } = props;
 
   return (
@@ -41,6 +44,7 @@ export function Button(props: ButtonProps) {
       style={style}
       tabIndex={tabIndex}
       role={role}
+      ref={domRef}
     >
       <span className={Styles.content}>
         <span className={Styles.icon}>{icon}</span>
