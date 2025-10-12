@@ -12,13 +12,13 @@ export function buildBaseConfig(config: BuildConfig) {
   const isDevelopment = mode === 'dev';
   const banner
     = `Project: Circuit Simulator
-  Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
+Author: 2016 - ${new Date().getFullYear()} © XiaoBoost
 
-  Version: ${version}
-  Build: ${build}
+Version: ${version}
+Build: ${build}
 
-  Nice to meet you ~ o(*￣▽￣*)ブ
-  Released under the MIT License.`;
+Nice to meet you ~ o(*￣▽￣*)ブ
+Released under the MIT License.`;
 
   const baseConfig: Webpack.Configuration = {
     mode: isDevelopment ? 'development' : 'production',
