@@ -1,4 +1,3 @@
-import { createPartReferenceTag } from '@circuit/electronics';
 import {
   ILoggerService,
   IStreamService,
@@ -19,11 +18,16 @@ definePlugin(({ registerService, getService }) => {
       return selected.data.size === 0;
     },
     set(...ids) {
+      const logger = getService(ILoggerService);
+
       if (ids.length > 0) {
-        getService(ILoggerService).info(LoggerName, '设置选中元件', getIdsString);
+        const stateService = getService(IStateCoreService);
+        const idsString = stateService.getReferenceTag(ids);
+
+        logger.info(LoggerName, '设置选中元件', idsString.join(', '));
       }
       else {
-        getService(ILoggerService).debug(LoggerName, '设置选中元件为空');
+        logger.debug(LoggerName, '设置选中元件为空');
       }
 
       selected.setData(new Set(ids));
@@ -36,19 +40,6 @@ definePlugin(({ registerService, getService }) => {
       selected.setData(new Set());
     },
   };
-
-  function getIdsString(...ids: string[]) {
-    const { state: { data: { parts, lines } } } = getService(IStateCoreService);
-    const lineIds = lines
-      .filter((line) => ids.includes(line.id))
-      .map((line) => line.id);
-
-    const partIds = parts
-      .filter((part) => ids.includes(part.id))
-      .map((part) => createPartReferenceTag(part));
-
-    return [...lineIds, ...partIds].join(', ');
-  }
 
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {

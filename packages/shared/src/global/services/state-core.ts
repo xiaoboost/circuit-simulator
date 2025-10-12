@@ -53,6 +53,10 @@ export interface IStateCoreService {
   readonly canRedo: Watcher<boolean>;
   /** 空图纸 */
   readonly isEmpty: Watcher<boolean>;
+
+  // ========== 数据查询 ==========
+  /** 编号转为引用编号 */
+  getReferenceTag(ids: string[]): string[];
   /** 获取器件原型 */
   getPartPrototype(kind: ElectronicKind): ElectronicPrototype;
   /** 获取元件 */
@@ -61,6 +65,8 @@ export interface IStateCoreService {
   getPart(id: string): Readonly<PartStructuredData>;
   /** 获取导线 */
   getLine(id: string): Readonly<LineStructuredData>;
+
+  // ========== 数据管理 ==========
   /**
    * 提交数据
    *

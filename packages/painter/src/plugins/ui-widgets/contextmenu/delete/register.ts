@@ -28,15 +28,8 @@ definePlugin(({ registerHook, getService }) => {
     key: 'backspace,del',
     name: '删除',
     action: () => {
-      const hoverService = getService(IHoverService);
-      const isHoverElectronic = Boolean(hoverService.status.data);
-
-      if (!isHoverElectronic) {
-        return;
-      }
-
       planDeleteAndMergeWithService({
-        hoverService,
+        hoverService: getService(IHoverService),
         cursorService: getService(ICursorService),
         connectionService: getService(IConnectionService),
         collisionService: getService(ICollisionService),

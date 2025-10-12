@@ -1,4 +1,4 @@
-import { Electronics, isPartId } from '@circuit/electronics';
+import { Electronics, isPartId, createPartReferenceTag } from '@circuit/electronics';
 import { IStateCoreService } from '@circuit/shared';
 import { LineStructuredData, PartStructuredData, StructuredData as State } from '@circuit/types';
 import { message } from 'antd';
@@ -57,6 +57,12 @@ definePlugin(({ registerService }) => {
     canUndo: new Watcher(false),
     canRedo: new Watcher(false),
     isEmpty: new Watcher(true),
+    getReferenceTag(ids) {
+      return ids.map((id) => {
+        const part = state.parts.find((item) => item.id === id);
+        return part ? createPartReferenceTag(part) : id;
+      });
+    },
     getPartPrototype(kind) {
       const result = Electronics[kind];
 

@@ -194,7 +194,7 @@ export function planDeleteAndMergeWithService(
     }
   }
 
-  let message = `删除选中元件：${Array.from(selected).join(', ')}`;
+  let message = `删除选中元件：${stateService.getReferenceTag(Array.from(selected)).join(', ')}`;
 
   if (plan.addedLines.length > 0) {
     message += `，合并新增导线：${plan.addedLines.map((line) => line.id).join(', ')}`;
@@ -203,6 +203,8 @@ export function planDeleteAndMergeWithService(
   if (plan.mergedRemovedLineIds.length > 0) {
     message += `，合并移除导线：${plan.mergedRemovedLineIds.join(', ')}`;
   }
+
+  loggerService.info(LoggerName, message);
 
   // 提交状态
   stateService.commit({
