@@ -23,3 +23,13 @@ export const RotateMatrixSet: Readonly<Record<Rotate, RotateMatrix>> = {
   [Rotate.XAxis]: [[1, 0], [0, -1]],
   [Rotate.YAxis]: [[-1, 0], [0, 1]],
 };
+
+/** 旋转方向显示名称 */
+export const RotateDisplayNameSet: Readonly<Record<Rotate, string>> = {
+  [Rotate.Same]: '同向旋转',
+  [Rotate.Reverse]: '反向旋转',
+  [Rotate.Clockwise]: '顺时针旋转',
+  [Rotate.AntiClockwise]: '逆时针旋转',
+  [Rotate.XAxis]: '水平翻转',
+  [Rotate.YAxis]: '垂直翻转',
+};

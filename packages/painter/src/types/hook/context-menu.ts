@@ -15,8 +15,24 @@ export const IContextMenuItemHook
   = createServiceKey<IContextMenuItemHook>('IPainterContextMenuHook');
 
 export interface IContextMenuItemProps {
-  /** 关闭菜单 */
+  /**
+   * 菜单项名称
+   *
+   * @description 等于钩子中注册的名称
+   */
+  name: string;
+  /**
+   * 关闭菜单
+   */
   onHide(): void;
+  /**
+   * 鼠标进入菜单项
+   */
+  onMouseEnter?(): void;
+  /**
+   * 鼠标离开菜单项
+   */
+  onMouseLeave?(): void;
 }
 
 export enum IContextMenuItemCategory {

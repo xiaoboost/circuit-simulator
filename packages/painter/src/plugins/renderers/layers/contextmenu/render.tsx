@@ -23,14 +23,20 @@ export function Render() {
   const hoverService = useService(IHoverService);
   const selectService = useService(ISelectService);
   const anchorRef = useRef<HTMLDivElement>(null);
+  const onMouseEnterItem = (name: string) => {
+    contextMenuService.openDropdown.setData(name);
+  };
 
   // 关闭菜单事件
   useEffect(() => {
     const closeContextMenu = (event: MouseEvent) => {
+      const target = event.target as Node;
+
       if (
-        event.button === 0
-        && menuRef.current
-        && !menuRef.current.contains(event.target as Node)
+        menuRef.current
+        && !menuRef.current.contains(target)
+        && contextMenuService.floatingElRef.current
+        && !contextMenuService.floatingElRef.current.contains(target)
       ) {
         setVisible(false);
       }
@@ -86,6 +92,8 @@ export function Render() {
           visible(visibleProps) && (
             <Render
               key={name}
+              name={name}
+              onMouseEnter={() => onMouseEnterItem(name)}
               onHide={() => setVisible(false)}
             />
           )

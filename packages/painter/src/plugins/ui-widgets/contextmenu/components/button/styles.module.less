@@ -8,11 +8,11 @@
   padding: 0 8px;
   width: 100%;
   box-sizing: border-box;
-  cursor: pointer;
   position: relative;
+  transition: background-color 0.1s ease-in-out;
 
-  &:hover {
-    background-color: mix(@color-white, @color-black, 95%);
+  &:hover, &.active {
+    background-color: fade(mix(@color-white, @color-black, 88%), 40%);
   }
 
   .content {

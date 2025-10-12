@@ -74,6 +74,7 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     );
   }, [properties, partLabelVisible]);
 
+  // 更新文本位置
   useEffect(() => {
     if (!prototype.textBias || !textRef.current) {
       return;
@@ -138,7 +139,6 @@ function PartLabelRender({ data, prototype }: IPartRendererProps) {
     stream.emit({ id });
   }, [
     texts,
-    rotate,
     textDirection,
     referenceTag,
     textRef.current,

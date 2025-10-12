@@ -1,4 +1,4 @@
-import { Point, Direction, DirectionVectorSet, RotateMatrixSet, rotateMatrix, Rotate } from '@circuit/algorithm';
+import { Point, Direction, DirectionVectorSet, RotateMatrixSet, preMatrixMultiply, Rotate } from '@circuit/algorithm';
 import { createPartByKind, createPartsByKind, createLineByPath } from '@circuit/electronics';
 import {
   ElectronicKind,
@@ -550,7 +550,7 @@ describe('创建导线搜索路径', () => {
 
         part2.position = Point.from([0, 200]);
         part3.position = Point.from([400, 400]);
-        part3.rotate = rotateMatrix(part3.rotate, RotateMatrixSet[Rotate.Clockwise]);
+        part3.rotate = preMatrixMultiply(part3.rotate, RotateMatrixSet[Rotate.Clockwise]);
 
         const painterState = await createSearchEnv(data);
         const search = createDrawLineSearcher({

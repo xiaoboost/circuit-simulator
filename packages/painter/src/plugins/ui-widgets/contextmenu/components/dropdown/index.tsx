@@ -7,7 +7,6 @@ import { createPortal } from 'react-dom';
 import { useService, useWatcher } from '../../../../../context';
 import { IContextMenuService } from '../../../../../types';
 import { Button } from '../button';
-import { PopoverContainer } from './drop-popover';
 import * as styles from './styles.module.less';
 
 export interface Content {
@@ -17,14 +16,14 @@ export interface Content {
   children: React.ReactNode;
 }
 
-export interface ItemData<T> extends Content {
+export interface ItemData<T extends string | number> extends Content {
   /** 按钮值 */
   key: T;
   /** 附加内容 */
   addonAfter?: string;
 }
 
-export interface DropdownProps<T extends string> extends Content {
+export interface DropdownProps<T extends string | number> extends Content {
   /** 下拉菜单名称 */
   name: string;
   /** 下拉菜单样式 */
@@ -34,18 +33,22 @@ export interface DropdownProps<T extends string> extends Content {
   /** 下拉菜单列表 */
   list: ItemData<T>[];
   /** 点击选项事件 */
-  onClickItem(value: T): void;
+  onClickItem?(value: T): void;
+  /** 按钮鼠标进入事件 */
+  onMouseEnter?(event: React.MouseEvent<HTMLDivElement>): void;
+  /** 按钮鼠标离开事件 */
+  onMouseLeave?(event: React.MouseEvent<HTMLDivElement>): void;
 }
 
-export function Dropdown<T extends string>(props: DropdownProps<T>) {
+export function Dropdown<T extends string | number>(props: DropdownProps<T>) {
   const buttonRef = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const contextMenuService = useService(IContextMenuService);
-  const [openDropdown, setOpenDropdown] = useWatcher(contextMenuService.openDropdown);
-  const visible = openDropdown === props.name;
+  const [openDropdown] = useWatcher(contextMenuService.openDropdown);
+  const active = openDropdown === props.name;
 
   useLayoutEffect(() => {
-    if (!buttonRef.current || !menuRef.current || !visible) {
+    if (!buttonRef.current || !menuRef.current || !active) {
       return;
     }
 
@@ -56,16 +59,16 @@ export function Dropdown<T extends string>(props: DropdownProps<T>) {
       menuRef.current!.style.left = `${x}px`;
       menuRef.current!.style.top = `${y}px`;
     });
-  }, [visible]);
+  }, [active]);
 
   // 如果浮层容器不存在，则不渲染
-  if (!PopoverContainer.current) {
-    return;
+  if (!contextMenuService.floatingElRef.current) {
+    throw new Error('浮层容器不存在');
   }
 
   const menus = (
     <AnimatePresence>
-      {visible && (
+      {active && (
         <motion.div
           className={scl(styles.dropdownContainer, props.dropdownClassName)}
           ref={menuRef}
@@ -84,8 +87,7 @@ export function Dropdown<T extends string>(props: DropdownProps<T>) {
                 key={item.key}
                 addonAfter={item.addonAfter}
                 onClick={() => {
-                  props.onClickItem(item.key);
-                  setOpenDropdown('');
+                  props.onClickItem?.(item.key);
                 }}
               >
                 {item.children}
@@ -102,10 +104,12 @@ export function Dropdown<T extends string>(props: DropdownProps<T>) {
       domRef={buttonRef}
       icon={props.icon}
       addonAfter={<RightOutlined />}
-      onMouseEnter={() => setOpenDropdown(props.name)}
+      active={active}
+      onMouseLeave={props.onMouseLeave}
+      onMouseEnter={props.onMouseEnter}
     >
       {props.children}
-      {createPortal(menus, PopoverContainer.current)}
+      {createPortal(menus, contextMenuService.floatingElRef.current)}
     </Button>
   );
 }

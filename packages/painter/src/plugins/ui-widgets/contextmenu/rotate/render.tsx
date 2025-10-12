@@ -1,4 +1,12 @@
-import { isPartId } from '@circuit/electronics';
+import {
+  RotateMatrixSet,
+  Rotate,
+  RotateDisplayNameSet,
+  preMatrixMultiply,
+  DirectionVectorSet,
+  rotateVector,
+} from '@circuit/algorithm';
+import { createPartReferenceTag } from '@circuit/electronics';
 import {
   RotateRightOutlined,
   RotateLeftOutlined,
@@ -9,64 +17,93 @@ import { IStateCoreService, ILoggerService } from '@circuit/shared';
 import React, { useCallback } from 'react';
 import { useService } from '../../../../context';
 import {
-  IHoverService,
   ICollisionService,
-  IConnectionService,
   IMapHashService,
   ISelectService,
-  ICursorService,
   IContextMenuService,
+  IContextMenuItemProps,
 } from '../../../../types';
 import { Dropdown } from '../components';
 
-enum TransformDirection {
-  Right = 'rotateRight',
-  Left = 'rotateLeft',
-  Horizontally = 'horizontally',
-  Vertically = 'vertically',
-}
+const LoggerName = '旋转器件';
 
-export function RotateRender() {
+export function RotateRender(props: IContextMenuItemProps) {
   const selectService = useService(ISelectService);
   const selectedIds = Array.from(selectService.value.data.keys());
-  const isSinglePart = selectedIds.length === 1 && isPartId(selectedIds[0]);
+  const stateCoreService = useService(IStateCoreService);
+  const loggerService = useService(ILoggerService);
+  const contextMenuService = useService(IContextMenuService);
+  const mapHashService = useService(IMapHashService);
+  const collisionService = useService(ICollisionService);
+  const transformDirection = useCallback((value: Rotate) => {
+    const partId = selectedIds[0];
+    const oldPart = stateCoreService.getPart(partId);
+    const partTag = createPartReferenceTag(oldPart);
+    const message = `${RotateDisplayNameSet[value]}器件 ${partTag}`;
 
-  // debugger;
+    // FIXME: 目前只有一个器件，所以直接旋转即可，这里还要判断器件能否旋转，以及旋转后的位置是否合法
 
-  if (!isSinglePart) {
-    return null;
-  }
+    loggerService.info(LoggerName, message);
+    contextMenuService.close();
+    mapHashService.removeMark(oldPart);
+    collisionService.removeEntity(partId);
+
+    stateCoreService.commit({
+      name: '旋转器件',
+      description: message,
+      patch: ({ parts }) => {
+        const originPart = parts.find((item) => item.id === partId);
+
+        if (originPart) {
+          const transformMatrix = RotateMatrixSet[value];
+          const oldRotate = originPart.rotate;
+          const newRotate = preMatrixMultiply(oldRotate, transformMatrix);
+          const directionVector = rotateVector(
+            DirectionVectorSet[originPart.textDirection],
+            transformMatrix,
+          );
+
+          originPart.rotate = newRotate;
+          originPart.textDirection = directionVector.toDirection();
+        }
+      },
+    });
+
+    const newPart = stateCoreService.getPart(partId);
+    mapHashService.setMark(newPart);
+    collisionService.setEntity(newPart);
+    console.log(newPart);
+  }, []);
 
   return (
     <Dropdown
-      name="rotate"
+      name={props.name}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
       list={[
         {
-          key: TransformDirection.Right,
+          key: Rotate.Clockwise,
           icon: <RotateRightOutlined />,
-          children: '顺时针旋转',
+          children: RotateDisplayNameSet[Rotate.Clockwise],
         },
         {
-          key: TransformDirection.Left,
+          key: Rotate.AntiClockwise,
           icon: <RotateLeftOutlined />,
-          children: '逆时针旋转',
+          children: RotateDisplayNameSet[Rotate.AntiClockwise],
         },
         {
-          key: TransformDirection.Horizontally,
+          key: Rotate.XAxis,
           icon: <FlipHorizontally />,
-          children: '水平翻转',
+          children: RotateDisplayNameSet[Rotate.XAxis],
         },
         {
-          key: TransformDirection.Vertically,
+          key: Rotate.YAxis,
           icon: <FlipVertically />,
-          children: '垂直翻转',
+          children: RotateDisplayNameSet[Rotate.YAxis],
         },
       ]}
       icon={<RotateRightOutlined />}
-      onClickItem={(value) => {
-        console.log(value);
-        debugger;
-      }}
+      onClickItem={transformDirection}
     >
       几何变换
     </Dropdown>

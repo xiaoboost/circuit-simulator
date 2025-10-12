@@ -1,4 +1,5 @@
 import { Point } from '@circuit/algorithm';
+import { createRef } from 'react';
 import { definePlugin, Watcher } from '../../../context';
 import { IContextMenuService } from '../../../types';
 
@@ -7,6 +8,7 @@ definePlugin(({ registerService }) => {
     visible: new Watcher<boolean>(false),
     position: new Watcher<Point>(new Point(0, 0)),
     openDropdown: new Watcher(''),
+    floatingElRef: createRef<HTMLDivElement>(),
     openAt(point: Point) {
       service.visible.setData(true);
       service.position.setData(point);

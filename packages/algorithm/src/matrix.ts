@@ -32,22 +32,45 @@ export function rotateVector(vector: PointLike, rotate: RotateMatrix): Point {
   return Point.from(vector).rotate(rotate);
 }
 
-/** 矩阵旋转 */
-export function rotateMatrix(matrix: RotateMatrix, rotate: RotateMatrix): RotateMatrix {
-  // 验证矩阵维度
+function validateMatrix(matrix: RotateMatrix): void {
   if (matrix.length !== 2 || matrix[0].length !== 2 || matrix[1].length !== 2) {
     throw new Error('输入矩阵必须是 2X2 矩阵');
   }
-  if (rotate.length !== 2 || rotate[0].length !== 2 || rotate[1].length !== 2) {
-    throw new Error('旋转矩阵必须是 2X2 矩阵');
-  }
+}
 
-  const [[a, b], [c, d]] = matrix;
-  const [[r1, r2], [r3, r4]] = rotate;
+/**
+ * 矩阵前乘
+ *
+ * @description 在 matrix1 的前面乘以 matrix2，即 matrix2 * matrix1
+ */
+export function preMatrixMultiply(matrix1: RotateMatrix, matrix2: RotateMatrix): RotateMatrix {
+  validateMatrix(matrix1);
+  validateMatrix(matrix2);
+
+  const [[a, b], [c, d]] = matrix1;
+  const [[e, f], [g, h]] = matrix2;
 
   return [
-    [r1 * a + r2 * c, r1 * b + r2 * d],
-    [r3 * a + r4 * c, r3 * b + r4 * d],
+    [e * a + f * c, e * b + f * d],
+    [g * a + h * c, g * b + h * d],
+  ];
+}
+
+/**
+ * 矩阵后乘
+ *
+ * @description 在 matrix1 的后面乘以 matrix2，即 matrix1 * matrix2
+ */
+export function postMatrixMultiply(matrix1: RotateMatrix, matrix2: RotateMatrix): RotateMatrix {
+  validateMatrix(matrix1);
+  validateMatrix(matrix2);
+
+  const [[a, b], [c, d]] = matrix1;
+  const [[e, f], [g, h]] = matrix2;
+
+  return [
+    [a * e + b * g, a * f + b * h],
+    [c * e + d * g, c * f + d * h],
   ];
 }
 

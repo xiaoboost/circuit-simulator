@@ -2,6 +2,7 @@ import { Point } from '@circuit/algorithm';
 import { IOverlayRender, IHotKeyHook } from '@circuit/shared';
 import { definePlugin } from '../../../../context';
 import { IEventListenerHook, IDragSceneService, IContextMenuService } from '../../../../types';
+import { FloatingContainer } from './floating';
 import { Render } from './render';
 
 definePlugin(({ registerHook, getService, root }) => {
@@ -12,6 +13,13 @@ definePlugin(({ registerHook, getService, root }) => {
     name: 'ContextMenuLayer',
     order: 0,
     Render,
+  });
+
+  // 注册右键菜单独立浮层到根作用域
+  registerHookInRoot(IOverlayRender, {
+    name: 'ContextMenuFloatingLayer',
+    order: 9,
+    Render: FloatingContainer,
   });
 
   // 注册关闭菜单事件

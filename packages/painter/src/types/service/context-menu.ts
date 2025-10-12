@@ -1,4 +1,5 @@
 import type { Point } from '@circuit/algorithm';
+import type { RefObject } from 'react';
 import { createServiceKey, type Watcher } from '../../context';
 
 /** 右键菜单服务键 */
@@ -8,11 +9,14 @@ export const IContextMenuService
 /** 右键菜单服务 */
 export interface IContextMenuService {
   /** 是否显示 */
-  visible: Watcher<boolean>;
+  readonly visible: Watcher<boolean>;
   /** 显示位置 */
-  position: Watcher<Point>;
+  readonly position: Watcher<Point>;
   /** 指定展开的下拉菜单 */
-  openDropdown: Watcher<string>;
+  readonly openDropdown: Watcher<string>;
+  /** 额外浮层元素引用 */
+  readonly floatingElRef: RefObject<HTMLDivElement | null>;
+
   /** 在指定位置打开 */
   openAt(point: Point): void;
   /** 关闭 */

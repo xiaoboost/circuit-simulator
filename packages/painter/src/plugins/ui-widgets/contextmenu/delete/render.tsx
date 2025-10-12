@@ -10,11 +10,12 @@ import {
   ISelectService,
   ICursorService,
   IContextMenuService,
+  IContextMenuItemProps,
 } from '../../../../types';
 import { Button } from '../components';
 import { planDeleteAndMergeWithService } from './action';
 
-export function DeleteRender() {
+export function DeleteRender(props: IContextMenuItemProps) {
   const hoverService = useService(IHoverService);
   const selectService = useService(ISelectService);
   const loggerService = useService(ILoggerService);
@@ -43,6 +44,8 @@ export function DeleteRender() {
       icon={<DeleteOutlined />}
       addonAfter="Delete"
       onClick={deleteCallback}
+      onMouseEnter={props.onMouseEnter}
+      onMouseLeave={props.onMouseLeave}
     >
       删除
     </Button>
