@@ -398,13 +398,13 @@ describe('DI 系统', () => {
       console.error = originalError;
     });
 
-    it('生命周期 afterPluginInit 以先序顺序调用', async () => {
+    it('生命周期 onCreated 以先序顺序调用', async () => {
       const Parent = createScopeSymbol('LCParent', RootScope);
       const Child = createScopeSymbol('LCChild', Parent);
       const order: string[] = [];
       defineGlobalPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          afterPluginInit() {
+          onCreated() {
             order.push('root');
           },
         });
@@ -413,14 +413,14 @@ describe('DI 系统', () => {
       const defChild = createPluginDefinitionWithScope(Child);
       defParent(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          afterPluginInit() {
+          onCreated() {
             order.push('parent');
           },
         });
       });
       defChild(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          afterPluginInit() {
+          onCreated() {
             order.push('child');
           },
         });
@@ -473,6 +473,156 @@ describe('DI 系统', () => {
       const fakeScope = Symbol('NotExistScope');
       await expect(getPluginService(key, fakeScope)).rejects.toThrow();
       await expect(getPluginHooks(key, fakeScope)).rejects.toThrow();
+    });
+  });
+
+  describe('生命周期钩子', () => {
+    it('onDestroyed 钩子应该在插件卸载时被调用', async () => {
+      const calls: string[] = [];
+
+      defineGlobalPlugin(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onDestroyed() {
+            calls.push('onDestroyed');
+          },
+        });
+      });
+
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        if (!args[0].includes('was not wrapped in act')) {
+          originalError(...args);
+        }
+      };
+
+      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(calls).toHaveLength(0);
+
+      unmount();
+
+      expect(calls).toStrictEqual(['onDestroyed']);
+      console.error = originalError;
+    });
+
+    it('definePlugin 返回值应该作为 onDestroyed 钩子被调用', async () => {
+      const calls: string[] = [];
+
+      defineGlobalPlugin(({ registerService }) => {
+        const key = createServiceKey('TestService');
+        const service = { name: 'test' };
+        registerService(key, service);
+
+        return () => {
+          calls.push('definePlugin return value');
+        };
+      });
+
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        if (!args[0].includes('was not wrapped in act')) {
+          originalError(...args);
+        }
+      };
+
+      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(calls).toHaveLength(0);
+
+      unmount();
+
+      expect(calls).toStrictEqual(['definePlugin return value']);
+      console.error = originalError;
+    });
+
+    it('多个 onDestroyed 钩子应该按注册顺序被调用', async () => {
+      const calls: string[] = [];
+
+      defineGlobalPlugin(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onDestroyed() {
+            calls.push('hook1');
+          },
+        });
+        registerHook(ILifeCycleHook, {
+          onDestroyed() {
+            calls.push('hook2');
+          },
+        });
+      });
+
+      defineGlobalPlugin(({ registerService }) => {
+        const key = createServiceKey('TestService2');
+        const service = { name: 'test2' };
+        registerService(key, service);
+
+        return () => {
+          calls.push('definePlugin return');
+        };
+      });
+
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        if (!args[0].includes('was not wrapped in act')) {
+          originalError(...args);
+        }
+      };
+
+      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(calls).toHaveLength(0);
+
+      unmount();
+
+      expect(calls).toStrictEqual([
+        'hook1', 'hook2', 'definePlugin return',
+      ]);
+      console.error = originalError;
+    });
+
+    it('不同作用域的 onDestroyed 钩子应该只调用全局作用域的', async () => {
+      const calls: string[] = [];
+      const childScope = createScopeSymbol('ChildScope', RootScope);
+      const defineChildPlugin = createPluginDefinitionWithScope(childScope);
+
+      // 全局作用域钩子
+      defineGlobalPlugin(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onDestroyed() {
+            calls.push('global onDestroyed');
+          },
+        });
+      });
+
+      // 子作用域钩子
+      defineChildPlugin(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onDestroyed() {
+            calls.push('child onDestroyed');
+          },
+        });
+      });
+
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        if (!args[0].includes('was not wrapped in act')) {
+          originalError(...args);
+        }
+      };
+
+      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(calls).toHaveLength(0);
+
+      unmount();
+
+      // 只应该调用全局作用域的钩子
+      expect(calls).toStrictEqual(['global onDestroyed']);
+      console.error = originalError;
     });
   });
 });

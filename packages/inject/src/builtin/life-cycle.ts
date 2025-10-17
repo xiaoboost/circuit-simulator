@@ -16,20 +16,8 @@ export const ILifeCycleHook
  * 生命周期
  */
 export interface ILifeCycleHook {
-  /**
-   * 插件初始化之后
-   *
-   * @description 所有插件加载完成之后运行
-   */
-  afterPluginInit?(): void | Promise<void>;
-  /**
-   * 画布初始化之后
-   *
-   * @description 画布初始化完成之后，但是 Loading 界面还没消失
-   */
-  afterPainterMounted?(): void | Promise<void>;
-  /**
-   * 画布卸载前
-   */
-  beforePainterUnmount?(): void | Promise<void>;
+  /** 作用域初始化完成 */
+  onCreated?(): void | Promise<void>;
+  /** 作用域销毁前 */
+  onDestroyed?(): void | Promise<void>;
 }

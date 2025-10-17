@@ -9,11 +9,10 @@ export interface ServiceTypeWithKey<T> {
   service: T;
 }
 
-/** 卸载插件回调 */
-export type PluginUninstaller = () => void | Promise<void>;
-
 /** 注册插件回调 */
-export type PluginInstaller = (context: IPluginInstallerContext) => PluginUninstaller | void;
+export type PluginInstaller = (context: IPluginInstallerContext) =>
+  | (() => void | Promise<void>)
+  | void;
 
 /** 插件原始信息 */
 export interface IPluginMeta {
@@ -62,8 +61,6 @@ export interface IInjectContext {
   ServiceMap: Map<ServiceTypeWithKey<any>, any>;
   /** 钩子储存表 */
   HookMap: Map<ServiceTypeWithKey<any>, any[]>;
-  /** 插件卸载器储存 */
-  PluginUninstallers: PluginUninstaller[];
 }
 
 /** 作用域 */

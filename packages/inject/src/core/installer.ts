@@ -15,7 +15,6 @@ function createScopeData(
     context: {
       ServiceMap: new Map(),
       HookMap: new Map(),
-      PluginUninstallers: [],
     },
   };
 }
@@ -105,7 +104,14 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
     });
 
     if (uninstaller) {
-      context.PluginUninstallers.push(uninstaller);
+      // 将 definePlugin 的返回值注册为生命周期钩子
+      const lifecycleHook: ILifeCycleHook = {
+        onDestroyed: uninstaller,
+      };
+      context.HookMap.set(ILifeCycleHook, [
+        ...(context.HookMap.get(ILifeCycleHook) ?? []),
+        lifecycleHook,
+      ]);
     }
   }
 }
@@ -116,7 +122,7 @@ async function runPluginAfterInit(manager: IScopeManager) {
 
   for (const { context: { HookMap } } of list) {
     const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
-    await Promise.all(lifeCycleHooks.map((i) => i.afterPluginInit?.()));
+    await Promise.all(lifeCycleHooks.map((hook) => hook.onCreated?.()));
   }
 }
 
@@ -143,14 +149,12 @@ export function useInjectInstall(ready?: () => void) {
 
     // 卸载插件
     return () => {
-      // 卸载时用后序的顺序
-      const list = getScopeList(manager.get(RootScope)!).reverse();
-      list.forEach(({ context }) => {
-        context.PluginUninstallers.forEach((cb) => cb());
-        context.PluginUninstallers.length = 0;
-        context.HookMap.clear();
-        context.ServiceMap.clear();
-      });
+      const { context: { HookMap } } = manager.get(RootScope)!;
+      const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
+
+      // 运行销毁钩子
+      lifeCycleHooks.map((hook) => hook.onDestroyed?.());
+      // 重置初始化状态
       setIsInitialized(false);
     };
   }, []);
