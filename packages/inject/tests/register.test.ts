@@ -49,6 +49,186 @@ describe('DI 系统', () => {
     });
   });
 
+  describe('批量获取服务 getServices', () => {
+    it('应该能够批量获取多个服务', async () => {
+      const service1Key = createServiceKey('Service1');
+      const service2Key = createServiceKey('Service2');
+      const service3Key = createServiceKey('Service3');
+
+      const service1 = { name: 'service1', value: 1 };
+      const service2 = { name: 'service2', value: 2 };
+      const service3 = { name: 'service3', value: 3 };
+
+      let capturedServices: any = null;
+
+      defineGlobalPlugin(({ registerService, getServices }) => {
+        registerService(service1Key, service1);
+        registerService(service2Key, service2);
+        registerService(service3Key, service3);
+
+        // 在插件安装时测试 getServices
+        capturedServices = getServices({
+          s1: service1Key,
+          s2: service2Key,
+          s3: service3Key,
+        });
+      });
+
+      // 等待插件安装完成
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(capturedServices).toBeDefined();
+      // 现在需要通过 getter 访问服务
+      expect(capturedServices.s1).toBe(service1);
+      expect(capturedServices.s2).toBe(service2);
+      expect(capturedServices.s3).toBe(service3);
+    });
+
+    it('应该能够获取部分服务（混合存在和不存在的服务）', async () => {
+      const existingKey = createServiceKey('ExistingService');
+      const nonExistingKey = createServiceKey('NonExistingService');
+
+      const existingService = { name: 'existing', value: 100 };
+
+      let capturedServices: any = null;
+
+      defineGlobalPlugin(({ registerService, getServices }) => {
+        registerService(existingKey, existingService);
+
+        // 测试获取部分存在的服务
+        capturedServices = getServices({
+          existing: existingKey,
+          nonExisting: nonExistingKey,
+        });
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(capturedServices).toBeDefined();
+      // 访问存在的服务应该成功
+      expect(capturedServices.existing).toBe(existingService);
+      // 访问不存在的服务应该抛出错误
+      expect(() => capturedServices.nonExisting).toThrow();
+    });
+
+    it('应该能够获取空对象', async () => {
+      let capturedServices: any = null;
+
+      defineGlobalPlugin(({ getServices }) => {
+        capturedServices = getServices({});
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(capturedServices).toBeDefined();
+      expect(Object.keys(capturedServices)).toHaveLength(0);
+    });
+
+    it('应该在不同作用域中正确获取服务', async () => {
+      const parentScope = createScopeSymbol('ParentScope', RootScope);
+      const childScope = createScopeSymbol('ChildScope', parentScope);
+
+      const parentKey = createServiceKey('ParentService');
+      const childKey = createServiceKey('ChildService');
+      const rootKey = createServiceKey('RootService');
+
+      const parentService = { name: 'parent', value: 1 };
+      const childService = { name: 'child', value: 2 };
+      const rootService = { name: 'root', value: 3 };
+
+      let parentCapturedServices: any = null;
+      let childCapturedServices: any = null;
+
+      // 在根作用域注册服务
+      defineGlobalPlugin(({ registerService }) => {
+        registerService(rootKey, rootService);
+      });
+
+      // 在父作用域注册服务并测试 getServices
+      const defineParentPlugin = createPluginDefinitionWithScope(parentScope);
+      defineParentPlugin(({ registerService, getServices }) => {
+        registerService(parentKey, parentService);
+
+        parentCapturedServices = getServices({
+          parent: parentKey,
+          root: rootKey,
+        });
+      });
+
+      // 在子作用域注册服务并测试 getServices
+      const defineChildPlugin = createPluginDefinitionWithScope(childScope);
+      defineChildPlugin(({ registerService, getServices }) => {
+        registerService(childKey, childService);
+
+        childCapturedServices = getServices({
+          child: childKey,
+          parent: parentKey,
+          root: rootKey,
+        });
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      // 验证父作用域获取的服务
+      expect(parentCapturedServices).toBeDefined();
+      expect(parentCapturedServices.parent).toBe(parentService);
+      expect(parentCapturedServices.root).toBe(rootService);
+
+      // 验证子作用域获取的服务（应该能获取到父作用域和根作用域的服务）
+      expect(childCapturedServices).toBeDefined();
+      expect(childCapturedServices.child).toBe(childService);
+      expect(childCapturedServices.parent).toBe(parentService);
+      expect(childCapturedServices.root).toBe(rootService);
+    });
+
+    it('应该保持类型安全', async () => {
+      interface Service1Type {
+        name: string;
+        value: number;
+      }
+
+      interface Service2Type {
+        id: string;
+        enabled: boolean;
+      }
+
+      const service1Key = createServiceKey<Service1Type>('TypedService1');
+      const service2Key = createServiceKey<Service2Type>('TypedService2');
+
+      const service1: Service1Type = { name: 'test', value: 42 };
+      const service2: Service2Type = { id: 'test-id', enabled: true };
+
+      let capturedServices: any = null;
+
+      defineGlobalPlugin(({ registerService, getServices }) => {
+        registerService(service1Key, service1);
+        registerService(service2Key, service2);
+
+        capturedServices = getServices({
+          s1: service1Key,
+          s2: service2Key,
+        });
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(capturedServices).toBeDefined();
+      expect(capturedServices.s1).toEqual(service1);
+      expect(capturedServices.s2).toEqual(service2);
+
+      // 验证类型正确性
+      expect(typeof capturedServices.s1.name).toBe('string');
+      expect(typeof capturedServices.s1.value).toBe('number');
+      expect(typeof capturedServices.s2.id).toBe('string');
+      expect(typeof capturedServices.s2.enabled).toBe('boolean');
+    });
+  });
+
   describe('作用域注册与查找', () => {
     it('子作用域可以获取到父作用域注册的服务', async () => {
       const key = createServiceKey('Srv');

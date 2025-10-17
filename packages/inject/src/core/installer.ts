@@ -75,6 +75,19 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
     const { context } = scopeContainer;
     const uninstaller = installer({
       getService: (key) => getServiceWithScope(key, scope, manager),
+      getServices: (services) => {
+        const result: Record<string, any> = {};
+
+        for (const [key, serviceKey] of Object.entries(services)) {
+          Object.defineProperty(result, key, {
+            get: () => getServiceWithScope(serviceKey, scope, manager),
+            enumerable: true,
+            configurable: true,
+          });
+        }
+
+        return result as any;
+      },
       getHook: (key) => getHookWithScope(key, scope, manager),
       getTestConfig(key) {
         return process.env.NODE_ENV === 'test'

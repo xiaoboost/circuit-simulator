@@ -10,20 +10,23 @@ import { ISelectService } from '../../../types';
 
 const LoggerName = '选择服务';
 
-definePlugin(({ registerService, getService }) => {
+definePlugin(({ registerService, getServices }) => {
   const selected = new Watcher(new Set<string>());
+  const services = getServices({
+    logger: ILoggerService,
+    stream: IStreamService,
+    state: IStateCoreService,
+  });
   const service: ISelectService = {
     value: selected,
     isEmpty() {
       return selected.data.size === 0;
     },
     set(...ids) {
-      const logger = getService(ILoggerService);
+      const { logger, state } = services;
 
       if (ids.length > 0) {
-        const stateService = getService(IStateCoreService);
-        const idsString = stateService.getReferenceTag(ids);
-
+        const idsString = state.getReferenceTag(ids);
         logger.info(LoggerName, '设置选中元件', idsString.join(', '));
       }
       else {
@@ -36,7 +39,7 @@ definePlugin(({ registerService, getService }) => {
       service.set(...selected.data.values(), ...ids);
     },
     clear() {
-      getService(ILoggerService).debug(LoggerName, '清空选中元件');
+      services.logger.debug(LoggerName, '清空选中元件');
       selected.setData(new Set());
     },
   };
@@ -44,7 +47,7 @@ definePlugin(({ registerService, getService }) => {
   // 订阅选中事件
   selected.observe((nextSet, preSet) => {
     if (!preSet || !isSameSet(preSet, nextSet)) {
-      getService(IStreamService)
+      services.stream
         .get<Constant.SelectedChangePayload>(Constant.SelectedChange)
         .emit(nextSet);
     }

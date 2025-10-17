@@ -35,6 +35,12 @@ export interface IPluginScopeRegister {
 export interface IPluginInstallerContext extends IPluginScopeRegister {
   /** 获取当前服务 */
   getService<T>(key: ServiceTypeWithKey<T>): T;
+  /** 批量获取服务 */
+  getServices<T extends Record<string, ServiceTypeWithKey<any>>>(
+    services: T
+  ): {
+    [K in keyof T]: T[K] extends ServiceTypeWithKey<infer U> ? U : never;
+  };
   /** 获取当前钩子 */
   getHook<T>(key: ServiceTypeWithKey<T>): T[];
   /** 获取测试时配置 */
