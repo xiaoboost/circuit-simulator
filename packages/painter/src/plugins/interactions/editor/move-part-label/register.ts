@@ -21,7 +21,7 @@ import {
   IVariableObserverService as VarService,
   PainterStreamConstant as Constant,
 } from '../../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../algorithm/searcher/constant';
 import { getPartNearestDirection } from './utils';
 
 const MoveDragSceneName = 'move-part-label';

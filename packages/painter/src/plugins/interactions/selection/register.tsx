@@ -8,7 +8,7 @@ import {
 definePlugin(({ registerHook, getService }) => {
   function handleClick(event: MouseEvent) {
     const selectService = getService(ISelectService);
-    const { status: { data: hover } } = getService(IHoverService);
+    const { current: { data: hover } } = getService(IHoverService);
 
     // 鼠标没有悬停在任何实体上
     if (!hover) {

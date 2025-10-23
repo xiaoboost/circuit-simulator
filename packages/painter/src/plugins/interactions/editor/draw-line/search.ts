@@ -16,7 +16,7 @@ import {
   EntityKind,
   PIN_DRAW_EXPANDED_STYLE,
   PIN_DRAW_FIXED_STYLE,
-} from '../constant';
+} from '../algorithm/searcher/constant';
 import { DrawLineSearcherOptions } from './types';
 
 export function createDrawLineSearcher({
@@ -62,7 +62,7 @@ export function createDrawLineSearcher({
 
     // 终点在空白
     if (!hover) {
-      endList = endGrid.filter((node) => !painter.get(node));
+      endList = endGrid.filter((node) => !painter.getMarkAt(node));
 
       // 四个节点均被占用
       if (endList.length === 0) {
@@ -84,17 +84,18 @@ export function createDrawLineSearcher({
     // 终点在导线
     else if (hover.kind === EntityKind.Line || hover.kind === EntityKind.LinePin) {
       const endRound = end.round();
-      const endRoundMark = painter.get(endRound);
+      const endRoundMark = painter.getMarkAt(endRound);
+      const { assert } = painter;
 
       // 空导线引脚上直接对齐
-      if (painter.isLinePoint(endRoundMark)) {
+      if (assert.isLinePoint(endRoundMark)) {
         endList = [endRound];
         searchMode = SearchMode.DrawAlignPoint;
       }
       // 在导线上
       else {
         // 四方格点在导线上的节点
-        endList = endGrid.filter((node) => painter.isLineAndLine(painter.get(node)));
+        endList = endGrid.filter((node) => assert.isLineAndLine(painter.getMarkAt(node)));
         // 线对齐模式
         searchMode = SearchMode.DrawAlignLine;
       }
@@ -267,11 +268,14 @@ export function createDrawLineSearcher({
     // 对齐导线的情况下，修饰导线
     else if (searchMode === SearchMode.DrawAlignLine) {
       const endRound = end.round();
-      const endMark = painter.get(endRound)!;
+      const endMark = painter.getMarkAt(endRound)!;
       const endRoundWay = cache.get(endRound)!;
       // 与<终点四舍五入的点>相连的坐标集合与四方格坐标集合的交集
-      const roundSet = painter.isLineAndLine(endMark)
-        ? endList.filter((node) => !endRound.isEqual(node) && painter.hasConnect(endMark, node))
+      const roundSet = painter.assert.isLineAndLine(endMark)
+        ? endList.filter((node) => (
+          !endRound.isEqual(node)
+          && painter.mark.hasConnect(endMark, node)
+        ))
         : [];
 
       if (roundSet.length > 0) {

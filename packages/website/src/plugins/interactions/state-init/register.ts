@@ -80,7 +80,7 @@ const LoggerName = '基座';
 
 definePlugin(({ registerHook, getService }) => {
   registerHook(ILifeCycleHook, {
-    afterPluginInit() {
+    onCreated() {
       const storage = getService(IStorageService);
       const stateCore = getService(IStateCoreService);
 

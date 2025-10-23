@@ -13,10 +13,10 @@ import {
 } from 'vitest';
 import {
   createDrawLineSearcher,
-  PainterState,
+  IPainterAdapter,
   PIN_DRAW_EXPANDED_STYLE,
   PIN_DRAW_FIXED_STYLE,
-} from '../../../src/plugins/interactions/editor/utils';
+} from '../../../src/plugins/interactions/editor/test.utils';
 import {
   IMapHashService,
   IConnectionService,
@@ -50,19 +50,15 @@ describe('创建导线搜索路径', () => {
 
     let hover: Entity | undefined;
 
-    const state: PainterState = {
-      ...map,
-      ...connection,
+    const state: IPainterAdapter = {
+      assert: map,
+      mark: map,
+      getMarkAt: (position: Point) => map.get(position),
+      hasMarkAt: (position: Point) => map.has(position),
       getHover: () => hover,
-      getPart: (id: string) => {
-        return data.parts.find((part) => part.id === id);
-      },
-      getLine: (id: string) => {
-        return data.lines.find((line) => line.id === id);
-      },
-      getConnection: (id: string, pin: number) => {
-        return connection.getConnections(id, pin);
-      },
+      getPart: (id: string) => data.parts.find((part) => part.id === id),
+      getLine: (id: string) => data.lines.find((line) => line.id === id),
+      getConnection: (id: string, pin: number) => connection.getConnections(id, pin),
     };
 
     return {

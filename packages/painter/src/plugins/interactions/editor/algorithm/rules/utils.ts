@@ -5,22 +5,24 @@ import {
   SegmentWithPoint as Segment,
 } from '@circuit/algorithm';
 import type { SearchNodeData } from '../a-star';
-import type { PainterState } from '../searcher';
+import type { IPainterAdapter } from '../searcher';
 
 /** 返回节点所在器件 */
-export function getPart(painter: PainterState, node: Point) {
-  const status = painter.get(node);
+export function getPart(painter: IPainterAdapter, node: Point) {
+  const { assert } = painter;
+  const status = painter.getMarkAt(node);
 
-  if (painter.isPart(status) || painter.isPartPin(status)) {
+  if (assert.isPart(status) || assert.isPartPin(status)) {
     return status.id;
   }
 }
 
 /** 返回节点所在线段 */
-export function getSegment(painter: PainterState, node: Point) {
-  const data = painter.get(node);
+export function getSegment(painter: IPainterAdapter, node: Point) {
+  const { assert, mark } = painter;
+  const data = painter.getMarkAt(node);
 
-  if (!data || !painter.isLineAndLine(data)) {
+  if (!data || !assert.isLineAndLine(data)) {
     return [];
   }
 
@@ -35,8 +37,8 @@ export function getSegment(painter: PainterState, node: Point) {
     ];
 
     const limit = [
-      painter.alongLineAndVector(data, Point.from(directors[i * 2])),
-      painter.alongLineAndVector(data, Point.from(directors[i * 2 + 1])),
+      mark.alongLineAndVector(data, Point.from(directors[i * 2])),
+      mark.alongLineAndVector(data, Point.from(directors[i * 2 + 1])),
     ];
 
     if (!limit[0].position.isEqual(limit[1].position)) {
@@ -48,10 +50,10 @@ export function getSegment(painter: PainterState, node: Point) {
 }
 
 /** 节点所在线段是否和当前节点方向垂直 */
-export function isNodeVerticalLine(painter: PainterState, node: SearchNodeData): boolean {
-  const status = painter.get(node.position);
+export function isNodeVerticalLine(painter: IPainterAdapter, node: SearchNodeData): boolean {
+  const status = painter.getMarkAt(node.position);
 
-  if (!status || painter.isNoConnect(status)) {
+  if (!status || painter.mark.isNoConnect(status)) {
     return false;
   }
 

@@ -408,7 +408,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
 
   // 注册生命周期
   registerHook(ILifeCycleHook, {
-    afterPainterMounted() {
+    onCreated() {
       startObserving();
     },
   });

@@ -1,3 +1,3 @@
 import './move-part-label';
-import './create-line';
+import './draw-line';
 import './create-part';

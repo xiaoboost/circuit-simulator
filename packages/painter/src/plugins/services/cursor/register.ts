@@ -8,9 +8,14 @@ import {
   EntityKind,
 } from '../../../types';
 
-definePlugin(({ registerService, registerHook, getService }) => {
+definePlugin(({ registerService, registerHook, getServices }) => {
   let defaultCursor = ICursorKind.Default;
   let highPriorityCursor: ICursorKind | undefined;
+
+  const services = getServices({
+    hover: IHoverService,
+    state: IStateCoreService,
+  });
 
   const service: ICursorService = {
     value: new Watcher<ICursorKind>(ICursorKind.Default),
@@ -27,8 +32,8 @@ definePlugin(({ registerService, registerHook, getService }) => {
 
   // 监听 Hover 状态
   registerHook(ILifeCycleHook, {
-    afterPluginInit() {
-      getService(IHoverService).status.observe((val) => {
+    onCreated() {
+      services.hover.current.observe((val) => {
         if (
           !val || val.kind === EntityKind.Part
         ) {
@@ -40,7 +45,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
           defaultCursor = ICursorKind.DrawLine;
         }
         else if (val.kind === EntityKind.Line) {
-          const line = getService(IStateCoreService).getLine(val.id);
+          const line = services.state.getLine(val.id);
           const lineSegmentVector = new Point(line.path[val.index], line.path[val.index + 1]);
 
           defaultCursor = lineSegmentVector.isHorizontal()

@@ -8,12 +8,13 @@ import type { RulesContext } from './types';
  */
 export function isValidNode(this: RulesContext, node: SearchNodeData): boolean {
   const { painter } = this;
-  const status = painter.get(node.position);
+  const { assert } = painter;
+  const status = painter.getMarkAt(node.position);
 
   if (
-    painter.isPart(status)
-    || painter.isPartPinLine(status)
-    || painter.isPartPin(status)
+    assert.isPart(status)
+    || assert.isPartPinLine(status)
+    || assert.isPartPin(status)
   ) {
     return false;
   }

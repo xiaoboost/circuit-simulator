@@ -15,7 +15,7 @@ const LoggerName = '画布';
 definePlugin(({ registerHook, getService }) => {
   // 画布初始化
   registerHook(ILifeCycleHook, {
-    afterPluginInit() {
+    onCreated() {
       const { state: { data } } = getService(IStateCoreService);
       const logger = getService(ILoggerService);
 

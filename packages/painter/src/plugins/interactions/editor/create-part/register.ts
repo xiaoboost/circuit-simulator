@@ -25,7 +25,7 @@ import {
   IPainterConfigurationService,
   IEventListenerHook,
 } from '../../../../types';
-import { MOVEMENT_HOC_SCOPE as KEY } from '../constant';
+import { MOVEMENT_HOC_SCOPE as KEY } from '../algorithm/searcher/constant';
 
 const CreatePartSceneName = 'create-part';
 const LoggerName = '创建器件';
@@ -36,7 +36,8 @@ interface StartPayloadType extends DragSceneHookPayload {
   part: PartStructuredData;
 }
 
-definePlugin(({ registerHook, getService }) => {
+definePlugin(({ registerHook, getService, root }) => {
+  const { registerHook: registerHookInRoot } = root();
   const setPosition = (id: string, position?: Point) => {
     getService(IVariableObserverService).set(KEY, [
       [getBodyKey(id), position],
@@ -45,8 +46,8 @@ definePlugin(({ registerHook, getService }) => {
   };
 
   // 全局监听创建的器件
-  registerHook(ILifeCycleHook, {
-    afterPluginInit() {
+  registerHookInRoot(ILifeCycleHook, {
+    onCreated() {
       const stateCore = getService(IStateCoreService);
       const logger = getService(ILoggerService);
       const dragScene = getService(IDragSceneService);

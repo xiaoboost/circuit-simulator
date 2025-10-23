@@ -5,12 +5,14 @@ import type { Rules } from '../rules';
 export interface SearchNodeData {
   /** 当前节点位置 */
   position: Point;
-  /** 当前节点是由什么方向扩展而来 */
+  /** 当前节点的前进方向 */
   direction: Point;
   /** 当前节点估值 */
   value: number;
-  /** 扩展到当前节点共有多少个弯道 */
+  /** 扩展到当前节点的拐弯次数 */
   junction: number;
+  /** 扩展到当前节点的路程 */
+  distance: number;
   /** 当前节点的祖节点 */
   parent?: SearchNodeData;
   /** 当前节点拐弯的祖节点 */

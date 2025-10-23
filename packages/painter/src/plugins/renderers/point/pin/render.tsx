@@ -88,12 +88,12 @@ function PinRenderer(props: IPinRendererProps) {
       if (hoverFalse) {
         handleHover(false);
       }
-      else if (isHover(hoverService.status.data)) {
+      else if (isHover(hoverService.current.data)) {
         handleHover(true);
       }
     }
 
-    const hoverUnOb = hoverService.status.observe((cur, pre) => {
+    const hoverUnOb = hoverService.current.observe((cur, pre) => {
       if (!isEnableHover()) {
         return;
       }

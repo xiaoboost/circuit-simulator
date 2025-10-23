@@ -17,6 +17,7 @@ function newNode(node: SearchNodeData, index: Rotate): SearchNodeData {
     direction,
     value: 0,
     parent: node,
+    distance: node.distance + 20,
     cornerParent: (index === Rotate.Same ? node.cornerParent : node),
     junction: index === Rotate.Same ? node.junction : node.junction + 1,
     position: node.position.add(direction.mul(20)),
@@ -34,6 +35,7 @@ export function aStarSearch({
   const first: SearchNodeData = {
     position: start,
     direction,
+    distance: 0,
     junction: 0,
     value: 0,
     cornerParent: undefined as any,

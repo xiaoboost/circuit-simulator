@@ -26,7 +26,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
 
   // 注册初始化，读取缓存
   registerHook(ILifeCycleHook, {
-    afterPluginInit() {
+    onCreated() {
       return getStorage(watcherCache, getService(IStorageService));
     },
   });

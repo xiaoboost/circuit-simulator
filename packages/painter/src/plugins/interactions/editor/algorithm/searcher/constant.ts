@@ -2,14 +2,14 @@ export {
   PIN_STYLE_HOC_SCOPE,
   PATH_DISTORTION_HOC_SCOPE,
   MOVEMENT_HOC_SCOPE,
-} from '../../hoc-modules';
+} from '../../../../hoc-modules';
 
 export {
   type MarkMap,
   type Entity,
   EntityKind,
   MarkKind,
-} from '../../../types';
+} from '../../../../../types';
 
 /** 引脚放大时的半径 */
 export const PIN_RADIUS_EXPANDED = 7;

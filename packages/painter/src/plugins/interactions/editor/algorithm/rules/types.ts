@@ -1,6 +1,6 @@
-import type { Point, SegmentWithPoint } from '@circuit/algorithm';
+import type { Point, SegmentWithPoint, PathWithPoint } from '@circuit/algorithm';
 import type { SearchNodeData } from '../a-star';
-import type { SearchMode, PainterState } from '../searcher';
+import type { SearchMode, IPainterAdapter } from '../searcher';
 
 /** 搜索规则 */
 export interface Rules {
@@ -23,13 +23,15 @@ export interface RulesOptions {
   /** 初始方向 */
   direction: Point;
   /** 标记图纸数据 */
-  painter: PainterState;
+  painter: IPainterAdapter;
   /** 搜索模式 */
   mode: SearchMode;
+  /** 参考路径 */
+  referencePath?: PathWithPoint;
 }
 
 /** 搜索规则上下文 */
-export interface RulesContext extends RulesOptions {
+export interface RulesContext extends Required<RulesOptions> {
   /** 终线 */
   endLines: SegmentWithPoint[];
 }

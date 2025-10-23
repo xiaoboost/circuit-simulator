@@ -66,7 +66,7 @@ definePlugin(({ registerHook, getService }) => {
 
       if (
         // 没有悬停实体
-        !hoverService.status.data
+        !hoverService.current.data
         // 拖动服务判断可以启动
         && dragSceneService.isLeftMouseDownNoMovingNoScene(event)
         // 鼠标在画布上

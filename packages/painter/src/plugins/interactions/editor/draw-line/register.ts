@@ -30,9 +30,12 @@ import {
   findPartPin,
   findLinePinAndIndex,
   removeRepeat,
+  createSearchHook,
+  setSearchResult,
+  getPainterAdapter,
 } from '../algorithm';
-import { PIN_DRAW_FIXED_STYLE } from '../constant';
-import { painterStateGetter, createSearchHook, setSearchResult } from '../utils';
+import { PIN_DRAW_FIXED_STYLE } from '../algorithm/searcher/constant';
+// import { painterStateGetter, createSearchHook, setSearchResult } from '../test.utils';
 import { CreateLineSceneName, LoggerName } from './constant';
 import { createDrawLineSearcher as createSearcher } from './search';
 
@@ -52,17 +55,52 @@ definePlugin(({ registerHook, getService }) => {
     onMouseDown(event) {
       const dragSceneService = getService(IDragSceneService);
       const hover = getService(IHoverService);
-      const hoverData = hover.status.data;
+      const hoverData = hover.current.data;
 
       if (
         !dragSceneService.isLeftMouseDownNoMovingNoScene(event)
         || (
           !hoverData
-          || hoverData.kind !== EntityKind.PartPin
+          || (
+            hoverData.kind !== EntityKind.PartPin
+            && hoverData.kind !== EntityKind.LinePin
+          )
         )
       ) {
         return;
       }
+
+      debugger;
+
+      /**
+       * 绘制全新导线
+       *   必须要一开始就把新导线提交到草稿
+       *   但是因为是新的，所以 hash 和方框这些都还没有，不需要提交
+       * 修改旧导线
+       *   这里的问题是，草稿也可以提交，但是 hash 和方框这些怎么处理，初次搜索的时候再删除吗
+       *
+       * 流程需要统一
+       * 点击时
+       *   创建新导线时，提交草稿数据，然后触发事件，创建 searcher
+       *   旧导线时，直接触发事件，创建 searcher
+       * 触发事件开始
+       *   主要是各种状态变更，设置选中，设置绘制导线节点之类的，还有打印日志
+       * 移动开始
+       *   创建导线时，没有别的内容
+       *   修改导线时
+       *       如果点击的点是导线的起点，还要把导线翻转
+       *       删除 hash、方框等内容，连接数据的话，考虑和创建新导线时情况一样，连接数据也全都删了吧，还有，如果节点只剩下两个，那么剩下的两个导线需要合并
+       * 移动中
+       *   传入旧的导线作为判定标准之一
+       * 正常结束
+       *   创建导线时，正式提交数据，设置 hash 等内容
+       *   修改导线时，正式提交数据，设置 hash 等内容
+       * 取消
+       *   需要有还原的函数，这里直接执行
+       *
+       * 整体来说，从创建到最后，都不应该区分两种情况。
+       * 那么就需要在触发事件开始时，就把所有的回调
+       */
 
       const state = getService(IStateCoreService);
       const connection = getService(IConnectionService);
@@ -74,7 +112,12 @@ definePlugin(({ registerHook, getService }) => {
         lineId: line.id,
         start: pin.position,
         direction: pin.direction,
-        painter: painterStateGetter(hover, state, connection, map),
+        painter: getPainterAdapter({
+          hoverService: hover,
+          stateCoreService: state,
+          connectionService: connection,
+          mapHashService: map,
+        }),
         hook: createSearchHook(getService(IVariableObserverService)),
       });
 

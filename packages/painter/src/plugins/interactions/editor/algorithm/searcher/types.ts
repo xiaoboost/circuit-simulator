@@ -2,12 +2,12 @@ import type { Point, PathWithPoint } from '@circuit/algorithm';
 import type { PartStructuredData, LineStructuredData } from '@circuit/types';
 import type {
   IConnectionDataWithPin,
-  IMapHashMarkService,
-  IMapHashCoreService,
   IMapHashAssertService,
+  IMapHashMarkService,
+  Mark,
 } from '../../../../../types';
-import type { Entity } from '../../constant';
 import type { SearchHook } from '../a-star';
+import type { Entity } from './constant';
 
 /** 搜索状态 */
 export const enum SearchMode {
@@ -26,14 +26,19 @@ export const enum SearchMode {
   DeformNormal = 30,
 }
 
-/** 画布状态 */
-export interface PainterState
-  extends
-  IMapHashCoreService,
-  IMapHashMarkService,
-  IMapHashAssertService {
+/** 画布适配层 */
+export interface IPainterAdapter {
+  /** Mark 断言方法 */
+  assert: IMapHashAssertService;
+  /** Mark 服务方法 */
+  mark: IMapHashMarkService;
+
+  /** 获取标记 */
+  getMarkAt: (position: Point) => Mark | undefined;
+  /** 是否包含标记 */
+  hasMarkAt: (position: Point) => boolean;
   /** 鼠标覆盖状态 */
-  getHover: () => Entity | undefined;
+  getHover: () => Readonly<Entity> | undefined;
   /** 获取元件数据 */
   getPart: (id: string) => Readonly<PartStructuredData> | undefined;
   /** 获取导线 */
@@ -86,7 +91,9 @@ export interface PathSearcherOptions {
   /** 起始方向 */
   direction: Point;
   /** 画布控制器 */
-  painter: PainterState;
+  painter: IPainterAdapter;
+  /** 参考路径 */
+  oldPath?: PathWithPoint;
   /** 搜索钩子 */
   hook?: SearchHook;
 }

@@ -15,41 +15,50 @@ const LoggerName = '悬停服务';
 definePlugin(({ registerService, registerHook, getService }) => {
   let positionInDrawer = Point.Zero();
 
+  /** Hover 中的实体排序 */
+  const sortEntitiesByPriority = (entities: Entity[]): Entity[] => {
+    if (entities.length <= 1) {
+      return entities;
+    }
+
+    return entities.sort((pre, next) => {
+      const prePriority = entityKindPriority[pre.kind];
+      const nextPriority = entityKindPriority[next.kind];
+
+      if (prePriority !== nextPriority) {
+        return prePriority - nextPriority;
+      }
+
+      // 如果类别相同，按照 id 字符串比较
+      return pre.id.localeCompare(next.id);
+    });
+  };
+
+  /** 公共查询逻辑 */
+  const queryEntitiesAt = (position: Point): Entity[] => {
+    const collisionService = getService(ICollisionService);
+    const collision = collisionService.pointInEntities(position);
+    return sortEntitiesByPriority(collision);
+  };
+
   const service: IHoverService = {
-    status: new Watcher<Entity | undefined>(undefined),
-    update() {
-      const collisionService = getService(ICollisionService);
-      const collision = collisionService.pointInEntities(positionInDrawer);
+    current: new Watcher<Entity | undefined>(undefined),
+    updateCurrent() {
+      const entities = queryEntitiesAt(positionInDrawer);
       const logger = getService(ILoggerService);
 
-      if (collision.length === 0) {
-        service.status.setData(undefined);
+      if (entities.length === 0) {
+        service.current.setData(undefined);
         logger.debug(LoggerName, '没有悬停实体');
         return;
       }
 
-      if (collision.length === 1) {
-        service.status.setData(collision[0]);
-        logger.debug(LoggerName, '悬停实体', getEntityText(collision[0]));
-        return;
-      }
-
-      // 按照优先级对所有实体排序
-      const sorted = collision.sort((pre, next) => {
-        const prePriority = entityKindPriority[pre.kind];
-        const nextPriority = entityKindPriority[next.kind];
-
-        if (prePriority !== nextPriority) {
-          return prePriority - nextPriority;
-        }
-
-        // 如果类别相同，按照 id 字符串比较
-        return pre.id.localeCompare(next.id);
-      });
-
       // 设置优先级最高的实体为当前悬停状态
-      service.status.setData(sorted[0]);
-      logger.debug(LoggerName, '悬停实体', getEntityText(sorted[0]));
+      service.current.setData(entities[0]);
+      logger.debug(LoggerName, '悬停实体', getEntityText(entities[0]));
+    },
+    getStackAt(position?: Point): Entity[] {
+      return queryEntitiesAt(position ?? positionInDrawer);
     },
   };
 
@@ -81,7 +90,7 @@ definePlugin(({ registerService, registerHook, getService }) => {
     onMouseMove(event) {
       const mapService = getService(IMapCoordinateService);
       positionInDrawer = mapService.screenToMapPosition(new Point(event.pageX, event.pageY));
-      service.update();
+      service.updateCurrent();
     },
   });
 
@@ -89,6 +98,6 @@ definePlugin(({ registerService, registerHook, getService }) => {
   registerService(IHoverService, service);
 
   return () => {
-    service.status.destroy();
+    service.current.destroy();
   };
 });

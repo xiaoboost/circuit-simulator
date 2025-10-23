@@ -181,9 +181,9 @@ export interface IMapHashBusinessService {
   /** 从初始数据创建图纸记录 */
   createFromData(data: StructuredData): void;
   /** 设置标记 */
-  setMark(data: PartStructuredData | LineStructuredData): void;
+  setMark(data?: PartStructuredData | LineStructuredData): void;
   /** 删除器件标记 */
-  removeMark(data: PartStructuredData | LineStructuredData): void;
+  removeMark(data?: PartStructuredData | LineStructuredData): void;
 }
 
 /** 图纸服务标记数据方法 */
@@ -213,5 +213,11 @@ export interface IMapHashService extends
   IMapHashCoreService,
   IMapHashAssertService,
   IMapHashBusinessService,
-  IMapHashMarkService
-{}
+  IMapHashMarkService {
+  // ========== 服务管理 ==========
+  /**
+   * 克隆服务
+   * @returns 完全独立的新服务实例
+   */
+  clone(): IMapHashService;
+}

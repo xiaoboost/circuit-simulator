@@ -219,7 +219,7 @@ export function planDeleteAndMergeWithService(
 
   selectService.clear();
   cursorService.clear();
-  hoverService.update();
+  hoverService.updateCurrent();
   contextMenuService.close();
 }
 
