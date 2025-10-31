@@ -4,10 +4,9 @@
  * @description 因为要用于推倒类型，所以这里的类型和实际类型并不相符
  * @internal
  */
-export interface ServiceTypeWithKey<T> {
-  key: symbol;
-  service: T;
-}
+export type ServiceTypeWithKey<T> = symbol
+  /** 用于从 Token 推导服务类型，不会出现在运行时 */
+  & { readonly __type: T };
 
 /** 注册插件回调 */
 export type PluginInstaller = (context: IPluginInstallerContext) =>
