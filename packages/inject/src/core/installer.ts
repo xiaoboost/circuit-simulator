@@ -81,7 +81,7 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
           Object.defineProperty(result, key, {
             get: () => getServiceWithScope(serviceKey, scope, manager),
             enumerable: true,
-            configurable: true,
+            configurable: false,
           });
         }
 
