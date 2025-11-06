@@ -2,12 +2,17 @@ import {
   getPartPin,
   createLineByPath,
   createPartReferenceTag,
+  isPartId,
 } from '@circuit/electronics';
 import {
   ILoggerService,
   IStateCoreService,
 } from '@circuit/shared';
 import { LineStructuredData } from '@circuit/types';
+import {
+  type PartWithPin,
+  type ElectronicWithPin,
+} from '@circuit/types';
 import { definePlugin } from '../../../../context';
 import {
   DragSceneHookPayload,
@@ -26,7 +31,6 @@ import {
 } from '../../../../types';
 import {
   type PathSearcher,
-  type PartWithPin,
   findPartPin,
   findLinePinAndIndex,
   removeRepeat,
@@ -42,36 +46,72 @@ import { createDrawLineSearcher as createSearcher } from './search';
 interface StartPayloadType extends DragSceneHookPayload {
   /** 新导线 */
   line: LineStructuredData;
-  /** 创建状态 */
-  start: PartWithPin;
+  /** 起点连接引脚 */
+  startPins: (PartWithPin | ElectronicWithPin)[];
   /** 搜索器 */
-  search: PathSearcher;
+  searcher: PathSearcher;
 }
 
-definePlugin(({ registerHook, getService }) => {
+definePlugin(({ registerHook, getServices }) => {
+  const services = getServices({
+    dragScene: IDragSceneService,
+    hover: IHoverService,
+    state: IStateCoreService,
+    connection: IConnectionService,
+    mapHash: IMapHashService,
+    variable: IVariableObserverService,
+    logger: ILoggerService,
+    select: ISelectService,
+    cursor: ICursorService,
+    collision: ICollisionService,
+  });
+
   // 注册创建导线场景触发器
   registerHook(IEventListenerHook, {
     order: 5,
     onMouseDown(event) {
-      const dragSceneService = getService(IDragSceneService);
-      const hover = getService(IHoverService);
-      const hoverData = hover.current.data;
+      const { dragScene, hover } = services;
+      const { data: hoverData } = hover.current;
 
       if (
-        !dragSceneService.isLeftMouseDownNoMovingNoScene(event)
-        || (
-          !hoverData
-          || (
-            hoverData.kind !== EntityKind.PartPin
-            && hoverData.kind !== EntityKind.LinePin
+        dragScene.isLeftMouseDownNoMovingNoScene(event)
+        && (
+          hoverData
+          && (
+            hoverData.kind === EntityKind.PartPin
+            || hoverData.kind === EntityKind.LinePin
           )
         )
       ) {
-        return;
+        dragScene.trigger(CreateLineSceneName, { event });
       }
+    },
+    onMouseUp(event) {
+      const { dragScene } = services;
+      if (dragScene.isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName)) {
+        dragScene.triggerEnd(CreateLineSceneName, { event });
+      }
+    },
+  });
+
+  // 创建的拖动场景
+  registerHook(IDragSceneHook, {
+    name: CreateLineSceneName,
+    afterStart({ line, search, event }: StartPayloadType) {
+      const { logger } = services;
 
       debugger;
 
+      if (!event) {
+        const msg = '创建导线事件触发时，必须传入鼠标事件';
+        logger.error(LoggerName, msg);
+        throw new Error(msg);
+      }
+
+      const { state, connection, variable, select, cursor, hover } = services;
+      const { data: hoverData } = hover.current;
+
+      debugger;
       /**
        * 绘制全新导线
        *   必须要一开始就把新导线提交到草稿
@@ -102,63 +142,57 @@ definePlugin(({ registerHook, getService }) => {
        * 那么就需要在触发事件开始时，就把所有的回调
        */
 
-      const state = getService(IStateCoreService);
-      const connection = getService(IConnectionService);
-      const map = getService(IMapHashService);
-      const part = state.getPart(hoverData.id);
-      const pin = getPartPin(part, hoverData.pin);
-      const line = createLineByPath([pin.position]);
-      const search = createSearcher({
-        lineId: line.id,
-        start: pin.position,
-        direction: pin.direction,
-        painter: getPainterAdapter({
-          hoverService: hover,
-          stateCoreService: state,
-          connectionService: connection,
-          mapHashService: map,
-        }),
-        hook: createSearchHook(getService(IVariableObserverService)),
-      });
+      let line: StartPayloadType['line'];
+      let searcher: StartPayloadType['searcher'];
+      let startPins: StartPayloadType['startPins'];
 
-      // 创建导线草稿
-      state.draft(({ lines }) => {
-        lines.push(line);
-      });
+      // 从器件引脚创建
+      if (hoverData!.kind === EntityKind.PartPin) {
+        const part = state.getPart(hoverData!.id);
+        const pin = getPartPin(part, hoverData!.pin);
 
-      // 触发创建导线事件
-      dragSceneService.trigger(CreateLineSceneName, {
-        line,
-        search,
-        event,
-        start: {
-          id: hoverData.id,
-          pin: hoverData.pin,
-          tag: createPartReferenceTag(part),
-        },
-      });
-    },
-    onMouseUp(event) {
-      const dragSceneService = getService(IDragSceneService);
-      if (dragSceneService.isLeftMouseUpNoMovingHasScene(event, CreateLineSceneName)) {
-        dragSceneService.triggerEnd(CreateLineSceneName, { event });
+        line = createLineByPath([pin.position]);
+        searcher = createSearcher({
+          lineId: line.id,
+          start: pin.position,
+          direction: pin.direction,
+          painter: getPainterAdapter({
+            ...services,
+            ignoreSet: new Set([hoverData!.id]),
+          }),
+          hook: createSearchHook(variable),
+        });
+        startPins = [
+          {
+            id: hoverData!.id,
+            pin: hoverData!.pin,
+            tag: createPartReferenceTag(part),
+          },
+        ];
+
+        state.draft(({ lines }) => {
+          lines.push(line);
+        });
       }
-    },
-  });
+      // 从导线引脚修改导线
+      else {
+        // 当前鼠标所在位置的坐标
+        const mouseRound = event.position.round(20);
+        const connections = connection.getConnections(hoverData.id, hoverData.pin);
 
-  // 创建的拖动场景
-  registerHook(IDragSceneHook, {
-    name: CreateLineSceneName,
-    afterStart({ line, start, search, event }: StartPayloadType) {
-      const logger = getService(ILoggerService);
-
-      if (!event) {
-        const msg = '创建导线事件触发时，必须传入鼠标事件';
-        logger.error(LoggerName, msg);
-        throw new Error(msg);
+        // 没有连接，表示是空位置
+        if (connections.length === 0) {
+          // ..
+        }
+        // 连接器件
+        else if (connections.some((item) => isPartId(item.id))) {
+          // ..
+        }
+        // 连接导线
+        else {
+          // ..
+        }
       }
-
-      const varService = getService(IVariableObserverService);
 
       // 打印日志
       logger.info(
@@ -168,18 +202,17 @@ definePlugin(({ registerHook, getService }) => {
         `新导线编号 ${line.id}`,
       );
       // 选中导线
-      getService(ISelectService).set(line.id);
+      select.set(line.id);
       // 设置鼠标样式
-      getService(ICursorService).set(ICursorKind.DrawLine);
+      cursor.set(ICursorKind.DrawLine);
       // 初始化导线路径和初始化样式
-      setSearchResult(varService, [
+      setSearchResult(variable, [
         ...search(event.positionInDrawer),
-        // 作为起点的器件引脚固定缩小
-        {
-          id: start.id,
-          pin: start.pin,
-          style: PIN_DRAW_FIXED_STYLE,
-        },
+        // // 作为起点的器件引脚固定缩小
+        // {
+        //   ...startPin,
+        //   style: PIN_DRAW_FIXED_STYLE,
+        // },
         // 导线起点固定缩小
         {
           id: line.id,
@@ -188,18 +221,23 @@ definePlugin(({ registerHook, getService }) => {
         },
       ]);
     },
-    onDragMove({ positionInDrawer, movement }, { search }: StartPayloadType) {
-      setSearchResult(getService(IVariableObserverService), search(positionInDrawer, movement));
+    onFirstDragMove({ positionInDrawer, movement }, { searcher }: StartPayloadType) {
+      // TODO: 处理第一次拖动
     },
-    beforeEnd({ line, search, start }: StartPayloadType) {
-      const mapHash = getService(IMapHashService);
-      const collision = getService(ICollisionService);
-      const logger = getService(ILoggerService);
-      const state = getService(IStateCoreService);
-      const connection = getService(IConnectionService);
-      const cursor = getService(ICursorService);
-      const varService = getService(IVariableObserverService);
-      const select = getService(ISelectService);
+    onDragMove({ positionInDrawer, movement }, { searcher }: StartPayloadType) {
+      setSearchResult(services.variable, searcher(positionInDrawer, movement));
+    },
+    beforeEnd({ line, search, startPin }: StartPayloadType) {
+      const {
+        mapHash,
+        collision,
+        logger,
+        state,
+        connection,
+        cursor,
+        variable,
+        select,
+      } = services;
 
       /** 导线路径 */
       const linePath = search.getSearchPath().map((point) => point.round(20));
@@ -230,7 +268,7 @@ definePlugin(({ registerHook, getService }) => {
         }
 
         // 设置连接关系
-        connection.createConnection(start.id, start.pin, newLineData.id, 0);
+        connection.createConnection(startPin.id, startPin.pin, newLineData.id, 0);
         connection.createConnection(newLineData.id, 1, endInPartPin.id, endInPartPin.pin);
         // 设置导线图纸数据
         mapHash.setMark(newLineData);
@@ -275,7 +313,7 @@ definePlugin(({ registerHook, getService }) => {
             collision.removeEntity(mergedLineId);
             mapHash.removeMark(mergedLine);
             // 设置新导线相关数据
-            connection.createConnection(newLineData.id, 0, start.id, start.pin);
+            connection.createConnection(newLineData.id, 0, startPin.id, startPin.pin);
             connection.createConnections(newLineData.id, 1, mergedLineConnection);
             collision.setEntity(newLineData);
             mapHash.setMark(newLineData);
@@ -293,7 +331,7 @@ definePlugin(({ registerHook, getService }) => {
           // 在导线交错节点上，连接导线
           else {
             // 设置导线相关数据
-            connection.createConnection(newLineData.id, 0, start.id, start.pin);
+            connection.createConnection(newLineData.id, 0, startPin.id, startPin.pin);
             connection.createConnections(newLineData.id, 1, endInLinePinAndIndex);
             collision.setEntity(newLineData);
             mapHash.setMark(newLineData);
@@ -351,7 +389,7 @@ definePlugin(({ registerHook, getService }) => {
           connection.createConnections(splitLine1.id, 1, crossConnections);
           connection.createConnections(splitLine2.id, 0, crossConnections);
           connection.createConnections(newLineData.id, 1, crossConnections);
-          connection.createConnection(newLineData.id, 0, start.id, start.pin);
+          connection.createConnection(newLineData.id, 0, startPin.id, startPin.pin);
 
           // 移除旧导线相关信息
           connection.removeDevice(splitLineId);
@@ -381,7 +419,7 @@ definePlugin(({ registerHook, getService }) => {
       // 终点在空位置
       else {
         // 空位置需要设置起点的连接关系
-        connection.createConnection(newLineData.id, 0, start.id, start.pin);
+        connection.createConnection(newLineData.id, 0, startPin.id, startPin.pin);
         // 设置导线图纸数据
         mapHash.setMark(newLineData);
         // 设置碰撞数据
@@ -399,7 +437,7 @@ definePlugin(({ registerHook, getService }) => {
       // 清除鼠标样式
       cursor.clear();
       // 清除临时变量
-      varService.clearVariable();
+      variable.clearVariable();
       // 设置选中
       select.set(newLineData.id);
       // 打印结束日志

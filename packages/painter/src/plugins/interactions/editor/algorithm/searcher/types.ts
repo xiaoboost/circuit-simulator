@@ -93,7 +93,7 @@ export interface PathSearcherOptions {
   /** 画布控制器 */
   painter: IPainterAdapter;
   /** 参考路径 */
-  oldPath?: PathWithPoint;
+  refPath?: PathWithPoint;
   /** 搜索钩子 */
   hook?: SearchHook;
 }

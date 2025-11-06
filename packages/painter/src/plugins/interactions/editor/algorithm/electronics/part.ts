@@ -1,16 +1,6 @@
 import type { Point } from '@circuit/algorithm';
 import { getPartPins, createPartReferenceTag } from '@circuit/electronics';
-import type { PartStructuredData } from '@circuit/types';
-
-/** 器件与引脚 */
-export interface PartWithPin {
-  /** 元件编号 */
-  id: string;
-  /** 元件引脚 */
-  pin: number;
-  /** 元件引用编号 */
-  tag: string;
-}
+import type { PartStructuredData, PartWithPin } from '@circuit/types';
 
 /** 按照坐标查找器件引脚 */
 export function findPartPin(point: Point, parts: PartStructuredData[]) {

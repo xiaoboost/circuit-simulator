@@ -2,7 +2,7 @@
 
 export {
   createDrawLineSearcher,
-} from './draw-line/search';
+} from '../../../src/plugins/interactions/editor/draw-line/search';
 
 export {
   type PathSearcher,
@@ -11,4 +11,4 @@ export {
   getPainterAdapter,
   PIN_DRAW_EXPANDED_STYLE,
   PIN_DRAW_FIXED_STYLE,
-} from './algorithm';
+} from '../../../src/plugins/interactions/editor/algorithm';

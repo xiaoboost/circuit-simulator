@@ -25,6 +25,7 @@ export function createDrawLineSearcher({
   lineId,
   painter,
   hook,
+  refPath,
 }: DrawLineSearcherOptions): PathSearcher {
   /** 搜索缓存 */
   const cache = new PathCache();
@@ -192,6 +193,7 @@ export function createDrawLineSearcher({
             start,
             end,
             painter,
+            referencePath: refPath,
             mode: SearchMode.DrawAlignPoint,
             direction,
           }),

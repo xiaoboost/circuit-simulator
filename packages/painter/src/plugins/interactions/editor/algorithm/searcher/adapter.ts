@@ -10,39 +10,43 @@ import type { IPainterAdapter } from './types';
 
 export interface IPainterAdapterOptions {
   /** 忽略的元件 */
-  ignoreIds?: Set<string>;
+  ignoreSet?: Set<string>;
   /** 鼠标覆盖状态 */
-  hoverService: IHoverService;
-  /** 画布状态 */
-  stateCoreService: IStateCoreService;
+  hover: IHoverService;
+  /** 画布数据服务 */
+  state: IStateCoreService;
   /** 连接服务 */
-  connectionService: IConnectionService;
+  connection: IConnectionService;
   /** MapHash 服务 */
-  mapHashService: IMapHashService;
+  mapHash: IMapHashService;
 }
 
 export function getPainterAdapter({
-  ignoreIds = new Set(),
-  hoverService: hover,
-  stateCoreService: state,
-  connectionService: connection,
-  mapHashService: map,
+  ignoreSet = new Set(),
+  hover,
+  state,
+  connection,
+  mapHash,
 }: IPainterAdapterOptions): IPainterAdapter {
-  const forkMapHash = map.clone();
+  const hasIgnoreId = (
+    ignoreSet.size > 0
+    && Array.from(ignoreSet).some((id) => Boolean(state.getElectronic(id)))
+  );
+  const forkMapHash = hasIgnoreId ? mapHash.clone() : mapHash;
 
-  for (const id of ignoreIds) {
+  for (const id of ignoreSet) {
     forkMapHash.removeMark(state.getElectronic(id));
   }
 
   return {
-    assert: map,
-    mark: map,
+    assert: forkMapHash,
+    mark: forkMapHash,
 
     getMarkAt(position: Point): Mark | undefined {
-      return map.get(position);
+      return forkMapHash.get(position);
     },
     hasMarkAt(position: Point): boolean {
-      return map.has(position);
+      return forkMapHash.has(position);
     },
     getHover() {
       const stack = hover.getStackAt();
@@ -51,7 +55,7 @@ export function getPainterAdapter({
         return;
       }
 
-      const filteredStack = stack.filter((entity) => !ignoreIds.has(entity.id));
+      const filteredStack = stack.filter((entity) => !ignoreSet.has(entity.id));
 
       if (filteredStack.length > 0) {
         return filteredStack[0];
@@ -66,7 +70,7 @@ export function getPainterAdapter({
     getConnection(id: string, pin: number) {
       return connection
         .getConnections(id, pin)
-        .filter((connection) => !ignoreIds.has(connection.id));
+        .filter((connection) => !ignoreSet.has(connection.id));
     },
   };
 }

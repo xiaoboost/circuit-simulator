@@ -5,7 +5,11 @@ import {
   type SegmentWithPoint,
 } from '@circuit/algorithm';
 import { copyLine } from '@circuit/electronics';
-import type { LineStructuredData } from '@circuit/types';
+import type {
+  LineStructuredData,
+  ElectronicWithPin,
+  LineWithIndex,
+} from '@circuit/types';
 
 /**
  * 去除节点冗余
@@ -134,23 +138,8 @@ export function move(path: PathWithPoint, bias: PointLike) {
   return path.map((item) => item.add(bias));
 }
 
-/** 导线引脚 */
-export interface LineWithPin {
-  /** 导线编号 */
-  id: string;
-  /** 导线引脚 */
-  pin: number;
-}
-
-export interface LineWithIndex {
-  /** 导线编号 */
-  id: string;
-  /** 导线线段索引 */
-  index: number;
-}
-
 export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
-  const pins: LineWithPin[] = [];
+  const pins: ElectronicWithPin[] = [];
   let index: LineWithIndex | undefined;
 
   for (const line of lines) {

@@ -17,14 +17,14 @@ const ThrowError = () => {
 /** 创建搜索规则 */
 export function createRules(options: RulesOptions): Rules {
   const { start, end, direction, painter, mode } = options;
-  const hasReferencePath = options.referencePath && options.referencePath.length > 0;
+  const hasReferencePath = options.refPath && options.refPath.length > 0;
   const context: RulesContext = {
     start,
     direction,
     painter,
     mode,
     end,
-    referencePath: options.referencePath ?? [],
+    refPath: options.refPath ?? [],
     endLines: [],
   };
   const rules: Rules = {

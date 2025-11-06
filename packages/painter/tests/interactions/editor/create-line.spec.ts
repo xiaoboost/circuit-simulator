@@ -12,18 +12,18 @@ import {
   beforeEach,
 } from 'vitest';
 import {
-  createDrawLineSearcher,
-  IPainterAdapter,
-  PIN_DRAW_EXPANDED_STYLE,
-  PIN_DRAW_FIXED_STYLE,
-} from '../../../src/plugins/interactions/editor/test.utils';
-import {
   IMapHashService,
   IConnectionService,
   Entity,
   EntityKind,
 } from '../../../src/types';
 import { registerPlugin, getPlugin } from '../../utils';
+import {
+  createDrawLineSearcher,
+  IPainterAdapter,
+  PIN_DRAW_EXPANDED_STYLE,
+  PIN_DRAW_FIXED_STYLE,
+} from './utils';
 
 describe('创建导线搜索路径', () => {
   registerPlugin([

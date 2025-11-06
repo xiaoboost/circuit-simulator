@@ -4,10 +4,10 @@ import type { RulesContext } from './types';
 /**
  * 路径基础代价
  *
- * @description 拐弯 * 10 + 路径长度
+ * @description 拐弯 * 10 + 路径长度 / 4
  */
 function gPathBaseCost(this: RulesContext, node: SearchNodeData) {
-  return node.junction * 10;
+  return node.junction * 10 + node.distance / 4;
 }
 
 /**
@@ -41,7 +41,7 @@ export function toPointCostWithRefPath(this: RulesContext, node: SearchNodeData)
   /** 向参考路径终点方向的“进度”项（索引差）权重 */
   const REF_PROGRESS_WEIGHT = 1;
 
-  const { referencePath: refPath } = this;
+  const { refPath } = this;
 
   // 基础代价计算
   const baseH = hEndDistanceCost.call(this, node);

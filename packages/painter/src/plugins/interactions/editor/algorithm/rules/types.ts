@@ -27,7 +27,7 @@ export interface RulesOptions {
   /** 搜索模式 */
   mode: SearchMode;
   /** 参考路径 */
-  referencePath?: PathWithPoint;
+  refPath?: PathWithPoint;
 }
 
 /** 搜索规则上下文 */
