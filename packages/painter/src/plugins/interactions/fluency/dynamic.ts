@@ -1,5 +1,4 @@
 import { Watcher } from '../../../context';
-import { DROPPED_FRAME_TOLERANCE_MS } from './constant';
 import type { BaselineStats, DynamicResult, FrameSample } from './types';
 import { calculateDroppedRate } from './utils';
 
@@ -100,21 +99,18 @@ export function createDynamicCollector(
     // 持续时间 = 总时间 - 累计暂停时间
     const durationMs = performance.now() - startTime - currentPausedTime;
     const syncPeriodMs = baseline.data.syncPeriodMs || 16.67; // 默认 60Hz
-
-    // 计算掉帧阈值（使用固定容差）
-    const threshold = syncPeriodMs + DROPPED_FRAME_TOLERANCE_MS;
-
-    // 计算掉帧率
     const frameTimes = samples.map((s) => s.dt);
-    const droppedRate = calculateDroppedRate(frameTimes, syncPeriodMs);
-    const droppedFrames = frameTimes.filter((dt) => dt > threshold).length;
+    const droppedResult = calculateDroppedRate(frameTimes, syncPeriodMs);
+
+    if (!droppedResult) {
+      return null;
+    }
 
     const result: DynamicResult = {
       name,
       durationMs,
       totalFrames: samples.length,
-      droppedFrames,
-      droppedRate,
+      ...droppedResult,
     };
 
     return result;

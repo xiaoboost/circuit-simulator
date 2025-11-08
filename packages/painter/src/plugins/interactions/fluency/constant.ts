@@ -71,26 +71,33 @@ export const KDE_BANDWIDTH_MIN_MS = 0.5;
 export const WARN_DROPPED_FRAMES = 3;
 
 /**
- * 掉帧判定容差
+ * 掉帧判定阈值倍数
  *
- * @description 帧时间超过 syncPeriodMs + 此容差值才判定为掉帧。
- * @description 使用固定容差，适应所有刷新率。
- * @description 单位：毫秒
- * @default 2.0
- *
- * @example
- * - 60Hz (16.67ms): 阈值 = 18.67ms (容差比例 ≈ 12%)
- * - 120Hz (8.33ms): 阈值 = 10.33ms (容差比例 ≈ 24%)
- * - 144Hz (6.94ms): 阈值 = 8.94ms (容差比例 ≈ 29%)
+ * @description 帧时间超过 syncPeriodMs * 此倍数才判定为掉帧。
  *
  * @remarks
- * Chrome DevTools 使用约 4ms 固定容差（针对 60Hz，容差比例 ≈ 24%）。
- * 这里使用 2ms 固定容差，对所有刷新率都较为兼容。
+ * 浏览器渲染原理：
+ * - requestAnimationFrame 的回调会在浏览器准备渲染下一帧之前调用
+ * - 如果回调执行时间过长，超过了当前帧的预算时间，浏览器会跳过这一帧
+ * - 跳过的帧会在下一个 v-sync 周期（同步周期）渲染
+ * - 因此，一旦掉帧，帧时间一定是同步周期的整数倍：
+ *   - 正常帧：syncPeriod * 1
+ *   - 掉一帧：syncPeriod * 2
+ *   - 掉两帧：syncPeriod * 3
+ *   - 以此类推
  *
- * @todo
- * 需要实际上线之后观察客户现象再来决定是否需要调整：
+ * 使用 1.5 倍作为阈值的原因：
+ * - 正常帧的帧时间 ≈ syncPeriod（1 倍）
+ * - 掉帧的帧时间 = syncPeriod * 2（2 倍）或更多
+ * - 使用 1.5 倍可以准确区分正常帧（< 1.5 * syncPeriod）和掉帧（≥ 1.5 * syncPeriod）
+ * - 这个倍数对所有刷新率都适用，无需针对不同刷新率调整
+ *
+ * @example
+ * - 60Hz (16.67ms): 阈值 = 25.0ms，正常帧 < 25.0ms，掉帧 ≥ 33.3ms
+ * - 120Hz (8.33ms): 阈值 = 12.5ms，正常帧 < 12.5ms，掉帧 ≥ 16.7ms
+ * - 144Hz (6.94ms): 阈值 = 10.4ms，正常帧 < 10.4ms，掉帧 ≥ 13.9ms
  */
-export const DROPPED_FRAME_TOLERANCE_MS = 2.0;
+export const DROPPED_FRAME_THRESHOLD_MULTIPLIER = 1.5;
 
 /** 是否启用空闲回调 */
 export const enableRic = (

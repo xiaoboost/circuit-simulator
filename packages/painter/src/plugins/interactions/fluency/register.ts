@@ -153,13 +153,15 @@ definePlugin(({ registerHook, getServices }) => {
   // ========== 生命周期管理 ==========
   registerHook(ILifeCycleHook, {
     onCreated() {
+      const { logger, drag } = services;
+
       if (!enableRaf || !enableRic) {
-        services.logger.warn(LoggerName, '浏览器版本过低，无法进行流畅度检查。');
+        logger.warn(LoggerName, '浏览器版本过低，无法进行流畅度检查。');
         return;
       }
 
-      unsubscribe.push(services.drag.onStart(handleDragStart));
-      unsubscribe.push(services.drag.onEnd(handleDragEnd));
+      unsubscribe.push(drag.onStart(handleDragStart));
+      unsubscribe.push(drag.onEnd(handleDragEnd));
       document.addEventListener('visibilitychange', handleVisibilityChange);
       steady.start();
     },
