@@ -76,10 +76,18 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
       getService: (key) => getServiceWithScope(key, scope, manager),
       getServices: (services) => {
         const result: Record<string, any> = {};
+        const cache: Record<string, any> = {};
 
         for (const [key, serviceKey] of Object.entries(services)) {
           Object.defineProperty(result, key, {
-            get: () => getServiceWithScope(serviceKey, scope, manager),
+            get() {
+              if (cache.hasOwnProperty(key)) {
+                return cache[key];
+              }
+              const service = getServiceWithScope(serviceKey, scope, manager);
+              cache[key] = service;
+              return service;
+            },
             enumerable: true,
             configurable: false,
           });
