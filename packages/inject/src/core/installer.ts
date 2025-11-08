@@ -47,6 +47,29 @@ function createScope(scopeMeta: typeof ScopeMetaInfos, manager: IScopeManager) {
   createScopeRecursive(RootScope);
 }
 
+/**
+ * 创建注册阶段访问错误消息
+ *
+ * @param type 访问类型：'服务' | '钩子'
+ * @param key 服务/钩子键
+ * @param isGetServices 是否为 getServices 的延迟访问
+ */
+function createInstallPhaseError(
+  type: '服务' | '钩子',
+  key: symbol,
+  isGetServices = false,
+): Error {
+  const action = isGetServices ? '访问' : '直接获取';
+  const keyName = type === '服务' ? '服务键' : '钩子键';
+  const message = (
+    `在插件注册阶段不允许${action}${type}。${keyName}: ${String(key)}。\n`
+    + '在 definePlugin 的回调中，只能使用 registerService 和 registerHook 注册服务/钩子。\n'
+    + `如果需要获取${type}，请在内部回调中使用 getService 或 getHook；以及使用 getServices 获取延迟查找的对象，然后在生命周期钩子（如 onCreated）中再访问其属性。`
+  );
+
+  return new Error(message);
+}
+
 function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeManager) {
   const getRegister = (scope: symbol): IPluginScopeRegister => {
     const scopeContainer = manager.get(scope);
@@ -72,8 +95,17 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
     }
 
     const { context } = scopeContainer;
+
+    // 标记当前是否在插件安装阶段
+    let isInstalling = true;
+
     const uninstaller = installer({
-      getService: (key) => getServiceWithScope(key, scope, manager),
+      getService: (key) => {
+        if (isInstalling) {
+          throw createInstallPhaseError('服务', key);
+        }
+        return getServiceWithScope(key, scope, manager);
+      },
       getServices: (services) => {
         const result: Record<string, any> = {};
         const cache: Record<string, any> = {};
@@ -81,9 +113,15 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
         for (const [key, serviceKey] of Object.entries(services)) {
           Object.defineProperty(result, key, {
             get() {
+              // 检查是否在安装阶段访问服务
+              if (isInstalling) {
+                throw createInstallPhaseError('服务', serviceKey, true);
+              }
+
               if (cache.hasOwnProperty(key)) {
                 return cache[key];
               }
+
               const service = getServiceWithScope(serviceKey, scope, manager);
               cache[key] = service;
               return service;
@@ -95,7 +133,12 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
 
         return result as any;
       },
-      getHook: (key) => getHookWithScope(key, scope, manager),
+      getHook: (key) => {
+        if (isInstalling) {
+          throw createInstallPhaseError('钩子', key);
+        }
+        return getHookWithScope(key, scope, manager);
+      },
       getTestConfig(key) {
         return process.env.NODE_ENV === 'test'
           ? (globalThis as any)?.[TestGlobalNamespace]?.[key]
@@ -110,6 +153,9 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
         return scopeContainer.parent ? getRegister(scopeContainer.parent.scope) : undefined;
       },
     });
+
+    // 安装完成后，重置标志
+    isInstalling = false;
 
     if (uninstaller) {
       // 将 definePlugin 的返回值注册为生命周期钩子

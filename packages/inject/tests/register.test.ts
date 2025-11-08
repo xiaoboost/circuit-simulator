@@ -668,4 +668,91 @@ describe('DI 系统', () => {
       console.error = originalError;
     });
   });
+
+  describe('注册阶段错误检查', () => {
+    it('在 definePlugin 回调中调用 getService 应该抛出错误', async () => {
+      const serviceKey = createServiceKey('TestService');
+      const service = { name: 'test' };
+
+      defineGlobalPlugin(({ registerService, getService }) => {
+        registerService(serviceKey, service);
+
+        // 在注册阶段调用 getService 应该抛出错误
+        expect(() => {
+          getService(serviceKey);
+        }).toThrow('在插件注册阶段不允许直接获取服务');
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+    });
+
+    it('在 definePlugin 回调中调用 getHook 应该抛出错误', async () => {
+      const hookKey = createServiceKey('TestHook');
+      const hook = { name: 'test' };
+
+      defineGlobalPlugin(({ registerHook, getHook }) => {
+        registerHook(hookKey, hook);
+
+        // 在注册阶段调用 getHook 应该抛出错误
+        expect(() => {
+          getHook(hookKey);
+        }).toThrow('在插件注册阶段不允许直接获取钩子');
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+    });
+
+    it('在 definePlugin 回调中访问 getServices 返回对象的属性应该抛出错误', async () => {
+      const serviceKey = createServiceKey('TestService');
+      const service = { name: 'test' };
+
+      defineGlobalPlugin(({ registerService, getServices }) => {
+        registerService(serviceKey, service);
+
+        // 在注册阶段调用 getServices 是可以的
+        const services = getServices({
+          test: serviceKey,
+        });
+
+        // 但在注册阶段访问其属性应该抛出错误
+        expect(() => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+          services.test;
+        }).toThrow('在插件注册阶段不允许访问服务');
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+    });
+
+    it('在生命周期钩子中访问服务应该正常工作', async () => {
+      const serviceKey = createServiceKey('TestService');
+      const service = { name: 'test', value: 123 };
+
+      let capturedService: any = null;
+
+      defineGlobalPlugin(({ registerService, getServices, registerHook }) => {
+        registerService(serviceKey, service);
+
+        // 在注册阶段调用 getServices 获取对象引用
+        const services = getServices({
+          test: serviceKey,
+        });
+
+        // 在生命周期钩子中访问服务应该正常工作
+        registerHook(ILifeCycleHook, {
+          onCreated() {
+            capturedService = services.test;
+          },
+        });
+      });
+
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+
+      expect(capturedService).toBe(service);
+    });
+  });
 });
