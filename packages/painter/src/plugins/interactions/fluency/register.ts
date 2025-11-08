@@ -3,8 +3,9 @@ import {
   ILoggerService,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
-// import { createDynamicCollector } from './dynamic';
+import { IDragSceneService } from '../../../types';
 import { enableRaf, enableRic } from './constant';
+import { createDynamicCollector, type DynamicCollector } from './dynamic';
 import { createSteadyCollector } from './steady';
 import type { BaselineStats } from './types';
 
@@ -14,43 +15,23 @@ definePlugin(({ registerHook, getServices }) => {
   /** 服务模块 */
   const services = getServices({
     logger: ILoggerService,
+    drag: IDragSceneService,
   });
 
-  if (!enableRaf || !enableRic) {
-    services.logger.warn(LoggerName, '浏览器版本过低，无法进行流畅度检查。');
-    return;
-  }
-
-  // ========== 公共状态 ==========
-  /** 是否处于活动状态 */
-  const isActive = new Watcher(false);
+  // ========== 状态管理 ==========
+  /** 当前动态采样控制器映射 */
+  const dynamicCollectors = new Map<string, DynamicCollector>();
   /** 当前稳态基线 */
   const baseline = new Watcher<BaselineStats>({
     samples: [],
     syncPeriodMs: 0,
   });
-
-  // ========== 采样模块 ==========
   /** 稳态采样模块 */
-  const steady = createSteadyCollector({
-    baseline,
-  });
+  const steady = createSteadyCollector(baseline);
+  /** 解除订阅的函数 */
+  const unsubscribe: (() => void)[] = [];
 
-  // /** 动态采样模块 */
-  // const dynamic = createDynamicCollector(
-  //   () => currentBaseline,
-  //   (result) => {
-  //     services.logger.info(
-  //       LoggerName,
-  //       `动态采样完成 [${result.scenario}]`,
-  //       `持续时间: ${result.durationMs.toFixed(0)} ms`,
-  //       `掉帧率: ${(result.droppedRate * 100).toFixed(1)}%`,
-  //       `掉帧数: ${result.droppedFrames}/${result.totalFrames}`,
-  //     );
-  //   },
-  // );
-
-  // ========== 监听稳态采样结果 ==========
+  // 监听稳态采样结果
   baseline.observe(({ syncPeriodMs: sync }) => {
     services.logger.debug(
       LoggerName,
@@ -60,29 +41,141 @@ definePlugin(({ registerHook, getServices }) => {
     );
   });
 
-  // ========== 页面可见性监听 ==========
-  function handleVisibilityChange() {
-    if (document.visibilityState === 'hidden') {
+  // ========== 动态采样与稳态采样协调 ==========
+  /**
+   * 检查是否需要暂停稳态采样
+   *
+   * @description 稳态采样暂停的条件：
+   * - 有动态采样正在进行，或
+   * - 页面隐藏
+   */
+  function shouldPauseSteady(): boolean {
+    return dynamicCollectors.size > 0 || document.visibilityState === 'hidden';
+  }
+
+  /**
+   * 检查是否需要恢复稳态采样
+   *
+   * @description 稳态采样恢复的条件：
+   * - 没有动态采样，且
+   * - 页面可见
+   */
+  function shouldResumeSteady(): boolean {
+    return dynamicCollectors.size === 0 && document.visibilityState === 'visible';
+  }
+
+  /**
+   * 更新稳态采样状态
+   */
+  function updateSteadyState() {
+    if (shouldPauseSteady()) {
       steady.pause();
     }
-    else if (document.visibilityState === 'visible') {
+    else if (shouldResumeSteady()) {
       steady.resume();
     }
   }
 
-  // 注册画布生命周期
+  // ========== 拖动事件订阅 ==========
+  /** 拖动开始回调 */
+  function handleDragStart(scene: string) {
+    // 检查基线是否已计算
+    if (baseline.data.syncPeriodMs === 0) {
+      services.logger.debug(
+        LoggerName,
+        `动态采样跳过 [${scene}]`,
+        '稳态基线尚未计算完成',
+      );
+      return;
+    }
+
+    // 创建动态采样控制器
+    const collector = createDynamicCollector(scene, baseline);
+    dynamicCollectors.set(scene, collector);
+
+    // 更新稳态采样状态
+    updateSteadyState();
+    services.logger.debug(LoggerName, `动态采样开始 [${scene}]`);
+  }
+
+  /** 拖动结束回调 */
+  function handleDragEnd(scene: string) {
+    const collector = dynamicCollectors.get(scene);
+
+    if (!collector) {
+      return;
+    }
+
+    // 停止动态采样并获取结果
+    const result = collector.stop();
+    dynamicCollectors.delete(scene);
+
+    // 更新稳态采样状态
+    updateSteadyState();
+
+    // 记录结果
+    if (result) {
+      services.logger.info(
+        LoggerName,
+        `动态采样完成 [${result.name}]`,
+        `持续时间: ${result.durationMs.toFixed(0)} ms`,
+        `掉帧率: ${(result.droppedRate * 100).toFixed(1)}%`,
+      );
+    }
+  }
+
+  // ========== 页面可见性监听 ==========
+  function handleVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+      services.logger.debug(LoggerName, '页面切换至后台，流畅度采样暂停');
+
+      // 暂停稳态采样
+      updateSteadyState();
+
+      // 暂停所有动态采样
+      dynamicCollectors.forEach((collector) => {
+        collector.pause();
+      });
+    }
+    else if (document.visibilityState === 'visible') {
+      services.logger.debug(LoggerName, '页面开始活动，流畅度采样重启');
+
+      // 恢复稳态采样
+      updateSteadyState();
+
+      // 恢复所有动态采样
+      dynamicCollectors.forEach((collector) => {
+        collector.resume();
+      });
+    }
+  }
+
+  // ========== 生命周期管理 ==========
   registerHook(ILifeCycleHook, {
     onCreated() {
+      if (!enableRaf || !enableRic) {
+        services.logger.warn(LoggerName, '浏览器版本过低，无法进行流畅度检查。');
+        return;
+      }
+
+      unsubscribe.push(services.drag.onStart(handleDragStart));
+      unsubscribe.push(services.drag.onEnd(handleDragEnd));
       document.addEventListener('visibilitychange', handleVisibilityChange);
       steady.start();
     },
   });
 
-  // 卸载器
+  // ========== 卸载器 ==========
   return () => {
+    // 取消订阅拖动事件
+    unsubscribe.forEach((unsubscribe) => unsubscribe());
+
+    // 停止所有采样
     steady.stop();
-    // dynamic.stopAll();
-    isActive.destroy();
+    dynamicCollectors.forEach((collector) => collector.stop());
+    dynamicCollectors.clear();
+
+    // 清理资源
     baseline.destroy();
     document.removeEventListener('visibilitychange', handleVisibilityChange);
   };

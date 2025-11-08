@@ -10,6 +10,7 @@ import {
   IEventListenerHook,
   IMapCoordinateService,
   IPainterConfigurationService,
+  type DragCallback,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
@@ -17,6 +18,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const triggerPayloadMap = new Map<string, any>();
   const isMovedMap = new Map<string, boolean>();
   const startPositionMap = new Map<string, Point>();
+  const startCallbacks = new Set<DragCallback>();
+  const endCallbacks = new Set<DragCallback>();
   const service: IDragSceneService = {
     isDragging: new Watcher(false),
     get size() {
@@ -45,6 +48,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       isMovedMap.set(scene, false);
       triggerPayloadMap.set(scene, startPayload);
       service.isDragging.setData(sceneSet.size !== 0);
+      startCallbacks.forEach((callback) => callback(scene));
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
       if (startPayload?.event) {
@@ -81,6 +85,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
           triggerPayloadMap.delete(name);
           startPositionMap.delete(name);
           service.isDragging.setData(sceneSet.size !== 0);
+          endCallbacks.forEach((callback) => callback(name));
         });
       };
 
@@ -106,6 +111,18 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         && event.type === 'mouseup'
         && sceneSet.has(scene)
       );
+    },
+    onStart(callback: DragCallback) {
+      startCallbacks.add(callback);
+      return () => {
+        startCallbacks.delete(callback);
+      };
+    },
+    onEnd(callback: DragCallback) {
+      endCallbacks.add(callback);
+      return () => {
+        endCallbacks.delete(callback);
+      };
     },
   };
 

@@ -11,15 +11,8 @@ export interface SteadyCollector {
   resume(): void;
 }
 
-/** 稳态采样控制器参数 */
-interface SteadyCollectorOptions {
-  baseline: Watcher<BaselineStats>;
-}
-
 /** 创建稳态采样控制器 */
-export function createSteadyCollector({
-  baseline,
-}: SteadyCollectorOptions): SteadyCollector {
+export function createSteadyCollector(baseline: Watcher<BaselineStats>): SteadyCollector {
   // ========== 状态管理 ==========
   /** 稳态采样正在运行 */
   let isRunning = false;

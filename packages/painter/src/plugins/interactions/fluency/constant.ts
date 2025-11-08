@@ -70,6 +70,28 @@ export const KDE_BANDWIDTH_MIN_MS = 0.5;
  */
 export const WARN_DROPPED_FRAMES = 3;
 
+/**
+ * 掉帧判定容差
+ *
+ * @description 帧时间超过 syncPeriodMs + 此容差值才判定为掉帧。
+ * @description 使用固定容差，适应所有刷新率。
+ * @description 单位：毫秒
+ * @default 2.0
+ *
+ * @example
+ * - 60Hz (16.67ms): 阈值 = 18.67ms (容差比例 ≈ 12%)
+ * - 120Hz (8.33ms): 阈值 = 10.33ms (容差比例 ≈ 24%)
+ * - 144Hz (6.94ms): 阈值 = 8.94ms (容差比例 ≈ 29%)
+ *
+ * @remarks
+ * Chrome DevTools 使用约 4ms 固定容差（针对 60Hz，容差比例 ≈ 24%）。
+ * 这里使用 2ms 固定容差，对所有刷新率都较为兼容。
+ *
+ * @todo
+ * 需要实际上线之后观察客户现象再来决定是否需要调整：
+ */
+export const DROPPED_FRAME_TOLERANCE_MS = 2.0;
+
 /** 是否启用空闲回调 */
 export const enableRic = (
   'requestIdleCallback' in window

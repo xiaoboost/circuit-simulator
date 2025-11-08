@@ -5,8 +5,12 @@ import {
   MAIN_PEAK_MIN_SHARE,
   KDE_BANDWIDTH_COEFFICIENT,
   KDE_BANDWIDTH_MIN_MS,
+  DROPPED_FRAME_TOLERANCE_MS,
 } from './constant';
-import type { BaselineStats, FrameSample } from './types';
+import type {
+  BaselineStats,
+  FrameSample,
+} from './types';
 
 /**
  * 计算分位数
@@ -164,7 +168,9 @@ export function calculateDroppedRate(
     return 0;
   }
 
-  const droppedCount = samples.filter((dt) => dt > syncPeriod).length;
+  // 计算掉帧阈值：syncPeriod + 固定容差
+  const threshold = syncPeriod + DROPPED_FRAME_TOLERANCE_MS;
+  const droppedCount = samples.filter((dt) => dt > threshold).length;
 
   return droppedCount / samples.length;
 }

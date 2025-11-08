@@ -14,14 +14,6 @@ export interface FrameSample {
   dt: number;
 }
 
-/** 分位数 */
-export interface Percentiles {
-  p50: number;
-  p70: number;
-  p90: number;
-  p95: number;
-}
-
 /** 稳态基线统计 */
 export interface BaselineStats {
   /**
@@ -36,14 +28,12 @@ export interface BaselineStats {
   syncPeriodMs: number;
 }
 
-/**  */
-
 /** 动态采样结果 */
 export interface DynamicResult {
   /**
    * 场景名称
    */
-  scenario: string;
+  name: string;
   /**
    * 持续时间
    *
@@ -64,10 +54,4 @@ export interface DynamicResult {
    * @description 0..1
    */
   droppedRate: number;
-  /**
-   * 同步周期（用于计算掉帧率）
-   *
-   * @description 单位：毫秒
-   */
-  syncPeriodMs: number;
 }
