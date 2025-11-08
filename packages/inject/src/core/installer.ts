@@ -117,13 +117,9 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
 }
 
 async function runPluginAfterInit(manager: IScopeManager) {
-  // 创建时用先序的顺序
-  const list = getScopeList(manager.get(RootScope)!);
-
-  for (const { context: { HookMap } } of list) {
-    const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
-    await Promise.all(lifeCycleHooks.map((hook) => hook.onCreated?.()));
-  }
+  const { context: { HookMap } } = manager.get(RootScope)!;
+  const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
+  await Promise.all(lifeCycleHooks.map((hook) => hook.onCreated?.()));
 }
 
 export function createScopeSymbol(name: string, parentScope: symbol) {

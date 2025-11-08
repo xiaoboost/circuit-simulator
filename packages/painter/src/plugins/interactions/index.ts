@@ -5,3 +5,4 @@ import './debugger';
 import './painter-focus';
 import './painter-adapter';
 import './selection';
+import './fluency';

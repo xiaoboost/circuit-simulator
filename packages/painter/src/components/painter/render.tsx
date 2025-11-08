@@ -20,9 +20,10 @@ export interface PainterProps {
 export const Painter = React.memo(function Painter(props: PainterProps) {
   const painterRef = useRef<HTMLDivElement>(null);
 
-  usePainterInit();
+  // 不要交换这里的顺序
   usePainterRefService(painterRef);
   useHotkeyDriver(painterRef);
+  usePainterInit();
 
   return (
     <main

@@ -193,7 +193,7 @@ export function createDrawLineSearcher({
             start,
             end,
             painter,
-            referencePath: refPath,
+            refPath,
             mode: SearchMode.DrawAlignPoint,
             direction,
           }),

@@ -9,6 +9,14 @@ const getLoggerStyle = (color: string) => {
   return `color: white; font-style: normal; background-color: ${color}; border-radius: 4px; padding: 2px`;
 };
 
+function getFormattedTime() {
+  const now = new Date();
+  const hour = String(now.getHours()).padStart(2, '0');
+  const minute = String(now.getMinutes()).padStart(2, '0');
+  const second = String(now.getSeconds()).padStart(2, '0');
+  return `[${hour}:${minute}:${second}]`;
+}
+
 definePlugin(({ registerService, getService }) => {
   const isDebugMode = () => getService(IConfigurationService).openDebugLog.data;
   const getMessage = (messages: Message[]) => {
@@ -32,17 +40,17 @@ definePlugin(({ registerService, getService }) => {
         }
 
         lastLogKey = logKey;
-        console.info(`%c[Debug] [${name}]`, getLoggerStyle('CornflowerBlue'), ...realMessages);
+        console.info(`%c[Debug] ${getFormattedTime()} [${name}]`, getLoggerStyle('CornflowerBlue'), ...realMessages);
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] [${name}]`, getLoggerStyle('Silver'), ...getMessage(messages));
+      console.info(`%c[Info] ${getFormattedTime()} [${name}]`, getLoggerStyle('Silver'), ...getMessage(messages));
     },
     warn(name, ...messages) {
-      console.warn(`%c[Warn] [${name}]`, getLoggerStyle('LightCoral'), ...getMessage(messages));
+      console.warn(`%c[Warn] ${getFormattedTime()} [${name}]`, getLoggerStyle('LightCoral'), ...getMessage(messages));
     },
     error(name, ...messages) {
-      console.error(`%c[Error] [${name}]`, getLoggerStyle('Tomato'), ...getMessage(messages));
+      console.error(`%c[Error] ${getFormattedTime()} [${name}]`, getLoggerStyle('Tomato'), ...getMessage(messages));
     },
   };
 

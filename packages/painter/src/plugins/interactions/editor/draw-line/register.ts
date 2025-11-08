@@ -97,7 +97,7 @@ definePlugin(({ registerHook, getServices }) => {
   // 创建的拖动场景
   registerHook(IDragSceneHook, {
     name: CreateLineSceneName,
-    afterStart({ line, search, event }: StartPayloadType) {
+    afterStart({ search, event }: StartPayloadType) {
       const { logger } = services;
 
       debugger;
@@ -178,31 +178,31 @@ definePlugin(({ registerHook, getServices }) => {
       else {
         // 当前鼠标所在位置的坐标
         const mouseRound = event.position.round(20);
-        const connections = connection.getConnections(hoverData.id, hoverData.pin);
+        // const connections = connection.getConnections(hoverData.id, hoverData.pin);
 
-        // 没有连接，表示是空位置
-        if (connections.length === 0) {
-          // ..
-        }
-        // 连接器件
-        else if (connections.some((item) => isPartId(item.id))) {
-          // ..
-        }
-        // 连接导线
-        else {
-          // ..
-        }
+        // // 没有连接，表示是空位置
+        // if (connections.length === 0) {
+        //   // ..
+        // }
+        // // 连接器件
+        // else if (connections.some((item) => isPartId(item.id))) {
+        //   // ..
+        // }
+        // // 连接导线
+        // else {
+        //   // ..
+        // }
       }
 
       // 打印日志
       logger.info(
         LoggerName,
         '开始创建导线',
-        `从器件 ${start.tag} 第 ${start.pin} 引脚开始`,
-        `新导线编号 ${line.id}`,
+        `从器件 ${startPins![0].id} 第 ${startPins![0].pin} 引脚开始`,
+        `新导线编号 ${line!.id}`,
       );
       // 选中导线
-      select.set(line.id);
+      select.set(line!.id);
       // 设置鼠标样式
       cursor.set(ICursorKind.DrawLine);
       // 初始化导线路径和初始化样式
@@ -215,7 +215,7 @@ definePlugin(({ registerHook, getServices }) => {
         // },
         // 导线起点固定缩小
         {
-          id: line.id,
+          id: line!.id,
           pin: 0,
           style: PIN_DRAW_FIXED_STYLE,
         },
@@ -227,7 +227,7 @@ definePlugin(({ registerHook, getServices }) => {
     onDragMove({ positionInDrawer, movement }, { searcher }: StartPayloadType) {
       setSearchResult(services.variable, searcher(positionInDrawer, movement));
     },
-    beforeEnd({ line, search, startPin }: StartPayloadType) {
+    beforeEnd({ line, searcher, startPin }: StartPayloadType) {
       const {
         mapHash,
         collision,
@@ -240,7 +240,7 @@ definePlugin(({ registerHook, getServices }) => {
       } = services;
 
       /** 导线路径 */
-      const linePath = search.getSearchPath().map((point) => point.round(20));
+      const linePath = searcher.getSearchPath().map((point) => point.round(20));
       /** 导线终点 */
       const endPoint = linePath[linePath.length - 1];
 
