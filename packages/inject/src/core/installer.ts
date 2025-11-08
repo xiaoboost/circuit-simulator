@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { ILifeCycleHook } from '../builtin';
 import { PluginMetaInfos, ScopeMetaInfos, InjectContext, RootScope, TestGlobalNamespace } from './context';
 import type { IScopeContainer, IScopeManager, IPluginScopeRegister } from './types';
-import { getServiceWithScope, getHookWithScope, getScopeList } from './utils';
+import { getServiceWithScope, getHookWithScope } from './utils';
 
 function createScopeData(
   symbol: symbol,

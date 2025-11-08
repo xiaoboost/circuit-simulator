@@ -4,6 +4,7 @@ import { ILifeCycleHook } from '../src/builtin';
 import { PluginMetaInfos, ScopeMetaInfos, RootScope } from '../src/core/context';
 import { defineGlobalPlugin, createServiceKey, createPluginDefinitionWithScope } from '../src/core/define';
 import { createScopeSymbol, useInjectInstall } from '../src/core/installer';
+import { useHookWithScope } from '../src/core/react';
 import { getPluginService, getPluginHooks } from './utils';
 
 describe('DI 系统', () => {
@@ -398,7 +399,7 @@ describe('DI 系统', () => {
       console.error = originalError;
     });
 
-    it('生命周期 onCreated 以先序顺序调用', async () => {
+    it('生命周期 onCreated 只调用根作用域的钩子', async () => {
       const Parent = createScopeSymbol('LCParent', RootScope);
       const Child = createScopeSymbol('LCChild', Parent);
       const order: string[] = [];
@@ -433,11 +434,53 @@ describe('DI 系统', () => {
       };
       const { result: isInitialized } = renderHook(() => useInjectInstall());
       await waitForStateBe(() => isInitialized.current.isInitialized, true);
-      expect(order).toStrictEqual([
-        'root',
-        'parent',
-        'child',
-      ]);
+      // 只应该调用根作用域的生命周期钩子
+      expect(order).toStrictEqual(['root']);
+      console.error = originalError;
+    });
+
+    it('其他作用域的生命周期钩子需要手动触发', async () => {
+      const Parent = createScopeSymbol('LCParent2', RootScope);
+      const Child = createScopeSymbol('LCChild2', Parent);
+      const order: string[] = [];
+      const defParent = createPluginDefinitionWithScope(Parent);
+      const defChild = createPluginDefinitionWithScope(Child);
+      defParent(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onCreated() {
+            order.push('parent');
+          },
+        });
+      });
+      defChild(({ registerHook }) => {
+        registerHook(ILifeCycleHook, {
+          onCreated() {
+            order.push('child');
+          },
+        });
+      });
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        if (!args[0].includes('was not wrapped in act')) {
+          originalError(...args);
+        }
+      };
+      const { result: isInitialized } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      // 初始化时不应该调用其他作用域的生命周期钩子
+      expect(order).toStrictEqual([]);
+      // 手动触发父作用域的生命周期钩子
+      const { result: { current: parentHooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, Parent),
+      );
+      await Promise.all(parentHooks.map((hook: ILifeCycleHook) => hook.onCreated?.()));
+      expect(order).toStrictEqual(['parent']);
+      // 手动触发子作用域的生命周期钩子
+      const { result: { current: childHooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, Child),
+      );
+      await Promise.all(childHooks.map((hook: ILifeCycleHook) => hook.onCreated?.()));
+      expect(order).toStrictEqual(['parent', 'child']);
       console.error = originalError;
     });
 

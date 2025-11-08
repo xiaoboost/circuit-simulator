@@ -59,18 +59,3 @@ export function getHookWithScope<T>(
 
   return (scopeContainer.context.HookMap.get(key) ?? []).sort(createSorter(sort));
 }
-
-/** 先序遍历作用域树 */
-export function getScopeList(root: IScopeContainer) {
-  const result: IScopeContainer[] = [];
-
-  function traverse(node: IScopeContainer) {
-    result.push(node);
-    for (const child of node.children) {
-      traverse(child);
-    }
-  }
-
-  traverse(root);
-  return result;
-}
