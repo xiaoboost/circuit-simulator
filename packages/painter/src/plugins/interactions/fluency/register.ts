@@ -30,8 +30,6 @@ definePlugin(({ registerHook, getServices }) => {
   });
   /** 稳态采样模块 */
   const steady = createSteadyCollector(baseline);
-  /** 解除订阅的函数 */
-  const unsubscribe: (() => void)[] = [];
 
   // 监听稳态采样结果
   baseline.observe(({ syncPeriodMs: sync }) => {
@@ -85,13 +83,13 @@ definePlugin(({ registerHook, getServices }) => {
     {
       type: 'watcher',
       name: 'drag',
-      watcher: services.drag.scenes,
+      watcher: () => services.drag.scenes,
     },
     // 动画事件源
     {
       type: 'watcher',
       name: 'animation',
-      watcher: services.viewport.isAnimating,
+      watcher: () => services.viewport.isAnimating,
     },
   ]);
 
@@ -179,9 +177,12 @@ definePlugin(({ registerHook, getServices }) => {
         return;
       }
 
+      // 启动事件适配器
+      eventAdapter.initialize();
+
       // 订阅动态采样事件
-      unsubscribe.push(eventAdapter.onStart(handleDynamicStart));
-      unsubscribe.push(eventAdapter.onEnd(handleDynamicEnd));
+      eventAdapter.onStart(handleDynamicStart);
+      eventAdapter.onEnd(handleDynamicEnd);
 
       // 订阅页面可见性变化
       document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -193,9 +194,6 @@ definePlugin(({ registerHook, getServices }) => {
 
   // ========== 卸载器 ==========
   return () => {
-    // 取消订阅所有事件
-    unsubscribe.forEach((unsubscribe) => unsubscribe());
-
     // 销毁事件适配器
     eventAdapter.destroy();
 

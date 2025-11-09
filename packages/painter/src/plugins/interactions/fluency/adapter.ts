@@ -10,7 +10,7 @@ export interface WatcherEventSource {
   /** 场景名称前缀 */
   name: string;
   /** 状态监听器 */
-  watcher: Watcher<boolean> | Watcher<Set<string>>;
+  watcher: () => Watcher<boolean> | Watcher<Set<string>>;
 }
 
 /** 事件源配置 */
@@ -18,6 +18,10 @@ export type EventSource = WatcherEventSource;
 
 /** 动态采样事件适配器 */
 export interface DynamicEventAdapter {
+  /**
+   * 启动适配器
+   */
+  initialize(): void;
   /**
    * 订阅开始事件
    *
@@ -91,7 +95,7 @@ export function createDynamicEventAdapter(
    * 订阅 Watcher 事件源
    */
   function subscribeWatcherSource(source: WatcherEventSource) {
-    const unsubscribe = source.watcher.observe((current, previous) => {
+    const unsubscribe = source.watcher().observe((current, previous) => {
       // 处理 Watcher<boolean>
       if (typeof current === 'boolean' && typeof previous === 'boolean') {
         // 从 false -> true：开始
@@ -127,13 +131,13 @@ export function createDynamicEventAdapter(
     unsubscribeFunctions.push(unsubscribe);
   }
 
-  // ========== 初始化：订阅所有事件源 ==========
-  for (const source of sources) {
-    subscribeWatcherSource(source);
-  }
-
   // ========== 公共接口 ==========
   return {
+    initialize() {
+      for (const source of sources) {
+        subscribeWatcherSource(source);
+      }
+    },
     onStart(callback: DynamicEventCallback) {
       startCallbacks.add(callback);
       return () => {
