@@ -136,7 +136,7 @@ Released under the MIT License.`;
         filename: 'index.html',
         templateParameters: {
           banner,
-          loadingId: meta.startLoading,
+          ...meta,
         },
         template: resolve(rootDir, template),
         inject: true,

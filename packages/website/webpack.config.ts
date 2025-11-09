@@ -1,6 +1,9 @@
 import { buildConfig } from '@circuit/build-config';
+import { GlobalMarker } from '@circuit/shared';
 import { version } from './package.json';
-import { startLoading } from './src/styles/constant';
+import { startLoadingId } from './src/styles/constant';
+
+console.log(GlobalMarker.startUp);
 
 export default buildConfig({
   mode: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
@@ -12,6 +15,7 @@ export default buildConfig({
   template: 'src/index.ejs',
   tsConfig: 'tsconfig.json',
   meta: {
-    startLoading,
+    startLoadingId,
+    startUpMarker: GlobalMarker.startUp,
   },
 });
