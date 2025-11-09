@@ -1,8 +1,8 @@
-import { startLoading } from '../../styles/constant';
+import { startLoadingId } from '../../styles/constant';
 
 /** 移除 loading 界面 */
 export function removeLoading() {
-  const loading = document.getElementById(startLoading);
+  const loading = document.getElementById(startLoadingId);
 
   if (!loading) {
     return;

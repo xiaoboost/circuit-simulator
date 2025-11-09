@@ -1,11 +1,11 @@
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import React, { useRef } from 'react';
+import { useLifeCycle } from '../../context';
 import { Drawer } from '../drawer';
 import { Viewer } from '../viewer';
 import {
   useHotkeyDriver,
   usePainterRefService,
-  usePainterInit,
 } from './driver';
 import * as Styles from './styles.less';
 
@@ -23,7 +23,7 @@ export const Painter = React.memo(function Painter(props: PainterProps) {
   // 不要交换这里的顺序
   usePainterRefService(painterRef);
   useHotkeyDriver(painterRef);
-  usePainterInit();
+  useLifeCycle();
 
   return (
     <main

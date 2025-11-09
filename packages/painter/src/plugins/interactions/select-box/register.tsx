@@ -19,7 +19,7 @@ import {
   IEventListenerHook,
   ICollisionService,
   ICursorService,
-  ICursorKind,
+  CursorKind,
   IHoverService,
 } from '../../../types';
 import {
@@ -98,7 +98,7 @@ definePlugin(({ registerHook, getService }) => {
       end.setData(Point.from(event.positionInDrawer));
 
       if (start.data.distance(end.data) > SELECT_BOX_MIN_MOVE_DISTANCE) {
-        getService(ICursorService).set(ICursorKind.SelectBox);
+        getService(ICursorService).set(CursorKind.SelectBox);
       }
     },
     afterEnd(startPayload, endPayload) {

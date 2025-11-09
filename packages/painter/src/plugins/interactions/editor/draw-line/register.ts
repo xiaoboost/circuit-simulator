@@ -25,7 +25,7 @@ import {
   EntityKind,
   IConnectionService,
   ICursorService,
-  ICursorKind,
+  CursorKind,
   ICollisionService,
   IVariableObserverService,
 } from '../../../../types';
@@ -204,7 +204,7 @@ definePlugin(({ registerHook, getServices }) => {
       // 选中导线
       select.set(line!.id);
       // 设置鼠标样式
-      cursor.set(ICursorKind.DrawLine);
+      cursor.set(CursorKind.DrawLine);
       // 初始化导线路径和初始化样式
       setSearchResult(variable, [
         ...search(event.positionInDrawer),

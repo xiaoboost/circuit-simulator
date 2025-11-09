@@ -1,7 +1,14 @@
-import { RootScope } from '@circuit/inject';
-import { ILoggerService } from '@circuit/shared';
-import React, { useContext } from 'react';
-import { useInjectInstall, InjectContext } from '../../context';
+import {
+  ILoggerService,
+  GlobalMarker,
+} from '@circuit/shared';
+import React, { useEffect } from 'react';
+import {
+  useInjectInstall,
+  InjectContext,
+  useService,
+  useLifeCycle,
+} from '../../context';
 import { Header } from '../header';
 import { LeftSidebar } from '../left-sidebar';
 import { MainArea } from '../main-area';
@@ -11,8 +18,30 @@ import { useHotkeyDriver } from './driver';
 import { removeLoading } from './loading';
 import * as Styles from './styles.less';
 
+const LoggerName = '应用';
+
+function getStartUpDuration() {
+  performance.mark(GlobalMarker.startUp);
+  const measure = performance.measure(GlobalMarker.startUp);
+  return Math.floor(measure.duration);
+}
+
 function Layout() {
+  const [isRootInitialized] = useLifeCycle();
+  const logger = useService(ILoggerService);
+
   useHotkeyDriver();
+
+  useEffect(() => {
+    if (isRootInitialized) {
+      logger.info(LoggerName, `应用初始化完成，耗时 ${getStartUpDuration()}ms`);
+      removeLoading();
+    }
+  }, [isRootInitialized]);
+
+  if (!isRootInitialized) {
+    return null;
+  }
 
   return (
     <article className={Styles.layout}>
@@ -28,20 +57,9 @@ function Layout() {
 }
 
 function Initialization() {
-  const context = useContext(InjectContext);
-  const { isInitialized } = useInjectInstall(() => {
-    setTimeout(() => {
-      removeLoading();
-      // 直接子外面用 useService 是不行的，因为只有初始化完成之后才能拿到服务
-      context.get(RootScope)?.context.ServiceMap.get(ILoggerService)?.info('基座', '初始化完成');
+  const [pluginInitialized] = useInjectInstall();
 
-      if (process.env.NODE_ENV === 'development') {
-        (window as any).$InjectionContext = context;
-      }
-    }, 500);
-  });
-
-  if (!isInitialized) {
+  if (!pluginInitialized) {
     return null;
   }
 

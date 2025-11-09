@@ -9,7 +9,7 @@ import {
   ICursorService,
   IContextMenuService,
   IContextMenuItemHook,
-  IContextMenuItemCategory as Category } from '../../../../types';
+  ContextMenuItemCategory as Category } from '../../../../types';
 import { planDeleteAndMergeWithService } from './action';
 import { DeleteRender as Render } from './render';
 import { visible } from './visible';

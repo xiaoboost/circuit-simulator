@@ -2,6 +2,7 @@ import {
   ILoggerService,
   IStateCoreService,
   ILifeCycleHook,
+  LifeCycleStage,
 } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
@@ -12,15 +13,16 @@ import {
 
 const LoggerName = '画布';
 
-definePlugin(({ registerHook, getService }) => {
-  // 画布初始化
-  registerHook(ILifeCycleHook, {
-    onCreated() {
-      const { state: { data } } = getService(IStateCoreService);
+definePlugin(({ getService, root }) => {
+  root().registerHook(ILifeCycleHook, {
+    order: LifeCycleStage.LATE,
+    onMounted() {
+      const stateCore = getService(IStateCoreService);
+      const { data } = stateCore.state;
       const logger = getService(ILoggerService);
 
       if (data.lines.length === 0 && data.parts.length === 0) {
-        logger.info(LoggerName, '初始化数据为空，跳过初始化');
+        logger.info(LoggerName, '初始数据为空，跳过装载');
         return;
       }
 
@@ -35,7 +37,7 @@ definePlugin(({ registerHook, getService }) => {
       // 初始化连接关系
       connectionService.createFromData(data);
       // 完成日志
-      logger.info(LoggerName, '初始化完成');
+      logger.info(LoggerName, '初始数据装载完成');
 
       // 延迟到下一帧
       return Promise.resolve();

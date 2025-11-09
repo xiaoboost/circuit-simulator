@@ -76,11 +76,11 @@ function getStoreByCache(cache: IStorageService): Promise<StoreData> {
   ).then(() => data);
 }
 
-const LoggerName = '基座';
+const LoggerName = '应用初始化';
 
 definePlugin(({ registerHook, getService }) => {
   registerHook(ILifeCycleHook, {
-    onCreated() {
+    onMounted() {
       const storage = getService(IStorageService);
       const stateCore = getService(IStateCoreService);
 
@@ -95,7 +95,7 @@ definePlugin(({ registerHook, getService }) => {
             return;
           }
 
-          getService(ILoggerService).info(LoggerName, '初始化加载图纸数据');
+          getService(ILoggerService).info(LoggerName, '获取初始数据');
 
           stateCore.commit({
             name: '图纸初始化',

@@ -1,44 +1,44 @@
 import { useService, useWatcher } from '../../../context';
-import { ICursorKind, ICursorService } from '../../../types';
+import { CursorKind, ICursorService } from '../../../types';
 
 import IconDrawLine from '../assets/draw-line.svg';
 import IconSelectBox from '../assets/select-box.svg';
 
-function getCursorStyle(cursor: ICursorKind): React.CSSProperties {
+function getCursorStyle(cursor: CursorKind): React.CSSProperties {
   switch (cursor) {
-    case ICursorKind.Default:
+    case CursorKind.Default:
       return {
         cursor: 'default',
       };
-    case ICursorKind.NotAllowed:
+    case CursorKind.NotAllowed:
       return {
         cursor: 'not-allowed',
       };
-    case ICursorKind.Crosshair:
+    case CursorKind.Crosshair:
       return {
         cursor: 'crosshair',
       };
-    case ICursorKind.Drag:
+    case CursorKind.Drag:
       return {
         cursor: 'grab',
       };
-    case ICursorKind.Dragging:
+    case CursorKind.Dragging:
       return {
         cursor: 'grabbing',
       };
-    case ICursorKind.ResizeEW:
+    case CursorKind.ResizeEW:
       return {
         cursor: 'ew-resize',
       };
-    case ICursorKind.ResizeNS:
+    case CursorKind.ResizeNS:
       return {
         cursor: 'ns-resize',
       };
-    case ICursorKind.DrawLine:
+    case CursorKind.DrawLine:
       return {
         cursor: `url(${IconDrawLine}) 16 16, default`,
       };
-    case ICursorKind.SelectBox:
+    case CursorKind.SelectBox:
       return {
         cursor: `url(${IconSelectBox}) 12 12, default`,
       };

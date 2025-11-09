@@ -10,8 +10,9 @@ export async function getPluginService<T>(key: ServiceTypeWithKey<T>, scope: sym
       originalError(...args);
     }
   };
-  const { result: isInitialized } = renderHook(() => useInjectInstall());
-  await waitForStateBe(() => isInitialized.current.isInitialized, true);
+  const { result } = renderHook(() => useInjectInstall());
+  const [isInitialized] = result.current;
+  await waitForStateBe(() => isInitialized, true);
   const { result: { current: service } } = renderHook(() => useServiceWithScope(key, scope));
   console.error = originalError;
   return service;
@@ -28,8 +29,9 @@ export async function getPluginHooks<T>(
       originalError(...args);
     }
   };
-  const { result: isInitialized } = renderHook(() => useInjectInstall());
-  await waitForStateBe(() => isInitialized.current.isInitialized, true);
+  const { result } = renderHook(() => useInjectInstall());
+  const [isInitialized] = result.current;
+  await waitForStateBe(() => isInitialized, true);
   const { result: { current: hooks } } = renderHook(() => useHookWithScope(key, scope, sort));
   console.error = originalError;
   return hooks;

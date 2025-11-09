@@ -1,7 +1,7 @@
 import {
   ILoggerService,
   IStreamService,
-  GlobalStreamConstant as Constant,
+  GlobalStream as Constant,
   isSameSet,
   IStateCoreService,
 } from '@circuit/shared';

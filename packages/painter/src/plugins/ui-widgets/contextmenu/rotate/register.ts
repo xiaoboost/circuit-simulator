@@ -1,7 +1,8 @@
 import { definePlugin } from '../../../../context';
 import {
   IContextMenuItemHook,
-  IContextMenuItemCategory as Category } from '../../../../types';
+  ContextMenuItemCategory as Category,
+} from '../../../../types';
 import { RotateRender as Render } from './render';
 import { visible } from './visible';
 

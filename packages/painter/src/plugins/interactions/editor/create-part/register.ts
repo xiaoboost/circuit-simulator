@@ -8,7 +8,7 @@ import {
   IStateCoreService,
   ILifeCycleHook,
   IStreamService,
-  GlobalStreamConstant as Constant,
+  GlobalStream as Constant,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { message } from 'antd';
@@ -47,7 +47,7 @@ definePlugin(({ registerHook, getService, root }) => {
 
   // 全局监听创建的器件
   registerHookInRoot(ILifeCycleHook, {
-    onCreated() {
+    onMounted() {
       const stateCore = getService(IStateCoreService);
       const logger = getService(ILoggerService);
       const dragScene = getService(IDragSceneService);

@@ -16,7 +16,7 @@ import {
   IDragSceneHook,
   ISelectService,
   ICursorService,
-  ICursorKind,
+  CursorKind,
   IEventListenerHook,
   IVariableObserverService as VarService,
   PainterStreamConstant as Constant,
@@ -52,7 +52,7 @@ definePlugin(({ registerHook, getService }) => {
       // 偏移数据清零
       getService(VarService).set(KEY, getLabelKey(id), new Point(0, 0));
       // 设置鼠标指针
-      getService(ICursorService).set(ICursorKind.Dragging);
+      getService(ICursorService).set(CursorKind.Dragging);
     },
     onDragMove({ movementInDrawerAcc }, { id }: Payload) {
       const part = getService(IStateCoreService).getPart(id);

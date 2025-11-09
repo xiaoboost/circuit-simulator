@@ -36,8 +36,8 @@ export async function getPlugin<T>(key: ServiceTypeWithKey<T>): Promise<T> {
       originalError(...args);
     }
   };
-  const { result: isInitialized } = renderHook(() => useInjectInstall());
-  await waitForStateBe(() => isInitialized.current.isInitialized, true);
+  const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+  await waitForStateBe(() => isInitialized[0], true);
   const { result: { current: service } } = renderHook(() => useService(key));
   console.error = originalError;
   return service;

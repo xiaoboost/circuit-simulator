@@ -35,7 +35,7 @@ export interface IContextMenuItemProps {
   onMouseLeave?(): void;
 }
 
-export enum IContextMenuItemCategory {
+export enum ContextMenuItemCategory {
   /** 编辑 */
   Edit,
   /** 视觉 */
@@ -64,7 +64,7 @@ export interface IContextMenuItemHook {
    *
    * @description 用于分类，不同的分类菜单项之间将会有个分割线
    */
-  category: IContextMenuItemCategory;
+  category: ContextMenuItemCategory;
   /**
    * 菜单项排序
    *

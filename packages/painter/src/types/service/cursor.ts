@@ -13,7 +13,7 @@ export const ICursorService
   = createServiceKey<ICursorService>('CursorService');
 
 /** 指针类别 */
-export enum ICursorKind {
+export enum CursorKind {
   /** 默认指针 */
   Default,
   /* 禁止操作 */
@@ -37,11 +37,11 @@ export enum ICursorKind {
 /** 指针服务 */
 export interface ICursorService {
   /** 当前指针 */
-  readonly value: Watcher<ICursorKind>;
+  readonly value: Watcher<CursorKind>;
   /** 指针类别枚举 */
-  readonly kind: typeof ICursorKind;
+  readonly kind: typeof CursorKind;
   /** 设置指针类别 */
-  set(kind: ICursorKind): void;
+  set(kind: CursorKind): void;
   /** 恢复默认指针 */
   clear(): void;
 }

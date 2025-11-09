@@ -166,7 +166,7 @@ definePlugin(({ registerService, getServices }) => {
       const { mapCoordinate, logger } = services;
       const { position, scale } = calculateRectFocus(rect, padding, mapCoordinate);
 
-      logger.info(LoggerName, `试图聚焦到矩形: ${rect.x}, ${rect.y}, ${rect.width}, ${rect.height}`);
+      logger.info(LoggerName, `试图聚焦到矩形 - x:${rect.x}, y:${rect.y}, width:${rect.width}, height:${rect.height}`);
 
       captureCurrentViewState(mapCoordinate);
       await animateToPosition(position, scale, duration, mapCoordinate);

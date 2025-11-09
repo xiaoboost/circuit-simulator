@@ -76,8 +76,8 @@ describe('DI 系统', () => {
       });
 
       // 等待插件安装完成
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(capturedServices).toBeDefined();
       // 现在需要通过 getter 访问服务
@@ -104,8 +104,8 @@ describe('DI 系统', () => {
         });
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(capturedServices).toBeDefined();
       // 访问存在的服务应该成功
@@ -121,8 +121,8 @@ describe('DI 系统', () => {
         capturedServices = getServices({});
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(capturedServices).toBeDefined();
       expect(Object.keys(capturedServices)).toHaveLength(0);
@@ -171,8 +171,8 @@ describe('DI 系统', () => {
         });
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       // 验证父作用域获取的服务
       expect(parentCapturedServices).toBeDefined();
@@ -215,8 +215,8 @@ describe('DI 系统', () => {
         });
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(capturedServices).toBeDefined();
       expect(capturedServices.s1).toEqual(service1);
@@ -386,26 +386,31 @@ describe('DI 系统', () => {
           originalError(...args);
         }
       };
-      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized }, unmount } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
       const first = await getPluginService(key, RootScope);
       expect(first).toBe(instance);
       unmount();
+      // 手动触发卸载钩子（模拟组件卸载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      hooks.forEach((hook: ILifeCycleHook) => hook.onUnmounted?.());
       expect(calls).toStrictEqual(['uninstall']);
-      const { result: isInitialized2 } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized2.current.isInitialized, true);
+      const { result: { current: isInitialized2 } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized2[0], true);
       const again = await getPluginService(key, RootScope);
       expect(again).toBe(instance);
       console.error = originalError;
     });
 
-    it('生命周期 onCreated 只调用根作用域的钩子', async () => {
+    it('生命周期 onMounted 只调用根作用域的钩子', async () => {
       const Parent = createScopeSymbol('LCParent', RootScope);
       const Child = createScopeSymbol('LCChild', Parent);
       const order: string[] = [];
       defineGlobalPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             order.push('root');
           },
         });
@@ -414,14 +419,14 @@ describe('DI 系统', () => {
       const defChild = createPluginDefinitionWithScope(Child);
       defParent(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             order.push('parent');
           },
         });
       });
       defChild(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             order.push('child');
           },
         });
@@ -432,8 +437,15 @@ describe('DI 系统', () => {
           originalError(...args);
         }
       };
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: [isInitialized] } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized, true);
+      // 初始化时不应该自动调用生命周期钩子（现在在组件中手动调用）
+      expect(order).toStrictEqual([]);
+      // 手动触发根作用域的生命周期钩子
+      const { result: { current: rootHooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      await Promise.all(rootHooks.map((hook: ILifeCycleHook) => hook.onMounted?.()));
       // 只应该调用根作用域的生命周期钩子
       expect(order).toStrictEqual(['root']);
       console.error = originalError;
@@ -447,14 +459,14 @@ describe('DI 系统', () => {
       const defChild = createPluginDefinitionWithScope(Child);
       defParent(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             order.push('parent');
           },
         });
       });
       defChild(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             order.push('child');
           },
         });
@@ -465,21 +477,21 @@ describe('DI 系统', () => {
           originalError(...args);
         }
       };
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
       // 初始化时不应该调用其他作用域的生命周期钩子
       expect(order).toStrictEqual([]);
       // 手动触发父作用域的生命周期钩子
       const { result: { current: parentHooks } } = renderHook(
         () => useHookWithScope(ILifeCycleHook, Parent),
       );
-      await Promise.all(parentHooks.map((hook: ILifeCycleHook) => hook.onCreated?.()));
+      await Promise.all(parentHooks.map((hook: ILifeCycleHook) => hook.onMounted?.()));
       expect(order).toStrictEqual(['parent']);
       // 手动触发子作用域的生命周期钩子
       const { result: { current: childHooks } } = renderHook(
         () => useHookWithScope(ILifeCycleHook, Child),
       );
-      await Promise.all(childHooks.map((hook: ILifeCycleHook) => hook.onCreated?.()));
+      await Promise.all(childHooks.map((hook: ILifeCycleHook) => hook.onMounted?.()));
       expect(order).toStrictEqual(['parent', 'child']);
       console.error = originalError;
     });
@@ -520,13 +532,13 @@ describe('DI 系统', () => {
   });
 
   describe('生命周期钩子', () => {
-    it('onDestroyed 钩子应该在插件卸载时被调用', async () => {
+    it('onUnmounted 钩子应该在插件卸载时被调用', async () => {
       const calls: string[] = [];
 
       defineGlobalPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onDestroyed() {
-            calls.push('onDestroyed');
+          onUnmounted() {
+            calls.push('onUnmounted');
           },
         });
       });
@@ -538,18 +550,22 @@ describe('DI 系统', () => {
         }
       };
 
-      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(calls).toHaveLength(0);
 
-      unmount();
+      // 手动触发卸载钩子（模拟组件卸载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      hooks.forEach((hook: ILifeCycleHook) => hook.onUnmounted?.());
 
-      expect(calls).toStrictEqual(['onDestroyed']);
+      expect(calls).toStrictEqual(['onUnmounted']);
       console.error = originalError;
     });
 
-    it('definePlugin 返回值应该作为 onDestroyed 钩子被调用', async () => {
+    it('definePlugin 返回值应该作为 onUnmounted 钩子被调用', async () => {
       const calls: string[] = [];
 
       defineGlobalPlugin(({ registerService }) => {
@@ -569,28 +585,32 @@ describe('DI 系统', () => {
         }
       };
 
-      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(calls).toHaveLength(0);
 
-      unmount();
+      // 手动触发卸载钩子（模拟组件卸载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      hooks.forEach((hook: ILifeCycleHook) => hook.onUnmounted?.());
 
       expect(calls).toStrictEqual(['definePlugin return value']);
       console.error = originalError;
     });
 
-    it('多个 onDestroyed 钩子应该按注册顺序被调用', async () => {
+    it('多个 onUnmounted 钩子应该按注册顺序被调用', async () => {
       const calls: string[] = [];
 
       defineGlobalPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onDestroyed() {
+          onUnmounted() {
             calls.push('hook1');
           },
         });
         registerHook(ILifeCycleHook, {
-          onDestroyed() {
+          onUnmounted() {
             calls.push('hook2');
           },
         });
@@ -613,12 +633,16 @@ describe('DI 系统', () => {
         }
       };
 
-      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(calls).toHaveLength(0);
 
-      unmount();
+      // 手动触发卸载钩子（模拟组件卸载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      hooks.forEach((hook: ILifeCycleHook) => hook.onUnmounted?.());
 
       expect(calls).toStrictEqual([
         'hook1', 'hook2', 'definePlugin return',
@@ -626,7 +650,7 @@ describe('DI 系统', () => {
       console.error = originalError;
     });
 
-    it('不同作用域的 onDestroyed 钩子应该只调用全局作用域的', async () => {
+    it('不同作用域的 onUnmounted 钩子应该只调用全局作用域的', async () => {
       const calls: string[] = [];
       const childScope = createScopeSymbol('ChildScope', RootScope);
       const defineChildPlugin = createPluginDefinitionWithScope(childScope);
@@ -634,8 +658,8 @@ describe('DI 系统', () => {
       // 全局作用域钩子
       defineGlobalPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onDestroyed() {
-            calls.push('global onDestroyed');
+          onUnmounted() {
+            calls.push('global onUnmounted');
           },
         });
       });
@@ -643,8 +667,8 @@ describe('DI 系统', () => {
       // 子作用域钩子
       defineChildPlugin(({ registerHook }) => {
         registerHook(ILifeCycleHook, {
-          onDestroyed() {
-            calls.push('child onDestroyed');
+          onUnmounted() {
+            calls.push('child onUnmounted');
           },
         });
       });
@@ -656,15 +680,19 @@ describe('DI 系统', () => {
         }
       };
 
-      const { result: isInitialized, unmount } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
 
       expect(calls).toHaveLength(0);
 
-      unmount();
+      // 手动触发全局作用域的卸载钩子（模拟组件卸载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      hooks.forEach((hook: ILifeCycleHook) => hook.onUnmounted?.());
 
       // 只应该调用全局作用域的钩子
-      expect(calls).toStrictEqual(['global onDestroyed']);
+      expect(calls).toStrictEqual(['global onUnmounted']);
       console.error = originalError;
     });
   });
@@ -683,8 +711,8 @@ describe('DI 系统', () => {
         }).toThrow('在插件注册阶段不允许直接获取服务');
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
     });
 
     it('在 definePlugin 回调中调用 getHook 应该抛出错误', async () => {
@@ -700,8 +728,8 @@ describe('DI 系统', () => {
         }).toThrow('在插件注册阶段不允许直接获取钩子');
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
     });
 
     it('在 definePlugin 回调中访问 getServices 返回对象的属性应该抛出错误', async () => {
@@ -723,8 +751,8 @@ describe('DI 系统', () => {
         }).toThrow('在插件注册阶段不允许访问服务');
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
     });
 
     it('在生命周期钩子中访问服务应该正常工作', async () => {
@@ -743,14 +771,20 @@ describe('DI 系统', () => {
 
         // 在生命周期钩子中访问服务应该正常工作
         registerHook(ILifeCycleHook, {
-          onCreated() {
+          onMounted() {
             capturedService = services.test;
           },
         });
       });
 
-      const { result: isInitialized } = renderHook(() => useInjectInstall());
-      await waitForStateBe(() => isInitialized.current.isInitialized, true);
+      const { result: { current: isInitialized } } = renderHook(() => useInjectInstall());
+      await waitForStateBe(() => isInitialized[0], true);
+
+      // 手动触发生命周期钩子（模拟组件挂载）
+      const { result: { current: hooks } } = renderHook(
+        () => useHookWithScope(ILifeCycleHook, RootScope),
+      );
+      await Promise.all(hooks.map((hook: ILifeCycleHook) => hook.onMounted?.()));
 
       expect(capturedService).toBe(service);
     });

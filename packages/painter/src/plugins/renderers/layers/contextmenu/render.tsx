@@ -3,7 +3,7 @@ import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
   IContextMenuItemHook,
-  IContextMenuItemCategory,
+  ContextMenuItemCategory,
   IContextMenuService,
   IContextMenuItemVisibleProps,
   IHoverService,
@@ -12,7 +12,7 @@ import {
 import { Divider } from './driver';
 import * as Styles from './styles.less';
 
-const categories = [IContextMenuItemCategory.Visual, IContextMenuItemCategory.Edit];
+const categories = [ContextMenuItemCategory.Visual, ContextMenuItemCategory.Edit];
 
 export function Render() {
   const menuRef = useRef<HTMLDivElement>(null);

@@ -1,7 +1,7 @@
 import { SearchOutlined } from '@circuit/icons';
 import {
   IStreamService,
-  GlobalStreamConstant as Constant,
+  GlobalStream as Constant,
 } from '@circuit/shared';
 import { ElectronicKind } from '@circuit/types';
 import { Input, Tooltip } from 'antd';

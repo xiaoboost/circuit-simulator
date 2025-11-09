@@ -24,3 +24,4 @@ const reactHook = createReactHookWithScope(PainterScope);
 export const definePlugin = createPluginDefinitionWithScope(PainterScope);
 export const useHook = reactHook.useHook;
 export const useService = reactHook.useService;
+export const useLifeCycle = reactHook.useLifeCycle;

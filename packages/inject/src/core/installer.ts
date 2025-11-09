@@ -131,7 +131,7 @@ function createInstallPhaseError(
     `在插件注册阶段不允许${action}${type}。${keyName}: ${String(key)}。\n`
     + `${pluginInfo}\n`
     + '提示：在 definePlugin 的回调中，只能使用 registerService 和 registerHook 注册服务/钩子。\n'
-    + `如果需要获取${type}，请在内部回调中使用 getService 或 getHook；以及使用 getServices 获取延迟查找的对象，然后在生命周期钩子（如 onCreated）中再访问其属性。`
+    + `如果需要获取${type}，请在内部回调中使用 getService 或 getHook；以及使用 getServices 获取延迟查找的对象，然后在生命周期钩子（如 onMounted）中再访问其属性。`
   );
 
   return new Error(message);
@@ -227,7 +227,7 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
     if (uninstaller) {
       // 将 definePlugin 的返回值注册为生命周期钩子
       const lifecycleHook: ILifeCycleHook = {
-        onDestroyed: uninstaller,
+        onUnmounted: uninstaller,
       };
       context.HookMap.set(ILifeCycleHook, [
         ...(context.HookMap.get(ILifeCycleHook) ?? []),
@@ -237,19 +237,13 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
   }
 }
 
-async function runPluginAfterInit(manager: IScopeManager) {
-  const { context: { HookMap } } = manager.get(RootScope)!;
-  const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
-  await Promise.all(lifeCycleHooks.map((hook) => hook.onCreated?.()));
-}
-
 export function createScopeSymbol(name: string, parentScope: symbol) {
   const symbol = Symbol(name);
   ScopeMetaInfos.set(parentScope, [...(ScopeMetaInfos.get(parentScope) ?? []), symbol]);
   return symbol;
 }
 
-export function useInjectInstall(ready?: () => void) {
+export function useInjectInstall() {
   const manager = useContext(InjectContext);
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -258,23 +252,15 @@ export function useInjectInstall(ready?: () => void) {
     createScope(ScopeMetaInfos, manager);
     // 创建插件
     installPlugin(PluginMetaInfos, manager);
-    // 运行插件初始化钩子
-    runPluginAfterInit(manager).then(() => {
-      setIsInitialized(true);
-      ready?.();
-    });
+    // 标记初始化完成
+    setIsInitialized(true);
 
     // 卸载插件
     return () => {
-      const { context: { HookMap } } = manager.get(RootScope)!;
-      const lifeCycleHooks = (HookMap.get(ILifeCycleHook) ?? []) as ILifeCycleHook[];
-
-      // 运行销毁钩子
-      lifeCycleHooks.map((hook) => hook.onDestroyed?.());
       // 重置初始化状态
       setIsInitialized(false);
     };
   }, []);
 
-  return { isInitialized };
+  return [isInitialized] as const;
 }

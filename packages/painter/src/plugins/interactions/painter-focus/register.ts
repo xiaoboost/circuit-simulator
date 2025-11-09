@@ -1,4 +1,4 @@
-import { ILifeCycleHook } from '@circuit/shared';
+import { ILifeCycleHook, LifeCycleStage } from '@circuit/shared';
 import { definePlugin } from '../../../context';
 import {
   IPainterHTMLElement,
@@ -21,7 +21,8 @@ definePlugin(({ registerHook, getService }) => {
 
   // 画布初始化时获得焦点
   registerHook(ILifeCycleHook, {
-    onCreated() {
+    order: LifeCycleStage.FINAL,
+    onMounted() {
       return new Promise<void>((resolve) => {
         if ('requestAnimationFrame' in window) {
           requestAnimationFrame(() => {

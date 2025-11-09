@@ -15,6 +15,7 @@ export {
   createReactHookWithScope,
   useServiceWithGlobal,
   useHookWithGlobal,
+  useLifeCycleWithGlobal,
 } from './react';
 
 export {

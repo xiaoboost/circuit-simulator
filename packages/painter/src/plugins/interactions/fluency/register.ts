@@ -169,7 +169,7 @@ definePlugin(({ registerHook, getServices }) => {
 
   // ========== 生命周期管理 ==========
   registerHook(ILifeCycleHook, {
-    onCreated() {
+    onMounted() {
       const { logger } = services;
 
       if (!enableRaf || !enableRic) {

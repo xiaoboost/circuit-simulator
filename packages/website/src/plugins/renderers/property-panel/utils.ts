@@ -1,7 +1,7 @@
 import {
   IStateCoreService,
   IStreamService,
-  GlobalStreamConstant as Stream,
+  GlobalStream as Stream,
 } from '@circuit/shared';
 import { PartStructuredData } from '@circuit/types';
 import { useEffect, useState } from 'react';
