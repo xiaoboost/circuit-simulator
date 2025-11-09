@@ -68,7 +68,7 @@ definePlugin(({ registerHook, getService, root }) => {
 
         const newPart = createPartByKind(payload.kind, stateCore.state.data.parts);
 
-        if (!dragScene.isDragging.data) {
+        if (!dragScene.isDragging()) {
           dragScene.trigger(CreatePartSceneName, {
             part: newPart,
           });

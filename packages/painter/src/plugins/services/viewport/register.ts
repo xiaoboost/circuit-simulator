@@ -10,7 +10,14 @@ import {
 
 const LoggerName = '视图服务';
 
-definePlugin(({ registerService, getService }) => {
+definePlugin(({ registerService, getServices }) => {
+  const services = getServices({
+    mapCoordinate: IMapCoordinateService,
+    collision: ICollisionService,
+    logger: ILoggerService,
+    state: IStateCoreService,
+  });
+
   let animationId: number | null = null;
   let previousViewState: IViewport | null = null;
 
@@ -21,7 +28,7 @@ definePlugin(({ registerService, getService }) => {
   function calculateRectFocus(
     rect: Rect,
     padding: number,
-    scaleService = getService(IMapCoordinateService),
+    scaleService: IMapCoordinateService,
   ) {
     const { width: viewportWidth, height: viewportHeight } = scaleService.getCurrentViewportRect();
     const scaleX = (viewportWidth - padding * 2) / rect.width;
@@ -43,7 +50,7 @@ definePlugin(({ registerService, getService }) => {
     targetPosition: Point,
     targetScale: number,
     duration: number,
-    scaleService = getService(IMapCoordinateService),
+    scaleService: IMapCoordinateService,
   ) {
     if (duration <= 0) {
       scaleService.setScale(targetScale);
@@ -93,7 +100,7 @@ definePlugin(({ registerService, getService }) => {
     service.isAnimating.setData(false);
   }
 
-  function captureCurrentViewState(scaleService = getService(IMapCoordinateService)) {
+  function captureCurrentViewState(scaleService: IMapCoordinateService) {
     previousViewState = {
       position: Point.from(scaleService.position.data),
       scale: scaleService.scale.data,
@@ -105,9 +112,8 @@ definePlugin(({ registerService, getService }) => {
     async focusOnElectronic(id, padding = 40, duration = 300) {
       stopAnimation();
 
-      const logger = getService(ILoggerService);
-      const collisionService = getService(ICollisionService);
-      const rect = collisionService.getEntityBoundingBox(id);
+      const { collision, logger } = services;
+      const rect = collision.getEntityBoundingBox(id);
 
       logger.info(LoggerName, `试图聚焦到元件: ${id}`);
 
@@ -121,10 +127,9 @@ definePlugin(({ registerService, getService }) => {
     async focusOnPosition(position, type, scale, duration = 300) {
       stopAnimation();
 
-      const logger = getService(ILoggerService);
-      const mapCoordinateService = getService(IMapCoordinateService);
-      const inputScale = scale ?? mapCoordinateService.scale.data ?? 1;
-      const targetScale = mapCoordinateService.clampScale(inputScale);
+      const { mapCoordinate, logger } = services;
+      const inputScale = scale ?? mapCoordinate.scale.data ?? 1;
+      const targetScale = mapCoordinate.clampScale(inputScale);
 
       logger.info(LoggerName, `试图聚焦到位置: ${position[0]}, ${position[1]}, 类型: ${type}, 缩放: ${scale}`);
 
@@ -132,7 +137,7 @@ definePlugin(({ registerService, getService }) => {
 
       // center 模式：将指定位置移动到视口中心
       if (type === 'center') {
-        const viewportSize = mapCoordinateService.getCurrentViewportRect();
+        const viewportSize = mapCoordinate.getCurrentViewportRect();
         targetPosition = position.mul(-targetScale).add([
           viewportSize.width / 2,
           viewportSize.height / 2,
@@ -144,37 +149,35 @@ definePlugin(({ registerService, getService }) => {
       }
       // rightTop 模式：将指定位置移动到视口右上角
       else {
-        const viewportSize = mapCoordinateService.getCurrentViewportRect();
+        const viewportSize = mapCoordinate.getCurrentViewportRect();
         targetPosition = Point.from([
           viewportSize.width - position[0] * targetScale,
           -position[1] * targetScale,
         ]);
       }
 
-      await animateToPosition(targetPosition, targetScale, duration, mapCoordinateService);
+      await animateToPosition(targetPosition, targetScale, duration, mapCoordinate);
 
       return true;
     },
     async focusOnRect(rect, padding = 40, duration = 300) {
       stopAnimation();
 
-      const logger = getService(ILoggerService);
-      const mapCoordinateService = getService(IMapCoordinateService);
-      const { position, scale } = calculateRectFocus(rect, padding, mapCoordinateService);
+      const { mapCoordinate, logger } = services;
+      const { position, scale } = calculateRectFocus(rect, padding, mapCoordinate);
 
       logger.info(LoggerName, `试图聚焦到矩形: ${rect.x}, ${rect.y}, ${rect.width}, ${rect.height}`);
 
-      captureCurrentViewState(mapCoordinateService);
-      await animateToPosition(position, scale, duration, mapCoordinateService);
+      captureCurrentViewState(mapCoordinate);
+      await animateToPosition(position, scale, duration, mapCoordinate);
 
       return true;
     },
     async fitPainter(padding, duration = 300) {
       stopAnimation();
 
-      const logger = getService(ILoggerService);
-      const collision = getService(ICollisionService);
-      const { state: { data: { parts, lines } } } = getService(IStateCoreService);
+      const { collision, logger, state } = services;
+      const { state: { data: { parts, lines } } } = state;
 
       if (parts.length === 0 && lines.length === 0) {
         logger.warn(LoggerName, '没有实体，无法执行适应画布操作');
@@ -199,13 +202,14 @@ definePlugin(({ registerService, getService }) => {
       }
 
       stopAnimation();
-      await animateToPosition(previousViewState.position, previousViewState.scale, duration);
+      await animateToPosition(
+        previousViewState.position,
+        previousViewState.scale,
+        duration,
+        services.mapCoordinate,
+      );
       previousViewState = null;
       return true;
-    },
-    isInViewport() {
-      // TODO:
-      return false;
     },
   };
 

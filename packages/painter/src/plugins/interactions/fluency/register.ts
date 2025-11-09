@@ -3,7 +3,8 @@ import {
   ILoggerService,
 } from '@circuit/shared';
 import { definePlugin, Watcher } from '../../../context';
-import { IDragSceneService } from '../../../types';
+import { IDragSceneService, IViewportService } from '../../../types';
+import { createDynamicEventAdapter } from './adapter';
 import { enableRaf, enableRic } from './constant';
 import { createDynamicCollector, type DynamicCollector } from './dynamic';
 import { createSteadyCollector } from './steady';
@@ -16,6 +17,7 @@ definePlugin(({ registerHook, getServices }) => {
   const services = getServices({
     logger: ILoggerService,
     drag: IDragSceneService,
+    viewport: IViewportService,
   });
 
   // ========== 状态管理 ==========
@@ -76,31 +78,48 @@ definePlugin(({ registerHook, getServices }) => {
     }
   }
 
-  // ========== 拖动事件订阅 ==========
-  /** 拖动开始回调 */
-  function handleDragStart(scene: string) {
+  // ========== 动态采样事件适配器 ==========
+  /** 动态采样事件适配器 */
+  const eventAdapter = createDynamicEventAdapter([
+    // 拖动事件源
+    {
+      type: 'watcher',
+      name: 'drag',
+      watcher: services.drag.scenes,
+    },
+    // 动画事件源
+    {
+      type: 'watcher',
+      name: 'animation',
+      watcher: services.viewport.isAnimating,
+    },
+  ]);
+
+  // ========== 动态采样事件处理 ==========
+  /** 动态采样开始回调 */
+  function handleDynamicStart(name: string) {
     // 检查基线是否已计算
     if (baseline.data.syncPeriodMs === 0) {
       services.logger.debug(
         LoggerName,
-        `动态采样跳过 [${scene}]`,
+        `动态采样跳过 [${name}]`,
         '稳态基线尚未计算完成',
       );
       return;
     }
 
     // 创建动态采样控制器
-    const collector = createDynamicCollector(scene, baseline);
-    dynamicCollectors.set(scene, collector);
+    const collector = createDynamicCollector(name, baseline);
+    dynamicCollectors.set(name, collector);
 
     // 更新稳态采样状态
     updateSteadyState();
-    services.logger.debug(LoggerName, `动态采样开始 [${scene}]`);
+    services.logger.debug(LoggerName, `动态采样开始 [${name}]`);
   }
 
-  /** 拖动结束回调 */
-  function handleDragEnd(scene: string) {
-    const collector = dynamicCollectors.get(scene);
+  /** 动态采样结束回调 */
+  function handleDynamicEnd(name: string) {
+    const collector = dynamicCollectors.get(name);
 
     if (!collector) {
       return;
@@ -108,7 +127,7 @@ definePlugin(({ registerHook, getServices }) => {
 
     // 停止动态采样并获取结果
     const result = collector.stop();
-    dynamicCollectors.delete(scene);
+    dynamicCollectors.delete(name);
 
     // 更新稳态采样状态
     updateSteadyState();
@@ -153,24 +172,32 @@ definePlugin(({ registerHook, getServices }) => {
   // ========== 生命周期管理 ==========
   registerHook(ILifeCycleHook, {
     onCreated() {
-      const { logger, drag } = services;
+      const { logger } = services;
 
       if (!enableRaf || !enableRic) {
         logger.warn(LoggerName, '浏览器版本过低，无法进行流畅度检查。');
         return;
       }
 
-      unsubscribe.push(drag.onStart(handleDragStart));
-      unsubscribe.push(drag.onEnd(handleDragEnd));
+      // 订阅动态采样事件
+      unsubscribe.push(eventAdapter.onStart(handleDynamicStart));
+      unsubscribe.push(eventAdapter.onEnd(handleDynamicEnd));
+
+      // 订阅页面可见性变化
       document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      // 启动稳态采样
       steady.start();
     },
   });
 
   // ========== 卸载器 ==========
   return () => {
-    // 取消订阅拖动事件
+    // 取消订阅所有事件
     unsubscribe.forEach((unsubscribe) => unsubscribe());
+
+    // 销毁事件适配器
+    eventAdapter.destroy();
 
     // 停止所有采样
     steady.stop();

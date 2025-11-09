@@ -156,7 +156,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       const configurationService = getService(IPainterConfigurationService);
 
       // 当前场景不为空或者不是移动模式时不处理
-      if (dragSceneService.isDragging.data || !configurationService.movePainterMode.data) {
+      if (dragSceneService.isDragging() || !configurationService.movePainterMode.data) {
         return;
       }
 
@@ -186,7 +186,7 @@ definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
       const dragSceneService = getService(IDragSceneService);
 
       // 当前场景不为空时不处理
-      if (dragSceneService.isDragging.data) {
+      if (dragSceneService.isDragging()) {
         return;
       }
 

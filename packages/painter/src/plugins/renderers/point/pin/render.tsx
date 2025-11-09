@@ -79,7 +79,7 @@ function PinRenderer(props: IPinRendererProps) {
 
     function isEnableHover() {
       return (
-        !dragService.isDragging.data
+        !dragService.isDragging()
         && !configuration.movePainterMode.data
       );
     }
@@ -105,7 +105,13 @@ function PinRenderer(props: IPinRendererProps) {
         handleHover(false);
       }
     });
-    const dragUnOb = dragService.isDragging.observe(handleObHover);
+    const dragUnOb = dragService.scenes.observe((current, previous) => {
+      const wasDragging = previous!.size > 0;
+      const isDragging = current.size > 0;
+      if (wasDragging !== isDragging) {
+        handleObHover(isDragging);
+      }
+    });
     const moveUnOb = configuration.movePainterMode.observe(handleObHover);
 
     return () => {

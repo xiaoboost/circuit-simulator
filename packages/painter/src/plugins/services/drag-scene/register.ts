@@ -10,26 +10,26 @@ import {
   IEventListenerHook,
   IMapCoordinateService,
   IPainterConfigurationService,
-  type DragCallback,
 } from '../../../types';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
-  const sceneSet = new Set<string>();
+  const scenesWatcher = new Watcher<Set<string>>(new Set());
   const triggerPayloadMap = new Map<string, any>();
   const isMovedMap = new Map<string, boolean>();
   const startPositionMap = new Map<string, Point>();
-  const startCallbacks = new Set<DragCallback>();
-  const endCallbacks = new Set<DragCallback>();
   const service: IDragSceneService = {
-    isDragging: new Watcher(false),
+    scenes: scenesWatcher,
     get size() {
-      return sceneSet.size;
+      return scenesWatcher.data.size;
     },
     has(name) {
-      return sceneSet.has(name);
+      return scenesWatcher.data.has(name);
     },
     forEach(callback) {
-      sceneSet.forEach(callback);
+      scenesWatcher.data.forEach(callback);
+    },
+    isDragging() {
+      return scenesWatcher.data.size > 0;
     },
     trigger(scene, payload) {
       const startPayload: DragSceneHookPayload | undefined = payload?.event
@@ -44,11 +44,13 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         .find(({ name }) => name === scene)
         ?.afterStart?.(startPayload);
 
-      sceneSet.add(scene);
+      // 更新场景集合
+      const newSet = new Set(scenesWatcher.data);
+      newSet.add(scene);
+      scenesWatcher.setData(newSet);
+
       isMovedMap.set(scene, false);
       triggerPayloadMap.set(scene, startPayload);
-      service.isDragging.setData(sceneSet.size !== 0);
-      startCallbacks.forEach((callback) => callback(scene));
 
       // 初始事件可能是空，因为不一定是从鼠标事件触发的
       if (startPayload?.event) {
@@ -63,7 +65,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       const hooks = getHook(IDragSceneHook).filter(({ name }) => {
         return (
           (scene === '*' || name === scene)
-          && sceneSet.has(name)
+          && scenesWatcher.data.has(name)
         );
       });
       const beforeKey = payload?.esc ? 'beforeCancel' : 'beforeEnd';
@@ -79,14 +81,15 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         }));
       };
       const clear = () => {
+        // 更新场景集合
+        const newSet = new Set(scenesWatcher.data);
         hooks.forEach(({ name }) => {
-          sceneSet.delete(name);
+          newSet.delete(name);
           isMovedMap.delete(name);
           triggerPayloadMap.delete(name);
           startPositionMap.delete(name);
-          service.isDragging.setData(sceneSet.size !== 0);
-          endCallbacks.forEach((callback) => callback(name));
         });
+        scenesWatcher.setData(newSet);
       };
 
       nextFrame()
@@ -95,7 +98,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
         .then(() => run(afterKey));
     },
     onlyHas(scene) {
-      return sceneSet.size === 1 && sceneSet.has(scene);
+      return scenesWatcher.data.size === 1 && scenesWatcher.data.has(scene);
     },
     isLeftMouseDownNoMovingNoScene(event) {
       return (
@@ -109,20 +112,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       return (
         event.button === 0
         && event.type === 'mouseup'
-        && sceneSet.has(scene)
+        && scenesWatcher.data.has(scene)
       );
-    },
-    onStart(callback: DragCallback) {
-      startCallbacks.add(callback);
-      return () => {
-        startCallbacks.delete(callback);
-      };
-    },
-    onEnd(callback: DragCallback) {
-      endCallbacks.add(callback);
-      return () => {
-        endCallbacks.delete(callback);
-      };
     },
   };
 
@@ -228,4 +219,8 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
 
   // 注册鼠标拖动服务
   registerService(IDragSceneService, service);
+
+  return () => {
+    scenesWatcher.destroy();
+  };
 });

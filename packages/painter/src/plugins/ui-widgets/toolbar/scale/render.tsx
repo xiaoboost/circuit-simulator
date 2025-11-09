@@ -16,7 +16,8 @@ export function ScaleRender() {
   const mapService = useService(IMapCoordinateService);
   const logger = useService(ILoggerService);
   const [scale] = useWatcher(mapService.scale);
-  const [isDragging] = useWatcher(dragScene.isDragging);
+  const [scenes] = useWatcher(dragScene.scenes);
+  const isDragging = scenes.size > 0;
   const isScaleMax = scale >= mapService.ScaleMax;
   const isScaleMin = scale <= mapService.ScaleMin;
   const draggingTooltip = '拖动中，无法缩放';

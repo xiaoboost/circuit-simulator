@@ -31,13 +31,17 @@ export interface SceneTriggerPayload {
   [key: string]: any;
 }
 
-/** 拖动回调 */
-export type DragCallback = (scene: string) => void;
-
 /** 鼠标拖动服务 */
 export interface IDragSceneService extends ReadonlySet<string> {
-  /** 正在拖动 */
-  isDragging: Watcher<boolean>;
+  /** 场景集合 */
+  scenes: Watcher<Set<string>>;
+  /**
+   * 是否正在拖动
+   *
+   * @description 判断当前是否有场景在拖动中
+   * @returns 如果有场景在拖动则返回 true，否则返回 false
+   */
+  isDragging(): boolean;
   /**
    * 只有某个场景
    */
@@ -62,18 +66,4 @@ export interface IDragSceneService extends ReadonlySet<string> {
    * @description 让场景立即结束，不会等待下一次`isEnd`判断
    */
   triggerEnd(scene: string, payload?: SceneTriggerPayload): void;
-  /**
-   * 订阅拖动开始事件
-   *
-   * @description 当拖动场景开始时调用回调
-   * @returns 取消订阅的函数
-   */
-  onStart(callback: DragCallback): () => void;
-  /**
-   * 订阅拖动结束事件
-   *
-   * @description 当拖动场景结束时调用回调
-   * @returns 取消订阅的函数
-   */
-  onEnd(callback: DragCallback): () => void;
 }

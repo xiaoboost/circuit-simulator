@@ -73,11 +73,4 @@ export interface IViewportService {
    * @returns {Promise<boolean>} 是否成功返回
    */
   goBack(duration?: number): Promise<boolean>;
-
-  /**
-   * 检查元件是否在视口内
-   * @param {string} id 元件 ID
-   * @returns {boolean} 是否在视口内
-   */
-  isInViewport(id: string): boolean;
 }
