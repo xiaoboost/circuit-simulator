@@ -3,8 +3,6 @@ import { GlobalMarker } from '@circuit/shared';
 import { version } from './package.json';
 import { startLoadingId } from './src/styles/constant';
 
-console.log(GlobalMarker.startUp);
-
 export default buildConfig({
   mode: process.env.NODE_ENV === 'development' ? 'dev' : 'prod',
   version,
