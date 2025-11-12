@@ -1,4 +1,5 @@
 import { Watcher } from '../../../context';
+import { DYNAMIC_MIN_DURATION_MS } from './constant';
 import type { BaselineStats, DynamicResult, FrameSample } from './types';
 import { calculateDroppedRate } from './utils';
 
@@ -98,6 +99,12 @@ export function createDynamicCollector(
 
     // 持续时间 = 总时间 - 累计暂停时间
     const durationMs = performance.now() - startTime - currentPausedTime;
+
+    // 如果持续时间太短，不进行动态检查
+    if (durationMs < DYNAMIC_MIN_DURATION_MS) {
+      return null;
+    }
+
     const syncPeriodMs = baseline.data.syncPeriodMs || 16.67; // 默认 60Hz
     const frameTimes = samples.map((s) => s.dt);
     const droppedResult = calculateDroppedRate(frameTimes, syncPeriodMs);

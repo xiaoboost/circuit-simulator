@@ -99,6 +99,35 @@ export const WARN_DROPPED_FRAMES = 3;
  */
 export const DROPPED_FRAME_THRESHOLD_MULTIPLIER = 1.5;
 
+/**
+ * 动态采样最小持续时间
+ *
+ * @description 低于此持续时间的动态过程不做动态检查，因为时间太短，没有统计意义。
+ * @description 单位：毫秒
+ */
+export const DYNAMIC_MIN_DURATION_MS = 240;
+
+/**
+ * 明显卡顿的时间阈值
+ *
+ * @description 连续掉帧时间超过此值才认为是明显卡顿。
+ * @description 单位：毫秒
+ * @default 50
+ *
+ * @remarks
+ * 人类对卡顿的感知阈值：
+ * - < 16ms: 流畅（60Hz 一帧）
+ * - 16-50ms: 轻微延迟，通常可接受
+ * - 50-100ms: 可感知延迟
+ * - > 100ms: 明显卡顿
+ *
+ * 使用 50ms 作为阈值的原因：
+ * - 这是可感知延迟的临界点
+ * - 对不同刷新率都适用（60Hz 掉3帧 ≈ 50ms，480Hz 掉24帧 ≈ 50ms）
+ * - 与业界标准一致（Chrome DevTools 的 Long Task 阈值也是 50ms）
+ */
+export const CONSECUTIVE_DROP_NOTICEABLE_MS = 50;
+
 /** 是否启用空闲回调 */
 export const enableRic = (
   'requestIdleCallback' in window

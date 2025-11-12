@@ -28,6 +28,33 @@ export interface BaselineStats {
   syncPeriodMs: number;
 }
 
+/** 掉帧率计算结果 */
+export interface DroppedRateResult {
+  /**
+   * 掉帧数
+   */
+  droppedFrames: number;
+  /**
+   * 掉帧率
+   *
+   * @description 0..1
+   */
+  droppedRate: number;
+  /**
+   * 最大连续掉帧数
+   *
+   * @description 连续掉帧的最大帧数
+   */
+  maxConsecutiveFrames: number;
+  /**
+   * 最大连续掉帧时间
+   *
+   * @description 最大连续掉帧的累计时间
+   * @description 单位：毫秒
+   */
+  maxConsecutiveTimeMs: number;
+}
+
 /** 动态采样结果 */
 export interface DynamicResult {
   /**
@@ -54,4 +81,17 @@ export interface DynamicResult {
    * @description 0..1
    */
   droppedRate: number;
+  /**
+   * 最大连续掉帧数
+   *
+   * @description 连续掉帧的最大帧数
+   */
+  maxConsecutiveFrames: number;
+  /**
+   * 最大连续掉帧时间
+   *
+   * @description 最大连续掉帧的累计时间
+   * @description 单位：毫秒
+   */
+  maxConsecutiveTimeMs: number;
 }

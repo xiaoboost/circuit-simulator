@@ -9,6 +9,7 @@ import {
 } from './constant';
 import type {
   BaselineStats,
+  DroppedRateResult,
   FrameSample,
 } from './types';
 
@@ -158,12 +159,12 @@ function inferSyncPeriod(samples: number[], minShare: number) {
  *
  * @param samples 帧时间样本
  * @param syncPeriod 同步周期（ms）
- * @returns 掉帧率（0..1）
+ * @returns 掉帧率计算结果
  */
 export function calculateDroppedRate(
   samples: number[],
   syncPeriod: number,
-) {
+): DroppedRateResult | undefined {
   if (samples.length === 0) {
     return;
   }
@@ -172,9 +173,40 @@ export function calculateDroppedRate(
   const threshold = syncPeriod * DROPPED_FRAME_THRESHOLD_MULTIPLIER;
   const droppedFrames = samples.filter((dt) => dt > threshold);
 
+  // 计算最大连续掉帧数和最大连续掉帧时间
+  let maxConsecutiveCount = 0;
+  let maxConsecutiveTime = 0;
+  let currentConsecutiveCount = 0;
+  let currentConsecutiveTime = 0;
+
+  for (const dt of samples) {
+    if (dt > threshold) {
+      // 当前帧是掉帧
+      currentConsecutiveCount++;
+      currentConsecutiveTime += dt;
+    }
+    else {
+      // 当前帧不是掉帧，更新最大值并重置计数
+      if (currentConsecutiveCount > maxConsecutiveCount) {
+        maxConsecutiveCount = currentConsecutiveCount;
+        maxConsecutiveTime = currentConsecutiveTime;
+      }
+      currentConsecutiveCount = 0;
+      currentConsecutiveTime = 0;
+    }
+  }
+
+  // 处理末尾的连续掉帧
+  if (currentConsecutiveCount > maxConsecutiveCount) {
+    maxConsecutiveCount = currentConsecutiveCount;
+    maxConsecutiveTime = currentConsecutiveTime;
+  }
+
   return {
     droppedFrames: droppedFrames.length,
     droppedRate: droppedFrames.length / samples.length,
+    maxConsecutiveFrames: maxConsecutiveCount,
+    maxConsecutiveTimeMs: maxConsecutiveTime,
   };
 }
 

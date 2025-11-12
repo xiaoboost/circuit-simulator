@@ -5,7 +5,7 @@ import {
 import { definePlugin, Watcher } from '../../../context';
 import { IDragSceneService, IViewportService } from '../../../types';
 import { createDynamicEventAdapter } from './adapter';
-import { enableRaf, enableRic } from './constant';
+import { CONSECUTIVE_DROP_NOTICEABLE_MS, enableRaf, enableRic } from './constant';
 import { createDynamicCollector, type DynamicCollector } from './dynamic';
 import { createSteadyCollector } from './steady';
 import type { BaselineStats } from './types';
@@ -132,11 +132,25 @@ definePlugin(({ registerHook, getServices }) => {
 
     // 记录结果
     if (result) {
+      // 判断是否明显卡顿（以时间为主）
+      const isNoticeable = result.maxConsecutiveTimeMs >= CONSECUTIVE_DROP_NOTICEABLE_MS;
+      const stutterMark = isNoticeable ? ' ⚠️ 明显卡顿' : '';
+
       services.logger.info(
         LoggerName,
         `动态采样完成 [${result.name}]`,
         `持续时间: ${result.durationMs.toFixed(0)} ms`,
+        `掉帧: ${result.droppedFrames} 帧`,
+        `(最大连续时间: ${result.maxConsecutiveTimeMs.toFixed(1)} ms,`,
+        `最大连续帧数: ${result.maxConsecutiveFrames} 帧)${stutterMark}`,
         `掉帧率: ${(result.droppedRate * 100).toFixed(1)}%`,
+      );
+    }
+    else {
+      services.logger.debug(
+        LoggerName,
+        `动态采样跳过 [${name}]`,
+        '持续时间过短，无统计意义',
       );
     }
   }
