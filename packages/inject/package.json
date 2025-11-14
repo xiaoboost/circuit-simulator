@@ -38,12 +38,12 @@
     "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.19.0",
-    "@types/react": "19.2.2",
+    "@types/react": "19.2.4",
     "@xiao-ai/tsconfig": "1.0.4",
-    "eslint": "9.34.0",
-    "rimraf": "6.0.1",
+    "eslint": "9.39.1",
+    "rimraf": "6.1.0",
     "tslib": "2.8.1",
-    "typescript": "5.9.2",
-    "vitest": "3.2.4"
+    "typescript": "5.9.3",
+    "vitest": "4.0.9"
   }
 }

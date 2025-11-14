@@ -23,8 +23,7 @@
   "pnpm": {
     "updateConfig": {
       "ignoreDependencies": [
-        "@types/node",
-        "eslint"
+        "@types/node"
       ]
     }
   }
