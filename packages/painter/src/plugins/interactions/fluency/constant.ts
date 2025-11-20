@@ -108,25 +108,32 @@ export const DROPPED_FRAME_THRESHOLD_MULTIPLIER = 1.5;
 export const DYNAMIC_MIN_DURATION_MS = 240;
 
 /**
- * 明显卡顿的时间阈值
+ * 流畅度等级阈值
  *
- * @description 连续掉帧时间超过此值才认为是明显卡顿。
- * @description 单位：毫秒
- * @default 50
- *
- * @remarks
- * 人类对卡顿的感知阈值：
- * - < 16ms: 流畅（60Hz 一帧）
- * - 16-50ms: 轻微延迟，通常可接受
+ * @description 根据人类对卡顿的感知阈值划分：
+ * - < 18ms: 流畅（覆盖 60Hz 正常帧时间及波动）
+ * - 18-50ms: 轻微延迟，通常可接受
  * - 50-100ms: 可感知延迟
  * - > 100ms: 明显卡顿
  *
- * 使用 50ms 作为阈值的原因：
- * - 这是可感知延迟的临界点
- * - 对不同刷新率都适用（60Hz 掉3帧 ≈ 50ms，480Hz 掉24帧 ≈ 50ms）
- * - 与业界标准一致（Chrome DevTools 的 Long Task 阈值也是 50ms）
+ * @remarks
+ * 这些阈值与业界标准一致：
+ * - 18ms 作为流畅阈值的原因：
+ *   - 60Hz 标准帧时间：16.67ms
+ *   - 实际情况下会有 ±1-2ms 的正常波动（浏览器调度、系统负载等）
+ *   - 16.67ms + 1-2ms ≈ 18ms，可以准确覆盖 60Hz 的正常帧
+ *   - 对于更高刷新率（120Hz、144Hz），18ms 仍然是合理的流畅阈值
+ * - 50ms 是 Chrome DevTools Long Task 的阈值，是可感知延迟的临界点
+ * - 100ms 是明显卡顿的阈值，用户会明显感受到不流畅
  */
-export const CONSECUTIVE_DROP_NOTICEABLE_MS = 50;
+export enum FluencyThreshold {
+  /** 流畅阈值：< 18ms（覆盖 60Hz 正常帧时间及波动） */
+  SMOOTH_MS = 18,
+  /** 轻微延迟阈值：18-50ms */
+  SLIGHT_MS = 50,
+  /** 可感知延迟阈值：50-100ms */
+  NOTICEABLE_MS = 100,
+}
 
 /** 是否启用空闲回调 */
 export const enableRic = (

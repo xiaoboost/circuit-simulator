@@ -6,11 +6,14 @@ import {
   KDE_BANDWIDTH_COEFFICIENT,
   KDE_BANDWIDTH_MIN_MS,
   DROPPED_FRAME_THRESHOLD_MULTIPLIER,
+  FluencyThreshold,
 } from './constant';
-import type {
-  BaselineStats,
-  DroppedRateResult,
-  FrameSample,
+import {
+  type BaselineStats,
+  type DroppedRateResult,
+  type FrameSample,
+  FluencyLevel,
+  FluencyLevelStats,
 } from './types';
 
 /**
@@ -208,6 +211,65 @@ export function calculateDroppedRate(
     maxConsecutiveFrames: maxConsecutiveCount,
     maxConsecutiveTimeMs: maxConsecutiveTime,
   };
+}
+
+/**
+ * 根据帧时间判断流畅度等级
+ *
+ * @param dt 帧时间（毫秒）
+ * @returns 流畅度等级
+ */
+export function getFluencyLevel(dt: number): FluencyLevel {
+  if (dt < FluencyThreshold.SMOOTH_MS) {
+    return FluencyLevel.SMOOTH;
+  }
+  if (dt < FluencyThreshold.SLIGHT_MS) {
+    return FluencyLevel.SLIGHT_DELAY;
+  }
+  if (dt < FluencyThreshold.NOTICEABLE_MS) {
+    return FluencyLevel.NOTICEABLE_DELAY;
+  }
+  return FluencyLevel.SEVERE_STUTTER;
+}
+
+/**
+ * 计算流畅度等级统计
+ *
+ * @param samples 帧时间样本
+ * @returns 流畅度等级统计（不包含流畅等级）
+ */
+export function calculateFluencyLevelStats(
+  samples: number[],
+): FluencyLevelStats {
+  const stats: FluencyLevelStats = {
+    slight: { frames: 0, durationMs: 0 },
+    noticeable: { frames: 0, durationMs: 0 },
+    severe: { frames: 0, durationMs: 0 },
+  };
+
+  for (const dt of samples) {
+    const level = getFluencyLevel(dt);
+
+    switch (level) {
+      case FluencyLevel.SLIGHT_DELAY:
+        stats.slight.frames++;
+        stats.slight.durationMs += dt;
+        break;
+      case FluencyLevel.NOTICEABLE_DELAY:
+        stats.noticeable.frames++;
+        stats.noticeable.durationMs += dt;
+        break;
+      case FluencyLevel.SEVERE_STUTTER:
+        stats.severe.frames++;
+        stats.severe.durationMs += dt;
+        break;
+      // SMOOTH 等级不统计
+      default:
+        break;
+    }
+  }
+
+  return stats;
 }
 
 /**

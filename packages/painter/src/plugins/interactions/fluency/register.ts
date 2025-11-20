@@ -5,7 +5,7 @@ import {
 import { definePlugin, Watcher } from '../../../context';
 import { IDragSceneService, IViewportService } from '../../../types';
 import { createDynamicEventAdapter } from './adapter';
-import { CONSECUTIVE_DROP_NOTICEABLE_MS, enableRaf, enableRic } from './constant';
+import { enableRaf, enableRic } from './constant';
 import { createDynamicCollector, type DynamicCollector } from './dynamic';
 import { createSteadyCollector } from './steady';
 import type { BaselineStats } from './types';
@@ -132,18 +132,29 @@ definePlugin(({ registerHook, getServices }) => {
 
     // 记录结果
     if (result) {
-      // 判断是否明显卡顿（以时间为主）
-      const isNoticeable = result.maxConsecutiveTimeMs >= CONSECUTIVE_DROP_NOTICEABLE_MS;
-      const stutterMark = isNoticeable ? ' ⚠️ 明显卡顿' : '';
+      // 判断是否明显卡顿（以严重卡顿等级为主）
+      const hasSevereStutter = result.fluencyLevels.severe.frames > 0;
+      const stutterMark = hasSevereStutter ? ' ⚠️ 明显卡顿' : '';
+      const {
+        fluencyLevels: {
+          slight,
+          noticeable,
+          severe,
+        },
+      } = result;
 
       services.logger.info(
         LoggerName,
-        `动态采样完成 [${result.name}]`,
-        `持续时间: ${result.durationMs.toFixed(0)} ms`,
-        `掉帧: ${result.droppedFrames} 帧`,
-        `(最大连续时间: ${result.maxConsecutiveTimeMs.toFixed(1)} ms,`,
-        `最大连续帧数: ${result.maxConsecutiveFrames} 帧)${stutterMark}`,
-        `掉帧率: ${(result.droppedRate * 100).toFixed(1)}%`,
+        `\n动态采样完成 [${result.name}]\n`
+        + `持续时间: ${result.durationMs.toFixed(0)} ms\n`
+        + `帧数: ${result.actualFrames} （期望帧数：${result.expectedFrames}）\n`
+        + `掉帧总数: ${result.droppedFrames} 帧\n`
+        + `最大连续掉帧时间: ${result.maxConsecutiveTimeMs.toFixed(1)} ms ${stutterMark}\n`
+        + `最大连续掉帧数: ${result.maxConsecutiveFrames} 帧\n`
+        + `轻微延迟 ${slight.frames} 帧（持续时间：${slight.durationMs.toFixed(1)} ms）\n`
+        + `可感知延迟 ${noticeable.frames} 帧（持续时间：${noticeable.durationMs.toFixed(1)} ms）\n`
+        + `明显卡顿 ${severe.frames} 帧（持续时间：${severe.durationMs.toFixed(1)} ms）\n`
+        + `[基准: ${result.syncPeriodMs.toFixed(2)} ms, ${result.fps} FPS]`,
       );
     }
     else {

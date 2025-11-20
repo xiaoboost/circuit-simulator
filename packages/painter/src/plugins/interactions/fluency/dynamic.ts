@@ -1,7 +1,7 @@
 import { Watcher } from '../../../context';
 import { DYNAMIC_MIN_DURATION_MS } from './constant';
 import type { BaselineStats, DynamicResult, FrameSample } from './types';
-import { calculateDroppedRate } from './utils';
+import { calculateDroppedRate, calculateFluencyLevelStats } from './utils';
 
 /** 动态采样控制器接口 */
 export interface DynamicCollector {
@@ -91,14 +91,16 @@ export function createDynamicCollector(
       return null;
     }
 
+    const endTime = performance.now();
+
     // 如果当前处于暂停状态，需要先计算最后一次暂停的时间
     let currentPausedTime = totalPausedTime;
     if (isPaused && pauseStartTime !== null) {
-      currentPausedTime += performance.now() - pauseStartTime;
+      currentPausedTime += endTime - pauseStartTime;
     }
 
     // 持续时间 = 总时间 - 累计暂停时间
-    const durationMs = performance.now() - startTime - currentPausedTime;
+    const durationMs = endTime - startTime - currentPausedTime;
 
     // 如果持续时间太短，不进行动态检查
     if (durationMs < DYNAMIC_MIN_DURATION_MS) {
@@ -106,18 +108,33 @@ export function createDynamicCollector(
     }
 
     const syncPeriodMs = baseline.data.syncPeriodMs || 16.67; // 默认 60Hz
+    const fps = Math.round(1000 / syncPeriodMs);
     const frameTimes = samples.map((s) => s.dt);
-    const droppedResult = calculateDroppedRate(frameTimes, syncPeriodMs);
+    const expectedFrames = Math.floor(durationMs / syncPeriodMs);
+    const actualFrames = samples.length - 1;
 
+    // 计算掉帧统计
+    const droppedResult = calculateDroppedRate(frameTimes, syncPeriodMs);
     if (!droppedResult) {
       return null;
     }
 
+    // 计算流畅度等级统计
+    const fluencyLevels = calculateFluencyLevelStats(frameTimes);
+
     const result: DynamicResult = {
       name,
+      startTimestamp: startTime,
+      endTimestamp: endTime,
       durationMs,
-      totalFrames: samples.length,
-      ...droppedResult,
+      syncPeriodMs,
+      fps,
+      expectedFrames,
+      actualFrames,
+      droppedFrames: droppedResult.droppedFrames,
+      maxConsecutiveFrames: droppedResult.maxConsecutiveFrames,
+      maxConsecutiveTimeMs: droppedResult.maxConsecutiveTimeMs,
+      fluencyLevels,
     };
 
     return result;
