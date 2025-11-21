@@ -163,9 +163,13 @@ export function createSteadyCollector(baseline: Watcher<BaselineStats>): SteadyC
       if (samples.length > 0) {
         waitIdleAndStart();
       }
-      // 没有样本，表示是在等待间隔中，则等待下次间隔
-      else {
+      // 没有样本，且有上次采样结果，则等待下次间隔
+      else if (baseline.data.syncPeriodMs > 0) {
         waitIntervalAndStart();
+      }
+      // 没有样本，且没有上次采样结果，此时是初次采样，则立即开始采样
+      else {
+        waitIdleAndStart();
       }
     },
     pause() {

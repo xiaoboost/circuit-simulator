@@ -40,11 +40,11 @@ definePlugin(({ registerService, getService }) => {
         }
 
         lastLogKey = logKey;
-        console.info(`%c[Debug] ${getFormattedTime()} [${name}]`, getLoggerStyle('CornflowerBlue'), ...realMessages);
+        console.info(`%c[Debug] ${getFormattedTime()} [${name}]`, getLoggerStyle('Silver'), ...realMessages);
       }
     },
     info(name, ...messages) {
-      console.info(`%c[Info] ${getFormattedTime()} [${name}]`, getLoggerStyle('Silver'), ...getMessage(messages));
+      console.info(`%c[Info] ${getFormattedTime()} [${name}]`, getLoggerStyle('CornflowerBlue'), ...getMessage(messages));
     },
     warn(name, ...messages) {
       console.warn(`%c[Warn] ${getFormattedTime()} [${name}]`, getLoggerStyle('LightCoral'), ...getMessage(messages));

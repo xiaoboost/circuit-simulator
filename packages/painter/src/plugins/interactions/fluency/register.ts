@@ -26,7 +26,7 @@ definePlugin(({ registerHook, getServices }) => {
   /** 当前稳态基线 */
   const baseline = new Watcher<BaselineStats>({
     samples: [],
-    syncPeriodMs: 0,
+    syncPeriodMs: -1,
   });
   /** 稳态采样模块 */
   const steady = createSteadyCollector(baseline);
@@ -97,7 +97,7 @@ definePlugin(({ registerHook, getServices }) => {
   /** 动态采样开始回调 */
   function handleDynamicStart(name: string) {
     // 检查基线是否已计算
-    if (baseline.data.syncPeriodMs === 0) {
+    if (baseline.data.syncPeriodMs <= 0) {
       services.logger.debug(
         LoggerName,
         `动态采样跳过 [${name}]`,
@@ -134,7 +134,7 @@ definePlugin(({ registerHook, getServices }) => {
     if (result) {
       // 判断是否明显卡顿（以严重卡顿等级为主）
       const hasSevereStutter = result.fluencyLevels.severe.frames > 0;
-      const stutterMark = hasSevereStutter ? ' ⚠️ 明显卡顿' : '';
+      const stutterMark: string = hasSevereStutter ? '⚠️ 明显卡顿' : '';
       const {
         fluencyLevels: {
           slight,
