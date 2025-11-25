@@ -1,7 +1,7 @@
 import { PluginMetaInfos, RootScope } from './context';
 import type { ServiceTypeWithKey, PluginInstaller } from './types';
 
-/** 创建服务键（品牌化 Token） */
+/** 创建服务键 */
 export function createServiceKey<T>(name: string): ServiceTypeWithKey<T> {
   return Symbol(name) as ServiceTypeWithKey<T>;
 }

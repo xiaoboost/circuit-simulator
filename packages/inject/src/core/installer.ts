@@ -237,12 +237,14 @@ function installPlugin(pluginMetaInfos: typeof PluginMetaInfos, manager: IScopeM
   }
 }
 
+/** 创建作用域 */
 export function createScopeSymbol(name: string, parentScope: symbol) {
   const symbol = Symbol(name);
   ScopeMetaInfos.set(parentScope, [...(ScopeMetaInfos.get(parentScope) ?? []), symbol]);
   return symbol;
 }
 
+/** DI 初始化钩子 */
 export function useInjectInstall() {
   const manager = useContext(InjectContext);
   const [isInitialized, setIsInitialized] = useState(false);
