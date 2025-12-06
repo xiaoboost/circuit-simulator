@@ -40,14 +40,22 @@ export enum FluencyLevel {
   SEVERE_STUTTER = 'severe',
 }
 
+/** 单个流畅度等级的统计 */
+export interface FluencyLevelStat {
+  /** 帧数 */
+  frames: number;
+  /** 持续时间 */
+  durationMs: number;
+}
+
 /** 流畅度等级统计 */
 export interface FluencyLevelStats {
-  /** 轻微延迟：帧数和持续时间 */
-  slight: { frames: number; durationMs: number };
-  /** 可感知延迟：帧数和持续时间 */
-  noticeable: { frames: number; durationMs: number };
-  /** 明显卡顿：帧数和持续时间 */
-  severe: { frames: number; durationMs: number };
+  /** 轻微延迟 */
+  slight: FluencyLevelStat;
+  /** 可感知延迟 */
+  noticeable: FluencyLevelStat;
+  /** 明显卡顿 */
+  severe: FluencyLevelStat;
 }
 
 /** 掉帧率计算结果 */
