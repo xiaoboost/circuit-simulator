@@ -68,11 +68,24 @@ export interface IStateCoreService {
 
   // ========== 数据管理 ==========
   /**
+   * 暂存操作
+   *
+   * @description 将操作添加到暂存区，不会立即提交
+   */
+  stage(data: CommitData): void;
+  /**
+   * 清空暂存
+   *
+   * @description 清空所有暂存的操作
+   */
+  clearStage(): void;
+  /**
    * 提交数据
    *
-   * @description 提交数据，并记录操作日志
+   * @description 提交数据，并记录操作日志。如果有暂存，会将暂存和传入的数据一起提交
+   * @param data 可选，要提交的数据。如果不传且无暂存，则不执行任何操作
    */
-  commit(data: CommitData): void;
+  commit(data?: CommitData): void;
   /** 草稿 */
   draft(cb: CommitCb): void;
   /** 丢弃草稿 */

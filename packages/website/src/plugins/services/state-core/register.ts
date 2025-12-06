@@ -10,7 +10,7 @@ import {
 } from 'immer';
 import { definePlugin, Watcher } from '../../../context';
 import { UNDO_STACK_LIMIT } from './constant';
-import { type PatchWithComment } from './types';
+import { type PatchWithComment, type CommitData } from './types';
 
 // 启动补丁功能
 enablePatches();
@@ -26,6 +26,8 @@ definePlugin(({ registerService }) => {
   let draftState: State | undefined = undefined;
   /** 栈指针 */
   let stackPointer = -1;
+  /** 暂存区 */
+  const staged: CommitData[] = [];
   /** 修改栈 */
   const editStack: PatchWithComment[] = [];
   /** 更新状态 */
@@ -101,14 +103,61 @@ definePlugin(({ registerService }) => {
 
       return result;
     },
-    commit({ name, description, patch }) {
+    stage(data) {
+      staged.push(data);
+    },
+    clearStage() {
+      staged.length = 0;
+    },
+    commit(data) {
+      // 收集所有要提交的操作
+      const itemsToCommit: CommitData[] = [];
+
+      // 先添加暂存的操作
+      if (staged.length > 0) {
+        itemsToCommit.push(...staged);
+        staged.length = 0;
+      }
+
+      // 再添加传入的操作
+      if (data) {
+        itemsToCommit.push(data);
+      }
+
+      // 如果没有要提交的操作，直接返回
+      if (itemsToCommit.length === 0) {
+        return;
+      }
+
       // 指针不是最新，需要抛弃掉指针后面的修改
       editStack.length = stackPointer + 1;
+
+      // 合并所有 patch
+      const combinedPatch = (currentState: State) => {
+        let result = currentState;
+        for (const item of itemsToCommit) {
+          result = produce(result, item.patch);
+        }
+        return result;
+      };
 
       // 生成补丁
       const [
         newState, patches, inversePatches,
-      ] = produceWithPatches(state, patch);
+      ] = produceWithPatches(state, combinedPatch);
+
+      // 生成统一的 name 和 description
+      let name: string;
+      let description: string;
+
+      if (itemsToCommit.length === 1) {
+        name = itemsToCommit[0].name;
+        description = itemsToCommit[0].description;
+      }
+      else {
+        name = itemsToCommit[itemsToCommit.length - 1].name;
+        description = '批量操作\n' + itemsToCommit.map((item) => `  - ${item.description}`).join('\n');
+      }
 
       // 修改操作补丁储存
       editStack.push({
@@ -118,9 +167,9 @@ definePlugin(({ registerService }) => {
         patches,
         inversePatches,
       });
-      // 新状态
+
+      // 更新状态
       state = newState;
-      // 编辑的时候，双指针都指向最新
       stackPointer = editStack.length - 1;
 
       // 如果修改栈超过上限，则删除最早的修改
