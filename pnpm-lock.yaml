@@ -48,6 +48,34 @@ importers:
         specifier: 4.0.9
         version: 4.0.9(@types/node@20.19.0)(jsdom@13.2.0)(less@4.4.0)(terser@5.43.1)(tsx@4.20.6)
 
+  packages/compiler:
+    dependencies:
+      eecircuit-engine:
+        specifier: 1.5.6
+        version: 1.5.6
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      eslint:
+        specifier: 9.39.1
+        version: 9.39.1
+      rimraf:
+        specifier: 6.1.0
+        version: 6.1.0
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/electronics:
     dependencies:
       '@circuit/algorithm':
@@ -351,6 +379,34 @@ importers:
       '@types/node':
         specifier: 20.19.0
         version: 20.19.0
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      eslint:
+        specifier: 9.39.1
+        version: 9.39.1
+      rimraf:
+        specifier: 6.1.0
+        version: 6.1.0
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
+  packages/solver:
+    dependencies:
+      eecircuit-engine:
+        specifier: 1.5.6
+        version: 1.5.6
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
       '@xiao-ai/tsconfig':
         specifier: 1.0.4
         version: 1.0.4
@@ -2437,6 +2493,9 @@ packages:
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
+
+  eecircuit-engine@1.5.6:
+    resolution: {integrity: sha512-nTJe2EjIpiqkRmactKf89zOi6dvLZyvZjDogvVEtgOcmf7jmQEdVTruvm1N5BH0QURNaHjOXicB8UyXDwLgncw==}
 
   electron-to-chromium@1.5.194:
     resolution: {integrity: sha512-SdnWJwSUot04UR51I2oPD8kuP2VI37/CADR1OHsFOUzZIvfWJBO6q11k5P/uKNyTT3cdOsnyjkrZ+DDShqYqJA==}
@@ -5313,7 +5372,7 @@ snapshots:
       '@babel/parser': 7.28.5
       '@babel/template': 7.27.2
       '@babel/types': 7.28.5
-      debug: 4.4.1
+      debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
 
@@ -5428,7 +5487,7 @@ snapshots:
   '@eslint/config-array@0.21.1':
     dependencies:
       '@eslint/object-schema': 2.1.7
-      debug: 4.4.1
+      debug: 4.4.3
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -5444,7 +5503,7 @@ snapshots:
   '@eslint/eslintrc@3.3.1':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.1
+      debug: 4.4.3
       espree: 10.4.0
       globals: 14.0.0
       ignore: 5.3.2
@@ -6012,7 +6071,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/tsconfig-utils': 8.46.4(typescript@5.9.3)
       '@typescript-eslint/types': 8.46.4
-      debug: 4.4.1
+      debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -6031,7 +6090,7 @@ snapshots:
       '@typescript-eslint/types': 8.46.4
       '@typescript-eslint/typescript-estree': 8.46.4(typescript@5.9.3)
       '@typescript-eslint/utils': 8.46.4(eslint@9.39.1)(typescript@5.9.3)
-      debug: 4.4.1
+      debug: 4.4.3
       eslint: 9.39.1
       ts-api-utils: 2.1.0(typescript@5.9.3)
       typescript: 5.9.3
@@ -7018,6 +7077,8 @@ snapshots:
 
   ee-first@1.1.1: {}
 
+  eecircuit-engine@1.5.6: {}
+
   electron-to-chromium@1.5.194: {}
 
   electron-to-chromium@1.5.252: {}
@@ -7257,7 +7318,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.1
+      debug: 4.4.3
       escape-string-regexp: 4.0.0
       eslint-scope: 8.4.0
       eslint-visitor-keys: 4.2.1
@@ -9400,7 +9461,7 @@ snapshots:
 
   spdy-transport@3.0.0:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.3
       detect-node: 2.1.0
       hpack.js: 2.1.6
       obuf: 1.1.2
