@@ -1,11 +1,11 @@
 import type { Point, PathWithPoint } from '@circuit/algorithm';
-import type { PartStructuredData, LineStructuredData } from '@circuit/types';
 import type {
   IConnectionDataWithPin,
   IMapHashAssertService,
   IMapHashMarkService,
   Mark,
-} from '../../../../../types';
+} from '@circuit/contracts/painter';
+import type { PartStructuredData, LineStructuredData } from '@circuit/types';
 import type { SearchHook } from '../a-star';
 import type { Entity } from './constant';
 

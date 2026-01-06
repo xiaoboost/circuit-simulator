@@ -1,19 +1,13 @@
 import { Point } from '@circuit/algorithm';
 import {
-  createPartByKind,
-  createPartReferenceTag as createPartTag,
-} from '@circuit/electronics';
-import {
   ILoggerService,
   IStateCoreService,
   ILifeCycleHook,
   IStreamService,
   GlobalStream as Constant,
-} from '@circuit/shared';
-import { PartStructuredData } from '@circuit/types';
-import { message } from 'antd';
-import { definePlugin } from '../../../../context';
+} from '@circuit/contracts/global';
 import {
+  definePlugin,
   DragSceneHookPayload,
   IDragSceneHook,
   ISelectService,
@@ -24,7 +18,14 @@ import {
   IPainterHTMLElement,
   IPainterConfigurationService,
   IEventListenerHook,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import {
+  createPartByKind,
+  createPartReferenceTag as createPartTag,
+} from '@circuit/electronics';
+import { PartStructuredData } from '@circuit/types';
+import { message } from 'antd';
+
 import { MOVEMENT_HOC_SCOPE as KEY } from '../algorithm/searcher/constant';
 
 const CreatePartSceneName = 'create-part';

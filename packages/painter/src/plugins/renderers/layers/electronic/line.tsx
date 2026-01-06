@@ -1,17 +1,17 @@
-import { IRendererHOC } from '@circuit/shared';
-import { stringifyClass as scl } from '@xiao-ai/utils';
-import React, { useMemo } from 'react';
-import {
-  composeHOC,
-  useWatcher,
-  useHook,
-  useService,
-} from '../../../../context';
+import { IRendererHOC } from '@circuit/contracts/global';
 import {
   ILineRendererHook,
   ISelectService,
   ILineRendererProps,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import { stringifyClass as scl } from '@xiao-ai/utils';
+import React, { useMemo } from 'react';
+import {
+  composeHOC,
+  useHook,
+  useService,
+} from '../../../../context';
 import * as Styles from './styles.less';
 
 export const Line = React.memo(function Line({ data }: ILineRendererProps) {

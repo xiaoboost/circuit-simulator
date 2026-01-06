@@ -1,6 +1,5 @@
+import { IMainAreaRender, definePlugin } from '@circuit/contracts/global';
 import { Painter } from '@circuit/painter';
-import { definePlugin } from '../../../context';
-import { IMainAreaRender } from '../../../types';
 
 definePlugin(({ registerHook }) => {
   registerHook(IMainAreaRender, {

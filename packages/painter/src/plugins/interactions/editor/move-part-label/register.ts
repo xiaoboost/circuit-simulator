@@ -4,14 +4,12 @@ import {
   rotateVector,
   invertRotateMatrix,
 } from '@circuit/algorithm';
-import { createPartReferenceTag as createPartTag } from '@circuit/electronics';
 import {
   IStreamService,
   ILoggerService,
   IStateCoreService,
-} from '@circuit/shared';
-import { definePlugin } from '../../../../context';
-import {
+} from '@circuit/contracts/global';
+import { definePlugin,
   IDragSceneService,
   IDragSceneHook,
   ISelectService,
@@ -20,7 +18,8 @@ import {
   IEventListenerHook,
   IVariableObserverService as VarService,
   PainterStreamConstant as Constant,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { createPartReferenceTag as createPartTag } from '@circuit/electronics';
 import { MOVEMENT_HOC_SCOPE as KEY } from '../algorithm/searcher/constant';
 import { getPartNearestDirection } from './utils';
 

@@ -1,6 +1,6 @@
+import { IPainterToolBarActionHook } from '@circuit/contracts/painter';
 import React from 'react';
 import { useHook } from '../../../../context';
-import { IPainterToolBarActionHook } from '../../../../types';
 import * as Styles from './styles.less';
 
 export function Render() {

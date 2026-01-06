@@ -1,6 +1,6 @@
+import { IViewLayerHook } from '@circuit/contracts/painter';
 import React from 'react';
 import { useHook } from '../../context';
-import { IViewLayerHook } from '../../types';
 import * as Styles from './styles.less';
 
 export const Viewer = React.memo(function Viewer() {

@@ -1,4 +1,4 @@
-import { Watcher } from '../../../context';
+import { Watcher } from '@circuit/reactive';
 import { STEADY_INTERVAL_MS, STEADY_MAX_SAMPLES } from './constant';
 import type { BaselineStats, FrameSample } from './types';
 import { processSteadySamples } from './utils';

@@ -1,5 +1,5 @@
+import { definePlugin } from '@circuit/contracts/painter';
 import { IRendererHOC } from '@circuit/inject';
-import { definePlugin } from '../../../context';
 import { PathDistortionFactory } from './render';
 
 definePlugin(({ registerHook }) => {

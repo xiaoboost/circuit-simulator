@@ -1,4 +1,4 @@
-import { Watcher } from '../../../context';
+import { Watcher } from '@circuit/reactive';
 import { DYNAMIC_MIN_DURATION_MS } from './constant';
 import type { BaselineStats, DynamicResult, FrameSample } from './types';
 import { calculateDroppedRate, calculateFluencyLevelStats } from './utils';

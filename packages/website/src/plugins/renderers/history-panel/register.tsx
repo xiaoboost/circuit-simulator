@@ -1,7 +1,6 @@
+import { ILeftSidebarRender, definePlugin } from '@circuit/contracts/global';
 import { HistoryOutlined } from '@circuit/icons';
 import React from 'react';
-import { definePlugin } from '../../../context';
-import { ILeftSidebarRender } from '../../../types';
 
 definePlugin(({ registerHook }) => {
   registerHook(ILeftSidebarRender, {

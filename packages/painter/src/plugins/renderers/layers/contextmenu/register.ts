@@ -1,7 +1,11 @@
 import { Point } from '@circuit/algorithm';
-import { IOverlayRender, IHotKeyHook } from '@circuit/shared';
-import { definePlugin } from '../../../../context';
-import { IEventListenerHook, IDragSceneService, IContextMenuService } from '../../../../types';
+import { IOverlayRender, IHotKeyHook } from '@circuit/contracts/global';
+import {
+  definePlugin,
+  IEventListenerHook,
+  IDragSceneService,
+  IContextMenuService,
+} from '@circuit/contracts/painter';
 import { FloatingContainer } from './floating';
 import { Render } from './render';
 

@@ -1,8 +1,8 @@
-import { isPart } from '@circuit/electronics';
 import {
   IMapHashService,
   MarkMap,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { isPart } from '@circuit/electronics';
 import * as MapHash from './map';
 import * as MapMark from './mark';
 

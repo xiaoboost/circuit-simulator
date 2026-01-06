@@ -1,9 +1,9 @@
-import { definePlugin } from '../../../context';
 import {
+  definePlugin,
   ISelectService,
   IEventListenerHook,
   IHoverService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
 
 definePlugin(({ registerHook, getService }) => {
   function handleClick(event: MouseEvent) {

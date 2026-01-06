@@ -1,6 +1,5 @@
+import { IStreamService, definePlugin } from '@circuit/contracts/global';
 import { EventStream } from '@circuit/reactive';
-import { IStreamService } from '@circuit/shared';
-import { definePlugin } from '../../../context';
 
 definePlugin(({ registerService }) => {
   const map = new Map<symbol, EventStream<any>>();

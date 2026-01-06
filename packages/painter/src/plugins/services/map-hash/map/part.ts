@@ -3,12 +3,12 @@ import {
   MarginBox,
   RotateMatrix,
 } from '@circuit/algorithm';
+import { MarkMap, MarkKind } from '@circuit/contracts/painter';
 import {
   getPartPins,
   getPartPrototype,
 } from '@circuit/electronics';
 import { PartStructuredData } from '@circuit/types';
-import { MarkMap, MarkKind } from '../../../../types';
 import {
   isPart,
   isPartPin,

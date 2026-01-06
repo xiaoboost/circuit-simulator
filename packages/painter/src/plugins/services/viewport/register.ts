@@ -1,12 +1,13 @@
 import { type Rect, Point } from '@circuit/algorithm';
-import { ILoggerService, IStateCoreService } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+import { ILoggerService, IStateCoreService } from '@circuit/contracts/global';
 import {
+  definePlugin,
   IViewportService,
   IViewport,
   IMapCoordinateService,
   ICollisionService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
 
 const LoggerName = '视图服务';
 

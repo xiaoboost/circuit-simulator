@@ -1,8 +1,8 @@
-import { SearchOutlined } from '@circuit/icons';
 import {
   IStreamService,
   GlobalStream as Constant,
-} from '@circuit/shared';
+} from '@circuit/contracts/global';
+import { SearchOutlined } from '@circuit/icons';
 import { ElectronicKind } from '@circuit/types';
 import { Input, Tooltip } from 'antd';
 import React, { useMemo, useState } from 'react';

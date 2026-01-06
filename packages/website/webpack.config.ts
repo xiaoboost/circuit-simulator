@@ -1,5 +1,5 @@
 import { buildConfig } from '@circuit/build-config';
-import { GlobalMarker } from '@circuit/shared';
+import { GlobalMarker } from '@circuit/contracts/global';
 import { version } from './package.json';
 import { startLoadingId } from './src/styles/constant';
 

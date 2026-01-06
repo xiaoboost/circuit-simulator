@@ -1,20 +1,20 @@
 import {
+  IStorageService,
+  IStateCoreService,
+  ILoggerService,
+  ILifeCycleHook,
+  definePlugin,
+} from '@circuit/contracts/global';
+import {
   transformLineStoreToStructureData as transformLine,
   transformLineStructureToStoreData as transformLineStore,
   transformPartStoreToStructureData as transformPart,
   transformPartStructureToStoreData as transformPartStore,
 } from '@circuit/electronics';
 import Examples from '@circuit/examples';
-import {
-  IStorageService,
-  IStateCoreService,
-  ILoggerService,
-  ILifeCycleHook,
-} from '@circuit/shared';
 import { PartStructuredData, LineStructuredData, StructuredData, StoreData } from '@circuit/types';
 import { isString } from '@xiao-ai/utils';
 import { parse } from 'qs';
-import { definePlugin } from '../../../context';
 
 /** 数据列 */
 const Columns = [

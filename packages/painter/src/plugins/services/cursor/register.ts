@@ -1,12 +1,14 @@
 import { Point } from '@circuit/algorithm';
-import { ILifeCycleHook, IStateCoreService } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+import { IStateCoreService } from '@circuit/contracts/global';
 import {
+  definePlugin,
   ICursorService,
   CursorKind,
   IHoverService,
   EntityKind,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { ILifeCycleHook } from '@circuit/inject';
+import { Watcher } from '@circuit/reactive';
 
 definePlugin(({ registerService, registerHook, getServices }) => {
   let defaultCursor = CursorKind.Default;

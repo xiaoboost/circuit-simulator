@@ -1,10 +1,11 @@
 import type { PathWithPoint } from '@circuit/algorithm';
-import React, { useEffect, useRef } from 'react';
-import { useService, useWatcher } from '../../../../context';
 import {
   IPainterConfigurationService,
   IVariableObserverService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import React, { useEffect, useRef } from 'react';
+import { useService } from '../../../../context';
 import {
   PATH_SEARCH_POINTS_STATE,
   PathSearchPointData,

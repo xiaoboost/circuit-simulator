@@ -1,12 +1,13 @@
-import { PlusOutlined as Add, MinusOutlined as Minus } from '@circuit/icons';
-import { ILoggerService } from '@circuit/shared';
-import { Tooltip } from 'antd';
-import React from 'react';
-import { useService, useWatcher } from '../../../../context';
+import { ILoggerService } from '@circuit/contracts/global';
 import {
   IMapCoordinateService,
   IDragSceneService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { PlusOutlined as Add, MinusOutlined as Minus } from '@circuit/icons';
+import { useWatcher } from '@circuit/reactive';
+import { Tooltip } from 'antd';
+import React from 'react';
+import { useService } from '../../../../context';
 import { Button, Divider } from '../components';
 
 const LoggerName = '快捷操作';

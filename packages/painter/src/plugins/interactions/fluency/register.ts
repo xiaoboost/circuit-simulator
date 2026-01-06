@@ -1,9 +1,9 @@
 import {
   ILifeCycleHook,
   ILoggerService,
-} from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
-import { IDragSceneService, IViewportService } from '../../../types';
+} from '@circuit/contracts/global';
+import { definePlugin, IDragSceneService, IViewportService } from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
 import { createDynamicEventAdapter } from './adapter';
 import { enableRaf, enableRic } from './constant';
 import { createDynamicCollector, type DynamicCollector } from './dynamic';

@@ -1,11 +1,13 @@
-import { IHotKeyHook } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../../context';
+import { IHotKeyHook } from '@circuit/contracts/global';
 import {
+  definePlugin,
   IPainterToolBarActionHook,
   IDragSceneService,
   ICursorService,
   IPainterConfigurationService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+
+import { Watcher } from '@circuit/reactive';
 import { MoveModeRenderWithSpace } from './render';
 
 definePlugin(({ registerHook, getService }) => {
@@ -29,7 +31,7 @@ definePlugin(({ registerHook, getService }) => {
         const configuration = getService(IPainterConfigurationService);
 
         // 空格按下时，强制切换到移动模式
-        if (dragScene.size === 0 && !ev.repeat) {
+        if (!dragScene.isDragging() && !ev.repeat) {
           spaceKeyDown.setData(true);
           configuration.movePainterMode.setData(true);
           cursorService.set(cursorService.kind.Drag);
@@ -56,7 +58,7 @@ definePlugin(({ registerHook, getService }) => {
 
           // 没有场景进行中，则恢复图标
           // 有场景进行时，不需要变更图标，由场景结束时自行控制
-          if (dragScene.size === 0) {
+          if (!dragScene.isDragging()) {
             cursorService.clear();
           }
         }

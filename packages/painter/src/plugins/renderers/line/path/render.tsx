@@ -1,6 +1,6 @@
 import { isEqualPoint } from '@circuit/algorithm';
+import { ILineRendererProps } from '@circuit/contracts/painter';
 import React from 'react';
-import { ILineRendererProps } from '../../../../types';
 
 function LinePathRender({ data: { path }, style }: ILineRendererProps) {
   if (path.length === 0) {

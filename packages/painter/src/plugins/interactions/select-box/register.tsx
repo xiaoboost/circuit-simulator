@@ -2,15 +2,9 @@ import { Point } from '@circuit/algorithm';
 import {
   ILoggerService,
   IStateCoreService,
-} from '@circuit/shared';
-import React, { memo } from 'react';
+} from '@circuit/contracts/global';
 import {
-  Watcher,
   definePlugin,
-  useWatcher,
-  useService,
-} from '../../../context';
-import {
   IDrawLayerHook,
   IMapCoordinateService,
   IDragSceneHook,
@@ -21,7 +15,10 @@ import {
   ICursorService,
   CursorKind,
   IHoverService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { Watcher, useWatcher } from '@circuit/reactive';
+import React, { memo } from 'react';
+import { useService } from '../../../context';
 import {
   SELECT_BOX_WIDTH,
   SELECT_BOX_MIN_MOVE_DISTANCE,

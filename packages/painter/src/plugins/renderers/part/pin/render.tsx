@@ -1,10 +1,10 @@
-import React from 'react';
-import { useService, useHook } from '../../../../context';
 import {
   type IPartRendererProps,
   IPinRendererHook,
   IConnectionService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import React from 'react';
+import { useService, useHook } from '../../../../context';
 import { Pin } from './pin';
 
 function PartPinRender({ data: { id }, prototype: { pins } }: IPartRendererProps) {

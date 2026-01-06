@@ -1,14 +1,15 @@
 import { Point } from '@circuit/algorithm';
-import { ILoggerService } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+import { ILoggerService } from '@circuit/contracts/global';
 import {
+  definePlugin,
   IHoverService,
   IEventListenerHook,
   IMapCoordinateService,
   ICollisionService,
   EntityKind,
   Entity,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
 
 const LoggerName = '悬停服务';
 

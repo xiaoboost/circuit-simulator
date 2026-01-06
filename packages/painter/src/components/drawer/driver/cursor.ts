@@ -1,5 +1,6 @@
-import { useService, useWatcher } from '../../../context';
-import { CursorKind, ICursorService } from '../../../types';
+import { CursorKind, ICursorService } from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import { useService } from '../../../context';
 
 import IconDrawLine from '../assets/draw-line.svg';
 import IconSelectBox from '../assets/select-box.svg';

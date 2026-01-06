@@ -1,11 +1,12 @@
-import { ILifeCycleHook } from '@circuit/inject';
 import {
   IConfigurationService,
   IStorageService,
   IStorageItemConfig,
   getStorage,
-} from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+  definePlugin,
+} from '@circuit/contracts/global';
+import { ILifeCycleHook } from '@circuit/inject';
+import { Watcher } from '@circuit/reactive';
 
 definePlugin(({ registerService, registerHook, getService }) => {
   const service: IConfigurationService = {

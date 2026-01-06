@@ -11,7 +11,7 @@ import {
   MarkKind,
   Mark,
   MarkMap,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
 import * as Connection from '../connection';
 import * as Map from '../map';
 import {

@@ -1,6 +1,3 @@
-import { PropsWithHocParams } from '@circuit/inject';
-import React, { useState, useRef, useEffect } from 'react';
-import { useService } from '../../../../context';
 import {
   IPinRendererProps,
   IDragSceneService,
@@ -8,7 +5,10 @@ import {
   IPainterConfigurationService,
   EntityKind,
   Entity,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { PropsWithHocParams } from '@circuit/inject';
+import React, { useState, useRef, useEffect } from 'react';
+import { useService } from '../../../../context';
 
 function PinRenderer(props: IPinRendererProps) {
   const circle = useRef<SVGCircleElement>(null);

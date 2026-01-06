@@ -1,4 +1,4 @@
-import type { IVariableObserverService } from '../../../../../types';
+import type { IVariableObserverService } from '@circuit/contracts/painter';
 import {
   PATH_DISTORTION_HOC_SCOPE as PathKey,
   PIN_STYLE_HOC_SCOPE as PinKey,

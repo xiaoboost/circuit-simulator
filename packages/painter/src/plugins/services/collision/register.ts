@@ -4,13 +4,13 @@ import {
   Direction,
   DirectionVectorSet,
 } from '@circuit/algorithm';
-import { LineOrPartStructuredData } from '@circuit/types';
-import { definePlugin } from '../../../context';
 import {
+  definePlugin,
   ICollisionService,
   IEntityRegion,
   Entity,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { LineOrPartStructuredData } from '@circuit/types';
 import { pointInRect, rectInRect, collision, rectOffset } from './collision';
 import { getRectByEntity } from './create';
 

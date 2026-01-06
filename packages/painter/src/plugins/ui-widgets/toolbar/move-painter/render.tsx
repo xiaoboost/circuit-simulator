@@ -1,12 +1,14 @@
-import { Cursor, Hand } from '@circuit/icons';
-import { Tooltip } from 'antd';
-import React from 'react';
-import { useService, useWatcher, Watcher } from '../../../../context';
 import {
   IDragSceneService,
   ICursorService,
   IPainterConfigurationService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { Cursor, Hand } from '@circuit/icons';
+import { Watcher, useWatcher } from '@circuit/reactive';
+import { Tooltip } from 'antd';
+import React from 'react';
+
+import { useService } from '../../../../context';
 import { Button } from '../components';
 
 export const MoveModeRenderWithSpace = (spaceKeyDown: Watcher<boolean>) => {
@@ -26,7 +28,7 @@ export const MoveModeRenderWithSpace = (spaceKeyDown: Watcher<boolean>) => {
     };
     const onClickHand = () => {
       // 无任何场景，且空格键没有按下，则打开移动模式
-      if (dragScene.size === 0 && !isSpaceKeyDown) {
+      if (!dragScene.isDragging() && !isSpaceKeyDown) {
         setIsMoveMode(true);
         cursorService.set(cursorService.kind.Drag);
       }

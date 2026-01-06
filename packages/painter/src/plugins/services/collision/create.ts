@@ -6,6 +6,10 @@ import {
   Point,
 } from '@circuit/algorithm';
 import {
+  IEntityRegion,
+  EntityKind,
+} from '@circuit/contracts/painter';
+import {
   getPartPrototype,
   getPartPins,
   isPart,
@@ -17,10 +21,6 @@ import {
   PartStructuredData,
   LineOrPartStructuredData,
 } from '@circuit/types';
-import {
-  IEntityRegion,
-  EntityKind,
-} from '../../../types';
 
 /** 获取器件引脚四边框 */
 function getPinRect(position: Point): Rect {

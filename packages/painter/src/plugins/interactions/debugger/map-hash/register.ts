@@ -1,5 +1,4 @@
-import { definePlugin } from '../../../../context';
-import { IDrawLayerHook } from '../../../../types';
+import { definePlugin, IDrawLayerHook } from '@circuit/contracts/painter';
 import { MapHashDebugger } from './render';
 
 definePlugin(({ registerHook }) => {

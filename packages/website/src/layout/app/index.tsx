@@ -1,11 +1,10 @@
 import {
   ILoggerService,
   GlobalMarker,
-} from '@circuit/shared';
+} from '@circuit/contracts/global';
+import { useInjectInstall, InjectContext } from '@circuit/inject';
 import React, { useEffect } from 'react';
 import {
-  useInjectInstall,
-  InjectContext,
   useService,
   useLifeCycle,
 } from '../../context';

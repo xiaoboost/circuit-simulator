@@ -1,6 +1,5 @@
+import { IRightSidebarRender, definePlugin } from '@circuit/contracts/global';
 import React from 'react';
-import { definePlugin } from '../../../context';
-import { IRightSidebarRender } from '../../../types';
 import { PropertyPanelTitle } from './components';
 import { PropertyPanelContent } from './content';
 

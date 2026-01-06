@@ -1,13 +1,12 @@
+import { IStateCoreService, IPropertyInputProps } from '@circuit/contracts/global';
 import {
   createPartReferenceTag as createPartTag,
   joinPartReferenceTag as joinPartTag,
   parsePartReferenceTag as parsePartTag,
 } from '@circuit/electronics';
-import { IStateCoreService } from '@circuit/shared';
 import { Input } from 'antd';
 import React, { useState, useEffect, useMemo } from 'react';
 import { useService } from '../../../../context';
-import { IPropertyInputProps } from '../../../../types';
 
 export type Value = string;
 

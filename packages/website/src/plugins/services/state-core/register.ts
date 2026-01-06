@@ -1,5 +1,6 @@
+import { IStateCoreService, definePlugin } from '@circuit/contracts/global';
 import { Electronics, isPartId, createPartReferenceTag } from '@circuit/electronics';
-import { IStateCoreService } from '@circuit/shared';
+import { Watcher } from '@circuit/reactive';
 import { LineStructuredData, PartStructuredData, StructuredData as State } from '@circuit/types';
 import { message } from 'antd';
 import {
@@ -8,7 +9,6 @@ import {
   enablePatches,
   applyPatches,
 } from 'immer';
-import { definePlugin, Watcher } from '../../../context';
 import { UNDO_STACK_LIMIT } from './constant';
 import { type PatchWithComment, type CommitData } from './types';
 

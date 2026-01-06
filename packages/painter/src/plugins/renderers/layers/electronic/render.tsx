@@ -1,7 +1,8 @@
+import { IDrawLayerProps, ISelectService } from '@circuit/contracts/painter';
 import { getPartPrototype } from '@circuit/electronics';
+import { useWatcher } from '@circuit/reactive';
 import React from 'react';
-import { useWatcher, useService } from '../../../../context';
-import { IDrawLayerProps, ISelectService } from '../../../../types';
+import { useService } from '../../../../context';
 import { Line } from './line';
 import { Part } from './part';
 

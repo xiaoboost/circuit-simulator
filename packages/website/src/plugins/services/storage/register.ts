@@ -1,6 +1,5 @@
-import { IStorageService } from '@circuit/shared';
+import { IStorageService, definePlugin } from '@circuit/contracts/global';
 import LocalForage from 'localforage';
-import { definePlugin } from '../../../context';
 
 definePlugin(({ registerService }) => {
   const store = LocalForage.createInstance({

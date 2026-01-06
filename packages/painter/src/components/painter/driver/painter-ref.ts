@@ -1,7 +1,7 @@
+import { IPainterHTMLElement } from '@circuit/contracts/painter';
 import { InjectContext } from '@circuit/inject';
 import { RefObject, useContext, useMemo } from 'react';
 import { PainterScope } from '../../../context';
-import { IPainterHTMLElement } from '../../../types';
 
 /** 画布原始 DOM 引用服务 */
 export function usePainterRefService(painterRef: RefObject<HTMLDivElement | null>) {

@@ -1,5 +1,4 @@
-import { definePlugin } from '../../../../context';
-import { IViewLayerHook } from '../../../../types';
+import { definePlugin, IViewLayerHook } from '@circuit/contracts/painter';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {

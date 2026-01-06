@@ -1,9 +1,9 @@
-import { ILayoutService } from '@circuit/shared';
+import { ILayoutService, ILeftSidebarRender } from '@circuit/contracts/global';
+import { useWatcher } from '@circuit/reactive';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip } from 'antd';
 import React, { useMemo } from 'react';
-import { useHook, useService, useWatcher } from '../../context';
-import { ILeftSidebarRender } from '../../types';
+import { useHook, useService } from '../../context';
 import { Sidebar } from '../right-sidebar/sidebar';
 import * as Styles from './styles.less';
 

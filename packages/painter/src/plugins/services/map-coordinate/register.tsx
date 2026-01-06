@@ -1,8 +1,7 @@
 import { Point } from '@circuit/algorithm';
-import { ILifeCycleHook } from '@circuit/shared';
-import React, { RefObject } from 'react';
-import { definePlugin, Watcher } from '../../../context';
+import { ILifeCycleHook } from '@circuit/contracts/global';
 import {
+  definePlugin,
   IMapCoordinateService,
   ICursorService,
   IDragSceneService,
@@ -10,7 +9,9 @@ import {
   IDragSceneHook,
   IViewLayerHook,
   IPainterConfigurationService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
+import React, { RefObject } from 'react';
 
 definePlugin(({ getService, registerHook, registerService, getTestConfig }) => {
   let painterPosition = getTestConfig<Point>('painterPosition') ?? new Point(0, 0);

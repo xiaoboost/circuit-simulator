@@ -1,10 +1,11 @@
-import React from 'react';
-import { useService, useWatcher } from '../../../../context';
 import {
   IPainterConfigurationService,
   ICollisionService,
   IMapCoordinateService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import React from 'react';
+import { useService } from '../../../../context';
 
 const OutlineWidth = 2;
 

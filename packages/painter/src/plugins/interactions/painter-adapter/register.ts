@@ -1,6 +1,5 @@
-import { ILifeCycleHook, LifeCycleStage } from '@circuit/shared';
-import { definePlugin } from '../../../context';
-import { IViewportService } from '../../../types';
+import { ILifeCycleHook, LifeCycleStage } from '@circuit/contracts/global';
+import { definePlugin, IViewportService } from '@circuit/contracts/painter';
 
 definePlugin(({ registerHook, getService }) => {
   // 画布初始化时自动适应屏幕

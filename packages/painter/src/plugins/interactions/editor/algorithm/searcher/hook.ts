@@ -1,4 +1,4 @@
-import type { IVariableObserverService } from '../../../../../types';
+import type { IVariableObserverService } from '@circuit/contracts/painter';
 import {
   PATH_SEARCH_POINTS_STATE as DebugKey,
   PathSearchPointData,

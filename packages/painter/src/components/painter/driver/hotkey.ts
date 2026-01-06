@@ -1,4 +1,4 @@
-import { IHotKeyHook, HotKeyOptions } from '@circuit/shared';
+import { IHotKeyHook, HotKeyOptions } from '@circuit/contracts/global';
 import hotkeys from 'hotkeys-js';
 import { useEffect, RefObject } from 'react';
 import { useHook } from '../../../context';

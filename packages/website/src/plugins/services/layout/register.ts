@@ -1,12 +1,13 @@
-import { ILifeCycleHook } from '@circuit/inject';
 import {
   ILayoutService,
   IStorageService,
   IStorageItemConfig,
+  ILeftSidebarRender,
   getStorage,
-} from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
-import { ILeftSidebarRender } from '../../../types';
+  definePlugin,
+} from '@circuit/contracts/global';
+import { ILifeCycleHook } from '@circuit/inject';
+import { Watcher } from '@circuit/reactive';
 
 definePlugin(({ registerService, registerHook, getService, getHook }) => {
   const service: ILayoutService = {

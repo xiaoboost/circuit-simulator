@@ -1,13 +1,8 @@
-import { IStateCoreService } from '@circuit/shared';
+import { IStateCoreService } from '@circuit/contracts/global';
+import { IDrawLayerHook } from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
 import React, { useRef } from 'react';
-import {
-  useService,
-  useHook,
-  useWatcher,
-} from '../../context';
-import {
-  IDrawLayerHook,
-} from '../../types';
+import { useService, useHook } from '../../context';
 import {
   useMouseListener,
   usePosition,

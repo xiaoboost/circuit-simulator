@@ -1,6 +1,5 @@
+import { IPropertyInput, definePlugin } from '@circuit/contracts/global';
 import { PropertyKind } from '@circuit/types';
-import { definePlugin } from '../../../../context';
-import { IPropertyInput } from '../../../../types';
 import { NumberInputRender as Render, Descriptor, Value } from './render';
 
 definePlugin(({ registerHook }) => {

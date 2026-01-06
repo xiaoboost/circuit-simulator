@@ -1,9 +1,9 @@
+import { IStateCoreService, ILoggerService } from '@circuit/contracts/global';
 import {
   createPartReferenceTag as createPartTag,
   parsePartReferenceTag as parsePartTag,
   getPartPrototype,
 } from '@circuit/electronics';
-import { IStateCoreService, ILoggerService } from '@circuit/shared';
 import { PartStructuredData, PropertyValue } from '@circuit/types';
 import React, { useState, useCallback, useMemo } from 'react';
 import { useService } from '../../../../../context';

@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
+    "@circuit/contracts": "workspace:*",
     "@circuit/electronics": "workspace:*",
     "@circuit/icons": "workspace:*",
     "@circuit/inject": "workspace:*",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
+    "@circuit/inject-test-utils": "workspace:*",
     "@circuit/test-toolkit": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.19.0",

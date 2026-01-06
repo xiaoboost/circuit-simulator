@@ -10,7 +10,7 @@ export function findPartPin(point: Point, parts: PartStructuredData[]) {
     for (const pin of getPartPins(part)) {
       if (pin.position.isEqual(point)) {
         result = {
-          id: part.id,
+          data: part,
           pin: pin.index,
           tag: createPartReferenceTag(part),
         };

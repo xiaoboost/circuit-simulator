@@ -11,7 +11,7 @@ import {
   LineAndPointMark,
   PartAndPinMark,
   LineAndLineMark,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
 
 /** 导线 */
 export function isLine(mark?: Mark): mark is LineMark {

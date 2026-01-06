@@ -1,6 +1,6 @@
+import { IMapCoordinateService } from '@circuit/contracts/painter';
 import { RefObject, useEffect } from 'react';
 import { useService } from '../../../context';
-import { IMapCoordinateService } from '../../../types';
 
 export function usePosition(ref: RefObject<SVGGElement | null>) {
   const mapService = useService(IMapCoordinateService);

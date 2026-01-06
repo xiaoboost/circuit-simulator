@@ -1,11 +1,11 @@
 import type { Point } from '@circuit/algorithm';
-import type { IStateCoreService } from '@circuit/shared';
+import type { IStateCoreService } from '@circuit/contracts/global';
 import type {
   IHoverService,
   IConnectionService,
   IMapHashService,
   Mark,
-} from '../../../../../types';
+} from '@circuit/contracts/painter';
 import type { IPainterAdapter } from './types';
 
 export interface IPainterAdapterOptions {

@@ -1,13 +1,13 @@
+import { ILayoutService, IRightSidebarRender } from '@circuit/contracts/global';
 import {
   DoubleLeftOutlined as DoubleLeft,
   DoubleRightOutlined as DoubleRight,
 } from '@circuit/icons';
-import { ILayoutService } from '@circuit/shared';
+import { useWatcher } from '@circuit/reactive';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Button } from 'antd';
 import React from 'react';
-import { useHook, useService, useWatcher } from '../../context';
-import { IRightSidebarRender } from '../../types';
+import { useHook, useService } from '../../context';
 import { Sidebar } from './sidebar';
 import * as Styles from './styles.less';
 

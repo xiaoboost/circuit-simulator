@@ -1,12 +1,12 @@
+import { IHotKey, HotKeyOptions } from '@circuit/contracts/global';
+import { IPainterHTMLElement } from '@circuit/contracts/painter';
 import {
   IRendererHOC,
   IRendererData,
   PropsWithHocParams,
 } from '@circuit/inject';
-import { IHotKey, HotKeyOptions } from '@circuit/shared';
 import Hotkey from 'hotkeys-js';
 import { FC, useEffect } from 'react';
-import { IPainterHTMLElement } from '../types';
 import { useService } from './index';
 
 /** 组合高阶渲染器 */

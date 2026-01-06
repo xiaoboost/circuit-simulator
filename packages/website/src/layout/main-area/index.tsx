@@ -1,6 +1,6 @@
+import { IMainAreaRender } from '@circuit/contracts/global';
 import React from 'react';
 import { useHook } from '../../context';
-import { IMainAreaRender } from '../../types';
 import * as Styles from './styles.less';
 
 export const MainArea = React.memo(function MainArea() {

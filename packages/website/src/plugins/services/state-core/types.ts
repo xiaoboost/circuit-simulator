@@ -1,6 +1,6 @@
 import { type Patch } from 'immer';
 
-export type { CommitData, CommitCb } from '@circuit/shared';
+export type { CommitData, CommitCb } from '@circuit/contracts/global';
 
 /** 补丁信息 */
 export interface PatchWithComment {

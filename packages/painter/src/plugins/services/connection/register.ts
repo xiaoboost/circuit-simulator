@@ -1,13 +1,13 @@
-import { StructuredData } from '@circuit/types';
-import { isEqual } from '@xiao-ai/utils';
-import { useEffect, useState } from 'react';
-import { definePlugin } from '../../../context';
+import { definePlugin } from '@circuit/contracts/painter';
 import {
   IConnectionService,
   type IConnectionData,
   type IConnectionDataWithPin,
   type ObserverCb,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { StructuredData } from '@circuit/types';
+import { isEqual } from '@xiao-ai/utils';
+import { useEffect, useState } from 'react';
 import { IConnectionMap } from './types';
 import { getConnections } from './utils';
 

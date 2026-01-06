@@ -1,7 +1,7 @@
-import { IRendererHOC } from '@circuit/shared';
+import { IRendererHOC } from '@circuit/contracts/global';
+import { IPinRendererHook, IPinRendererProps } from '@circuit/contracts/painter';
 import React, { useMemo } from 'react';
 import { composeHOC, useHook } from '../../../../context';
-import { IPinRendererHook, IPinRendererProps } from '../../../../types';
 
 export const Pin = React.memo(function Pin(props: IPinRendererProps) {
   const pinRenderers = useHook(IPinRendererHook, 'asc');

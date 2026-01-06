@@ -1,9 +1,10 @@
+import { IStateCoreService } from '@circuit/contracts/global';
+import { IViewportService } from '@circuit/contracts/painter';
 import { FitScreen } from '@circuit/icons';
-import { IStateCoreService } from '@circuit/shared';
+import { useWatcher } from '@circuit/reactive';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../context';
-import { IViewportService } from '../../../../types';
+import { useService } from '../../../../context';
 import { Button } from '../components';
 
 export const FitScreenButton = () => {

@@ -1,6 +1,5 @@
+import { definePlugin, IVariableObserverService, type ObserverCb } from '@circuit/contracts/painter';
 import { useEffect, useState } from 'react';
-import { definePlugin } from '../../../context';
-import { IVariableObserverService, ObserverCb } from '../../../types';
 
 const DEFAULT_KEY = '_$default';
 

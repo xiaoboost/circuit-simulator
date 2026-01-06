@@ -1,9 +1,9 @@
-import { ILifeCycleHook, LifeCycleStage } from '@circuit/shared';
-import { definePlugin } from '../../../context';
+import { ILifeCycleHook, LifeCycleStage } from '@circuit/contracts/global';
 import {
+  definePlugin,
   IPainterHTMLElement,
   IEventListenerHook,
-} from '../../../types';
+} from '@circuit/contracts/painter';
 
 definePlugin(({ registerHook, getService }) => {
   const getPainterFocus = () => {

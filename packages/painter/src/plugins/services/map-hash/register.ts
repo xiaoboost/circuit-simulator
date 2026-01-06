@@ -1,5 +1,4 @@
-import { definePlugin } from '../../../context';
-import { IMapHashService } from '../../../types';
+import { definePlugin, IMapHashService } from '@circuit/contracts/painter';
 import { createMapHashService } from './factory';
 
 definePlugin(({ registerService }) => {

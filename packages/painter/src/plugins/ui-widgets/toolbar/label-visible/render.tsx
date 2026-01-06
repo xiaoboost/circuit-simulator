@@ -1,8 +1,9 @@
+import { IPainterConfigurationService } from '@circuit/contracts/painter';
 import { Text } from '@circuit/icons';
+import { useWatcher } from '@circuit/reactive';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../context';
-import { IPainterConfigurationService } from '../../../../types';
+import { useService } from '../../../../context';
 import { Button } from '../components';
 import { ToolbarMenuOffset } from '../constant';
 

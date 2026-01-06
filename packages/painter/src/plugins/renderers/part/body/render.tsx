@@ -1,5 +1,5 @@
+import { IPartRendererProps } from '@circuit/contracts/painter';
 import React from 'react';
-import { IPartRendererProps } from '../../../../types';
 
 function PartBodyRender({ prototype }: IPartRendererProps) {
   return prototype.shape.map(({ name: Tag, attribute }, index) => (

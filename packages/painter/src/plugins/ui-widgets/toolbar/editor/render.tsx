@@ -1,12 +1,13 @@
-import { UndoOutlined as Undo, RedoOutlined as Redo } from '@circuit/icons';
 import {
   ILoggerService,
   IStateCoreService,
-} from '@circuit/shared';
+} from '@circuit/contracts/global';
+import { ISelectService } from '@circuit/contracts/painter';
+import { UndoOutlined as Undo, RedoOutlined as Redo } from '@circuit/icons';
+import { useWatcher } from '@circuit/reactive';
 import { Tooltip } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../context';
-import { ISelectService } from '../../../../types';
+import { useService } from '../../../../context';
 import { Button } from '../components';
 
 const LoggerName = '快捷操作';

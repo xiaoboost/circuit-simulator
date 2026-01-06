@@ -1,4 +1,4 @@
-import type { Watcher } from '../../../context';
+import type { Watcher } from '@circuit/reactive';
 
 /** 动态采样事件回调 */
 export type DynamicEventCallback = (name: string) => void;

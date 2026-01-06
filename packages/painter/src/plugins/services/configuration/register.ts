@@ -1,10 +1,11 @@
-import { ILifeCycleHook } from '@circuit/inject';
-import { IStorageService, IStorageItemConfig, getStorage } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+import { IStorageService, IStorageItemConfig, getStorage } from '@circuit/contracts/global';
 import {
+  definePlugin,
   PartLabelVisibleKind,
   IPainterConfigurationService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { ILifeCycleHook } from '@circuit/inject';
+import { Watcher } from '@circuit/reactive';
 
 definePlugin(({ registerService, registerHook, getService }) => {
   const service: IPainterConfigurationService = {

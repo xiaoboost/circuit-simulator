@@ -1,5 +1,4 @@
-import { definePlugin } from '../../../../context';
-import { IPinRendererHook } from '../../../../types';
+import { definePlugin, IPinRendererHook } from '@circuit/contracts/painter';
 import { Render } from './render';
 
 definePlugin(({ registerHook }) => {

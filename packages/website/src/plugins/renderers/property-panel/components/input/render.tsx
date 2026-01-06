@@ -1,7 +1,7 @@
+import { IPropertyInput, type IPropertyInputProps } from '@circuit/contracts/global';
 import debounce from 'debounce';
 import React, { useMemo } from 'react';
 import { useHook } from '../../../../../context';
-import { IPropertyInput, type IPropertyInputProps } from '../../../../../types';
 
 export interface FormItemProps {
   title: string;

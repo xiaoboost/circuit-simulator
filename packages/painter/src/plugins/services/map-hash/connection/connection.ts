@@ -1,5 +1,5 @@
 import { Point } from '@circuit/algorithm';
-import { ConnectionData } from '../../../../types';
+import { ConnectionData } from '@circuit/contracts/painter';
 
 function vectorToKey(vector: Point) {
   if (process.env.NODE_ENV === 'development') {

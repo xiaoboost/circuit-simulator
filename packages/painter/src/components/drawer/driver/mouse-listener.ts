@@ -1,6 +1,6 @@
+import { IEventListenerHook } from '@circuit/contracts/painter';
 import { RefObject, useEffect } from 'react';
 import { useHook } from '../../../context';
-import { IEventListenerHook } from '../../../types';
 
 /** 事件监听器 */
 export function useMouseListener(ref: RefObject<HTMLDivElement | null>) {

@@ -1,6 +1,6 @@
+import { IContextMenuService } from '@circuit/contracts/painter';
 import React from 'react';
 import { useService } from '../../../../context';
-import { IContextMenuService } from '../../../../types';
 import * as Styles from './styles.less';
 
 export function FloatingContainer() {

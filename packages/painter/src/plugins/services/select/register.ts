@@ -2,11 +2,11 @@ import {
   ILoggerService,
   IStreamService,
   GlobalStream as Constant,
-  isSameSet,
   IStateCoreService,
-} from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
-import { ISelectService } from '../../../types';
+} from '@circuit/contracts/global';
+import { definePlugin, ISelectService } from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
+import { isSameSet } from '@circuit/shared';
 
 const LoggerName = '选择服务';
 

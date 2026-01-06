@@ -1,5 +1,6 @@
-import { useService, useWatcher } from '../../../context';
-import { IMapCoordinateService } from '../../../types';
+import { IMapCoordinateService } from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import { useService } from '../../../context';
 
 export function useBackgroundStyle() {
   const mapService = useService(IMapCoordinateService);

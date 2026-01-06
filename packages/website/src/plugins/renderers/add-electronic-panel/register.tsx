@@ -1,7 +1,6 @@
+import { ILeftSidebarRender, definePlugin } from '@circuit/contracts/global';
 import { PlusOutlined } from '@circuit/icons';
 import React from 'react';
-import { definePlugin } from '../../../context';
-import { ILeftSidebarRender } from '../../../types';
 import { AddElectronicPanelRender } from './render';
 
 definePlugin(({ registerHook }) => {

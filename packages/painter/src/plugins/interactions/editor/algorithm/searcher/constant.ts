@@ -9,7 +9,7 @@ export {
   type Entity,
   EntityKind,
   MarkKind,
-} from '../../../../../types';
+} from '@circuit/contracts/painter';
 
 /** 引脚放大时的半径 */
 export const PIN_RADIUS_EXPANDED = 7;

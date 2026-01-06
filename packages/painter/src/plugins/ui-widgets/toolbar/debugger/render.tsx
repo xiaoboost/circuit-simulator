@@ -1,10 +1,11 @@
+import { IConfigurationService } from '@circuit/contracts/global';
+import { IPainterConfigurationService } from '@circuit/contracts/painter';
 import { Debugger } from '@circuit/icons';
-import { IConfigurationService } from '@circuit/shared';
+import { useWatcher } from '@circuit/reactive';
 import { stringifyClass as sc } from '@xiao-ai/utils';
 import { Tooltip, Dropdown, MenuProps } from 'antd';
 import React from 'react';
-import { useService, useWatcher } from '../../../../context';
-import { IPainterConfigurationService } from '../../../../types';
+import { useService } from '../../../../context';
 import { Button, Divider } from '../components';
 import { ToolbarMenuOffset } from '../constant';
 import * as Styles from './styles.less';

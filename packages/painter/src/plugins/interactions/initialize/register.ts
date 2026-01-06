@@ -3,13 +3,13 @@ import {
   IStateCoreService,
   ILifeCycleHook,
   LifeCycleStage,
-} from '@circuit/shared';
-import { definePlugin } from '../../../context';
+} from '@circuit/contracts/global';
 import {
+  definePlugin,
   ICollisionService,
   IMapHashService,
   IConnectionService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
 
 const LoggerName = '画布';
 

@@ -1,8 +1,8 @@
 import { allRanks, shortUnitList } from '@circuit/algorithm';
+import { IPropertyInputProps } from '@circuit/contracts/global';
 import { NumberValue, NumberPropertyDescription } from '@circuit/types';
 import { Input, Select } from 'antd';
 import React, { useState, useEffect } from 'react';
-import { IPropertyInputProps } from '../../../../types';
 
 export type Value = NumberValue;
 

@@ -1,11 +1,11 @@
 import { isEqualPoint } from '@circuit/algorithm';
-import React from 'react';
-import { useService, useHook } from '../../../../context';
 import {
   type ILineRendererProps,
   IPinRendererHook,
   IConnectionService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import React from 'react';
+import { useService, useHook } from '../../../../context';
 import { Pin } from './pin';
 
 function LinePinRender({ data: { id, path }, style }: ILineRendererProps) {

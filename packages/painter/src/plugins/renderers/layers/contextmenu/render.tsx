@@ -1,6 +1,3 @@
-import { computePosition, flip } from '@floating-ui/dom';
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
-import { useHook, useWatcher, createSorter, useService } from '../../../../context';
 import {
   IContextMenuItemHook,
   ContextMenuItemCategory,
@@ -8,7 +5,11 @@ import {
   IContextMenuItemVisibleProps,
   IHoverService,
   ISelectService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import { computePosition, flip } from '@floating-ui/dom';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import { useHook, createSorter, useService } from '../../../../context';
 import { Divider } from './driver';
 import * as Styles from './styles.less';
 

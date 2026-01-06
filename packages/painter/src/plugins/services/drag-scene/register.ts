@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
-import { IHotKeyHook, nextFrame } from '@circuit/shared';
-import { definePlugin, Watcher } from '../../../context';
+import { IHotKeyHook } from '@circuit/contracts/global';
 import {
+  definePlugin,
   DragMouseEvent,
   DragMoveEvent,
   DragSceneHookPayload,
@@ -10,7 +10,9 @@ import {
   IEventListenerHook,
   IMapCoordinateService,
   IPainterConfigurationService,
-} from '../../../types';
+} from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
+import { nextFrame } from '@circuit/shared';
 
 definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const scenesWatcher = new Watcher<Set<string>>(new Set());
@@ -19,15 +21,6 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
   const startPositionMap = new Map<string, Point>();
   const service: IDragSceneService = {
     scenes: scenesWatcher,
-    get size() {
-      return scenesWatcher.data.size;
-    },
-    has(name) {
-      return scenesWatcher.data.has(name);
-    },
-    forEach(callback) {
-      scenesWatcher.data.forEach(callback);
-    },
     isDragging() {
       return scenesWatcher.data.size > 0;
     },
@@ -58,7 +51,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       }
     },
     triggerEnd(scene, payload) {
-      if (scene !== '*' && !service.has(scene)) {
+      if (scene !== '*' && !scenesWatcher.data.has(scene)) {
         return;
       }
 
@@ -104,7 +97,7 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
       return (
         event.button === 0
         && event.type === 'mousedown'
-        && this.size === 0
+        && !service.isDragging()
         && !getService(IPainterConfigurationService).movePainterMode.data
       );
     },
@@ -149,9 +142,9 @@ definePlugin(({ registerService, registerHook, getHook, getService }) => {
     // 这个事件的优先级较低
     order: 10,
     onMouseMove(event) {
-      if (service.size !== 0) {
+      if (service.isDragging()) {
         const dragHook = getHook(IDragSceneHook);
-        const hooks = dragHook.filter((hook) => service.has(hook.name));
+        const hooks = dragHook.filter((hook) => scenesWatcher.data.has(hook.name));
 
         if (hooks.length !== 0) {
           const map = getService(IMapCoordinateService);

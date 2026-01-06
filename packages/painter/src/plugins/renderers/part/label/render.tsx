@@ -7,10 +7,7 @@ import {
   isMatrixEqual,
   rotateVector,
 } from '@circuit/algorithm';
-import { IStreamService } from '@circuit/shared';
-import { isEqual } from '@xiao-ai/utils';
-import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-import { useService, useWatcher } from '../../../../context';
+import { IStreamService } from '@circuit/contracts/global';
 import {
   IPartRendererProps,
   IMapCoordinateService,
@@ -18,7 +15,11 @@ import {
   IPainterConfigurationService,
   PartLabelVisibleKind as Kind,
   PainterStreamConstant as Constant,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { useWatcher } from '@circuit/reactive';
+import { isEqual } from '@xiao-ai/utils';
+import React, { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { useService } from '../../../../context';
 import { textHeight, textSpaceHeight } from './constant';
 import * as Styles from './styles.less';
 import { getTextLineCount, propertyToString } from './utils';

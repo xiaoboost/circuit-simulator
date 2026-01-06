@@ -1,11 +1,12 @@
+import { IContextMenuService } from '@circuit/contracts/painter';
 import { RightOutlined } from '@circuit/icons';
+import { useWatcher } from '@circuit/reactive';
 import { computePosition, flip } from '@floating-ui/dom';
 import { stringifyClass as scl } from '@xiao-ai/utils';
 import { AnimatePresence, motion } from 'motion/react';
 import React, { useRef, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { useService, useWatcher } from '../../../../../context';
-import { IContextMenuService } from '../../../../../types';
+import { useService } from '../../../../../context';
 import { Button } from '../button';
 import * as styles from './styles.module.less';
 

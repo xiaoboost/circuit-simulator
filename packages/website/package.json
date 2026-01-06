@@ -22,6 +22,7 @@
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "1.0.3",
     "@circuit/algorithm": "workspace:*",
+    "@circuit/contracts": "workspace:*",
     "@circuit/electronics": "workspace:*",
     "@circuit/examples": "workspace:*",
     "@circuit/icons": "workspace:*",

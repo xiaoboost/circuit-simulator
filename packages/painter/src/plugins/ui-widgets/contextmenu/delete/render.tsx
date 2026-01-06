@@ -1,7 +1,4 @@
-import { DeleteOutlined } from '@circuit/icons';
-import { IStateCoreService, ILoggerService } from '@circuit/shared';
-import React, { useCallback } from 'react';
-import { useService } from '../../../../context';
+import { IStateCoreService, ILoggerService } from '@circuit/contracts/global';
 import {
   IHoverService,
   ICollisionService,
@@ -11,7 +8,10 @@ import {
   ICursorService,
   IContextMenuService,
   IContextMenuItemProps,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { DeleteOutlined } from '@circuit/icons';
+import React, { useCallback } from 'react';
+import { useService } from '../../../../context';
 import { Button } from '../components';
 import { planDeleteAndMergeWithService } from './action';
 

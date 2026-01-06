@@ -1,5 +1,4 @@
-import { definePlugin } from '../../../../context';
-import { IPropertyInput } from '../../../../types';
+import { IPropertyInput, definePlugin } from '@circuit/contracts/global';
 import { IdInputRender as Render, Value, Descriptor } from './render';
 
 definePlugin(({ registerHook }) => {

@@ -1,4 +1,4 @@
-import { IOverlayRender } from '@circuit/shared';
+import { IOverlayRender } from '@circuit/contracts/global';
 import React from 'react';
 import { useHook } from '../../context';
 import * as Styles from './styles.less';

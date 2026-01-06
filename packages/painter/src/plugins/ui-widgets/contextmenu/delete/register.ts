@@ -1,5 +1,4 @@
-import { IHotKeyHook, ILoggerService, IStateCoreService } from '@circuit/shared';
-import { definePlugin } from '../../../../context';
+import { IHotKeyHook, ILoggerService, IStateCoreService } from '@circuit/contracts/global';
 import {
   IHoverService,
   ICollisionService,
@@ -9,7 +8,9 @@ import {
   ICursorService,
   IContextMenuService,
   IContextMenuItemHook,
-  ContextMenuItemCategory as Category } from '../../../../types';
+  ContextMenuItemCategory as Category,
+  definePlugin,
+} from '@circuit/contracts/painter';
 import { planDeleteAndMergeWithService } from './action';
 import { DeleteRender as Render } from './render';
 import { visible } from './visible';

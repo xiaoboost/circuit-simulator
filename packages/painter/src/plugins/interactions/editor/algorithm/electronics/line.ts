@@ -7,8 +7,9 @@ import {
 import { copyLine } from '@circuit/electronics';
 import type {
   LineStructuredData,
-  ElectronicWithPin,
+  LineWithPin,
   LineWithIndex,
+  StructuredData,
 } from '@circuit/types';
 
 /**
@@ -138,14 +139,15 @@ export function move(path: PathWithPoint, bias: PointLike) {
   return path.map((item) => item.add(bias));
 }
 
+/** 查询节点所在导线及引脚 */
 export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
-  const pins: ElectronicWithPin[] = [];
+  const pins: LineWithPin[] = [];
   let index: LineWithIndex | undefined;
 
   for (const line of lines) {
     if (line.path[0].isEqual(point)) {
       pins.push({
-        id: line.id,
+        data: line,
         pin: 0,
       });
       continue;
@@ -153,7 +155,7 @@ export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
 
     if (line.path[line.path.length - 1].isEqual(point)) {
       pins.push({
-        id: line.id,
+        data: line,
         pin: 1,
       });
       continue;
@@ -164,7 +166,7 @@ export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
 
       if (point.isInLine(segment)) {
         index = {
-          id: line.id,
+          data: line,
           index: i,
         };
 
@@ -174,4 +176,63 @@ export function findLinePinAndIndex(point: Point, lines: LineStructuredData[]) {
   }
 
   return pins.length > 0 ? pins : undefined;
+}
+
+/**
+ * 查找距离坐标最近的导线
+ *   - 只会查找作为坐标端点的导线
+ */
+export function findNearestLineByPoint(
+  point: Point,
+  lines: LineStructuredData[],
+) {
+  const roundedPoint = point.round(20);
+  const crossLines = lines.filter((line) =>
+    line.path[0].isEqual(roundedPoint)
+    || line.path[line.path.length - 1].isEqual(roundedPoint),
+  );
+
+  if (crossLines.length === 0) {
+    return;
+  }
+
+  // 计算原始坐标到每个导线的最小距离
+  let nearestLine: LineStructuredData | undefined;
+  let minDistance = Infinity;
+
+  for (const line of crossLines) {
+    // 计算点到导线所有线段的最小距离
+    let lineMinDistance = Infinity;
+
+    for (let i = 0; i < line.path.length - 1; i++) {
+      const segment: SegmentWithPoint = [line.path[i], line.path[i + 1]];
+      const distance = point.distanceToSegment(segment);
+      lineMinDistance = Math.min(lineMinDistance, distance);
+    }
+
+    // 更新最近距离和对应的导线
+    if (lineMinDistance < minDistance) {
+      minDistance = lineMinDistance;
+      nearestLine = line;
+    }
+  }
+
+  if (!nearestLine) {
+    return;
+  }
+
+  const getPin = (line: LineStructuredData) => roundedPoint.isEqual(line.path[0]) ? 0 : 1;
+
+  return {
+    nearest: {
+      data: nearestLine,
+      pin: getPin(nearestLine),
+    } as LineWithPin,
+    rest: crossLines
+      .filter((line) => line.id !== nearestLine.id)
+      .map((line): LineWithPin => ({
+        data: line,
+        pin: getPin(line),
+      })),
+  };
 }

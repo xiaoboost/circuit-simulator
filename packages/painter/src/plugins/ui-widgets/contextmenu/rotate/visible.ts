@@ -1,5 +1,5 @@
+import type { IContextMenuItemVisibleProps } from '@circuit/contracts/painter';
 import { isPartId } from '@circuit/electronics';
-import type { IContextMenuItemVisibleProps } from '../../../../types';
 
 export function visible({ select }: IContextMenuItemVisibleProps) {
   const selectedIds = Array.from(select.value.data.keys());

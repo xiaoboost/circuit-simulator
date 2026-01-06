@@ -1,7 +1,7 @@
+import { IVariableObserverService } from '@circuit/contracts/painter';
 import { renderHook } from '@circuit/test-toolkit';
 import { describe, it, expect, beforeEach, vi, beforeAll } from 'vitest';
-import { IVariableObserverService } from '../../src/types';
-import { registerPlugin, getPlugin } from '../utils';
+import { registerPlugin, getService } from '../utils';
 
 describe('变量观察服务', () => {
   registerPlugin('services/variable-observer/register.ts');
@@ -11,7 +11,7 @@ describe('变量观察服务', () => {
   const testSymbol2 = Symbol('test2');
 
   beforeAll(async () => {
-    variableObserver = await getPlugin(IVariableObserverService);
+    variableObserver = await getService(IVariableObserverService);
   });
 
   beforeEach(() => {

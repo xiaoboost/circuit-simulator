@@ -1,7 +1,7 @@
 import { Point } from '@circuit/algorithm';
+import { definePlugin, IContextMenuService } from '@circuit/contracts/painter';
+import { Watcher } from '@circuit/reactive';
 import { createRef } from 'react';
-import { definePlugin, Watcher } from '../../../context';
-import { IContextMenuService } from '../../../types';
 
 definePlugin(({ registerService }) => {
   const service: IContextMenuService = {

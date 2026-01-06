@@ -6,6 +6,14 @@ import {
   DirectionVectorSet,
   rotateVector,
 } from '@circuit/algorithm';
+import { IStateCoreService, ILoggerService } from '@circuit/contracts/global';
+import {
+  ICollisionService,
+  IMapHashService,
+  ISelectService,
+  IContextMenuService,
+  IContextMenuItemProps,
+} from '@circuit/contracts/painter';
 import { createPartReferenceTag } from '@circuit/electronics';
 import {
   RotateRightOutlined,
@@ -13,16 +21,8 @@ import {
   FlipHorizontally,
   FlipVertically,
 } from '@circuit/icons';
-import { IStateCoreService, ILoggerService } from '@circuit/shared';
 import React, { useCallback } from 'react';
 import { useService } from '../../../../context';
-import {
-  ICollisionService,
-  IMapHashService,
-  ISelectService,
-  IContextMenuService,
-  IContextMenuItemProps,
-} from '../../../../types';
 import { Dropdown } from '../components';
 
 const LoggerName = '旋转器件';

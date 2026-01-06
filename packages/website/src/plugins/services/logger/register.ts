@@ -2,8 +2,8 @@ import {
   ILoggerService,
   IConfigurationService,
   Message,
-} from '@circuit/shared';
-import { definePlugin } from '../../../context';
+  definePlugin,
+} from '@circuit/contracts/global';
 
 const getLoggerStyle = (color: string) => {
   return `color: white; font-style: normal; background-color: ${color}; border-radius: 4px; padding: 2px`;

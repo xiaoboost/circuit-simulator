@@ -1,6 +1,4 @@
-import { createLineByPath } from '@circuit/electronics';
-import type { IStateCoreService, ILoggerService } from '@circuit/shared';
-import type { StructuredData, LineStructuredData } from '@circuit/types';
+import type { IStateCoreService, ILoggerService } from '@circuit/contracts/global';
 import type {
   IConnectionData,
   IConnectionService,
@@ -10,7 +8,9 @@ import type {
   ICursorService,
   IHoverService,
   IContextMenuService,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
+import { createLineByPath } from '@circuit/electronics';
+import type { StructuredData, LineStructuredData } from '@circuit/types';
 import { removeRepeat } from '../../../interactions/editor/algorithm/electronics/line';
 import { getConnections } from '../../../services/connection/utils';
 import { LoggerName } from './constant';

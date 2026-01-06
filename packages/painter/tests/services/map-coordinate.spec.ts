@@ -1,6 +1,6 @@
 import { Point } from '@circuit/algorithm';
+import { IMapCoordinateService } from '@circuit/contracts/painter';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { IMapCoordinateService } from '../../src/types';
 import { registerPlugin, getPlugin } from '../utils';
 
 describe('图纸坐标服务', () => {

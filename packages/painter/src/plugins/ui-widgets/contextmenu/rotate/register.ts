@@ -1,8 +1,8 @@
-import { definePlugin } from '../../../../context';
 import {
+  definePlugin,
   IContextMenuItemHook,
   ContextMenuItemCategory as Category,
-} from '../../../../types';
+} from '@circuit/contracts/painter';
 import { RotateRender as Render } from './render';
 import { visible } from './visible';
 
