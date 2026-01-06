@@ -1,9 +1,9 @@
 import { Point } from '@circuit/algorithm';
+import { IConnectionService } from '@circuit/contracts/painter';
 import { createPartByKind, createLineByPath } from '@circuit/electronics';
 import { ElectronicKind } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { IConnectionService } from '../../src/types';
-import { registerPlugin, getPlugin } from '../utils';
+import { registerPlugin, getService } from '../utils';
 
 describe('连接服务', () => {
   registerPlugin('services/connection/register.ts');
@@ -16,7 +16,7 @@ describe('连接服务', () => {
   ]);
 
   beforeAll(async () => {
-    connection = await getPlugin(IConnectionService);
+    connection = await getService(IConnectionService);
   });
 
   beforeEach(() => {

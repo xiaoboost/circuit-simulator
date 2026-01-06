@@ -1,4 +1,10 @@
 import { Point, Direction, DirectionVectorSet, RotateMatrixSet, preMatrixMultiply, Rotate } from '@circuit/algorithm';
+import {
+  IMapHashService,
+  IConnectionService,
+  Entity,
+  EntityKind,
+} from '@circuit/contracts/painter';
 import { createPartByKind, createPartsByKind, createLineByPath } from '@circuit/electronics';
 import {
   ElectronicKind,
@@ -11,13 +17,7 @@ import {
   beforeAll,
   beforeEach,
 } from 'vitest';
-import {
-  IMapHashService,
-  IConnectionService,
-  Entity,
-  EntityKind,
-} from '../../../src/types';
-import { registerPlugin, getPlugin } from '../../utils';
+import { registerPlugin, getService } from '../../utils';
 import {
   createDrawLineSearcher,
   IPainterAdapter,
@@ -35,8 +35,8 @@ describe('创建导线搜索路径', () => {
   let connection: IConnectionService;
 
   beforeAll(async () => {
-    map = await getPlugin(IMapHashService);
-    connection = await getPlugin(IConnectionService);
+    map = await getService(IMapHashService);
+    connection = await getService(IConnectionService);
   });
 
   beforeEach(() => {

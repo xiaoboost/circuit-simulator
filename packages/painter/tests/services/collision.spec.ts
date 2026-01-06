@@ -3,7 +3,7 @@ import { ICollisionService } from '@circuit/contracts/painter';
 import { createLineByPath, createPartByKind } from '@circuit/electronics';
 import { PartStructuredData, LineStructuredData, ElectronicKind } from '@circuit/types';
 import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
-import { registerPlugin, getServiceAfterMounted } from '../utils';
+import { registerPlugin, getService } from '../utils';
 
 describe('碰撞服务', () => {
   registerPlugin('services/collision/register.ts');
@@ -13,7 +13,7 @@ describe('碰撞服务', () => {
   let line: LineStructuredData;
 
   beforeAll(async () => {
-    collision = await getServiceAfterMounted(ICollisionService);
+    collision = await getService(ICollisionService);
   });
 
   beforeEach(() => {

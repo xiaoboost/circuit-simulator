@@ -1,7 +1,4 @@
 import { Point } from '@circuit/algorithm';
-import { createPartByKind, createLineByPath } from '@circuit/electronics';
-import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
-import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
 import {
   MarkKind,
   IMapHashService,
@@ -13,8 +10,11 @@ import {
   PartPinMark,
   PartMark,
   LineAndLineMark,
-} from '../../src/types';
-import { registerPlugin, getPlugin } from '../utils';
+} from '@circuit/contracts/painter';
+import { createPartByKind, createLineByPath } from '@circuit/electronics';
+import { ElectronicKind, PartStructuredData, LineStructuredData } from '@circuit/types';
+import { describe, it, expect, beforeEach, beforeAll } from 'vitest';
+import { registerPlugin, getService } from '../utils';
 
 describe('图纸标记服务', () => {
   registerPlugin('services/map-hash/register.ts');
@@ -22,7 +22,7 @@ describe('图纸标记服务', () => {
   let mapHash: IMapHashService;
 
   beforeAll(async () => {
-    mapHash = await getPlugin(IMapHashService);
+    mapHash = await getService(IMapHashService);
   });
 
   beforeEach(() => {
