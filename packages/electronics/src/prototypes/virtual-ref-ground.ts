@@ -1,0 +1,27 @@
+import { Direction } from '@circuit/algorithm';
+import { type ElectronicPrototype, ElectronicKind, ElectronicCategory } from '@circuit/types';
+
+export const data: ElectronicPrototype = {
+  pre: 'GND',
+  kind: ElectronicKind.ReferenceGround,
+  category: ElectronicCategory.Virtual,
+  margin: [
+    10, 8, 8, 8,
+  ],
+  properties: [],
+  pins: [
+    {
+      position: [0, -20],
+      direction: Direction.Top,
+    },
+  ],
+  shape: [
+    {
+      name: 'path',
+      attribute: {
+        d: 'M0,-20V0M-12,0H12M-7,5H7M-2,10H2',
+        stroke: 'currentColor',
+      },
+    },
+  ],
+};

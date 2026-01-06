@@ -1,0 +1,23 @@
+{
+  "name": "@circuit/inject-test-utils",
+  "version": "1.0.0",
+  "description": "DI 系统测试工具",
+  "author": "xiaoboost",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.json"
+  },
+  "dependencies": {
+    "@circuit/inject": "workspace:*",
+    "@circuit/test-toolkit": "workspace:*",
+    "vitest": "4.0.9"
+  },
+  "devDependencies": {
+    "@xiao-ai/tsconfig": "1.0.4",
+    "typescript": "5.8.3"
+  }
+}
+

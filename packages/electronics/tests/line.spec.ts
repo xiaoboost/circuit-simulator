@@ -1,16 +1,16 @@
 import { Point } from '@circuit/algorithm';
-import { type LineStoreData, type LineStructuredData } from '@circuit/types';
+import type { LineStoreData, LineStructuredData } from '@circuit/types';
 import { describe, it, expect } from 'vitest';
 
 import {
   isLineId,
   copyLine,
-  transformLineStoreToStructureData,
-  transformLineStructureToStoreData,
   createLineByPath,
   createLine,
   getIndexVector,
-} from '../src/line';
+  transformLineStoreToStructureData,
+  transformLineStructureToStoreData,
+} from '../src/operations';
 
 describe('导线相关函数', () => {
   describe('isLineId()', () => {

@@ -76,11 +76,60 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/contracts:
+    dependencies:
+      '@circuit/algorithm':
+        specifier: workspace:*
+        version: link:../algorithm
+      '@circuit/inject':
+        specifier: workspace:*
+        version: link:../inject
+      '@circuit/reactive':
+        specifier: workspace:*
+        version: link:../reactive
+      '@circuit/types':
+        specifier: workspace:*
+        version: link:../types
+      '@xiao-ai/utils':
+        specifier: 1.6.7
+        version: 1.6.7
+    devDependencies:
+      '@circuit/eslint-config':
+        specifier: workspace:*
+        version: link:../../tools/eslint-config
+      '@types/circuit':
+        specifier: workspace:*
+        version: link:../../tools/typings
+      '@types/node':
+        specifier: 20.19.0
+        version: 20.19.0
+      '@types/react':
+        specifier: 19.2.4
+        version: 19.2.4
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      eslint:
+        specifier: 9.39.1
+        version: 9.39.1
+      rimraf:
+        specifier: 6.1.0
+        version: 6.1.0
+      tslib:
+        specifier: 2.8.1
+        version: 2.8.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+
   packages/electronics:
     dependencies:
       '@circuit/algorithm':
         specifier: workspace:*
         version: link:../algorithm
+      '@circuit/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@circuit/types':
         specifier: workspace:*
         version: link:../types
@@ -94,6 +143,9 @@ importers:
       '@circuit/eslint-config':
         specifier: workspace:*
         version: link:../../tools/eslint-config
+      '@circuit/inject-test-utils':
+        specifier: workspace:*
+        version: link:../../tools/inject-test-utils
       '@circuit/test-toolkit':
         specifier: workspace:*
         version: link:../../tools/test-toolkit
@@ -238,6 +290,9 @@ importers:
       '@circuit/algorithm':
         specifier: workspace:*
         version: link:../algorithm
+      '@circuit/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
@@ -281,6 +336,9 @@ importers:
       '@circuit/eslint-config':
         specifier: workspace:*
         version: link:../../tools/eslint-config
+      '@circuit/inject-test-utils':
+        specifier: workspace:*
+        version: link:../../tools/inject-test-utils
       '@circuit/test-toolkit':
         specifier: workspace:*
         version: link:../../tools/test-toolkit
@@ -462,6 +520,9 @@ importers:
       '@circuit/algorithm':
         specifier: workspace:*
         version: link:../algorithm
+      '@circuit/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       '@circuit/electronics':
         specifier: workspace:*
         version: link:../electronics
@@ -668,6 +729,25 @@ importers:
       typescript-eslint:
         specifier: 8.46.4
         version: 8.46.4(eslint@9.39.1)(typescript@5.9.3)
+
+  tools/inject-test-utils:
+    dependencies:
+      '@circuit/inject':
+        specifier: workspace:*
+        version: link:../../packages/inject
+      '@circuit/test-toolkit':
+        specifier: workspace:*
+        version: link:../test-toolkit
+      vitest:
+        specifier: 4.0.9
+        version: 4.0.9(@types/node@20.19.0)(jsdom@13.2.0)(less@4.4.0)(terser@5.43.1)(tsx@4.20.6)
+    devDependencies:
+      '@xiao-ai/tsconfig':
+        specifier: 1.0.4
+        version: 1.0.4
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
 
   tools/test-toolkit:
     dependencies:
@@ -2736,14 +2816,6 @@ packages:
   faye-websocket@0.11.4:
     resolution: {integrity: sha512-CzbClwlXAuiRQAlUyfqPgvPoNKTckTPGfwZV4ZdAhVcP2lh9KUxJg2b5GkE7XbjKQ3YJnQ9z6D9ntLAlB+tP8g==}
     engines: {node: '>=0.8.0'}
-
-  fdir@6.4.6:
-    resolution: {integrity: sha512-hiFoqpyZcfNm1yc4u8oWCf9A2c4D3QjCrks3zmoVKVxpQRzmPNar1hUJcBG2RQHvEVGDN+Jm81ZheVLAQMK6+w==}
-    peerDependencies:
-      picomatch: ^3 || ^4
-    peerDependenciesMeta:
-      picomatch:
-        optional: true
 
   fdir@6.5.0:
     resolution: {integrity: sha512-tIbYtZbucOs0BRGqPJkshJUYdL+SDH7dVM8gjy+ERp3WAUjLEFJE+02kanyHtwjWOnwrKYBiwAmM0p4kLJAnXg==}
@@ -7443,10 +7515,6 @@ snapshots:
     dependencies:
       websocket-driver: 0.7.4
 
-  fdir@6.4.6(picomatch@4.0.3):
-    optionalDependencies:
-      picomatch: 4.0.3
-
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
@@ -9837,7 +9905,7 @@ snapshots:
   vite@7.0.6(@types/node@20.19.0)(less@4.4.0)(terser@5.43.1)(tsx@4.20.6):
     dependencies:
       esbuild: 0.25.8
-      fdir: 6.4.6(picomatch@4.0.3)
+      fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
       postcss: 8.5.6
       rollup: 4.46.2

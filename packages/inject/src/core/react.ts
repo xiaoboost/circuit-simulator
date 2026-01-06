@@ -18,6 +18,58 @@ export function useHookWithScope<T>(
   return getHookWithScope(key, scope, useContext(InjectContext), sort);
 }
 
+export function useLifeCycleWithScope(scope: symbol) {
+  const hooks = useHookWithScope(ILifeCycleHook, scope);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const getOrder = (order?: number) => {
+    if (!order) {
+      return LifeCycleStage.INITIAL;
+    }
+
+    return order > LifeCycleStage.FINAL ? LifeCycleStage.FINAL : order;
+  };
+  const executeHooks = async (
+    map: Map<number, ILifeCycleHook[]>,
+    asc = true,
+    isMounted = true,
+  ) => {
+    const orders = Array.from(map.keys()).sort((a, b) => asc ? a - b : b - a);
+    for (const order of orders) {
+      const group = map.get(order)!;
+      const promises = group
+        .map((hook) => (isMounted ? hook.onMounted?.() : hook.onUnmounted?.()))
+        .filter((result): result is Promise<void> => result instanceof Promise);
+
+      await Promise.all(promises);
+    }
+  };
+
+  useEffect(() => {
+    // 按 order 排序，超出 LifeCycleStage 范围的映射到 FINAL 阶段
+    const sortedHooks = hooks.slice().sort((a, b) => {
+      return getOrder(a.order) - getOrder(b.order);
+    });
+
+    // 按 order 分组，组内并发，组间顺序执行
+    const groups = new Map<number, ILifeCycleHook[]>();
+    for (const hook of sortedHooks) {
+      const order = getOrder(hook.order);
+      groups.set(order, [...(groups.get(order) ?? []), hook]);
+    }
+
+    // 按 order 顺序执行挂载钩子，组内并发
+    executeHooks(groups, true, true)
+      .then(() => setIsInitialized(true));
+
+    // 卸载时按 order 逆序执行卸载钩子
+    return () => {
+      executeHooks(groups, false, false);
+    };
+  }, [hooks]);
+
+  return [isInitialized] as const;
+}
+
 /** 创建快捷钩子 */
 export function createReactHookWithScope(scope: symbol) {
   const hook = {
@@ -33,55 +85,7 @@ export function createReactHookWithScope(scope: symbol) {
       ]);
     },
     useLifeCycle() {
-      const hooks = hook.useHook(ILifeCycleHook);
-      const [isInitialized, setIsInitialized] = useState(false);
-      const getOrder = (order?: number) => {
-        if (!order) {
-          return LifeCycleStage.INITIAL;
-        }
-
-        return order > LifeCycleStage.FINAL ? LifeCycleStage.FINAL : order;
-      };
-      const executeHooks = async (
-        map: Map<number, ILifeCycleHook[]>,
-        asc = true,
-        isMounted = true,
-      ) => {
-        const orders = Array.from(map.keys()).sort((a, b) => asc ? a - b : b - a);
-        for (const order of orders) {
-          const group = map.get(order)!;
-          const promises = group
-            .map((hook) => (isMounted ? hook.onMounted?.() : hook.onUnmounted?.()))
-            .filter((result): result is Promise<void> => result instanceof Promise);
-
-          await Promise.all(promises);
-        }
-      };
-
-      useEffect(() => {
-        // 按 order 排序，超出 LifeCycleStage 范围的映射到 FINAL 阶段
-        const sortedHooks = hooks.slice().sort((a, b) => {
-          return getOrder(a.order) - getOrder(b.order);
-        });
-
-        // 按 order 分组，组内并发，组间顺序执行
-        const groups = new Map<number, ILifeCycleHook[]>();
-        for (const hook of sortedHooks) {
-          const order = getOrder(hook.order);
-          groups.set(order, [...(groups.get(order) ?? []), hook]);
-        }
-
-        // 按 order 顺序执行挂载钩子，组内并发
-        executeHooks(groups, true, true)
-          .then(() => setIsInitialized(true));
-
-        // 卸载时按 order 逆序执行卸载钩子
-        return () => {
-          executeHooks(groups, false, false);
-        };
-      }, [hooks]);
-
-      return [isInitialized] as const;
+      return useLifeCycleWithScope(scope);
     },
   };
 

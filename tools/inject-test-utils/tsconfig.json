@@ -1,0 +1,13 @@
+{
+  "extends": "@xiao-ai/tsconfig",
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"]
+  }
+}
+

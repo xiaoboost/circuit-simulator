@@ -12,7 +12,6 @@ import {
   ElectronicCategory,
 } from '@circuit/types';
 import { describe, it, expect } from 'vitest';
-
 import {
   isPart,
   isPartId,
@@ -26,7 +25,7 @@ import {
   getPartPin,
   createPartByKind,
   createPartsByKind,
-} from '../src/part';
+} from '../src/operations';
 
 describe('器件相关函数', () => {
   describe('isPart()', () => {

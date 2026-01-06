@@ -1,6 +1,6 @@
 {
-  "name": "@circuit/electronics",
-  "description": "circuit's electronics",
+  "name": "@circuit/contracts",
+  "description": "circuit's DI tokens",
   "version": "1.0.0",
   "author": "xiaoboost",
   "license": "MIT",
@@ -8,6 +8,12 @@
   "main": "src/index.ts",
   "module": "src/index.ts",
   "types": "src/index.ts",
+  "exports": {
+    "./*": {
+      "types": "./src/*/index.ts",
+      "default": "./src/*/index.ts"
+    }
+  },
   "files": [
     "dist",
     "README.md",
@@ -15,11 +21,8 @@
   ],
   "scripts": {
     "clear": "rimraf ./dist",
-    "test": "pnpm run test:watch --run",
-    "test:watch": "vitest -c ./vite.config.ts",
     "build:cjs": "tsc -p ./tsconfig.json",
     "build": "pnpm run clear && pnpm run build:cjs",
-    "watch": "pnpm run build -w",
     "lint:type": "pnpm run build:cjs --noEmit",
     "lint:style": "eslint -c eslint.config.mjs",
     "lint:fix": "eslint --fix -c eslint.config.mjs",
@@ -27,22 +30,20 @@
   },
   "dependencies": {
     "@circuit/algorithm": "workspace:*",
-    "@circuit/contracts": "workspace:*",
+    "@circuit/inject": "workspace:*",
+    "@circuit/reactive": "workspace:*",
     "@circuit/types": "workspace:*",
-    "@xiao-ai/utils": "1.6.7",
-    "nanoid": "5.1.6"
+    "@xiao-ai/utils": "1.6.7"
   },
   "devDependencies": {
     "@circuit/eslint-config": "workspace:*",
-    "@circuit/test-toolkit": "workspace:*",
-    "@circuit/inject-test-utils": "workspace:*",
     "@types/circuit": "workspace:*",
     "@types/node": "20.19.0",
+    "@types/react": "19.2.4",
     "@xiao-ai/tsconfig": "1.0.4",
     "eslint": "9.39.1",
     "rimraf": "6.1.0",
     "tslib": "2.8.1",
-    "typescript": "5.9.3",
-    "vitest": "4.0.9"
+    "typescript": "5.9.3"
   }
 }
